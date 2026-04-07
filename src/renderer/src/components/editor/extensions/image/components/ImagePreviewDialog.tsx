@@ -25,6 +25,7 @@ export function ImagePreviewDialog({
 			<DialogPortal>
 				<DialogOverlay />
 				<DialogPrimitive.Content
+					aria-describedby={undefined}
 					className={cn(
 						'fixed inset-0 z-[9999] flex items-center justify-center p-8',
 						'data-[state=open]:animate-in data-[state=closed]:animate-out',

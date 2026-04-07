@@ -2,11 +2,7 @@ import { useMemo } from 'react';
 import { X } from 'lucide-react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
-import {
-	AppDialog,
-	AppDialogContent,
-	AppDialogTitle,
-} from '@/components/app';
+import { AppDialog, AppDialogContent, AppDialogTitle } from '@/components/app';
 import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPdfTemplate';
 
 interface PdfPreviewDialogProps extends DocumentPdfTemplateProps {
