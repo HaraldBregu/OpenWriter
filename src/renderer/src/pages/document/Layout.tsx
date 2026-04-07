@@ -292,9 +292,10 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
+			dispatch({ type: 'CONTENT_CHANGED', value: newContent });
 			debouncedSave();
 		},
-		[debouncedSave]
+		[debouncedSave, dispatch]
 	);
 
 	const handleSelectionChange = useCallback(
