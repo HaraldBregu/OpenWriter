@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
+import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
-import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle } from '@/components/app';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPdfTemplate';
 
 interface PdfPreviewDialogProps extends DocumentPdfTemplateProps {
@@ -18,21 +17,23 @@ export function PdfPreviewDialog({
 	closeLabel,
 	title,
 	content,
-	metadata,
 }: PdfPreviewDialogProps): React.ReactElement {
-	const metadataType = metadata?.type;
-	const metadataCreatedAt = metadata?.createdAt;
-
 	const pdfDocument = useMemo(
-		() => <DocumentPdfTemplate title={title} content={content} metadata={metadata} />,
+		() => <DocumentPdfTemplate title={title} content={content} />,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[title, content, metadataType, metadataCreatedAt]
+		[title, content]
 	);
 
 	return (
-		<AppDialog open={open} onOpenChange={onOpenChange}>
-			<AppDialogPortal>
-				<AppDialogOverlay />
+		<DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+			<DialogPrimitive.Portal>
+				<DialogPrimitive.Overlay
+					className={cn(
+						'fixed inset-0 z-[9998] bg-black/80',
+						'data-[state=open]:animate-in data-[state=closed]:animate-out',
+						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+					)}
+				/>
 				<DialogPrimitive.Content
 					className={cn(
 						'fixed inset-0 z-[9999]',
@@ -40,7 +41,7 @@ export function PdfPreviewDialog({
 						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
 					)}
 				>
-					<AppDialogTitle className="sr-only">{title || 'Document'}</AppDialogTitle>
+					<DialogPrimitive.Title className="sr-only">{title || 'Document'}</DialogPrimitive.Title>
 					<button
 						type="button"
 						onClick={() => onOpenChange(false)}
@@ -65,7 +66,7 @@ export function PdfPreviewDialog({
 						</PDFViewer>
 					)}
 				</DialogPrimitive.Content>
-			</AppDialogPortal>
-		</AppDialog>
+			</DialogPrimitive.Portal>
+		</DialogPrimitive.Root>
 	);
 }
