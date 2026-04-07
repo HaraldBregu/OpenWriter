@@ -45,7 +45,7 @@ export function AssistantContent({
 	onResize,
 }: AssistantContentProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const isPainter = agentId === 'painter';
+	const isImage = agentId === 'image';
 	const footerHint = loading
 		? t('assistantNode.generating', 'Generating response...')
 		: !enable
