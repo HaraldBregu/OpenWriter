@@ -1,5 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
-import { FileDown, Eye } from 'lucide-react';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { FileDown, Eye, RefreshCw } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
 import { useDocumentState } from '../../../hooks';
 import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPdfTemplate';
