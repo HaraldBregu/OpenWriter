@@ -32,7 +32,6 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		const writerTask = useWriterTaskSubmit(documentId);
 		const imageTask = useImageTaskSubmit(documentId);
 
-		const [assistantSessionId, setAssistantSessionId] = useState<string | null>(null);
 		const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 		const [assistantActiveAgentId, setAssistantActiveAgentId] =
 			useState<AssistantAgentId>('writer');
