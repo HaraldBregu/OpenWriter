@@ -29,7 +29,7 @@ export interface ExtensionHandlers {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		agentId?: 'writer' | 'painter',
+		agentId?: 'writer' | 'image',
 		files?: File[]
 	) => void;
 	onImageInsert: ImageInsertHandler;
