@@ -6,7 +6,7 @@ import {
 	AppDropdownMenuItem,
 	AppDropdownMenuTrigger,
 } from '@components/app/AppDropdownMenu';
-import { ChevronDown, Palette, PenLine } from 'lucide-react';
+import { ChevronDown, ImageIcon, Palette, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ASSISTANT_AGENT_OPTIONS, type AssistantAgentId } from './agents';
 
