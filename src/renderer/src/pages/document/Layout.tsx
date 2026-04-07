@@ -96,8 +96,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const assistantIsRunning = assistantActiveTaskId !== null;
 	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
-	const stateRef = useRef({ title, content });
-	stateRef.current = { title, content };
+	const stateRef = useRef({ title, emoji, content });
+	stateRef.current = { title, emoji, content };
 
 	const loadedRef = useRef(false);
 	loadedRef.current = loaded;
