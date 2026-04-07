@@ -88,6 +88,7 @@ export function bootstrapServices(): BootstrapResult {
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
 	agentRegistry.register(AssistantAgent);
+	agentRegistry.register(ImageGeneratorAgent);
 	agentRegistry.register(PainterAgent);
 	agentRegistry.register(WriterAgent);
 
