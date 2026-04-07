@@ -9,7 +9,7 @@ import { useEditorInstance } from './providers';
 import { useDocumentDispatch } from './hooks';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 
-export interface EditorPanelContentElement {
+export interface EditorContentElement {
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 }
