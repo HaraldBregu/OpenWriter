@@ -146,23 +146,27 @@ export const TitleBar = React.memo(function TitleBar({
 						</button>
 					)}
 
-					<button
-						type="button"
-						onClick={onNavigateBack}
-						className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-						title={t('titleBar.navigateBack')}
-					>
-						<ChevronLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-					</button>
+					{onNavigateBack && (
+						<button
+							type="button"
+							onClick={onNavigateBack}
+							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
+							title={t('titleBar.navigateBack')}
+						>
+							<ChevronLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
+						</button>
+					)}
 
-					<button
-						type="button"
-						onClick={onNavigateForward}
-						className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-						title={t('titleBar.navigateForward')}
-					>
-						<ChevronRight className="h-[16px] w-[16px]" strokeWidth={1.5} />
-					</button>
+					{onNavigateForward && (
+						<button
+							type="button"
+							onClick={onNavigateForward}
+							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
+							title={t('titleBar.navigateForward')}
+						>
+							<ChevronRight className="h-[16px] w-[16px]" strokeWidth={1.5} />
+						</button>
+					)}
 				</div>
 			)}
 
