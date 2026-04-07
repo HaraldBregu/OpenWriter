@@ -1,6 +1,17 @@
 import { useMemo, useCallback, useRef, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Tag, Image, FolderOpen, FileDown, Link, Plus, Trash2, Copy, Loader2 } from 'lucide-react';
+import {
+	Calendar,
+	Tag,
+	Image,
+	FolderOpen,
+	FileDown,
+	Link,
+	Plus,
+	Trash2,
+	Copy,
+	Loader2,
+} from 'lucide-react';
 import { usePDF } from '@react-pdf/renderer';
 import type { OutputFileMetadata } from '../../../../../shared/types';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
@@ -326,36 +337,14 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 						)}
 
 						{documentId && metadata && (
-							<div className={sectionClassName}>
-								<div className="mb-3 flex items-center justify-between gap-2">
-									<span className="text-xs font-medium text-muted-foreground/70">
-										{t('configSidebar.exportPdf')}
-									</span>
-									<PDFDownloadLink
-										document={
-											<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
-										}
-										fileName={`${title || 'document'}.pdf`}
-									>
-										{({ loading }) => (
-											<button
-												type="button"
-												disabled={loading}
-												className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
-												aria-label={t('common.download')}
-												title={t('common.download')}
-											>
-												<FileDown className="h-3.5 w-3.5" aria-hidden="true" />
-											</button>
-										)}
-									</PDFDownloadLink>
-								</div>
-								<div className="overflow-hidden rounded-xl border border-border/70 [&>iframe]:block [&>iframe]:border-0">
-									<PDFViewer width="100%" height={300} showToolbar={false}>
-										<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
-									</PDFViewer>
-								</div>
-							</div>
+							<PdfExportSection
+								title={title}
+								content={content}
+								metadata={metadata}
+								sectionClassName={sectionClassName}
+								exportLabel={t('configSidebar.exportPdf')}
+								downloadLabel={t('common.download')}
+							/>
 						)}
 
 						{documentId && (
