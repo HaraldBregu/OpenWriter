@@ -180,6 +180,9 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string) => {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
 				const imagesDir = path.join(documentDir, 'images');
+				const imageExtensions = new Set([
+					'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif', '.bmp', '.ico', '.tiff', '.tif',
+				]);
 
 				try {
 					const entries = await fsPromises.readdir(imagesDir, { withFileTypes: true });
@@ -187,6 +190,8 @@ export class WorkspaceIpc implements IpcModule {
 
 					for (const entry of entries) {
 						if (!entry.isFile()) continue;
+						const ext = path.extname(entry.name).toLowerCase();
+						if (!imageExtensions.has(ext)) continue;
 						const filePath = path.join(imagesDir, entry.name);
 						const stat = await fsPromises.stat(filePath);
 						images.push({

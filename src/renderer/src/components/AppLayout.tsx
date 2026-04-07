@@ -277,7 +277,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							</AppSidebarGroup>
 						</AppCollapsible>
 
-
 						{/* Debug */}
 						<AppCollapsible defaultOpen className="py-0">
 							<AppSidebarGroup className="py-0">

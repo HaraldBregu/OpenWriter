@@ -321,7 +321,7 @@ const App: React.FC = () => {
 													path="/resources"
 													element={<Navigate to="/resources/documents" replace />}
 												/>
-															</Routes>
+											</Routes>
 										</Suspense>
 									</AppLayout>
 								}
