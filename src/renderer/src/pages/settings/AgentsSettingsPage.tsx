@@ -161,7 +161,7 @@ const AgentsSettingsPage: React.FC = () => {
 			<div className="space-y-4">
 				{DEFAULT_AGENTS.map((agent) => {
 					const config = selectedConfigs[agent.id];
-					const models = getModelsForProvider(config?.provider ?? '');
+					const models = getChatModelsForProvider(config?.provider ?? '');
 
 					return (
 						<div
@@ -254,7 +254,7 @@ const AgentsSettingsPage: React.FC = () => {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getModelsForProvider(providerName: string): readonly ModelDescriptor[] {
+function getChatModelsForProvider(providerName: string): readonly ModelDescriptor[] {
 	return getChatModelsForProvider(providerName);
 }
 
