@@ -262,9 +262,6 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 
 						{documentId && metadata && (
 							<PdfExportSection
-								title={title}
-								content={content}
-								metadata={metadata}
 								sectionClassName={sectionClassName}
 								exportLabel={t('configSidebar.exportPdf')}
 								downloadLabel={t('common.download')}
