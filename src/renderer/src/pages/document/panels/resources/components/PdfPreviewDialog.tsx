@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { X } from 'lucide-react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
@@ -19,7 +20,14 @@ export function PdfPreviewDialog({
 	content,
 	metadata,
 }: PdfPreviewDialogProps): React.ReactElement {
-	const templateProps: DocumentPdfTemplateProps = { title, content, metadata };
+	const metadataType = metadata?.type;
+	const metadataCreatedAt = metadata?.createdAt;
+
+	const pdfDocument = useMemo(
+		() => <DocumentPdfTemplate title={title} content={content} metadata={metadata} />,
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[title, content, metadataType, metadataCreatedAt]
+	);
 
 	return (
 		<AppDialog open={open} onOpenChange={onOpenChange}>
@@ -53,7 +61,7 @@ export function PdfPreviewDialog({
 							showToolbar={false}
 							style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 }}
 						>
-							<DocumentPdfTemplate {...templateProps} />
+							{pdfDocument}
 						</PDFViewer>
 					)}
 				</DialogPrimitive.Content>
