@@ -91,7 +91,7 @@ export function PdfExportSection({
 						}}
 					>
 						<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
-							<DocumentPdfTemplate {...templateProps} />
+							{pdfDocument}
 						</PDFViewer>
 					</div>
 				</div>
