@@ -1,0 +1,1 @@
+- [image_generator agent architecture](project_image_generator_arch.md) — custom execute hook (no LangGraph), plain state interface, OpenAI SDK for image gen vs fetch in Painter
