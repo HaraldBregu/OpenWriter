@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { FileDown, Eye } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
 import { useDocumentState } from '../../../hooks';
@@ -27,11 +27,21 @@ export function PdfExportSection({
 }: PdfExportSectionProps): React.ReactElement {
 	const { title, content, metadata } = useDocumentState();
 
-	const templateProps: DocumentPdfTemplateProps = { title, content, metadata };
+	const metadataType = metadata?.type;
+	const metadataCreatedAt = metadata?.createdAt;
 
-	const [{ loading: downloadLoading, url }] = usePDF({
-		document: <DocumentPdfTemplate {...templateProps} />,
-	});
+	const templateProps: DocumentPdfTemplateProps = useMemo(
+		() => ({ title, content, metadata }),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[title, content, metadataType, metadataCreatedAt]
+	);
+
+	const pdfDocument = useMemo(
+		() => <DocumentPdfTemplate {...templateProps} />,
+		[templateProps]
+	);
+
+	const [{ loading: downloadLoading, url }] = usePDF({ document: pdfDocument });
 
 	const [previewOpen, setPreviewOpen] = useState(false);
 
