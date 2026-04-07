@@ -47,6 +47,9 @@ export { AppTooltip, AppTooltipTrigger, AppTooltipContent, AppTooltipProvider } 
 
 export { AppPopover, AppPopoverTrigger, AppPopoverContent } from './AppPopover';
 
+export { AppEmojiPicker } from './AppEmojiPicker';
+export type { AppEmojiPickerProps } from './AppEmojiPicker';
+
 export {
 	AppSheet,
 	AppSheetPortal,

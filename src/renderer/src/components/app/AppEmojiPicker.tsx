@@ -66,10 +66,7 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 							className="select-none"
 							components={{
 								CategoryHeader: ({ category, ...props }) => (
-									<div
-										{...props}
-										className="px-1 py-1 text-xs font-medium text-muted-foreground"
-									>
+									<div {...props} className="px-1 py-1 text-xs font-medium text-muted-foreground">
 										{category.label}
 									</div>
 								),
