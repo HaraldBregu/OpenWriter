@@ -1,4 +1,4 @@
-import { useMemo, useCallback, useRef, useState, type ReactElement } from 'react';
+import { useMemo, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Calendar,
