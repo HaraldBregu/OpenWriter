@@ -4,7 +4,6 @@ import type { Editor } from '@tiptap/core';
 import type { AssistantAgentId } from '@/components/editor/extensions/assistant';
 import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
-import { v7 as uuidv7 } from 'uuid';
 import { useEditorInstance } from './providers';
 import { useDocumentDispatch, useImageTaskSubmit, useWriterTaskSubmit } from './hooks';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
