@@ -13,7 +13,7 @@ import {
 	Loader2,
 } from 'lucide-react';
 import { usePDF } from '@react-pdf/renderer';
-import type { OutputFileMetadata } from '../../../../../shared/types';
+import type { OutputFileMetadata } from '../../../../../../shared/types';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
 import { DocumentPdfTemplate } from './components/DocumentPdfTemplate';
 import {
