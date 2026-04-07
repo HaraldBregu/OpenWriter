@@ -181,7 +181,17 @@ export class WorkspaceIpc implements IpcModule {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
 				const imagesDir = path.join(documentDir, 'images');
 				const imageExtensions = new Set([
-					'.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.avif', '.bmp', '.ico', '.tiff', '.tif',
+					'.jpg',
+					'.jpeg',
+					'.png',
+					'.gif',
+					'.webp',
+					'.svg',
+					'.avif',
+					'.bmp',
+					'.ico',
+					'.tiff',
+					'.tif',
 				]);
 
 				try {
