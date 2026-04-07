@@ -270,18 +270,17 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 					after
 				);
 				pendingCloseMenuRef.current = closeMenu;
-				handleAssistantSend(
+				handleGenerateTextSubmit(
 					cleanBefore,
 					cleanAfter,
 					cursorPos,
-					'CONTINUE WRITING HERE WITH 15 WORDS MAX',
-					'writer'
+					'CONTINUE WRITING HERE WITH 15 WORDS MAX'
 				).catch(() => {
 					pendingCloseMenuRef.current = null;
 					closeMenu();
 				});
 			},
-			[assistantIsRunning, handleAssistantSend]
+			[assistantIsRunning, handleGenerateTextSubmit]
 		);
 
 		return (
