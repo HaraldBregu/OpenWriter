@@ -1,4 +1,4 @@
-import { HumanMessage } from '@langchain/core/messages';
+import type OpenAI from 'openai';
 import { IMAGE_GENERATOR_MESSAGES } from '../messages';
 import { readLabeledValue } from '../agent-output';
 import {
@@ -47,18 +47,19 @@ function buildHumanMessage(state: ImageGeneratorState): string {
 }
 
 export function createCreateImagePromptAgent(
-	model: ImageGeneratorSpecialistAgent['model']
+	client: OpenAI,
+	model: string,
+	temperature: number,
+	maxTokens: number
 ): ImageGeneratorSpecialistAgent {
-	return createImageGeneratorSpecialistAgent(model, SYSTEM_PROMPT);
+	return createImageGeneratorSpecialistAgent(client, SYSTEM_PROMPT, model, temperature, maxTokens);
 }
 
 export async function createImagePrompt(
 	state: ImageGeneratorState,
 	agent: ImageGeneratorSpecialistAgent
 ): Promise<Partial<ImageGeneratorState>> {
-	const raw = await invokeImageGeneratorSpecialist(agent, [
-		new HumanMessage(buildHumanMessage(state)),
-	]);
+	const raw = await invokeImageGeneratorSpecialist(agent, buildHumanMessage(state));
 
 	const nextPrompt = readLabeledValue(raw, 'PROMPT') || state.subject || state.prompt;
 	const nextAltText = readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
