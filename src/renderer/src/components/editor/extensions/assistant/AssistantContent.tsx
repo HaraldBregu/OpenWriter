@@ -52,7 +52,7 @@ export function AssistantContent({
 			? t('assistantNode.disabled', 'Assistant unavailable right now.')
 			: undefined;
 	const isSubmitDisabled =
-		!enable || loading || (!prompt.trim() && (!isPainter || files.length === 0));
+		!enable || loading || (!prompt.trim() && (!isImage || files.length === 0));
 
 	return (
 		<>
