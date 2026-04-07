@@ -1,5 +1,4 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import { useDocumentState } from '../../../hooks';
 
 const BODY_COLOR = '#1a1a1a';
 const MUTED_COLOR = '#888888';
