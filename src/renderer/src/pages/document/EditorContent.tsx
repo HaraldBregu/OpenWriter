@@ -239,11 +239,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 						referenceImages: savedReferenceImages,
 					};
 
-					const ipcResult = await window.task.submit(
-						'agent-image-generator',
-						taskInput,
-						metadata
-					);
+					const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);
 					if (!ipcResult.success) {
 						editorRef.current?.setAssistantLoading(false);
 						editorRef.current?.setAssistantEnable(true);

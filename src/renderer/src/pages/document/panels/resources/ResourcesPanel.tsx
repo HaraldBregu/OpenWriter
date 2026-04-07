@@ -217,6 +217,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 													type="button"
 													key={img.fileName}
 													className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+													style={{ maxWidth: '95pt', maxHeight: '95pt' }}
 													onClick={() =>
 														setPreviewImage({
 															src: toLocalResourceUrl(img.filePath),
@@ -228,6 +229,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 														src={toLocalResourceUrl(img.filePath)}
 														alt={img.fileName}
 														className="h-full w-full object-cover"
+														style={{ maxWidth: '95pt', maxHeight: '95pt' }}
 														loading="lazy"
 													/>
 													<div className="absolute inset-x-0 bottom-0 bg-black/55 px-1.5 py-1 opacity-0 transition-opacity group-hover:opacity-100">
