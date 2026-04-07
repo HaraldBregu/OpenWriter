@@ -14,9 +14,7 @@ export async function deliverImage(
 	const lines: string[] = [];
 
 	if (state.generatedImageUrl) {
-		lines.push(
-			`![${state.imageAltText || 'Generated image'}](<${state.generatedImageUrl}>)`
-		);
+		lines.push(`![${state.imageAltText || 'Generated image'}](<${state.generatedImageUrl}>)`);
 		lines.push('');
 	}
 

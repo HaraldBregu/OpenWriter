@@ -48,13 +48,9 @@ function buildHistory(history: ImageGeneratorState['history']): string {
 }
 
 function buildHumanMessage(state: ImageGeneratorState): string {
-	return [
-		'User request:',
-		state.prompt,
-		'',
-		'Recent history:',
-		buildHistory(state.history),
-	].join('\n');
+	return ['User request:', state.prompt, '', 'Recent history:', buildHistory(state.history)].join(
+		'\n'
+	);
 }
 
 export function createInterpretIntentAgent(

@@ -61,8 +61,7 @@ export async function createImagePrompt(
 	]);
 
 	const nextPrompt = readLabeledValue(raw, 'PROMPT') || state.subject || state.prompt;
-	const nextAltText =
-		readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
+	const nextAltText = readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
 
 	return {
 		imagePrompt: nextPrompt,
