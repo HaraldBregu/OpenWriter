@@ -4,15 +4,16 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
 import type { LoggerService } from '../../services/logger';
-import type { ImageResolution } from './state';
 
-const OPENAI_IMAGE_MODEL = 'gpt-image-1';
-const IMAGE_FILE_PREFIX = 'image-generator';
-const IMAGE_EXTENSION = 'png';
+const IMAGE_MODEL = 'gpt-image-1';
+const IMAGE_FORMAT = 'png';
+const IMAGE_QUALITY = 'medium';
 
-interface GenerateImageInput {
+type ImageSize = '1024x1024' | '1024x1536' | '1536x1024';
+
+export interface GenerateImageInput {
 	readonly prompt: string;
-	readonly resolution: ImageResolution;
+	readonly size?: ImageSize;
 	readonly apiKey: string;
 	readonly baseUrl?: string;
 	readonly signal?: AbortSignal;
@@ -21,7 +22,7 @@ interface GenerateImageInput {
 	readonly logger?: LoggerService;
 }
 
-interface GeneratedImage {
+export interface GeneratedImage {
 	readonly filePath: string;
 	readonly fileName: string;
 	readonly localUrl: string;
@@ -33,7 +34,29 @@ function toLocalResourceUrl(filePath: string): string {
 	return url.toString();
 }
 
-function getWorkspacePath(
+function resolveOutputDirectory(
+	workspacePath: string | undefined,
+	metadata?: Record<string, unknown>
+): string {
+	const documentId = typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : '';
+
+	if (workspacePath && documentId) {
+		const documentsRoot = path.resolve(workspacePath, 'output', 'documents');
+		const documentDir = path.resolve(documentsRoot, documentId);
+		if (!documentDir.startsWith(`${documentsRoot}${path.sep}`)) {
+			throw new Error(`Rejected document path outside workspace for ID "${documentId}".`);
+		}
+		return path.join(documentDir, 'images');
+	}
+
+	if (workspacePath) {
+		return path.resolve(workspacePath, 'resources', 'generated-images');
+	}
+
+	return path.resolve(os.tmpdir(), 'openwriter-generated-images');
+}
+
+function resolveWorkspacePath(
 	workspacePath: string | null | undefined,
 	metadata?: Record<string, unknown>
 ): string | undefined {
@@ -46,35 +69,8 @@ function getWorkspacePath(
 		: undefined;
 }
 
-function resolveDocumentImageDirectory(workspacePath: string, documentId: string): string {
-	const documentsRoot = path.resolve(workspacePath, 'output', 'documents');
-	const documentDir = path.resolve(documentsRoot, documentId);
-	if (!documentDir.startsWith(`${documentsRoot}${path.sep}`)) {
-		throw new Error(`Rejected document path outside workspace for ID "${documentId}".`);
-	}
-
-	return path.join(documentDir, 'images');
-}
-
-function resolveOutputDirectory(
-	workspacePath: string | undefined,
-	metadata?: Record<string, unknown>
-): string {
-	const documentId = typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : '';
-
-	if (workspacePath && documentId) {
-		return resolveDocumentImageDirectory(workspacePath, documentId);
-	}
-
-	if (workspacePath) {
-		return path.resolve(workspacePath, 'resources', 'generated-images');
-	}
-
-	return path.resolve(os.tmpdir(), 'openwriter-generated-images');
-}
-
 export async function generateImage(input: GenerateImageInput): Promise<GeneratedImage> {
-	const { prompt, resolution, apiKey, baseUrl, signal, metadata, workspacePath, logger } = input;
+	const { prompt, size, apiKey, baseUrl, signal, metadata, workspacePath, logger } = input;
 
 	const client = new OpenAI({
 		apiKey,
@@ -83,36 +79,31 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
 
 	const response = await client.images.generate(
 		{
-			model: OPENAI_IMAGE_MODEL,
+			model: IMAGE_MODEL,
 			prompt,
-			size: resolution,
-			quality: 'medium',
-			output_format: IMAGE_EXTENSION,
+			size: size ?? '1024x1024',
+			quality: IMAGE_QUALITY,
+			output_format: IMAGE_FORMAT,
 			moderation: 'auto',
 			n: 1,
 		},
 		{ signal }
 	);
 
-	const imageData = response.data?.[0];
-	const base64 = imageData?.b64_json;
-
+	const base64 = response.data?.[0]?.b64_json;
 	if (!base64) {
 		throw new Error('Image generation returned no image data.');
 	}
 
-	const resolvedWorkspacePath = getWorkspacePath(workspacePath, metadata);
-	const outputDir = resolveOutputDirectory(resolvedWorkspacePath, metadata);
+	const resolved = resolveWorkspacePath(workspacePath, metadata);
+	const outputDir = resolveOutputDirectory(resolved, metadata);
 	await fs.mkdir(outputDir, { recursive: true });
 
-	const fileName = `${IMAGE_FILE_PREFIX}-${randomUUID()}.${IMAGE_EXTENSION}`;
+	const fileName = `image-generator-${randomUUID()}.${IMAGE_FORMAT}`;
 	const filePath = path.join(outputDir, fileName);
 	await fs.writeFile(filePath, Buffer.from(base64, 'base64'));
 
-	logger?.info('ImageGenerator', 'Generated image saved', {
-		filePath,
-		outputDir,
-	});
+	logger?.info('ImageGenerator', 'Generated image saved', { filePath, outputDir });
 
 	return {
 		filePath,
