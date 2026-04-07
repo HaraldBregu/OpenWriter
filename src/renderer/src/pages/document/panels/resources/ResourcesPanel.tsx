@@ -69,6 +69,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
+	const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
