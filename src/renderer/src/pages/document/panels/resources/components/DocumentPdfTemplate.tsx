@@ -260,6 +260,20 @@ function parseMarkdown(content: string): MarkdownBlock[] {
 	return blocks;
 }
 
+const ABSOLUTE_SRC_RE = /^(https?:\/\/|data:|local-resource:\/\/)/;
+
+function resolveImageSrcForPdf(src: string, images: ImageInfo[]): string {
+	if (ABSOLUTE_SRC_RE.test(src)) return src;
+	const fileName = src.startsWith('images/') ? src.slice(7) : src;
+	const found = images.find((img) => img.fileName === fileName);
+	if (found) {
+		const normalized = found.filePath.replace(/\\/g, '/');
+		const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+		return `local-resource://localhost${urlPath}`;
+	}
+	return src;
+}
+
 function InlineText({ segments }: { readonly segments: InlineSegment[] }): React.ReactElement {
 	return (
 		<>
