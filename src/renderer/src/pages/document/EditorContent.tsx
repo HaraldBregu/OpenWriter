@@ -122,8 +122,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				const streamContent = output?.content ?? snap.streamedContent ?? '';
 
 				if (streamContent) {
-					const isImageAgent =
-						assistantActiveAgentId === 'painter' || assistantActiveAgentId === 'image';
+					const isImageAgent = assistantActiveAgentId === 'image';
 					if (completed && isImageAgent) {
 						editorRef.current?.insertMarkdownText(streamContent, {
 							preventEditorUpdate: !completed,
