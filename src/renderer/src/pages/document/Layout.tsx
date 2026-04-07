@@ -13,7 +13,7 @@ import Chat from './panels/chat';
 import { useEditorInstance, useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { useAppDispatch } from '../../store';
-import { documentUpdated } from '../../store/documents/actions';
+import { documentMetadataPatched } from '../../store/documents/actions';
 import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
