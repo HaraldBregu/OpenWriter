@@ -25,10 +25,10 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const { title, content, metadata } = useDocumentState();
+	const { title } = useDocumentState();
 
 	const [{ loading: downloadLoading, url }] = usePDF({
-		document: <DocumentPdfTemplate title={title} content={content} metadata={metadata} />,
+		document: <DocumentPdfTemplate />,
 	});
 
 	const [previewOpen, setPreviewOpen] = useState(false);
@@ -79,7 +79,7 @@ export function PdfExportSection({
 						}}
 					>
 						<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
-							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+							<DocumentPdfTemplate />
 						</PDFViewer>
 					</div>
 				</div>
