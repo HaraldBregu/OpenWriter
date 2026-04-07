@@ -6,7 +6,7 @@ import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { useEditorInstance } from './providers';
 import { useDocumentDispatch, useImageTaskSubmit, useWriterTaskSubmit } from './hooks';
-import { buildTaskPrompt, normalizeTaskPromptContext } from './shared';
+import { normalizeTaskPromptContext } from './shared';
 
 export interface EditorContentElement {
 	setSearch: (query: string) => void;
