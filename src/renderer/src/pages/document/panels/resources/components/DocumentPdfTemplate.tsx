@@ -1,5 +1,10 @@
 import { Document, Page, Text, View, Image, StyleSheet } from '@react-pdf/renderer';
 
+interface ImageInfo {
+	readonly fileName: string;
+	readonly filePath: string;
+}
+
 const BODY_COLOR = '#1a1a1a';
 const MUTED_COLOR = '#888888';
 const CODE_BG = '#f5f5f5';
