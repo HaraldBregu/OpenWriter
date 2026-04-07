@@ -279,13 +279,8 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										{t('configSidebar.export')}
 									</span>
 								</div>
-								<div className="mb-3 overflow-hidden rounded-xl border border-border/70">
-									<PDFViewer
-										width="100%"
-										height={300}
-										showToolbar={false}
-										style={{ border: 'none', display: 'block' }}
-									>
+								<div className="mb-3 overflow-hidden rounded-xl border border-border/70 [&>iframe]:block [&>iframe]:border-0">
+									<PDFViewer width="100%" height={300} showToolbar={false}>
 										<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 									</PDFViewer>
 								</div>
