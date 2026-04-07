@@ -74,6 +74,7 @@ export const {
 	documentsLoaded,
 	documentAdded,
 	documentUpdated,
+	documentMetadataPatched,
 	documentRemoved,
 	documentSelected,
 	documentsLoadingStarted,
