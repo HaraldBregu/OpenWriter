@@ -28,6 +28,7 @@ import {
 	AppAlertDialogHeader,
 	AppAlertDialogTitle,
 } from '@/components/app';
+import { ImagePreviewDialog } from '@/components/editor/extensions/image/components/ImagePreviewDialog';
 
 interface ResourcesPanelProps {
 	readonly onOpenFolder: () => void;
