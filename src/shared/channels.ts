@@ -225,6 +225,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.openDataFolder]: { args: []; result: void };
 	[WorkspaceChannels.openResourcesFolder]: { args: []; result: void };
 	[WorkspaceChannels.openDocumentFolder]: { args: [documentId: string]; result: void };
+	[WorkspaceChannels.openDocumentImagesFolder]: { args: [documentId: string]; result: void };
 	[WorkspaceChannels.getDocumentPath]: { args: [documentId: string]; result: string };
 
 	// ---- Resources (IpcResult-wrapped) ----
