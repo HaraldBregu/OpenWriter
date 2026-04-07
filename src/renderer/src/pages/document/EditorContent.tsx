@@ -240,7 +240,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 					};
 
 					const ipcResult = await window.task.submit(
-						DOCUMENT_AGENT_TASK_TYPES.image,
+						'agent-image-generator',
 						taskInput,
 						metadata
 					);
