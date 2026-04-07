@@ -203,7 +203,18 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										<span className="text-xs font-medium text-muted-foreground/70">
 											{t('configSidebar.images')}
 										</span>
-										<span className="text-[11px] text-muted-foreground">{images.length}</span>
+										<div className="flex items-center gap-1.5">
+											<span className="text-[11px] text-muted-foreground">{images.length}</span>
+											<button
+												type="button"
+												onClick={handleOpenImagesFolder}
+												className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+												aria-label={t('common.openFolder')}
+												title={t('common.openFolder')}
+											>
+												<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+											</button>
+										</div>
 									</div>
 									{images.length > 0 ? (
 										<div className="grid grid-cols-3 gap-2.5">
