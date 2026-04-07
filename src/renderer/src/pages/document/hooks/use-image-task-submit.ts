@@ -30,10 +30,7 @@ function readFileAsDataUri(file: File): Promise<string> {
 	});
 }
 
-async function saveReferenceImages(
-	documentId: string,
-	files: File[]
-): Promise<SavedImage[]> {
+async function saveReferenceImages(documentId: string, files: File[]): Promise<SavedImage[]> {
 	const saved: SavedImage[] = [];
 
 	for (const file of files) {
@@ -64,9 +61,7 @@ export function useImageTaskSubmit(documentId: string | undefined): UseImageTask
 			if (!documentId) return null;
 
 			const savedReferenceImages =
-				params.files.length > 0
-					? await saveReferenceImages(documentId, params.files)
-					: [];
+				params.files.length > 0 ? await saveReferenceImages(documentId, params.files) : [];
 
 			const referenceNote =
 				savedReferenceImages.length > 0
@@ -102,11 +97,7 @@ export function useImageTaskSubmit(documentId: string | undefined): UseImageTask
 				referenceImages: savedReferenceImages,
 			};
 
-			const ipcResult = await window.task.submit(
-				'agent-image-generator',
-				taskInput,
-				metadata
-			);
+			const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);
 			if (!ipcResult.success) return null;
 
 			const resolvedTaskId = ipcResult.data.taskId;

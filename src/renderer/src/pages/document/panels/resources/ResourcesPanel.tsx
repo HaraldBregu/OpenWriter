@@ -211,7 +211,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										</div>
 									</div>
 									{images.length > 0 ? (
-										<div className="grid grid-cols-3 gap-2.5">
+										<div className="grid grid-cols-4 gap-1.5">
 											{images.map((img) => (
 												<button
 													type="button"
