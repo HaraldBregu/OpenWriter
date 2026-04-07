@@ -27,14 +27,19 @@ export function PdfExportSection({
 }: PdfExportSectionProps): React.ReactElement {
 	const { title, content, metadata, images } = useDocumentState();
 
-	const metadataType = metadata?.type;
-	const metadataCreatedAt = metadata?.createdAt;
+	const snapshotRef = useRef<DocumentPdfTemplateProps>({ title, content, images });
+	const [refreshKey, setRefreshKey] = useState(0);
 
 	const templateProps: DocumentPdfTemplateProps = useMemo(
-		() => ({ title, content, images }),
+		() => snapshotRef.current,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[title, content, images, metadataType, metadataCreatedAt]
+		[refreshKey]
 	);
+
+	const handleRefresh = useCallback(() => {
+		snapshotRef.current = { title, content, images };
+		setRefreshKey((k) => k + 1);
+	}, [title, content, images]);
 
 	const pdfDocument = useMemo(() => <DocumentPdfTemplate {...templateProps} />, [templateProps]);
 
