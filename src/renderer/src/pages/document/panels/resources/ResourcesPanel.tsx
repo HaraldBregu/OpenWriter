@@ -116,7 +116,7 @@ function PdfExportSection({
 					</div>
 				) : (
 					<iframe
-						src={url ?? undefined}
+						src={url ? `${url}#toolbar=0&navpanes=0&scrollbar=0` : undefined}
 						width="100%"
 						height={300}
 						style={{ display: 'block', border: 'none' }}
