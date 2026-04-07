@@ -371,6 +371,14 @@ function BlockRenderer({
 			);
 		case 'hr':
 			return <View key={index} style={styles.hrSpacer} />;
+		case 'image': {
+			const resolvedSrc = resolveImageSrcForPdf(block.src, images);
+			return (
+				<View key={index} style={styles.imageWrapper}>
+					<Image src={resolvedSrc} style={styles.image} />
+				</View>
+			);
+		}
 		default:
 			return null;
 	}
