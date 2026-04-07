@@ -238,11 +238,11 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	);
 
 	const handleSearch = useCallback((query: string) => {
-		editorPanelContentRef.current?.setSearch(query);
+		editorContentRef.current?.setSearch(query);
 	}, []);
 
 	const handleClearSearch = useCallback(() => {
-		editorPanelContentRef.current?.clearSearch();
+		editorContentRef.current?.clearSearch();
 	}, []);
 
 	return (
