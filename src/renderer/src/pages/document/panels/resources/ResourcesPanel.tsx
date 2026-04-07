@@ -12,7 +12,9 @@ import {
 	Trash2,
 	Copy,
 } from 'lucide-react';
+import { PDFViewer, PDFDownloadLink } from '@react-pdf/renderer';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
+import { DocumentPdfTemplate } from './components/DocumentPdfTemplate';
 import {
 	AppLabel,
 	AppCard,
