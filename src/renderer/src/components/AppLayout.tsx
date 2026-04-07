@@ -43,7 +43,6 @@ import {
 	ChevronsUpDown,
 	Database,
 	Search,
-	Bot,
 	ListTodo,
 	Globe,
 	CircleHelp,
