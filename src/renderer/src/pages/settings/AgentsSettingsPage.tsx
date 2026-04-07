@@ -50,17 +50,12 @@ const AgentsSettingsPage: React.FC = () => {
 				if (!active) return;
 
 				const uniqueProviders = Array.from(
-					new Set(
-						entries
-							.map((entry) => entry.name.trim())
-							.filter((name) => name.length > 0)
-					)
+					new Set(entries.map((entry) => entry.name.trim()).filter((name) => name.length > 0))
 				).sort((a, b) => a.localeCompare(b));
 
 				setProviders(uniqueProviders);
 
 				const defaultProvider = uniqueProviders[0] ?? '';
-				const defaultModel = getFirstChatModel(defaultProvider);
 				const nextSaved: Record<string, AgentProviderConfig> = {};
 				const nextSelected: Record<string, AgentProviderConfig> = {};
 
@@ -112,16 +107,13 @@ const AgentsSettingsPage: React.FC = () => {
 		});
 	}, [fallbackProvider, providers]);
 
-	const handleProviderChange = useCallback(
-		(agentId: string, providerName: string) => {
-			const model = getFirstChatModel(providerName);
-			setSelectedConfigs((prev) => ({
-				...prev,
-				[agentId]: { provider: providerName, model },
-			}));
-		},
-		[]
-	);
+	const handleProviderChange = useCallback((agentId: string, providerName: string) => {
+		const model = getFirstChatModel(providerName);
+		setSelectedConfigs((prev) => ({
+			...prev,
+			[agentId]: { provider: providerName, model },
+		}));
+	}, []);
 
 	const handleModelChange = useCallback((agentId: string, modelId: string) => {
 		setSelectedConfigs((prev) => ({
@@ -194,18 +186,12 @@ const AgentsSettingsPage: React.FC = () => {
 										>
 											<AppSelectTrigger className="h-9 text-sm">
 												<AppSelectValue
-													placeholder={t(
-														'settings.agents.noProviders',
-														'No providers configured'
-													)}
+													placeholder={t('settings.agents.noProviders', 'No providers configured')}
 												/>
 											</AppSelectTrigger>
 											<AppSelectContent>
 												{providers.map((provider) => (
-													<AppSelectItem
-														key={`${agent.id}-provider-${provider}`}
-														value={provider}
-													>
+													<AppSelectItem key={`${agent.id}-provider-${provider}`} value={provider}>
 														{provider}
 													</AppSelectItem>
 												))}
@@ -226,18 +212,12 @@ const AgentsSettingsPage: React.FC = () => {
 										>
 											<AppSelectTrigger className="h-9 text-sm flex-1">
 												<AppSelectValue
-													placeholder={t(
-														'settings.agents.noModels',
-														'No models available'
-													)}
+													placeholder={t('settings.agents.noModels', 'No models available')}
 												/>
 											</AppSelectTrigger>
 											<AppSelectContent>
 												{models.map((model) => (
-													<AppSelectItem
-														key={`${agent.id}-model-${model.id}`}
-														value={model.id}
-													>
+													<AppSelectItem key={`${agent.id}-model-${model.id}`} value={model.id}>
 														{model.name}
 													</AppSelectItem>
 												))}
@@ -257,11 +237,7 @@ const AgentsSettingsPage: React.FC = () => {
 												void handleSave(agent.id);
 											}}
 										>
-											{savingByAgent[agent.id] ? (
-												<Loader2 className="animate-spin" />
-											) : (
-												<Check />
-											)}
+											{savingByAgent[agent.id] ? <Loader2 className="animate-spin" /> : <Check />}
 										</AppButton>
 									</div>
 								</div>
