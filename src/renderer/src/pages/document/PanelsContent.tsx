@@ -3,11 +3,11 @@ import ResourcesPanel from './panels/resources/ResourcesPanel';
 import Chat from './panels/chat';
 import { useSidebarVisibility } from './providers';
 
-interface SidePanelsContentProps {
+interface PanelsContentProps {
 	readonly documentId: string | undefined;
 }
 
-const SidePanelsContent: React.FC<SidePanelsContentProps> = ({ documentId }) => {
+const PanelsContent: React.FC<PanelsContentProps> = ({ documentId }) => {
 	const { activeSidebar } = useSidebarVisibility();
 
 	const handleOpenFolder = useCallback(() => {
