@@ -3,6 +3,7 @@ export {
 	documentsLoaded,
 	documentAdded,
 	documentUpdated,
+	documentMetadataPatched,
 	documentRemoved,
 	documentSelected,
 	documentsLoadingStarted,
