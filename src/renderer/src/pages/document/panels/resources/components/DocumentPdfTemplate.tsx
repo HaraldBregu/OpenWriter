@@ -1,5 +1,5 @@
 import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import type { OutputFileMetadata } from '../../../../../../shared/types';
+import type { OutputFileMetadata } from '../../../../../../../shared/types';
 
 interface DocumentPdfTemplateProps {
 	readonly title: string;

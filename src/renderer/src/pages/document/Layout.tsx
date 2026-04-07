@@ -445,7 +445,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		<div className="h-full flex flex-col">
 			<Header
 				title={title}
+				emoji={emoji}
 				onTitleChange={handleTitleChange}
+				onEmojiChange={handleEmojiChange}
 				onSearch={handleSearch}
 				onClearSearch={handleClearSearch}
 				historyEntries={historyEntries}
