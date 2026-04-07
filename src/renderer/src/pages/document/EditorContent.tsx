@@ -24,40 +24,6 @@ interface EditorContentProps {
 	readonly onRedo: () => void;
 }
 
-function readFileAsDataUri(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = (): void => resolve(reader.result as string);
-		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
-		reader.readAsDataURL(file);
-	});
-}
-
-async function saveAssistantReferenceImages(
-	documentId: string,
-	files: File[]
-): Promise<Array<{ fileName: string; filePath: string }>> {
-	const saved: Array<{ fileName: string; filePath: string }> = [];
-
-	for (const file of files) {
-		const dataUri = await readFileAsDataUri(file);
-		const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
-		if (!match) continue;
-
-		const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-		const base64 = match[2];
-		const fileName = `${crypto.randomUUID()}.${ext}`;
-		const result = await window.workspace.saveDocumentImage({
-			documentId,
-			fileName,
-			base64,
-		});
-		saved.push(result);
-	}
-
-	return saved;
-}
-
 const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>(
 	({ documentId, loaded, content, externalValueVersion, onChange, onUndo, onRedo }, ref) => {
 		const dispatch = useDocumentDispatch();
