@@ -153,7 +153,7 @@ const AgentsSettingsPage: React.FC = () => {
 										<AppSelect
 											value={config?.provider ?? ''}
 											onValueChange={(value) => handleProviderChange(agent.id, value)}
-											disabled={providers.length === 0}
+											disabled={catalogueProviders.length === 0}
 										>
 											<AppSelectTrigger className="h-9 text-sm">
 												<AppSelectValue
@@ -161,9 +161,12 @@ const AgentsSettingsPage: React.FC = () => {
 												/>
 											</AppSelectTrigger>
 											<AppSelectContent>
-												{providers.map((provider) => (
-													<AppSelectItem key={`${agent.id}-provider-${provider}`} value={provider}>
-														{provider}
+												{catalogueProviders.map((provider) => (
+													<AppSelectItem
+														key={`${agent.id}-provider-${provider.id}`}
+														value={provider.id}
+													>
+														{provider.name}
 													</AppSelectItem>
 												))}
 											</AppSelectContent>
