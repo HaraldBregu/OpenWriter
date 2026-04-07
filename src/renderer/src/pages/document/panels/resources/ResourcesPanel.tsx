@@ -300,7 +300,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 										{({ loading }) => (
 											<>
 												<FileDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-												{loading ? t('common.loading') : t('configSidebar.exportPdf')}
+												{loading ? '…' : t('configSidebar.exportPdf')}
 											</>
 										)}
 									</PDFDownloadLink>

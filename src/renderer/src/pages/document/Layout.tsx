@@ -131,6 +131,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				}
 
 				setTitle(output.metadata.title || '');
+				setEmoji(output.metadata.emoji || '');
 				setContent(output.content || '');
 				dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
 				setLoaded(true);
