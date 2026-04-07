@@ -227,6 +227,15 @@ function parseMarkdown(content: string): MarkdownBlock[] {
 			continue;
 		}
 
+		const imageMatch = line.match(/^!\[([^\]]*)\]\((.+)\)$/);
+		if (imageMatch) {
+			const srcPart = imageMatch[2];
+			const srcOnly = srcPart.match(/^(\S+)(?:\s+"[^"]*")?$/);
+			blocks.push({ type: 'image', alt: imageMatch[1], src: srcOnly ? srcOnly[1] : srcPart });
+			i++;
+			continue;
+		}
+
 		if (line.trim() === '') {
 			orderedIndex = 0;
 			i++;
