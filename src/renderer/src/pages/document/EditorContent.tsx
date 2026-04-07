@@ -165,11 +165,11 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 				try {
 					const savedReferenceImages =
-						agentId === 'painter' && files.length > 0
+						agentId === 'image' && files.length > 0
 							? await saveAssistantReferenceImages(documentId, files)
 							: [];
 					const referenceNote =
-						agentId === 'painter' && savedReferenceImages.length > 0
+						agentId === 'image' && savedReferenceImages.length > 0
 							? `\n\nReference images saved in the document:\n${savedReferenceImages
 									.map((image) => `- images/${image.fileName}`)
 									.join('\n')}`
