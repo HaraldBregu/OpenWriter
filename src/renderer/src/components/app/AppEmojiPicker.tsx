@@ -26,13 +26,13 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 				<AppButton
 					type="button"
 					variant="header-icon"
-					size="header-icon-md"
+					size="header-icon-lg"
 					aria-label="Select emoji"
 					title="Select emoji"
-					className={cn('shrink-0 text-base leading-none', className)}
+					className={cn('shrink-0 text-2xl leading-none', className)}
 				>
 					{value ? (
-						<span aria-hidden="true" className="text-base leading-none">
+						<span aria-hidden="true" className="text-2xl leading-none">
 							{value}
 						</span>
 					) : (
