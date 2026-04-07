@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
 		paddingTop: 56,
 		paddingBottom: 56,
 		paddingHorizontal: 64,
-		fontSize: 11,
+		fontSize: 12,
 		lineHeight: 1.625,
 		color: BODY_COLOR,
 		fontFamily: 'Helvetica',
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
 	title: {
 		fontSize: 22,
 		fontFamily: 'Helvetica-Bold',
-		marginBottom: 4,
+		marginBottom: 40,
 		color: BODY_COLOR,
 	},
 	meta: {
@@ -36,54 +36,54 @@ const styles = StyleSheet.create({
 		marginBottom: 18,
 	},
 	h1: {
-		fontSize: 22,
+		fontSize: 26,
 		fontFamily: 'Helvetica-Bold',
-		marginTop: 15,
-		marginBottom: 8,
+		marginTop: 20,
+		marginBottom: 10,
 		color: BODY_COLOR,
 	},
 	h2: {
-		fontSize: 17,
+		fontSize: 20,
 		fontFamily: 'Helvetica-Bold',
-		marginTop: 14,
-		marginBottom: 7,
+		marginTop: 18,
+		marginBottom: 9,
 		color: BODY_COLOR,
 	},
 	h3: {
-		fontSize: 13,
+		fontSize: 16,
 		fontFamily: 'Helvetica-Bold',
-		marginTop: 13,
-		marginBottom: 6,
+		marginTop: 16,
+		marginBottom: 8,
 		color: BODY_COLOR,
 	},
 	paragraph: {
-		marginBottom: 11,
-		fontSize: 11,
+		marginBottom: 14,
+		fontSize: 12,
 		lineHeight: 1.625,
 		color: BODY_COLOR,
 	},
 	listItemRow: {
 		flexDirection: 'row',
-		marginBottom: 6,
-		paddingLeft: 8,
+		marginBottom: 8,
+		paddingLeft: 10,
 	},
 	bullet: {
-		width: 12,
-		fontSize: 11,
+		width: 14,
+		fontSize: 12,
 		color: BODY_COLOR,
 	},
 	listText: {
 		flex: 1,
-		fontSize: 11,
+		fontSize: 12,
 		lineHeight: 1.625,
 		color: BODY_COLOR,
 	},
 	codeBlock: {
 		backgroundColor: CODE_BG,
-		padding: 10,
-		marginBottom: 11,
+		padding: 12,
+		marginBottom: 14,
 		fontFamily: 'Courier',
-		fontSize: 10,
+		fontSize: 11,
 		lineHeight: 1.5,
 		color: BODY_COLOR,
 	},
@@ -91,22 +91,21 @@ const styles = StyleSheet.create({
 		borderLeftWidth: 2,
 		borderLeftColor: '#d4d4d4',
 		paddingLeft: 8,
-		marginBottom: 11,
+		marginBottom: 14,
 		color: MUTED_COLOR,
-		fontSize: 11,
+		fontSize: 12,
 		lineHeight: 1.625,
 	},
 	hrSpacer: {
 		borderBottomWidth: 0.5,
 		borderBottomColor: '#d4d4d4',
-		marginVertical: 11,
+		marginVertical: 14,
 	},
 	imageWrapper: {
-		marginBottom: 11,
-		alignItems: 'flex-start',
+		marginBottom: 14,
 	},
 	image: {
-		maxWidth: '100%',
+		width: '100%',
 	},
 });
 
@@ -280,7 +279,7 @@ function InlineText({ segments }: { readonly segments: InlineSegment[] }): React
 			{segments.map((seg, idx) => {
 				if (seg.code) {
 					return (
-						<Text key={idx} style={{ fontFamily: 'Courier', fontSize: 10 }}>
+						<Text key={idx} style={{ fontFamily: 'Courier', fontSize: 11 }}>
 							{seg.text}
 						</Text>
 					);
