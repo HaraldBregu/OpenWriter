@@ -124,7 +124,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 		displayWorkspaceName === 'OpenWriter'
 			? t('appLayout.workspaceLabel', 'Workspace')
 			: displayWorkspaceName;
-	const isLandingPage = location.pathname === '/home';
+	const isLandingPage = location.pathname === '/';
 	const footerUserName = currentUser?.name?.trim() || 'User';
 	const footerUserEmail = currentUser?.email?.trim() || 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
