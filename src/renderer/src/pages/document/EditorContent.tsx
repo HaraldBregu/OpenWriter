@@ -26,7 +26,7 @@ interface EditorContentProps {
 
 const DOCUMENT_AGENT_TASK_TYPES: Record<AssistantAgentId, string> = {
 	writer: 'agent-writer',
-	image: 'vision',
+	image: 'agent-image-generator',
 };
 
 function readFileAsDataUri(file: File): Promise<string> {
