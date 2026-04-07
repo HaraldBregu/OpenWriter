@@ -91,6 +91,7 @@ export function PdfExportSection({
 				open={previewOpen}
 				onOpenChange={setPreviewOpen}
 				closeLabel={downloadLabel}
+				{...templateProps}
 			/>
 		</>
 	);
