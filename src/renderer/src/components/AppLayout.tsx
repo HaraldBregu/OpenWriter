@@ -185,7 +185,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										>
 											<Plus className="h-4 w-4 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
-											<span className="text-xs text-muted-foreground/60">⌃N</span>
+											<span className="text-xs text-muted-foreground/60">Ctrl+Alt+N</span>
 										</AppSidebarMenuButton>
 									</AppSidebarMenuItem>
 									<AppSidebarMenuItem>
