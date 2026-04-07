@@ -108,7 +108,7 @@ export function AssistantNodeView({
 
 	const submit = useCallback(() => {
 		const trimmedPrompt = prompt.trim();
-		const canSubmitWithFiles = agentId === 'painter' && files.length > 0;
+		const canSubmitWithFiles = agentId === 'image' && files.length > 0;
 		if (!trimmedPrompt && !canSubmitWithFiles) {
 			deleteNode();
 			return;
