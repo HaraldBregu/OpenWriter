@@ -341,34 +341,18 @@ function BlockRenderer({
 export interface DocumentPdfTemplateProps {
 	readonly title: string;
 	readonly content: string;
-	readonly metadata?: { type?: string; createdAt?: string } | null;
 }
 
 export function DocumentPdfTemplate({
 	title,
 	content,
-	metadata,
 }: DocumentPdfTemplateProps): React.ReactElement {
 	const blocks = parseMarkdown(content);
-
-	const metaParts: string[] = [];
-	if (metadata?.type) metaParts.push(metadata.type);
-	if (metadata?.createdAt) {
-		metaParts.push(
-			new Date(metadata.createdAt).toLocaleDateString('en-US', {
-				year: 'numeric',
-				month: 'long',
-				day: 'numeric',
-			})
-		);
-	}
 
 	return (
 		<Document title={title}>
 			<Page size="A4" style={styles.page}>
 				<Text style={styles.title}>{title}</Text>
-				{metaParts.length > 0 && <Text style={styles.meta}>{metaParts.join(' · ')}</Text>}
-				<View style={styles.divider} />
 				{blocks.map((block, idx) => (
 					<BlockRenderer key={idx} block={block} index={idx} />
 				))}

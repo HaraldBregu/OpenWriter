@@ -31,15 +31,12 @@ export function PdfExportSection({
 	const metadataCreatedAt = metadata?.createdAt;
 
 	const templateProps: DocumentPdfTemplateProps = useMemo(
-		() => ({ title, content, metadata }),
+		() => ({ title, content }),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[title, content, metadataType, metadataCreatedAt]
 	);
 
-	const pdfDocument = useMemo(
-		() => <DocumentPdfTemplate {...templateProps} />,
-		[templateProps]
-	);
+	const pdfDocument = useMemo(() => <DocumentPdfTemplate {...templateProps} />, [templateProps]);
 
 	const [{ loading: downloadLoading, url }] = usePDF({ document: pdfDocument });
 
@@ -81,7 +78,7 @@ export function PdfExportSection({
 					</div>
 				</div>
 
-				<div className="overflow-hidden rounded-xl" style={{ height: PREVIEW_HEIGHT }}>
+				<div className="overflow-hidden" style={{ height: PREVIEW_HEIGHT }}>
 					<div
 						style={{
 							marginTop: -CROP,

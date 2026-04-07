@@ -196,7 +196,9 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 											{t('configSidebar.images')}
 										</span>
 										<div className="flex items-center gap-1.5">
-											<span className="text-[11px] text-muted-foreground">{images.length}</span>
+											{images.length > 0 && (
+												<span className="text-[11px] text-muted-foreground">{images.length}</span>
+											)}
 											<button
 												type="button"
 												onClick={handleOpenImagesFolder}
