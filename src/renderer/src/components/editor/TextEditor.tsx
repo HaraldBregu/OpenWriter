@@ -69,13 +69,18 @@ export interface TextEditorProps {
 		cursorPos: number,
 		closeMenu: () => void
 	) => void;
-	onTextSubmit?: (
+	onGenerateTextSubmit?: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string
+	) => void;
+	onGenerateImageSubmit?: (
 		before: string,
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		agentId?: AssistantAgentId,
-		files?: File[]
+		files: File[]
 	) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
