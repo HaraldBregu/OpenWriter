@@ -4,10 +4,12 @@ import { debounce } from 'lodash';
 import Header from './Header';
 import EditorPanelContent, { type EditorPanelContentElement } from './EditorPanelContent';
 import SidePanelsContent from './SidePanelsContent';
+import { useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
-import { ResizablePanelGroup, ResizablePanel } from '@/components/ui/Resizable';
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
+import { usePanelRef } from 'react-resizable-panels';
 
 interface LayoutProps {
 	documentId: string | undefined;
