@@ -24,10 +24,6 @@ interface EditorContentProps {
 	readonly onRedo: () => void;
 }
 
-const DOCUMENT_AGENT_TASK_TYPES: Record<AssistantAgentId, string> = {
-	writer: 'agent-writer',
-};
-
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
