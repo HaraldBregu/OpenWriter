@@ -475,29 +475,22 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 				<ResizablePanel defaultSize="70%" minSize="40%">
-					<div className="h-full min-w-0 flex flex-col">
-						<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-							<div className="mx-auto flex w-full max-w-4xl flex-col gap-2 px-10 py-10">
-								{loaded && (
-									<TextEditor
-										disabled={assistantIsRunning}
-										ref={editorRef}
-										key={id}
-										value={content}
-										onSelectionChange={handleSelectionChange}
-										externalValueVersion={editorExternalValueVersion}
-										onChange={handleContentChange}
-										onContinueWithAssistant={onContinueWithAssistant}
-										onTextSubmit={handleAssistantSend}
-										documentId={id}
-										onEditorReady={handleEditorReady}
-										onUndo={handleUndo}
-										onRedo={handleRedo}
-									/>
-								)}
-							</div>
-						</div>
-					</div>
+					<EditorContent
+						key={id}
+						loaded={loaded}
+						assistantIsRunning={assistantIsRunning}
+						editorRef={editorRef}
+						documentId={id}
+						content={content}
+						externalValueVersion={editorExternalValueVersion}
+						onSelectionChange={handleSelectionChange}
+						onChange={handleContentChange}
+						onContinueWithAssistant={onContinueWithAssistant}
+						onTextSubmit={handleAssistantSend}
+						onEditorReady={handleEditorReady}
+						onUndo={handleUndo}
+						onRedo={handleRedo}
+					/>
 				</ResizablePanel>
 
 				{activeSidebar && <ResizableHandle />}
