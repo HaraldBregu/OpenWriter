@@ -9,7 +9,7 @@
 // Provider type
 // ---------------------------------------------------------------------------
 
-export type AppProviderName =
+export type AppProviderNameName =
   | 'OpenAI'
   | 'Anthropic'
   | 'Google'
@@ -44,7 +44,7 @@ export type ModelType =
 // ---------------------------------------------------------------------------
 
 export interface ModelInfo {
-  readonly provider: AppProvider;
+  readonly provider: AppProviderName;
   readonly modelId: string;
   readonly name: string;
   readonly type: ModelType;
@@ -706,7 +706,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 // All provider names (derived)
 // ---------------------------------------------------------------------------
 
-export const APP_PROVIDERS: readonly AppProvider[] = [
+export const APP_PROVIDERS: readonly AppProviderName[] = [
   'OpenAI',
   'Anthropic',
   'Google',
@@ -728,7 +728,7 @@ export const APP_PROVIDERS: readonly AppProvider[] = [
 // ---------------------------------------------------------------------------
 
 /** Get all models for a specific provider. */
-export function getModelsByProvider(provider: AppProvider): readonly ModelInfo[] {
+export function getModelsByProvider(provider: AppProviderName): readonly ModelInfo[] {
   return AI_MODELS.filter((m) => m.provider === provider);
 }
 
