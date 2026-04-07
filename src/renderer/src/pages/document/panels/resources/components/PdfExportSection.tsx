@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { FileDown, Eye } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
 import { useDocumentState } from '../../../hooks';
-import { DocumentPdfTemplate } from './DocumentPdfTemplate';
+import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPdfTemplate';
 import { PdfPreviewDialog } from './PdfPreviewDialog';
 
 export interface PdfExportSectionProps {
