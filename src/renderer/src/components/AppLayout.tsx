@@ -71,6 +71,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const handleNavigateBack = useCallback(() => navigate(-1), [navigate]);
+	const handleNavigateForward = useCallback(() => navigate(1), [navigate]);
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
 	const currentUser = useCurrentUser();
