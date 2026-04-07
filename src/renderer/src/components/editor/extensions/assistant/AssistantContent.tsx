@@ -56,7 +56,7 @@ export function AssistantContent({
 
 	return (
 		<>
-			{isPainter && (
+			{isImage && (
 				<input
 					ref={fileInputRef}
 					type="file"
@@ -68,7 +68,7 @@ export function AssistantContent({
 					multiple
 				/>
 			)}
-			{isPainter && (
+			{isImage && (
 				<div className="border-b border-border/65 bg-muted/[0.28] px-3.5 pb-2 dark:border-white/10 dark:bg-white/[0.03]">
 					<div className="flex items-center gap-2 overflow-x-auto pt-3 pb-1">
 						<AppButton
