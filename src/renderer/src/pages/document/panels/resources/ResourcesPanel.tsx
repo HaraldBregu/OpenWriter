@@ -274,35 +274,32 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 
 						{documentId && metadata && (
 							<div className={sectionClassName}>
-								<div className="mb-3">
+								<div className="mb-3 flex items-center justify-between gap-2">
 									<span className="text-xs font-medium text-muted-foreground/70">
-										{t('configSidebar.export')}
+										{t('configSidebar.exportPdf')}
 									</span>
-								</div>
-								<div className="mb-3 overflow-hidden rounded-xl border border-border/70 [&>iframe]:block [&>iframe]:border-0">
-									<PDFViewer width="100%" height={300} showToolbar={false}>
-										<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
-									</PDFViewer>
-								</div>
-								<div className="space-y-1">
 									<PDFDownloadLink
 										document={
 											<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 										}
 										fileName={`${title || 'document'}.pdf`}
-										className={actionButtonClassName}
 									>
 										{({ loading }) => (
-											<>
-												<FileDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-												{loading ? '…' : t('configSidebar.exportPdf')}
-											</>
+											<button
+												type="button"
+												disabled={loading}
+												className="flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+											>
+												<FileDown className="h-3 w-3 shrink-0" />
+												{loading ? '…' : t('common.download')}
+											</button>
 										)}
 									</PDFDownloadLink>
-									<button type="button" className={actionButtonClassName}>
-										<FileType className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										{t('configSidebar.exportMd')}
-									</button>
+								</div>
+								<div className="overflow-hidden rounded-xl border border-border/70 [&>iframe]:block [&>iframe]:border-0">
+									<PDFViewer width="100%" height={300} showToolbar={false}>
+										<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+									</PDFViewer>
 								</div>
 							</div>
 						)}
