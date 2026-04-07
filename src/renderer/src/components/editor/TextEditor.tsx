@@ -154,8 +154,10 @@ const TextEditor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onTextSubmit: (before, after, cursorPos, prompt, agentId, files) =>
-							onTextSubmitRef.current?.(before, after, cursorPos, prompt, agentId, files),
+						onGenerateTextSubmit: (before, after, cursorPos, prompt) =>
+							onGenerateTextSubmitRef.current?.(before, after, cursorPos, prompt),
+						onGenerateImageSubmit: (before, after, cursorPos, prompt, files) =>
+							onGenerateImageSubmitRef.current?.(before, after, cursorPos, prompt, files),
 						onImageInsert: (file, insertAtPos) =>
 							handleImageFileInsertRef.current(file, insertAtPos),
 						onUndo: () => onUndoRef.current?.(),
