@@ -90,11 +90,7 @@ export function PdfExportSection({
 								height: PREVIEW_HEIGHT + CROP * 2,
 							}}
 						>
-							<PDFViewer
-								width="100%"
-								height={PREVIEW_HEIGHT + CROP * 2}
-								showToolbar={false}
-							>
+							<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
 								<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
 							</PDFViewer>
 						</div>

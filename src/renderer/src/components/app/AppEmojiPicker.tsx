@@ -48,7 +48,7 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 			>
 				<EmojiPicker.Root
 					onEmojiSelect={handleEmojiSelect}
-					className="h-[340px] w-[320px] rounded-md p-2"
+					className="h-[340px] w-[320px] rounded-md bg-popover p-2"
 				>
 					<EmojiPicker.Search
 						className="mb-2 h-8 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
