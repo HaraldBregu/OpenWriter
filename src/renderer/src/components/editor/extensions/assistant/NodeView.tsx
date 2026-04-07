@@ -181,7 +181,7 @@ export function AssistantNodeView({
 
 	const handleDragOver = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'painter') return;
+			if (agentId !== 'image') return;
 			e.preventDefault();
 			setIsDragOver(true);
 		},
@@ -190,7 +190,7 @@ export function AssistantNodeView({
 
 	const handleDragLeave = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'painter') return;
+			if (agentId !== 'image') return;
 			e.preventDefault();
 			setIsDragOver(false);
 		},
@@ -199,7 +199,7 @@ export function AssistantNodeView({
 
 	const handleDrop = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'painter') return;
+			if (agentId !== 'image') return;
 			e.preventDefault();
 			setIsDragOver(false);
 			for (const file of Array.from(e.dataTransfer.files)) {
