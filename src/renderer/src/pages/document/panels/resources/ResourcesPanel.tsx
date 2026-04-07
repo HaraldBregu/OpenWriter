@@ -221,9 +221,16 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 									{images.length > 0 ? (
 										<div className="grid grid-cols-3 gap-2.5">
 											{images.map((img) => (
-												<div
+												<button
+													type="button"
 													key={img.fileName}
-													className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-accent/45 dark:bg-muted/40"
+													className="group relative aspect-square overflow-hidden rounded-xl border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+													onClick={() =>
+														setPreviewImage({
+															src: toLocalResourceUrl(img.filePath),
+															alt: img.fileName,
+														})
+													}
 												>
 													<img
 														src={toLocalResourceUrl(img.filePath)}
@@ -236,7 +243,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 															{img.fileName}
 														</span>
 													</div>
-												</div>
+												</button>
 											))}
 											<button
 												type="button"
