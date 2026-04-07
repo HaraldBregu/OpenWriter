@@ -1,21 +1,8 @@
 import { useMemo, useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Calendar,
-	Tag,
-	Image,
-	FolderOpen,
-	FileDown,
-	Link,
-	Plus,
-	Trash2,
-	Copy,
-	Loader2,
-} from 'lucide-react';
-import { usePDF } from '@react-pdf/renderer';
-import type { OutputFileMetadata } from '../../../../../../shared/types';
+import { Calendar, Tag, Image, FolderOpen, Link, Plus, Trash2, Copy } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
-import { DocumentPdfTemplate } from './components/DocumentPdfTemplate';
+import { PdfExportSection } from './components/PdfExportSection';
 import {
 	AppLabel,
 	AppCard,
