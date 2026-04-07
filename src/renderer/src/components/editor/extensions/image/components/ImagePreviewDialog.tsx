@@ -47,7 +47,7 @@ export function ImagePreviewDialog({
 					>
 						<X className="h-5 w-5" />
 						<span className="sr-only">{t('imageNode.cancel')}</span>
-					</DialogPrimitive.Close>
+					</button>
 					{src && (
 						<img
 							src={src}
