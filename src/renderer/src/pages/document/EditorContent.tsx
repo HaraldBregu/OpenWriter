@@ -145,14 +145,82 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			return unsub;
 		}, [assistantActiveAgentId, assistantActiveTaskId]);
 
-		const handleAssistantSend = useCallback(
+		const submitAssistantTask = useCallback(
+			async (
+				agentId: AssistantAgentId,
+				before: string,
+				after: string,
+				cursorPos: number,
+				prompt: string,
+				referenceImages: Array<{ fileName: string; filePath: string }> = []
+			) => {
+				const resolvedSessionId = assistantSessionId ?? uuidv7();
+				if (!assistantSessionId) {
+					setAssistantSessionId(resolvedSessionId);
+				}
+
+				if (typeof window.task?.submit !== 'function') {
+					editorRef.current?.setAssistantLoading(false);
+					editorRef.current?.setAssistantEnable(true);
+					return;
+				}
+
+				const taskType = DOCUMENT_AGENT_TASK_TYPES[agentId];
+				const taskInput = { prompt };
+				const metadata = {
+					agentId,
+					documentId,
+					chatId: resolvedSessionId,
+					before,
+					after,
+					cursorPos,
+					referenceImages,
+				};
+
+				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
+				if (!ipcResult.success) {
+					editorRef.current?.setAssistantLoading(false);
+					editorRef.current?.setAssistantEnable(true);
+					return;
+				}
+
+				const resolvedTaskId = ipcResult.data.taskId;
+				initTaskMetadata(resolvedTaskId, metadata);
+				setAssistantActiveAgentId(agentId);
+				setAssistantActiveTaskId(resolvedTaskId);
+			},
+			[assistantSessionId, documentId]
+		);
+
+		const handleGenerateTextSubmit = useCallback(
+			async (before: string, after: string, cursorPos: number, input: string) => {
+				if (!documentId || assistantIsRunning) {
+					editorRef.current?.setAssistantLoading(false);
+					editorRef.current?.setAssistantEnable(true);
+					return;
+				}
+
+				editorRef.current?.setAssistantLoading(true);
+				editorRef.current?.setAssistantEnable(false);
+
+				try {
+					const prompt = buildTaskPrompt(before, after, input);
+					await submitAssistantTask('writer', before, after, cursorPos, prompt);
+				} catch {
+					editorRef.current?.setAssistantLoading(false);
+					editorRef.current?.setAssistantEnable(true);
+				}
+			},
+			[assistantIsRunning, documentId, submitAssistantTask]
+		);
+
+		const handleGenerateImageSubmit = useCallback(
 			async (
 				before: string,
 				after: string,
 				cursorPos: number,
 				input: string,
-				agentId: AssistantAgentId = 'writer',
-				files: File[] = []
+				files: File[]
 			) => {
 				if (!documentId || assistantIsRunning) {
 					editorRef.current?.setAssistantLoading(false);
@@ -165,57 +233,30 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 				try {
 					const savedReferenceImages =
-						agentId === 'image' && files.length > 0
+						files.length > 0
 							? await saveAssistantReferenceImages(documentId, files)
 							: [];
 					const referenceNote =
-						agentId === 'image' && savedReferenceImages.length > 0
+						savedReferenceImages.length > 0
 							? `\n\nReference images saved in the document:\n${savedReferenceImages
 									.map((image) => `- images/${image.fileName}`)
 									.join('\n')}`
 							: '';
 					const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
-
-					const resolvedSessionId = assistantSessionId ?? uuidv7();
-					if (!assistantSessionId) {
-						setAssistantSessionId(resolvedSessionId);
-					}
-
-					if (typeof window.task?.submit !== 'function') {
-						editorRef.current?.setAssistantLoading(false);
-						editorRef.current?.setAssistantEnable(true);
-						return;
-					}
-
-					const taskType = DOCUMENT_AGENT_TASK_TYPES[agentId];
-					const taskInput = { prompt };
-					const metadata = {
-						agentId,
-						documentId,
-						chatId: resolvedSessionId,
+					await submitAssistantTask(
+						'image',
 						before,
 						after,
 						cursorPos,
-						referenceImages: savedReferenceImages,
-					};
-
-					const ipcResult = await window.task.submit(taskType, taskInput, metadata);
-					if (!ipcResult.success) {
-						editorRef.current?.setAssistantLoading(false);
-						editorRef.current?.setAssistantEnable(true);
-						return;
-					}
-
-					const resolvedTaskId = ipcResult.data.taskId;
-					initTaskMetadata(resolvedTaskId, metadata);
-					setAssistantActiveAgentId(agentId);
-					setAssistantActiveTaskId(resolvedTaskId);
+						prompt,
+						savedReferenceImages
+					);
 				} catch {
 					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setAssistantEnable(true);
 				}
 			},
-			[assistantIsRunning, assistantSessionId, documentId]
+			[assistantIsRunning, documentId, submitAssistantTask]
 		);
 
 		const handleContinueWithAssistant = useCallback(
