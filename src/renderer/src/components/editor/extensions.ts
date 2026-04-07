@@ -24,12 +24,7 @@ import { ImagePlaceholderExtension } from './extensions/image_placeholder';
 import { Markdown } from '@tiptap/markdown';
 
 export interface ExtensionHandlers {
-	onGenerateTextSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		prompt: string
-	) => void;
+	onGenerateTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onGenerateImageSubmit: (
 		before: string,
 		after: string,

@@ -145,53 +145,6 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			return unsub;
 		}, [assistantActiveAgentId, assistantActiveTaskId]);
 
-		const submitAssistantTask = useCallback(
-			async (
-				agentId: AssistantAgentId,
-				before: string,
-				after: string,
-				cursorPos: number,
-				prompt: string,
-				referenceImages: Array<{ fileName: string; filePath: string }> = []
-			) => {
-				const resolvedSessionId = assistantSessionId ?? uuidv7();
-				if (!assistantSessionId) {
-					setAssistantSessionId(resolvedSessionId);
-				}
-
-				if (typeof window.task?.submit !== 'function') {
-					editorRef.current?.setAssistantLoading(false);
-					editorRef.current?.setAssistantEnable(true);
-					return;
-				}
-
-				const taskType = DOCUMENT_AGENT_TASK_TYPES[agentId];
-				const taskInput = { prompt };
-				const metadata = {
-					agentId,
-					documentId,
-					chatId: resolvedSessionId,
-					before,
-					after,
-					cursorPos,
-					referenceImages,
-				};
-
-				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
-				if (!ipcResult.success) {
-					editorRef.current?.setAssistantLoading(false);
-					editorRef.current?.setAssistantEnable(true);
-					return;
-				}
-
-				const resolvedTaskId = ipcResult.data.taskId;
-				initTaskMetadata(resolvedTaskId, metadata);
-				setAssistantActiveAgentId(agentId);
-				setAssistantActiveTaskId(resolvedTaskId);
-			},
-			[assistantSessionId, documentId]
-		);
-
 		const handleGenerateTextSubmit = useCallback(
 			async (before: string, after: string, cursorPos: number, input: string) => {
 				if (!documentId || assistantIsRunning) {
@@ -205,23 +158,54 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 				try {
 					const prompt = buildTaskPrompt(before, after, input);
-					await submitAssistantTask('writer', before, after, cursorPos, prompt);
+
+					const resolvedSessionId = assistantSessionId ?? uuidv7();
+					if (!assistantSessionId) {
+						setAssistantSessionId(resolvedSessionId);
+					}
+
+					if (typeof window.task?.submit !== 'function') {
+						editorRef.current?.setAssistantLoading(false);
+						editorRef.current?.setAssistantEnable(true);
+						return;
+					}
+
+					const taskInput = { prompt };
+					const metadata = {
+						agentId: 'writer' as const,
+						documentId,
+						chatId: resolvedSessionId,
+						before,
+						after,
+						cursorPos,
+						referenceImages: [],
+					};
+
+					const ipcResult = await window.task.submit(
+						DOCUMENT_AGENT_TASK_TYPES.writer,
+						taskInput,
+						metadata
+					);
+					if (!ipcResult.success) {
+						editorRef.current?.setAssistantLoading(false);
+						editorRef.current?.setAssistantEnable(true);
+						return;
+					}
+
+					const resolvedTaskId = ipcResult.data.taskId;
+					initTaskMetadata(resolvedTaskId, metadata);
+					setAssistantActiveAgentId('writer');
+					setAssistantActiveTaskId(resolvedTaskId);
 				} catch {
 					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setAssistantEnable(true);
 				}
 			},
-			[assistantIsRunning, documentId, submitAssistantTask]
+			[assistantIsRunning, assistantSessionId, documentId]
 		);
 
 		const handleGenerateImageSubmit = useCallback(
-			async (
-				before: string,
-				after: string,
-				cursorPos: number,
-				input: string,
-				files: File[]
-			) => {
+			async (before: string, after: string, cursorPos: number, input: string, files: File[]) => {
 				if (!documentId || assistantIsRunning) {
 					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setAssistantEnable(true);
@@ -233,9 +217,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 				try {
 					const savedReferenceImages =
-						files.length > 0
-							? await saveAssistantReferenceImages(documentId, files)
-							: [];
+						files.length > 0 ? await saveAssistantReferenceImages(documentId, files) : [];
 					const referenceNote =
 						savedReferenceImages.length > 0
 							? `\n\nReference images saved in the document:\n${savedReferenceImages
@@ -243,20 +225,50 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 									.join('\n')}`
 							: '';
 					const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
-					await submitAssistantTask(
-						'image',
+
+					const resolvedSessionId = assistantSessionId ?? uuidv7();
+					if (!assistantSessionId) {
+						setAssistantSessionId(resolvedSessionId);
+					}
+
+					if (typeof window.task?.submit !== 'function') {
+						editorRef.current?.setAssistantLoading(false);
+						editorRef.current?.setAssistantEnable(true);
+						return;
+					}
+
+					const taskInput = { prompt };
+					const metadata = {
+						agentId: 'image' as const,
+						documentId,
+						chatId: resolvedSessionId,
 						before,
 						after,
 						cursorPos,
-						prompt,
-						savedReferenceImages
+						referenceImages: savedReferenceImages,
+					};
+
+					const ipcResult = await window.task.submit(
+						DOCUMENT_AGENT_TASK_TYPES.image,
+						taskInput,
+						metadata
 					);
+					if (!ipcResult.success) {
+						editorRef.current?.setAssistantLoading(false);
+						editorRef.current?.setAssistantEnable(true);
+						return;
+					}
+
+					const resolvedTaskId = ipcResult.data.taskId;
+					initTaskMetadata(resolvedTaskId, metadata);
+					setAssistantActiveAgentId('image');
+					setAssistantActiveTaskId(resolvedTaskId);
 				} catch {
 					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setAssistantEnable(true);
 				}
 			},
-			[assistantIsRunning, documentId, submitAssistantTask]
+			[assistantIsRunning, assistantSessionId, documentId]
 		);
 
 		const handleContinueWithAssistant = useCallback(

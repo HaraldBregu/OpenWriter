@@ -144,12 +144,7 @@ export function AssistantNodeView({
 				files
 			);
 		} else {
-			options.onGenerateTextSubmit(
-				stripHtml(rawBefore),
-				stripHtml(rawAfter),
-				from,
-				trimmedPrompt
-			);
+			options.onGenerateTextSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt);
 		}
 	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
 

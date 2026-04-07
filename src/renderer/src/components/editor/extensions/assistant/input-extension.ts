@@ -4,12 +4,7 @@ import { AssistantNodeView } from './NodeView';
 import type { AssistantAgentId } from './agents';
 
 export interface AssistantOptions {
-	onGenerateTextSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		prompt: string
-	) => void;
+	onGenerateTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
 	onGenerateImageSubmit: (
 		before: string,
 		after: string,
