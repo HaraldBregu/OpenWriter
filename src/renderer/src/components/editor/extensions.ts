@@ -65,7 +65,8 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		SearchExtension,
 		SelectionMarkerExtension,
 		AssistantExtension.configure({
-			onSubmit: handlers.onTextSubmit,
+			onGenerateTextSubmit: handlers.onGenerateTextSubmit,
+			onGenerateImageSubmit: handlers.onGenerateImageSubmit,
 		}),
 		Markdown,
 		Placeholder.configure({
