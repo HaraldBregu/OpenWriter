@@ -1,33 +1,24 @@
 import { X } from 'lucide-react';
 import { PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
-import {
-	AppDialog,
-	AppDialogPortal,
-	AppDialogOverlay,
-	AppDialogTitle,
-} from '@/components/app';
+import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle } from '@/components/app';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import type { OutputFileMetadata } from '../../../../../../../shared/types';
+import { useDocumentState } from '../../../hooks';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 
 interface PdfPreviewDialogProps {
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
-	readonly title: string;
-	readonly content: string;
-	readonly metadata: OutputFileMetadata;
 	readonly closeLabel: string;
 }
 
 export function PdfPreviewDialog({
 	open,
 	onOpenChange,
-	title,
-	content,
-	metadata,
 	closeLabel,
 }: PdfPreviewDialogProps): React.ReactElement {
+	const { title, content, metadata } = useDocumentState();
+
 	return (
 		<AppDialog open={open} onOpenChange={onOpenChange}>
 			<AppDialogPortal>
@@ -53,7 +44,7 @@ export function PdfPreviewDialog({
 						<X className="h-5 w-5" />
 						<span className="sr-only">{closeLabel}</span>
 					</button>
-					{open && (
+					{open && metadata && (
 						<PDFViewer
 							width="100%"
 							height="100%"
