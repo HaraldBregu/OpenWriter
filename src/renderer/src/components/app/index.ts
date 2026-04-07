@@ -106,6 +106,19 @@ export {
 	AppAlertDialogCancel,
 } from './AppAlertDialog';
 
+export {
+	AppDialog,
+	AppDialogPortal,
+	AppDialogOverlay,
+	AppDialogTrigger,
+	AppDialogClose,
+	AppDialogContent,
+	AppDialogHeader,
+	AppDialogFooter,
+	AppDialogTitle,
+	AppDialogDescription,
+} from './AppDialog';
+
 export { AppSlider } from './AppSlider';
 
 export { AppCheckbox } from './AppCheckbox';
