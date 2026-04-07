@@ -174,55 +174,28 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				editorRef.current?.setAssistantEnable(false);
 
 				try {
-					const savedReferenceImages =
-						files.length > 0 ? await saveAssistantReferenceImages(documentId, files) : [];
-					const referenceNote =
-						savedReferenceImages.length > 0
-							? `\n\nReference images saved in the document:\n${savedReferenceImages
-									.map((image) => `- images/${image.fileName}`)
-									.join('\n')}`
-							: '';
-					const prompt = buildTaskPrompt(before, after, `${input}${referenceNote}`);
-
-					const resolvedSessionId = assistantSessionId ?? uuidv7();
-					if (!assistantSessionId) {
-						setAssistantSessionId(resolvedSessionId);
-					}
-
-					if (typeof window.task?.submit !== 'function') {
-						editorRef.current?.setAssistantLoading(false);
-						editorRef.current?.setAssistantEnable(true);
-						return;
-					}
-
-					const taskInput = { prompt };
-					const metadata = {
-						agentId: 'image' as const,
-						documentId,
-						chatId: resolvedSessionId,
+					const taskId = await imageTask.submit({
 						before,
 						after,
 						cursorPos,
-						referenceImages: savedReferenceImages,
-					};
+						input,
+						files,
+					});
 
-					const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);
-					if (!ipcResult.success) {
+					if (!taskId) {
 						editorRef.current?.setAssistantLoading(false);
 						editorRef.current?.setAssistantEnable(true);
 						return;
 					}
 
-					const resolvedTaskId = ipcResult.data.taskId;
-					initTaskMetadata(resolvedTaskId, metadata);
 					setAssistantActiveAgentId('image');
-					setAssistantActiveTaskId(resolvedTaskId);
+					setAssistantActiveTaskId(taskId);
 				} catch {
 					editorRef.current?.setAssistantLoading(false);
 					editorRef.current?.setAssistantEnable(true);
 				}
 			},
-			[assistantIsRunning, assistantSessionId, documentId]
+			[assistantIsRunning, documentId, imageTask]
 		);
 
 		const handleContinueWithAssistant = useCallback(
