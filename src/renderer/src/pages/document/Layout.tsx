@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
