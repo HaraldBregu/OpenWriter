@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
-import { FileDown, Loader2, Eye, X } from 'lucide-react';
+import { FileDown, Eye } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
-import { cn } from '@/lib/utils';
-import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle, AppDialogContent } from '@/components/app';
 import type { OutputFileMetadata } from '../../../../../../../shared/types';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
+import { PdfPreviewDialog } from './PdfPreviewDialog';
 
 export interface PdfExportSectionProps {
 	readonly title: string;
@@ -19,7 +18,7 @@ export interface PdfExportSectionProps {
 const ICON_BUTTON_CLASS =
 	'rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
 
-/** Pixels to crop on each side to remove the PDF page shadow and scrollbar. */
+/** Extra pixels cropped on each side to hide the PDF page drop-shadow and scrollbar. */
 const CROP = 20;
 const PREVIEW_HEIGHT = 300;
 
@@ -32,7 +31,7 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const [{ loading, url }] = usePDF({
+	const [{ loading: downloadLoading, url }] = usePDF({
 		document: <DocumentPdfTemplate title={title} content={content} metadata={metadata} />,
 	});
 
@@ -54,7 +53,6 @@ export function PdfExportSection({
 					<div className="flex items-center gap-1">
 						<button
 							type="button"
-							disabled={loading || !url}
 							onClick={() => setPreviewOpen(true)}
 							className={ICON_BUTTON_CLASS}
 							aria-label={previewLabel}
@@ -64,7 +62,7 @@ export function PdfExportSection({
 						</button>
 						<button
 							type="button"
-							disabled={loading || !url}
+							disabled={downloadLoading || !url}
 							onClick={handleDownload}
 							className={ICON_BUTTON_CLASS}
 							aria-label={downloadLabel}
@@ -76,57 +74,29 @@ export function PdfExportSection({
 				</div>
 
 				<div className="overflow-hidden rounded-xl" style={{ height: PREVIEW_HEIGHT }}>
-					{loading ? (
-						<div className="flex h-full items-center justify-center bg-muted/30">
-							<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-						</div>
-					) : (
-						<div
-							style={{
-								marginTop: -CROP,
-								marginLeft: -CROP,
-								width: `calc(100% + ${CROP * 2}px)`,
-								height: PREVIEW_HEIGHT + CROP * 2,
-							}}
-						>
-							<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
-								<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
-							</PDFViewer>
-						</div>
-					)}
+					<div
+						style={{
+							marginTop: -CROP,
+							marginLeft: -CROP,
+							width: `calc(100% + ${CROP * 2}px)`,
+							height: PREVIEW_HEIGHT + CROP * 2,
+						}}
+					>
+						<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
+							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+						</PDFViewer>
+					</div>
 				</div>
 			</div>
 
-			<AppDialog open={previewOpen} onOpenChange={setPreviewOpen}>
-				<AppDialogPortal>
-					<AppDialogOverlay />
-					<AppDialogContent
-						className={cn(
-							'fixed inset-0 z-[9999] flex flex-col',
-							'data-[state=open]:animate-in data-[state=closed]:animate-out',
-							'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
-						)}
-					>
-						<AppDialogTitle className="sr-only">{title}</AppDialogTitle>
-						<button
-							type="button"
-							onClick={() => setPreviewOpen(false)}
-							className={cn(
-								'absolute right-4 top-4 z-10 rounded-full p-2',
-								'bg-black/50 text-white backdrop-blur-sm',
-								'transition-opacity hover:bg-black/70',
-								'focus:outline-none focus:ring-2 focus:ring-white/50'
-							)}
-						>
-							<X className="h-5 w-5" />
-							<span className="sr-only">{downloadLabel}</span>
-						</button>
-						<PDFViewer width="100%" height="100%" showToolbar={false} style={{ flex: 1 }}>
-							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
-						</PDFViewer>
-					</AppDialogContent>
-				</AppDialogPortal>
-			</AppDialog>
+			<PdfPreviewDialog
+				open={previewOpen}
+				onOpenChange={setPreviewOpen}
+				title={title}
+				content={content}
+				metadata={metadata}
+				closeLabel={downloadLabel}
+			/>
 		</>
 	);
 }
