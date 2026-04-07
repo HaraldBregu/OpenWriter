@@ -1,13 +1,8 @@
 import { useCallback, useState } from 'react';
 import { FileDown, Loader2, Eye, X } from 'lucide-react';
-import { usePDF } from '@react-pdf/renderer';
+import { usePDF, PDFViewer } from '@react-pdf/renderer';
 import { cn } from '@/lib/utils';
-import {
-	AppDialog,
-	AppDialogPortal,
-	AppDialogOverlay,
-	AppDialogTitle,
-} from '@/components/app';
+import { AppDialog, AppDialogPortal, AppDialogOverlay, AppDialogTitle } from '@/components/app';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import type { OutputFileMetadata } from '../../../../../../../shared/types';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
@@ -25,7 +20,9 @@ export interface PdfExportSectionProps {
 const ICON_BUTTON_CLASS =
 	'rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50';
 
-const SHADOW_CROP = 6;
+/** Pixels to crop on each side to remove the PDF page shadow and scrollbar. */
+const CROP = 20;
+const PREVIEW_HEIGHT = 300;
 
 export function PdfExportSection({
 	title,
@@ -78,26 +75,29 @@ export function PdfExportSection({
 						</button>
 					</div>
 				</div>
-				<div className="h-[300px] overflow-hidden rounded-xl">
+
+				<div className="overflow-hidden rounded-xl" style={{ height: PREVIEW_HEIGHT }}>
 					{loading ? (
 						<div className="flex h-full items-center justify-center bg-muted/30">
 							<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
 						</div>
 					) : (
-						<iframe
-							src={url ? `${url}#toolbar=0&navpanes=0&scrollbar=0` : undefined}
-							scrolling="no"
-							title={title}
+						<div
 							style={{
-								display: 'block',
-								border: 'none',
-								overflow: 'hidden',
-								width: `calc(100% + ${SHADOW_CROP * 2}px)`,
-								height: 300 + SHADOW_CROP * 2,
-								marginTop: -SHADOW_CROP,
-								marginLeft: -SHADOW_CROP,
+								marginTop: -CROP,
+								marginLeft: -CROP,
+								width: `calc(100% + ${CROP * 2}px)`,
+								height: PREVIEW_HEIGHT + CROP * 2,
 							}}
-						/>
+						>
+							<PDFViewer
+								width="100%"
+								height={PREVIEW_HEIGHT + CROP * 2}
+								showToolbar={false}
+							>
+								<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+							</PDFViewer>
+						</div>
 					)}
 				</div>
 			</div>
@@ -126,15 +126,9 @@ export function PdfExportSection({
 							<X className="h-5 w-5" />
 							<span className="sr-only">{downloadLabel}</span>
 						</button>
-						{url && (
-							<iframe
-								src={`${url}#toolbar=0&navpanes=0`}
-								width="100%"
-								height="100%"
-								style={{ display: 'block', border: 'none', flex: 1 }}
-								title={title}
-							/>
-						)}
+						<PDFViewer width="100%" height="100%" showToolbar={false} style={{ flex: 1 }}>
+							<DocumentPdfTemplate title={title} content={content} metadata={metadata} />
+						</PDFViewer>
 					</DialogPrimitive.Content>
 				</AppDialogPortal>
 			</AppDialog>
