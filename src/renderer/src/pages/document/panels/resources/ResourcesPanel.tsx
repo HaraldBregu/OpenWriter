@@ -66,7 +66,7 @@ function toLocalResourceUrl(filePath: string): string {
 
 const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
-	const { documentId, metadata, images } = useDocumentState();
+	const { documentId, metadata, images, content, title } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
