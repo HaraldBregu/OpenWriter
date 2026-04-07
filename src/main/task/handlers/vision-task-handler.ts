@@ -3,11 +3,13 @@ import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import type { LoggerService } from '../../services/logger';
 import type { WindowContextManager } from '../../core/window-context';
-import {
-	createVisionAgent,
-	generateImage,
- } from '../../agents/image/image-generation';
-import type { VisionSize, VisionQuality, VisionFormat, GeneratedImage } from '../../agents/image/types';
+import { createVisionAgent, generateImage } from '../../agents/image/image-generation';
+import type {
+	VisionSize,
+	VisionQuality,
+	VisionFormat,
+	GeneratedImage,
+} from '../../agents/image/types';
 
 // ---------------------------------------------------------------------------
 // Input / Output
