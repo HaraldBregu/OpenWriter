@@ -128,20 +128,29 @@ export function AssistantNodeView({
 		const rawAfter =
 			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
 		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
-		const effectivePrompt =
-			agentId === 'image' && !trimmedPrompt && files.length > 0
-				? 'Create an image inspired by the uploaded reference images.'
-				: trimmedPrompt;
 
 		updateAttributes({ loading: true, enable: false });
-		options.onSubmit(
-			stripHtml(rawBefore),
-			stripHtml(rawAfter),
-			from,
-			effectivePrompt,
-			agentId,
-			files
-		);
+
+		if (agentId === 'image') {
+			const effectivePrompt =
+				!trimmedPrompt && files.length > 0
+					? 'Create an image inspired by the uploaded reference images.'
+					: trimmedPrompt;
+			options.onGenerateImageSubmit(
+				stripHtml(rawBefore),
+				stripHtml(rawAfter),
+				from,
+				effectivePrompt,
+				files
+			);
+		} else {
+			options.onGenerateTextSubmit(
+				stripHtml(rawBefore),
+				stripHtml(rawAfter),
+				from,
+				trimmedPrompt
+			);
+		}
 	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
