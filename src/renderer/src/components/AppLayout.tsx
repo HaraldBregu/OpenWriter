@@ -133,8 +133,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 			<TitleBar
 				title={displayWorkspaceName}
 				onToggleSidebar={toggleSidebar}
-				onNavigateBack={handleNavigateBack}
-				onNavigateForward={handleNavigateForward}
+				onNavigateBack={isLandingPage ? undefined : handleNavigateBack}
+				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
 			/>
 
 			<div className="flex flex-1 min-h-0 w-full">
