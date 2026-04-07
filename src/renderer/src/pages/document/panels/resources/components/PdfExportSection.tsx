@@ -81,7 +81,8 @@ export function PdfExportSection({
 							src={url ? `${url}#toolbar=0&navpanes=0&scrollbar=0` : undefined}
 							width="100%"
 							height={300}
-							style={{ display: 'block', border: 'none' }}
+							scrolling="no"
+							style={{ display: 'block', border: 'none', overflow: 'hidden' }}
 							title={title}
 						/>
 					)}
