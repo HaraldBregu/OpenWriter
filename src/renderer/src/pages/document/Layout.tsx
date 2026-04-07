@@ -2,8 +2,8 @@ import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import Header from './Header';
-import EditorPanelContent, { type EditorPanelContentElement } from './EditorPanelContent';
-import SidePanelsContent from './SidePanelsContent';
+import EditorContent, { type EditorContentElement } from './EditorContent';
+import PanelsContent from './PanelsContent';
 import { useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory } from './hooks';
 import { useAppDispatch } from '../../store';
