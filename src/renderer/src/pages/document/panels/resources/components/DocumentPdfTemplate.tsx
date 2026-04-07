@@ -387,11 +387,13 @@ function BlockRenderer({
 export interface DocumentPdfTemplateProps {
 	readonly title: string;
 	readonly content: string;
+	readonly images: ImageInfo[];
 }
 
 export function DocumentPdfTemplate({
 	title,
 	content,
+	images,
 }: DocumentPdfTemplateProps): React.ReactElement {
 	const blocks = parseMarkdown(content);
 
@@ -400,7 +402,7 @@ export function DocumentPdfTemplate({
 			<Page size="A4" style={styles.page}>
 				<Text style={styles.title}>{title}</Text>
 				{blocks.map((block, idx) => (
-					<BlockRenderer key={idx} block={block} index={idx} />
+					<BlockRenderer key={idx} block={block} index={idx} images={images} />
 				))}
 			</Page>
 		</Document>
