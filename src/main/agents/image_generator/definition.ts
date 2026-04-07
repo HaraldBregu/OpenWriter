@@ -1,4 +1,4 @@
-import { ChatOpenAI } from '@langchain/openai';
+import OpenAI from 'openai';
 import type { AgentDefinition } from '../core/definition';
 import type { AgentStreamEvent } from '../core/types';
 import { IMAGE_GENERATOR_MESSAGES } from './messages';
@@ -18,23 +18,6 @@ const CREATE_PROMPT_TEMPERATURE = 0.4;
 const CREATE_PROMPT_MAX_TOKENS = 1024;
 const CHECK_ALIGNMENT_TEMPERATURE = 0.2;
 const CHECK_ALIGNMENT_MAX_TOKENS = 512;
-
-function createNodeModel(
-	apiKey: string,
-	baseUrl: string | undefined,
-	modelName: string,
-	temperature: number,
-	maxTokens: number
-): ChatOpenAI {
-	return new ChatOpenAI({
-		apiKey,
-		model: modelName,
-		streaming: true,
-		temperature,
-		maxTokens,
-		...(baseUrl ? { configuration: { baseURL: baseUrl } } : {}),
-	});
-}
 
 function buildThinkingEvent(content: string, runId: string): AgentStreamEvent {
 	return { type: 'thinking', content, runId };
@@ -69,34 +52,30 @@ const definition: AgentDefinition = {
 
 		const { apiKey, baseUrl, modelName } = input.provider;
 
+		const client = new OpenAI({
+			apiKey,
+			...(baseUrl ? { baseURL: baseUrl } : {}),
+		});
+
 		const interpretIntentAgent = createInterpretIntentAgent(
-			createNodeModel(
-				apiKey,
-				baseUrl,
-				modelName,
-				INTERPRET_INTENT_TEMPERATURE,
-				INTERPRET_INTENT_MAX_TOKENS
-			)
+			client,
+			modelName,
+			INTERPRET_INTENT_TEMPERATURE,
+			INTERPRET_INTENT_MAX_TOKENS
 		);
 
 		const createImagePromptAgent = createCreateImagePromptAgent(
-			createNodeModel(
-				apiKey,
-				baseUrl,
-				modelName,
-				CREATE_PROMPT_TEMPERATURE,
-				CREATE_PROMPT_MAX_TOKENS
-			)
+			client,
+			modelName,
+			CREATE_PROMPT_TEMPERATURE,
+			CREATE_PROMPT_MAX_TOKENS
 		);
 
 		const checkAlignmentAgent = createCheckAlignmentAgent(
-			createNodeModel(
-				apiKey,
-				baseUrl,
-				modelName,
-				CHECK_ALIGNMENT_TEMPERATURE,
-				CHECK_ALIGNMENT_MAX_TOKENS
-			)
+			client,
+			modelName,
+			CHECK_ALIGNMENT_TEMPERATURE,
+			CHECK_ALIGNMENT_MAX_TOKENS
 		);
 
 		let state = createInitialState(
