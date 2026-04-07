@@ -268,6 +268,7 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 								sectionClassName={sectionClassName}
 								exportLabel={t('configSidebar.exportPdf')}
 								downloadLabel={t('common.download')}
+								previewLabel={t('common.preview')}
 							/>
 						)}
 
