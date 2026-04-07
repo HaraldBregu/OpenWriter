@@ -354,6 +354,15 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 					</AppAlertDialogFooter>
 				</AppAlertDialogContent>
 			</AppAlertDialog>
+
+			<ImagePreviewDialog
+				open={previewImage !== null}
+				onOpenChange={(open) => {
+					if (!open) setPreviewImage(null);
+				}}
+				src={previewImage?.src ?? null}
+				alt={previewImage?.alt ?? null}
+			/>
 		</>
 	);
 };
