@@ -35,7 +35,6 @@ import {
 	AppSidebarHeader,
 	AppIconOpenWriter,
 	useSidebar,
-	AppSidebarSeparator,
 } from './app';
 import {
 	Settings,
@@ -179,13 +178,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppSidebarMenu>
 									<AppSidebarMenuItem>
 										<AppSidebarMenuButton
-											className="group h-9 px-3"
+											className="group/btn h-9 px-3"
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
 											<Plus className="h-4 w-4 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
-											<span className="text-xs text-muted-foreground/60 opacity-0 group-hover:opacity-100 transition-opacity">
+											<span className="text-xs text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 												Ctrl+Alt+N
 											</span>
 										</AppSidebarMenuButton>
@@ -251,8 +250,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarGroup>
 							</AppCollapsible>
 						)}
-
-						<AppSidebarSeparator />
 
 						{/* Resources */}
 						<AppCollapsible defaultOpen className="py-0">
