@@ -1,14 +1,16 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PenLine, Search, X, Bot, Undo2, Redo2, Info } from 'lucide-react';
-import { AppButton, AppInput, AppSeparator } from '@/components/app';
+import { Search, X, Bot, Undo2, Redo2, Info } from 'lucide-react';
+import { AppButton, AppInput, AppSeparator, AppEmojiPicker } from '@/components/app';
 import { useSidebarVisibility } from '../providers';
 import HistoryMenu from './HistoryMenu';
 import type { HistoryEntry } from '../services/history-service';
 
 interface HeaderProps {
 	readonly title: string;
+	readonly emoji: string;
 	readonly onTitleChange: (value: string) => void;
+	readonly onEmojiChange: (emoji: string) => void;
 	readonly onSearch: (query: string) => void;
 	readonly onClearSearch: () => void;
 	readonly historyEntries: HistoryEntry[];
