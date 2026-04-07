@@ -17,11 +17,12 @@ export function PdfPreviewDialog({
 	closeLabel,
 	title,
 	content,
+	images,
 }: PdfPreviewDialogProps): React.ReactElement {
 	const pdfDocument = useMemo(
-		() => <DocumentPdfTemplate title={title} content={content} />,
+		() => <DocumentPdfTemplate title={title} content={content} images={images} />,
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[title, content]
+		[title, content, images]
 	);
 
 	return (
