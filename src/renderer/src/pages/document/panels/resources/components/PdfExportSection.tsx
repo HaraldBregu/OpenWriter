@@ -25,7 +25,7 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const { title, content, metadata, images } = useDocumentState();
+	const { title, content, images } = useDocumentState();
 
 	const snapshotRef = useRef<DocumentPdfTemplateProps>({ title, content, images });
 	const [refreshKey, setRefreshKey] = useState(0);
