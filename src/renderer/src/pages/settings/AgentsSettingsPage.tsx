@@ -4,8 +4,8 @@ import { Check, Loader2 } from 'lucide-react';
 import { DEFAULT_AGENTS } from '../../../../shared/types';
 import type { AgentProviderConfig } from '../../../../shared/types';
 import {
-	PROVIDER_CATALOGUE,
 	getChatModelsForProvider,
+	getProvidersForDisplay,
 } from '../../../../shared/provider-constants';
 import {
 	AppButton,
