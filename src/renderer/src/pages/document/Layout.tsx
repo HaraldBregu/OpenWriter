@@ -281,6 +281,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		[debouncedSave]
 	);
 
+	useEffect(() => {
+		if (!id || !loaded) return;
+		appDispatch(
+			documentUpdated({ id, title, emoji: emoji || undefined, path: '', createdAt: 0, updatedAt: Date.now() })
+		);
+	}, [id, title, emoji, loaded, appDispatch]);
+
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
