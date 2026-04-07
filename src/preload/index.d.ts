@@ -219,6 +219,13 @@ export interface WorkspaceApi {
 	/** Update the project description. */
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 	// -------------------------------------------------------------------------
+	// Agent configs
+	// -------------------------------------------------------------------------
+	/** Get agent provider/model configurations from the workspace file. */
+	getAgentConfigs: () => Promise<Record<string, AgentProviderConfig>>;
+	/** Set provider and model for a specific agent. */
+	setAgentConfig: (agentId: string, provider: string, model: string) => Promise<void>;
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
