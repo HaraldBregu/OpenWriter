@@ -58,7 +58,6 @@ const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const DocumentsPage = lazy(() => import('./pages/resources/Documents/DocumentsPage'));
 const ImagesPage = lazy(() => import('./pages/resources/Images/ImagesPage'));
 const FilesPage = lazy(() => import('./pages/resources/Files/FilesPage'));
-const AgentsPage = lazy(() => import('./pages/agents/AgentsPage'));
 const SearchPage = lazy(() => import('./pages/search/Page'));
 
 // Lazy-loaded settings pages
