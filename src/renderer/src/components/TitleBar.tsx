@@ -120,7 +120,7 @@ export const TitleBar = React.memo(function TitleBar({
 							className={btnNavNoHover}
 							title={t('titleBar.navigateBack')}
 						>
-							<ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
+							<ArrowLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
 						</button>
 					)}
 
@@ -158,7 +158,7 @@ export const TitleBar = React.memo(function TitleBar({
 							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
 							title={t('titleBar.navigateBack')}
 						>
-							<ChevronLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
+							<ArrowLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
 						</button>
 					)}
 
