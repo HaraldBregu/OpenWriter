@@ -315,9 +315,11 @@ function InlineText({ segments }: { readonly segments: InlineSegment[] }): React
 function BlockRenderer({
 	block,
 	index,
+	images,
 }: {
 	readonly block: MarkdownBlock;
 	readonly index: number;
+	readonly images: ImageInfo[];
 }): React.ReactElement | null {
 	switch (block.type) {
 		case 'h1':
