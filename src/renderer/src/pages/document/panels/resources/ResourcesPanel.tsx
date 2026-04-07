@@ -287,10 +287,11 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 											<button
 												type="button"
 												disabled={loading}
-												className="flex items-center gap-1.5 rounded-lg bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+												className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50"
+												aria-label={t('common.download')}
+												title={t('common.download')}
 											>
-												<FileDown className="h-3 w-3 shrink-0" />
-												{loading ? '…' : t('common.download')}
+												<FileDown className="h-3.5 w-3.5" aria-hidden="true" />
 											</button>
 										)}
 									</PDFDownloadLink>
