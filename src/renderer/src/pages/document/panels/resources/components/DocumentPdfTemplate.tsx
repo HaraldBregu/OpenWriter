@@ -101,6 +101,13 @@ const styles = StyleSheet.create({
 		borderBottomColor: '#d4d4d4',
 		marginVertical: 14,
 	},
+	imageWrapper: {
+		marginBottom: 8,
+		alignItems: 'flex-start',
+	},
+	image: {
+		maxWidth: '100%',
+	},
 });
 
 type InlineSegment = {
