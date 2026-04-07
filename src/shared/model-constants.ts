@@ -9,7 +9,7 @@
 // Provider type
 // ---------------------------------------------------------------------------
 
-export type AppProvider =
+export type AppProviderName =
   | 'OpenAI'
   | 'Anthropic'
   | 'Google'
