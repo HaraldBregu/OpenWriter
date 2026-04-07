@@ -63,6 +63,7 @@ const DOCUMENT_AGENT_TASK_TYPES: Record<AssistantAgentId, string> = {
 
 const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const dispatch = useDocumentDispatch();
+	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const [title, setTitle] = useState('');
