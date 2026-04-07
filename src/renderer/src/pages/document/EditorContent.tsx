@@ -269,6 +269,6 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 	}
 );
 
-EditorPanelContent.displayName = 'EditorPanelContent';
+EditorContent.displayName = 'EditorContent';
 
-export default EditorPanelContent;
+export default EditorContent;
