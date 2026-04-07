@@ -5,17 +5,25 @@ import { randomUUID } from 'node:crypto';
 import OpenAI from 'openai';
 import type { LoggerService } from '../../services/logger';
 
-const IMAGE_MODEL = 'gpt-image-1';
-const IMAGE_FORMAT = 'png';
-const IMAGE_QUALITY = 'medium';
+export type VisionProvider = 'openai';
+export type VisionModel = 'gpt-image-1' | 'dall-e-3' | 'dall-e-2';
+export type VisionSize = '1024x1024' | '1024x1536' | '1536x1024';
+export type VisionQuality = 'low' | 'medium' | 'high' | 'auto';
+export type VisionFormat = 'png' | 'jpeg' | 'webp';
 
-type ImageSize = '1024x1024' | '1024x1536' | '1536x1024';
+export interface VisionAgent {
+	readonly apiKey: string;
+	readonly url?: string;
+	readonly provider: VisionProvider;
+	readonly model: VisionModel;
+	readonly size: VisionSize;
+	readonly quality: VisionQuality;
+	readonly format: VisionFormat;
+}
 
 export interface GenerateImageInput {
+	readonly agent: VisionAgent;
 	readonly prompt: string;
-	readonly size?: ImageSize;
-	readonly apiKey: string;
-	readonly baseUrl?: string;
 	readonly signal?: AbortSignal;
 	readonly metadata?: Record<string, unknown>;
 	readonly workspacePath?: string | null;
@@ -26,6 +34,18 @@ export interface GeneratedImage {
 	readonly filePath: string;
 	readonly fileName: string;
 	readonly localUrl: string;
+}
+
+export function createVisionAgent(overrides?: Partial<VisionAgent>): VisionAgent {
+	return {
+		apiKey: overrides?.apiKey ?? '',
+		url: overrides?.url,
+		provider: overrides?.provider ?? 'openai',
+		model: overrides?.model ?? 'gpt-image-1',
+		size: overrides?.size ?? '1024x1024',
+		quality: overrides?.quality ?? 'medium',
+		format: overrides?.format ?? 'png',
+	};
 }
 
 function toLocalResourceUrl(filePath: string): string {
@@ -70,20 +90,20 @@ function resolveWorkspacePath(
 }
 
 export async function generateImage(input: GenerateImageInput): Promise<GeneratedImage> {
-	const { prompt, size, apiKey, baseUrl, signal, metadata, workspacePath, logger } = input;
+	const { agent, prompt, signal, metadata, workspacePath, logger } = input;
 
 	const client = new OpenAI({
-		apiKey,
-		...(baseUrl ? { baseURL: baseUrl } : {}),
+		apiKey: agent.apiKey,
+		...(agent.url ? { baseURL: agent.url } : {}),
 	});
 
 	const response = await client.images.generate(
 		{
-			model: IMAGE_MODEL,
+			model: agent.model,
 			prompt,
-			size: size ?? '1024x1024',
-			quality: IMAGE_QUALITY,
-			output_format: IMAGE_FORMAT,
+			size: agent.size,
+			quality: agent.quality,
+			output_format: agent.format,
 			moderation: 'auto',
 			n: 1,
 		},
@@ -99,7 +119,7 @@ export async function generateImage(input: GenerateImageInput): Promise<Generate
 	const outputDir = resolveOutputDirectory(resolved, metadata);
 	await fs.mkdir(outputDir, { recursive: true });
 
-	const fileName = `image-generator-${randomUUID()}.${IMAGE_FORMAT}`;
+	const fileName = `image-generator-${randomUUID()}.${agent.format}`;
 	const filePath = path.join(outputDir, fileName);
 	await fs.writeFile(filePath, Buffer.from(base64, 'base64'));
 
