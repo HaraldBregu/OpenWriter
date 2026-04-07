@@ -7,7 +7,7 @@ import {
 	createVisionAgent,
 	generateImage,
  } from '../../agents/image/image-generation';
-import type { VisionSize, VisionQuality, VisionFormat } from '../../agents/image/types';
+import type { VisionSize, VisionQuality, VisionFormat, GeneratedImage } from '../../agents/image/types';
 
 // ---------------------------------------------------------------------------
 // Input / Output
