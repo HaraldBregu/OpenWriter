@@ -25,7 +25,7 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const { title, content, metadata } = useDocumentState();
+	const { title, content, metadata, images } = useDocumentState();
 
 	const metadataType = metadata?.type;
 	const metadataCreatedAt = metadata?.createdAt;
