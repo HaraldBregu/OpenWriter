@@ -32,7 +32,12 @@ export function ImagePreviewDialog({
 					)}
 					onClick={() => onOpenChange(false)}
 				>
-					<DialogPrimitive.Close
+					<button
+						type="button"
+						onClick={(e) => {
+							e.stopPropagation();
+							onOpenChange(false);
+						}}
 						className={cn(
 							'absolute right-4 top-4 z-10 rounded-full p-2',
 							'bg-black/50 text-white backdrop-blur-sm',
