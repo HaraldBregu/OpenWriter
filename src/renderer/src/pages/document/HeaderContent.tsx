@@ -167,4 +167,4 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 	);
 };
 
-export default Header;
+export default HeaderContent;
