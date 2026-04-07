@@ -77,6 +77,11 @@ export const TitleBar = React.memo(function TitleBar({
     text-muted-foreground
   `;
 
+	const btnNavNoHover = `
+    flex items-center justify-center h-full w-[28px]
+    text-muted-foreground
+  `;
+
 	return (
 		<div
 			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border bg-card/95 backdrop-blur-md ${className}`}
