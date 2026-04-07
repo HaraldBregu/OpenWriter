@@ -154,6 +154,16 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.openDocumentImagesFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string) => {
+				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
+				const imagesDir = path.join(documentDir, 'images');
+				await fsPromises.mkdir(imagesDir, { recursive: true });
+				await shell.openPath(imagesDir);
+			}, WorkspaceChannels.openDocumentImagesFolder)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.getDocumentPath,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, documentId: string) =>
