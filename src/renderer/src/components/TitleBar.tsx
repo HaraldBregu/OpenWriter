@@ -117,7 +117,7 @@ export const TitleBar = React.memo(function TitleBar({
 						<button
 							type="button"
 							onClick={onNavigateBack}
-							className={btnNoHover}
+							className={btnNavNoHover}
 							title={t('titleBar.navigateBack')}
 						>
 							<ChevronLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
@@ -128,7 +128,7 @@ export const TitleBar = React.memo(function TitleBar({
 						<button
 							type="button"
 							onClick={onNavigateForward}
-							className={btnNoHover}
+							className={btnNavNoHover}
 							title={t('titleBar.navigateForward')}
 						>
 							<ChevronRight className="h-[18px] w-[18px]" strokeWidth={1.5} />
