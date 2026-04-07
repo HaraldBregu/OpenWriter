@@ -1,13 +1,11 @@
 import { useCallback, useState } from 'react';
 import { FileDown, Eye } from 'lucide-react';
 import { usePDF, PDFViewer } from '@react-pdf/renderer';
+import { useDocumentState } from '../../../hooks';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 import { PdfPreviewDialog } from './PdfPreviewDialog';
 
 export interface PdfExportSectionProps {
-	readonly title: string;
-	readonly content: string;
-	readonly metadata: OutputFileMetadata;
 	readonly sectionClassName: string;
 	readonly exportLabel: string;
 	readonly downloadLabel: string;
@@ -22,14 +20,13 @@ const CROP = 20;
 const PREVIEW_HEIGHT = 300;
 
 export function PdfExportSection({
-	title,
-	content,
-	metadata,
 	sectionClassName,
 	exportLabel,
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
+	const { title, content, metadata } = useDocumentState();
+
 	const [{ loading: downloadLoading, url }] = usePDF({
 		document: <DocumentPdfTemplate title={title} content={content} metadata={metadata} />,
 	});
@@ -91,9 +88,6 @@ export function PdfExportSection({
 			<PdfPreviewDialog
 				open={previewOpen}
 				onOpenChange={setPreviewOpen}
-				title={title}
-				content={content}
-				metadata={metadata}
 				closeLabel={downloadLabel}
 			/>
 		</>
