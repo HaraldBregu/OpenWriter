@@ -6,6 +6,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { useDocumentState } from '../../../hooks';
 import { DocumentPdfTemplate } from './DocumentPdfTemplate';
 
+
 interface PdfPreviewDialogProps {
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
