@@ -228,10 +228,9 @@ const AgentsSettingsPage: React.FC = () => {
 // Helpers
 // ---------------------------------------------------------------------------
 
-function getFirstChatModel(providerName: string): string {
-	const catalogue = PROVIDER_CATALOGUE.find((p) => p.id === providerName);
-	const chatModel = catalogue?.models.find((m) => m.category === 'chat');
-	return chatModel?.id ?? '';
+function getFirstChatModel(providerId: string): string {
+	const models = getChatModelsForProvider(providerId);
+	return models[0]?.id ?? '';
 }
 
 export default AgentsSettingsPage;
