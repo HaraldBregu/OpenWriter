@@ -67,7 +67,7 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 				default: 'writer' as AssistantAgentId,
 				parseHTML: (element) => {
 					const value = element.getAttribute('data-agent-id');
-					return value === 'painter' ? 'painter' : 'writer';
+					return value === 'image' ? 'image' : 'writer';
 				},
 				renderHTML: (attributes) => ({
 					'data-agent-id': attributes.agentId as AssistantAgentId,
