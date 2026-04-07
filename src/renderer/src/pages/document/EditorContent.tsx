@@ -2,7 +2,7 @@ import React, { useRef, useState, useCallback, useEffect, useImperativeHandle } 
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import type { AssistantAgentId } from '@/components/editor/extensions/assistant';
-import { subscribeToTask, initTaskMetadata } from '../../services/task-event-bus';
+import { subscribeToTask } from '../../services/task-event-bus';
 import type { TaskSnapshot } from '../../services/task-event-bus';
 import { v7 as uuidv7 } from 'uuid';
 import { useEditorInstance } from './providers';
