@@ -30,6 +30,19 @@ export const documentsSlice = createSlice({
 			}
 		},
 
+		/** Patch only title, emoji, and updatedAt for an existing document. */
+		documentMetadataPatched(
+			state,
+			action: PayloadAction<{ id: string; title: string; emoji?: string; updatedAt: number }>
+		) {
+			const item = state.items.find((d) => d.id === action.payload.id);
+			if (item) {
+				item.title = action.payload.title;
+				item.emoji = action.payload.emoji;
+				item.updatedAt = action.payload.updatedAt;
+			}
+		},
+
 		/** Remove a document item by id. */
 		documentRemoved(state, action: PayloadAction<string>) {
 			state.items = state.items.filter((d) => d.id !== action.payload);
