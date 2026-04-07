@@ -63,6 +63,15 @@ export function PdfExportSection({
 					<div className="flex items-center gap-1">
 						<button
 							type="button"
+							onClick={handleRefresh}
+							className={ICON_BUTTON_CLASS}
+							aria-label="Refresh preview"
+							title="Refresh preview"
+						>
+							<RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+						</button>
+						<button
+							type="button"
 							onClick={() => setPreviewOpen(true)}
 							className={ICON_BUTTON_CLASS}
 							aria-label={previewLabel}
