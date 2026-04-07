@@ -63,7 +63,7 @@ async function saveAssistantReferenceImages(
 	return saved;
 }
 
-const EditorPanelContent = React.forwardRef<EditorPanelContentElement, EditorPanelContentProps>(
+const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>(
 	({ documentId, loaded, content, externalValueVersion, onChange, onUndo, onRedo }, ref) => {
 		const dispatch = useDocumentDispatch();
 		const { setEditor } = useEditorInstance();
