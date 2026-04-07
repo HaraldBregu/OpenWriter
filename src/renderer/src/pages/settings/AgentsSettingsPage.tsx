@@ -2,6 +2,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2 } from 'lucide-react';
 import { DEFAULT_AGENTS } from '../../../../shared/types';
+import type { AgentProviderConfig } from '../../../../shared/types';
+import {
+	PROVIDER_CATALOGUE,
+	getChatModelsForProvider,
+} from '../../../../shared/provider-constants';
+import type { ModelDescriptor } from '../../../../shared/provider-constants';
 import {
 	AppButton,
 	AppLabel,
@@ -12,10 +18,6 @@ import {
 	AppSelectValue,
 } from '@/components/app';
 
-function getAgentKey(agent: (typeof DEFAULT_AGENTS)[number]): string {
-	return agent.id;
-}
-
 // ---------------------------------------------------------------------------
 // Main page
 // ---------------------------------------------------------------------------
@@ -23,8 +25,8 @@ function getAgentKey(agent: (typeof DEFAULT_AGENTS)[number]): string {
 const AgentsSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [providers, setProviders] = useState<string[]>([]);
-	const [selectedProviders, setSelectedProviders] = useState<Record<string, string>>({});
-	const [savedProviders, setSavedProviders] = useState<Record<string, string>>({});
+	const [selectedConfigs, setSelectedConfigs] = useState<Record<string, AgentProviderConfig>>({});
+	const [savedConfigs, setSavedConfigs] = useState<Record<string, AgentProviderConfig>>({});
 	const [savingByAgent, setSavingByAgent] = useState<Record<string, boolean>>({});
 
 	const fallbackProvider = useMemo(() => providers[0] ?? '', [providers]);
@@ -32,10 +34,10 @@ const AgentsSettingsPage: React.FC = () => {
 	useEffect(() => {
 		let active = true;
 
-		async function loadProvidersAndSelections() {
+		async function load(): Promise<void> {
 			if (
 				typeof window.app?.getProviders !== 'function' ||
-				typeof window.app?.getAgentProviders !== 'function'
+				typeof window.workspace?.getAgentConfigs !== 'function'
 			) {
 				return;
 			}
@@ -43,7 +45,7 @@ const AgentsSettingsPage: React.FC = () => {
 			try {
 				const [entries, saved] = await Promise.all([
 					window.app.getProviders(),
-					window.app.getAgentProviders(),
+					window.workspace.getAgentConfigs(),
 				]);
 				if (!active) return;
 
@@ -51,39 +53,44 @@ const AgentsSettingsPage: React.FC = () => {
 					new Set(
 						entries
 							.map((entry) => entry.name.trim())
-							.filter((providerName) => providerName.length > 0)
+							.filter((name) => name.length > 0)
 					)
 				).sort((a, b) => a.localeCompare(b));
 
 				setProviders(uniqueProviders);
 
-				const nextSaved: Record<string, string> = {};
-				const nextSelected: Record<string, string> = {};
 				const defaultProvider = uniqueProviders[0] ?? '';
+				const defaultModel = getFirstChatModel(defaultProvider);
+				const nextSaved: Record<string, AgentProviderConfig> = {};
+				const nextSelected: Record<string, AgentProviderConfig> = {};
 
 				for (const agent of DEFAULT_AGENTS) {
-					const agentKey = getAgentKey(agent);
-					const savedProvider =
-						typeof saved[agentKey] === 'string' ? saved[agentKey] : saved[agent.name];
-					const resolvedProvider =
-						typeof savedProvider === 'string' && uniqueProviders.includes(savedProvider)
-							? savedProvider
+					const savedConfig = saved[agent.id];
+					const provider =
+						savedConfig?.provider && uniqueProviders.includes(savedConfig.provider)
+							? savedConfig.provider
 							: defaultProvider;
-					nextSaved[agentKey] = resolvedProvider;
-					nextSelected[agentKey] = resolvedProvider;
+					const models = getChatModelsForProvider(provider);
+					const model =
+						savedConfig?.model && models.some((m) => m.id === savedConfig.model)
+							? savedConfig.model
+							: getFirstChatModel(provider);
+					const config = { provider, model };
+					nextSaved[agent.id] = config;
+					nextSelected[agent.id] = config;
 				}
 
-				setSavedProviders(nextSaved);
-				setSelectedProviders(nextSelected);
+				setSavedConfigs(nextSaved);
+				setSelectedConfigs(nextSelected);
 			} catch {
 				if (!active) return;
 				setProviders([]);
-				setSavedProviders({});
-				setSelectedProviders({});
+				setSavedConfigs({});
+				setSelectedConfigs({});
 			}
 		}
 
-		void loadProvidersAndSelections();
+		void load();
 
 		return () => {
 			active = false;
@@ -91,43 +98,68 @@ const AgentsSettingsPage: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		setSelectedProviders((prev) => {
+		setSelectedConfigs((prev) => {
 			const next = { ...prev };
 			for (const agent of DEFAULT_AGENTS) {
-				const agentKey = getAgentKey(agent);
-				const current = next[agentKey];
-				if (!current || !providers.includes(current)) {
-					next[agentKey] = fallbackProvider;
+				const current = next[agent.id];
+				if (!current?.provider || !providers.includes(current.provider)) {
+					const provider = fallbackProvider;
+					const model = getFirstChatModel(provider);
+					next[agent.id] = { provider, model };
 				}
 			}
 			return next;
 		});
 	}, [fallbackProvider, providers]);
 
-	const handleProviderChange = useCallback((agentName: string, providerName: string) => {
-		setSelectedProviders((prev) => ({
+	const handleProviderChange = useCallback(
+		(agentId: string, providerName: string) => {
+			const model = getFirstChatModel(providerName);
+			setSelectedConfigs((prev) => ({
+				...prev,
+				[agentId]: { provider: providerName, model },
+			}));
+		},
+		[]
+	);
+
+	const handleModelChange = useCallback((agentId: string, modelId: string) => {
+		setSelectedConfigs((prev) => ({
 			...prev,
-			[agentName]: providerName,
+			[agentId]: { ...prev[agentId], model: modelId },
 		}));
 	}, []);
 
-	const handleSaveProvider = useCallback(
-		async (agentName: string) => {
-			const providerName = selectedProviders[agentName]?.trim() ?? '';
-			if (providerName.length === 0 || typeof window.app?.setAgentProvider !== 'function') return;
+	const handleSave = useCallback(
+		async (agentId: string) => {
+			const config = selectedConfigs[agentId];
+			if (
+				!config?.provider ||
+				!config?.model ||
+				typeof window.workspace?.setAgentConfig !== 'function'
+			) {
+				return;
+			}
 
-			setSavingByAgent((prev) => ({ ...prev, [agentName]: true }));
+			setSavingByAgent((prev) => ({ ...prev, [agentId]: true }));
 			try {
-				await window.app.setAgentProvider(agentName, providerName);
-				setSavedProviders((prev) => ({
-					...prev,
-					[agentName]: providerName,
-				}));
+				await window.workspace.setAgentConfig(agentId, config.provider, config.model);
+				setSavedConfigs((prev) => ({ ...prev, [agentId]: { ...config } }));
 			} finally {
-				setSavingByAgent((prev) => ({ ...prev, [agentName]: false }));
+				setSavingByAgent((prev) => ({ ...prev, [agentId]: false }));
 			}
 		},
-		[selectedProviders]
+		[selectedConfigs]
+	);
+
+	const isChanged = useCallback(
+		(agentId: string): boolean => {
+			const selected = selectedConfigs[agentId];
+			const saved = savedConfigs[agentId];
+			if (!selected) return false;
+			return selected.provider !== saved?.provider || selected.model !== saved?.model;
+		},
+		[selectedConfigs, savedConfigs]
 	);
 
 	return (
@@ -135,63 +167,125 @@ const AgentsSettingsPage: React.FC = () => {
 			<h1 className="text-lg font-normal mb-6">{t('settings.agents.title')}</h1>
 
 			<div className="space-y-4">
-				{DEFAULT_AGENTS.map((agent) => (
-					<div
-						key={agent.id}
-						className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
-					>
-						<div className="mb-3">
-							<h2 className="text-sm font-medium text-foreground">{agent.name}</h2>
-							<p className="mt-1 text-sm text-muted-foreground">{agent.description}</p>
-						</div>
+				{DEFAULT_AGENTS.map((agent) => {
+					const config = selectedConfigs[agent.id];
+					const models = getModelsForProvider(config?.provider ?? '');
 
-						<div>
-							<AppLabel className="text-xs font-medium text-muted-foreground">
-								{t('settings.agents.providerLabel', 'Provider')}
-							</AppLabel>
-							<div className="mt-1 flex items-center gap-2">
-								<AppSelect
-									value={selectedProviders[agent.id] ?? ''}
-									onValueChange={(value) => handleProviderChange(agent.id, value)}
-									disabled={providers.length === 0}
-								>
-									<AppSelectTrigger className="h-9 text-sm flex-1">
-										<AppSelectValue
-											placeholder={t('settings.agents.noProviders', 'No providers configured')}
-										/>
-									</AppSelectTrigger>
-									<AppSelectContent>
-										{providers.map((provider) => (
-											<AppSelectItem key={`${agent.id}-${provider}`} value={provider}>
-												{provider}
-											</AppSelectItem>
-										))}
-									</AppSelectContent>
-								</AppSelect>
-								<AppButton
-									type="button"
-									variant="ghost"
-									size="icon-xs"
-									aria-label={t('settings.agents.saveProvider', 'Save provider')}
-									disabled={
-										providers.length === 0 ||
-										!selectedProviders[agent.id] ||
-										selectedProviders[agent.id] === savedProviders[agent.id] ||
-										Boolean(savingByAgent[agent.id])
-									}
-									onClick={() => {
-										void handleSaveProvider(agent.id);
-									}}
-								>
-									{savingByAgent[agent.id] ? <Loader2 className="animate-spin" /> : <Check />}
-								</AppButton>
+					return (
+						<div
+							key={agent.id}
+							className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
+						>
+							<div className="mb-3">
+								<h2 className="text-sm font-medium text-foreground">{agent.name}</h2>
+								<p className="mt-1 text-sm text-muted-foreground">{agent.description}</p>
+							</div>
+
+							<div className="space-y-3">
+								<div>
+									<AppLabel className="text-xs font-medium text-muted-foreground">
+										{t('settings.agents.providerLabel', 'Provider')}
+									</AppLabel>
+									<div className="mt-1">
+										<AppSelect
+											value={config?.provider ?? ''}
+											onValueChange={(value) => handleProviderChange(agent.id, value)}
+											disabled={providers.length === 0}
+										>
+											<AppSelectTrigger className="h-9 text-sm">
+												<AppSelectValue
+													placeholder={t(
+														'settings.agents.noProviders',
+														'No providers configured'
+													)}
+												/>
+											</AppSelectTrigger>
+											<AppSelectContent>
+												{providers.map((provider) => (
+													<AppSelectItem
+														key={`${agent.id}-provider-${provider}`}
+														value={provider}
+													>
+														{provider}
+													</AppSelectItem>
+												))}
+											</AppSelectContent>
+										</AppSelect>
+									</div>
+								</div>
+
+								<div>
+									<AppLabel className="text-xs font-medium text-muted-foreground">
+										{t('settings.agents.modelLabel', 'Model')}
+									</AppLabel>
+									<div className="mt-1 flex items-center gap-2">
+										<AppSelect
+											value={config?.model ?? ''}
+											onValueChange={(value) => handleModelChange(agent.id, value)}
+											disabled={models.length === 0}
+										>
+											<AppSelectTrigger className="h-9 text-sm flex-1">
+												<AppSelectValue
+													placeholder={t(
+														'settings.agents.noModels',
+														'No models available'
+													)}
+												/>
+											</AppSelectTrigger>
+											<AppSelectContent>
+												{models.map((model) => (
+													<AppSelectItem
+														key={`${agent.id}-model-${model.id}`}
+														value={model.id}
+													>
+														{model.name}
+													</AppSelectItem>
+												))}
+											</AppSelectContent>
+										</AppSelect>
+										<AppButton
+											type="button"
+											variant="ghost"
+											size="icon-xs"
+											aria-label={t('settings.agents.saveProvider', 'Save provider')}
+											disabled={
+												providers.length === 0 ||
+												!isChanged(agent.id) ||
+												Boolean(savingByAgent[agent.id])
+											}
+											onClick={() => {
+												void handleSave(agent.id);
+											}}
+										>
+											{savingByAgent[agent.id] ? (
+												<Loader2 className="animate-spin" />
+											) : (
+												<Check />
+											)}
+										</AppButton>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-				))}
+					);
+				})}
 			</div>
 		</div>
 	);
 };
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function getModelsForProvider(providerName: string): readonly ModelDescriptor[] {
+	return getChatModelsForProvider(providerName);
+}
+
+function getFirstChatModel(providerName: string): string {
+	const catalogue = PROVIDER_CATALOGUE.find((p) => p.id === providerName);
+	const chatModel = catalogue?.models.find((m) => m.category === 'chat');
+	return chatModel?.id ?? '';
+}
 
 export default AgentsSettingsPage;
