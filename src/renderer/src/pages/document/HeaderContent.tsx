@@ -22,7 +22,7 @@ interface HeaderContentProps {
 	readonly onRestoreHistoryEntry: (id: string) => void;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const HeaderContent: React.FC<HeaderContentProps> = ({
 	title,
 	emoji,
 	onTitleChange,
