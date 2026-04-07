@@ -6,7 +6,6 @@ import {
 	Image,
 	FolderOpen,
 	FileDown,
-	FileType,
 	Link,
 	Plus,
 	Trash2,
