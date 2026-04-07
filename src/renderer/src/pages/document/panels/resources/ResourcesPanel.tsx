@@ -69,6 +69,11 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
+	const handleOpenImagesFolder = useCallback(() => {
+		if (!documentId) return;
+		window.workspace.openDocumentImagesFolder(documentId);
+	}, [documentId]);
+
 	const handleUploadClick = useCallback(() => {
 		fileInputRef.current?.click();
 	}, []);
