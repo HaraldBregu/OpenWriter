@@ -1,4 +1,4 @@
-import { HumanMessage } from '@langchain/core/messages';
+import type OpenAI from 'openai';
 import { IMAGE_GENERATOR_MESSAGES } from '../messages';
 import { parseYesNo, readLabeledValue } from '../agent-output';
 import {
@@ -42,18 +42,19 @@ function buildHumanMessage(state: ImageGeneratorState): string {
 }
 
 export function createCheckAlignmentAgent(
-	model: ImageGeneratorSpecialistAgent['model']
+	client: OpenAI,
+	model: string,
+	temperature: number,
+	maxTokens: number
 ): ImageGeneratorSpecialistAgent {
-	return createImageGeneratorSpecialistAgent(model, SYSTEM_PROMPT);
+	return createImageGeneratorSpecialistAgent(client, SYSTEM_PROMPT, model, temperature, maxTokens);
 }
 
 export async function checkAlignment(
 	state: ImageGeneratorState,
 	agent: ImageGeneratorSpecialistAgent
 ): Promise<Partial<ImageGeneratorState>> {
-	const raw = await invokeImageGeneratorSpecialist(agent, [
-		new HumanMessage(buildHumanMessage(state)),
-	]);
+	const raw = await invokeImageGeneratorSpecialist(agent, buildHumanMessage(state));
 
 	const approved = parseYesNo(readLabeledValue(raw, 'APPROVED'), false);
 	const needsAnotherPass = !approved && state.revisionCount < state.maxRevisions;
