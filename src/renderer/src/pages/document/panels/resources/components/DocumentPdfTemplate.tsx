@@ -121,7 +121,8 @@ type MarkdownBlock =
 	| { type: 'h1' | 'h2' | 'h3' | 'paragraph' | 'blockquote'; segments: InlineSegment[] }
 	| { type: 'list-item'; segments: InlineSegment[]; ordered: boolean; index: number }
 	| { type: 'code-block'; text: string }
-	| { type: 'hr' };
+	| { type: 'hr' }
+	| { type: 'image'; src: string; alt: string };
 
 function parseInline(text: string): InlineSegment[] {
 	const segments: InlineSegment[] = [];
