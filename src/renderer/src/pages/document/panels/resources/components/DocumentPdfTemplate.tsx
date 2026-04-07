@@ -339,11 +339,8 @@ function BlockRenderer({
 	}
 }
 
-export function DocumentPdfTemplate({
-	title,
-	content,
-	metadata,
-}: DocumentPdfTemplateProps): React.ReactElement {
+export function DocumentPdfTemplate(): React.ReactElement {
+	const { title, content, metadata } = useDocumentState();
 	const blocks = parseMarkdown(content);
 
 	const metaParts: string[] = [];
