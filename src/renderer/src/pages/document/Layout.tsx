@@ -283,7 +283,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 	useEffect(() => {
 		if (!id || !loaded) return;
-		appDispatch(documentMetadataPatched({ id, title, emoji: emoji || undefined, updatedAt: Date.now() }));
+		appDispatch(
+			documentMetadataPatched({ id, title, emoji: emoji || undefined, updatedAt: Date.now() })
+		);
 	}, [id, title, emoji, loaded, appDispatch]);
 
 	const handleContentChange = useCallback(
