@@ -7,7 +7,6 @@ import {
 	PROVIDER_CATALOGUE,
 	getChatModelsForProvider,
 } from '../../../../shared/provider-constants';
-import type { ModelDescriptor } from '../../../../shared/provider-constants';
 import {
 	AppButton,
 	AppLabel,
