@@ -129,9 +129,9 @@ export function AssistantContent({
 					'disabled:cursor-not-allowed disabled:opacity-60'
 				)}
 				placeholder={
-					isPainter
+					isImage
 						? t(
-								'assistantNode.painterPlaceholder',
+								'assistantNode.imagePlaceholder',
 								'Describe the image you want to create. You can also drop reference images here.'
 							)
 						: t(
