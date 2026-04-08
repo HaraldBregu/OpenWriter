@@ -7,7 +7,8 @@ import type { ContentGeneratorOptions } from './input-extension';
 import { ContentGeneratorContent } from './ContentGeneratorContent';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
-import { IMAGE_MODELS } from '../../../../../../shared/models';
+import { DEFAULT_WRITING_MODEL_ID } from '../../../../../../shared/types';
+import { IMAGE_MODELS, WRITING_MODELS } from '../../../../../../shared/models';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
