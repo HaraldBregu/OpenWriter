@@ -172,7 +172,8 @@ export function useAssistantTask(
 				cleanBefore,
 				cleanAfter,
 				cursorPos,
-				'CONTINUE WRITING HERE WITH 15 WORDS MAX'
+				'CONTINUE WRITING HERE WITH 15 WORDS MAX',
+				DEFAULT_WRITING_MODEL
 			).catch(() => {
 				pendingCloseMenuRef.current = null;
 				closeMenu();
