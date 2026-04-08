@@ -201,7 +201,7 @@
 			"language": "Language"
 		},
 		"theme": {
-			"title": "Theme",
+			"title": "Theme Mode",
 			"description": "Choose how the application appearance is determined.",
 			"light": "Light",
 			"lightDescription": "Always use the light color scheme",
@@ -209,6 +209,18 @@
 			"darkDescription": "Always use the dark color scheme",
 			"system": "System",
 			"systemDescription": "Follow the operating system preference"
+		},
+		"appTheme": {
+			"title": "Theme",
+			"description": "Select a color theme for the application.",
+			"default": "Default",
+			"aurora": "Aurora",
+			"ember": "Ember",
+			"ocean": "Ocean",
+			"forest": "Forest",
+			"lavender": "Lavender",
+			"midnight": "Midnight",
+			"sandstone": "Sandstone"
 		},
 		"language": {
 			"title": "Language",
