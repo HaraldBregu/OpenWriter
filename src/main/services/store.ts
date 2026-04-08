@@ -1,11 +1,7 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import {
-	PROVIDER_IDS,
-	toProviderConfig,
-	type ProviderId,
-	type ServiceProvider,
-} from '../../shared/providers';
+import { PROVIDER_IDS, toProviderConfig, type ProviderId } from '../../shared/providers';
+import type { ServiceProvider } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 
 export interface WorkspaceInfo {
