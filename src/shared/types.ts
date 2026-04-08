@@ -595,9 +595,9 @@ export interface DocumentConfig {
 	createdAt: string;
 	updatedAt: string;
 	/** Model ID of the text generation model assigned to this document. */
-	textModel?: string;
+	textModel: string;
 	/** Model ID of the image generation model assigned to this document. */
-	imageModel?: string;
+	imageModel: string;
 }
 
 // ---- Project Workspace ----------------------------------------------------

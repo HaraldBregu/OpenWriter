@@ -308,7 +308,6 @@ export class ProjectWorkspaceService {
 		}
 	}
 
-
 	/**
 	 * Safely resolve the running Electron app version.
 	 * Falls back to '0.0.0' in unit-test environments where `app` is not
