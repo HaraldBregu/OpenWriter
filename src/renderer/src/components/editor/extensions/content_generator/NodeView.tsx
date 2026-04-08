@@ -175,15 +175,7 @@ export function ContentGeneratorNodeView({
 			const builtPrompt = buildTaskPrompt(before, after, trimmedPrompt);
 			options.onGenerateTextSubmit(builtPrompt);
 		}
-	}, [
-		agentId,
-		files,
-		prompt,
-		deleteNode,
-		editor,
-		extension.options,
-		updateAttributes,
-	]);
+	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
 	submitRef.current = submit;

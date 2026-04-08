@@ -1,6 +1,7 @@
 import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
+import type { ModelInfo } from '../../../../../shared/types';
 
 interface EditorAreaProps {
 	readonly loaded: boolean;
@@ -9,6 +10,10 @@ interface EditorAreaProps {
 	readonly content: string;
 	readonly externalValueVersion: number;
 	readonly documentId: string | undefined;
+	readonly defaultTextModel: ModelInfo | undefined;
+	readonly defaultImageModel: ModelInfo | undefined;
+	readonly onTextModelChange: (model: ModelInfo) => void;
+	readonly onImageModelChange: (model: ModelInfo) => void;
 	readonly onEditorReady: (editor: Editor | null) => void;
 	readonly onSelectionChange: (selection: { from: number; to: number } | null) => void;
 	readonly onChange: (newContent: string) => void;
@@ -31,6 +36,10 @@ export function EditorArea({
 	content,
 	externalValueVersion,
 	documentId,
+	defaultTextModel,
+	defaultImageModel,
+	onTextModelChange,
+	onImageModelChange,
 	onEditorReady,
 	onSelectionChange,
 	onChange,
@@ -56,6 +65,10 @@ export function EditorArea({
 							onGenerateTextSubmit={onGenerateTextSubmit}
 							onGenerateImageSubmit={onGenerateImageSubmit}
 							documentId={documentId}
+							defaultTextModel={defaultTextModel}
+							defaultImageModel={defaultImageModel}
+							onTextModelChange={onTextModelChange}
+							onImageModelChange={onImageModelChange}
 							onEditorReady={onEditorReady}
 							onUndo={onUndo}
 							onRedo={onRedo}
