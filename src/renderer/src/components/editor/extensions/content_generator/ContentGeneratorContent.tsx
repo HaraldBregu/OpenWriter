@@ -14,6 +14,7 @@ export interface ContentGeneratorContentProps {
 	loading: boolean;
 	enable: boolean;
 	selectedImageModel: ModelInfo;
+	selectedWritingModel: ModelInfo;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 	submitRef: React.RefObject<(() => void) | null>;
