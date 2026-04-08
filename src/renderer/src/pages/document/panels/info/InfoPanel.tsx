@@ -327,7 +327,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 									<span className="text-xs">{t('configSidebar.uploadImage')}</span>
 								</button>
 							)}
-						</>
+						</div>
 					)}
 
 					{documentId && documentConfig && (
