@@ -1,8 +1,20 @@
-import { useMemo, useCallback, useRef, useState } from 'react';
+import { useMemo, useCallback, useRef, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, Tag, Image, FolderOpen, Link, Plus, Trash2, Copy } from 'lucide-react';
+import {
+	Calendar,
+	Tag,
+	Image,
+	FolderOpen,
+	Link,
+	Plus,
+	Trash2,
+	Copy,
+	PenLine,
+	ImageIcon,
+} from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
 import { PdfExportSection } from './components/PdfExportSection';
+import { findModelById } from '../../../../../../shared/models';
 import {
 	AppLabel,
 	AppCard,
