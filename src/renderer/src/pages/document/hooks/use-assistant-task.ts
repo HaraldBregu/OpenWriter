@@ -36,6 +36,9 @@ export interface AssistantTaskHandlers {
 	) => void;
 }
 
+const DEFAULT_WRITING_MODEL =
+	WRITING_MODELS.find((m) => m.modelId === DEFAULT_WRITING_MODEL_ID) ?? WRITING_MODELS[0];
+
 export function useAssistantTask(
 	documentId: string | undefined,
 	editorRef: RefObject<TextEditorElement | null>
