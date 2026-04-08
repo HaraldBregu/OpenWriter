@@ -23,8 +23,7 @@ export interface AssistantTaskHandlers {
 
 export function useAssistantTask(
 	documentId: string | undefined,
-	editorRef: RefObject<TextEditorElement | null>,
-	defaultImageModelRef: MutableRefObject<ModelInfo | undefined>
+	editorRef: RefObject<TextEditorElement | null>
 ): AssistantTaskHandlers {
 	const writerTask = useTextGeneratorSubmit(documentId);
 	const imageTask = useImageGeneratorSubmit(documentId);
