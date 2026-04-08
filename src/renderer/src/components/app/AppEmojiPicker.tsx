@@ -12,6 +12,11 @@ interface AppEmojiPickerProps {
 	readonly className?: string;
 }
 
+const EMOJI_COLUMNS = 8;
+const EMOJI_BUTTON_SIZE_PX = 40;
+const PICKER_PADDING_PX = 16;
+const PICKER_WIDTH_PX = EMOJI_COLUMNS * EMOJI_BUTTON_SIZE_PX + PICKER_PADDING_PX;
+
 const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, className }) => {
 	const handleEmojiSelect = useCallback(
 		(emoji: Emoji) => {
@@ -48,7 +53,9 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 			>
 				<EmojiPicker.Root
 					onEmojiSelect={handleEmojiSelect}
-					className="h-[340px] w-[320px] rounded-md bg-popover p-2"
+					columns={EMOJI_COLUMNS}
+					className="h-[340px] rounded-md bg-popover p-2"
+					style={{ width: `${PICKER_WIDTH_PX}px` }}
 				>
 					<EmojiPicker.Search
 						className="mb-2 h-8 w-full rounded-md border border-input bg-transparent px-3 text-sm shadow-none outline-none placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
@@ -81,7 +88,7 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 										type="button"
 										aria-label={emoji.label}
 										className={cn(
-											'flex h-8 w-8 items-center justify-center rounded text-lg transition-colors',
+											'flex h-10 w-10 items-center justify-center rounded text-2xl transition-colors',
 											emoji.isActive
 												? 'bg-accent text-accent-foreground'
 												: 'hover:bg-accent hover:text-accent-foreground'
