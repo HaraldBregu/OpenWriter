@@ -144,7 +144,8 @@ export function AssistantNodeView({
 				stripHtml(rawAfter),
 				from,
 				effectivePrompt,
-				files
+				files,
+				selectedImageModel
 			);
 		} else {
 			options.onGenerateTextSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt);
