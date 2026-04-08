@@ -38,12 +38,14 @@ export function ContentGeneratorNodeView({
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const options = extension.options as ContentGeneratorOptions;
+	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
+		.contentGenerator;
 	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(
-		() => options.defaultImageModel ?? IMAGE_MODELS[0]
+		() => storage.defaultImageModel ?? IMAGE_MODELS[0]
 	);
 	const [selectedTextModel, setSelectedTextModel] = useState<ModelInfo>(
 		() =>
-			options.defaultTextModel ??
+			storage.defaultTextModel ??
 			TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ??
 			TEXT_MODELS[0]
 	);
