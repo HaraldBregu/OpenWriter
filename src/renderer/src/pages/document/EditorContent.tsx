@@ -12,7 +12,7 @@ export interface EditorContentElement {
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 }
-
+ 
 interface EditorContentProps {
 	readonly documentId: string | undefined;
 	readonly loaded: boolean;
