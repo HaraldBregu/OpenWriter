@@ -9,8 +9,6 @@ export interface PdfExportSectionProps {
 	readonly exportLabel: string;
 	readonly downloadLabel: string;
 	readonly previewLabel: string;
-	/** Optional slot rendered to the right of the section label (e.g. action icon buttons). */
-	readonly headerActions?: React.ReactNode;
 }
 
 const ICON_BUTTON_CLASS =
