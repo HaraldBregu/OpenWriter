@@ -18,11 +18,6 @@ import { findModelById, DEFAULT_IMAGE_MODEL_ID } from '../../../../../../shared/
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import type { DocumentConfig } from '../../../../../../shared/types';
 import {
-	AppLabel,
-	AppCard,
-	AppCardHeader,
-	AppCardTitle,
-	AppCardContent,
 	AppAlertDialog,
 	AppAlertDialogAction,
 	AppAlertDialogCancel,
@@ -33,6 +28,7 @@ import {
 	AppAlertDialogTitle,
 } from '@/components/app';
 import { ImagePreviewDialog } from '@/components/editor/extensions/image/components/ImagePreviewDialog';
+import { SectionHeader, SettingRow } from '../../../../settings/SettingsComponents';
 
 interface InfoPanelProps {
 	readonly onOpenFolder: () => void;
@@ -50,6 +46,12 @@ function formatDate(isoString: string, locale: string): string {
 }
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
+
+const ICON_BUTTON_CLASS =
+	'rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+
+const ACTION_BUTTON_CLASS =
+	'flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm text-foreground/85 transition-colors hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -160,11 +162,6 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 		return iso ? formatDate(iso, i18n.language) : null;
 	}, [documentConfig?.updatedAt, documentConfig?.createdAt, i18n.language]);
 
-	const sectionClassName =
-		'rounded-2xl border border-border/70 bg-card/75 p-3 shadow-none backdrop-blur-sm dark:bg-background/45';
-	const actionButtonClassName =
-		'flex w-full items-center gap-2 rounded-xl px-2.5 py-2 text-sm text-foreground/85 transition-colors hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60';
-
 	const handleDeletePermanently = useCallback(async () => {
 		if (!documentId || isDeleting) return;
 
@@ -179,209 +176,202 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 
 	return (
 		<>
-			<div className="flex w-full flex-col overflow-y-auto overflow-x-hidden border-l border-border/70 bg-card/55 dark:bg-background">
-				<AppCard className="w-full flex flex-col flex-1 min-h-0 rounded-none border-none bg-transparent shadow-none">
-					{documentConfig && (
-						<AppCardHeader className="p-4 pb-0">
-							<AppCardTitle className="flex items-center justify-between text-xs font-medium text-muted-foreground/70">
+			<div className="flex w-full flex-col overflow-y-auto overflow-x-hidden border-l border-border/70 px-4 pb-6 bg-card/55 dark:bg-background">
+				{documentConfig && (
+					<>
+						<div className="flex items-center justify-between pt-6 pb-2 first:pt-0">
+							<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
 								{t('configSidebar.documentInfo')}
+							</h2>
+							<button
+								type="button"
+								onClick={onOpenFolder}
+								className={ICON_BUTTON_CLASS}
+								aria-label={t('common.openFolder')}
+								title={t('common.openFolder')}
+							>
+								<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+							</button>
+						</div>
+
+						<SettingRow label={t('configSidebar.documentTitle')}>
+							<span className="text-sm font-medium text-foreground truncate max-w-[140px] block">
+								{documentConfig.title}
+							</span>
+						</SettingRow>
+
+						<SettingRow label={t('configSidebar.documentType')}>
+							<div className="flex items-center gap-1.5">
+								<Tag className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+								<span className="text-sm text-foreground capitalize">{documentConfig.type}</span>
+							</div>
+						</SettingRow>
+
+						{formattedDate && (
+							<SettingRow label={t('configSidebar.updatedAt')}>
+								<div className="flex items-center gap-1.5">
+									<Calendar
+										className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+										aria-hidden="true"
+									/>
+									<span className="text-sm text-foreground">{formattedDate}</span>
+								</div>
+							</SettingRow>
+						)}
+
+						<SettingRow label={t('configSidebar.textModel', 'Text Model')}>
+							<div className="flex items-center gap-1.5">
+								<PenLine
+									className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+									aria-hidden="true"
+								/>
+								<span className="text-sm text-foreground truncate max-w-[140px] block">
+									{textModelName}
+								</span>
+							</div>
+						</SettingRow>
+
+						<SettingRow label={t('configSidebar.imageModel', 'Image Model')}>
+							<div className="flex items-center gap-1.5">
+								<ImageIcon
+									className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
+									aria-hidden="true"
+								/>
+								<span className="text-sm text-foreground truncate max-w-[140px] block">
+									{imageModelName}
+								</span>
+							</div>
+						</SettingRow>
+					</>
+				)}
+
+				{documentId && (
+					<>
+						<input
+							ref={fileInputRef}
+							type="file"
+							accept={ACCEPTED_IMAGE_TYPES}
+							multiple
+							className="hidden"
+							onChange={handleFileChange}
+						/>
+
+						<div className="flex items-center justify-between pt-6 pb-2">
+							<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+								{t('configSidebar.images')}
+							</h2>
+							<div className="flex items-center gap-1.5">
+								{images.length > 0 && (
+									<span className="text-[11px] text-muted-foreground">{images.length}</span>
+								)}
 								<button
 									type="button"
-									onClick={onOpenFolder}
-									className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+									onClick={handleOpenImagesFolder}
+									className={ICON_BUTTON_CLASS}
 									aria-label={t('common.openFolder')}
 									title={t('common.openFolder')}
 								>
 									<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
 								</button>
-							</AppCardTitle>
-							<div className={`${sectionClassName} mt-3 space-y-3`}>
-								<div className="space-y-1">
-									<AppLabel className="text-xs text-muted-foreground">
-										{t('configSidebar.documentTitle')}
-									</AppLabel>
-									<div className="truncate text-sm font-medium text-foreground">
-										{documentConfig.title}
-									</div>
-								</div>
-								<div className="space-y-1">
-									<AppLabel className="text-xs text-muted-foreground">
-										{t('configSidebar.documentType')}
-									</AppLabel>
-									<div className="flex items-center gap-1.5">
-										<Tag className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										<span className="text-sm text-foreground capitalize">
-											{documentConfig.type}
-										</span>
-									</div>
-								</div>
-								{formattedDate && (
-									<div className="space-y-1">
-										<AppLabel className="text-xs text-muted-foreground">
-											{t('configSidebar.updatedAt')}
-										</AppLabel>
-										<div className="flex items-center gap-1.5">
-											<Calendar className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-											<span className="text-sm text-foreground">{formattedDate}</span>
-										</div>
-									</div>
-								)}
-								<div className="space-y-1">
-									<AppLabel className="text-xs text-muted-foreground">
-										{t('configSidebar.textModel', 'Text Model')}
-									</AppLabel>
-									<div className="flex items-center gap-1.5">
-										<PenLine className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										<span className="truncate text-sm text-foreground">{textModelName}</span>
-									</div>
-								</div>
-								<div className="space-y-1">
-									<AppLabel className="text-xs text-muted-foreground">
-										{t('configSidebar.imageModel', 'Image Model')}
-									</AppLabel>
-									<div className="flex items-center gap-1.5">
-										<ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										<span className="truncate text-sm text-foreground">{imageModelName}</span>
-									</div>
-								</div>
 							</div>
-						</AppCardHeader>
-					)}
+						</div>
 
-					<AppCardContent className="flex-1 space-y-4 p-4">
-						{documentId && (
-							<>
-								<input
-									ref={fileInputRef}
-									type="file"
-									accept={ACCEPTED_IMAGE_TYPES}
-									multiple
-									className="hidden"
-									onChange={handleFileChange}
-								/>
-								<div className={sectionClassName}>
-									<div className="mb-3 flex items-center justify-between gap-2">
-										<span className="text-xs font-medium text-muted-foreground/70">
-											{t('configSidebar.images')}
-										</span>
-										<div className="flex items-center gap-1.5">
-											{images.length > 0 && (
-												<span className="text-[11px] text-muted-foreground">{images.length}</span>
-											)}
-											<button
-												type="button"
-												onClick={handleOpenImagesFolder}
-												className="rounded-full p-1 text-muted-foreground/70 transition-colors hover:bg-accent/75 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-												aria-label={t('common.openFolder')}
-												title={t('common.openFolder')}
-											>
-												<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
-											</button>
-										</div>
-									</div>
-									{images.length > 0 ? (
-										<div className="grid grid-cols-4 gap-1.5">
-											{images.map((img) => (
-												<button
-													type="button"
-													key={img.fileName}
-													className="group relative aspect-square overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
-													onClick={() =>
-														setPreviewImage({
-															src: toLocalResourceUrl(img.filePath),
-															alt: img.fileName,
-														})
-													}
-												>
-													<img
-														src={toLocalResourceUrl(img.filePath)}
-														alt={img.fileName}
-														className="h-full w-full object-cover"
-														loading="lazy"
-													/>
-													<div className="absolute inset-x-0 bottom-0 bg-black/55 px-1.5 py-1 opacity-0 transition-opacity group-hover:opacity-100">
-														<span className="block truncate text-[10px] text-white">
-															{img.fileName}
-														</span>
-													</div>
-												</button>
-											))}
-											<button
-												type="button"
-												onClick={handleUploadClick}
-												className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
-												aria-label={t('configSidebar.uploadImage')}
-												title={t('configSidebar.uploadImage')}
-											>
-												<Plus className="h-4 w-4" />
-											</button>
-										</div>
-									) : (
-										<button
-											type="button"
-											onClick={handleUploadClick}
-											className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-card/65 px-3 py-4 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
-											aria-label={t('configSidebar.uploadImage')}
-										>
-											<Image className="h-4 w-4 shrink-0" />
-											<span className="text-xs">{t('configSidebar.uploadImage')}</span>
-										</button>
-									)}
-								</div>
-							</>
-						)}
-
-						{documentId && documentConfig && (
-							<PdfExportSection
-								sectionClassName={sectionClassName}
-								exportLabel={t('configSidebar.exportPdf')}
-								downloadLabel={t('common.download')}
-								previewLabel={t('common.preview')}
-							/>
-						)}
-
-						{documentId && (
-							<div className={sectionClassName}>
-								<div className="mb-2">
-									<span className="text-xs font-medium text-muted-foreground/70">
-										{t('configSidebar.share')}
-									</span>
-								</div>
-								<div className="space-y-1">
-									<button type="button" className={actionButtonClassName}>
-										<Link className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										{t('configSidebar.shareLink')}
-									</button>
-								</div>
-							</div>
-						)}
-
-						{documentId && (
-							<div className={sectionClassName}>
-								<div className="mb-2">
-									<span className="text-xs font-medium text-muted-foreground/70">
-										{t('configSidebar.actions')}
-									</span>
-								</div>
-								<div className="space-y-1">
-									<button type="button" className={actionButtonClassName}>
-										<Copy className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										{t('configSidebar.duplicate')}
-									</button>
+						{images.length > 0 ? (
+							<div className="grid grid-cols-4 gap-1.5">
+								{images.map((img) => (
 									<button
 										type="button"
-										onClick={() => setConfirmDeleteOpen(true)}
-										disabled={isDeleting}
-										className={`${actionButtonClassName} hover:bg-destructive/10 hover:text-destructive`}
+										key={img.fileName}
+										className="group relative aspect-square overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+										onClick={() =>
+											setPreviewImage({
+												src: toLocalResourceUrl(img.filePath),
+												alt: img.fileName,
+											})
+										}
 									>
-										<Trash2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										{t('configSidebar.deletePermanently')}
+										<img
+											src={toLocalResourceUrl(img.filePath)}
+											alt={img.fileName}
+											className="h-full w-full object-cover"
+											loading="lazy"
+										/>
+										<div className="absolute inset-x-0 bottom-0 bg-black/55 px-1.5 py-1 opacity-0 transition-opacity group-hover:opacity-100">
+											<span className="block truncate text-[10px] text-white">
+												{img.fileName}
+											</span>
+										</div>
 									</button>
-								</div>
+								))}
+								<button
+									type="button"
+									onClick={handleUploadClick}
+									className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
+									aria-label={t('configSidebar.uploadImage')}
+									title={t('configSidebar.uploadImage')}
+								>
+									<Plus className="h-4 w-4" />
+								</button>
 							</div>
+						) : (
+							<button
+								type="button"
+								onClick={handleUploadClick}
+								className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border/80 bg-card/65 px-3 py-4 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
+								aria-label={t('configSidebar.uploadImage')}
+							>
+								<Image className="h-4 w-4 shrink-0" />
+								<span className="text-xs">{t('configSidebar.uploadImage')}</span>
+							</button>
 						)}
-					</AppCardContent>
-				</AppCard>
+					</>
+				)}
+
+				{documentId && documentConfig && (
+					<>
+						<SectionHeader title={t('configSidebar.exportPdf')} />
+						<PdfExportSection
+							exportLabel={t('configSidebar.exportPdf')}
+							downloadLabel={t('common.download')}
+							previewLabel={t('common.preview')}
+						/>
+					</>
+				)}
+
+				{documentId && (
+					<>
+						<SectionHeader title={t('configSidebar.share')} />
+						<SettingRow label={t('configSidebar.shareLink')}>
+							<button type="button" className={ACTION_BUTTON_CLASS}>
+								<Link className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+								{t('configSidebar.shareLink')}
+							</button>
+						</SettingRow>
+					</>
+				)}
+
+				{documentId && (
+					<>
+						<SectionHeader title={t('configSidebar.actions')} />
+						<SettingRow label={t('configSidebar.duplicate')}>
+							<button type="button" className={ACTION_BUTTON_CLASS}>
+								<Copy className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+								{t('configSidebar.duplicate')}
+							</button>
+						</SettingRow>
+						<SettingRow label={t('configSidebar.deletePermanently')}>
+							<button
+								type="button"
+								onClick={() => setConfirmDeleteOpen(true)}
+								disabled={isDeleting}
+								className={`${ACTION_BUTTON_CLASS} hover:bg-destructive/10 hover:text-destructive`}
+							>
+								<Trash2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+								{t('configSidebar.deletePermanently')}
+							</button>
+						</SettingRow>
+					</>
+				)}
 			</div>
 
 			<AppAlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
