@@ -703,6 +703,11 @@ export const AI_MODELS: readonly ModelInfo[] = [
 /** All models whose type is `'image'` (e.g. DALL-E 3, GPT Image 1, Imagen 3, etc.). */
 export const IMAGE_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'image');
 
+/** Models suitable for writing: text, multimodal, and code types. */
+export const WRITING_MODELS: readonly ModelInfo[] = AI_MODELS.filter(
+	(m) => m.type === 'text' || m.type === 'multimodal' || m.type === 'code'
+);
+
 // ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------
