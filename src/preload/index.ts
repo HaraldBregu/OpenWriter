@@ -393,6 +393,23 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.agentConfigChanged, callback);
 	},
 	// -------------------------------------------------------------------------
+	// Document config
+	// -------------------------------------------------------------------------
+	getDocumentConfig: (documentId: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.getDocumentConfig, documentId),
+	updateConfig: (documentId: string, config: Partial<DocumentConfig>) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateDocumentConfig, documentId, config),
+	onDocumentConfigChanges: (
+		documentId: string,
+		callback: (config: DocumentConfig) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.documentConfigChanged, (event) => {
+			if (event.documentId === documentId) {
+				callback(event.config);
+			}
+		});
+	},
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
