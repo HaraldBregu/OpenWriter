@@ -5,7 +5,7 @@ import {
 	toProviderConfig,
 	type ProviderId,
 	type ServiceProvider,
-} from '../../shared/provider-constants';
+} from '../../shared/providers';
 import type { AppStartupInfo } from '../../shared/types';
 
 export interface WorkspaceInfo {
