@@ -23,7 +23,8 @@ interface EditorAreaProps {
 		before: string,
 		after: string,
 		cursorPos: number,
-		input: string
+		input: string,
+		model: ModelInfo
 	) => Promise<void>;
 	readonly onGenerateImageSubmit: (
 		before: string,
