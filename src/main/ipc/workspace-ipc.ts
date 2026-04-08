@@ -555,6 +555,35 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		// -------------------------------------------------------------------------
+		// Document config
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getDocumentConfig,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, documentId: string) =>
+					this.mgr(event, container).getDocumentConfig(documentId),
+				WorkspaceChannels.getDocumentConfig
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.updateDocumentConfig,
+			wrapIpcHandler(
+				async (event: IpcMainInvokeEvent, documentId: string, config: Partial<DocumentConfig>) => {
+					const mgr = this.mgr(event, container);
+					await mgr.updateDocumentConfig(documentId, config);
+					const updated = await mgr.getDocumentConfig(documentId);
+					eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
+						documentId,
+						config: updated,
+					});
+				},
+				WorkspaceChannels.updateDocumentConfig
+			)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
