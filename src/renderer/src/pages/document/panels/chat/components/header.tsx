@@ -30,9 +30,7 @@ const Header: React.FC = () => {
 		return chatSessions.filter((item) => item.title.toLowerCase().includes(q));
 	}, [search, chatSessions]);
 
-	if (chatSessions.length === 0 && chatMessages.length === 0) {
-		return null;
-	}
+	const hasHistory = chatSessions.length > 0 || chatMessages.length > 0;
 
 	const handleLoadSession = async (sessionId: string) => {
 		if (!documentId) return;
