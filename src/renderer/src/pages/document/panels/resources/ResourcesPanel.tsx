@@ -72,6 +72,39 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
+	const [defaultTextModelName, setDefaultTextModelName] = useState<string | null>(null);
+	const [defaultImageModelName, setDefaultImageModelName] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!documentId) return;
+		let cancelled = false;
+
+		(async () => {
+			try {
+				const docPath = await window.workspace.getDocumentPath(documentId);
+				const raw = await window.workspace.readFile({ filePath: `${docPath}/config.json` });
+				if (cancelled) return;
+				const config = JSON.parse(raw) as {
+					defaultTextModelId?: string;
+					defaultImageModelId?: string;
+				};
+				if (config.defaultTextModelId) {
+					const model = findModelById(config.defaultTextModelId);
+					if (model) setDefaultTextModelName(model.name);
+				}
+				if (config.defaultImageModelId) {
+					const model = findModelById(config.defaultImageModelId);
+					if (model) setDefaultImageModelName(model.name);
+				}
+			} catch {
+				// config.json doesn't exist yet
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [documentId]);
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
