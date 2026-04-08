@@ -256,11 +256,13 @@ export function AssistantNodeView({
 					previewUrls={previewUrls}
 					loading={loading}
 					enable={enable}
+					selectedImageModel={selectedImageModel}
 					textareaRef={textareaRef}
 					fileInputRef={fileInputRef}
 					submitRef={submitRef}
 					onPromptChange={handlePromptChange}
 					onAgentChange={handleAgentChange}
+					onImageModelChange={setSelectedImageModel}
 					onRemoveFile={removeFile}
 					onFileInputChange={handleFileInputChange}
 					onOpenFilePicker={handleOpenFilePicker}
