@@ -940,6 +940,168 @@ export const MODEL_CATALOGUE: readonly ModelDescriptor[] = [
 		category: 'chat',
 		capabilities: CHAT,
 	},
+
+	// ---- Cohere
+	{
+		providerId: 'cohere',
+		id: 'command-r-plus-08-2024',
+		name: 'Command R+',
+		description: 'Advanced RAG-optimized model',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'cohere',
+		id: 'command-a-03-2025',
+		name: 'Command A',
+		description: 'Latest generation, large context',
+		contextWindow: '256K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+
+	// ---- xAI
+	{
+		providerId: 'xai',
+		id: 'grok-3',
+		name: 'Grok 3',
+		description: 'Most capable xAI model',
+		contextWindow: '131K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'xai',
+		id: 'grok-3-mini',
+		name: 'Grok 3 Mini',
+		description: 'Fast reasoning at lower cost',
+		contextWindow: '131K',
+		category: 'chat',
+		capabilities: REASONING,
+	},
+
+	// ---- Amazon
+	{
+		providerId: 'amazon',
+		id: 'amazon.nova-pro-v1:0',
+		name: 'Nova Pro',
+		description: 'Multimodal with broad capabilities',
+		contextWindow: '300K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'amazon',
+		id: 'amazon.nova-lite-v1:0',
+		name: 'Nova Lite',
+		description: 'Fast and cost-effective multimodal',
+		contextWindow: '300K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+
+	// ---- DeepSeek
+	{
+		providerId: 'deepseek',
+		id: 'deepseek-chat',
+		name: 'DeepSeek V3',
+		description: 'High-quality general-purpose chat',
+		contextWindow: '64K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'deepseek',
+		id: 'deepseek-reasoner',
+		name: 'DeepSeek R1',
+		description: 'Advanced chain-of-thought reasoning',
+		contextWindow: '64K',
+		category: 'chat',
+		capabilities: REASONING,
+	},
+
+	// ---- Qwen
+	{
+		providerId: 'qwen',
+		id: 'qwen-max',
+		name: 'Qwen 2.5 Max',
+		description: 'Most capable Qwen model',
+		contextWindow: '131K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'qwen',
+		id: 'qwen-vl-max',
+		name: 'Qwen-VL Max',
+		description: 'Multimodal vision-language model',
+		contextWindow: '131K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+
+	// ---- Inception
+	{
+		providerId: 'inception',
+		id: 'mercury-coder-small',
+		name: 'Mercury Coder Small',
+		description: 'Fast code generation',
+		contextWindow: '32K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+
+	// ---- Zhipu AI
+	{
+		providerId: 'zhipu-ai',
+		id: 'glm-4-plus',
+		name: 'GLM-4 Plus',
+		description: 'High-quality Chinese and English',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'zhipu-ai',
+		id: 'glm-4v-plus',
+		name: 'GLM-4V Plus',
+		description: 'Multimodal vision-language',
+		contextWindow: '8K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+
+	// ---- Perplexity
+	{
+		providerId: 'perplexity',
+		id: 'sonar-pro',
+		name: 'Sonar Pro',
+		description: 'Web-grounded search and answers',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'perplexity',
+		id: 'sonar-reasoning-pro',
+		name: 'Sonar Reasoning Pro',
+		description: 'Deep reasoning with web grounding',
+		contextWindow: '127K',
+		category: 'chat',
+		capabilities: REASONING,
+	},
+
+	// ---- AI21 Labs
+	{
+		providerId: 'ai21-labs',
+		id: 'jamba-1.5-large',
+		name: 'Jamba 1.5 Large',
+		description: 'Large context hybrid architecture',
+		contextWindow: '256K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
 ];
 
 // ---------------------------------------------------------------------------
