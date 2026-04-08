@@ -48,9 +48,7 @@ export function AgentDropdown({
 					size="icon"
 					className={cn(
 						'h-10 w-10 shrink-0 rounded-[1.15rem] border border-border/75 bg-background/78 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]',
-						current.value === 'image'
-							? 'text-primary'
-							: 'text-foreground'
+						current.value === 'image' ? 'text-primary' : 'text-foreground'
 					)}
 					title={currentLabel}
 					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
