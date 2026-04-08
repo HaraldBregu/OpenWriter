@@ -3,10 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Check, Loader2 } from 'lucide-react';
 import { DEFAULT_AGENTS } from '../../../../shared/types';
 import type { AgentProviderConfig } from '../../../../shared/types';
-import {
-	getChatModelsForProvider,
-	getProvidersForDisplay,
-} from '../../../../shared/provider-constants';
+import { getChatModelsForProvider, getProvidersForDisplay } from '../../../../shared/providers';
 import {
 	AppButton,
 	AppLabel,
