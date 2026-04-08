@@ -120,11 +120,16 @@ const APP_THEME_OPTIONS: readonly AppThemeOption[] = [
 const SystemSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const themeMode = useThemeMode();
+	const appTheme = useAppTheme();
 	const language = useLanguageMode();
-	const { setTheme, setLanguage } = useAppActions();
+	const { setTheme, setAppTheme, setLanguage } = useAppActions();
 
 	const handleThemeChange = (next: ThemeMode): void => {
 		setTheme(next);
+	};
+
+	const handleAppThemeChange = (next: string): void => {
+		setAppTheme(next as AppTheme);
 	};
 
 	const handleLanguageChange = (next: string): void => {
@@ -157,6 +162,29 @@ const SystemSettingsPage: React.FC = () => {
 					</AppSelectTrigger>
 					<AppSelectContent>
 						{LANGUAGE_OPTIONS.map((option) => (
+							<AppSelectItem key={option.value} value={option.value}>
+								{t(option.labelKey)}
+							</AppSelectItem>
+						))}
+					</AppSelectContent>
+				</AppSelect>
+			</SettingRow>
+
+			<SectionHeader title={t('settings.appTheme.title')} />
+
+			<SettingRow
+				label={t('settings.appTheme.title')}
+				description={t('settings.appTheme.description')}
+			>
+				<AppSelect value={appTheme} onValueChange={handleAppThemeChange}>
+					<AppSelectTrigger
+						className="w-32 h-8 text-sm"
+						aria-label={t('settings.appTheme.title')}
+					>
+						<AppSelectValue />
+					</AppSelectTrigger>
+					<AppSelectContent>
+						{APP_THEME_OPTIONS.map((option) => (
 							<AppSelectItem key={option.value} value={option.value}>
 								{t(option.labelKey)}
 							</AppSelectItem>
