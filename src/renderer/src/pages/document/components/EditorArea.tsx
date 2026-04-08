@@ -1,7 +1,6 @@
 import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
-import type { ModelInfo } from '../../../../../shared/types';
 
 interface EditorAreaProps {
 	readonly loaded: boolean;
@@ -19,21 +18,8 @@ interface EditorAreaProps {
 		cursorPos: number,
 		closeMenu: () => void
 	) => void;
-	readonly onGenerateTextSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		input: string,
-		model: ModelInfo
-	) => Promise<void>;
-	readonly onGenerateImageSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		input: string,
-		files: File[],
-		model: ModelInfo
-	) => Promise<void>;
+	readonly onGenerateTextSubmit: (prompt: string) => Promise<void>;
+	readonly onGenerateImageSubmit: (prompt: string, files: File[]) => Promise<void>;
 	readonly onUndo: () => void;
 	readonly onRedo: () => void;
 }
