@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { v7 as uuidv7 } from 'uuid';
+import type { ModelInfo } from '../../../../../shared/types';
 import { initTaskMetadata } from '../../../services/task-event-bus';
 import { buildTaskPrompt } from '../shared';
 
@@ -8,6 +9,7 @@ interface WriterTaskSubmitParams {
 	readonly after: string;
 	readonly cursorPos: number;
 	readonly input: string;
+	readonly model: ModelInfo;
 }
 
 interface UseWriterTaskSubmitReturn {
