@@ -22,6 +22,7 @@ import { AssistantExtension } from './extensions/assistant';
 import { ImageExtension, type ImageInsertHandler } from './extensions/image';
 import { ImagePlaceholderExtension } from './extensions/image_placeholder';
 import { Markdown } from '@tiptap/markdown';
+import type { ModelInfo } from '../../../../shared/types';
 
 export interface ExtensionHandlers {
 	onGenerateTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
@@ -30,7 +31,8 @@ export interface ExtensionHandlers {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		files: File[]
+		files: File[],
+		model: ModelInfo
 	) => void;
 	onImageInsert: ImageInsertHandler;
 	onUndo: () => void;
