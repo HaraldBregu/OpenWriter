@@ -32,11 +32,10 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 				>
 					{isImage ? <ImageIcon className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
 				</div>
-				<div className="flex min-w-0 items-center gap-2.5">
+				<div className="flex min-w-0 items-baseline gap-1.5">
 					<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
-					<span className="h-1 w-1 shrink-0 rounded-full bg-border/80 dark:bg-white/20" />
 					<p className="truncate text-[11px] font-medium leading-none text-muted-foreground dark:text-muted-foreground/95">
-						{modeDescription}
+						{`· ${modeDescription}`}
 					</p>
 				</div>
 			</div>

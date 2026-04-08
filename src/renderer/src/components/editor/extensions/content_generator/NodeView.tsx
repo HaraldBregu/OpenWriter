@@ -161,27 +161,19 @@ export function ContentGeneratorNodeView({
 
 		updateAttributes({ loading: true, enable: false });
 
+		const before = stripHtml(rawBefore);
+		const after = stripHtml(rawAfter);
+
 		if (agentId === 'image') {
 			const effectivePrompt =
 				!trimmedPrompt && files.length > 0
 					? 'Create an image inspired by the uploaded reference images.'
 					: trimmedPrompt;
-			options.onGenerateImageSubmit(
-				stripHtml(rawBefore),
-				stripHtml(rawAfter),
-				from,
-				effectivePrompt,
-				files,
-				selectedImageModel
-			);
+			const builtPrompt = buildTaskPrompt(before, after, effectivePrompt);
+			options.onGenerateImageSubmit(builtPrompt, files);
 		} else {
-			options.onGenerateTextSubmit(
-				stripHtml(rawBefore),
-				stripHtml(rawAfter),
-				from,
-				trimmedPrompt,
-				selectedTextModel
-			);
+			const builtPrompt = buildTaskPrompt(before, after, trimmedPrompt);
+			options.onGenerateTextSubmit(builtPrompt);
 		}
 	}, [
 		agentId,
