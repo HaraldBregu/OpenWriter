@@ -1,4 +1,5 @@
-import React, { useRef, useCallback, useImperativeHandle, useState, useEffect } from 'react';
+import React, { useRef, useCallback, useImperativeHandle, useState, useEffect, useMemo } from 'react';
+import { debounce } from 'lodash';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 import { useEditorInstance } from './providers';
@@ -7,26 +8,30 @@ import { EditorArea } from './components/EditorArea';
 import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
 
+const SAVE_DEBOUNCE_MS = 1500;
+
 export interface EditorContentElement {
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
+	setContent: (content: string) => void;
 }
 
 interface EditorContentProps {
 	readonly documentId: string | undefined;
-	readonly loaded: boolean;
-	readonly content: string;
-	readonly externalValueVersion: number;
-	readonly onChange: (newContent: string) => void;
+	readonly onContentChange: (content: string) => void;
 	readonly onUndo: () => void;
 	readonly onRedo: () => void;
 }
 
 const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>(
-	({ documentId, loaded, content, externalValueVersion, onChange, onUndo, onRedo }, ref) => {
+	({ documentId, onContentChange, onUndo, onRedo }, ref) => {
 		const dispatch = useDocumentDispatch();
 		const { setEditor } = useEditorInstance();
 		const editorRef = useRef<TextEditorElement>(null);
+
+		const [content, setContentState] = useState('');
+		const [loaded, setLoaded] = useState(false);
+		const [contentVersion, setContentVersion] = useState(0);
 
 		const [defaultTextModel, setDefaultTextModel] = useState<ModelInfo | undefined>(undefined);
 		const [defaultImageModel, setDefaultImageModel] = useState<ModelInfo | undefined>(undefined);
@@ -34,27 +39,81 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		const defaultImageModelRef = useRef(defaultImageModel);
 		defaultImageModelRef.current = defaultImageModel;
 
+		const contentRef = useRef(content);
+		contentRef.current = content;
+
+		const loadedRef = useRef(loaded);
+		loadedRef.current = loaded;
+
 		useEffect(() => {
 			if (!documentId) return;
 			let cancelled = false;
 
+			setLoaded(false);
+			setContentState('');
+
 			(async () => {
 				try {
-					const config = await window.workspace.getDocumentConfig(documentId);
+					const [loadedContent, config] = await Promise.all([
+						window.workspace.getDocumentContent(documentId),
+						window.workspace.getDocumentConfig(documentId),
+					]);
 					if (cancelled) return;
+
+					setContentState(loadedContent);
+					dispatch({ type: 'CONTENT_CHANGED', value: loadedContent });
+					onContentChange(loadedContent);
+					setLoaded(true);
+
 					const textModel = findModelById(config.textModel);
 					if (textModel) setDefaultTextModel(textModel);
 					const imageModel = findModelById(config.imageModel);
 					if (imageModel) setDefaultImageModel(imageModel);
 				} catch {
-					// document config unavailable — use built-in defaults
+					if (!cancelled) setLoaded(true);
 				}
 			})();
 
 			return () => {
 				cancelled = true;
 			};
-		}, [documentId]);
+		}, [documentId, dispatch, onContentChange]);
+
+		const debouncedSave = useMemo(
+			() =>
+				debounce(
+					() => {
+						if (!documentId || !loadedRef.current) return;
+						window.workspace.updateDocumentContent(documentId, contentRef.current);
+					},
+					SAVE_DEBOUNCE_MS,
+					{ leading: false, trailing: true }
+				),
+			[documentId]
+		);
+
+		useEffect(() => {
+			return () => {
+				debouncedSave.flush();
+				debouncedSave.cancel();
+			};
+		}, [debouncedSave]);
+
+		useEffect(() => {
+			if (!documentId) return;
+
+			const unsubscribe = window.workspace.onDocumentContentChanges(
+				documentId,
+				(updatedContent) => {
+					setContentState(updatedContent);
+					setContentVersion((v) => v + 1);
+					dispatch({ type: 'CONTENT_CHANGED', value: updatedContent });
+					onContentChange(updatedContent);
+				}
+			);
+
+			return unsubscribe;
+		}, [documentId, dispatch, onContentChange]);
 
 		const updateDocumentConfig = useCallback(
 			async (update: { textModel?: string; imageModel?: string }) => {
@@ -94,6 +153,12 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		useImperativeHandle(ref, () => ({
 			setSearch: (query: string) => editorRef.current?.setSearch(query),
 			clearSearch: () => editorRef.current?.clearSearch(),
+			setContent: (newContent: string) => {
+				setContentState(newContent);
+				setContentVersion((v) => v + 1);
+				dispatch({ type: 'CONTENT_CHANGED', value: newContent });
+				debouncedSave();
+			},
 		}));
 
 		const handleEditorReady = useCallback(
@@ -112,10 +177,12 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 		const handleContentChange = useCallback(
 			(newContent: string) => {
+				setContentState(newContent);
 				dispatch({ type: 'CONTENT_CHANGED', value: newContent });
-				onChange(newContent);
+				onContentChange(newContent);
+				debouncedSave();
 			},
-			[dispatch, onChange]
+			[dispatch, onContentChange, debouncedSave]
 		);
 
 		return (
@@ -124,7 +191,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				disabled={assistantIsRunning}
 				editorRef={editorRef}
 				content={content}
-				externalValueVersion={externalValueVersion}
+				externalValueVersion={contentVersion}
 				documentId={documentId}
 				defaultTextModel={defaultTextModel}
 				defaultImageModel={defaultImageModel}
