@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { RefObject, MutableRefObject } from 'react';
+import type { RefObject } from 'react';
 import type { ContentGeneratorAgentId } from '@/components/editor/extensions/content_generator';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
-import type { ModelInfo } from '../../../../../shared/types';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
