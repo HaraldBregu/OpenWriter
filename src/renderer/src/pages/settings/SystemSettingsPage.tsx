@@ -10,8 +10,8 @@ import {
 	AppSelectItem,
 } from '@/components/app';
 import { SectionHeader, SettingRow } from './SettingsComponents';
-import { useThemeMode, useLanguageMode, useAppActions } from '../../contexts';
-import type { ThemeMode, AppLanguage } from '../../contexts';
+import { useThemeMode, useAppTheme, useLanguageMode, useAppActions } from '../../contexts';
+import type { ThemeMode, AppTheme, AppLanguage } from '../../contexts';
 
 // ---------------------------------------------------------------------------
 // Theme segment control
