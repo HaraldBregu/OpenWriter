@@ -50,7 +50,7 @@ export function AssistantContent({
 		? t('assistantNode.generating', 'Generating response...')
 		: !enable
 			? t('assistantNode.disabled', 'Assistant unavailable right now.')
-			: undefined;
+			: t('assistantNode.keyboardHint', 'Enter to send  ·  Esc to dismiss');
 	const isSubmitDisabled =
 		!enable || loading || (!prompt.trim() && (!isImage || files.length === 0));
 
