@@ -152,7 +152,13 @@ export function ContentGeneratorNodeView({
 				selectedImageModel
 			);
 		} else {
-			options.onGenerateTextSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt);
+			options.onGenerateTextSubmit(
+				stripHtml(rawBefore),
+				stripHtml(rawAfter),
+				from,
+				trimmedPrompt,
+				selectedWritingModel
+			);
 		}
 	}, [
 		agentId,
