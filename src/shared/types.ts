@@ -93,12 +93,6 @@ export type ModelType =
 	| 'code'
 	| 'reasoning';
 
-export interface ModelPricing {
-	readonly inputPerMillionTokens: number;
-	readonly cachedInputPerMillionTokens?: number;
-	readonly outputPerMillionTokens: number;
-}
-
 export interface ModelInfo {
 	readonly provider: AppProviderName;
 	readonly modelId: string;
@@ -107,7 +101,9 @@ export interface ModelInfo {
 	readonly contextWindow: number | null;
 	readonly maxOutputTokens: number | null;
 	readonly knowledgeCutoff?: string;
-	readonly pricing?: ModelPricing;
+	readonly inputPricePerMillionTokens?: number;
+	readonly cachedInputPricePerMillionTokens?: number;
+	readonly outputPricePerMillionTokens?: number | Record<string, number>;
 	readonly features?: readonly string[];
 	readonly reasoningLevels?: readonly string[];
 	readonly toolsSupported?: readonly string[];
