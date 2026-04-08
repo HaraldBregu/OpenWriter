@@ -31,9 +31,6 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		const [defaultTextModel, setDefaultTextModel] = useState<ModelInfo | undefined>(undefined);
 		const [defaultImageModel, setDefaultImageModel] = useState<ModelInfo | undefined>(undefined);
 
-		const defaultTextModelRef = useRef(defaultTextModel);
-		defaultTextModelRef.current = defaultTextModel;
-
 		const defaultImageModelRef = useRef(defaultImageModel);
 		defaultImageModelRef.current = defaultImageModel;
 
