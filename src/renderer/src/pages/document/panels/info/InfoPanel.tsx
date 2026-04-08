@@ -156,9 +156,9 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	);
 
 	const formattedDate = useMemo(() => {
-		const iso = metadata?.updatedAt ?? metadata?.createdAt;
+		const iso = documentConfig?.updatedAt ?? documentConfig?.createdAt;
 		return iso ? formatDate(iso, i18n.language) : null;
-	}, [metadata?.updatedAt, metadata?.createdAt, i18n.language]);
+	}, [documentConfig?.updatedAt, documentConfig?.createdAt, i18n.language]);
 
 	const sectionClassName =
 		'rounded-2xl border border-border/70 bg-card/75 p-3 shadow-none backdrop-blur-sm dark:bg-background/45';
