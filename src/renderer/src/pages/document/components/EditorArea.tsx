@@ -1,5 +1,6 @@
 import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import { AppEditorLayout } from '@/components/app/document/AppEditorLayout';
 import type { Editor } from '@tiptap/core';
 import type { ModelInfo } from '../../../../../shared/types';
 
