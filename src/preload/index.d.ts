@@ -236,6 +236,18 @@ export interface WorkspaceApi {
 		callback: (event: { agentId: string; provider: string; model: string }) => void
 	) => () => void;
 	// -------------------------------------------------------------------------
+	// Document config
+	// -------------------------------------------------------------------------
+	/** Get the combined config for a document (metadata + model overrides). */
+	getDocumentConfig: (documentId: string) => Promise<DocumentConfig>;
+	/** Persist model overrides for a document and broadcast a config-changed event. */
+	updateConfig: (documentId: string, config: Partial<DocumentConfig>) => Promise<void>;
+	/** Subscribe to config changes for a specific document. */
+	onDocumentConfigChanges: (
+		documentId: string,
+		callback: (config: DocumentConfig) => void
+	) => () => void;
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
