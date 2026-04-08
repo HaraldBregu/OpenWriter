@@ -169,6 +169,7 @@ export function ContentGeneratorNodeView({
 		extension.options,
 		updateAttributes,
 		selectedImageModel,
+		selectedWritingModel,
 	]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
