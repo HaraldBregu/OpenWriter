@@ -61,7 +61,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		ImagePlaceholderExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
 		SelectionMarkerExtension,
-		AssistantExtension.configure({
+		ContentGeneratorExtension.configure({
 			onGenerateTextSubmit: handlers.onGenerateTextSubmit,
 			onGenerateImageSubmit: handlers.onGenerateImageSubmit,
 		}),
