@@ -31,10 +31,6 @@ export const PROVIDER_CATALOGUE: readonly ProviderDescriptor[] = [
 	{ id: 'meta', name: 'Meta' },
 	{ id: 'mistral', name: 'Mistral' },
 	{ id: 'xai', name: 'xAI' },
-	{ id: 'amazon', name: 'Amazon' },
-	{ id: 'deepseek', name: 'DeepSeek' },
-	{ id: 'qwen', name: 'Qwen' },
-	{ id: 'inception', name: 'Inception' },
 ];
 
 // ---------------------------------------------------------------------------
