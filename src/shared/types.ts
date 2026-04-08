@@ -582,6 +582,24 @@ export interface DocumentImageInfo {
 	size: number;
 }
 
+// ---- Document Config -------------------------------------------------------
+
+/**
+ * Per-document configuration combining output file metadata with
+ * document-specific model overrides stored in the document's config.json.
+ */
+export interface DocumentConfig {
+	title: string;
+	emoji?: string;
+	type: string;
+	createdAt: string;
+	updatedAt: string;
+	/** Model ID of the text generation model assigned to this document. */
+	textModel?: string;
+	/** Model ID of the image generation model assigned to this document. */
+	imageModel?: string;
+}
+
 // ---- Project Workspace ----------------------------------------------------
 
 /**
