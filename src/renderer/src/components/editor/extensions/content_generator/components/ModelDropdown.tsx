@@ -37,9 +37,7 @@ export function ModelDropdown({
 						e.stopPropagation();
 					}}
 				>
-					<span className="truncate text-xs font-medium text-foreground">
-						{selectedModel.name}
-					</span>
+					<span className="truncate text-xs font-medium text-foreground">{selectedModel.name}</span>
 					<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
 				</AppButton>
 			</AppDropdownMenuTrigger>
@@ -47,7 +45,7 @@ export function ModelDropdown({
 				align="start"
 				side="top"
 				sideOffset={8}
-				className="z-[120] max-h-[280px] min-w-[220px] overflow-y-auto rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+				className="z-[120] flex max-h-[280px] min-w-[220px] flex-col gap-1 overflow-y-auto rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
 			>
 				{models.map((model) => (
 					<AppDropdownMenuItem
