@@ -529,33 +529,6 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		// -------------------------------------------------------------------------
-		// Agent configs
-		// -------------------------------------------------------------------------
-
-		ipcMain.handle(
-			WorkspaceChannels.getAgentConfigs,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent) => this.mgr(event, container).getAgentConfigs(),
-				WorkspaceChannels.getAgentConfigs
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.setAgentConfig,
-			wrapIpcHandler(
-				async (event: IpcMainInvokeEvent, agentId: string, provider: string, model: string) => {
-					await this.mgr(event, container).setAgentConfig(agentId, provider, model);
-					eventBus.broadcast(WorkspaceChannels.agentConfigChanged, {
-						agentId,
-						provider,
-						model,
-					});
-				},
-				WorkspaceChannels.setAgentConfig
-			)
-		);
-
-		// -------------------------------------------------------------------------
 		// Document config
 		// -------------------------------------------------------------------------
 
