@@ -177,10 +177,7 @@ const SystemSettingsPage: React.FC = () => {
 				description={t('settings.appTheme.description')}
 			>
 				<AppSelect value={appTheme} onValueChange={handleAppThemeChange}>
-					<AppSelectTrigger
-						className="w-32 h-8 text-sm"
-						aria-label={t('settings.appTheme.title')}
-					>
+					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.appTheme.title')}>
 						<AppSelectValue />
 					</AppSelectTrigger>
 					<AppSelectContent>

@@ -93,6 +93,33 @@ export type ModelType =
 	| 'code'
 	| 'reasoning';
 
+export type ReasoningLevel = 'none' | 'low' | 'medium' | 'high' | 'xhigh';
+
+export type ModelFeature =
+	| 'reasoning_tokens'
+	| 'streaming'
+	| 'tool_calling'
+	| 'json_mode'
+	| 'structured_output'
+	| 'prompt_caching'
+	| 'agent_support'
+	| 'computer_use'
+	| 'vision';
+
+export type ModelTool =
+	| 'function_calling'
+	| 'web_search'
+	| 'file_search'
+	| 'code_interpreter';
+
+export type ModelEndpoint = 'responses' | 'chat.completions';
+
+export interface ModelPricing {
+	readonly inputPerMillionTokens: number;
+	readonly cachedInputPerMillionTokens?: number;
+	readonly outputPerMillionTokens: number;
+}
+
 export interface ModelInfo {
 	readonly provider: AppProviderName;
 	readonly modelId: string;
@@ -100,6 +127,15 @@ export interface ModelInfo {
 	readonly type: ModelType;
 	readonly contextWindow: number | null;
 	readonly maxOutputTokens: number | null;
+	readonly knowledgeCutoff?: string;
+	readonly pricing?: ModelPricing;
+	readonly features?: readonly ModelFeature[];
+	readonly reasoningLevels?: readonly ReasoningLevel[];
+	readonly toolsSupported?: readonly ModelTool[];
+	readonly endpoints?: readonly ModelEndpoint[];
+	readonly snapshots?: readonly string[];
+	readonly rateLimits?: string;
+	readonly notes?: string;
 }
 
 export interface InferenceCapabilities {
