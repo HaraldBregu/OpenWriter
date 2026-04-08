@@ -51,32 +51,28 @@ export function EditorArea({
 	onRedo,
 }: EditorAreaProps): ReactElement {
 	return (
-		<div className="h-full min-w-0 flex flex-col">
-			<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
-				<div className="mx-auto flex w-full max-w-4xl flex-col gap-2 px-10 py-10">
-					{loaded && (
-						<TextEditor
-							disabled={disabled}
-							ref={editorRef}
-							value={content}
-							onSelectionChange={onSelectionChange}
-							externalValueVersion={externalValueVersion}
-							onChange={onChange}
-							onContinueWithAssistant={onContinueWithAssistant}
-							onGenerateTextSubmit={onGenerateTextSubmit}
-							onGenerateImageSubmit={onGenerateImageSubmit}
-							documentId={documentId}
-							defaultTextModel={defaultTextModel}
-							defaultImageModel={defaultImageModel}
-							onTextModelChange={onTextModelChange}
-							onImageModelChange={onImageModelChange}
-							onEditorReady={onEditorReady}
-							onUndo={onUndo}
-							onRedo={onRedo}
-						/>
-					)}
-				</div>
-			</div>
-		</div>
+		<AppEditorLayout>
+			{loaded && (
+				<TextEditor
+					disabled={disabled}
+					ref={editorRef}
+					value={content}
+					onSelectionChange={onSelectionChange}
+					externalValueVersion={externalValueVersion}
+					onChange={onChange}
+					onContinueWithAssistant={onContinueWithAssistant}
+					onGenerateTextSubmit={onGenerateTextSubmit}
+					onGenerateImageSubmit={onGenerateImageSubmit}
+					documentId={documentId}
+					defaultTextModel={defaultTextModel}
+					defaultImageModel={defaultImageModel}
+					onTextModelChange={onTextModelChange}
+					onImageModelChange={onImageModelChange}
+					onEditorReady={onEditorReady}
+					onUndo={onUndo}
+					onRedo={onRedo}
+				/>
+			)}
+		</AppEditorLayout>
 	);
 }
