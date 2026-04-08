@@ -3,7 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { ServiceProvider } from '../../shared/provider-constants';
+import type { ServiceProvider } from '../../shared/providers';
 
 export class StoreValidators {
 	private static readonly MAX_TOKEN_LENGTH = 500;
