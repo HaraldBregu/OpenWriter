@@ -31,7 +31,7 @@ import {
 	AppDropdownMenuContent,
 	AppDropdownMenuItem,
 } from '@/components/app/AppDropdownMenu';
-import { IMAGE_MODELS } from '@shared/models';
+import { IMAGE_MODELS } from '../../../../../../../shared/models';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
@@ -502,9 +502,7 @@ export function ImageEditor({
 										>
 											<div className="flex flex-col gap-0.5">
 												<span className="text-xs font-medium">{model.name}</span>
-												<span className="text-[10px] text-muted-foreground">
-													{model.provider}
-												</span>
+												<span className="text-[10px] text-muted-foreground">{model.provider}</span>
 											</div>
 										</AppDropdownMenuItem>
 									))}
