@@ -118,6 +118,7 @@ export const WorkspaceChannels = {
 	// Agent configs (stored in project_workspace.openwriter)
 	getAgentConfigs: 'workspace:get-agent-configs',
 	setAgentConfig: 'workspace:set-agent-config',
+	agentConfigChanged: 'workspace:agent-config-changed',
 } as const;
 
 export const WindowChannels = {

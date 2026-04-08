@@ -52,8 +52,13 @@ import {
 	LogOut,
 	Plus,
 	ScrollText,
+	Sun,
+	Monitor,
+	Moon,
 } from 'lucide-react';
-import { useCurrentUser } from '../contexts';
+import { useAppActions, useCurrentUser, useThemeMode } from '../contexts';
+import type { ThemeMode } from '../contexts';
+import { cn } from '../lib/utils';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
@@ -74,6 +79,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
 	const currentUser = useCurrentUser();
+	const themeMode = useThemeMode();
+	const { setTheme } = useAppActions();
 
 	// Listen for workspace changes from main process and update Redux
 	useWorkspaceListener();
@@ -126,6 +133,23 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const footerUserName = currentUser?.name?.trim() || 'User';
 	const footerUserEmail = currentUser?.email?.trim() || 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
+	const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
+		{
+			value: 'light',
+			label: t('settings.theme.light', 'Light'),
+			icon: Sun,
+		},
+		{
+			value: 'system',
+			label: t('settings.theme.system', 'System'),
+			icon: Monitor,
+		},
+		{
+			value: 'dark',
+			label: t('settings.theme.dark', 'Dark'),
+			icon: Moon,
+		},
+	];
 
 	return (
 		<>
@@ -396,6 +420,24 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 							>
 								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
 									{footerUserEmail}
+								</div>
+								<div className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-border bg-muted/40 p-1">
+									{themeOptions.map(({ value, label, icon: Icon }) => (
+										<button
+											key={value}
+											type="button"
+											onClick={() => setTheme(value)}
+											className={cn(
+												'flex h-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-popover',
+												themeMode === value && 'bg-background text-foreground shadow-sm'
+											)}
+											aria-label={label}
+											aria-pressed={themeMode === value}
+											title={label}
+										>
+											<Icon className="h-4 w-4" />
+										</button>
+									))}
 								</div>
 
 								<button
