@@ -21,6 +21,7 @@ export interface ContentGeneratorContentProps {
 	onPromptChange: (value: string) => void;
 	onAgentChange: (agentId: ContentGeneratorAgentId) => void;
 	onImageModelChange: (model: ModelInfo) => void;
+	onWritingModelChange: (model: ModelInfo) => void;
 	onRemoveFile: (index: number) => void;
 	onFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onOpenFilePicker: () => void;
