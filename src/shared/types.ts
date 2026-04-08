@@ -647,6 +647,8 @@ export interface AgentConfig {
 	description: string;
 }
 
+export const DEFAULT_WRITING_MODEL_ID = 'gpt-4.1';
+
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	{
 		id: 'assistant',
