@@ -25,6 +25,10 @@ import { Markdown } from '@tiptap/markdown';
 import type { ModelInfo } from '../../../../shared/types';
 
 export interface ExtensionHandlers {
+	defaultTextModel?: ModelInfo;
+	defaultImageModel?: ModelInfo;
+	onTextModelChange?: (model: ModelInfo) => void;
+	onImageModelChange?: (model: ModelInfo) => void;
 	onGenerateTextSubmit: (
 		before: string,
 		after: string,
