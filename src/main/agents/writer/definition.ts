@@ -25,97 +25,97 @@ Rules:
 - Return only the written text — no labels, explanations, or meta commentary.`;
 
 function toOpenAIMessages(
-  history: AgentHistoryMessage[]
+	history: AgentHistoryMessage[]
 ): Array<OpenAI.Chat.ChatCompletionMessageParam> {
-  return history.map((msg) => ({
-    role: msg.role as 'user' | 'assistant',
-    content: msg.content,
-  }));
+	return history.map((msg) => ({
+		role: msg.role as 'user' | 'assistant',
+		content: msg.content,
+	}));
 }
 
 const definition: AgentDefinition = {
-  id: 'writer',
-  name: 'Agent Writer',
-  category: 'writing',
-  defaultModel: {
-    providerId: 'openai',
-    modelId: 'gpt-4o',
-    temperature: 0.6,
-    maxTokens: 4096,
-  },
+	id: 'writer',
+	name: 'Agent Writer',
+	category: 'writing',
+	defaultModel: {
+		providerId: 'openai',
+		modelId: 'gpt-4o',
+		temperature: 0.6,
+		maxTokens: 4096,
+	},
 
-  async *execute(input) {
-    const { runId, provider, prompt, temperature, maxTokens, history, signal, logger } = input;
+	async *execute(input) {
+		const { runId, provider, prompt, temperature, maxTokens, history, signal, logger } = input;
 
-    yield {
-      type: 'thinking',
-      content: 'Writing...',
-      runId,
-    } satisfies AgentStreamEvent;
+		yield {
+			type: 'thinking',
+			content: 'Writing...',
+			runId,
+		} satisfies AgentStreamEvent;
 
-    const client = new OpenAI({
-      apiKey: provider.apiKey,
-      ...(provider.baseUrl ? { baseURL: provider.baseUrl } : {}),
-    });
+		const client = new OpenAI({
+			apiKey: provider.apiKey,
+			...(provider.baseUrl ? { baseURL: provider.baseUrl } : {}),
+		});
 
-    const messages: Array<OpenAI.Chat.ChatCompletionMessageParam> = [
-      { role: 'system', content: SYSTEM_PROMPT },
-      ...toOpenAIMessages(history),
-      { role: 'user', content: prompt },
-    ];
+		const messages: Array<OpenAI.Chat.ChatCompletionMessageParam> = [
+			{ role: 'system', content: SYSTEM_PROMPT },
+			...toOpenAIMessages(history),
+			{ role: 'user', content: prompt },
+		];
 
-    logger?.info(LOG_SOURCE, 'Starting writer execution', {
-      promptLength: prompt.length,
-      historyLength: history.length,
-      model: provider.modelName,
-    });
+		logger?.info(LOG_SOURCE, 'Starting writer execution', {
+			promptLength: prompt.length,
+			historyLength: history.length,
+			model: provider.modelName,
+		});
 
-    try {
-      const stream = await client.chat.completions.create(
-        {
-          model: provider.modelName,
-          messages,
-          temperature,
-          max_tokens: maxTokens,
-          stream: true,
-        },
-        { signal }
-      );
+		try {
+			const stream = await client.chat.completions.create(
+				{
+					model: provider.modelName,
+					messages,
+					temperature,
+					max_tokens: maxTokens,
+					stream: true,
+				},
+				{ signal }
+			);
 
-      let content = '';
-      let tokenCount = 0;
+			let content = '';
+			let tokenCount = 0;
 
-      for await (const chunk of stream) {
-        const token = chunk.choices[0]?.delta?.content;
-        if (token) {
-          content += token;
-          tokenCount++;
-          yield { type: 'token', token, runId } satisfies AgentStreamEvent;
-        }
-      }
+			for await (const chunk of stream) {
+				const token = chunk.choices[0]?.delta?.content;
+				if (token) {
+					content += token;
+					tokenCount++;
+					yield { type: 'token', token, runId } satisfies AgentStreamEvent;
+				}
+			}
 
-      logger?.info(LOG_SOURCE, 'Writer execution completed', {
-        contentLength: content.length,
-        tokenCount,
-      });
+			logger?.info(LOG_SOURCE, 'Writer execution completed', {
+				contentLength: content.length,
+				tokenCount,
+			});
 
-      yield {
-        type: 'done',
-        content,
-        tokenCount,
-        runId,
-      } satisfies AgentStreamEvent;
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      logger?.error(LOG_SOURCE, `Writer execution failed: ${message}`);
-      yield {
-        type: 'error',
-        error: message,
-        code: 'WRITER_AGENT_ERROR',
-        runId,
-      } satisfies AgentStreamEvent;
-    }
-  },
+			yield {
+				type: 'done',
+				content,
+				tokenCount,
+				runId,
+			} satisfies AgentStreamEvent;
+		} catch (error: unknown) {
+			const message = error instanceof Error ? error.message : String(error);
+			logger?.error(LOG_SOURCE, `Writer execution failed: ${message}`);
+			yield {
+				type: 'error',
+				error: message,
+				code: 'WRITER_AGENT_ERROR',
+				runId,
+			} satisfies AgentStreamEvent;
+		}
+	},
 };
 
 export { definition as WriterAgent };

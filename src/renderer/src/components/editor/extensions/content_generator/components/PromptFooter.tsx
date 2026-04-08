@@ -77,6 +77,42 @@ export function PromptFooter({
 						</AppDropdownMenuContent>
 					</AppDropdownMenu>
 				)}
+				{agentId === 'writer' && (
+					<AppDropdownMenu>
+						<AppDropdownMenuTrigger asChild>
+							<AppButton
+								variant="ghost"
+								size="sm"
+								disabled={loading}
+								className="h-7 gap-1 px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
+							>
+								<span className="truncate">{selectedWritingModel.name}</span>
+								<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+							</AppButton>
+						</AppDropdownMenuTrigger>
+						<AppDropdownMenuContent
+							align="start"
+							side="top"
+							className="max-h-[280px] min-w-[200px] overflow-y-auto"
+						>
+							{WRITING_MODELS.map((model) => (
+								<AppDropdownMenuItem
+									key={model.modelId}
+									onSelect={() => onWritingModelChange(model)}
+									className={cn(
+										selectedWritingModel.modelId === model.modelId &&
+											'bg-accent text-accent-foreground'
+									)}
+								>
+									<div className="flex flex-col gap-0.5">
+										<span className="text-xs font-medium">{model.name}</span>
+										<span className="text-[10px] text-muted-foreground">{model.provider}</span>
+									</div>
+								</AppDropdownMenuItem>
+							))}
+						</AppDropdownMenuContent>
+					</AppDropdownMenu>
+				)}
 				{hint && (
 					<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
 						{hint}
