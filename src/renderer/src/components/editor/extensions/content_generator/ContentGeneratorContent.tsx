@@ -105,9 +105,6 @@ export function ContentGeneratorContent({
 				agentId={agentId}
 				selectedImageModel={selectedImageModel}
 				selectedTextModel={selectedTextModel}
-				hint={footerHint}
-				hintId={hintId}
-				hintTone={footerHintTone}
 				loading={loading}
 				isSubmitDisabled={isSubmitDisabled}
 				submitRef={submitRef}
