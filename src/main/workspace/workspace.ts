@@ -197,16 +197,6 @@ export class Workspace implements Disposable {
 		let textModel = stored.defaultTextModelId;
 		let imageModel = stored.defaultImageModelId;
 
-		if (!textModel || !imageModel) {
-			try {
-				const agentConfigs = await this.projectWorkspace.getAgentConfigs();
-				if (!textModel) textModel = agentConfigs['writer']?.model;
-				if (!imageModel) imageModel = agentConfigs['image']?.model;
-			} catch {
-				// workspace not ready
-			}
-		}
-
 		return {
 			title: stored.title ?? '',
 			emoji: stored.emoji,
