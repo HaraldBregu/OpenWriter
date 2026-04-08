@@ -31,16 +31,12 @@ export function useTextGeneratorSubmit(
 
 			const taskInput = {
 				prompt: params.prompt,
-				modelId: params.modelId,
-				providerId: params.provider,
 			};
 			const metadata = {
 				agentId: 'writer' as const,
 				documentId,
 				chatId: resolvedSessionId,
 				referenceImages: [],
-				modelId: params.modelId,
-				provider: params.provider,
 			};
 
 			const ipcResult = await window.task.submit('agent-writer', taskInput, metadata);
