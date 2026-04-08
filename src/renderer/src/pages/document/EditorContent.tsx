@@ -67,7 +67,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			async (update: { textModel?: string; imageModel?: string }) => {
 				if (!documentId) return;
 				try {
-					await window.workspace.updateConfig(documentId, update);
+					await window.workspace.updateDocumentConfig(documentId, update);
 				} catch {
 					// silently ignore write errors
 				}
