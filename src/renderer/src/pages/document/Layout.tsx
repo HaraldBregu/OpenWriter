@@ -11,6 +11,8 @@ import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 
+const METADATA_SAVE_DEBOUNCE_MS = 1500;
+
 interface LayoutProps {
 	documentId: string | undefined;
 }
@@ -23,7 +25,6 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const [title, setTitle] = useState('');
 	const [emoji, setEmoji] = useState('');
 	const [content, setContent] = useState('');
-	const [editorExternalValueVersion, setEditorExternalValueVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 
 	const { activeSidebar } = useSidebarVisibility();
@@ -39,8 +40,8 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
-	const stateRef = useRef({ title, emoji, content });
-	stateRef.current = { title, emoji, content };
+	const stateRef = useRef({ title, emoji });
+	stateRef.current = { title, emoji };
 
 	const loadedRef = useRef(false);
 	loadedRef.current = loaded;
@@ -59,28 +60,19 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 
 		async function load() {
 			try {
-				const output = await window.workspace.loadOutput({
-					type: 'documents',
-					id: id!,
-				});
+				const config = await window.workspace.getDocumentConfig(id!);
 
-				if (cancelled || !output) {
-					if (!cancelled) {
-						documentDeletedRef.current = true;
-						setLoaded(true);
-						navigate('/home', { replace: true });
-					}
-					return;
-				}
+				if (cancelled) return;
 
-				setTitle(output.metadata.title || '');
-				setEmoji(output.metadata.emoji || '');
-				setContent(output.content || '');
-				dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
-				dispatch({ type: 'CONTENT_CHANGED', value: output.content || '' });
+				setTitle(config.title || '');
+				setEmoji(config.emoji || '');
 				setLoaded(true);
 			} catch {
-				if (!cancelled) setLoaded(true);
+				if (!cancelled) {
+					documentDeletedRef.current = true;
+					setLoaded(true);
+					navigate('/home', { replace: true });
+				}
 			}
 		}
 
@@ -121,24 +113,13 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 				return;
 			}
 
-			if (event.type === 'changed') {
-				window.workspace
-					.loadOutput({ type: 'documents', id })
-					.then((output) => {
-						if (output) {
-							dispatch({ type: 'METADATA_UPDATED', metadata: output.metadata });
-						}
-					})
-					.catch(() => {});
-			}
-
 			if (event.type === 'changed' || event.type === 'added') {
 				loadImages();
 			}
 		});
 
 		return unsubscribe;
-	}, [id, loadImages, dispatch, navigate]);
+	}, [id, loadImages, navigate]);
 
 	// Image-watcher: refresh images on add/change/remove events
 	useEffect(() => {
@@ -152,20 +133,16 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		return unsubscribe;
 	}, [id, loadImages]);
 
-	const debouncedSave = useMemo(
+	// Debounced metadata save (title, emoji only — content is saved by EditorContent)
+	const debouncedMetadataSave = useMemo(
 		() =>
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
-					const { title: t, emoji: e, content: c } = stateRef.current;
-					window.workspace.updateOutput({
-						type: 'documents',
-						id,
-						content: c,
-						metadata: { title: t, emoji: e },
-					});
+					const { title: t, emoji: e } = stateRef.current;
+					window.workspace.updateDocumentConfig(id, { title: t, emoji: e });
 				},
-				1500,
+				METADATA_SAVE_DEBOUNCE_MS,
 				{ leading: false, trailing: true }
 			),
 		[id]
@@ -174,20 +151,20 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	useEffect(() => {
 		return () => {
 			if (!documentDeletedRef.current) {
-				debouncedSave.flush();
+				debouncedMetadataSave.flush();
 			}
-			debouncedSave.cancel();
+			debouncedMetadataSave.cancel();
 		};
-	}, [debouncedSave]);
+	}, [debouncedMetadataSave]);
 
 	const handleHistoryRestore = useCallback(
 		(restoredContent: string, restoredTitle: string) => {
-			setEditorExternalValueVersion((currentVersion) => currentVersion + 1);
+			editorContentRef.current?.setContent(restoredContent);
 			setContent(restoredContent);
 			setTitle(restoredTitle);
-			debouncedSave();
+			debouncedMetadataSave();
 		},
-		[debouncedSave]
+		[debouncedMetadataSave]
 	);
 
 	const {
@@ -209,17 +186,17 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 	const handleTitleChange = useCallback(
 		(value: string) => {
 			setTitle(value);
-			debouncedSave();
+			debouncedMetadataSave();
 		},
-		[debouncedSave]
+		[debouncedMetadataSave]
 	);
 
 	const handleEmojiChange = useCallback(
 		(value: string) => {
 			setEmoji(value);
-			debouncedSave();
+			debouncedMetadataSave();
 		},
-		[debouncedSave]
+		[debouncedMetadataSave]
 	);
 
 	useEffect(() => {
@@ -229,13 +206,9 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 		);
 	}, [id, title, emoji, loaded, appDispatch]);
 
-	const handleContentChange = useCallback(
-		(newContent: string) => {
-			setContent(newContent);
-			debouncedSave();
-		},
-		[debouncedSave]
-	);
+	const handleContentChange = useCallback((newContent: string) => {
+		setContent(newContent);
+	}, []);
 
 	const handleSearch = useCallback((query: string) => {
 		editorContentRef.current?.setSearch(query);
@@ -270,10 +243,7 @@ const Layout: React.FC<LayoutProps> = ({ documentId: id }) => {
 						key={id}
 						ref={editorContentRef}
 						documentId={id}
-						loaded={loaded}
-						content={content}
-						externalValueVersion={editorExternalValueVersion}
-						onChange={handleContentChange}
+						onContentChange={handleContentChange}
 						onUndo={handleUndo}
 						onRedo={handleRedo}
 					/>
