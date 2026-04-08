@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Sun, Monitor, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
 	AppSelect,
@@ -18,13 +19,14 @@ import type { ThemeMode, AppLanguage } from '../../contexts';
 
 interface ThemeOption {
 	readonly value: ThemeMode;
+	readonly icon: React.ElementType;
 	readonly labelKey: string;
 }
 
 const THEME_OPTIONS: readonly ThemeOption[] = [
-	{ value: 'light', labelKey: 'settings.theme.light' },
-	{ value: 'dark', labelKey: 'settings.theme.dark' },
-	{ value: 'system', labelKey: 'settings.theme.system' },
+	{ value: 'light', icon: Sun, labelKey: 'settings.theme.light' },
+	{ value: 'system', icon: Monitor, labelKey: 'settings.theme.system' },
+	{ value: 'dark', icon: Moon, labelKey: 'settings.theme.dark' },
 ] as const;
 
 interface ThemeSegmentControlProps {
@@ -48,6 +50,7 @@ const ThemeSegmentControl: React.FC<ThemeSegmentControlProps> = ({
 		>
 			{THEME_OPTIONS.map((option, index) => {
 				const isActive = value === option.value;
+				const Icon = option.icon;
 				const isFirst = index === 0;
 				const isLast = index === THEME_OPTIONS.length - 1;
 
@@ -56,9 +59,10 @@ const ThemeSegmentControl: React.FC<ThemeSegmentControlProps> = ({
 						key={option.value}
 						type="button"
 						aria-pressed={isActive}
+						aria-label={t(option.labelKey)}
 						onClick={() => onChange(option.value)}
 						className={cn(
-							'relative px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+							'relative p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
 							isFirst && 'rounded-l-sm',
 							isLast && 'rounded-r-sm',
 							!isFirst && !isLast && 'rounded-none',
@@ -67,7 +71,7 @@ const ThemeSegmentControl: React.FC<ThemeSegmentControlProps> = ({
 								: 'bg-transparent text-muted-foreground hover:text-foreground'
 						)}
 					>
-						{t(option.labelKey)}
+						<Icon size={16} />
 					</button>
 				);
 			})}

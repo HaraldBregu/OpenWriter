@@ -184,6 +184,79 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Document config
+	// -------------------------------------------------------------------------
+
+	async getDocumentConfig(documentId: string): Promise<DocumentConfig> {
+		const docPath = this.getDocumentFolderPath(documentId);
+		const configFilePath = path.join(docPath, 'config.json');
+
+		type StoredJson = {
+			title?: string;
+			emoji?: string;
+			type?: string;
+			createdAt?: string;
+			updatedAt?: string;
+			defaultTextModelId?: string;
+			defaultImageModelId?: string;
+		};
+
+		let stored: StoredJson = {};
+		try {
+			const raw = await fsPromises.readFile(configFilePath, 'utf-8');
+			stored = JSON.parse(raw) as StoredJson;
+		} catch {
+			// config.json doesn't exist yet
+		}
+
+		let textModel = stored.defaultTextModelId;
+		let imageModel = stored.defaultImageModelId;
+
+		if (!textModel || !imageModel) {
+			try {
+				const agentConfigs = await this.projectWorkspace.getAgentConfigs();
+				if (!textModel) textModel = agentConfigs['writer']?.model;
+				if (!imageModel) imageModel = agentConfigs['image']?.model;
+			} catch {
+				// workspace not ready
+			}
+		}
+
+		return {
+			title: stored.title ?? '',
+			emoji: stored.emoji,
+			type: stored.type ?? '',
+			createdAt: stored.createdAt ?? '',
+			updatedAt: stored.updatedAt ?? '',
+			textModel,
+			imageModel,
+		};
+	}
+
+	async updateDocumentConfig(documentId: string, config: Partial<DocumentConfig>): Promise<void> {
+		const docPath = this.getDocumentFolderPath(documentId);
+		const configFilePath = path.join(docPath, 'config.json');
+
+		let existing: Record<string, unknown> = {};
+		try {
+			const raw = await fsPromises.readFile(configFilePath, 'utf-8');
+			existing = JSON.parse(raw) as Record<string, unknown>;
+		} catch {
+			// file doesn't exist yet
+		}
+
+		if (config.textModel !== undefined) {
+			existing.defaultTextModelId = config.textModel;
+		}
+		if (config.imageModel !== undefined) {
+			existing.defaultImageModelId = config.imageModel;
+		}
+
+		const manager = this.buildFileManager();
+		await manager.writeFile(configFilePath, JSON.stringify(existing, null, 2));
+	}
+
+	// -------------------------------------------------------------------------
 	// Documents
 	// -------------------------------------------------------------------------
 
