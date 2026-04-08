@@ -121,6 +121,10 @@ export const WorkspaceChannels = {
 	getAgentConfigs: 'workspace:get-agent-configs',
 	setAgentConfig: 'workspace:set-agent-config',
 	agentConfigChanged: 'workspace:agent-config-changed',
+	// Document config
+	getDocumentConfig: 'workspace:get-document-config',
+	updateDocumentConfig: 'workspace:update-document-config',
+	documentConfigChanged: 'workspace:document-config-changed',
 } as const;
 
 export const WindowChannels = {
