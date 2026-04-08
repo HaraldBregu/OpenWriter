@@ -60,11 +60,11 @@ export function ImageAttachmentBar({
 								</span>
 							) : null}
 						</div>
-						<p className="mt-1 text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
+						<span className="mt-1 text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
 							{files.length > 0
 								? t('assistantNode.referenceImagesHelp', 'Add more references if needed.')
 								: t('assistantNode.referenceImagesEmpty', 'Optional references for style or mood.')}
-						</p>
+						</span>
 					</div>
 					<AppButton
 						variant="ghost"
