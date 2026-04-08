@@ -108,26 +108,18 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			(model: ModelInfo) => {
 				setDefaultTextModel(model);
 				saveDocumentConfig({ defaultTextModelId: model.modelId });
-				dispatch({
-					type: 'MODEL_CONFIG_CHANGED',
-					textModelName: model.name,
-					imageModelName: defaultImageModelRef.current?.name ?? null,
-				});
+				window.workspace.setAgentConfig('writer', model.provider, model.modelId);
 			},
-			[saveDocumentConfig, dispatch]
+			[saveDocumentConfig]
 		);
 
 		const handleImageModelChange = useCallback(
 			(model: ModelInfo) => {
 				setDefaultImageModel(model);
 				saveDocumentConfig({ defaultImageModelId: model.modelId });
-				dispatch({
-					type: 'MODEL_CONFIG_CHANGED',
-					textModelName: defaultTextModelRef.current?.name ?? null,
-					imageModelName: model.name,
-				});
+				window.workspace.setAgentConfig('image', model.provider, model.modelId);
 			},
-			[saveDocumentConfig, dispatch]
+			[saveDocumentConfig]
 		);
 
 		const {
