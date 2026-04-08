@@ -323,9 +323,8 @@ const TextEditor = React.memo(
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
-				const cgStorage = (
-					editor.storage as unknown as Record<string, ContentGeneratorStorage>
-				).contentGenerator;
+				const cgStorage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
+					.contentGenerator;
 				cgStorage.defaultTextModel = defaultTextModel;
 				cgStorage.defaultImageModel = defaultImageModel;
 			}, [editor, defaultTextModel, defaultImageModel]);

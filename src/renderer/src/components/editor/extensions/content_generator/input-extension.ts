@@ -26,7 +26,10 @@ declare module '@tiptap/core' {
 	}
 }
 
-export const ContentGeneratorExtension = Node.create<ContentGeneratorOptions, ContentGeneratorStorage>({
+export const ContentGeneratorExtension = Node.create<
+	ContentGeneratorOptions,
+	ContentGeneratorStorage
+>({
 	name: 'contentGenerator',
 
 	group: 'block',
