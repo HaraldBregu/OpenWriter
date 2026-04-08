@@ -15,6 +15,10 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 	const modeLabel = isImage
 		? t('assistantAgent.image', 'Image')
 		: t('assistantAgent.writer', 'Text');
+	const modeDescription = isImage
+		? t('assistantNode.imageHeaderSubtitle', 'Create from prompt or references')
+		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, or continue');
+	const modelLabel = t('assistantNode.selectedModel', 'Selected model');
 
 	return (
 		<div className="flex min-h-[3.25rem] items-center justify-between gap-3 px-4 pt-3 pb-1.5">
@@ -32,13 +36,21 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 				<div className="min-w-0">
 					<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
 					<p className="mt-1 truncate text-[11px] leading-none text-muted-foreground dark:text-muted-foreground/95">
-						{t('assistantNode.model', 'Model')}
+						{modeDescription}
 					</p>
 				</div>
 			</div>
-			<span className="max-w-[58%] truncate rounded-full border border-border/70 bg-background/80 px-2.5 py-1.5 text-[11px] font-medium leading-none text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]">
-				{modelName}
-			</span>
+			<div
+				className="max-w-[58%] rounded-[1rem] border border-border/70 bg-background/80 px-3 py-1.5 text-right shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]"
+				aria-label={`${modelLabel}: ${modelName}`}
+			>
+				<p className="truncate text-[10px] font-semibold uppercase leading-none tracking-[0.12em] text-muted-foreground dark:text-muted-foreground/95">
+					{modelLabel}
+				</p>
+				<p className="mt-1 truncate text-[11px] font-medium leading-none text-foreground">
+					{modelName}
+				</p>
+			</div>
 		</div>
 	);
 }
