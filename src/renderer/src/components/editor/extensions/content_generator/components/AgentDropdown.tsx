@@ -45,8 +45,13 @@ export function AgentDropdown({
 				<AppButton
 					type="button"
 					variant="ghost"
-					size="sm"
-					className="h-auto min-h-[3rem] w-full justify-start gap-3 rounded-[1.15rem] border border-border/75 bg-background/78 px-3 py-2 text-left shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]"
+					size="icon"
+					className={cn(
+						'h-10 w-10 shrink-0 rounded-[1.15rem] border border-border/75 bg-background/78 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]',
+						current.value === 'image'
+							? 'text-primary'
+							: 'text-foreground'
+					)}
 					title={currentLabel}
 					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
 					onMouseDown={(e) => {
@@ -54,25 +59,7 @@ export function AgentDropdown({
 						e.stopPropagation();
 					}}
 				>
-					<span
-						className={cn(
-							'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)]',
-							current.value === 'image'
-								? 'border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12'
-								: 'border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]'
-						)}
-					>
-						{getAgentIcon(current.value)}
-					</span>
-					<span className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
-						<span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:text-muted-foreground/95">
-							{t('assistantNode.mode', 'Mode')}
-						</span>
-						<span className="truncate text-sm font-semibold text-foreground">
-							{currentLabel}
-						</span>
-					</span>
-					<ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/80" />
+					{getAgentIcon(current.value)}
 				</AppButton>
 			</AppDropdownMenuTrigger>
 			<AppDropdownMenuContent
