@@ -194,7 +194,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 					</div>
 				</div>
 
-				<div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-4">
+				<div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 py-2 space-y-2">
 					{documentConfig && (
 						<>
 							<SettingRow label={t('configSidebar.documentTitle')}>
