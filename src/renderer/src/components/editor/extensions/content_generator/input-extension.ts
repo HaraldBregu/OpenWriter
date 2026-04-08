@@ -5,7 +5,13 @@ import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 
 export interface ContentGeneratorOptions {
-	onGenerateTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
+	onGenerateTextSubmit: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		model: ModelInfo
+	) => void;
 	onGenerateImageSubmit: (
 		before: string,
 		after: string,
