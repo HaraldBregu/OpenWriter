@@ -218,6 +218,12 @@ export class Workspace implements Disposable {
 			// file doesn't exist yet
 		}
 
+		if (config.title !== undefined) {
+			existing.title = config.title;
+		}
+		if (config.emoji !== undefined) {
+			existing.emoji = config.emoji;
+		}
 		if (config.textModel !== undefined) {
 			existing.defaultTextModelId = config.textModel;
 		}
