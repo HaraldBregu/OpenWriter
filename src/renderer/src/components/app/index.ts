@@ -125,6 +125,8 @@ export { AppCheckbox } from './AppCheckbox';
 
 export { AppSwitch } from './AppSwitch';
 
+export { AppEditorLayout } from './document/AppEditorLayout';
+
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
 export {
