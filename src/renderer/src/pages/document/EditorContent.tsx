@@ -1,4 +1,11 @@
-import React, { useRef, useCallback, useImperativeHandle, useState, useEffect, useMemo } from 'react';
+import React, {
+	useRef,
+	useCallback,
+	useImperativeHandle,
+	useState,
+	useEffect,
+	useMemo,
+} from 'react';
 import { debounce } from 'lodash';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';

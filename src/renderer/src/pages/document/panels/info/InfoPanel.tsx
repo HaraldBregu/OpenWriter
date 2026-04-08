@@ -16,6 +16,7 @@ import { useDocumentState, useDocumentDispatch } from '../../hooks';
 import { PdfExportSection } from './components/PdfExportSection';
 import { findModelById, DEFAULT_IMAGE_MODEL_ID } from '../../../../../../shared/models';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
+import type { DocumentConfig } from '../../../../../../shared/types';
 import {
 	AppLabel,
 	AppCard,
