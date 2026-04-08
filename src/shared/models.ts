@@ -110,6 +110,7 @@ export interface ImageGenerationConfig {
 export type ModelCategory = 'chat' | 'image' | 'embedding';
 
 export interface ModelDescriptor {
+	providerId: string;
 	id: string;
 	name: string;
 	description: string;
