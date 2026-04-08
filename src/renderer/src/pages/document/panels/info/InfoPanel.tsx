@@ -64,7 +64,7 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
+const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
 	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
