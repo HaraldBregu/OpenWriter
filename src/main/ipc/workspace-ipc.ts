@@ -35,7 +35,7 @@ export class WorkspaceIpc implements IpcModule {
 		return getWindowService<Workspace>(event, container, 'workspaceManager');
 	}
 
-	register(container: ServiceContainer, _eventBus: EventBus): void {
+	register(container: ServiceContainer, eventBus: EventBus): void {
 		const logger = container.get<LoggerService>('logger');
 
 		// -------------------------------------------------------------------------
