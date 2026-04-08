@@ -5,8 +5,7 @@ import { useEditorInstance } from './providers';
 import { useDocumentDispatch, useAssistantTask } from './hooks';
 import { EditorArea } from './components/EditorArea';
 import type { ModelInfo } from '../../../../shared/types';
-import { DEFAULT_TEXT_MODEL_ID } from '../../../../shared/types';
-import { TEXT_MODELS, IMAGE_MODELS, findModelById } from '../../../../shared/models';
+import { findModelById } from '../../../../shared/models';
 
 export interface EditorContentElement {
 	setSearch: (query: string) => void;
