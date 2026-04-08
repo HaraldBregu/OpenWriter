@@ -36,6 +36,7 @@ export function ContentGeneratorContent({
 	loading,
 	enable,
 	selectedImageModel,
+	selectedWritingModel,
 	textareaRef,
 	fileInputRef,
 	submitRef,
