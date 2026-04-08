@@ -110,7 +110,8 @@
       "WebFetch(domain:v03.api.js.langchain.com)",
       "WebFetch(domain:js.langchain.com)",
       "Bash(wait)",
-      "Read(//c/Users/BRGHLD87H/AppData/Local/Temp/claude/C--Users-BRGHLD87H-Documents-OpenWriter/64a94657-56e4-475f-abd1-f67b0e04fece/tasks/**)"
+      "Read(//c/Users/BRGHLD87H/AppData/Local/Temp/claude/C--Users-BRGHLD87H-Documents-OpenWriter/64a94657-56e4-475f-abd1-f67b0e04fece/tasks/**)",
+      "Bash(git:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",
