@@ -17,12 +17,14 @@ import { IMAGE_MODELS, WRITING_MODELS } from '../../../../../../../shared/models
 interface PromptFooterProps {
 	agentId: ContentGeneratorAgentId;
 	selectedImageModel: ModelInfo;
+	selectedWritingModel: ModelInfo;
 	hint: string | undefined;
 	loading: boolean;
 	isSubmitDisabled: boolean;
 	submitRef: React.RefObject<(() => void) | null>;
 	onAgentChange: (agentId: ContentGeneratorAgentId) => void;
 	onImageModelChange: (model: ModelInfo) => void;
+	onWritingModelChange: (model: ModelInfo) => void;
 }
 
 export function PromptFooter({
