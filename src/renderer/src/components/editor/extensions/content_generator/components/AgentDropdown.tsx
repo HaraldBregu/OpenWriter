@@ -64,7 +64,7 @@ export function AgentDropdown({
 				align="start"
 				side="top"
 				sideOffset={8}
-				className="z-[120] min-w-[240px] rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+				className="z-[120] flex min-w-[240px] flex-col gap-1 rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
 			>
 				{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
 					const label = t(option.labelKey, option.labelFallback);
