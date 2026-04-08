@@ -17,15 +17,11 @@ export const PROVIDER_IDS: readonly ProviderId[] = [
 	'google',
 	'meta',
 	'mistral',
-	'cohere',
 	'xai',
 	'amazon',
 	'deepseek',
 	'qwen',
 	'inception',
-	'zhipu-ai',
-	'perplexity',
-	'ai21-labs',
 ];
 
 // ---------------------------------------------------------------------------
