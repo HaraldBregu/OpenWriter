@@ -373,6 +373,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 						</div>
 					</>
 				)}
+				</div>
 			</div>
 
 			<AppAlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
