@@ -269,6 +269,52 @@ export function useLanguageContext(): LanguageContextValue {
 }
 
 // ---------------------------------------------------------------------------
+// 3. AppThemeContext
+// ---------------------------------------------------------------------------
+
+interface AppThemeContextValue {
+	appTheme: AppTheme;
+	setAppTheme: (theme: AppTheme) => void;
+}
+
+const AppThemeContext = createContext<AppThemeContextValue | undefined>(undefined);
+
+function AppThemeProvider({
+	children,
+	initialAppTheme,
+}: {
+	children: React.ReactNode;
+	initialAppTheme?: AppTheme;
+}) {
+	const [appTheme, setAppThemeState] = useState<AppTheme>(
+		initialAppTheme ?? readPersistedAppTheme()
+	);
+
+	const setAppTheme = useCallback((next: AppTheme) => setAppThemeState(next), []);
+
+	useEffect(() => {
+		try {
+			localStorage.setItem(APP_THEME_STORAGE_KEY, appTheme);
+		} catch (error) {
+			console.error('Failed to save app theme:', error);
+		}
+	}, [appTheme]);
+
+	const value = useMemo<AppThemeContextValue>(
+		() => ({ appTheme, setAppTheme }),
+		[appTheme, setAppTheme]
+	);
+
+	return <AppThemeContext.Provider value={value}>{children}</AppThemeContext.Provider>;
+}
+
+export function useAppThemeContext(): AppThemeContextValue {
+	const ctx = useContext(AppThemeContext);
+	if (ctx === undefined) throw new Error('useAppThemeContext must be used within an AppProvider');
+	return ctx;
+}
+
+// ---------------------------------------------------------------------------
 // 4. UserContext
 // ---------------------------------------------------------------------------
 
