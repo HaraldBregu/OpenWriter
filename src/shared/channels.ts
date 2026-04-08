@@ -47,6 +47,7 @@ import type {
 	AgentProviderConfig,
 	AppLogEntry,
 	AppStartupInfo,
+	ThemeMode,
 } from './types';
 import type { ServiceProvider } from './types';
 
@@ -310,7 +311,7 @@ export interface InvokeChannelMap {
  */
 export interface SendChannelMap {
 	[AppChannels.playSound]: { args: [] };
-	[AppChannels.setTheme]: { args: [theme: string] };
+	[AppChannels.setTheme]: { args: [theme: ThemeMode] };
 	[AppChannels.setLanguage]: { args: [language: string] };
 	[AppChannels.contextMenu]: { args: [] };
 	[AppChannels.contextMenuEditable]: { args: [] };
@@ -326,7 +327,7 @@ export interface SendChannelMap {
  */
 export interface EventChannelMap {
 	[AppChannels.changeLanguage]: { data: string };
-	[AppChannels.changeTheme]: { data: string };
+	[AppChannels.changeTheme]: { data: ThemeMode };
 	[AppChannels.fileOpened]: { data: string };
 	[WindowChannels.maximizeChange]: { data: boolean };
 	[WindowChannels.fullScreenChange]: { data: boolean };

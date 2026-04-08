@@ -11,8 +11,8 @@ import type { LoggerService } from '../services/logger';
 import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
-import type { WritingContextMenuAction } from '../../shared/types';
-import type { ServiceProvider } from '../../shared/types';
+import { isThemeMode } from '../../shared/theme';
+import type { ServiceProvider, ThemeMode, WritingContextMenuAction } from '../../shared/types';
 
 const execFileAsync = promisify(execFile);
 
@@ -21,13 +21,12 @@ const execFileAsync = promisify(execFile);
  * Includes sound playback, context menu handling, and AI model store operations
  * (formerly in StoreIpc, now consolidated here and exposed on window.app).
  */
-const VALID_THEMES = ['light', 'dark', 'system'] as const;
 const VALID_LANGUAGES = ['en', 'it'] as const;
 
 export class AppIpc implements IpcModule {
 	readonly name = 'app';
 
-	private lastTheme: string | null = null;
+	private lastTheme: ThemeMode | null = null;
 	private lastLanguage: string | null = null;
 
 	register(container: ServiceContainer, eventBus: EventBus): void {
@@ -50,12 +49,12 @@ export class AppIpc implements IpcModule {
 
 		// Theme handler
 		ipcMain.on(AppChannels.setTheme, (event, theme: string) => {
-			if (!VALID_THEMES.includes(theme as (typeof VALID_THEMES)[number])) return;
+			if (!isThemeMode(theme)) return;
 			if (this.lastTheme === theme) return;
 			this.lastTheme = theme;
 
-			nativeTheme.themeSource = theme as 'light' | 'dark' | 'system';
-			eventBus.emit('theme:changed', { theme: theme as 'light' | 'dark' | 'system' });
+			nativeTheme.themeSource = theme;
+			eventBus.emit('theme:changed', { theme });
 
 			const senderContents = event.sender;
 			BrowserWindow.getAllWindows().forEach((win) => {

@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react';
 import i18n from '../i18n';
+import { DEFAULT_THEME_MODE, isThemeMode } from '../../../shared/theme';
+import type { ThemeMode } from '../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Shared types
 // ---------------------------------------------------------------------------
 
-export type ThemeMode = 'light' | 'dark' | 'system';
+export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
 export type SidebarState = 'expanded' | 'collapsed';
 
@@ -55,11 +57,11 @@ const DARK_CLASS = 'dark';
 function readPersistedTheme(): ThemeMode {
 	try {
 		const stored = localStorage.getItem(THEME_STORAGE_KEY);
-		if (stored === 'light' || stored === 'dark' || stored === 'system') return stored;
+		if (stored && isThemeMode(stored)) return stored;
 	} catch {
 		// localStorage may be unavailable in some contexts
 	}
-	return 'system';
+	return DEFAULT_THEME_MODE;
 }
 
 function readPersistedLanguage(): AppLanguage {
@@ -154,10 +156,8 @@ function ThemeProvider({
 	useEffect(() => {
 		// Guard: window.app is only available inside the Electron preload context.
 		if (!window.app?.onThemeChange) return;
-		return window.app.onThemeChange((incoming: string) => {
-			if (incoming === 'light' || incoming === 'dark' || incoming === 'system') {
-				setThemeState(incoming as ThemeMode);
-			}
+		return window.app.onThemeChange((incoming) => {
+			setThemeState(incoming);
 		});
 	}, []);
 

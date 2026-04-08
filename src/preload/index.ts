@@ -9,6 +9,7 @@ import {
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type { ServiceProvider } from '../shared/types';
+import type { ThemeMode } from '../shared/types';
 import type { WorkspaceInfo } from '../shared/types';
 
 // ---------------------------------------------------------------------------
@@ -18,7 +19,7 @@ const app: AppApi = {
 	playSound: (): void => {
 		typedSend(AppChannels.playSound);
 	},
-	setTheme: (theme: string): void => {
+	setTheme: (theme: ThemeMode): void => {
 		typedSend(AppChannels.setTheme, theme);
 	},
 	setLanguage: (language: string): void => {
@@ -33,7 +34,7 @@ const app: AppApi = {
 	onLanguageChange: (callback: (lng: string) => void): (() => void) => {
 		return typedOn(AppChannels.changeLanguage, callback);
 	},
-	onThemeChange: (callback: (theme: string) => void): (() => void) => {
+	onThemeChange: (callback: (theme: ThemeMode) => void): (() => void) => {
 		return typedOn(AppChannels.changeTheme, callback);
 	},
 	onFileOpened: (callback: (filePath: string) => void): (() => void) => {

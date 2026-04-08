@@ -1,4 +1,5 @@
 import { BrowserWindow } from 'electron';
+import type { ThemeMode } from '../../shared/types';
 
 /**
  * Base event structure for main process events
@@ -32,7 +33,7 @@ export interface AppEvents {
 		timestamp: number;
 	};
 	'resources:watcher-error': { error: string; timestamp: number };
-	'theme:changed': { theme: 'light' | 'dark' | 'system' };
+	'theme:changed': { theme: ThemeMode };
 	// Task lifecycle events — emitted by TaskExecutor for main-process observers (e.g. TaskReactionBus)
 	'task:submitted': {
 		taskId: string;

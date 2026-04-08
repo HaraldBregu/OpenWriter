@@ -1,16 +1,17 @@
 import { app, BrowserWindow, Menu as ElectronMenu } from 'electron';
 import { loadTranslations } from './i18n';
+import type { ThemeMode } from '../shared/types';
 
 interface MenuManagerCallbacks {
 	onLanguageChange: (lng: string) => void;
-	onThemeChange: (theme: string) => void;
+	onThemeChange: (theme: ThemeMode) => void;
 	onNewWindow: () => void;
 	onNewWorkspace: () => void;
 }
 
 export class Menu {
 	private currentLanguage = 'en';
-	private currentTheme = 'system';
+	private currentTheme: ThemeMode = 'system';
 	private callbacks: MenuManagerCallbacks;
 
 	constructor(callbacks: MenuManagerCallbacks) {
@@ -26,7 +27,7 @@ export class Menu {
 		this.buildMenu();
 	}
 
-	updateTheme(theme: string): void {
+	updateTheme(theme: ThemeMode): void {
 		this.currentTheme = theme;
 		this.buildMenu();
 	}
@@ -41,7 +42,7 @@ export class Menu {
 			this.callbacks.onLanguageChange(lng);
 		};
 
-		const switchTheme = (theme: string): void => {
+		const switchTheme = (theme: ThemeMode): void => {
 			this.currentTheme = theme;
 			this.buildMenu();
 			this.callbacks.onThemeChange(theme);

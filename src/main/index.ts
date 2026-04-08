@@ -24,6 +24,7 @@ protocol.registerSchemesAsPrivileged([
 import type { WorkspaceService } from './workspace/workspace-service';
 import type { WorkspaceMetadataService } from './workspace/workspace-metadata';
 import type { ProjectWorkspaceService } from './workspace/project-workspace';
+import type { ThemeMode } from '../shared/types';
 import {
 	bootstrapServices,
 	bootstrapIpcModules,
@@ -83,7 +84,7 @@ const menuManager = new Menu({
 		});
 	},
 	onThemeChange: (theme) => {
-		nativeTheme.themeSource = theme as 'light' | 'dark' | 'system';
+		nativeTheme.themeSource = theme;
 		BrowserWindow.getAllWindows().forEach((win) => {
 			win.webContents.send('change-theme', theme);
 		});
@@ -231,7 +232,7 @@ app.whenReady().then(async () => {
 
 	// Sync menu radio buttons when theme changes from renderer
 	eventBus.on('theme:changed', (event) => {
-		const { theme } = event.payload as { theme: string };
+		const { theme } = event.payload as { theme: ThemeMode };
 		menuManager.updateTheme(theme);
 	});
 

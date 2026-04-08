@@ -53,6 +53,7 @@ import type {
 	AppStartupInfo,
 	IpcResult,
 	ServiceProvider,
+	ThemeMode,
 } from '../shared/types';
 
 // ---------------------------------------------------------------------------
@@ -99,6 +100,7 @@ export type {
 	ServiceProvider,
 	AppLogEntry,
 	AppStartupInfo,
+	ThemeMode,
 };
 
 // ---------------------------------------------------------------------------
@@ -108,12 +110,12 @@ export type {
 /** General application utilities — also includes all persisted AI model settings (store) methods. */
 export interface AppApi {
 	playSound: () => void;
-	setTheme: (theme: string) => void;
+	setTheme: (theme: ThemeMode) => void;
 	setLanguage: (language: string) => void;
 	showContextMenu: () => void;
 	showContextMenuEditable: () => void;
 	onLanguageChange: (callback: (lng: string) => void) => () => void;
-	onThemeChange: (callback: (theme: string) => void) => () => void;
+	onThemeChange: (callback: (theme: ThemeMode) => void) => () => void;
 	onFileOpened: (callback: (filePath: string) => void) => () => void;
 	popupMenu: () => void;
 	getPlatform: () => Promise<string>;
