@@ -13,6 +13,11 @@ export interface ContentGeneratorOptions {
 	onGenerateImageSubmit: (prompt: string, files: File[]) => void;
 }
 
+export interface ContentGeneratorStorage {
+	defaultTextModel: ModelInfo | undefined;
+	defaultImageModel: ModelInfo | undefined;
+}
+
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		contentGenerator: {
