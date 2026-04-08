@@ -423,7 +423,7 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'assistant') {
+							if (node.type.name === 'contentGenerator') {
 								tr.setNodeMarkup(pos, undefined, { ...node.attrs, enable });
 								return false;
 							}
