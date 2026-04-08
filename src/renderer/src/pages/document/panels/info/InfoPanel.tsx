@@ -67,8 +67,7 @@ function toLocalResourceUrl(filePath: string): string {
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
-	const { documentId, metadata, images, defaultTextModelName, defaultImageModelName } =
-		useDocumentState();
+	const { documentId, metadata, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -77,8 +76,42 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const fallbackTextModelName = findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
 	const fallbackImageModelName =
 		findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
-	const textModelName = defaultTextModelName ?? fallbackTextModelName;
-	const imageModelName = defaultImageModelName ?? fallbackImageModelName;
+	const [textModelName, setTextModelName] = useState(fallbackTextModelName);
+	const [imageModelName, setImageModelName] = useState(fallbackImageModelName);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		(async () => {
+			try {
+				const configs = await window.workspace.getAgentConfigs();
+				if (cancelled) return;
+				if (configs['writer']) {
+					const model = findModelById(configs['writer'].model);
+					if (model) setTextModelName(model.name);
+				}
+				if (configs['image']) {
+					const model = findModelById(configs['image'].model);
+					if (model) setImageModelName(model.name);
+				}
+			} catch {
+				// workspace not ready yet
+			}
+		})();
+
+		const unsubscribe = window.workspace.onAgentConfigChanged((event) => {
+			if (cancelled) return;
+			const model = findModelById(event.model);
+			if (!model) return;
+			if (event.agentId === 'writer') setTextModelName(model.name);
+			if (event.agentId === 'image') setImageModelName(model.name);
+		});
+
+		return () => {
+			cancelled = true;
+			unsubscribe();
+		};
+	}, []);
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
