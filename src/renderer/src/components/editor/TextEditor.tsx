@@ -19,6 +19,7 @@ import { InsertImageDialog } from './InsertImageDialog';
 
 import { createExtensions } from './extensions';
 import { type ImageInsertHandler } from './extensions/image';
+import type { ContentGeneratorStorage } from './extensions/content_generator';
 import { EditorProvider } from './EditorContext';
 import type { ModelInfo } from '../../../../shared/types';
 
