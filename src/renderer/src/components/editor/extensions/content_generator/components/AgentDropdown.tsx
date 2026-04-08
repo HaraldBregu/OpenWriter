@@ -59,10 +59,7 @@ export function AgentDropdown({
 					const isSelected = option.value === current.value;
 
 					return (
-						<AppDropdownMenuItem
-							key={option.value}
-							onSelect={() => onAgentChange(option.value)}
-						>
+						<AppDropdownMenuItem key={option.value} onSelect={() => onAgentChange(option.value)}>
 							<span className="flex items-center gap-2">
 								{getAgentIcon(option.value)}
 								<span className="flex flex-col">
