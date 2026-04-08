@@ -85,7 +85,6 @@ export function ContentGeneratorContent({
 				}}
 				disabled={!enable}
 				aria-label={inputLabel}
-				aria-describedby={hintId}
 				className={cn(
 					'min-h-[108px] w-full resize-none border-none bg-transparent px-4 pt-2 pb-3 text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 					'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
