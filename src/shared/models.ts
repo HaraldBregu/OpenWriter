@@ -60,11 +60,9 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		contextWindow: 1050000,
 		maxOutputTokens: 128000,
 		knowledgeCutoff: '2025-08-31',
-		pricing: {
-			inputPerMillionTokens: 2.5,
-			cachedInputPerMillionTokens: 0.25,
-			outputPerMillionTokens: 15.0,
-		},
+		inputPricePerMillionTokens: 2.5,
+		cachedInputPricePerMillionTokens: 0.25,
+		outputPricePerMillionTokens: 15.0,
 		features: [
 			'reasoning_tokens',
 			'streaming',
