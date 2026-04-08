@@ -80,18 +80,19 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const [imageModelName, setImageModelName] = useState(fallbackImageModelName);
 
 	useEffect(() => {
+		if (!documentId) return;
 		let cancelled = false;
 
 		(async () => {
 			try {
-				const configs = await window.workspace.getAgentConfigs();
+				const config = await window.workspace.getDocumentConfig(documentId);
 				if (cancelled) return;
-				if (configs['writer']) {
-					const model = findModelById(configs['writer'].model);
+				if (config.textModel) {
+					const model = findModelById(config.textModel);
 					if (model) setTextModelName(model.name);
 				}
-				if (configs['image']) {
-					const model = findModelById(configs['image'].model);
+				if (config.imageModel) {
+					const model = findModelById(config.imageModel);
 					if (model) setImageModelName(model.name);
 				}
 			} catch {
@@ -99,19 +100,23 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 			}
 		})();
 
-		const unsubscribe = window.workspace.onAgentConfigChanged((event) => {
+		const unsubscribe = window.workspace.onDocumentConfigChanges(documentId, (config) => {
 			if (cancelled) return;
-			const model = findModelById(event.model);
-			if (!model) return;
-			if (event.agentId === 'writer') setTextModelName(model.name);
-			if (event.agentId === 'image') setImageModelName(model.name);
+			if (config.textModel) {
+				const model = findModelById(config.textModel);
+				if (model) setTextModelName(model.name);
+			}
+			if (config.imageModel) {
+				const model = findModelById(config.imageModel);
+				if (model) setImageModelName(model.name);
+			}
 		});
 
 		return () => {
 			cancelled = true;
 			unsubscribe();
 		};
-	}, []);
+	}, [documentId]);
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
