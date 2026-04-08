@@ -6,10 +6,11 @@ import { DocumentPdfTemplate, type DocumentPdfTemplateProps } from './DocumentPd
 import { PdfPreviewDialog } from './PdfPreviewDialog';
 
 export interface PdfExportSectionProps {
-	readonly sectionClassName: string;
 	readonly exportLabel: string;
 	readonly downloadLabel: string;
 	readonly previewLabel: string;
+	/** Optional slot rendered to the right of the section label (e.g. action icon buttons). */
+	readonly headerActions?: React.ReactNode;
 }
 
 const ICON_BUTTON_CLASS =
@@ -20,7 +21,6 @@ const CROP = 20;
 const PREVIEW_HEIGHT = 300;
 
 export function PdfExportSection({
-	sectionClassName,
 	exportLabel,
 	downloadLabel,
 	previewLabel,
@@ -57,54 +57,52 @@ export function PdfExportSection({
 
 	return (
 		<>
-			<div className={sectionClassName}>
-				<div className="mb-3 flex items-center justify-between gap-2">
-					<span className="text-xs font-medium text-muted-foreground/70">{exportLabel}</span>
-					<div className="flex items-center gap-1">
-						<button
-							type="button"
-							onClick={handleRefresh}
-							className={ICON_BUTTON_CLASS}
-							aria-label="Refresh preview"
-							title="Refresh preview"
-						>
-							<RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
-						</button>
-						<button
-							type="button"
-							onClick={() => setPreviewOpen(true)}
-							className={ICON_BUTTON_CLASS}
-							aria-label={previewLabel}
-							title={previewLabel}
-						>
-							<Eye className="h-3.5 w-3.5" aria-hidden="true" />
-						</button>
-						<button
-							type="button"
-							disabled={downloadLoading || !url}
-							onClick={handleDownload}
-							className={ICON_BUTTON_CLASS}
-							aria-label={downloadLabel}
-							title={downloadLabel}
-						>
-							<FileDown className="h-3.5 w-3.5" aria-hidden="true" />
-						</button>
-					</div>
-				</div>
-
-				<div className="overflow-hidden" style={{ height: PREVIEW_HEIGHT }}>
-					<div
-						style={{
-							marginTop: -CROP,
-							marginLeft: -CROP,
-							width: `calc(100% + ${CROP * 2}px)`,
-							height: PREVIEW_HEIGHT + CROP * 2,
-						}}
+			<div className="flex items-center justify-between pb-2">
+				<span className="text-xs font-medium text-muted-foreground/70">{exportLabel}</span>
+				<div className="flex items-center gap-1">
+					<button
+						type="button"
+						onClick={handleRefresh}
+						className={ICON_BUTTON_CLASS}
+						aria-label="Refresh preview"
+						title="Refresh preview"
 					>
-						<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
-							{pdfDocument}
-						</PDFViewer>
-					</div>
+						<RefreshCw className="h-3.5 w-3.5" aria-hidden="true" />
+					</button>
+					<button
+						type="button"
+						onClick={() => setPreviewOpen(true)}
+						className={ICON_BUTTON_CLASS}
+						aria-label={previewLabel}
+						title={previewLabel}
+					>
+						<Eye className="h-3.5 w-3.5" aria-hidden="true" />
+					</button>
+					<button
+						type="button"
+						disabled={downloadLoading || !url}
+						onClick={handleDownload}
+						className={ICON_BUTTON_CLASS}
+						aria-label={downloadLabel}
+						title={downloadLabel}
+					>
+						<FileDown className="h-3.5 w-3.5" aria-hidden="true" />
+					</button>
+				</div>
+			</div>
+
+			<div className="overflow-hidden rounded-lg border border-border/70" style={{ height: PREVIEW_HEIGHT }}>
+				<div
+					style={{
+						marginTop: -CROP,
+						marginLeft: -CROP,
+						width: `calc(100% + ${CROP * 2}px)`,
+						height: PREVIEW_HEIGHT + CROP * 2,
+					}}
+				>
+					<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
+						{pdfDocument}
+					</PDFViewer>
 				</div>
 			</div>
 
