@@ -201,7 +201,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 										{t('configSidebar.documentTitle')}
 									</AppLabel>
 									<div className="truncate text-sm font-medium text-foreground">
-										{metadata.title}
+										{documentConfig.title}
 									</div>
 								</div>
 								<div className="space-y-1">
