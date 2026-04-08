@@ -26,6 +26,22 @@ export type AppProviderName =
 	| 'Perplexity'
 	| 'AI21 Labs';
 
+export type ProviderId =
+	| 'openai'
+	| 'anthropic'
+	| 'google'
+	| 'meta'
+	| 'mistral'
+	| 'cohere'
+	| 'xai'
+	| 'amazon'
+	| 'deepseek'
+	| 'qwen'
+	| 'inception'
+	| 'zhipu-ai'
+	| 'perplexity'
+	| 'ai21-labs';
+
 export type ModelType =
 	| 'text'
 	| 'image'
@@ -105,22 +121,6 @@ export interface ProviderDescriptor {
 	id: string;
 	name: string;
 }
-
-export type ProviderId =
-	| 'openai'
-	| 'anthropic'
-	| 'google'
-	| 'meta'
-	| 'mistral'
-	| 'cohere'
-	| 'xai'
-	| 'amazon'
-	| 'deepseek'
-	| 'qwen'
-	| 'inception'
-	| 'zhipu-ai'
-	| 'perplexity'
-	| 'ai21-labs';
 
 export interface ServiceProvider {
 	name: string;

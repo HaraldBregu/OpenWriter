@@ -11,7 +11,7 @@ import type { ProviderDescriptor, ProviderId, ServiceProvider } from './types';
 // Provider IDs
 // ---------------------------------------------------------------------------
 
-export const PROVIDER_IDS = [
+export const PROVIDER_IDS: readonly ProviderId[] = [
 	'openai',
 	'anthropic',
 	'google',
@@ -26,7 +26,7 @@ export const PROVIDER_IDS = [
 	'zhipu-ai',
 	'perplexity',
 	'ai21-labs',
-] as const;
+];
 
 // ---------------------------------------------------------------------------
 // Provider catalogue
