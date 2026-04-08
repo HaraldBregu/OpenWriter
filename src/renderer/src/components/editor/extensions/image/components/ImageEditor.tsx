@@ -315,7 +315,7 @@ export function ImageEditor({
 								aria-label={t('imageNode.save')}
 								onClick={handleSave}
 								disabled={!state.isLoaded}
-								className="h-8 w-8 bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-4 [&_svg]:w-4"
+								className="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<Check />
 							</AppButton>
