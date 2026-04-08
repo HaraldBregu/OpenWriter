@@ -127,6 +127,8 @@ export { AppSwitch } from './AppSwitch';
 
 export { AppEditorLayout } from './document/AppEditorLayout';
 
+export { AppSidebarLayout } from './sidebar/AppSidebarLayout';
+
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
 export {
