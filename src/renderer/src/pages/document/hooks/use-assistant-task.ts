@@ -100,7 +100,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await writerTask.submit({ before, after, cursorPos, input });
+				const taskId = await writerTask.submit({ before, after, cursorPos, input, model });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
