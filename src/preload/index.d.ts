@@ -49,6 +49,7 @@ import type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	AgentProviderConfig,
+	DocumentConfig,
 	AppLogEntry,
 	AppStartupInfo,
 	IpcResult,
