@@ -274,6 +274,7 @@ export function ContentGeneratorNodeView({
 					agentId={agentId}
 					files={files}
 					previewUrls={previewUrls}
+					isDragOver={isDragOver}
 					loading={loading}
 					enable={enable}
 					selectedImageModel={selectedImageModel}
