@@ -97,6 +97,8 @@ export function useImageTaskSubmit(documentId: string | undefined): UseImageTask
 				after: params.after,
 				cursorPos: params.cursorPos,
 				referenceImages: savedReferenceImages,
+				modelId: params.model.modelId,
+				modelProvider: params.model.provider,
 			};
 
 			const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);
