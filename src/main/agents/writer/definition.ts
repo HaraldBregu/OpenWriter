@@ -1,94 +1,121 @@
-import type { AgentDefinition, AgentRuntimeContext, GraphInputContext } from '../core/definition';
-import { buildGraph, WRITER_SPECIALIST } from './graph';
-import { WRITER_STATE_MESSAGES } from './messages';
-import { WRITER_INTENT } from './state';
+import OpenAI from 'openai';
+import type { AgentDefinition } from '../core/definition';
+import type { AgentStreamEvent, AgentHistoryMessage } from '../core/types';
 
 const LOG_SOURCE = 'WriterAgent';
 
-const SPECIALIST_MODELS: AgentDefinition['nodeModels'] = {
-	[WRITER_SPECIALIST.UNDERSTAND_INTENT]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.1,
-		maxTokens: 512,
-	},
-	[WRITER_SPECIALIST.DRAFT_RESPONSE]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.6,
-		maxTokens: 2048,
-	},
-	[WRITER_SPECIALIST.ALIGN_RESPONSE]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.3,
-		maxTokens: 2048,
-	},
-	[WRITER_SPECIALIST.REVIEW_RESPONSE]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.1,
-		maxTokens: 512,
-	},
-	[WRITER_SPECIALIST.REFINE_RESPONSE]: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.4,
-		maxTokens: 4096,
-	},
-};
+const SYSTEM_PROMPT = `You are a professional writing assistant embedded in a document editor.
+
+You receive the user's request along with surrounding writing context.
+
+Determine what the user needs and respond accordingly:
+
+- **Continue**: Extend the text naturally from the provided context without repeating existing text.
+- **Improve**: Refine clarity, tone, and structure while preserving meaning.
+- **Transform**: Rewrite or adapt the text to a different style, format, or perspective.
+- **Expand**: Add detail, depth, or examples while staying on topic.
+- **Condense**: Summarize or shorten while preserving key ideas.
+
+Rules:
+
+- Infer the best action from the request and surrounding context.
+- Match the tone, voice, and style of the surrounding document unless the user explicitly requests otherwise.
+- Respect explicit constraints such as word limits, brevity requests, or audience specifications.
+- When continuing, make the text flow naturally with the surrounding context.
+- Return only the written text — no labels, explanations, or meta commentary.`;
+
+function toOpenAIMessages(
+  history: AgentHistoryMessage[]
+): Array<OpenAI.Chat.ChatCompletionMessageParam> {
+  return history.map((msg) => ({
+    role: msg.role as 'user' | 'assistant',
+    content: msg.content,
+  }));
+}
 
 const definition: AgentDefinition = {
-	id: 'writer',
-	name: 'Agent Writer',
-	category: 'writing',
-	nodeModels: SPECIALIST_MODELS,
-	streamableNodes: [],
-	buildGraph,
+  id: 'writer',
+  name: 'Agent Writer',
+  category: 'writing',
+  defaultModel: {
+    providerId: 'openai',
+    modelId: 'gpt-4o',
+    temperature: 0.6,
+    maxTokens: 4096,
+  },
 
-	prepareGraph(
-		_baseBuildGraph: NonNullable<AgentDefinition['buildGraph']>,
-		context: AgentRuntimeContext
-	): NonNullable<AgentDefinition['buildGraph']> {
-		const logger = context.logger;
+  async *execute(input) {
+    const { runId, provider, prompt, temperature, maxTokens, history, signal, logger } = input;
 
-		logger?.info(LOG_SOURCE, 'Preparing writer graph', {
-			hasWorkspace: Boolean(context.workspaceService?.getCurrent()),
-			providerId: context.providerId,
-		});
+    yield {
+      type: 'thinking',
+      content: 'Writing...',
+      runId,
+    } satisfies AgentStreamEvent;
 
-		return (models) => buildGraph(models, logger);
-	},
+    const client = new OpenAI({
+      apiKey: provider.apiKey,
+      ...(provider.baseUrl ? { baseURL: provider.baseUrl } : {}),
+    });
 
-	buildGraphInput(ctx: GraphInputContext): Record<string, unknown> {
-		return {
-			prompt: ctx.prompt,
-			history: ctx.history,
-			normalizedPrompt: '',
-			intent: WRITER_INTENT.UNCLEAR,
-			intentFindings: '',
-			audienceGuidance: '',
-			toneGuidance: '',
-			lengthGuidance: '',
-			draftResponse: '',
-			alignedResponse: '',
-			reviewFindings: '',
-			needsRefinement: false,
-			refinementGuidance: '',
-			revisionCount: 0,
-			maxRefinements: 2,
-			phaseLabel: WRITER_STATE_MESSAGES.UNDERSTAND_INTENT,
-			response: '',
-		};
-	},
+    const messages: Array<OpenAI.Chat.ChatCompletionMessageParam> = [
+      { role: 'system', content: SYSTEM_PROMPT },
+      ...toOpenAIMessages(history),
+      { role: 'user', content: prompt },
+    ];
 
-	extractGraphOutput(state: Record<string, unknown>): string {
-		return typeof state['response'] === 'string' ? state['response'] : '';
-	},
+    logger?.info(LOG_SOURCE, 'Starting writer execution', {
+      promptLength: prompt.length,
+      historyLength: history.length,
+      model: provider.modelName,
+    });
 
-	extractThinkingLabel(state: Record<string, unknown>): string | undefined {
-		return typeof state['phaseLabel'] === 'string' ? state['phaseLabel'] : undefined;
-	},
+    try {
+      const stream = await client.chat.completions.create(
+        {
+          model: provider.modelName,
+          messages,
+          temperature,
+          max_tokens: maxTokens,
+          stream: true,
+        },
+        { signal }
+      );
+
+      let content = '';
+      let tokenCount = 0;
+
+      for await (const chunk of stream) {
+        const token = chunk.choices[0]?.delta?.content;
+        if (token) {
+          content += token;
+          tokenCount++;
+          yield { type: 'token', token, runId } satisfies AgentStreamEvent;
+        }
+      }
+
+      logger?.info(LOG_SOURCE, 'Writer execution completed', {
+        contentLength: content.length,
+        tokenCount,
+      });
+
+      yield {
+        type: 'done',
+        content,
+        tokenCount,
+        runId,
+      } satisfies AgentStreamEvent;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      logger?.error(LOG_SOURCE, `Writer execution failed: ${message}`);
+      yield {
+        type: 'error',
+        error: message,
+        code: 'WRITER_AGENT_ERROR',
+        runId,
+      } satisfies AgentStreamEvent;
+    }
+  },
 };
 
 export { definition as WriterAgent };

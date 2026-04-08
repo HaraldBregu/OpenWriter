@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { AgentDropdown } from './AgentDropdown';
 import type { ContentGeneratorAgentId } from '../agents';
 import type { ModelInfo } from '../../../../../../../shared/types';
-import { IMAGE_MODELS } from '../../../../../../../shared/models';
+import { IMAGE_MODELS, WRITING_MODELS } from '../../../../../../../shared/models';
 
 interface PromptFooterProps {
 	agentId: ContentGeneratorAgentId;
