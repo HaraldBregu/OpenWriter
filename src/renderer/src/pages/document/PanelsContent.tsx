@@ -17,7 +17,7 @@ const PanelsContent: React.FC<PanelsContentProps> = ({ documentId }) => {
 
 	return (
 		<div className="h-full">
-			{activeSidebar === 'config' && <ResourcesPanel onOpenFolder={handleOpenFolder} />}
+			{activeSidebar === 'config' && <InfoPanel onOpenFolder={handleOpenFolder} />}
 			{activeSidebar === 'agentic' && <Chat />}
 		</div>
 	);
