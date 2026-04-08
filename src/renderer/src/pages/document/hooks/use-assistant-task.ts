@@ -3,8 +3,8 @@ import type { RefObject } from 'react';
 import type { ContentGeneratorAgentId } from '@/components/editor/extensions/content_generator';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { ModelInfo } from '../../../../../shared/types';
-import { DEFAULT_WRITING_MODEL_ID } from '../../../../../shared/types';
-import { WRITING_MODELS } from '../../../../../shared/models';
+import { DEFAULT_TEXT_MODEL_ID } from '../../../../../shared/types';
+import { TEXT_MODELS } from '../../../../../shared/models';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { normalizeTaskPromptContext } from '../shared';
@@ -36,8 +36,8 @@ export interface AssistantTaskHandlers {
 	) => void;
 }
 
-const DEFAULT_WRITING_MODEL =
-	WRITING_MODELS.find((m) => m.modelId === DEFAULT_WRITING_MODEL_ID) ?? WRITING_MODELS[0];
+const DEFAULT_TEXT_MODEL =
+	TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0];
 
 export function useAssistantTask(
 	documentId: string | undefined,
@@ -172,8 +172,8 @@ export function useAssistantTask(
 				cleanBefore,
 				cleanAfter,
 				cursorPos,
-				'CONTINUE WRITING HERE WITH 15 WORDS MAX',
-				DEFAULT_WRITING_MODEL
+				'CONTINUE HERE WITH 15 WORDS MAX',
+				DEFAULT_TEXT_MODEL
 			).catch(() => {
 				pendingCloseMenuRef.current = null;
 				closeMenu();

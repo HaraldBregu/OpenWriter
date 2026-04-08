@@ -647,7 +647,7 @@ export interface AgentConfig {
 	description: string;
 }
 
-export const DEFAULT_WRITING_MODEL_ID = 'gpt-4.1';
+export const DEFAULT_TEXT_MODEL_ID = 'gpt-4.1';
 
 export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 	{
@@ -665,6 +665,6 @@ export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
 		id: 'writer',
 		name: 'Agent Writer',
 		description:
-			'Understands writing intent, drafts, aligns tone and length, and refines before returning',
+			'Understands text intent, drafts, aligns tone and length, and refines before returning',
 	},
 ];

@@ -12,14 +12,14 @@ import { cn } from '@/lib/utils';
 import { AgentDropdown } from './AgentDropdown';
 import type { ContentGeneratorAgentId } from '../agents';
 import type { ModelInfo } from '../../../../../../../shared/types';
-import { IMAGE_MODELS, WRITING_MODELS } from '../../../../../../../shared/models';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../../shared/models';
 
 type PromptFooterHintTone = 'default' | 'loading' | 'disabled';
 
 interface PromptFooterProps {
 	agentId: ContentGeneratorAgentId;
 	selectedImageModel: ModelInfo;
-	selectedWritingModel: ModelInfo;
+	selectedTextModel: ModelInfo;
 	hint: string | undefined;
 	hintId: string;
 	hintTone: PromptFooterHintTone;
@@ -28,13 +28,13 @@ interface PromptFooterProps {
 	submitRef: React.RefObject<(() => void) | null>;
 	onAgentChange: (agentId: ContentGeneratorAgentId) => void;
 	onImageModelChange: (model: ModelInfo) => void;
-	onWritingModelChange: (model: ModelInfo) => void;
+	onTextModelChange: (model: ModelInfo) => void;
 }
 
 export function PromptFooter({
 	agentId,
 	selectedImageModel,
-	selectedWritingModel,
+	selectedTextModel,
 	hint,
 	hintId,
 	hintTone,
@@ -43,13 +43,13 @@ export function PromptFooter({
 	submitRef,
 	onAgentChange,
 	onImageModelChange,
-	onWritingModelChange,
+	onTextModelChange,
 }: PromptFooterProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const isImage = agentId === 'image';
-	const modelOptions = isImage ? IMAGE_MODELS : WRITING_MODELS;
-	const selectedModel = isImage ? selectedImageModel : selectedWritingModel;
-	const handleModelChange = isImage ? onImageModelChange : onWritingModelChange;
+	const modelOptions = isImage ? IMAGE_MODELS : TEXT_MODELS;
+	const selectedModel = isImage ? selectedImageModel : selectedTextModel;
+	const handleModelChange = isImage ? onImageModelChange : onTextModelChange;
 
 	return (
 		<div className="border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.2)_0%,hsl(var(--background)/0.18)_100%)] px-4 py-3 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.14)_100%)]">

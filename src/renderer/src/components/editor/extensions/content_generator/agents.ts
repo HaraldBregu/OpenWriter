@@ -12,7 +12,7 @@ export const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOpti
 	{
 		value: 'writer',
 		labelKey: 'assistantAgent.writer',
-		labelFallback: 'Writer',
+		labelFallback: 'Text',
 		descriptionKey: 'assistantAgent.writerDescription',
 		descriptionFallback: 'Generate, rewrite, or continue text',
 	},

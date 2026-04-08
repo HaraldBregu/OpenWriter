@@ -7,8 +7,8 @@ import type { ContentGeneratorOptions } from './input-extension';
 import { ContentGeneratorContent } from './ContentGeneratorContent';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
-import { DEFAULT_WRITING_MODEL_ID } from '../../../../../../shared/types';
-import { IMAGE_MODELS, WRITING_MODELS } from '../../../../../../shared/models';
+import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -37,8 +37,8 @@ export function ContentGeneratorNodeView({
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(IMAGE_MODELS[0]);
-	const [selectedWritingModel, setSelectedWritingModel] = useState<ModelInfo>(
-		() => WRITING_MODELS.find((m) => m.modelId === DEFAULT_WRITING_MODEL_ID) ?? WRITING_MODELS[0]
+	const [selectedTextModel, setSelectedTextModel] = useState<ModelInfo>(
+		() => TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0]
 	);
 
 	const handlePromptChange = useCallback(
@@ -157,7 +157,7 @@ export function ContentGeneratorNodeView({
 				stripHtml(rawAfter),
 				from,
 				trimmedPrompt,
-				selectedWritingModel
+				selectedTextModel
 			);
 		}
 	}, [
@@ -169,7 +169,7 @@ export function ContentGeneratorNodeView({
 		extension.options,
 		updateAttributes,
 		selectedImageModel,
-		selectedWritingModel,
+		selectedTextModel,
 	]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
@@ -278,14 +278,14 @@ export function ContentGeneratorNodeView({
 					loading={loading}
 					enable={enable}
 					selectedImageModel={selectedImageModel}
-					selectedWritingModel={selectedWritingModel}
+					selectedTextModel={selectedTextModel}
 					textareaRef={textareaRef}
 					fileInputRef={fileInputRef}
 					submitRef={submitRef}
 					onPromptChange={handlePromptChange}
 					onAgentChange={handleAgentChange}
 					onImageModelChange={setSelectedImageModel}
-					onWritingModelChange={setSelectedWritingModel}
+					onTextModelChange={setSelectedTextModel}
 					onRemoveFile={removeFile}
 					onFileInputChange={handleFileInputChange}
 					onOpenFilePicker={handleOpenFilePicker}
