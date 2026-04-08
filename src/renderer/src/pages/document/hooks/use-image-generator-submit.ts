@@ -10,6 +10,8 @@ interface SavedImage {
 interface ImageGeneratorSubmitParams {
 	readonly prompt: string;
 	readonly files: File[];
+	readonly modelId?: string;
+	readonly provider?: string;
 }
 
 interface UseImageGeneratorSubmitReturn {
