@@ -225,17 +225,6 @@ export interface WorkspaceApi {
 	/** Update the project description. */
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 	// -------------------------------------------------------------------------
-	// Agent configs
-	// -------------------------------------------------------------------------
-	/** Get agent provider/model configurations from the workspace file. */
-	getAgentConfigs: () => Promise<Record<string, AgentProviderConfig>>;
-	/** Set provider and model for a specific agent. */
-	setAgentConfig: (agentId: string, provider: string, model: string) => Promise<void>;
-	/** Listen for agent config changes broadcast from the main process. */
-	onAgentConfigChanged: (
-		callback: (event: { agentId: string; provider: string; model: string }) => void
-	) => () => void;
-	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
 	/** Get the combined config for a document (metadata + model overrides). */
