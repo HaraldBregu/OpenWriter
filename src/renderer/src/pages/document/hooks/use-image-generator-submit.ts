@@ -1,25 +1,19 @@
 import { useCallback, useRef, useState } from 'react';
 import { v7 as uuidv7 } from 'uuid';
 import { initTaskMetadata } from '../../../services/task-event-bus';
-import { buildTaskPrompt } from '../shared';
-import type { ModelInfo } from '../../../../../shared/types';
 
 interface SavedImage {
 	readonly fileName: string;
 	readonly filePath: string;
 }
 
-interface ImageTaskSubmitParams {
-	readonly before: string;
-	readonly after: string;
-	readonly cursorPos: number;
-	readonly input: string;
+interface ImageGeneratorSubmitParams {
+	readonly prompt: string;
 	readonly files: File[];
-	readonly model: ModelInfo;
 }
 
-interface UseImageTaskSubmitReturn {
-	readonly submit: (params: ImageTaskSubmitParams) => Promise<string | null>;
+interface UseImageGeneratorSubmitReturn {
+	readonly submit: (params: ImageGeneratorSubmitParams) => Promise<string | null>;
 	readonly sessionId: string | null;
 }
 
@@ -54,12 +48,14 @@ async function saveReferenceImages(documentId: string, files: File[]): Promise<S
 	return saved;
 }
 
-export function useImageTaskSubmit(documentId: string | undefined): UseImageTaskSubmitReturn {
+export function useImageGeneratorSubmit(
+	documentId: string | undefined
+): UseImageGeneratorSubmitReturn {
 	const [sessionId, setSessionId] = useState<string | null>(null);
 	const sessionIdRef = useRef<string | null>(null);
 
 	const submit = useCallback(
-		async (params: ImageTaskSubmitParams): Promise<string | null> => {
+		async (params: ImageGeneratorSubmitParams): Promise<string | null> => {
 			if (!documentId) return null;
 
 			const savedReferenceImages =
@@ -72,11 +68,7 @@ export function useImageTaskSubmit(documentId: string | undefined): UseImageTask
 							.join('\n')}`
 					: '';
 
-			const prompt = buildTaskPrompt(
-				params.before,
-				params.after,
-				`${params.input}${referenceNote}`
-			);
+			const prompt = referenceNote ? `${params.prompt}${referenceNote}` : params.prompt;
 
 			const resolvedSessionId = sessionIdRef.current ?? uuidv7();
 			if (!sessionIdRef.current) {
@@ -93,12 +85,7 @@ export function useImageTaskSubmit(documentId: string | undefined): UseImageTask
 				agentId: 'image' as const,
 				documentId,
 				chatId: resolvedSessionId,
-				before: params.before,
-				after: params.after,
-				cursorPos: params.cursorPos,
 				referenceImages: savedReferenceImages,
-				modelId: params.model.modelId,
-				modelProvider: params.model.provider,
 			};
 
 			const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);

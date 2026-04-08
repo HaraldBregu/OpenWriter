@@ -47,6 +47,22 @@ export function ContentGeneratorNodeView({
 			TEXT_MODELS[0]
 	);
 
+	const handleImageModelChange = useCallback(
+		(model: ModelInfo) => {
+			setSelectedImageModel(model);
+			options.onImageModelChange?.(model);
+		},
+		[options]
+	);
+
+	const handleTextModelChange = useCallback(
+		(model: ModelInfo) => {
+			setSelectedTextModel(model);
+			options.onTextModelChange?.(model);
+		},
+		[options]
+	);
+
 	const handlePromptChange = useCallback(
 		(value: string) => {
 			setPrompt(value);
