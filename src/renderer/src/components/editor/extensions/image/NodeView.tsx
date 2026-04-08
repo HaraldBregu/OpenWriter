@@ -183,7 +183,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 					role="img"
 					aria-label={alt ?? t('imageNode.imageLabel')}
 				>
-					<figure className="relative inline-block max-w-full rounded-md">
+					<figure className="relative inline-block max-w-full rounded-[1.55rem]">
 						{/* Floating toolbar overlay */}
 						<AppTooltipProvider delayDuration={300}>
 							<div

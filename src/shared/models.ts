@@ -946,7 +946,6 @@ export const MODEL_CATALOGUE: readonly ModelDescriptor[] = [
 		category: 'chat',
 		capabilities: REASONING,
 	},
-
 ];
 
 // ---------------------------------------------------------------------------
