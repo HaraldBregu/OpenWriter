@@ -25,6 +25,13 @@ import { MIN_CROP_SIZE } from '../shared';
 import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { AppTextarea } from '@/components/app/AppTextarea';
+import {
+	AppDropdownMenu,
+	AppDropdownMenuTrigger,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+} from '@/components/app/AppDropdownMenu';
+import { IMAGE_MODELS } from '@shared/models';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
