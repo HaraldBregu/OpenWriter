@@ -14,10 +14,10 @@ import { ASSISTANT_AGENT_OPTIONS, type AssistantAgentId } from '../agents';
 function getAgentIcon(agentId: AssistantAgentId): React.JSX.Element {
 	switch (agentId) {
 		case 'image':
-			return <ImageIcon className="h-3.5 w-3.5" />;
+			return <ImageIcon className="h-4 w-4" />;
 		case 'writer':
 		default:
-			return <PenLine className="h-3.5 w-3.5" />;
+			return <PenLine className="h-4 w-4" />;
 	}
 }
 
