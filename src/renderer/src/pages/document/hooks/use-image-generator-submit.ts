@@ -82,12 +82,18 @@ export function useImageGeneratorSubmit(
 				return null;
 			}
 
-			const taskInput = { prompt };
+			const taskInput = {
+				prompt,
+				modelId: params.modelId,
+				providerId: params.provider,
+			};
 			const metadata = {
 				agentId: 'image' as const,
 				documentId,
 				chatId: resolvedSessionId,
 				referenceImages: savedReferenceImages,
+				modelId: params.modelId,
+				modelProvider: params.provider,
 			};
 
 			const ipcResult = await window.task.submit('agent-image-generator', taskInput, metadata);
