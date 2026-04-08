@@ -3,7 +3,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
-import type { ContentGeneratorOptions } from './input-extension';
+import type { ContentGeneratorOptions, ContentGeneratorStorage } from './input-extension';
 import { ContentGeneratorContent } from './ContentGeneratorContent';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
