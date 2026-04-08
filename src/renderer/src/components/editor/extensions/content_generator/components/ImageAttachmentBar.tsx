@@ -150,15 +150,15 @@ export function ImageAttachmentBar({
 									<ImagePlus className="h-4 w-4" />
 								</div>
 								<div className="space-y-0.5">
-									<p className="text-xs font-semibold text-foreground">
+									<span className="text-xs font-semibold text-foreground">
 										{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
-									</p>
-									<p className="text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
+									</span>
+									<span className="text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
 										{t(
 											'assistantNode.dropImagesDescription',
 											'Optional references for style or mood.'
 										)}
-									</p>
+									</span>
 								</div>
 							</div>
 						</div>
