@@ -20,7 +20,7 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
 
 	return (
-		<div className="flex min-h-[3.1rem] items-center justify-between gap-3 px-4 py-2.5">
+		<div className="flex min-h-[3.1rem] items-center justify-between gap-3 px-4 py-4">
 			<div className="flex min-w-0 items-center gap-2.5">
 				<div
 					className={cn(
@@ -33,7 +33,9 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 					{isImage ? <ImageIcon className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
 				</div>
 				<div className="flex min-w-0 flex-col gap-1">
-					<span className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</span>
+					<span className="truncate text-sm font-semibold leading-none text-foreground">
+						{modeLabel}
+					</span>
 					<span className="truncate text-[11px] font-medium leading-none text-muted-foreground dark:text-muted-foreground/95">
 						{modeDescription}
 					</span>
