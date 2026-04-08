@@ -57,13 +57,18 @@ export function PromptFooter({
 				<div className="flex min-w-0 flex-1 flex-col gap-2">
 					<div className="flex flex-wrap items-center gap-2">
 						<AgentDropdown agentId={agentId} disabled={loading} onAgentChange={onAgentChange} />
-						<AppDropdownMenu>
+						<AppDropdownMenu modal={false}>
 							<AppDropdownMenuTrigger asChild>
 								<AppButton
+									type="button"
 									variant="ghost"
 									size="sm"
 									disabled={loading}
 									className="h-9 max-w-full gap-2 rounded-full border border-border/75 bg-background/78 px-3 text-left shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]"
+									onMouseDown={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
 								>
 									<span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:text-muted-foreground/95">
 										{t('assistantNode.model', 'Model')}
