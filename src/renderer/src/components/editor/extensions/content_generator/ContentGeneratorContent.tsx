@@ -103,7 +103,7 @@ export function ContentGeneratorContent({
 					isImage
 						? t(
 								'assistantNode.imagePlaceholder',
-								'Describe the image you want to create. You can also drop reference images here.'
+								'Describe the scene, style, colors, or mood you want to create. Reference images are optional.'
 							)
 						: t(
 								'assistantNode.placeholder',

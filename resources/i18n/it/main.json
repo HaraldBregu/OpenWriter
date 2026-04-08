@@ -821,6 +821,23 @@
 		"search": "Cerca",
 		"rag": "RAG"
 	},
+	"assistantNode": {
+		"referenceImages": "Immagini di riferimento",
+		"imageCount": "{{count}} pronte",
+		"referenceImagesHelp": "Aggiungi altri riferimenti o trascina altre immagini nel composer per rifinire il risultato.",
+		"referenceImagesEmpty": "Le immagini di riferimento aiutano a guidare inquadratura, palette, illuminazione e atmosfera generale.",
+		"addImage": "Aggiungi immagine",
+		"removeImage": "Rimuovi immagine",
+		"browseReferenceImages": "Sfoglia immagini di riferimento",
+		"dropImagesTitle": "Trascina immagini o sfoglia",
+		"dropImagesDescription": "Le immagini di riferimento aiutano il modello a seguire inquadratura, colori, illuminazione e atmosfera, lasciando il controllo al prompt.",
+		"referenceHintComposition": "Composizione",
+		"referenceHintPalette": "Palette",
+		"referenceHintLighting": "Luce",
+		"referenceHintMood": "Atmosfera",
+		"supportedFormats": "Supporta PNG, JPG, WEBP, GIF, SVG e AVIF",
+		"imagePlaceholder": "Descrivi la scena, lo stile, i colori o l'atmosfera che vuoi creare. Le immagini di riferimento sono facoltative."
+	},
 	"imageNode": {
 		"notFound": "Immagine non trovata",
 		"delete": "Elimina immagine",
