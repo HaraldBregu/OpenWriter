@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils';
 import type { AssistantOptions } from './input-extension';
 import { AssistantContent } from './AssistantContent';
 import type { AssistantAgentId } from './agents';
+import type { ModelInfo } from '../../../../../../shared/types';
+import { IMAGE_MODELS } from '../../../../../../shared/models';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
