@@ -552,14 +552,15 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
  */
 export function useAppState(): AppState {
 	const { theme } = useTheme();
+	const { appTheme } = useAppThemeContext();
 	const { language } = useLanguageContext();
 	const { user } = useUser();
 	const { uiPreferences } = useUIPreferencesContext();
 	const { modals } = useModalContext();
 	const { isOnline, lastSyncedAt } = useNetworkContext();
 	return useMemo(
-		() => ({ theme, language, user, uiPreferences, modals, isOnline, lastSyncedAt }),
-		[theme, language, user, uiPreferences, modals, isOnline, lastSyncedAt]
+		() => ({ theme, appTheme, language, user, uiPreferences, modals, isOnline, lastSyncedAt }),
+		[theme, appTheme, language, user, uiPreferences, modals, isOnline, lastSyncedAt]
 	);
 }
 
