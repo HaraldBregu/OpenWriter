@@ -45,9 +45,9 @@ export function AgentDropdown({
 			<AppDropdownMenuTrigger asChild>
 				<AppButton
 					variant="ghost"
-					size="sm"
+					size="icon"
 					className={cn(
-						'h-7 gap-1.5 rounded-full border border-border/75 bg-background/72 px-2.5 text-xs font-medium text-muted-foreground',
+						'h-7 w-7 rounded-full border border-border/75 bg-background/72 text-muted-foreground',
 						'shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)]',
 						'hover:border-foreground/15 hover:bg-background hover:text-foreground',
 						'dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.04)_inset,0_6px_16px_hsl(var(--background)/0.3)] dark:hover:border-white/16 dark:hover:bg-white/[0.06]'
@@ -55,9 +55,7 @@ export function AgentDropdown({
 					disabled={disabled}
 					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
 				>
-					<span className="text-muted-foreground">{getAgentIcon(current.value)}</span>
-					<span>{currentLabel}</span>
-					<ChevronDown className="h-3 w-3" />
+					{getAgentIcon(current.value)}
 				</AppButton>
 			</AppDropdownMenuTrigger>
 			<AppDropdownMenuContent

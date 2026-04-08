@@ -40,11 +40,7 @@ export function PromptFooter({
 	return (
 		<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
 			<div className="flex min-w-0 items-center gap-2">
-				<AgentDropdown
-					agentId={agentId}
-					disabled={false}
-					onAgentChange={onAgentChange}
-				/>
+				<AgentDropdown agentId={agentId} disabled={false} onAgentChange={onAgentChange} />
 				{agentId === 'image' && (
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
