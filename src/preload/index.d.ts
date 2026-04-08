@@ -227,6 +227,10 @@ export interface WorkspaceApi {
 	getAgentConfigs: () => Promise<Record<string, AgentProviderConfig>>;
 	/** Set provider and model for a specific agent. */
 	setAgentConfig: (agentId: string, provider: string, model: string) => Promise<void>;
+	/** Listen for agent config changes broadcast from the main process. */
+	onAgentConfigChanged: (
+		callback: (event: { agentId: string; provider: string; model: string }) => void
+	) => () => void;
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
