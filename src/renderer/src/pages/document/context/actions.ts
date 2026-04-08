@@ -12,6 +12,7 @@ export type DocumentAction =
 	| { type: 'METADATA_UPDATED'; metadata: OutputFileMetadata | null }
 	| { type: 'IMAGES_UPDATED'; images: DocumentImageInfo[] }
 	| { type: 'EDITOR_SELECTION_CHANGED'; selection: DocumentSelection | null }
+	| { type: 'MODEL_CONFIG_CHANGED'; textModelName: string | null; imageModelName: string | null }
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }
