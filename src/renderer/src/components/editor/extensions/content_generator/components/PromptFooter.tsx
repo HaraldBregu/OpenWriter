@@ -70,9 +70,6 @@ export function PromptFooter({
 										e.stopPropagation();
 									}}
 								>
-									<span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-background/82 text-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04]">
-										<ChevronDown className="h-4 w-4" />
-									</span>
 									<span className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
 										<span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:text-muted-foreground/95">
 											{t('assistantNode.model', 'Model')}
@@ -80,9 +77,6 @@ export function PromptFooter({
 										<span className="truncate text-sm font-semibold text-foreground">
 											{selectedModel.name}
 										</span>
-									</span>
-									<span className="hidden text-[11px] font-medium text-muted-foreground/90 md:block">
-										{selectedModel.provider}
 									</span>
 									<ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/80" />
 								</AppButton>
