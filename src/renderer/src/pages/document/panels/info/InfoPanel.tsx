@@ -249,7 +249,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 					)}
 
 					{documentId && (
-						<>
+						<div className="mt-4">
 							<input
 								ref={fileInputRef}
 								type="file"
