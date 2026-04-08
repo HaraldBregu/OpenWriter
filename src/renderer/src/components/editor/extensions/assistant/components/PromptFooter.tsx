@@ -42,7 +42,7 @@ export function PromptFooter({
 			<div className="flex min-w-0 items-center gap-2">
 				<AgentDropdown
 					agentId={agentId}
-					disabled={isSubmitDisabled && !loading}
+					disabled={false}
 					onAgentChange={onAgentChange}
 				/>
 				{agentId === 'image' && (
