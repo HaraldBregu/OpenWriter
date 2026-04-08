@@ -32,7 +32,7 @@ import {
 } from '@/components/app';
 import { ImagePreviewDialog } from '@/components/editor/extensions/image/components/ImagePreviewDialog';
 
-interface ResourcesPanelProps {
+interface InfoPanelProps {
 	readonly onOpenFolder: () => void;
 }
 
