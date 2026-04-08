@@ -1,11 +1,11 @@
-import type { RefObject } from 'react';
+import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
 
 interface EditorAreaProps {
 	readonly loaded: boolean;
 	readonly disabled: boolean;
-	readonly editorRef: RefObject<TextEditorElement>;
+	readonly editorRef: RefObject<TextEditorElement | null>;
 	readonly content: string;
 	readonly externalValueVersion: number;
 	readonly documentId: string | undefined;
