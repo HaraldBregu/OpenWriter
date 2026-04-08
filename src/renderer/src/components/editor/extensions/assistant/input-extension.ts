@@ -112,6 +112,9 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 
 				return ed.commands.insertAssistant();
 			},
+			'Mod-/': ({ editor: ed }) => {
+				return ed.commands.insertAssistant();
+			},
 		};
 	},
 
