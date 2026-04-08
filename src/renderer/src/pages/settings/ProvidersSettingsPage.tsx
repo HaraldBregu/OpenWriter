@@ -107,7 +107,10 @@ const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
 							key={provider}
 							className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
 						>
-							<div className="mb-3">
+							<div className="mb-3 flex items-center gap-2">
+								<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
+									{PROVIDER_LABELS[provider].charAt(0)}
+								</div>
 								<h2 className="text-sm font-medium text-foreground">{PROVIDER_LABELS[provider]}</h2>
 							</div>
 
