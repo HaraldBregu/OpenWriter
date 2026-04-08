@@ -181,7 +181,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 		<>
 			<div className="flex w-full flex-col overflow-y-auto overflow-x-hidden border-l border-border/70 bg-card/55 dark:bg-background">
 				<AppCard className="w-full flex flex-col flex-1 min-h-0 rounded-none border-none bg-transparent shadow-none">
-					{metadata && (
+					{documentConfig && (
 						<AppCardHeader className="p-4 pb-0">
 							<AppCardTitle className="flex items-center justify-between text-xs font-medium text-muted-foreground/70">
 								{t('configSidebar.documentInfo')}
