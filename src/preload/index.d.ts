@@ -53,7 +53,7 @@ import type {
 	AppStartupInfo,
 } from '../shared/types';
 import type { IpcResult } from '../shared/types';
-import type { ServiceProvider } from '../shared/provider-constants';
+import type { ServiceProvider } from '../shared/providers';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
