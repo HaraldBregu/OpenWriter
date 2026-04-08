@@ -69,21 +69,8 @@ export interface TextEditorProps {
 		cursorPos: number,
 		closeMenu: () => void
 	) => void;
-	onGenerateTextSubmit?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		prompt: string,
-		model: ModelInfo
-	) => void;
-	onGenerateImageSubmit?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		prompt: string,
-		files: File[],
-		model: ModelInfo
-	) => void;
+	onGenerateTextSubmit?: (prompt: string) => void;
+	onGenerateImageSubmit?: (prompt: string, files: File[]) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Default text model loaded from document config. */
@@ -153,6 +140,18 @@ const TextEditor = React.memo(
 
 			const onEditorReadyRef = useRef(onEditorReady);
 			onEditorReadyRef.current = onEditorReady;
+
+			const defaultTextModelRef = useRef(defaultTextModel);
+			defaultTextModelRef.current = defaultTextModel;
+
+			const defaultImageModelRef = useRef(defaultImageModel);
+			defaultImageModelRef.current = defaultImageModel;
+
+			const onTextModelChangeRef = useRef(onTextModelChange);
+			onTextModelChangeRef.current = onTextModelChange;
+
+			const onImageModelChangeRef = useRef(onImageModelChange);
+			onImageModelChangeRef.current = onImageModelChange;
 
 			const onUndoRef = useRef(onUndo);
 			onUndoRef.current = onUndo;
