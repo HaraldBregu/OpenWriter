@@ -67,7 +67,8 @@ function toLocalResourceUrl(filePath: string): string {
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
-	const { documentId, metadata, images } = useDocumentState();
+	const { documentId, metadata, images, defaultTextModelName, defaultImageModelName } =
+		useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
@@ -76,39 +77,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const fallbackTextModelName = findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
 	const fallbackImageModelName =
 		findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
-	const [defaultTextModelName, setDefaultTextModelName] = useState(fallbackTextModelName);
-	const [defaultImageModelName, setDefaultImageModelName] = useState(fallbackImageModelName);
-
-	useEffect(() => {
-		if (!documentId) return;
-		let cancelled = false;
-
-		(async () => {
-			try {
-				const docPath = await window.workspace.getDocumentPath(documentId);
-				const raw = await window.workspace.readFile({ filePath: `${docPath}/config.json` });
-				if (cancelled) return;
-				const config = JSON.parse(raw) as {
-					defaultTextModelId?: string;
-					defaultImageModelId?: string;
-				};
-				if (config.defaultTextModelId) {
-					const model = findModelById(config.defaultTextModelId);
-					if (model) setDefaultTextModelName(model.name);
-				}
-				if (config.defaultImageModelId) {
-					const model = findModelById(config.defaultImageModelId);
-					if (model) setDefaultImageModelName(model.name);
-				}
-			} catch {
-				// config.json doesn't exist yet — defaults already set
-			}
-		})();
-
-		return () => {
-			cancelled = true;
-		};
-	}, [documentId]);
+	const textModelName = defaultTextModelName ?? fallbackTextModelName;
+	const imageModelName = defaultImageModelName ?? fallbackImageModelName;
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
