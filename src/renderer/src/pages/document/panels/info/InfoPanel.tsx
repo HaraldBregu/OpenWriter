@@ -87,14 +87,10 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 			try {
 				const config = await window.workspace.getDocumentConfig(documentId);
 				if (cancelled) return;
-				if (config.textModel) {
-					const model = findModelById(config.textModel);
-					if (model) setTextModelName(model.name);
-				}
-				if (config.imageModel) {
-					const model = findModelById(config.imageModel);
-					if (model) setImageModelName(model.name);
-				}
+				const textModel = findModelById(config.textModel);
+				if (textModel) setTextModelName(textModel.name);
+				const imageModel = findModelById(config.imageModel);
+				if (imageModel) setImageModelName(imageModel.name);
 			} catch {
 				// workspace not ready yet
 			}
