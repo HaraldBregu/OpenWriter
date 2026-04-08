@@ -27,7 +27,6 @@ export const PROVIDER_IDS = [
 	'perplexity',
 	'ai21-labs',
 ] as const;
-export type ProviderId = (typeof PROVIDER_IDS)[number];
 
 // ---------------------------------------------------------------------------
 // Provider catalogue
