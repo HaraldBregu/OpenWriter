@@ -16,13 +16,13 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 		? t('assistantAgent.image', 'Image')
 		: t('assistantAgent.writer', 'Text');
 	const modeDescription = isImage
-		? t('assistantNode.imageHeaderSubtitle', 'Create from prompt or references')
-		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, or continue');
+		? t('assistantNode.imageHeaderSubtitle', 'Prompt or references')
+		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
 	const modelLabel = t('assistantNode.selectedModel', 'Selected model');
 
 	return (
 		<div className="flex min-h-[3.25rem] items-center justify-between gap-3 px-4 pt-3 pb-1.5">
-			<div className="flex min-w-0 items-center gap-2.5">
+			<div className="flex min-w-0 items-center gap-2">
 				<div
 					className={cn(
 						'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)]',
@@ -33,11 +33,11 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 				>
 					{isImage ? <ImageIcon className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
 				</div>
-				<div className="min-w-0">
+				<div className="flex min-w-0 items-center gap-2">
 					<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
-					<p className="mt-1 truncate text-[11px] leading-none text-muted-foreground dark:text-muted-foreground/95">
+					<span className="max-w-[10rem] truncate rounded-full bg-muted/70 px-2 py-0.5 text-[10px] font-medium leading-none text-muted-foreground dark:bg-white/[0.05] dark:text-muted-foreground/95">
 						{modeDescription}
-					</p>
+					</span>
 				</div>
 			</div>
 			<div
