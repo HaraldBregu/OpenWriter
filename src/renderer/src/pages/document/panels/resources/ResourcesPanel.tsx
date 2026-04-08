@@ -225,6 +225,44 @@ const ResourcesPanel: React.FC<ResourcesPanelProps> = ({ onOpenFolder }) => {
 					)}
 
 					<AppCardContent className="flex-1 space-y-4 p-4">
+						{documentId && (defaultTextModelName || defaultImageModelName) && (
+							<div className={sectionClassName}>
+								<div className="mb-2">
+									<span className="text-xs font-medium text-muted-foreground/70">
+										{t('configSidebar.defaultModels', 'Default Models')}
+									</span>
+								</div>
+								<div className="space-y-2.5">
+									{defaultTextModelName && (
+										<div className="flex items-center gap-2">
+											<PenLine className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+											<div className="min-w-0">
+												<p className="text-[11px] text-muted-foreground">
+													{t('configSidebar.textModel', 'Text')}
+												</p>
+												<p className="truncate text-sm font-medium text-foreground">
+													{defaultTextModelName}
+												</p>
+											</div>
+										</div>
+									)}
+									{defaultImageModelName && (
+										<div className="flex items-center gap-2">
+											<ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+											<div className="min-w-0">
+												<p className="text-[11px] text-muted-foreground">
+													{t('configSidebar.imageModel', 'Image')}
+												</p>
+												<p className="truncate text-sm font-medium text-foreground">
+													{defaultImageModelName}
+												</p>
+											</div>
+										</div>
+									)}
+								</div>
+							</div>
+						)}
+
 						{documentId && (
 							<>
 								<input
