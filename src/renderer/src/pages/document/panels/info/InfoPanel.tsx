@@ -339,25 +339,23 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 				{documentId && (
 					<>
 						<SectionHeader title={t('configSidebar.share')} />
-						<SettingRow label={t('configSidebar.shareLink')}>
+						<div className="space-y-1">
 							<button type="button" className={ACTION_BUTTON_CLASS}>
 								<Link className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 								{t('configSidebar.shareLink')}
 							</button>
-						</SettingRow>
+						</div>
 					</>
 				)}
 
 				{documentId && (
 					<>
 						<SectionHeader title={t('configSidebar.actions')} />
-						<SettingRow label={t('configSidebar.duplicate')}>
+						<div className="space-y-1">
 							<button type="button" className={ACTION_BUTTON_CLASS}>
 								<Copy className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 								{t('configSidebar.duplicate')}
 							</button>
-						</SettingRow>
-						<SettingRow label={t('configSidebar.deletePermanently')}>
 							<button
 								type="button"
 								onClick={() => setConfirmDeleteOpen(true)}
@@ -367,7 +365,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 								<Trash2 className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 								{t('configSidebar.deletePermanently')}
 							</button>
-						</SettingRow>
+						</div>
 					</>
 				)}
 			</div>
