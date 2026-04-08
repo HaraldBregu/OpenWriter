@@ -1,12 +1,8 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
-import type { ServiceProvider } from '../../../../shared/provider-constants';
-import {
-	PROVIDER_IDS,
-	type ProviderId,
-	PROVIDER_CATALOGUE,
-} from '../../../../shared/provider-constants';
+import type { ServiceProvider } from '../../../../shared/providers';
+import { PROVIDER_IDS, type ProviderId, PROVIDER_CATALOGUE } from '../../../../shared/providers';
 import { AppButton, AppInput, AppLabel } from '@/components/app';
 
 const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
