@@ -64,24 +64,10 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		}, [documentId]);
 
 		const saveDocumentConfig = useCallback(
-			async (update: Partial<DocumentConfig>) => {
+			async (update: { textModel?: string; imageModel?: string }) => {
 				if (!documentId) return;
 				try {
-					const docPath = await window.workspace.getDocumentPath(documentId);
-					const configPath = `${docPath}/config.json`;
-					let existing: DocumentConfig = {};
-					try {
-						const raw = await window.workspace.readFile({ filePath: configPath });
-						existing = JSON.parse(raw) as DocumentConfig;
-					} catch {
-						// file doesn't exist yet
-					}
-					const merged = { ...existing, ...update };
-					await window.workspace.writeFile({
-						filePath: configPath,
-						content: JSON.stringify(merged, null, 2),
-						createParents: true,
-					});
+					await window.workspace.updateConfig(documentId, update);
 				} catch {
 					// silently ignore write errors
 				}
