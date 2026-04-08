@@ -256,7 +256,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								onLoad={handleLoad}
 								onClick={handleImageClick}
 								draggable={false}
-								className="block max-w-full cursor-pointer rounded-md"
+								className="block max-w-full cursor-pointer rounded-[1.55rem]"
 							/>
 						)}
 					</figure>
