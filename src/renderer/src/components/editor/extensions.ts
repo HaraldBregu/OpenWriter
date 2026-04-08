@@ -72,6 +72,10 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		SearchExtension,
 		SelectionMarkerExtension,
 		ContentGeneratorExtension.configure({
+			defaultTextModel: handlers.defaultTextModel,
+			defaultImageModel: handlers.defaultImageModel,
+			onTextModelChange: handlers.onTextModelChange,
+			onImageModelChange: handlers.onImageModelChange,
 			onGenerateTextSubmit: handlers.onGenerateTextSubmit,
 			onGenerateImageSubmit: handlers.onGenerateImageSubmit,
 		}),
