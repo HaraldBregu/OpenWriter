@@ -584,6 +584,7 @@ export interface AppActionsContextValue {
  */
 export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
+	const { setAppTheme } = useAppThemeContext();
 	const { setLanguage } = useLanguageContext();
 	const { setUser } = useUser();
 	const { updateUIPreferences } = useUIPreferencesContext();
@@ -595,6 +596,7 @@ export function useAppActions(): AppActionsContextValue {
 	// stable setters with the default values.
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
+		setAppTheme(readPersistedAppTheme());
 		setLanguage(readPersistedLanguage());
 		setUser(null);
 		updateUIPreferences(defaultUIPreferences);
@@ -603,11 +605,20 @@ export function useAppActions(): AppActionsContextValue {
 		toggleModal('searchOpen', false);
 		toggleModal('shareDialogOpen', false);
 		setOnlineStatus(navigator.onLine);
-	}, [setTheme, setLanguage, setUser, updateUIPreferences, toggleModal, setOnlineStatus]);
+	}, [
+		setTheme,
+		setAppTheme,
+		setLanguage,
+		setUser,
+		updateUIPreferences,
+		toggleModal,
+		setOnlineStatus,
+	]);
 
 	return useMemo(
 		() => ({
 			setTheme,
+			setAppTheme,
 			setLanguage,
 			setUser,
 			updateUIPreferences,
@@ -618,6 +629,7 @@ export function useAppActions(): AppActionsContextValue {
 		}),
 		[
 			setTheme,
+			setAppTheme,
 			setLanguage,
 			setUser,
 			updateUIPreferences,
