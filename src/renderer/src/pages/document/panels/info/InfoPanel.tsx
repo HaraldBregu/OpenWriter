@@ -331,14 +331,11 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 					)}
 
 					{documentId && documentConfig && (
-						<>
-							<SectionHeader title={t('configSidebar.exportPdf')} />
-							<PdfExportSection
-								exportLabel={t('configSidebar.exportPdf')}
-								downloadLabel={t('common.download')}
-								previewLabel={t('common.preview')}
-							/>
-						</>
+						<PdfExportSection
+							exportLabel={t('configSidebar.exportPdf')}
+							downloadLabel={t('common.download')}
+							previewLabel={t('common.preview')}
+						/>
 					)}
 
 					{documentId && (
