@@ -39,8 +39,6 @@ describe('CustomIpc', () => {
 			getApiKey: jest.fn().mockReturnValue(null),
 			setApiKey: jest.fn(),
 			getAgentSettings: jest.fn().mockReturnValue({}),
-			getAgentConfig: jest.fn().mockReturnValue(null),
-			setAgentConfig: jest.fn(),
 		});
 		container.register('logger', {
 			info: jest.fn(),
