@@ -6,3 +6,5 @@ export { useDocumentPersistence } from './use-document-persistence';
 export { useDocumentHistory, type HistoryEntry } from './use-document-history';
 export { useImageTaskSubmit } from './use-image-task-submit';
 export { useWriterTaskSubmit } from './use-writer-task-submit';
+export { useAssistantTask } from './use-assistant-task';
+export type { AssistantTaskHandlers } from './use-assistant-task';
