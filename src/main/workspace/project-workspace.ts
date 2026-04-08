@@ -128,37 +128,7 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
-	/**
-	 * Return the agent configuration map from the workspace file.
-	 */
-	async getAgentConfigs(): Promise<Record<string, AgentProviderConfig>> {
-		const info = await this.getOrCreate();
-		return info.agentConfigs ?? {};
-	}
 
-	/**
-	 * Set the provider and model for a specific agent, persisting to the workspace file.
-	 */
-	async setAgentConfig(agentId: string, provider: string, model: string): Promise<void> {
-		const workspacePath = this.requireWorkspace();
-		const filePath = this.resolveFilePath(workspacePath);
-
-		const current = await this.getOrCreate();
-		const configs = current.agentConfigs ?? {};
-		configs[agentId] = { provider, model };
-
-		const updated: ProjectWorkspaceInfo = {
-			...current,
-			agentConfigs: configs,
-			updatedAt: new Date().toISOString(),
-		};
-
-		await this.atomicWrite(filePath, updated);
-		this.logger?.info(
-			'ProjectWorkspaceService',
-			`Updated agent config for "${agentId}": provider=${provider}, model=${model}`
-		);
-	}
 
 	// -------------------------------------------------------------------------
 	// Private helpers

@@ -483,6 +483,35 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 								<div className="my-2 h-px bg-border" />
 
+								<div className="flex items-center justify-between px-3 py-2">
+									<span className="text-sm">{t('settings.theme.title')}</span>
+									<div
+										role="group"
+										aria-label={t('settings.theme.title')}
+										className="inline-flex rounded-full border border-border bg-muted p-0.5"
+									>
+										{themeOptions.map(({ value, label, icon: Icon }) => (
+											<button
+												key={value}
+												type="button"
+												onClick={() => setTheme(value)}
+												className={cn(
+													'relative rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+													themeMode === value
+														? 'bg-background text-foreground shadow-sm'
+														: 'bg-transparent text-muted-foreground hover:text-foreground'
+												)}
+												aria-label={label}
+												aria-pressed={themeMode === value}
+											>
+												<Icon size={16} />
+											</button>
+										))}
+									</div>
+								</div>
+
+								<div className="my-2 h-px bg-border" />
+
 								<button
 									type="button"
 									className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
