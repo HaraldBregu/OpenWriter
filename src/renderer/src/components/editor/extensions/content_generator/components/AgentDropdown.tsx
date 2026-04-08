@@ -47,7 +47,6 @@ export function AgentDropdown({
 					className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent/80 hover:text-foreground"
 					title={t(current.labelKey, current.labelFallback)}
 					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
-					onMouseDown={(e) => e.preventDefault()}
 				>
 					{getAgentIcon(current.value)}
 				</AppButton>
