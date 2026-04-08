@@ -119,6 +119,7 @@ const Header: React.FC = () => {
 								type="button"
 								variant="ghost"
 								size="icon"
+								disabled={!hasHistory}
 								className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground"
 								aria-label={t('agenticPanel.openHistory', 'Open chat history')}
 							>
