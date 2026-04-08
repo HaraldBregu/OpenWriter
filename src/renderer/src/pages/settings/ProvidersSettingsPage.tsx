@@ -1,9 +1,10 @@
-import React, { useState, useCallback, useId, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
+import { Check, Loader2, Pencil, X } from 'lucide-react';
 import type { ProviderId, ServiceProvider } from '../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE } from '../../../../shared/providers';
-import { AppButton, AppInput, AppLabel } from '@/components/app';
+import { AppButton, AppInput } from '@/components/app';
+import { SettingRow } from './SettingsComponents';
 
 const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	(acc, providerId) => {
@@ -15,171 +16,106 @@ const PROVIDER_LABELS: Record<ProviderId, string> = PROVIDER_IDS.reduce(
 	{} as Record<ProviderId, string>
 );
 
-const MASKED_API_KEY = '********';
+const MASKED_API_KEY = '••••••••';
 
-interface DefaultProvidersSectionProps {
-	providers: Array<ServiceProvider & { id: string }>;
-	onSaveProviderApiKey: (provider: string, apiKey: string) => Promise<void>;
-	onDeleteProvider: (provider: string) => Promise<void>;
+interface ProviderRowProps {
+	readonly provider: ProviderId;
+	readonly existingKey: string;
+	readonly onSave: (provider: ProviderId, apiKey: string) => Promise<void>;
 }
 
-const DefaultProvidersSection: React.FC<DefaultProvidersSectionProps> = ({
-	providers,
-	onSaveProviderApiKey,
-	onDeleteProvider,
-}) => {
+const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey, onSave }) => {
 	const { t } = useTranslation();
-	const uid = useId();
-	const [apiKeys, setApiKeys] = useState<Record<ProviderId, string>>(
-		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, ''])) as Record<ProviderId, string>
-	);
-	const [visible, setVisible] = useState<Record<ProviderId, boolean>>(
-		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
-	);
-	const [saving, setSaving] = useState<Record<ProviderId, boolean>>(
-		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
-	);
-	const [deleting, setDeleting] = useState<Record<ProviderId, boolean>>(
-		() => Object.fromEntries(PROVIDER_IDS.map((id) => [id, false])) as Record<ProviderId, boolean>
-	);
+	const [editing, setEditing] = useState(false);
+	const [draft, setDraft] = useState('');
+	const [saving, setSaving] = useState(false);
 
-	const handleApiKeyChange = useCallback((provider: ProviderId, value: string) => {
-		setApiKeys((prev) => ({ ...prev, [provider]: value }));
+	const hasKey = existingKey.length > 0;
+
+	const handleEdit = useCallback(() => {
+		setDraft('');
+		setEditing(true);
 	}, []);
 
-	const handleToggleVisibility = useCallback((provider: ProviderId) => {
-		setVisible((prev) => ({ ...prev, [provider]: !prev[provider] }));
+	const handleCancel = useCallback(() => {
+		setDraft('');
+		setEditing(false);
 	}, []);
 
-	const handleSaveProvider = useCallback(
-		async (provider: ProviderId) => {
-			const apiKey = apiKeys[provider].trim();
-			if (apiKey.length === 0 || saving[provider]) return;
+	const handleConfirm = useCallback(async () => {
+		const trimmed = draft.trim();
+		if (trimmed.length === 0 || saving) return;
 
-			setSaving((prev) => ({ ...prev, [provider]: true }));
-			try {
-				await onSaveProviderApiKey(provider, apiKey);
-				setApiKeys((prev) => ({ ...prev, [provider]: '' }));
-			} catch {
-				// Save failed — keep current input so the user can retry
-			} finally {
-				setSaving((prev) => ({ ...prev, [provider]: false }));
-			}
-		},
-		[apiKeys, onSaveProviderApiKey, saving]
-	);
-
-	const handleDeleteProvider = useCallback(
-		async (provider: ProviderId) => {
-			if (deleting[provider]) return;
-			setDeleting((prev) => ({ ...prev, [provider]: true }));
-			try {
-				await onDeleteProvider(provider);
-				setApiKeys((prev) => ({ ...prev, [provider]: '' }));
-			} catch {
-				// Deletion failed — keep current state
-			} finally {
-				setDeleting((prev) => ({ ...prev, [provider]: false }));
-			}
-		},
-		[deleting, onDeleteProvider]
-	);
+		setSaving(true);
+		try {
+			await onSave(provider, trimmed);
+			setDraft('');
+			setEditing(false);
+		} catch {
+			// Save failed — keep input so user can retry
+		} finally {
+			setSaving(false);
+		}
+	}, [draft, onSave, provider, saving]);
 
 	return (
-		<section>
-			<div className="space-y-4">
-				{PROVIDER_IDS.map((provider) => {
-					const existing = providers.find((m) => m.name === provider)?.apikey ?? '';
-					const hasInputValue = apiKeys[provider].trim().length > 0;
-					const displayValue = hasInputValue
-						? apiKeys[provider]
-						: existing.length > 0
-							? MASKED_API_KEY
-							: '';
-					const isSaving = saving[provider];
-					const isDeleting = deleting[provider];
-					const visibilityLabel = visible[provider]
-						? t('models.hideApiKey', 'Hide API key')
-						: t('models.showApiKey', 'Show API key');
-
-					return (
-						<div
-							key={provider}
-							className="rounded-lg border border-border bg-card p-4 shadow-sm transition-colors"
-						>
-							<div className="mb-3 flex items-center gap-2">
-								<div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-muted-foreground">
-									{PROVIDER_LABELS[provider].charAt(0)}
-								</div>
-								<h2 className="text-sm font-medium text-foreground">{PROVIDER_LABELS[provider]}</h2>
-							</div>
-
-							<div>
-								<AppLabel
-									htmlFor={`${uid}-${provider}-apikey`}
-									className="text-xs font-medium text-muted-foreground"
-								>
-									{t('models.form.apiKey', 'API Key')}
-								</AppLabel>
-								<div className="mt-1 flex items-center gap-2">
-									<div className="relative flex flex-1 items-center">
-										<AppInput
-											id={`${uid}-${provider}-apikey`}
-											type={visible[provider] ? 'text' : 'password'}
-											value={displayValue}
-											onChange={(e) => handleApiKeyChange(provider, e.target.value)}
-											placeholder={
-												existing.length > 0
-													? t('models.defaultProviders.updatePlaceholder', 'Update API key…')
-													: t('models.form.apiKeyPlaceholder', 'Enter API key…')
-											}
-											autoComplete="off"
-											spellCheck={false}
-											className="h-9 text-sm font-mono pr-8"
-										/>
-										<AppButton
-											type="button"
-											variant="ghost"
-											size="icon-xs"
-											aria-label={visibilityLabel}
-											onClick={() => handleToggleVisibility(provider)}
-											className="absolute right-1.5 text-muted-foreground hover:text-foreground"
-										>
-											{visible[provider] ? <EyeOff /> : <Eye />}
-										</AppButton>
-									</div>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon-xs"
-										aria-label={t('models.form.save', 'Save')}
-										disabled={!hasInputValue || isSaving || isDeleting}
-										onClick={() => {
-											void handleSaveProvider(provider);
-										}}
-									>
-										{isSaving ? <Loader2 className="animate-spin" /> : <Check />}
-									</AppButton>
-									<AppButton
-										type="button"
-										variant="ghost"
-										size="icon-xs"
-										aria-label={t('models.deleteProvider', 'Delete')}
-										disabled={isDeleting || isSaving}
-										onClick={() => {
-											void handleDeleteProvider(provider);
-										}}
-										className="text-muted-foreground hover:text-destructive"
-									>
-										{isDeleting ? <Loader2 className="animate-spin" /> : <Trash2 />}
-									</AppButton>
-								</div>
-							</div>
-						</div>
-					);
-				})}
-			</div>
-		</section>
+		<SettingRow label={PROVIDER_LABELS[provider]}>
+			{editing ? (
+				<div className="flex items-center gap-1.5">
+					<AppInput
+						type="password"
+						value={draft}
+						onChange={(e) => setDraft(e.target.value)}
+						placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
+						autoComplete="off"
+						spellCheck={false}
+						autoFocus
+						className="h-7 w-48 text-xs font-mono"
+						onKeyDown={(e) => {
+							if (e.key === 'Enter') void handleConfirm();
+							if (e.key === 'Escape') handleCancel();
+						}}
+					/>
+					<AppButton
+						type="button"
+						variant="ghost"
+						size="icon-xs"
+						aria-label={t('models.form.save', 'Save')}
+						disabled={draft.trim().length === 0 || saving}
+						onClick={() => void handleConfirm()}
+					>
+						{saving ? <Loader2 className="animate-spin" /> : <Check />}
+					</AppButton>
+					<AppButton
+						type="button"
+						variant="ghost"
+						size="icon-xs"
+						aria-label={t('common.cancel', 'Cancel')}
+						disabled={saving}
+						onClick={handleCancel}
+						className="text-muted-foreground hover:text-destructive"
+					>
+						<X />
+					</AppButton>
+				</div>
+			) : (
+				<div className="flex items-center gap-1.5">
+					<span className="text-sm font-mono text-muted-foreground">
+						{hasKey ? MASKED_API_KEY : t('models.form.notSet', 'Not set')}
+					</span>
+					<AppButton
+						type="button"
+						variant="ghost"
+						size="icon-xs"
+						aria-label={t('common.edit', 'Edit')}
+						onClick={handleEdit}
+						className="text-muted-foreground hover:text-foreground"
+					>
+						<Pencil />
+					</AppButton>
+				</div>
+			)}
+		</SettingRow>
 	);
 };
 
@@ -199,8 +135,8 @@ const ProvidersSettingsPage: React.FC = () => {
 		});
 	}, [loadProviders]);
 
-	const handleSaveProviderApiKey = useCallback(
-		async (provider: string, apiKey: string) => {
+	const handleSave = useCallback(
+		async (provider: ProviderId, apiKey: string) => {
 			const added = await window.app.addProvider({
 				name: provider,
 				apikey: apiKey,
@@ -216,15 +152,6 @@ const ProvidersSettingsPage: React.FC = () => {
 		[loadProviders, providers]
 	);
 
-	const handleDeleteProvider = useCallback(
-		async (provider: string) => {
-			const entries = providers.filter((entry) => entry.name === provider);
-			await Promise.all(entries.map((entry) => window.app.deleteProvider(entry.id)));
-			await loadProviders();
-		},
-		[loadProviders, providers]
-	);
-
 	return (
 		<div className="w-full max-w-2xl p-4 sm:p-6">
 			<h1 className="text-lg font-normal mb-6">{t('settings.providers.title', 'Providers')}</h1>
@@ -235,11 +162,17 @@ const ProvidersSettingsPage: React.FC = () => {
 				)}
 			</p>
 
-			<DefaultProvidersSection
-				providers={providers}
-				onSaveProviderApiKey={handleSaveProviderApiKey}
-				onDeleteProvider={handleDeleteProvider}
-			/>
+			{PROVIDER_IDS.map((provider) => {
+				const existingKey = providers.find((m) => m.name === provider)?.apikey ?? '';
+				return (
+					<ProviderRow
+						key={provider}
+						provider={provider}
+						existingKey={existingKey}
+						onSave={handleSave}
+					/>
+				);
+			})}
 		</div>
 	);
 };
