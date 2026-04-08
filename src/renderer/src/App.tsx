@@ -64,7 +64,6 @@ const SearchPage = lazy(() => import('./pages/search/Page'));
 const GeneralSettingsPage = lazy(() => import('./pages/settings/GeneralSettingsPage'));
 const ProvidersSettingsPage = lazy(() => import('./pages/settings/ProvidersSettingsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
-const AgentsSettingsPage = lazy(() => import('./pages/settings/AgentsSettingsPage'));
 const SystemSettingsPage = lazy(() => import('./pages/settings/SystemSettingsPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
