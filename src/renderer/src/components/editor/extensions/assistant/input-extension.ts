@@ -48,7 +48,8 @@ export const AssistantExtension = Node.create<AssistantOptions>({
 				_after: string,
 				_cursorPos: number,
 				_prompt: string,
-				_files: File[]
+				_files: File[],
+				_model: ModelInfo
 			) => {},
 		};
 	},
