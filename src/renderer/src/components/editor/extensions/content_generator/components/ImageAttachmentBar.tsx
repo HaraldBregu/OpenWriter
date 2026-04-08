@@ -1,15 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ImagePlus, Sparkles, X } from 'lucide-react';
+import { ImagePlus, X } from 'lucide-react';
 import { AppButton } from '@components/app/AppButton';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
-const REFERENCE_HINTS = [
-	['assistantNode.referenceHintComposition', 'Composition'],
-	['assistantNode.referenceHintPalette', 'Palette'],
-	['assistantNode.referenceHintLighting', 'Lighting'],
-	['assistantNode.referenceHintMood', 'Mood'],
-] as const;
 
 interface ImageAttachmentBarProps {
 	files: File[];
@@ -53,9 +47,9 @@ export function ImageAttachmentBar({
 				tabIndex={-1}
 				multiple
 			/>
-			<div className="border-b border-border/65 bg-muted/[0.24] px-4 py-3.5 dark:border-white/10 dark:bg-white/[0.03]">
+			<div className="border-b border-border/65 bg-muted/[0.24] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
 				<div className="flex flex-wrap items-start justify-between gap-3">
-					<div className="min-w-0 max-w-[30rem]">
+					<div className="min-w-0 max-w-[24rem]">
 						<div className="flex flex-wrap items-center gap-2">
 							<span className="text-xs font-semibold text-foreground">
 								{t('assistantNode.referenceImages', 'Reference images')}
@@ -66,15 +60,15 @@ export function ImageAttachmentBar({
 								</span>
 							) : null}
 						</div>
-						<p className="mt-1 text-[11px] leading-5 text-muted-foreground dark:text-muted-foreground/95">
+						<p className="mt-1 text-[11px] leading-4.5 text-muted-foreground dark:text-muted-foreground/95">
 							{files.length > 0
 								? t(
 										'assistantNode.referenceImagesHelp',
-										'Add more references or drag more images into the composer to refine the result.'
+										'Add more references if needed.'
 									)
 								: t(
 										'assistantNode.referenceImagesEmpty',
-										'Reference images help guide framing, palette, lighting, and overall mood.'
+										'Optional references for style or mood.'
 									)}
 						</p>
 					</div>
@@ -95,17 +89,17 @@ export function ImageAttachmentBar({
 						{previewUrls.map((url, index) => (
 							<div
 								key={`${files[index]?.name ?? 'image'}-${index}`}
-								className="group/thumb relative w-[6.4rem] shrink-0"
+								className="group/thumb relative w-[5.5rem] shrink-0"
 							>
 								<div className="overflow-hidden rounded-[1.25rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
-									<div className="h-[5.25rem] w-full overflow-hidden bg-muted/30 dark:bg-white/[0.04]">
+									<div className="h-[4.5rem] w-full overflow-hidden bg-muted/30 dark:bg-white/[0.04]">
 										<img
 											src={url}
 											alt={files[index]?.name ?? ''}
 											className="h-full w-full object-cover"
 										/>
 									</div>
-									<div className="border-t border-border/60 bg-background/88 px-2.5 py-2 dark:border-white/10 dark:bg-white/[0.03]">
+									<div className="border-t border-border/60 bg-background/88 px-2 py-1.5 dark:border-white/10 dark:bg-white/[0.03]">
 										<p
 											className="truncate text-[10px] font-medium text-foreground/85 dark:text-foreground/88"
 											title={files[index]?.name ?? ''}
@@ -129,7 +123,7 @@ export function ImageAttachmentBar({
 						<AppButton
 							variant="ghost"
 							size="sm"
-							className="h-auto min-h-[7.65rem] min-w-[5.75rem] shrink-0 rounded-[1.25rem] border border-dashed border-border/80 bg-background/62 px-3 text-[11px] font-semibold text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
+							className="h-auto min-h-[6.5rem] min-w-[5rem] shrink-0 rounded-[1.25rem] border border-dashed border-border/80 bg-background/62 px-3 text-[11px] font-semibold text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
 							disabled={disabled}
 							onMouseDown={(e) => e.preventDefault()}
 							onClick={onOpenFilePicker}
@@ -155,43 +149,23 @@ export function ImageAttachmentBar({
 							onClick={disabled ? undefined : onOpenFilePicker}
 							onKeyDown={handlePlaceholderKeyDown}
 							aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
-							className="relative flex min-h-[9.4rem] items-center justify-center px-5 py-5 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
+							className="relative flex min-h-[7rem] items-center justify-center px-4 py-4 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
 						>
-							<div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-foreground/12 to-transparent dark:via-white/14" />
-							<div className="flex max-w-[28rem] flex-col items-center gap-3">
-								<div className="relative flex h-12 w-12 items-center justify-center rounded-[1.35rem] border border-border/70 bg-background/85 text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.95)_inset,0_8px_18px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.05] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_10px_20px_hsl(var(--background)/0.34)]">
-									<ImagePlus className="h-[18px] w-[18px]" />
-									<span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-primary shadow-sm dark:border-white/12 dark:bg-background">
-										<Sparkles className="h-3 w-3" />
-									</span>
+							<div className="flex max-w-[16rem] flex-col items-center gap-2">
+								<div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border/70 bg-background/85 text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.95)_inset,0_6px_14px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.05] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_16px_hsl(var(--background)/0.34)]">
+									<ImagePlus className="h-4 w-4" />
 								</div>
-								<div className="space-y-1">
-									<p className="text-sm font-semibold text-foreground">
+								<div className="space-y-0.5">
+									<p className="text-xs font-semibold text-foreground">
 										{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
 									</p>
-									<p className="text-[11px] leading-5 text-muted-foreground dark:text-muted-foreground/95">
+									<p className="text-[11px] leading-4.5 text-muted-foreground dark:text-muted-foreground/95">
 										{t(
 											'assistantNode.dropImagesDescription',
-											'Reference images help the model match framing, colors, lighting, and mood while your prompt stays in control.'
+											'Optional references for style or mood.'
 										)}
 									</p>
 								</div>
-								<div className="flex flex-wrap justify-center gap-1.5">
-									{REFERENCE_HINTS.map(([key, fallback]) => (
-										<span
-											key={key}
-											className="rounded-full border border-border/70 bg-background/82 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-muted-foreground dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95"
-										>
-											{t(key, fallback)}
-										</span>
-									))}
-								</div>
-								<p className="text-[10px] font-medium text-muted-foreground/88 dark:text-muted-foreground/88">
-									{t(
-										'assistantNode.supportedFormats',
-										'Supports PNG, JPG, WEBP, GIF, SVG, and AVIF'
-									)}
-								</p>
 							</div>
 						</div>
 					</div>

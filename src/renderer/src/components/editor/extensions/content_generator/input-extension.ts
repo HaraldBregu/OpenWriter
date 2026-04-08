@@ -47,6 +47,10 @@ export const ContentGeneratorExtension = Node.create<ContentGeneratorOptions>({
 
 	addOptions() {
 		return {
+			defaultTextModel: undefined,
+			defaultImageModel: undefined,
+			onTextModelChange: undefined,
+			onImageModelChange: undefined,
 			onGenerateTextSubmit: (
 				_before: string,
 				_after: string,
