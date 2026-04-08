@@ -54,6 +54,14 @@ export const AI_MODELS: readonly ModelInfo[] = [
 	// ========================== OpenAI ========================================
 	{
 		provider: 'OpenAI',
+		modelId: 'gpt-5.4',
+		name: 'GPT-5.4',
+		type: 'multimodal',
+		contextWindow: 1050000,
+		maxOutputTokens: 128000,
+	},
+	{
+		provider: 'OpenAI',
 		modelId: 'gpt-4.1',
 		name: 'GPT-4.1',
 		type: 'multimodal',
