@@ -12,11 +12,6 @@ export interface EditorContentElement {
 	clearSearch: () => void;
 }
 
-interface DocumentConfig {
-	defaultTextModelId?: string;
-	defaultImageModelId?: string;
-}
-
 interface EditorContentProps {
 	readonly documentId: string | undefined;
 	readonly loaded: boolean;
