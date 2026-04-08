@@ -185,11 +185,11 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 						<button
 							type="button"
 							onClick={onOpenFolder}
-							className={ICON_BUTTON_CLASS}
+							className="h-7 w-7 flex items-center justify-center rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 							aria-label={t('common.openFolder')}
 							title={t('common.openFolder')}
 						>
-							<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+							<FolderOpen className="h-4 w-4" aria-hidden="true" />
 						</button>
 					</div>
 				</div>
