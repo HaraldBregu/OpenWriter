@@ -195,17 +195,14 @@ export class Workspace implements Disposable {
 			// config.json doesn't exist yet
 		}
 
-		let textModel = stored.defaultTextModelId;
-		let imageModel = stored.defaultImageModelId;
-
 		return {
 			title: stored.title ?? '',
 			emoji: stored.emoji,
 			type: stored.type ?? '',
 			createdAt: stored.createdAt ?? '',
 			updatedAt: stored.updatedAt ?? '',
-			textModel,
-			imageModel,
+			textModel: stored.defaultTextModelId ?? DEFAULT_TEXT_MODEL_ID,
+			imageModel: stored.defaultImageModelId ?? DEFAULT_IMAGE_MODEL_ID,
 		};
 	}
 
