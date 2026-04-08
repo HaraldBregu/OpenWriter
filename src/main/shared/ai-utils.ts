@@ -7,7 +7,7 @@
  * Reasoning-model detection is delegated to the shared model constants module.
  */
 
-import { isReasoningModel as catalogueIsReasoningModel } from '../../shared/provider-constants';
+import { isReasoningModel as catalogueIsReasoningModel } from '../../shared/models';
 
 // ---------------------------------------------------------------------------
 // Re-export reasoning detection from the shared catalogue
