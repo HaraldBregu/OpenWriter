@@ -60,16 +60,10 @@ export function ImageAttachmentBar({
 								</span>
 							) : null}
 						</div>
-						<p className="mt-1 text-[11px] leading-4.5 text-muted-foreground dark:text-muted-foreground/95">
+						<p className="mt-1 text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
 							{files.length > 0
-								? t(
-										'assistantNode.referenceImagesHelp',
-										'Add more references if needed.'
-									)
-								: t(
-										'assistantNode.referenceImagesEmpty',
-										'Optional references for style or mood.'
-									)}
+								? t('assistantNode.referenceImagesHelp', 'Add more references if needed.')
+								: t('assistantNode.referenceImagesEmpty', 'Optional references for style or mood.')}
 						</p>
 					</div>
 					<AppButton
@@ -159,7 +153,7 @@ export function ImageAttachmentBar({
 									<p className="text-xs font-semibold text-foreground">
 										{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
 									</p>
-									<p className="text-[11px] leading-4.5 text-muted-foreground dark:text-muted-foreground/95">
+									<p className="text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
 										{t(
 											'assistantNode.dropImagesDescription',
 											'Optional references for style or mood.'
