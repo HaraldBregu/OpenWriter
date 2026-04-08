@@ -23,8 +23,8 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 		id: 'resources-documents',
 		title: 'Open Documents',
 		description: 'Browse imported documents and manage indexing.',
-		href: RESOURCE_SECTIONS.documents.route,
-		icon: RESOURCE_SECTIONS.documents.icon,
+		href: RESOURCE_SECTIONS.media.route,
+		icon: RESOURCE_SECTIONS.media.icon,
 		meta: 'Route',
 	},
 	{
