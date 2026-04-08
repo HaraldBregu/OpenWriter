@@ -30,7 +30,8 @@ interface EditorAreaProps {
 		after: string,
 		cursorPos: number,
 		input: string,
-		files: File[]
+		files: File[],
+		model: ModelInfo
 	) => Promise<void>;
 	readonly onUndo: () => void;
 	readonly onRedo: () => void;
