@@ -150,7 +150,7 @@ export function AssistantNodeView({
 		} else {
 			options.onGenerateTextSubmit(stripHtml(rawBefore), stripHtml(rawAfter), from, trimmedPrompt);
 		}
-	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes]);
+	}, [agentId, files, prompt, deleteNode, editor, extension.options, updateAttributes, selectedImageModel]);
 
 	const submitRef = useRef<(() => void) | null>(submit);
 	submitRef.current = submit;
