@@ -9,15 +9,10 @@ import type { ContentGeneratorAgentId } from '../agents';
 import type { ModelInfo } from '../../../../../../../shared/types';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../../shared/models';
 
-type PromptFooterHintTone = 'default' | 'loading' | 'disabled';
-
 interface PromptFooterProps {
 	agentId: ContentGeneratorAgentId;
 	selectedImageModel: ModelInfo;
 	selectedTextModel: ModelInfo;
-	hint: string | undefined;
-	hintId: string;
-	hintTone: PromptFooterHintTone;
 	loading: boolean;
 	isSubmitDisabled: boolean;
 	submitRef: React.RefObject<(() => void) | null>;
