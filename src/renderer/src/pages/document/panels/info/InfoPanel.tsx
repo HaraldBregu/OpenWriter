@@ -431,4 +431,4 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	);
 };
 
-export default ResourcesPanel;
+export default InfoPanel;
