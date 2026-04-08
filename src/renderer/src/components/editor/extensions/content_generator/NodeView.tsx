@@ -277,6 +277,7 @@ export function ContentGeneratorNodeView({
 					loading={loading}
 					enable={enable}
 					selectedImageModel={selectedImageModel}
+					selectedWritingModel={selectedWritingModel}
 					textareaRef={textareaRef}
 					fileInputRef={fileInputRef}
 					submitRef={submitRef}
