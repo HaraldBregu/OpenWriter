@@ -34,6 +34,13 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 		case 'EDITOR_SELECTION_CHANGED':
 			return { ...state, selection: action.selection };
 
+		case 'MODEL_CONFIG_CHANGED':
+			return {
+				...state,
+				defaultTextModelName: action.textModelName,
+				defaultImageModelName: action.imageModelName,
+			};
+
 		case 'TRASH_STARTED':
 			return { ...state, isTrashing: true };
 
