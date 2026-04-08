@@ -15,7 +15,8 @@ export interface AssistantTaskHandlers {
 		before: string,
 		after: string,
 		cursorPos: number,
-		input: string
+		input: string,
+		model: ModelInfo
 	) => Promise<void>;
 	handleGenerateImageSubmit: (
 		before: string,
