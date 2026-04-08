@@ -201,7 +201,7 @@
 			"language": "Lingua"
 		},
 		"theme": {
-			"title": "Tema",
+			"title": "Modalità Tema",
 			"description": "Scegli come viene determinato l'aspetto dell'applicazione.",
 			"light": "Chiaro",
 			"lightDescription": "Usa sempre la combinazione di colori chiara",
@@ -209,6 +209,18 @@
 			"darkDescription": "Usa sempre la combinazione di colori scura",
 			"system": "Sistema",
 			"systemDescription": "Segui la preferenza del sistema operativo"
+		},
+		"appTheme": {
+			"title": "Tema",
+			"description": "Seleziona un tema colore per l'applicazione.",
+			"default": "Predefinito",
+			"aurora": "Aurora",
+			"ember": "Brace",
+			"ocean": "Oceano",
+			"forest": "Foresta",
+			"lavender": "Lavanda",
+			"midnight": "Mezzanotte",
+			"sandstone": "Arenaria"
 		},
 		"language": {
 			"title": "Lingua",
