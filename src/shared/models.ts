@@ -980,256 +980,215 @@ export function getChatModelsForProvider(providerId: string): readonly ModelDesc
 	return MODEL_CATALOGUE.filter((m) => m.providerId === providerId && m.category === 'chat');
 }
 
-
 const newmodels = {
-	"models": [
+	models: [
 		{
-			"name": "GPT-5.4",
-			"model_id": "gpt-5.4",
-			"provider": "openai",
-			"type": "foundation",
-			"modalities": ["text", "image_input"],
-			"context_window": 1050000,
-			"max_output_tokens": 128000,
-			"knowledge_cutoff": "2025-08-31",
-			"input_price_per_1M_tokens": 2.5,
-			"cached_input_price_per_1M_tokens": 0.25,
-			"output_price_per_1M_tokens": 15.0,
-			"features": [
-				"reasoning_tokens",
-				"streaming",
-				"tool_calling",
-				"json_mode",
-				"structured_output",
-				"prompt_caching",
-				"agent_support",
-				"computer_use",
-				"vision"
+			name: 'GPT-5.4',
+			model_id: 'gpt-5.4',
+			provider: 'openai',
+			type: 'foundation',
+			modalities: ['text', 'image_input'],
+			context_window: 1050000,
+			max_output_tokens: 128000,
+			knowledge_cutoff: '2025-08-31',
+			input_price_per_1M_tokens: 2.5,
+			cached_input_price_per_1M_tokens: 0.25,
+			output_price_per_1M_tokens: 15.0,
+			features: [
+				'reasoning_tokens',
+				'streaming',
+				'tool_calling',
+				'json_mode',
+				'structured_output',
+				'prompt_caching',
+				'agent_support',
+				'computer_use',
+				'vision',
 			],
-			"reasoning_levels": ["none", "low", "medium", "high", "xhigh"],
-			"tools_supported": [
-				"function_calling",
-				"web_search",
-				"file_search",
-				"code_interpreter"
-			],
-			"endpoints": ["responses", "chat.completions"],
-			"snapshots": ["gpt-5.4", "gpt-5.4-latest"],
-			"rate_limits": "tier_based_dynamic",
-			"notes": "Flagship unified reasoning + coding + agent model"
+			reasoning_levels: ['none', 'low', 'medium', 'high', 'xhigh'],
+			tools_supported: ['function_calling', 'web_search', 'file_search', 'code_interpreter'],
+			endpoints: ['responses', 'chat.completions'],
+			snapshots: ['gpt-5.4', 'gpt-5.4-latest'],
+			rate_limits: 'tier_based_dynamic',
+			notes: 'Flagship unified reasoning + coding + agent model',
 		},
 		{
-			"name": "GPT-5.4 Mini",
-			"model_id": "gpt-5.4-mini",
-			"provider": "openai",
-			"type": "foundation",
-			"modalities": ["text", "image_input"],
-			"context_window": 400000,
-			"max_output_tokens": 128000,
-			"knowledge_cutoff": "2025-08",
-			"input_price_per_1M_tokens": 0.75,
-			"output_price_per_1M_tokens": 4.5,
-			"features": [
-				"streaming",
-				"tool_calling",
-				"reasoning_tokens",
-				"structured_output"
-			],
-			"reasoning_levels": ["none", "low", "medium", "high"],
-			"tools_supported": [
-				"function_calling",
-				"retrieval"
-			],
-			"endpoints": ["responses"],
-			"snapshots": ["gpt-5.4-mini"],
-			"rate_limits": "high_throughput",
-			"notes": "Balanced cost/performance model"
+			name: 'GPT-5.4 Mini',
+			model_id: 'gpt-5.4-mini',
+			provider: 'openai',
+			type: 'foundation',
+			modalities: ['text', 'image_input'],
+			context_window: 400000,
+			max_output_tokens: 128000,
+			knowledge_cutoff: '2025-08',
+			input_price_per_1M_tokens: 0.75,
+			output_price_per_1M_tokens: 4.5,
+			features: ['streaming', 'tool_calling', 'reasoning_tokens', 'structured_output'],
+			reasoning_levels: ['none', 'low', 'medium', 'high'],
+			tools_supported: ['function_calling', 'retrieval'],
+			endpoints: ['responses'],
+			snapshots: ['gpt-5.4-mini'],
+			rate_limits: 'high_throughput',
+			notes: 'Balanced cost/performance model',
 		},
 		{
-			"name": "GPT-5.4 Nano",
-			"model_id": "gpt-5.4-nano",
-			"provider": "openai",
-			"type": "foundation",
-			"modalities": ["text"],
-			"context_window": 400000,
-			"max_output_tokens": 128000,
-			"input_price_per_1M_tokens": 0.2,
-			"output_price_per_1M_tokens": 1.25,
-			"features": [
-				"fast_latency",
-				"low_cost",
-				"basic_reasoning"
-			],
-			"reasoning_levels": ["none", "low", "medium"],
-			"tools_supported": [
-				"basic_function_calling"
-			],
-			"endpoints": ["responses"],
-			"snapshots": ["gpt-5.4-nano"],
-			"rate_limits": "very_high_throughput",
-			"notes": "Ultra-cheap high-scale workloads"
+			name: 'GPT-5.4 Nano',
+			model_id: 'gpt-5.4-nano',
+			provider: 'openai',
+			type: 'foundation',
+			modalities: ['text'],
+			context_window: 400000,
+			max_output_tokens: 128000,
+			input_price_per_1M_tokens: 0.2,
+			output_price_per_1M_tokens: 1.25,
+			features: ['fast_latency', 'low_cost', 'basic_reasoning'],
+			reasoning_levels: ['none', 'low', 'medium'],
+			tools_supported: ['basic_function_calling'],
+			endpoints: ['responses'],
+			snapshots: ['gpt-5.4-nano'],
+			rate_limits: 'very_high_throughput',
+			notes: 'Ultra-cheap high-scale workloads',
 		},
 		{
-			"name": "GPT-5.4 Pro",
-			"model_id": "gpt-5.4-pro",
-			"provider": "openai",
-			"type": "foundation",
-			"modalities": ["text", "image_input"],
-			"context_window": 1050000,
-			"max_output_tokens": 128000,
-			"input_price_per_1M_tokens": 30.0,
-			"output_price_per_1M_tokens": 180.0,
-			"features": [
-				"max_reasoning",
-				"high_accuracy",
-				"long_context",
-				"agent_support",
-				"dedicated_compute"
+			name: 'GPT-5.4 Pro',
+			model_id: 'gpt-5.4-pro',
+			provider: 'openai',
+			type: 'foundation',
+			modalities: ['text', 'image_input'],
+			context_window: 1050000,
+			max_output_tokens: 128000,
+			input_price_per_1M_tokens: 30.0,
+			output_price_per_1M_tokens: 180.0,
+			features: [
+				'max_reasoning',
+				'high_accuracy',
+				'long_context',
+				'agent_support',
+				'dedicated_compute',
 			],
-			"reasoning_levels": ["medium", "high", "xhigh"],
-			"tools_supported": [
-				"full_tooling"
-			],
-			"endpoints": ["responses"],
-			"snapshots": ["gpt-5.4-pro"],
-			"rate_limits": "restricted_high_cost",
-			"notes": "Highest accuracy and reasoning depth"
+			reasoning_levels: ['medium', 'high', 'xhigh'],
+			tools_supported: ['full_tooling'],
+			endpoints: ['responses'],
+			snapshots: ['gpt-5.4-pro'],
+			rate_limits: 'restricted_high_cost',
+			notes: 'Highest accuracy and reasoning depth',
 		},
 		{
-			"name": "GPT Realtime 1.5",
-			"model_id": "gpt-realtime-1.5",
-			"provider": "openai",
-			"type": "realtime",
-			"modalities": ["text", "audio", "image"],
-			"context_window": "variable",
-			"input_price_per_1M_tokens": {
-				"text": 4.0,
-				"audio": 32.0
+			name: 'GPT Realtime 1.5',
+			model_id: 'gpt-realtime-1.5',
+			provider: 'openai',
+			type: 'realtime',
+			modalities: ['text', 'audio', 'image'],
+			context_window: 'variable',
+			input_price_per_1M_tokens: {
+				text: 4.0,
+				audio: 32.0,
 			},
-			"output_price_per_1M_tokens": {
-				"text": 16.0,
-				"audio": 64.0
+			output_price_per_1M_tokens: {
+				text: 16.0,
+				audio: 64.0,
 			},
-			"features": [
-				"real_time_streaming",
-				"low_latency",
-				"speech_to_speech"
-			],
-			"tools_supported": ["streaming_tools"],
-			"endpoints": ["realtime"],
-			"snapshots": ["gpt-realtime-1.5"],
-			"rate_limits": "latency_optimized",
-			"notes": "Live voice + multimodal apps"
+			features: ['real_time_streaming', 'low_latency', 'speech_to_speech'],
+			tools_supported: ['streaming_tools'],
+			endpoints: ['realtime'],
+			snapshots: ['gpt-realtime-1.5'],
+			rate_limits: 'latency_optimized',
+			notes: 'Live voice + multimodal apps',
 		},
 		{
-			"name": "GPT Realtime Mini",
-			"model_id": "gpt-realtime-mini",
-			"provider": "openai",
-			"type": "realtime",
-			"modalities": ["text", "audio"],
-			"context_window": "variable",
-			"input_price_per_1M_tokens": {
-				"text": 0.6,
-				"audio": 10.0
+			name: 'GPT Realtime Mini',
+			model_id: 'gpt-realtime-mini',
+			provider: 'openai',
+			type: 'realtime',
+			modalities: ['text', 'audio'],
+			context_window: 'variable',
+			input_price_per_1M_tokens: {
+				text: 0.6,
+				audio: 10.0,
 			},
-			"output_price_per_1M_tokens": {
-				"text": 2.4,
-				"audio": 20.0
+			output_price_per_1M_tokens: {
+				text: 2.4,
+				audio: 20.0,
 			},
-			"features": [
-				"cheap_realtime",
-				"fast_audio"
-			],
-			"tools_supported": ["basic_streaming"],
-			"endpoints": ["realtime"],
-			"snapshots": ["gpt-realtime-mini"],
-			"rate_limits": "very_high",
-			"notes": "Lightweight realtime apps"
+			features: ['cheap_realtime', 'fast_audio'],
+			tools_supported: ['basic_streaming'],
+			endpoints: ['realtime'],
+			snapshots: ['gpt-realtime-mini'],
+			rate_limits: 'very_high',
+			notes: 'Lightweight realtime apps',
 		},
 		{
-			"name": "GPT Image 1.5",
-			"model_id": "gpt-image-1.5",
-			"provider": "openai",
-			"type": "image_generation",
-			"modalities": ["image", "text"],
-			"input_price_per_1M_tokens": {
-				"image": 8.0,
-				"text": 5.0
+			name: 'GPT Image 1.5',
+			model_id: 'gpt-image-1.5',
+			provider: 'openai',
+			type: 'image_generation',
+			modalities: ['image', 'text'],
+			input_price_per_1M_tokens: {
+				image: 8.0,
+				text: 5.0,
 			},
-			"output_price_per_1M_tokens": {
-				"image": 32.0,
-				"text": 10.0
+			output_price_per_1M_tokens: {
+				image: 32.0,
+				text: 10.0,
 			},
-			"features": [
-				"image_generation",
-				"image_editing",
-				"multimodal_prompt"
-			],
-			"tools_supported": [],
-			"endpoints": ["images"],
-			"snapshots": ["gpt-image-1.5"],
-			"rate_limits": "standard",
-			"notes": "High quality image generation"
+			features: ['image_generation', 'image_editing', 'multimodal_prompt'],
+			tools_supported: [],
+			endpoints: ['images'],
+			snapshots: ['gpt-image-1.5'],
+			rate_limits: 'standard',
+			notes: 'High quality image generation',
 		},
 		{
-			"name": "GPT Image Mini",
-			"model_id": "gpt-image-1-mini",
-			"provider": "openai",
-			"type": "image_generation",
-			"modalities": ["image"],
-			"input_price_per_1M_tokens": {
-				"image": 2.5,
-				"text": 2.0
+			name: 'GPT Image Mini',
+			model_id: 'gpt-image-1-mini',
+			provider: 'openai',
+			type: 'image_generation',
+			modalities: ['image'],
+			input_price_per_1M_tokens: {
+				image: 2.5,
+				text: 2.0,
 			},
-			"output_price_per_1M_tokens": {
-				"image": 8.0
+			output_price_per_1M_tokens: {
+				image: 8.0,
 			},
-			"features": [
-				"low_cost_images"
-			],
-			"tools_supported": [],
-			"endpoints": ["images"],
-			"snapshots": ["gpt-image-1-mini"],
-			"rate_limits": "high",
-			"notes": "Cheap image generation"
+			features: ['low_cost_images'],
+			tools_supported: [],
+			endpoints: ['images'],
+			snapshots: ['gpt-image-1-mini'],
+			rate_limits: 'high',
+			notes: 'Cheap image generation',
 		},
 		{
-			"name": "Sora 2",
-			"model_id": "sora-2",
-			"provider": "openai",
-			"type": "video_generation",
-			"modalities": ["video"],
-			"pricing": {
-				"per_second": 0.10
+			name: 'Sora 2',
+			model_id: 'sora-2',
+			provider: 'openai',
+			type: 'video_generation',
+			modalities: ['video'],
+			pricing: {
+				per_second: 0.1,
 			},
-			"features": [
-				"video_generation",
-				"text_to_video"
-			],
-			"tools_supported": [],
-			"endpoints": ["videos"],
-			"snapshots": ["sora-2"],
-			"rate_limits": "compute_limited",
-			"notes": "Standard video generation"
+			features: ['video_generation', 'text_to_video'],
+			tools_supported: [],
+			endpoints: ['videos'],
+			snapshots: ['sora-2'],
+			rate_limits: 'compute_limited',
+			notes: 'Standard video generation',
 		},
 		{
-			"name": "Sora 2 Pro",
-			"model_id": "sora-2-pro",
-			"provider": "openai",
-			"type": "video_generation",
-			"modalities": ["video"],
-			"pricing": {
-				"per_second": "0.30-0.70"
+			name: 'Sora 2 Pro',
+			model_id: 'sora-2-pro',
+			provider: 'openai',
+			type: 'video_generation',
+			modalities: ['video'],
+			pricing: {
+				per_second: '0.30-0.70',
 			},
-			"features": [
-				"high_quality_video",
-				"cinematic_generation"
-			],
-			"tools_supported": [],
-			"endpoints": ["videos"],
-			"snapshots": ["sora-2-pro"],
-			"rate_limits": "restricted",
-			"notes": "Premium video generation"
-		}
-	]
-}
+			features: ['high_quality_video', 'cinematic_generation'],
+			tools_supported: [],
+			endpoints: ['videos'],
+			snapshots: ['sora-2-pro'],
+			rate_limits: 'restricted',
+			notes: 'Premium video generation',
+		},
+	],
+};
