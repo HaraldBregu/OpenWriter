@@ -7,7 +7,8 @@ import {
 	AppDropdownMenuItem,
 	AppDropdownMenuTrigger,
 } from '@components/app/AppDropdownMenu';
-import { Check, ImageIcon, PenLine } from 'lucide-react';
+import { Check, ChevronDown, ImageIcon, PenLine } from 'lucide-react';
+import { cn } from '@/lib/utils';
 import { CONTENT_GENERATOR_AGENT_OPTIONS, type ContentGeneratorAgentId } from '../agents';
 
 function getAgentIcon(agentId: ContentGeneratorAgentId): React.JSX.Element {
@@ -36,34 +37,77 @@ export function AgentDropdown({
 	const current =
 		CONTENT_GENERATOR_AGENT_OPTIONS.find((option) => option.value === agentId) ??
 		CONTENT_GENERATOR_AGENT_OPTIONS[0];
+	const currentLabel = t(current.labelKey, current.labelFallback);
 
 	return (
-		<AppDropdownMenu>
+		<AppDropdownMenu modal={false}>
 			<AppDropdownMenuTrigger asChild disabled={disabled}>
 				<AppButton
 					type="button"
 					variant="ghost"
-					size="icon"
-					className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent/80 hover:text-foreground"
-					title={t(current.labelKey, current.labelFallback)}
+					size="sm"
+					className="h-auto min-h-[3rem] w-full justify-start gap-3 rounded-[1.15rem] border border-border/75 bg-background/78 px-3 py-2 text-left shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]"
+					title={currentLabel}
 					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
-					onMouseDown={(e) => e.preventDefault()}
+					onMouseDown={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+					}}
 				>
-					{getAgentIcon(current.value)}
+					<span
+						className={cn(
+							'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)]',
+							current.value === 'image'
+								? 'border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12'
+								: 'border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]'
+						)}
+					>
+						{getAgentIcon(current.value)}
+					</span>
+					<span className="flex min-w-0 flex-1 flex-col items-start gap-0.5">
+						<span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:text-muted-foreground/95">
+							{t('assistantNode.mode', 'Mode')}
+						</span>
+						<span className="truncate text-sm font-semibold text-foreground">
+							{currentLabel}
+						</span>
+					</span>
+					<ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/80" />
 				</AppButton>
 			</AppDropdownMenuTrigger>
-			<AppDropdownMenuContent align="start" sideOffset={6}>
+			<AppDropdownMenuContent
+				align="start"
+				side="top"
+				sideOffset={8}
+				className="z-[120] min-w-[240px] rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+			>
 				{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
 					const label = t(option.labelKey, option.labelFallback);
 					const description = t(option.descriptionKey, option.descriptionFallback);
 					const isSelected = option.value === current.value;
 
 					return (
-						<AppDropdownMenuItem key={option.value} onSelect={() => onAgentChange(option.value)}>
-							<span className="flex items-center gap-2">
-								{getAgentIcon(option.value)}
-								<span className="flex flex-col">
-									<span className="text-sm font-medium">{label}</span>
+						<AppDropdownMenuItem
+							key={option.value}
+							onSelect={() => onAgentChange(option.value)}
+							className={cn(
+								'rounded-xl px-2.5 py-2.5',
+								isSelected && 'bg-accent text-accent-foreground'
+							)}
+						>
+							<span className="flex min-w-0 items-center gap-3">
+								<span
+									className={cn(
+										'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border',
+										option.value === 'image'
+											? 'border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12'
+											: 'border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]'
+									)}
+								>
+									{getAgentIcon(option.value)}
+								</span>
+								<span className="flex min-w-0 flex-col gap-0.5">
+									<span className="truncate text-sm font-medium">{label}</span>
 									<span className="text-xs text-muted-foreground">{description}</span>
 								</span>
 							</span>
