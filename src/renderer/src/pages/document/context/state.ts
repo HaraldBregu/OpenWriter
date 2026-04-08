@@ -33,8 +33,6 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	isTrashing: false,
 	sidebarOpen: true,
 	agenticSidebarOpen: false,
-	defaultTextModelName: null,
-	defaultImageModelName: null,
 	chatSessions: [],
 	chat: INITIAL_CHAT_STATE,
 };
