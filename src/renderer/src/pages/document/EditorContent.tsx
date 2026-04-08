@@ -53,21 +53,14 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 					const raw = await window.workspace.readFile({ filePath: configPath });
 					if (cancelled) return;
 					const config = JSON.parse(raw) as DocumentConfig;
-					let textModel: ModelInfo | undefined;
-					let imageModel: ModelInfo | undefined;
 					if (config.defaultTextModelId) {
-						textModel = findModelById(config.defaultTextModelId);
+						const textModel = findModelById(config.defaultTextModelId);
 						if (textModel) setDefaultTextModel(textModel);
 					}
 					if (config.defaultImageModelId) {
-						imageModel = findModelById(config.defaultImageModelId);
+						const imageModel = findModelById(config.defaultImageModelId);
 						if (imageModel) setDefaultImageModel(imageModel);
 					}
-					dispatch({
-						type: 'MODEL_CONFIG_CHANGED',
-						textModelName: textModel?.name ?? null,
-						imageModelName: imageModel?.name ?? null,
-					});
 				} catch {
 					// config.json doesn't exist yet — use built-in defaults
 				}
@@ -76,7 +69,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			return () => {
 				cancelled = true;
 			};
-		}, [documentId, dispatch]);
+		}, [documentId]);
 
 		const saveDocumentConfig = useCallback(
 			async (update: Partial<DocumentConfig>) => {
