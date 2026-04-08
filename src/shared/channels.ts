@@ -308,6 +308,16 @@ export interface InvokeChannelMap {
 		args: [agentId: string, provider: string, model: string];
 		result: void;
 	};
+
+	// ---- Document config (IpcResult-wrapped) ----
+	[WorkspaceChannels.getDocumentConfig]: {
+		args: [documentId: string];
+		result: DocumentConfig;
+	};
+	[WorkspaceChannels.updateDocumentConfig]: {
+		args: [documentId: string, config: Partial<DocumentConfig>];
+		result: void;
+	};
 }
 
 /**
