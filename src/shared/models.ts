@@ -855,3 +855,214 @@ export function isReasoningModel(modelId: string): boolean {
 		(prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
 	);
 }
+
+// ---------------------------------------------------------------------------
+// Model catalogue (provider-facing model descriptors for the settings UI)
+// ---------------------------------------------------------------------------
+
+export const MODEL_CATALOGUE: readonly ModelDescriptor[] = [
+	// ---- Anthropic
+	{
+		providerId: 'anthropic',
+		id: 'claude-opus-4-6',
+		name: 'Claude Opus 4.6',
+		description: 'Most capable, best for complex tasks',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'anthropic',
+		id: 'claude-sonnet-4-5-20250929',
+		name: 'Claude Sonnet 4.5',
+		description: 'Balanced performance and speed',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'anthropic',
+		id: 'claude-haiku-4-5-20251001',
+		name: 'Claude Haiku 4.5',
+		description: 'Fastest, ideal for simple tasks',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+
+	// ---- OpenAI
+	{
+		providerId: 'openai',
+		id: 'gpt-4o',
+		name: 'GPT-4o',
+		description: 'Most capable multimodal model',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'openai',
+		id: 'gpt-4o-mini',
+		name: 'GPT-4o mini',
+		description: 'Fast and affordable',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'openai',
+		id: 'o1',
+		name: 'o1',
+		description: 'Reasoning model for complex problems',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: REASONING,
+	},
+	{
+		providerId: 'openai',
+		id: 'o3-mini',
+		name: 'o3-mini',
+		description: 'Fast reasoning at lower cost',
+		contextWindow: '200K',
+		category: 'chat',
+		capabilities: REASONING,
+	},
+	{
+		providerId: 'openai',
+		id: 'gpt-image-1',
+		name: 'GPT Image 1',
+		description: 'Image generation from text prompts',
+		contextWindow: 'N/A',
+		category: 'image',
+		capabilities: {
+			inference: { reasoning: false, vision: true, streaming: false },
+			generation: { imageGeneration: true, embeddings: false },
+		},
+		imageGenerationConfig: {
+			defaultSize: '1536x1024',
+			defaultQuality: 'low',
+			maxImagesPerRequest: 1,
+			outputFormat: 'b64_json',
+			supportedSizes: ['1024x1024', '1024x1792', '1792x1024', '1536x1024', '1024x1536'],
+			supportedQualities: ['low', 'medium', 'high'],
+		},
+	},
+	{
+		providerId: 'openai',
+		id: 'text-embedding-3-small',
+		name: 'Text Embedding 3 Small',
+		description: 'Efficient text embeddings',
+		contextWindow: '8K',
+		category: 'embedding',
+		capabilities: {
+			inference: { reasoning: false, vision: false, streaming: false },
+			generation: { imageGeneration: false, embeddings: true },
+		},
+	},
+
+	// ---- Google
+	{
+		providerId: 'google',
+		id: 'gemini-2-0-flash',
+		name: 'Gemini 2.0 Flash',
+		description: 'Fast multimodal with low latency',
+		contextWindow: '1M',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'google',
+		id: 'gemini-2-0-pro',
+		name: 'Gemini 2.0 Pro',
+		description: 'Best quality for complex reasoning',
+		contextWindow: '2M',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'google',
+		id: 'gemini-1-5-flash',
+		name: 'Gemini 1.5 Flash',
+		description: 'Efficient for high-volume tasks',
+		contextWindow: '1M',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+
+	// ---- Meta
+	{
+		providerId: 'meta',
+		id: 'llama-3-3-70b',
+		name: 'Llama 3.3 70B',
+		description: 'Powerful open-weight model',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'meta',
+		id: 'llama-3-2-11b',
+		name: 'Llama 3.2 11B',
+		description: 'Multimodal, efficient inference',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: VISION_CHAT,
+	},
+	{
+		providerId: 'meta',
+		id: 'llama-3-1-8b',
+		name: 'Llama 3.1 8B',
+		description: 'Lightweight, fast local inference',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+
+	// ---- Mistral
+	{
+		providerId: 'mistral',
+		id: 'mistral-large-2',
+		name: 'Mistral Large 2',
+		description: 'Top-tier reasoning and code',
+		contextWindow: '128K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'mistral',
+		id: 'mistral-small-3',
+		name: 'Mistral Small 3',
+		description: 'Efficient for everyday tasks',
+		contextWindow: '32K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+	{
+		providerId: 'mistral',
+		id: 'codestral-latest',
+		name: 'Codestral',
+		description: 'Specialized for code generation',
+		contextWindow: '256K',
+		category: 'chat',
+		capabilities: CHAT,
+	},
+];
+
+// ---------------------------------------------------------------------------
+// Model catalogue query helpers
+// ---------------------------------------------------------------------------
+
+/** Find a model descriptor by ID across the catalogue. */
+export function findCatalogueModel(modelId: string): ModelDescriptor | undefined {
+	return MODEL_CATALOGUE.find((m) => m.id === modelId);
+}
+
+/** Get the image generation config for a catalogue model, if it supports it. */
+export function getImageGenerationConfig(modelId: string): ImageGenerationConfig | undefined {
+	return findCatalogueModel(modelId)?.imageGenerationConfig;
+}
+
+/** Get chat models for a provider (the models shown in the settings UI). */
+export function getChatModelsForProvider(providerId: string): readonly ModelDescriptor[] {
+	return MODEL_CATALOGUE.filter((m) => m.providerId === providerId && m.category === 'chat');
+}
