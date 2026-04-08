@@ -9,6 +9,7 @@ import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { buildTaskPrompt } from '../../../../pages/document/shared';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
