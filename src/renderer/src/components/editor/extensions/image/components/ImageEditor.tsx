@@ -482,7 +482,7 @@ export function ImageEditor({
 										variant="ghost"
 										size="sm"
 										disabled={isProcessingAI}
-										className="h-7 gap-1 px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
+										className="h-7 gap-1 rounded-full px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
 									>
 										<span className="truncate">
 											{IMAGE_MODELS.find((m) => m.modelId === selectedModelId)?.name ??
