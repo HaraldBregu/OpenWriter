@@ -59,9 +59,25 @@ export interface AppState {
 // ---------------------------------------------------------------------------
 
 const THEME_STORAGE_KEY = 'app-theme-mode';
+const APP_THEME_STORAGE_KEY = 'app-theme';
 const LANGUAGE_STORAGE_KEY = 'app-language';
 const UI_PREFS_STORAGE_KEY = 'app-ui-preferences';
 const DARK_CLASS = 'dark';
+
+const VALID_APP_THEMES: readonly AppTheme[] = [
+	'default',
+	'aurora',
+	'ember',
+	'ocean',
+	'forest',
+	'lavender',
+	'midnight',
+	'sandstone',
+] as const;
+
+function isAppTheme(value: string): value is AppTheme {
+	return VALID_APP_THEMES.includes(value as AppTheme);
+}
 
 function readPersistedTheme(): ThemeMode {
 	try {
