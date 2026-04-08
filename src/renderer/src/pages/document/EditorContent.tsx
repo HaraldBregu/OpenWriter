@@ -92,7 +92,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			handleGenerateTextSubmit,
 			handleGenerateImageSubmit,
 			handleContinueWithAssistant,
-		} = useAssistantTask(documentId, editorRef, defaultTextModelRef, defaultImageModelRef);
+		} = useAssistantTask(documentId, editorRef, defaultImageModelRef);
 
 		useImperativeHandle(ref, () => ({
 			setSearch: (query: string) => editorRef.current?.setSearch(query),
