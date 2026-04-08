@@ -103,12 +103,14 @@ export function ContentGeneratorContent({
 			<PromptFooter
 				agentId={agentId}
 				selectedImageModel={selectedImageModel}
+				selectedWritingModel={selectedWritingModel}
 				hint={footerHint}
 				loading={loading}
 				isSubmitDisabled={isSubmitDisabled}
 				submitRef={submitRef}
 				onAgentChange={onAgentChange}
 				onImageModelChange={onImageModelChange}
+				onWritingModelChange={onWritingModelChange}
 			/>
 		</>
 	);
