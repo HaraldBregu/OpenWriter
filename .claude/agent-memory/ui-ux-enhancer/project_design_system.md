@@ -52,6 +52,13 @@ type: project
 - Inline segmented controls: `role="group"` + `aria-label` on the wrapper `<div>`, `aria-pressed` on each `<button>`. Active state uses `bg-background text-foreground shadow-sm`; inactive uses `bg-transparent text-muted-foreground hover:text-foreground`. Outer wrapper: `bg-muted border border-border p-0.5 rounded-md`.
 - Language/select controls inside `SettingRow`: use `AppSelect` with a fixed width trigger (`w-32 h-8 text-sm`) and `aria-label` on `AppSelectTrigger` (no adjacent visible label in the trigger).
 
+## InfoPanel / Document Sidebar Conventions
+
+- `InfoPanel.tsx` was refactored to use `SectionHeader` + `SettingRow` from `SettingsComponents.tsx` (path: `../../../../settings/SettingsComponents`). No `AppCard` wrappers remain.
+- For section headers that need an icon button alongside (e.g. "Open Folder"), inline a flex row manually rather than extending `SectionHeader` — keeps the component API simple.
+- `PdfExportSection` no longer accepts a `sectionClassName` prop. It renders its own header row (label + icon buttons) and a PDF preview iframe. The parent owns any `SectionHeader` above it.
+- The image grid section is intentionally not wrapped in `SettingRow` — it is a visual grid, not a key-value pair. Use a custom flex header + grid layout directly.
+
 ## i18n
 
 Uses `react-i18next`. All user-visible strings go through `t('imageNode.*')`.

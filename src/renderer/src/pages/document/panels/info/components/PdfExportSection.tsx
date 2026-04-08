@@ -91,7 +91,10 @@ export function PdfExportSection({
 				</div>
 			</div>
 
-			<div className="overflow-hidden rounded-lg border border-border/70" style={{ height: PREVIEW_HEIGHT }}>
+			<div
+				className="overflow-hidden rounded-lg border border-border/70"
+				style={{ height: PREVIEW_HEIGHT }}
+			>
 				<div
 					style={{
 						marginTop: -CROP,
