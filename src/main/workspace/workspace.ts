@@ -230,6 +230,28 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// Document content
+	// -------------------------------------------------------------------------
+
+	async getDocumentContent(documentId: string): Promise<string> {
+		const docPath = this.getDocumentFolderPath(documentId);
+		const contentFilePath = path.join(docPath, 'content.md');
+
+		try {
+			return await fsPromises.readFile(contentFilePath, 'utf-8');
+		} catch {
+			return '';
+		}
+	}
+
+	async updateDocumentContent(documentId: string, content: string): Promise<void> {
+		const docPath = this.getDocumentFolderPath(documentId);
+		const contentFilePath = path.join(docPath, 'content.md');
+
+		await fsPromises.writeFile(contentFilePath, content, 'utf-8');
+	}
+
+	// -------------------------------------------------------------------------
 	// Documents
 	// -------------------------------------------------------------------------
 

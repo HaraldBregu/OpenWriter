@@ -4,8 +4,6 @@ import { initTaskMetadata } from '../../../services/task-event-bus';
 
 interface TextGeneratorSubmitParams {
 	readonly prompt: string;
-	readonly modelId?: string;
-	readonly provider?: string;
 }
 
 interface UseTextGeneratorSubmitReturn {
