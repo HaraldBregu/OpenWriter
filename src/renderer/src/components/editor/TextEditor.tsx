@@ -86,6 +86,14 @@ export interface TextEditorProps {
 	) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
+	/** Default text model loaded from document config. */
+	defaultTextModel?: ModelInfo;
+	/** Default image model loaded from document config. */
+	defaultImageModel?: ModelInfo;
+	/** Called when the user selects a different text model in the content generator. */
+	onTextModelChange?: (model: ModelInfo) => void;
+	/** Called when the user selects a different image model in the content generator. */
+	onImageModelChange?: (model: ModelInfo) => void;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
 	onEditorReady?: (editor: Editor | null) => void;
 	onUndo?: () => void;
