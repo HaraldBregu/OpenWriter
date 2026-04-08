@@ -18,6 +18,8 @@ export interface DocumentState {
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
 	readonly agenticSidebarOpen: boolean;
+	readonly defaultTextModelName: string | null;
+	readonly defaultImageModelName: string | null;
 	readonly chatSessions: ChatSessionListItem[];
 	readonly chat: ChatSession;
 }
