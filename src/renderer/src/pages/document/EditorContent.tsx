@@ -63,7 +63,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			};
 		}, [documentId]);
 
-		const saveDocumentConfig = useCallback(
+		const updateDocumentConfig = useCallback(
 			async (update: { textModel?: string; imageModel?: string }) => {
 				if (!documentId) return;
 				try {
