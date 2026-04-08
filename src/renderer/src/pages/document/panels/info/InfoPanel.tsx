@@ -340,23 +340,15 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 
 					{documentId && (
 						<>
-							<SectionHeader title={t('configSidebar.share')} />
-							<div className="space-y-1">
-								<button type="button" className={ACTION_BUTTON_CLASS}>
-									<Link className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-									{t('configSidebar.shareLink')}
-								</button>
-							</div>
-						</>
-					)}
-
-					{documentId && (
-						<>
 							<SectionHeader title={t('configSidebar.actions')} />
 							<div className="space-y-1">
 								<button type="button" className={ACTION_BUTTON_CLASS}>
 									<Copy className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 									{t('configSidebar.duplicate')}
+								</button>
+								<button type="button" className={ACTION_BUTTON_CLASS}>
+									<Link className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
+									{t('configSidebar.shareLink')}
 								</button>
 								<button
 									type="button"
