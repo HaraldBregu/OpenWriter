@@ -43,21 +43,18 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 
 			(async () => {
 				try {
-					const docPath = await window.workspace.getDocumentPath(documentId);
-					const configPath = `${docPath}/config.json`;
-					const raw = await window.workspace.readFile({ filePath: configPath });
+					const config = await window.workspace.getDocumentConfig(documentId);
 					if (cancelled) return;
-					const config = JSON.parse(raw) as DocumentConfig;
-					if (config.defaultTextModelId) {
-						const textModel = findModelById(config.defaultTextModelId);
+					if (config.textModel) {
+						const textModel = findModelById(config.textModel);
 						if (textModel) setDefaultTextModel(textModel);
 					}
-					if (config.defaultImageModelId) {
-						const imageModel = findModelById(config.defaultImageModelId);
+					if (config.imageModel) {
+						const imageModel = findModelById(config.imageModel);
 						if (imageModel) setDefaultImageModel(imageModel);
 					}
 				} catch {
-					// config.json doesn't exist yet — use built-in defaults
+					// document config unavailable — use built-in defaults
 				}
 			})();
 
