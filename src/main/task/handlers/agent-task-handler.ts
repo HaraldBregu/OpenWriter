@@ -26,7 +26,7 @@ import type { LoggerService } from '../../services/logger';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../shared/types';
-import { findCatalogueModel } from '../../../shared/models';
+import { DEFAULT_IMAGE_MODEL_ID, findCatalogueModel } from '../../../shared/models';
 
 // ---------------------------------------------------------------------------
 // Input / Output (self-contained — no agent-system type re-exports)

@@ -210,7 +210,9 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 									</AppLabel>
 									<div className="flex items-center gap-1.5">
 										<Tag className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-										<span className="text-sm text-foreground capitalize">{documentConfig.type}</span>
+										<span className="text-sm text-foreground capitalize">
+											{documentConfig.type}
+										</span>
 									</div>
 								</div>
 								{formattedDate && (
