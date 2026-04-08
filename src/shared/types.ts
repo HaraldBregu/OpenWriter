@@ -691,37 +691,4 @@ export function withTaskStatusText(
 	return Object.keys(next).length > 0 ? next : undefined;
 }
 
-// ---- Agent Settings
-
-export interface AgentProviderConfig {
-	provider: string;
-	model: string;
-}
-
-export interface AgentConfig {
-	id: string;
-	name: string;
-	description: string;
-}
-
 export const DEFAULT_TEXT_MODEL_ID = 'gpt-4.1';
-
-export const DEFAULT_AGENTS: ReadonlyArray<AgentConfig> = [
-	{
-		id: 'assistant',
-		name: 'Assistant',
-		description: 'Routes requests by intent and responds through the right specialist flow',
-	},
-	{
-		id: 'painter',
-		name: 'Painter',
-		description:
-			'Interprets a visual goal, writes an image prompt, generates the image, and checks alignment before delivery',
-	},
-	{
-		id: 'writer',
-		name: 'Agent Writer',
-		description:
-			'Understands text intent, drafts, aligns tone and length, and refines before returning',
-	},
-];
