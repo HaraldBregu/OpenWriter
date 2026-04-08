@@ -306,8 +306,8 @@ export function ContentGeneratorNodeView({
 					submitRef={submitRef}
 					onPromptChange={handlePromptChange}
 					onAgentChange={handleAgentChange}
-					onImageModelChange={setSelectedImageModel}
-					onTextModelChange={setSelectedTextModel}
+					onImageModelChange={handleImageModelChange}
+					onTextModelChange={handleTextModelChange}
 					onRemoveFile={removeFile}
 					onFileInputChange={handleFileInputChange}
 					onOpenFilePicker={handleOpenFilePicker}

@@ -2,32 +2,16 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import type { RefObject } from 'react';
 import type { ContentGeneratorAgentId } from '@/components/editor/extensions/content_generator';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
-import type { ModelInfo } from '../../../../../shared/types';
-import { DEFAULT_TEXT_MODEL_ID } from '../../../../../shared/types';
-import { TEXT_MODELS } from '../../../../../shared/models';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
-import { normalizeTaskPromptContext } from '../shared';
-import { useWriterTaskSubmit } from './use-writer-task-submit';
-import { useImageTaskSubmit } from './use-image-task-submit';
+import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
+import { useTextGeneratorSubmit } from './use-text-generator-submit';
+import { useImageGeneratorSubmit } from './use-image-generator-submit';
 
 export interface AssistantTaskHandlers {
 	assistantIsRunning: boolean;
-	handleGenerateTextSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		input: string,
-		model: ModelInfo
-	) => Promise<void>;
-	handleGenerateImageSubmit: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		input: string,
-		files: File[],
-		model: ModelInfo
-	) => Promise<void>;
+	handleGenerateTextSubmit: (prompt: string) => Promise<void>;
+	handleGenerateImageSubmit: (prompt: string, files: File[]) => Promise<void>;
 	handleContinueWithAssistant: (
 		before: string,
 		after: string,
@@ -36,15 +20,12 @@ export interface AssistantTaskHandlers {
 	) => void;
 }
 
-const DEFAULT_TEXT_MODEL =
-	TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0];
-
 export function useAssistantTask(
 	documentId: string | undefined,
 	editorRef: RefObject<TextEditorElement | null>
 ): AssistantTaskHandlers {
-	const writerTask = useWriterTaskSubmit(documentId);
-	const imageTask = useImageTaskSubmit(documentId);
+	const writerTask = useTextGeneratorSubmit(documentId);
+	const imageTask = useImageGeneratorSubmit(documentId);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const [assistantActiveAgentId, setAssistantActiveAgentId] =
@@ -94,7 +75,7 @@ export function useAssistantTask(
 	}, [assistantActiveAgentId, assistantActiveTaskId, editorRef]);
 
 	const handleGenerateTextSubmit = useCallback(
-		async (before: string, after: string, cursorPos: number, input: string, model: ModelInfo) => {
+		async (prompt: string) => {
 			if (!documentId || assistantIsRunning) {
 				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setAssistantEnable(true);
@@ -105,7 +86,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await writerTask.submit({ before, after, cursorPos, input, model });
+				const taskId = await writerTask.submit({ prompt });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
@@ -124,14 +105,7 @@ export function useAssistantTask(
 	);
 
 	const handleGenerateImageSubmit = useCallback(
-		async (
-			before: string,
-			after: string,
-			cursorPos: number,
-			input: string,
-			files: File[],
-			model: ModelInfo
-		) => {
+		async (prompt: string, files: File[]) => {
 			if (!documentId || assistantIsRunning) {
 				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setAssistantEnable(true);
@@ -142,7 +116,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await imageTask.submit({ before, after, cursorPos, input, files, model });
+				const taskId = await imageTask.submit({ prompt, files });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
@@ -168,13 +142,8 @@ export function useAssistantTask(
 			}
 			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
 			pendingCloseMenuRef.current = closeMenu;
-			handleGenerateTextSubmit(
-				cleanBefore,
-				cleanAfter,
-				cursorPos,
-				'CONTINUE HERE WITH 15 WORDS MAX',
-				DEFAULT_TEXT_MODEL
-			).catch(() => {
+			const prompt = buildTaskPrompt(cleanBefore, cleanAfter, 'CONTINUE HERE WITH 15 WORDS MAX');
+			handleGenerateTextSubmit(prompt).catch(() => {
 				pendingCloseMenuRef.current = null;
 				closeMenu();
 			});
