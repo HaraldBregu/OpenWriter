@@ -48,7 +48,7 @@ import type {
 	AppLogEntry,
 	AppStartupInfo,
 } from './types';
-import type { ServiceProvider } from './provider-constants';
+import type { ServiceProvider } from './providers';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
