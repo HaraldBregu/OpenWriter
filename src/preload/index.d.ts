@@ -97,7 +97,6 @@ export type {
 	FsListDirEntry,
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
-	AgentProviderConfig,
 	DocumentConfig,
 	ServiceProvider,
 	AppLogEntry,
