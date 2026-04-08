@@ -153,26 +153,6 @@ const SystemSettingsPage: React.FC = () => {
 			</SettingRow>
 
 			<SettingRow
-				label={t('settings.language.title')}
-				description={t('settings.language.description')}
-			>
-				<AppSelect value={language} onValueChange={handleLanguageChange}>
-					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.language.title')}>
-						<AppSelectValue />
-					</AppSelectTrigger>
-					<AppSelectContent>
-						{LANGUAGE_OPTIONS.map((option) => (
-							<AppSelectItem key={option.value} value={option.value}>
-								{t(option.labelKey)}
-							</AppSelectItem>
-						))}
-					</AppSelectContent>
-				</AppSelect>
-			</SettingRow>
-
-			<SectionHeader title={t('settings.appTheme.title')} />
-
-			<SettingRow
 				label={t('settings.appTheme.title')}
 				description={t('settings.appTheme.description')}
 			>
@@ -182,6 +162,24 @@ const SystemSettingsPage: React.FC = () => {
 					</AppSelectTrigger>
 					<AppSelectContent>
 						{APP_THEME_OPTIONS.map((option) => (
+							<AppSelectItem key={option.value} value={option.value}>
+								{t(option.labelKey)}
+							</AppSelectItem>
+						))}
+					</AppSelectContent>
+				</AppSelect>
+			</SettingRow>
+
+			<SettingRow
+				label={t('settings.language.title')}
+				description={t('settings.language.description')}
+			>
+				<AppSelect value={language} onValueChange={handleLanguageChange}>
+					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.language.title')}>
+						<AppSelectValue />
+					</AppSelectTrigger>
+					<AppSelectContent>
+						{LANGUAGE_OPTIONS.map((option) => (
 							<AppSelectItem key={option.value} value={option.value}>
 								{t(option.labelKey)}
 							</AppSelectItem>
