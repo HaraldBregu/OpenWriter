@@ -433,6 +433,46 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 
 		return documentDir;
 	}
+
+	private async loadDocumentModelId(
+		input: AgentTaskInput,
+		metadata?: Record<string, unknown>
+	): Promise<string | undefined> {
+		const documentId =
+			typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : undefined;
+		if (!documentId) return undefined;
+
+		const windowContext =
+			typeof input.windowId === 'number'
+				? this.windowContextManager.tryGet(input.windowId)
+				: undefined;
+
+		if (windowContext?.container.has('workspaceManager')) {
+			try {
+				const workspace = windowContext.container.get<Workspace>('workspaceManager');
+				const config = await workspace.getDocumentConfig(documentId);
+				return config.textModel || undefined;
+			} catch {
+				return undefined;
+			}
+		}
+
+		const workspacePath = this.resolveWorkspacePath(input, metadata);
+		if (!workspacePath) return undefined;
+
+		const documentsRoot = path.resolve(workspacePath, 'output', 'documents');
+		const configPath = path.resolve(documentsRoot, documentId, 'config.json');
+		if (!configPath.startsWith(`${documentsRoot}${path.sep}`)) return undefined;
+
+		try {
+			const raw = await fs.readFile(configPath, 'utf-8');
+			const config = JSON.parse(raw) as Record<string, unknown>;
+			const value = config.defaultTextModelId;
+			return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+		} catch {
+			return undefined;
+		}
+	}
 }
 
 function toAgentHistoryMessages(messages: unknown, currentPrompt: string): AgentHistoryMessage[] {
