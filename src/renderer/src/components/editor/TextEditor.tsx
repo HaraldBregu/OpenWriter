@@ -397,7 +397,7 @@ const TextEditor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						const { doc } = editor.state;
 						doc.descendants((node, pos) => {
-							if (node.type.name === 'assistant') {
+							if (node.type.name === 'contentGenerator') {
 								editor
 									.chain()
 									.deleteRange({ from: pos, to: pos + node.nodeSize })
