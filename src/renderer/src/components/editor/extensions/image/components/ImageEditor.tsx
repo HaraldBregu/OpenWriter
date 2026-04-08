@@ -434,7 +434,7 @@ export function ImageEditor({
 										<img
 											src={url}
 											alt={aiFiles[index]?.name ?? ''}
-											className="h-full w-full object-cover"
+											className="h-full w-full object-contain"
 										/>
 									</div>
 									<AppButton
