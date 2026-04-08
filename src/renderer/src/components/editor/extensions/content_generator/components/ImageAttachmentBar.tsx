@@ -40,12 +40,31 @@ export function ImageAttachmentBar({
 				tabIndex={-1}
 				multiple
 			/>
-			<div
-				className={`border-b border-border/65 px-4 py-3 transition-colors dark:border-white/10 ${
-					isDragOver ? 'bg-primary/6' : 'bg-muted/[0.18] dark:bg-white/[0.03]'
-				}`}
-			>
-				<div className="flex flex-wrap items-center gap-2">
+			<div className="border-b border-border/65 bg-muted/[0.24] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+				<div className="flex flex-wrap items-start justify-between gap-3">
+					<div className="min-w-0">
+						<div className="flex flex-wrap items-center gap-2">
+							<span className="text-xs font-semibold text-foreground">
+								{t('assistantNode.referenceImages', 'Reference images')}
+							</span>
+							{files.length > 0 ? (
+								<span className="rounded-full border border-border/70 bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95">
+									{t('assistantNode.imageCount', '{{count}} attached', { count: files.length })}
+								</span>
+							) : null}
+						</div>
+						<p className="mt-1 text-[11px] leading-5 text-muted-foreground dark:text-muted-foreground/95">
+							{previewUrls.length > 0
+								? t(
+										'assistantNode.referenceImagesHelp',
+										'Add more images or drag files into the composer to guide the result.'
+									)
+								: t(
+										'assistantNode.referenceImagesEmpty',
+										'Drop images here or browse to give the generator visual references.'
+									)}
+						</p>
+					</div>
 					<AppButton
 						variant="ghost"
 						size="sm"
@@ -57,22 +76,8 @@ export function ImageAttachmentBar({
 						<ImagePlus className="h-4 w-4" />
 						<span>{t('assistantNode.addImage', 'Add image')}</span>
 					</AppButton>
-					<span className="text-[11px] text-muted-foreground dark:text-muted-foreground/95">
-						{files.length > 0
-							? t('assistantNode.imageCount', '{{count}} attached', { count: files.length })
-							: t('assistantNode.imageOptional', 'Optional')}
-					</span>
-					<span
-						className={`text-[11px] ${
-							isDragOver ? 'text-primary' : 'text-muted-foreground dark:text-muted-foreground/95'
-						}`}
-					>
-						{isDragOver
-							? t('assistantNode.dropImagesTitle', 'Drop reference images')
-							: t('assistantNode.referenceImagesEmpty', 'Drag images here or browse')}
-					</span>
 				</div>
-				{previewUrls.length > 0 && (
+				{previewUrls.length > 0 ? (
 					<div className="mt-3 flex items-center gap-2 overflow-x-auto pb-1">
 						{previewUrls.map((url, index) => (
 							<div
@@ -98,6 +103,29 @@ export function ImageAttachmentBar({
 								</AppButton>
 							</div>
 						))}
+					</div>
+				) : (
+					<div
+						className={`mt-3 flex min-h-[7.25rem] items-center justify-center rounded-[1.35rem] border border-dashed px-4 text-center transition-colors ${
+							isDragOver
+								? 'border-primary/45 bg-primary/10'
+								: 'border-border/75 bg-background/56 dark:border-white/12 dark:bg-white/[0.03]'
+						}`}
+					>
+						<div className="flex max-w-[18rem] flex-col items-center gap-1.5">
+							<div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-border/70 bg-background/80 text-muted-foreground dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95">
+								<ImagePlus className="h-4 w-4" />
+							</div>
+							<p className="text-xs font-semibold text-foreground">
+								{t('assistantNode.dropImagesTitle', 'Drop reference images')}
+							</p>
+							<p className="text-[11px] leading-5 text-muted-foreground dark:text-muted-foreground/95">
+								{t(
+									'assistantNode.dropImagesDescription',
+									'Use references for composition, palette, or mood. You can still send a prompt without attachments.'
+								)}
+							</p>
+						</div>
 					</div>
 				)}
 			</div>

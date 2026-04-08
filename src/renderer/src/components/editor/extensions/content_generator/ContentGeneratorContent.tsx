@@ -55,7 +55,10 @@ export function ContentGeneratorContent({
 	const isImage = agentId === 'image';
 	const hintId = React.useId();
 	const activeModel = isImage ? selectedImageModel : selectedTextModel;
-	const modeTitle = isImage
+	const modeLabel = isImage
+		? t('assistantAgent.image', 'Image')
+		: t('assistantAgent.writer', 'Text');
+	const inputLabel = isImage
 		? t('assistantNode.imageTitle', 'Generate image')
 		: t('assistantNode.writerTitle', 'Generate text');
 
@@ -71,9 +74,9 @@ export function ContentGeneratorContent({
 
 	return (
 		<>
-			<div className="flex items-center justify-between gap-3 px-4 pt-4 pb-1">
-				<p className="truncate text-sm font-semibold text-foreground">{modeTitle}</p>
-				<span className="truncate text-[11px] font-medium text-muted-foreground dark:text-muted-foreground/95">
+			<div className="flex min-h-12 items-center justify-between gap-3 px-4 pt-3 pb-1">
+				<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
+				<span className="max-w-[55%] truncate rounded-full border border-border/70 bg-background/76 px-2.5 py-1 text-[11px] font-medium leading-none text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]">
 					{activeModel.name}
 				</span>
 			</div>
@@ -97,7 +100,7 @@ export function ContentGeneratorContent({
 					onResize();
 				}}
 				disabled={!enable}
-				aria-label={modeTitle}
+				aria-label={inputLabel}
 				aria-describedby={hintId}
 				className={cn(
 					'min-h-[108px] w-full resize-none border-none bg-transparent px-4 pt-2 pb-3 text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',

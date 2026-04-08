@@ -47,22 +47,23 @@ export function AgentDropdown({
 						key={option.value}
 						type="button"
 						variant="ghost"
-						size="sm"
+						size="icon"
 						className={cn(
-							'h-7 gap-1.5 rounded-full px-3 text-xs font-semibold shadow-none',
+							'h-7 w-7 rounded-full shadow-none',
 							isSelected
 								? 'bg-foreground text-background hover:bg-foreground/92 dark:bg-foreground dark:text-background dark:hover:bg-foreground/92'
 								: 'text-muted-foreground hover:bg-accent/80 hover:text-foreground dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground'
 						)}
 						disabled={disabled}
+						title={label}
+						aria-label={label}
 						aria-pressed={isSelected}
 						onMouseDown={(e) => e.preventDefault()}
 						onClick={() => {
 							if (!isSelected) onAgentChange(option.value);
 						}}
 					>
-						<span className="shrink-0">{getAgentIcon(option.value)}</span>
-						<span>{label}</span>
+						{getAgentIcon(option.value)}
 					</AppButton>
 				);
 			})}
