@@ -1,26 +1,39 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, LoaderCircle } from 'lucide-react';
+import { ArrowUp, LoaderCircle, ChevronDown } from 'lucide-react';
 import { AppButton } from '@components/app/AppButton';
+import {
+	AppDropdownMenu,
+	AppDropdownMenuTrigger,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+} from '@components/app/AppDropdownMenu';
+import { cn } from '@/lib/utils';
 import { AgentDropdown } from './AgentDropdown';
 import type { AssistantAgentId } from '../agents';
+import type { ModelInfo } from '../../../../../../../shared/types';
+import { IMAGE_MODELS } from '../../../../../../../shared/models';
 
 interface PromptFooterProps {
 	agentId: AssistantAgentId;
+	selectedImageModel: ModelInfo;
 	hint: string | undefined;
 	loading: boolean;
 	isSubmitDisabled: boolean;
 	submitRef: React.RefObject<(() => void) | null>;
 	onAgentChange: (agentId: AssistantAgentId) => void;
+	onImageModelChange: (model: ModelInfo) => void;
 }
 
 export function PromptFooter({
 	agentId,
+	selectedImageModel,
 	hint,
 	loading,
 	isSubmitDisabled,
 	submitRef,
 	onAgentChange,
+	onImageModelChange,
 }: PromptFooterProps): React.JSX.Element {
 	const { t } = useTranslation();
 
@@ -32,6 +45,38 @@ export function PromptFooter({
 					disabled={isSubmitDisabled && !loading}
 					onAgentChange={onAgentChange}
 				/>
+				{agentId === 'image' && (
+					<AppDropdownMenu>
+						<AppDropdownMenuTrigger asChild>
+							<AppButton
+								variant="ghost"
+								size="sm"
+								disabled={loading}
+								className="h-7 gap-1 px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
+							>
+								<span className="truncate">{selectedImageModel.name}</span>
+								<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+							</AppButton>
+						</AppDropdownMenuTrigger>
+						<AppDropdownMenuContent align="start" side="top" className="min-w-[180px]">
+							{IMAGE_MODELS.map((model) => (
+								<AppDropdownMenuItem
+									key={model.modelId}
+									onSelect={() => onImageModelChange(model)}
+									className={cn(
+										selectedImageModel.modelId === model.modelId &&
+											'bg-accent text-accent-foreground'
+									)}
+								>
+									<div className="flex flex-col gap-0.5">
+										<span className="text-xs font-medium">{model.name}</span>
+										<span className="text-[10px] text-muted-foreground">{model.provider}</span>
+									</div>
+								</AppDropdownMenuItem>
+							))}
+						</AppDropdownMenuContent>
+					</AppDropdownMenu>
+				)}
 				{hint && (
 					<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
 						{hint}
