@@ -421,31 +421,34 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
 									{footerUserEmail}
 								</div>
-								<div
-									role="group"
-									aria-label={t('settings.theme.title')}
-									className="mb-2 inline-flex rounded-md border border-border bg-muted p-0.5"
-								>
-									{themeOptions.map(({ value, label, icon: Icon }, index) => (
-										<button
-											key={value}
-											type="button"
-											onClick={() => setTheme(value)}
-											className={cn(
-												'relative p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-												index === 0 && 'rounded-l-sm',
-												index === themeOptions.length - 1 && 'rounded-r-sm',
-												index !== 0 && index !== themeOptions.length - 1 && 'rounded-none',
-												themeMode === value
-													? 'bg-background text-foreground shadow-sm'
-													: 'bg-transparent text-muted-foreground hover:text-foreground'
-											)}
-											aria-label={label}
-											aria-pressed={themeMode === value}
-										>
-											<Icon size={16} />
-										</button>
-									))}
+								<div className="mb-2 flex items-center justify-between rounded-lg px-3 py-2">
+									<span className="text-sm">{t('settings.theme.title')}</span>
+									<div
+										role="group"
+										aria-label={t('settings.theme.title')}
+										className="inline-flex rounded-md border border-border bg-muted p-0.5"
+									>
+										{themeOptions.map(({ value, label, icon: Icon }, index) => (
+											<button
+												key={value}
+												type="button"
+												onClick={() => setTheme(value)}
+												className={cn(
+													'relative p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+													index === 0 && 'rounded-l-sm',
+													index === themeOptions.length - 1 && 'rounded-r-sm',
+													index !== 0 && index !== themeOptions.length - 1 && 'rounded-none',
+													themeMode === value
+														? 'bg-background text-foreground shadow-sm'
+														: 'bg-transparent text-muted-foreground hover:text-foreground'
+												)}
+												aria-label={label}
+												aria-pressed={themeMode === value}
+											>
+												<Icon size={16} />
+											</button>
+										))}
+									</div>
 								</div>
 
 								<button
