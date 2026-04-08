@@ -96,9 +96,11 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		}
 
 		// 2. Resolve provider (task input → document config → shared default → global fallback)
+		const isImageAgent = this.agentId === 'image-generator';
 		const documentModelId = await this.loadDocumentModelId(input, metadata);
 		const defaultCfg = def.defaultModel;
-		const modelId = input.modelId ?? documentModelId ?? DEFAULT_TEXT_MODEL_ID;
+		const fallbackModelId = isImageAgent ? DEFAULT_IMAGE_MODEL_ID : DEFAULT_TEXT_MODEL_ID;
+		const modelId = input.modelId ?? documentModelId ?? fallbackModelId;
 		const providerId =
 			input.providerId ??
 			(documentModelId ? findCatalogueModel(documentModelId)?.providerId : undefined) ??
