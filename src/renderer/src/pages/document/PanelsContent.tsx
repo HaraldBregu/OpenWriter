@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import ResourcesPanel from './panels/resources/ResourcesPanel';
+import InfoPanel from './panels/info/InfoPanel';
 import Chat from './panels/chat';
 import { useSidebarVisibility } from './providers';
 
