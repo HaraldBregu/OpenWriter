@@ -210,7 +210,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 									<div className="flex items-center gap-1.5">
 										<ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
 										<span className="truncate text-sm text-foreground">
-											{defaultImageModelName}
+											{imageModelName}
 										</span>
 									</div>
 								</div>
