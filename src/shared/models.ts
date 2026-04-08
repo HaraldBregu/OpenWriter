@@ -697,6 +697,13 @@ export const AI_MODELS: readonly ModelInfo[] = [
 ] as const;
 
 // ---------------------------------------------------------------------------
+// Pre-filtered model collections
+// ---------------------------------------------------------------------------
+
+/** All models whose type is `'image'` (e.g. DALL-E 3, GPT Image 1, Imagen 3, etc.). */
+export const IMAGE_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'image');
+
+// ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------
 
