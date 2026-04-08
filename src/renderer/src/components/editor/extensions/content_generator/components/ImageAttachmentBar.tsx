@@ -94,12 +94,12 @@ export function ImageAttachmentBar({
 										/>
 									</div>
 									<div className="border-t border-border/60 bg-background/88 px-2 py-1.5 dark:border-white/10 dark:bg-white/[0.03]">
-										<p
+										<span
 											className="truncate text-[10px] font-medium text-foreground/85 dark:text-foreground/88"
 											title={files[index]?.name ?? ''}
 										>
 											{files[index]?.name ?? t('assistantNode.referenceImages', 'Reference images')}
-										</p>
+										</span>
 									</div>
 								</div>
 								<AppButton
