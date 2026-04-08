@@ -37,6 +37,9 @@ export function ContentGeneratorNodeView({
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
 	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(IMAGE_MODELS[0]);
+	const [selectedWritingModel, setSelectedWritingModel] = useState<ModelInfo>(
+		() => WRITING_MODELS.find((m) => m.modelId === DEFAULT_WRITING_MODEL_ID) ?? WRITING_MODELS[0]
+	);
 
 	const handlePromptChange = useCallback(
 		(value: string) => {
