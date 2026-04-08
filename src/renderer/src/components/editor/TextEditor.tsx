@@ -75,7 +75,8 @@ export interface TextEditorProps {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		files: File[]
+		files: File[],
+		model: ModelInfo
 	) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
