@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppTextarea } from '@components/app/AppTextarea';
 import { cn } from '@/lib/utils';
-import { ImageAttachmentBar, PromptFooter } from './components';
+import { ImageAttachmentBar, PromptFooter, PromptHeader } from './components';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 
@@ -55,9 +55,6 @@ export function ContentGeneratorContent({
 	const isImage = agentId === 'image';
 	const hintId = React.useId();
 	const activeModel = isImage ? selectedImageModel : selectedTextModel;
-	const modeLabel = isImage
-		? t('assistantAgent.image', 'Image')
-		: t('assistantAgent.writer', 'Text');
 	const inputLabel = isImage
 		? t('assistantNode.imageTitle', 'Generate image')
 		: t('assistantNode.writerTitle', 'Generate text');
@@ -74,12 +71,7 @@ export function ContentGeneratorContent({
 
 	return (
 		<>
-			<div className="flex min-h-12 items-center justify-between gap-3 px-4 pt-3 pb-1">
-				<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
-				<span className="max-w-[55%] truncate rounded-full border border-border/70 bg-background/76 px-2.5 py-1 text-[11px] font-medium leading-none text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]">
-					{activeModel.name}
-				</span>
-			</div>
+			<PromptHeader agentId={agentId} modelName={activeModel.name} />
 			{isImage && (
 				<ImageAttachmentBar
 					files={files}
