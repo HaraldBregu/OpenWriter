@@ -45,6 +45,13 @@ type: project
 - `shared/use-image-canvas.ts` — all canvas operations (crop, rotate, AI filters, undo)
 - `shared/image-editor-constants.ts` — `MIN_CROP_SIZE`, `MIN_DIMENSION`, `MAX_DIMENSION`
 
+## Settings Page Conventions
+
+- `GeneralSettingsPage` is the canonical layout reference: `SectionHeader` + `SettingRow` components, no border-wrapped boxes.
+- `SettingRow` renders label + optional description on the left, arbitrary child on the right (`flex items-center justify-between`).
+- Inline segmented controls: `role="group"` + `aria-label` on the wrapper `<div>`, `aria-pressed` on each `<button>`. Active state uses `bg-background text-foreground shadow-sm`; inactive uses `bg-transparent text-muted-foreground hover:text-foreground`. Outer wrapper: `bg-muted border border-border p-0.5 rounded-md`.
+- Language/select controls inside `SettingRow`: use `AppSelect` with a fixed width trigger (`w-32 h-8 text-sm`) and `aria-label` on `AppSelectTrigger` (no adjacent visible label in the trigger).
+
 ## i18n
 
 Uses `react-i18next`. All user-visible strings go through `t('imageNode.*')`.

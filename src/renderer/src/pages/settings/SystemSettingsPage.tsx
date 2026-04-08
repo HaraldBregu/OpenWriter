@@ -115,10 +115,7 @@ const SystemSettingsPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.layout')} />
 
-			<SettingRow
-				label={t('settings.theme.title')}
-				description={t('settings.theme.description')}
-			>
+			<SettingRow label={t('settings.theme.title')} description={t('settings.theme.description')}>
 				<ThemeSegmentControl
 					value={themeMode}
 					onChange={handleThemeChange}
@@ -131,10 +128,7 @@ const SystemSettingsPage: React.FC = () => {
 				description={t('settings.language.description')}
 			>
 				<AppSelect value={language} onValueChange={handleLanguageChange}>
-					<AppSelectTrigger
-						className="w-32 h-8 text-sm"
-						aria-label={t('settings.language.title')}
-					>
+					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.language.title')}>
 						<AppSelectValue />
 					</AppSelectTrigger>
 					<AppSelectContent>
