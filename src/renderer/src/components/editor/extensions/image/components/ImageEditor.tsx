@@ -331,7 +331,7 @@ export function ImageEditor({
 										size="sm"
 										onClick={handleApplyCrop}
 										disabled={!hasCropSelection}
-										className="h-7 px-2 text-xs"
+										className="h-7 rounded-full px-2 text-xs"
 									>
 										{t('imageNode.applyCrop')}
 									</AppButton>
