@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useId, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Eye, EyeOff, Loader2, Trash2 } from 'lucide-react';
-import type { ServiceProvider } from '../../../../shared/providers';
+import type { ServiceProvider } from '../../../../shared/types';
 import { PROVIDER_IDS, type ProviderId, PROVIDER_CATALOGUE } from '../../../../shared/providers';
 import { AppButton, AppInput, AppLabel } from '@/components/app';
 
