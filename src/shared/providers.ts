@@ -54,14 +54,8 @@ export function isKnownProvider(providerId: string): providerId is ProviderId {
 }
 
 // ---------------------------------------------------------------------------
-// Service Provider (user-configured provider connections)
+// Service Provider helpers
 // ---------------------------------------------------------------------------
-
-export interface ServiceProvider {
-	name: string;
-	apikey: string;
-	baseurl: string;
-}
 
 function slugify(segment: string): string {
 	return segment
