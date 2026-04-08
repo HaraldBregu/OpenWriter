@@ -67,18 +67,6 @@ flowchart TB
 	Shared --> IpcModules
 ```
 
-## What The Image Needed To Show
-
-The screenshot was not accurate for the current codebase.
-
-- `preload` is correct about the four exposed namespaces: `app`, `win`, `workspace`, and `task`.
-- The `main` side is not just `Workspace`, `Task`, `Window`, and `App`.
-- `Workspace` is not the parent container of `Task`, `Window`, and `App`.
-- The actual runtime has a global IPC layer and a global service layer above the domain services.
-- Workspace logic is split into per-window services managed by `WindowContextManager`.
-- `Task` runs through `TaskExecutor` and registered handlers, not directly as a child of `Workspace`.
-- AI is not a single block under `Task`; it is reached through task handlers, including the registered `researcher` agent.
-
 ## Preload To Main Mapping
 
 | Preload namespace  | Main IPC module  | Backing runtime                                                        |
