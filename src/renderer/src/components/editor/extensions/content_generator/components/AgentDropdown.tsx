@@ -1,8 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppButton } from '@components/app/AppButton';
-import { ImageIcon, PenLine } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import {
+	AppDropdownMenu,
+	AppDropdownMenuContent,
+	AppDropdownMenuItem,
+	AppDropdownMenuTrigger,
+} from '@components/app/AppDropdownMenu';
+import { Check, ImageIcon, PenLine } from 'lucide-react';
 import { CONTENT_GENERATOR_AGENT_OPTIONS, type ContentGeneratorAgentId } from '../agents';
 
 function getAgentIcon(agentId: ContentGeneratorAgentId): React.JSX.Element {
@@ -33,40 +38,43 @@ export function AgentDropdown({
 		CONTENT_GENERATOR_AGENT_OPTIONS[0];
 
 	return (
-		<div
-			className="inline-flex items-center rounded-full border border-border/75 bg-background/78 p-1 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]"
-			role="group"
-			aria-label={t('assistantNode.switchAgent', 'Switch agent')}
-		>
-			{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
-				const label = t(option.labelKey, option.labelFallback);
-				const isSelected = option.value === current.value;
+		<AppDropdownMenu>
+			<AppDropdownMenuTrigger asChild disabled={disabled}>
+				<AppButton
+					type="button"
+					variant="ghost"
+					size="icon"
+					className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent/80 hover:text-foreground"
+					title={t(current.labelKey, current.labelFallback)}
+					aria-label={t('assistantNode.switchAgent', 'Switch agent')}
+					onMouseDown={(e) => e.preventDefault()}
+				>
+					{getAgentIcon(current.value)}
+				</AppButton>
+			</AppDropdownMenuTrigger>
+			<AppDropdownMenuContent align="start" sideOffset={6}>
+				{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
+					const label = t(option.labelKey, option.labelFallback);
+					const description = t(option.descriptionKey, option.descriptionFallback);
+					const isSelected = option.value === current.value;
 
-				return (
-					<AppButton
-						key={option.value}
-						type="button"
-						variant="ghost"
-						size="icon"
-						className={cn(
-							'h-7 w-7 rounded-full shadow-none',
-							isSelected
-								? 'bg-foreground text-background hover:bg-foreground/92 dark:bg-foreground dark:text-background dark:hover:bg-foreground/92'
-								: 'text-muted-foreground hover:bg-accent/80 hover:text-foreground dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground'
-						)}
-						disabled={disabled}
-						title={label}
-						aria-label={label}
-						aria-pressed={isSelected}
-						onMouseDown={(e) => e.preventDefault()}
-						onClick={() => {
-							if (!isSelected) onAgentChange(option.value);
-						}}
-					>
-						{getAgentIcon(option.value)}
-					</AppButton>
-				);
-			})}
-		</div>
+					return (
+						<AppDropdownMenuItem
+							key={option.value}
+							onSelect={() => onAgentChange(option.value)}
+						>
+							<span className="flex items-center gap-2">
+								{getAgentIcon(option.value)}
+								<span className="flex flex-col">
+									<span className="text-sm font-medium">{label}</span>
+									<span className="text-xs text-muted-foreground">{description}</span>
+								</span>
+							</span>
+							{isSelected && <Check className="ml-auto h-4 w-4" />}
+						</AppDropdownMenuItem>
+					);
+				})}
+			</AppDropdownMenuContent>
+		</AppDropdownMenu>
 	);
 }

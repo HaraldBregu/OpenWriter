@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import type { RefObject } from 'react';
+import type { RefObject, MutableRefObject } from 'react';
 import type { ContentGeneratorAgentId } from '@/components/editor/extensions/content_generator';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
+import type { ModelInfo } from '../../../../../shared/types';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
@@ -22,7 +23,9 @@ export interface AssistantTaskHandlers {
 
 export function useAssistantTask(
 	documentId: string | undefined,
-	editorRef: RefObject<TextEditorElement | null>
+	editorRef: RefObject<TextEditorElement | null>,
+	defaultTextModelRef: MutableRefObject<ModelInfo | undefined>,
+	defaultImageModelRef: MutableRefObject<ModelInfo | undefined>
 ): AssistantTaskHandlers {
 	const writerTask = useTextGeneratorSubmit(documentId);
 	const imageTask = useImageGeneratorSubmit(documentId);
@@ -86,7 +89,12 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await writerTask.submit({ prompt });
+				const model = defaultTextModelRef.current;
+				const taskId = await writerTask.submit({
+					prompt,
+					modelId: model?.modelId,
+					provider: model?.provider,
+				});
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
@@ -101,7 +109,7 @@ export function useAssistantTask(
 				editorRef.current?.setAssistantEnable(true);
 			}
 		},
-		[assistantIsRunning, documentId, editorRef, writerTask]
+		[assistantIsRunning, documentId, editorRef, writerTask, defaultTextModelRef]
 	);
 
 	const handleGenerateImageSubmit = useCallback(
@@ -116,7 +124,13 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await imageTask.submit({ prompt, files });
+				const model = defaultImageModelRef.current;
+				const taskId = await imageTask.submit({
+					prompt,
+					files,
+					modelId: model?.modelId,
+					provider: model?.provider,
+				});
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
@@ -131,7 +145,7 @@ export function useAssistantTask(
 				editorRef.current?.setAssistantEnable(true);
 			}
 		},
-		[assistantIsRunning, documentId, editorRef, imageTask]
+		[assistantIsRunning, documentId, editorRef, imageTask, defaultImageModelRef]
 	);
 
 	const handleContinueWithAssistant = useCallback(
