@@ -55,7 +55,7 @@ export function PromptFooter({
 		<div className="border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.2)_0%,hsl(var(--background)/0.18)_100%)] px-4 py-3.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.14)_100%)]">
 			<div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
 				<div className="flex min-w-0 flex-1 flex-col gap-2.5">
-					<div className="grid gap-2 sm:grid-cols-[minmax(0,0.95fr)_minmax(0,1.15fr)]">
+					<div className="flex items-center gap-2">
 						<AgentDropdown agentId={agentId} disabled={loading} onAgentChange={onAgentChange} />
 						<AppDropdownMenu modal={false}>
 							<AppDropdownMenuTrigger asChild>
