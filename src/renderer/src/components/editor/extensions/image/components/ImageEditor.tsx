@@ -68,6 +68,7 @@ export function ImageEditor({
 	const [aiFiles, setAIFiles] = useState<File[]>([]);
 	const [aiPreviewUrls, setAIPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
+	const [selectedModelId, setSelectedModelId] = useState(IMAGE_MODELS[0]?.modelId ?? '');
 	const editorRef = useRef<HTMLDivElement>(null);
 	const aiTextareaRef = useRef<HTMLTextAreaElement>(null);
 	const aiFileInputRef = useRef<HTMLInputElement>(null);
