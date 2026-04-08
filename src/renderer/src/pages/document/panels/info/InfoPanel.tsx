@@ -68,17 +68,13 @@ function toLocalResourceUrl(filePath: string): string {
 
 const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const { t, i18n } = useTranslation();
-	const { documentId, metadata, images } = useDocumentState();
+	const { documentId, images } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
-	const fallbackTextModelName = findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
-	const fallbackImageModelName =
-		findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
-	const [textModelName, setTextModelName] = useState(fallbackTextModelName);
-	const [imageModelName, setImageModelName] = useState(fallbackImageModelName);
+	const [documentConfig, setDocumentConfig] = useState<DocumentConfig | null>(null);
 
 	useEffect(() => {
 		if (!documentId) return;
@@ -87,22 +83,14 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 		(async () => {
 			try {
 				const config = await window.workspace.getDocumentConfig(documentId);
-				if (cancelled) return;
-				const textModel = findModelById(config.textModel);
-				if (textModel) setTextModelName(textModel.name);
-				const imageModel = findModelById(config.imageModel);
-				if (imageModel) setImageModelName(imageModel.name);
+				if (!cancelled) setDocumentConfig(config);
 			} catch {
 				// workspace not ready yet
 			}
 		})();
 
 		const unsubscribe = window.workspace.onDocumentConfigChanges(documentId, (config) => {
-			if (cancelled) return;
-			const updatedTextModel = findModelById(config.textModel);
-			if (updatedTextModel) setTextModelName(updatedTextModel.name);
-			const updatedImageModel = findModelById(config.imageModel);
-			if (updatedImageModel) setImageModelName(updatedImageModel.name);
+			if (!cancelled) setDocumentConfig(config);
 		});
 
 		return () => {
@@ -110,6 +98,17 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 			unsubscribe();
 		};
 	}, [documentId]);
+
+	const textModelName = useMemo(() => {
+		if (!documentConfig) return findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
+		return findModelById(documentConfig.textModel)?.name ?? documentConfig.textModel;
+	}, [documentConfig]);
+
+	const imageModelName = useMemo(() => {
+		if (!documentConfig)
+			return findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
+		return findModelById(documentConfig.imageModel)?.name ?? documentConfig.imageModel;
+	}, [documentConfig]);
 
 	const handleOpenImagesFolder = useCallback(() => {
 		if (!documentId) return;
