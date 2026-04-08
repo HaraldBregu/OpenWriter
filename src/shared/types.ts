@@ -106,6 +106,22 @@ export interface ProviderDescriptor {
 	name: string;
 }
 
+export type ProviderId =
+	| 'openai'
+	| 'anthropic'
+	| 'google'
+	| 'meta'
+	| 'mistral'
+	| 'cohere'
+	| 'xai'
+	| 'amazon'
+	| 'deepseek'
+	| 'qwen'
+	| 'inception'
+	| 'zhipu-ai'
+	| 'perplexity'
+	| 'ai21-labs';
+
 export interface ServiceProvider {
 	name: string;
 	apikey: string;
