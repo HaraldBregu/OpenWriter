@@ -104,7 +104,7 @@ export function useAssistantTask(
 				editorRef.current?.setAssistantEnable(true);
 			}
 		},
-		[assistantIsRunning, documentId, editorRef, writerTask, defaultTextModelRef]
+		[assistantIsRunning, documentId, editorRef, writerTask]
 	);
 
 	const handleGenerateImageSubmit = useCallback(
