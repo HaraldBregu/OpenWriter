@@ -73,8 +73,11 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 	const [previewImage, setPreviewImage] = useState<{ src: string; alt: string } | null>(null);
-	const [defaultTextModelName, setDefaultTextModelName] = useState<string | null>(null);
-	const [defaultImageModelName, setDefaultImageModelName] = useState<string | null>(null);
+	const fallbackTextModelName = findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
+	const fallbackImageModelName =
+		findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
+	const [defaultTextModelName, setDefaultTextModelName] = useState(fallbackTextModelName);
+	const [defaultImageModelName, setDefaultImageModelName] = useState(fallbackImageModelName);
 
 	useEffect(() => {
 		if (!documentId) return;
@@ -98,7 +101,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 					if (model) setDefaultImageModelName(model.name);
 				}
 			} catch {
-				// config.json doesn't exist yet
+				// config.json doesn't exist yet — defaults already set
 			}
 		})();
 
