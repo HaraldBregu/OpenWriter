@@ -339,5 +339,8 @@ export interface EventChannelMap {
 	[WorkspaceChannels.outputWatcherError]: { data: WatcherError };
 	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
 	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
+	[WorkspaceChannels.agentConfigChanged]: {
+		data: { agentId: string; provider: string; model: string };
+	};
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
 }
