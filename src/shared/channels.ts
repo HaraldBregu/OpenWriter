@@ -358,5 +358,8 @@ export interface EventChannelMap {
 	[WorkspaceChannels.agentConfigChanged]: {
 		data: { agentId: string; provider: string; model: string };
 	};
+	[WorkspaceChannels.documentConfigChanged]: {
+		data: { documentId: string; config: DocumentConfig };
+	};
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
 }
