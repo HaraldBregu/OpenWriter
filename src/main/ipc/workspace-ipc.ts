@@ -20,6 +20,7 @@ import type {
 	FsListDirParams,
 	DocumentImageInfo,
 	SaveDocumentImageParams,
+	DocumentConfig,
 } from '../../shared/types';
 
 /**
