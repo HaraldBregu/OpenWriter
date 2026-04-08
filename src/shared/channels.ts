@@ -120,6 +120,10 @@ export const WorkspaceChannels = {
 	getDocumentConfig: 'workspace:get-document-config',
 	updateDocumentConfig: 'workspace:update-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
+	// Document content
+	getDocumentContent: 'workspace:get-document-content',
+	updateDocumentContent: 'workspace:update-document-content',
+	documentContentChanged: 'workspace:document-content-changed',
 } as const;
 
 export const WindowChannels = {
