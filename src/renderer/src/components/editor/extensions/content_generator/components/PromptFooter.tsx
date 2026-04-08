@@ -30,12 +30,14 @@ interface PromptFooterProps {
 export function PromptFooter({
 	agentId,
 	selectedImageModel,
+	selectedWritingModel,
 	hint,
 	loading,
 	isSubmitDisabled,
 	submitRef,
 	onAgentChange,
 	onImageModelChange,
+	onWritingModelChange,
 }: PromptFooterProps): React.JSX.Element {
 	const { t } = useTranslation();
 
