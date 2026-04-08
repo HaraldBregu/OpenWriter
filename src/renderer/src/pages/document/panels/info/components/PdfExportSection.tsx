@@ -55,8 +55,8 @@ export function PdfExportSection({
 
 	return (
 		<>
-			<div className="flex items-center justify-between pb-2">
-				<span className="text-xs font-medium text-muted-foreground/70">{exportLabel}</span>
+			<div className="flex items-center justify-between pt-6 pb-2">
+				<span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{exportLabel}</span>
 				<div className="flex items-center gap-1">
 					<button
 						type="button"
