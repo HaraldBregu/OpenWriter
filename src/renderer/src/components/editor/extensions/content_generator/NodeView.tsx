@@ -36,9 +36,15 @@ export function ContentGeneratorNodeView({
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
-	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(IMAGE_MODELS[0]);
+	const options = extension.options as ContentGeneratorOptions;
+	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(
+		() => options.defaultImageModel ?? IMAGE_MODELS[0]
+	);
 	const [selectedTextModel, setSelectedTextModel] = useState<ModelInfo>(
-		() => TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0]
+		() =>
+			options.defaultTextModel ??
+			TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ??
+			TEXT_MODELS[0]
 	);
 
 	const handlePromptChange = useCallback(

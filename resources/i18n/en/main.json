@@ -824,19 +824,14 @@
 	"assistantNode": {
 		"referenceImages": "Reference images",
 		"imageCount": "{{count}} ready",
-		"referenceImagesHelp": "Add more references or drag more images into the composer to refine the result.",
-		"referenceImagesEmpty": "Reference images help guide framing, palette, lighting, and overall mood.",
+		"referenceImagesHelp": "Add more references if needed.",
+		"referenceImagesEmpty": "Optional references for style or mood.",
 		"addImage": "Add image",
 		"removeImage": "Remove image",
 		"browseReferenceImages": "Browse reference images",
 		"dropImagesTitle": "Drop images or browse",
-		"dropImagesDescription": "Reference images help the model match framing, colors, lighting, and mood while your prompt stays in control.",
-		"referenceHintComposition": "Composition",
-		"referenceHintPalette": "Palette",
-		"referenceHintLighting": "Lighting",
-		"referenceHintMood": "Mood",
-		"supportedFormats": "Supports PNG, JPG, WEBP, GIF, SVG, and AVIF",
-		"imagePlaceholder": "Describe the scene, style, colors, or mood you want to create. Reference images are optional."
+		"dropImagesDescription": "Optional references for style or mood.",
+		"imagePlaceholder": "Describe the image you want to create."
 	},
 	"imageNode": {
 		"notFound": "Image not found",

@@ -101,10 +101,7 @@ export function ContentGeneratorContent({
 				)}
 				placeholder={
 					isImage
-						? t(
-								'assistantNode.imagePlaceholder',
-								'Describe the scene, style, colors, or mood you want to create. Reference images are optional.'
-							)
+						? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
 						: t(
 								'assistantNode.placeholder',
 								'Ask the assistant to continue, rewrite, or generate from here.'
