@@ -64,5 +64,5 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 export const SEARCH_SECTION_ICONS: Record<string, LucideIcon> = {
 	actions: Home,
 	documents: FolderOpen,
-	resources: RESOURCE_SECTIONS.documents.icon,
+	resources: RESOURCE_SECTIONS.media.icon,
 };
