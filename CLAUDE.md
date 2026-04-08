@@ -29,3 +29,4 @@ After implementing or modifying code, verify it follows SonarQube best practices
   - Remove commented-out code instead of leaving it in.
   - Do not use magic numbers — extract them into named constants.
   - Avoid non-null assertions (`!`) — use proper null checks instead.
+  - Do not add comments on every function or line of code — only add comments on important or complex functions where the logic is not self-evident.
