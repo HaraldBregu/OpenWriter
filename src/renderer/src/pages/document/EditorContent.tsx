@@ -45,14 +45,10 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				try {
 					const config = await window.workspace.getDocumentConfig(documentId);
 					if (cancelled) return;
-					if (config.textModel) {
-						const textModel = findModelById(config.textModel);
-						if (textModel) setDefaultTextModel(textModel);
-					}
-					if (config.imageModel) {
-						const imageModel = findModelById(config.imageModel);
-						if (imageModel) setDefaultImageModel(imageModel);
-					}
+					const textModel = findModelById(config.textModel);
+					if (textModel) setDefaultTextModel(textModel);
+					const imageModel = findModelById(config.imageModel);
+					if (imageModel) setDefaultImageModel(imageModel);
 				} catch {
 					// document config unavailable — use built-in defaults
 				}
