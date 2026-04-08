@@ -128,8 +128,6 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
-
-
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
@@ -310,36 +308,6 @@ export class ProjectWorkspaceService {
 		}
 	}
 
-	/**
-	 * Parse and validate the agentConfigs field from the file.
-	 * Returns undefined if no valid configs are found.
-	 */
-	private parseAgentConfigs(value: unknown): Record<string, AgentProviderConfig> | undefined {
-		if (value === null || typeof value !== 'object' || Array.isArray(value)) {
-			return undefined;
-		}
-		const raw = value as Record<string, unknown>;
-		const result: Record<string, AgentProviderConfig> = {};
-		let hasEntries = false;
-
-		for (const [key, entry] of Object.entries(raw)) {
-			if (
-				entry !== null &&
-				typeof entry === 'object' &&
-				!Array.isArray(entry) &&
-				typeof (entry as Record<string, unknown>)['provider'] === 'string' &&
-				typeof (entry as Record<string, unknown>)['model'] === 'string'
-			) {
-				result[key] = {
-					provider: (entry as Record<string, unknown>)['provider'] as string,
-					model: (entry as Record<string, unknown>)['model'] as string,
-				};
-				hasEntries = true;
-			}
-		}
-
-		return hasEntries ? result : undefined;
-	}
 
 	/**
 	 * Safely resolve the running Electron app version.
