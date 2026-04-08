@@ -1011,56 +1011,6 @@ export const MODEL_CATALOGUE: readonly ModelDescriptor[] = [
 		capabilities: CHAT,
 	},
 
-	// ---- Zhipu AI
-	{
-		providerId: 'zhipu-ai',
-		id: 'glm-4-plus',
-		name: 'GLM-4 Plus',
-		description: 'High-quality Chinese and English',
-		contextWindow: '128K',
-		category: 'chat',
-		capabilities: CHAT,
-	},
-	{
-		providerId: 'zhipu-ai',
-		id: 'glm-4v-plus',
-		name: 'GLM-4V Plus',
-		description: 'Multimodal vision-language',
-		contextWindow: '8K',
-		category: 'chat',
-		capabilities: VISION_CHAT,
-	},
-
-	// ---- Perplexity
-	{
-		providerId: 'perplexity',
-		id: 'sonar-pro',
-		name: 'Sonar Pro',
-		description: 'Web-grounded search and answers',
-		contextWindow: '200K',
-		category: 'chat',
-		capabilities: CHAT,
-	},
-	{
-		providerId: 'perplexity',
-		id: 'sonar-reasoning-pro',
-		name: 'Sonar Reasoning Pro',
-		description: 'Deep reasoning with web grounding',
-		contextWindow: '127K',
-		category: 'chat',
-		capabilities: REASONING,
-	},
-
-	// ---- AI21 Labs
-	{
-		providerId: 'ai21-labs',
-		id: 'jamba-1.5-large',
-		name: 'Jamba 1.5 Large',
-		description: 'Large context hybrid architecture',
-		contextWindow: '256K',
-		category: 'chat',
-		capabilities: CHAT,
-	},
 ];
 
 // ---------------------------------------------------------------------------
