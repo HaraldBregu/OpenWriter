@@ -31,7 +31,7 @@ export function ModelDropdown({
 					variant="ghost"
 					size="sm"
 					disabled={disabled}
-					className="h-8 min-w-0 gap-1.5 rounded-xl border border-border/75 bg-background/78 px-2.5 text-left shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]"
+					className="h-10 min-w-0 gap-1.5 rounded-[1.15rem] border border-border/75 bg-background/78 px-2.5 text-left shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]"
 					onMouseDown={(e) => {
 						e.preventDefault();
 						e.stopPropagation();
