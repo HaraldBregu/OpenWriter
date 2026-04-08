@@ -920,26 +920,6 @@ export const MODEL_CATALOGUE: readonly ModelDescriptor[] = [
 		capabilities: CHAT,
 	},
 
-	// ---- Cohere
-	{
-		providerId: 'cohere',
-		id: 'command-r-plus-08-2024',
-		name: 'Command R+',
-		description: 'Advanced RAG-optimized model',
-		contextWindow: '128K',
-		category: 'chat',
-		capabilities: CHAT,
-	},
-	{
-		providerId: 'cohere',
-		id: 'command-a-03-2025',
-		name: 'Command A',
-		description: 'Latest generation, large context',
-		contextWindow: '256K',
-		category: 'chat',
-		capabilities: CHAT,
-	},
-
 	// ---- xAI
 	{
 		providerId: 'xai',
