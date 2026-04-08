@@ -527,11 +527,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppPopoverContent>
 							</AppPopover>
 						</AppSidebarFooter>
-					</>
-				}
-			>
-				{children}
-			</AppSidebarLayout>
+				</AppSidebarLayout>
+
+				<AppSidebarInsetLayout>{children}</AppSidebarInsetLayout>
+			</AppSidebarContainer>
 		</>
 	);
 }
