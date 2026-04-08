@@ -305,7 +305,7 @@ export function ImageEditor({
 								size="icon-xs"
 								aria-label={t('imageNode.cancel')}
 								onClick={onCancel}
-								className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-4 [&_svg]:w-4"
+								className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<X />
 							</AppButton>
