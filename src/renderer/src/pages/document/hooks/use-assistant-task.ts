@@ -41,7 +41,7 @@ export function useAssistantTask(
 	const imageTask = useImageTaskSubmit(documentId);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
-	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<AssistantAgentId>('writer');
+	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<ContentGeneratorAgentId>('writer');
 	const assistantIsRunning = assistantActiveTaskId !== null;
 	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
