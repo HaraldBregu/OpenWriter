@@ -28,7 +28,7 @@ import {
 	AppAlertDialogTitle,
 } from '@/components/app';
 import { ImagePreviewDialog } from '@/components/editor/extensions/image/components/ImagePreviewDialog';
-import { SectionHeader, SettingRow } from '../../../../settings/SettingsComponents';
+import { SectionHeader, SettingRow } from '@pages/settings/SettingsComponents';
 
 interface InfoPanelProps {
 	readonly onOpenFolder: () => void;
