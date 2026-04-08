@@ -176,23 +176,28 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 
 	return (
 		<>
-			<div className="flex w-full flex-col overflow-y-auto overflow-x-hidden border-l border-border/70 px-4 pb-6 bg-card/55 dark:bg-background">
+			<div className="flex w-full flex-col overflow-hidden border-l border-border/70 bg-card/55 dark:bg-background">
+				<div className="shrink-0 border-b border-border/80 bg-card/92 px-4 py-2 backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+					<div className="flex items-center justify-between">
+						<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
+							{t('configSidebar.documentInfo')}
+						</h2>
+						<button
+							type="button"
+							onClick={onOpenFolder}
+							className={ICON_BUTTON_CLASS}
+							aria-label={t('common.openFolder')}
+							title={t('common.openFolder')}
+						>
+							<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+						</button>
+					</div>
+				</div>
+
+				<div className="flex-1 overflow-y-auto overflow-x-hidden px-4 pb-6">
 				{documentConfig && (
 					<>
-						<div className="flex items-center justify-between pt-6 pb-2 first:pt-0">
-							<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-								{t('configSidebar.documentInfo')}
-							</h2>
-							<button
-								type="button"
-								onClick={onOpenFolder}
-								className={ICON_BUTTON_CLASS}
-								aria-label={t('common.openFolder')}
-								title={t('common.openFolder')}
-							>
-								<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
-							</button>
-						</div>
+						<SectionHeader title={t('configSidebar.documentInfo')} />
 
 						<SettingRow label={t('configSidebar.documentTitle')}>
 							<span className="text-sm font-medium text-foreground truncate max-w-[140px] block">
