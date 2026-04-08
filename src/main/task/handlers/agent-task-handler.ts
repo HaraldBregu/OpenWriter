@@ -95,10 +95,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			throw new Error(`Agent "${this.agentId}" not found in registry`);
 		}
 
-		// 2. Resolve provider (task input overrides → definition default → global fallback)
+		// 2. Resolve provider (task input → document config → shared default → global fallback)
+		const documentModelId = await this.loadDocumentModelId(input, metadata);
 		const defaultCfg = def.defaultModel;
-		const providerId = input.providerId ?? defaultCfg?.providerId;
-		const modelId = input.modelId ?? defaultCfg?.modelId;
+		const modelId = input.modelId ?? documentModelId ?? DEFAULT_TEXT_MODEL_ID;
+		const providerId =
+			input.providerId ??
+			(documentModelId ? findCatalogueModel(documentModelId)?.providerId : undefined) ??
+			defaultCfg?.providerId;
 
 		const provider = this.providerResolver.resolve({ providerId, modelId });
 
