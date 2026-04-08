@@ -476,6 +476,40 @@ export function ImageEditor({
 					{/* Footer */}
 					<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
 						<div className="flex min-w-0 items-center gap-2">
+							<AppDropdownMenu>
+								<AppDropdownMenuTrigger asChild>
+									<AppButton
+										variant="ghost"
+										size="sm"
+										disabled={isProcessingAI}
+										className="h-7 gap-1 px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
+									>
+										<span className="truncate">
+											{IMAGE_MODELS.find((m) => m.modelId === selectedModelId)?.name ??
+												selectedModelId}
+										</span>
+										<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+									</AppButton>
+								</AppDropdownMenuTrigger>
+								<AppDropdownMenuContent align="start" side="top" className="min-w-[180px]">
+									{IMAGE_MODELS.map((model) => (
+										<AppDropdownMenuItem
+											key={model.modelId}
+											onSelect={() => setSelectedModelId(model.modelId)}
+											className={cn(
+												selectedModelId === model.modelId && 'bg-accent text-accent-foreground'
+											)}
+										>
+											<div className="flex flex-col gap-0.5">
+												<span className="text-xs font-medium">{model.name}</span>
+												<span className="text-[10px] text-muted-foreground">
+													{model.provider}
+												</span>
+											</div>
+										</AppDropdownMenuItem>
+									))}
+								</AppDropdownMenuContent>
+							</AppDropdownMenu>
 							{isProcessingAI && (
 								<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
 									{t('imageNode.aiProcessing', 'Processing...')}
