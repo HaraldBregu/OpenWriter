@@ -1,15 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, LoaderCircle, ChevronDown } from 'lucide-react';
+import { ArrowUp, LoaderCircle } from 'lucide-react';
 import { AppButton } from '@components/app/AppButton';
-import {
-	AppDropdownMenu,
-	AppDropdownMenuTrigger,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-} from '@components/app/AppDropdownMenu';
 import { cn } from '@/lib/utils';
 import { AgentDropdown } from './AgentDropdown';
+import { ModelDropdown } from './ModelDropdown';
 import type { ContentGeneratorAgentId } from '../agents';
 import type { ModelInfo } from '../../../../../../../shared/types';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../../shared/models';
