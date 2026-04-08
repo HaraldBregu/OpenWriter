@@ -89,12 +89,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const model = defaultTextModelRef.current;
-				const taskId = await writerTask.submit({
-					prompt,
-					modelId: model?.modelId,
-					provider: model?.provider,
-				});
+				const taskId = await writerTask.submit({ prompt });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
