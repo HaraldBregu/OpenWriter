@@ -20,6 +20,7 @@ import { InsertImageDialog } from './InsertImageDialog';
 import { createExtensions } from './extensions';
 import { type ImageInsertHandler } from './extensions/image';
 import { EditorProvider } from './EditorContext';
+import type { ModelInfo } from '../../../../shared/types';
 
 export interface ImageInsertOptions {
 	src: string;
