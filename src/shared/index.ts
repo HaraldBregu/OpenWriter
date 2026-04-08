@@ -4,4 +4,5 @@
 export * from './types';
 export * from './channels';
 export * from './file-type-validator';
-export * from './model-constants';
+export * from './models';
+export * from './providers';
