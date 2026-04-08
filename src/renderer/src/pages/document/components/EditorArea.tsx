@@ -1,6 +1,7 @@
 import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
+import type { ModelInfo } from '../../../../../shared/types';
 
 interface EditorAreaProps {
 	readonly loaded: boolean;
