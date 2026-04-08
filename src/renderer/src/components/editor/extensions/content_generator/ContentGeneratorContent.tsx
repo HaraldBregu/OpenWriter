@@ -43,6 +43,7 @@ export function ContentGeneratorContent({
 	onPromptChange,
 	onAgentChange,
 	onImageModelChange,
+	onWritingModelChange,
 	onRemoveFile,
 	onFileInputChange,
 	onOpenFilePicker,
