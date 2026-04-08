@@ -2,6 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { v7 as uuidv7 } from 'uuid';
 import { initTaskMetadata } from '../../../services/task-event-bus';
 import { buildTaskPrompt } from '../shared';
+import type { ModelInfo } from '../../../../../shared/types';
 
 interface SavedImage {
 	readonly fileName: string;
@@ -14,6 +15,7 @@ interface ImageTaskSubmitParams {
 	readonly cursorPos: number;
 	readonly input: string;
 	readonly files: File[];
+	readonly model: ModelInfo;
 }
 
 interface UseImageTaskSubmitReturn {

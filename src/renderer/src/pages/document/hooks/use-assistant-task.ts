@@ -117,7 +117,14 @@ export function useAssistantTask(
 	);
 
 	const handleGenerateImageSubmit = useCallback(
-		async (before: string, after: string, cursorPos: number, input: string, files: File[], model: ModelInfo) => {
+		async (
+			before: string,
+			after: string,
+			cursorPos: number,
+			input: string,
+			files: File[],
+			model: ModelInfo
+		) => {
 			if (!documentId || assistantIsRunning) {
 				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setAssistantEnable(true);
