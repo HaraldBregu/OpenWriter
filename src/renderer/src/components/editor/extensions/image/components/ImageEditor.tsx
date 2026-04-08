@@ -340,7 +340,7 @@ export function ImageEditor({
 										size="sm"
 										onClick={handleResetCrop}
 										disabled={!state.cropRegion}
-										className="h-7 px-2 text-xs"
+										className="h-7 rounded-full px-2 text-xs"
 									>
 										{t('imageNode.resetCrop')}
 									</AppButton>
