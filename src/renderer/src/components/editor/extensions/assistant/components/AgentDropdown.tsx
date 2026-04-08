@@ -38,8 +38,6 @@ export function AgentDropdown({
 		ASSISTANT_AGENT_OPTIONS.find((option) => option.value === agentId) ??
 		ASSISTANT_AGENT_OPTIONS[0];
 
-	const currentLabel = t(current.labelKey, current.labelFallback);
-
 	return (
 		<AppDropdownMenu>
 			<AppDropdownMenuTrigger asChild>
