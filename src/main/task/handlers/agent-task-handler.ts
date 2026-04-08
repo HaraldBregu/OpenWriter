@@ -444,6 +444,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			typeof metadata?.documentId === 'string' ? metadata.documentId.trim() : undefined;
 		if (!documentId) return undefined;
 
+		const isImageAgent = this.agentId === 'image-generator';
+
 		const windowContext =
 			typeof input.windowId === 'number'
 				? this.windowContextManager.tryGet(input.windowId)
@@ -453,7 +455,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			try {
 				const workspace = windowContext.container.get<Workspace>('workspaceManager');
 				const config = await workspace.getDocumentConfig(documentId);
-				return config.textModel || undefined;
+				const value = isImageAgent ? config.imageModel : config.textModel;
+				return value || undefined;
 			} catch {
 				return undefined;
 			}
@@ -469,7 +472,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		try {
 			const raw = await fs.readFile(configPath, 'utf-8');
 			const config = JSON.parse(raw) as Record<string, unknown>;
-			const value = config.defaultTextModelId;
+			const key = isImageAgent ? 'defaultImageModelId' : 'defaultTextModelId';
+			const value = config[key];
 			return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
 		} catch {
 			return undefined;
