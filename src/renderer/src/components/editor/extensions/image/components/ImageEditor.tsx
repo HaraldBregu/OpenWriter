@@ -252,7 +252,7 @@ export function ImageEditor({
 	return (
 		<div
 			ref={editorRef}
-			className="overflow-hidden rounded-lg border border-border bg-card/90"
+			className="overflow-hidden rounded-[1.55rem] border border-border bg-card/90"
 			role="dialog"
 			aria-modal="true"
 			aria-label={t('imageNode.editorLabel', 'Image editor')}
