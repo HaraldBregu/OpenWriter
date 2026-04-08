@@ -9,6 +9,15 @@ import type { ThemeMode } from '../../../shared/types';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
+export type AppTheme =
+	| 'default'
+	| 'aurora'
+	| 'ember'
+	| 'ocean'
+	| 'forest'
+	| 'lavender'
+	| 'midnight'
+	| 'sandstone';
 export type SidebarState = 'expanded' | 'collapsed';
 
 export interface User {
