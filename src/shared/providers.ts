@@ -5,14 +5,7 @@
 // This file must be valid in all three process contexts (main, renderer, preload).
 // ---------------------------------------------------------------------------
 
-// ---------------------------------------------------------------------------
-// Provider descriptor
-// ---------------------------------------------------------------------------
-
-export interface ProviderDescriptor {
-	id: string;
-	name: string;
-}
+import type { ProviderDescriptor, ServiceProvider } from './types';
 
 // ---------------------------------------------------------------------------
 // Provider IDs
