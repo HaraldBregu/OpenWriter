@@ -48,6 +48,13 @@ export const ContentGeneratorExtension = Node.create<ContentGeneratorOptions, Co
 		};
 	},
 
+	addStorage() {
+		return {
+			defaultTextModel: this.options.defaultTextModel,
+			defaultImageModel: this.options.defaultImageModel,
+		};
+	},
+
 	addAttributes() {
 		return {
 			loading: {
