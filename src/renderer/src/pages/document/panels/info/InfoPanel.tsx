@@ -14,7 +14,8 @@ import {
 } from 'lucide-react';
 import { useDocumentState, useDocumentDispatch } from '../../hooks';
 import { PdfExportSection } from './components/PdfExportSection';
-import { findModelById } from '../../../../../../shared/models';
+import { findModelById, DEFAULT_IMAGE_MODEL_ID } from '../../../../../../shared/models';
+import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import {
 	AppLabel,
 	AppCard,
