@@ -428,13 +428,13 @@ export function ImageEditor({
 							{aiPreviewUrls.map((url, index) => (
 								<div
 									key={`${aiFiles[index]?.name ?? 'ref'}-${index}`}
-									className="group/thumb relative h-16 w-16 shrink-0"
+									className="group/thumb relative h-16 shrink-0"
 								>
-									<div className="h-full w-full overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
+									<div className="h-full overflow-hidden rounded-[1.15rem] border border-border/75 bg-background/82 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_6px_16px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_18px_hsl(var(--background)/0.32)]">
 										<img
 											src={url}
 											alt={aiFiles[index]?.name ?? ''}
-											className="h-full w-full object-contain"
+											className="h-full w-auto"
 										/>
 									</div>
 									<AppButton
