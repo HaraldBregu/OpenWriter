@@ -29,8 +29,21 @@ export interface ExtensionHandlers {
 	defaultImageModel?: ModelInfo;
 	onTextModelChange?: (model: ModelInfo) => void;
 	onImageModelChange?: (model: ModelInfo) => void;
-	onGenerateTextSubmit: (prompt: string) => void;
-	onGenerateImageSubmit: (prompt: string, files: File[]) => void;
+	onGenerateTextSubmit: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		model: ModelInfo
+	) => void;
+	onGenerateImageSubmit: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		prompt: string,
+		files: File[],
+		model: ModelInfo
+	) => void;
 	onImageInsert: ImageInsertHandler;
 	onUndo: () => void;
 	onRedo: () => void;

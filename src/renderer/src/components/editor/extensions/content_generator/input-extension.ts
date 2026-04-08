@@ -38,21 +38,8 @@ export const ContentGeneratorExtension = Node.create<ContentGeneratorOptions>({
 			defaultImageModel: undefined,
 			onTextModelChange: undefined,
 			onImageModelChange: undefined,
-			onGenerateTextSubmit: (
-				_before: string,
-				_after: string,
-				_cursorPos: number,
-				_prompt: string,
-				_model: ModelInfo
-			) => {},
-			onGenerateImageSubmit: (
-				_before: string,
-				_after: string,
-				_cursorPos: number,
-				_prompt: string,
-				_files: File[],
-				_model: ModelInfo
-			) => {},
+			onGenerateTextSubmit: (_prompt: string) => {},
+			onGenerateImageSubmit: (_prompt: string, _files: File[]) => {},
 		};
 	},
 
