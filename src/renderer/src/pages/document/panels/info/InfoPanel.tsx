@@ -176,7 +176,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 
 	return (
 		<>
-			<div className="flex w-full flex-col overflow-hidden border-l border-border/70 bg-card/55 dark:bg-background">
+			<div className="flex h-full w-full flex-col overflow-hidden border-l border-border/70 bg-card/55 dark:bg-background">
 				<div className="shrink-0 border-b border-border/80 bg-card/92 px-4 py-2 backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
 					<div className="flex items-center justify-between">
 						<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
