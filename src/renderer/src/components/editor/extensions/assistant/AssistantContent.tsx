@@ -4,6 +4,7 @@ import { AppTextarea } from '@components/app/AppTextarea';
 import { cn } from '@/lib/utils';
 import { ImageAttachmentBar, PromptFooter } from './components';
 import type { AssistantAgentId } from './agents';
+import type { ModelInfo } from '../../../../../../shared/types';
 
 export interface AssistantContentProps {
 	prompt: string;
@@ -12,11 +13,13 @@ export interface AssistantContentProps {
 	previewUrls: string[];
 	loading: boolean;
 	enable: boolean;
+	selectedImageModel: ModelInfo;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 	submitRef: React.RefObject<(() => void) | null>;
 	onPromptChange: (value: string) => void;
 	onAgentChange: (agentId: AssistantAgentId) => void;
+	onImageModelChange: (model: ModelInfo) => void;
 	onRemoveFile: (index: number) => void;
 	onFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	onOpenFilePicker: () => void;
