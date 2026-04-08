@@ -2,6 +2,7 @@ import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { AssistantNodeView } from './NodeView';
 import type { AssistantAgentId } from './agents';
+import type { ModelInfo } from '../../../../../../shared/types';
 
 export interface AssistantOptions {
 	onGenerateTextSubmit: (before: string, after: string, cursorPos: number, prompt: string) => void;
@@ -10,7 +11,8 @@ export interface AssistantOptions {
 		after: string,
 		cursorPos: number,
 		prompt: string,
-		files: File[]
+		files: File[],
+		model: ModelInfo
 	) => void;
 }
 
