@@ -697,27 +697,6 @@ export const AI_MODELS: readonly ModelInfo[] = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// All provider names (derived)
-// ---------------------------------------------------------------------------
-
-export const APP_PROVIDERS: readonly AppProviderName[] = [
-	'OpenAI',
-	'Anthropic',
-	'Google',
-	'Meta',
-	'Mistral',
-	'Cohere',
-	'xAI',
-	'Amazon',
-	'DeepSeek',
-	'Qwen',
-	'Inception',
-	'Zhipu AI',
-	'Perplexity',
-	'AI21 Labs',
-] as const;
-
-// ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------
 
