@@ -5,7 +5,7 @@
 // This file must be valid in all three process contexts (main, renderer, preload).
 // ---------------------------------------------------------------------------
 
-import type { ProviderDescriptor, ServiceProvider } from './types';
+import type { ProviderDescriptor, ProviderId, ServiceProvider } from './types';
 
 // ---------------------------------------------------------------------------
 // Provider IDs
