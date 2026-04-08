@@ -161,11 +161,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
 			/>
 
-			<AppSidebarLayout
-				sidebar={
-					<>
-						{/* Header */}
-						<AppSidebarHeader>
+			<AppSidebarContainer>
+				<AppSidebarLayout>
+					{/* Header */}
+					<AppSidebarHeader>
 							<AppSidebarMenu>
 								<AppSidebarMenuItem>
 									<AppSidebarMenuButton
