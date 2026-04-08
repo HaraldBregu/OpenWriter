@@ -53,18 +53,10 @@ export function ContentGeneratorContent({
 }: ContentGeneratorContentProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const isImage = agentId === 'image';
-	const hintId = React.useId();
 	const activeModel = isImage ? selectedImageModel : selectedTextModel;
 	const inputLabel = isImage
 		? t('assistantNode.imageTitle', 'Generate image')
 		: t('assistantNode.writerTitle', 'Generate text');
-
-	const footerHint = loading
-		? t('assistantNode.generating', 'Generating response...')
-		: !enable
-			? t('assistantNode.disabled', 'Assistant unavailable right now.')
-			: t('assistantNode.keyboardHint', 'Enter to send  ·  Esc to dismiss');
-	const footerHintTone = loading ? 'loading' : !enable ? 'disabled' : 'default';
 
 	const isSubmitDisabled =
 		!enable || loading || (!prompt.trim() && (!isImage || files.length === 0));
