@@ -3,6 +3,8 @@ import type { RefObject } from 'react';
 import type { ContentGeneratorAgentId } from '@/components/editor/extensions/content_generator';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { ModelInfo } from '../../../../../shared/types';
+import { DEFAULT_WRITING_MODEL_ID } from '../../../../../shared/types';
+import { WRITING_MODELS } from '../../../../../shared/models';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { normalizeTaskPromptContext } from '../shared';
