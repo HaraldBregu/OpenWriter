@@ -238,7 +238,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 							<div
 								className={cn(
 									'flex h-32 w-64 flex-col items-center justify-center gap-2',
-									'rounded-[1.55rem] border border-dashed border-border bg-muted/50',
+									'rounded-md border border-dashed border-border bg-muted/50',
 									'text-muted-foreground'
 								)}
 								role="img"
