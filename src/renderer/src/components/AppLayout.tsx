@@ -421,21 +421,29 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
 									{footerUserEmail}
 								</div>
-								<div className="mb-2 grid grid-cols-3 gap-1 rounded-xl border border-border bg-muted/40 p-1">
-									{themeOptions.map(({ value, label, icon: Icon }) => (
+								<div
+									role="group"
+									aria-label={t('settings.theme.title')}
+									className="mb-2 inline-flex rounded-md border border-border bg-muted p-0.5"
+								>
+									{themeOptions.map(({ value, label, icon: Icon }, index) => (
 										<button
 											key={value}
 											type="button"
 											onClick={() => setTheme(value)}
 											className={cn(
-												'flex h-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-popover',
-												themeMode === value && 'bg-background text-foreground shadow-sm'
+												'relative p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+												index === 0 && 'rounded-l-sm',
+												index === themeOptions.length - 1 && 'rounded-r-sm',
+												index !== 0 && index !== themeOptions.length - 1 && 'rounded-none',
+												themeMode === value
+													? 'bg-background text-foreground shadow-sm'
+													: 'bg-transparent text-muted-foreground hover:text-foreground'
 											)}
 											aria-label={label}
 											aria-pressed={themeMode === value}
-											title={label}
 										>
-											<Icon className="h-4 w-4" />
+											<Icon size={16} />
 										</button>
 									))}
 								</div>
