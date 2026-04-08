@@ -135,7 +135,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await imageTask.submit({ before, after, cursorPos, input, files });
+				const taskId = await imageTask.submit({ before, after, cursorPos, input, files, model });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
