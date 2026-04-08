@@ -88,7 +88,7 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 										type="button"
 										aria-label={emoji.label}
 										className={cn(
-											'flex h-10 w-10 items-center justify-center rounded text-2xl transition-colors',
+											'flex h-12 w-12 items-center justify-center rounded text-3xl transition-colors',
 											emoji.isActive
 												? 'bg-accent text-accent-foreground'
 												: 'hover:bg-accent hover:text-accent-foreground'
