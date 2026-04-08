@@ -132,7 +132,7 @@ export function useAssistantTask(
 				editorRef.current?.setAssistantEnable(true);
 			}
 		},
-		[assistantIsRunning, documentId, editorRef, imageTask, defaultImageModelRef]
+		[assistantIsRunning, documentId, editorRef, imageTask]
 	);
 
 	const handleContinueWithAssistant = useCallback(
