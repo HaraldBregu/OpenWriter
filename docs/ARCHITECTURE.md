@@ -156,16 +156,16 @@ Renderer
 
 ## Related Files
 
-- [src/preload/index.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\preload\index.ts)
-- [src/preload/typed-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\preload\typed-ipc.ts)
-- [src/shared/channels.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\shared\channels.ts)
-- [src/main/bootstrap.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\bootstrap.ts)
-- [src/main/core/window-context.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\core\window-context.ts)
-- [src/main/core/window-scoped-service-factory.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\core\window-scoped-service-factory.ts)
-- [src/main/ipc/workspace-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\workspace-ipc.ts)
-- [src/main/ipc/task-manager-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\task-manager-ipc.ts)
-- [src/main/ipc/app-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\app-ipc.ts)
-- [src/main/ipc/window-ipc.ts](C:\Users\BRGHLD87H\Documents\OpenWriter\src\main\ipc\window-ipc.ts)
+- `src/preload/index.ts`
+- `src/preload/typed-ipc.ts`
+- `src/shared/channels.ts`
+- `src/main/bootstrap.ts`
+- `src/main/core/window-context.ts`
+- `src/main/core/window-scoped-service-factory.ts`
+- `src/main/ipc/workspace-ipc.ts`
+- `src/main/ipc/task-manager-ipc.ts`
+- `src/main/ipc/app-ipc.ts`
+- `src/main/ipc/window-ipc.ts`
 
 ## Related Docs
 
