@@ -98,14 +98,10 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 
 		const unsubscribe = window.workspace.onDocumentConfigChanges(documentId, (config) => {
 			if (cancelled) return;
-			if (config.textModel) {
-				const model = findModelById(config.textModel);
-				if (model) setTextModelName(model.name);
-			}
-			if (config.imageModel) {
-				const model = findModelById(config.imageModel);
-				if (model) setImageModelName(model.name);
-			}
+			const updatedTextModel = findModelById(config.textModel);
+			if (updatedTextModel) setTextModelName(updatedTextModel.name);
+			const updatedImageModel = findModelById(config.imageModel);
+			if (updatedImageModel) setImageModelName(updatedImageModel.name);
 		});
 
 		return () => {
