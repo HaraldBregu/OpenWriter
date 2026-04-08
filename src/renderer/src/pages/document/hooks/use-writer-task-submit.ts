@@ -44,6 +44,8 @@ export function useWriterTaskSubmit(documentId: string | undefined): UseWriterTa
 				after: params.after,
 				cursorPos: params.cursorPos,
 				referenceImages: [],
+				modelId: params.model.modelId,
+				provider: params.model.provider,
 			};
 
 			const ipcResult = await window.task.submit('agent-writer', taskInput, metadata);
