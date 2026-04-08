@@ -262,21 +262,21 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 							<div className="flex items-center justify-between pt-6 pb-2">
 								<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
 									{t('configSidebar.images')}
-								</h2>
-								<div className="flex items-center gap-1.5">
 									{images.length > 0 && (
-										<span className="text-[11px] text-muted-foreground">{images.length}</span>
+										<span className="ml-1.5 text-[11px] text-muted-foreground/70">
+											{images.length}
+										</span>
 									)}
-									<button
-										type="button"
-										onClick={handleOpenImagesFolder}
-										className={ICON_BUTTON_CLASS}
-										aria-label={t('common.openFolder')}
-										title={t('common.openFolder')}
-									>
-										<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
-									</button>
-								</div>
+								</h2>
+								<button
+									type="button"
+									onClick={handleOpenImagesFolder}
+									className={ICON_BUTTON_CLASS}
+									aria-label={t('common.openFolder')}
+									title={t('common.openFolder')}
+								>
+									<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+								</button>
 							</div>
 
 							{images.length > 0 ? (
