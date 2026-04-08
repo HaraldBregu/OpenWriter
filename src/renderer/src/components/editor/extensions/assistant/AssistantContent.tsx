@@ -98,11 +98,13 @@ export function AssistantContent({
 			/>
 			<PromptFooter
 				agentId={agentId}
+				selectedImageModel={selectedImageModel}
 				hint={footerHint}
 				loading={loading}
 				isSubmitDisabled={isSubmitDisabled}
 				submitRef={submitRef}
 				onAgentChange={onAgentChange}
+				onImageModelChange={onImageModelChange}
 			/>
 		</>
 	);
