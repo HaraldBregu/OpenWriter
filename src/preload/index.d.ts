@@ -241,7 +241,7 @@ export interface WorkspaceApi {
 	/** Get the combined config for a document (metadata + model overrides). */
 	getDocumentConfig: (documentId: string) => Promise<DocumentConfig>;
 	/** Persist model overrides for a document and broadcast a config-changed event. */
-	updateConfig: (documentId: string, config: Partial<DocumentConfig>) => Promise<void>;
+	updateDocumentConfig: (documentId: string, config: Partial<DocumentConfig>) => Promise<void>;
 	/** Subscribe to config changes for a specific document. */
 	onDocumentConfigChanges: (
 		documentId: string,
