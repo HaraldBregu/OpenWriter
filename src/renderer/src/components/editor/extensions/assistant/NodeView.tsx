@@ -35,6 +35,7 @@ export function AssistantNodeView({
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
+	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(IMAGE_MODELS[0]);
 
 	const handlePromptChange = useCallback(
 		(value: string) => {
