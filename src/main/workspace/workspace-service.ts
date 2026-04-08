@@ -4,7 +4,7 @@ import type { StoreService } from '../services/store';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
-import type { ServiceProvider } from '../../shared/providers';
+import type { ServiceProvider } from '../../shared/types';
 import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
 
 /**
