@@ -18,11 +18,10 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 	const modeDescription = isImage
 		? t('assistantNode.imageHeaderSubtitle', 'Prompt or references')
 		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
-	const modelLabel = t('assistantNode.selectedModel', 'Selected model');
 
 	return (
-		<div className="flex min-h-[3.25rem] items-center justify-between gap-3 px-4 pt-3 pb-1.5">
-			<div className="flex min-w-0 items-center gap-2">
+		<div className="flex min-h-[3.1rem] items-center justify-between gap-3 px-4 pt-3 pb-1.5">
+			<div className="flex min-w-0 items-center gap-2.5">
 				<div
 					className={cn(
 						'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)]',
@@ -33,23 +32,21 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 				>
 					{isImage ? <ImageIcon className="h-4 w-4" /> : <PenLine className="h-4 w-4" />}
 				</div>
-				<div className="flex min-w-0 items-center gap-2">
+				<div className="flex min-w-0 items-center gap-2.5">
 					<p className="truncate text-sm font-semibold leading-none text-foreground">{modeLabel}</p>
-					<span className="max-w-[10rem] truncate rounded-full bg-muted/70 px-2 py-0.5 text-[10px] font-medium leading-none text-muted-foreground dark:bg-white/[0.05] dark:text-muted-foreground/95">
+					<span className="h-1 w-1 shrink-0 rounded-full bg-border/80 dark:bg-white/20" />
+					<p className="truncate text-[11px] font-medium leading-none text-muted-foreground dark:text-muted-foreground/95">
 						{modeDescription}
-					</span>
+					</p>
 				</div>
 			</div>
 			<div
-				className="max-w-[58%] rounded-[1rem] border border-border/70 bg-background/80 px-3 py-1.5 text-right shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]"
-				aria-label={`${modelLabel}: ${modelName}`}
+				className="max-w-[58%] truncate rounded-full border border-border/70 bg-background/80 px-3 py-1.5 text-[11px] font-medium leading-none text-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] dark:border-white/12 dark:bg-white/[0.04] dark:text-foreground dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)]"
+				aria-label={t('assistantNode.selectedModelAria', 'Selected model: {{modelName}}', {
+					modelName,
+				})}
 			>
-				<p className="truncate text-[10px] font-semibold uppercase leading-none tracking-[0.12em] text-muted-foreground dark:text-muted-foreground/95">
-					{modelLabel}
-				</p>
-				<p className="mt-1 truncate text-[11px] font-medium leading-none text-foreground">
-					{modelName}
-				</p>
+				{modelName}
 			</div>
 		</div>
 	);

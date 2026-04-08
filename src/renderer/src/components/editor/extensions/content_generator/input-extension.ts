@@ -5,6 +5,10 @@ import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 
 export interface ContentGeneratorOptions {
+	defaultTextModel?: ModelInfo;
+	defaultImageModel?: ModelInfo;
+	onTextModelChange?: (model: ModelInfo) => void;
+	onImageModelChange?: (model: ModelInfo) => void;
 	onGenerateTextSubmit: (
 		before: string,
 		after: string,

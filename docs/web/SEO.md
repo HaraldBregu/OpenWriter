@@ -23,13 +23,17 @@ OpenWriter is a free, open-source desktop writing app with built-in AI assistanc
 ```html
 <meta property="og:type" content="website" />
 <meta property="og:title" content="OpenWriter — Free AI-Powered Desktop Writing App" />
-<meta property="og:description" content="A free, open-source desktop writing app with built-in AI assistance, workspace management, and a distraction-free rich text editor." />
+<meta
+	property="og:description"
+	content="A free, open-source desktop writing app with built-in AI assistance, workspace management, and a distraction-free rich text editor."
+/>
 <meta property="og:image" content="https://openwriter.app/og-image.png" />
 <meta property="og:url" content="https://openwriter.app" />
 <meta property="og:site_name" content="OpenWriter" />
 ```
 
 **OG Image specifications:**
+
 - Dimensions: 1200x630px
 - Content: App screenshot with logo overlay and tagline
 - Format: PNG
@@ -42,7 +46,10 @@ OpenWriter is a free, open-source desktop writing app with built-in AI assistanc
 ```html
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="OpenWriter — Free AI-Powered Desktop Writing App" />
-<meta name="twitter:description" content="Free, open-source desktop writing app with AI assistance. macOS, Windows, Linux." />
+<meta
+	name="twitter:description"
+	content="Free, open-source desktop writing app with AI assistance. macOS, Windows, Linux."
+/>
 <meta name="twitter:image" content="https://openwriter.app/og-image.png" />
 ```
 
@@ -52,26 +59,26 @@ OpenWriter is a free, open-source desktop writing app with built-in AI assistanc
 
 ```json
 {
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "OpenWriter",
-  "description": "A free, open-source desktop writing application with built-in AI assistance, workspace management, and a distraction-free rich text editor.",
-  "applicationCategory": "Productivity",
-  "operatingSystem": "macOS, Windows, Linux",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
-  },
-  "author": {
-    "@type": "Person",
-    "name": "Harald Bregu"
-  },
-  "license": "https://opensource.org/licenses/MIT",
-  "url": "https://openwriter.app",
-  "downloadUrl": "https://github.com/HaraldBregu/openwriter/releases",
-  "softwareVersion": "1.0.0",
-  "screenshot": "https://openwriter.app/screenshot.png"
+	"@context": "https://schema.org",
+	"@type": "SoftwareApplication",
+	"name": "OpenWriter",
+	"description": "A free, open-source desktop writing application with built-in AI assistance, workspace management, and a distraction-free rich text editor.",
+	"applicationCategory": "Productivity",
+	"operatingSystem": "macOS, Windows, Linux",
+	"offers": {
+		"@type": "Offer",
+		"price": "0",
+		"priceCurrency": "USD"
+	},
+	"author": {
+		"@type": "Person",
+		"name": "Harald Bregu"
+	},
+	"license": "https://opensource.org/licenses/MIT",
+	"url": "https://openwriter.app",
+	"downloadUrl": "https://github.com/HaraldBregu/openwriter/releases",
+	"softwareVersion": "1.0.0",
+	"screenshot": "https://openwriter.app/screenshot.png"
 }
 ```
 
@@ -106,6 +113,7 @@ Long-tail: `free open source AI writing app for mac`, `desktop writing app with 
 ## Favicon
 
 Provide in multiple sizes:
+
 - `favicon.ico` (16x16, 32x32)
 - `apple-touch-icon.png` (180x180)
 - `icon-192.png` (192x192, for PWA manifest)

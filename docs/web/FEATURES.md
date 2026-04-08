@@ -14,6 +14,7 @@ Organized into feature blocks. Each block includes a title, description, and sug
 A multi-agent AI assistant that plans, researches, drafts, reviews, and enhances your writing. It retrieves context from your workspace documents, searches the web when needed, and streams responses in real time. Not a chatbot — a writing partner.
 
 **Key points:**
+
 - Intelligent content continuation with length control
 - Workspace-aware retrieval (RAG) for grounded answers
 - Web search integration for up-to-date information
@@ -31,6 +32,7 @@ A multi-agent AI assistant that plans, researches, drafts, reviews, and enhances
 A rich text editor built on Tiptap and ProseMirror. Supports headings, lists, code blocks, images, highlights, and markdown shortcuts. Everything you need to write, nothing you don't.
 
 **Key points:**
+
 - Full rich text formatting with keyboard shortcuts
 - Code blocks with syntax highlighting
 - Image insertion and management
@@ -48,6 +50,7 @@ A rich text editor built on Tiptap and ProseMirror. Supports headings, lists, co
 Group your documents into workspaces. Each workspace tracks its own files, resources, and AI context. Switch between projects instantly without losing your place.
 
 **Key points:**
+
 - Per-workspace file tracking and metadata
 - Recent workspaces for quick switching
 - Multi-window support with independent workspace state
@@ -65,6 +68,7 @@ Group your documents into workspaces. Each workspace tracks its own files, resou
 Add PDFs, Word documents, and text files to your workspace. OpenWriter indexes them with semantic embeddings so the AI assistant can find and cite relevant information when you write.
 
 **Key points:**
+
 - PDF, DOCX, and plain text import
 - Automatic chunking and semantic embedding
 - Vector similarity search for relevant retrieval
@@ -82,6 +86,7 @@ Add PDFs, Word documents, and text files to your workspace. OpenWriter indexes t
 Native desktop app for macOS, Windows, and Linux. Fast startup, offline-capable, and built with Electron for a consistent experience across platforms.
 
 **Key points:**
+
 - macOS (Intel + Apple Silicon)
 - Windows (NSIS installer)
 - Linux (AppImage)
@@ -99,6 +104,7 @@ Native desktop app for macOS, Windows, and Linux. Fast startup, offline-capable,
 MIT licensed. Read the code, contribute features, or fork it for your own use. No subscriptions, no lock-in, no data collection.
 
 **Key points:**
+
 - Full source code on GitHub
 - MIT license — use it for anything
 - Community-driven development
@@ -116,6 +122,7 @@ MIT licensed. Read the code, contribute features, or fork it for your own use. N
 A priority-based task system runs AI generation, document indexing, and other heavy operations in the background. Real-time progress streaming keeps you informed without blocking your writing.
 
 **Key points:**
+
 - Priority queue with concurrent execution
 - Real-time token streaming from AI agents
 - Progress reporting with cancellation support
@@ -133,6 +140,7 @@ A priority-based task system runs AI generation, document indexing, and other he
 Interface available in English and Italian, with an extensible i18n system ready for more languages. Write content in any language the AI model supports.
 
 **Key points:**
+
 - English and Italian UI out of the box
 - Extensible translation system
 - AI writing support for any language

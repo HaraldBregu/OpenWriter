@@ -22,6 +22,7 @@ OpenWriter is a free, open-source desktop writing app with built-in AI assistanc
 ## Hero Visual
 
 A screenshot or animated preview showing:
+
 - The rich text editor with a document open
 - The AI assistant panel generating a continuation
 - The sidebar with workspace navigation
