@@ -520,20 +520,22 @@ interface AppProviderProps {
 export function AppProvider({ children, initialState }: AppProviderProps) {
 	return (
 		<ThemeProvider initialTheme={initialState?.theme}>
-			<LanguageProvider initialLanguage={initialState?.language}>
-				<UserProvider initialUser={initialState?.user}>
-					<UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
-						<ModalProvider initialModals={initialState?.modals}>
-							<NetworkProvider
-								initialOnline={initialState?.isOnline}
-								initialSyncedAt={initialState?.lastSyncedAt}
-							>
-								{children}
-							</NetworkProvider>
-						</ModalProvider>
-					</UIPreferencesProvider>
-				</UserProvider>
-			</LanguageProvider>
+			<AppThemeProvider initialAppTheme={initialState?.appTheme}>
+				<LanguageProvider initialLanguage={initialState?.language}>
+					<UserProvider initialUser={initialState?.user}>
+						<UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
+							<ModalProvider initialModals={initialState?.modals}>
+								<NetworkProvider
+									initialOnline={initialState?.isOnline}
+									initialSyncedAt={initialState?.lastSyncedAt}
+								>
+									{children}
+								</NetworkProvider>
+							</ModalProvider>
+						</UIPreferencesProvider>
+					</UserProvider>
+				</LanguageProvider>
+			</AppThemeProvider>
 		</ThemeProvider>
 	);
 }
