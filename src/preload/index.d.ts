@@ -235,6 +235,15 @@ export interface WorkspaceApi {
 		callback: (config: DocumentConfig) => void
 	) => () => void;
 	// -------------------------------------------------------------------------
+	// Document content
+	// -------------------------------------------------------------------------
+	getDocumentContent: (documentId: string) => Promise<string>;
+	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
+	onDocumentContentChanges: (
+		documentId: string,
+		callback: (content: string) => void
+	) => () => void;
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
