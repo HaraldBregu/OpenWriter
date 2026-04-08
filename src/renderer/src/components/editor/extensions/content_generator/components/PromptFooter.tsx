@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
 import { AppButton } from '@components/app/AppButton';
-import { cn } from '@/lib/utils';
+
 import { AgentDropdown } from './AgentDropdown';
 import { ModelDropdown } from './ModelDropdown';
 import type { ContentGeneratorAgentId } from '../agents';
