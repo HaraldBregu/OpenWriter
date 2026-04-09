@@ -233,6 +233,11 @@ export class AppIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			AppChannels.deleteTheme,
+			wrapSimpleHandler((id: string) => themeService.deleteTheme(id), AppChannels.deleteTheme)
+		);
+
+		ipcMain.handle(
 			AppChannels.importTheme,
 			wrapSimpleHandler(async () => {
 				const result = await dialog.showOpenDialog({
