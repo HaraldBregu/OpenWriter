@@ -288,54 +288,6 @@ const Input: React.FC<InputProps> = ({
 					</div>
 				)}
 
-				{isImage && files.length === 0 && (
-					<div
-						className={cn(
-							'mx-3.5 mb-1 mt-3 overflow-hidden rounded-2xl border border-dashed transition-[border-color,background-color]',
-							isDragOver
-								? 'border-primary/50 bg-primary/8 dark:bg-primary/12'
-								: 'border-border/75 bg-muted/20 dark:border-white/12 dark:bg-white/[0.03]'
-						)}
-					>
-						<div
-							role="button"
-							tabIndex={disabled ? -1 : 0}
-							onMouseDown={(e) => e.preventDefault()}
-							onClick={disabled ? undefined : openFilePicker}
-							onKeyDown={(e) => {
-								if (disabled) return;
-								if (e.key === 'Enter' || e.key === ' ') {
-									e.preventDefault();
-									openFilePicker();
-								}
-							}}
-							aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
-							aria-describedby={dropStatusId}
-							className="flex min-h-[4.5rem] items-center justify-center px-4 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
-						>
-							<div className="flex items-center gap-2.5">
-								<div
-									aria-hidden="true"
-									className="flex h-8 w-8 items-center justify-center rounded-xl border border-border/70 bg-background/85 text-muted-foreground dark:border-white/12 dark:bg-white/[0.05]"
-								>
-									<ImagePlus className="h-3.5 w-3.5" />
-								</div>
-								<div className="flex flex-col gap-0.5 text-left">
-									<span className="text-xs font-medium text-foreground">
-										{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
-									</span>
-									<span className="text-[11px] text-muted-foreground">
-										{t(
-											'assistantNode.dropImagesDescription',
-											'Optional references for style or mood.'
-										)}
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-				)}
-
 				{selectionLabel && (
 					<div className="flex items-center gap-2 px-3.5 pb-1 pt-3">
 						<div
