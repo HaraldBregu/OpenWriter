@@ -193,6 +193,10 @@ export function ImageEditor({
 		if (activeMode === 'ai') {
 			aiTextareaRef.current?.focus();
 		}
+		if (activeMode === 'resize') {
+			const widthInput = editorRef.current?.querySelector<HTMLInputElement>('#resize-width');
+			widthInput?.focus();
+		}
 	}, [activeMode]);
 
 	const handleAISubmit = useCallback((): void => {
