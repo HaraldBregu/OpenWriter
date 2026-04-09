@@ -273,10 +273,10 @@
 			"import": "Import Theme",
 			"installed": "Installed Themes",
 			"noThemes": "No custom themes installed yet. Import a theme folder or place one in the themes directory.",
-			"activate": "Activate",
-			"active": "Active",
 			"importSuccess": "Theme imported successfully.",
 			"importErrorFallback": "Failed to import the theme. Please try again.",
+			"confirmDelete": "Confirm",
+			"deleteErrorFallback": "Failed to delete the theme. Please try again.",
 			"dismissError": "Dismiss error",
 			"dismissSuccess": "Dismiss"
 		}
