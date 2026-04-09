@@ -331,8 +331,8 @@ export function ImageEditor({
 						</div>
 					</div>
 
-					{/* Context controls row — crop / rotate */}
-					{(activeMode === 'crop' || activeMode === 'rotate') && (
+					{/* Context controls row — crop / rotate / resize */}
+					{(activeMode === 'crop' || activeMode === 'rotate' || activeMode === 'resize') && (
 						<div className="border-t border-border/60 bg-muted/30 px-2 py-1.5">
 							{activeMode === 'crop' && (
 								<div className="flex flex-wrap items-center gap-2">
@@ -385,6 +385,14 @@ export function ImageEditor({
 										{state.rotation}&deg;
 									</span>
 								</div>
+							)}
+
+							{activeMode === 'resize' && (
+								<ResizeControls
+									currentWidth={currentWidth}
+									currentHeight={currentHeight}
+									onApply={applyResize}
+								/>
 							)}
 						</div>
 					)}
