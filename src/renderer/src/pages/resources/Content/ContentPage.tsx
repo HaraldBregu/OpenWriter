@@ -39,8 +39,8 @@ import {
 } from '@/components/app';
 import { cn } from '@/lib/utils';
 import { useTaskListener } from '@/hooks/use-task-listener';
-import { useAppDispatch, useAppSelector } from '@/store';
-import { selectCurrentWorkspacePath, selectIndexingInfo, selectImporting } from '@/store/workspace';
+import { useAppSelector } from '@/store';
+import { selectImporting } from '@/store/workspace';
 import {
 	filterResourcesBySection,
 	RESOURCE_SECTIONS,
