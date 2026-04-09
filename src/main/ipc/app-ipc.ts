@@ -29,6 +29,7 @@ export class AppIpc implements IpcModule {
 
 	private lastTheme: ThemeMode | null = null;
 	private lastLanguage: string | null = null;
+	private trayEnabled = true;
 
 	register(container: ServiceContainer, eventBus: EventBus): void {
 		const store = container.get<StoreService>('store');
