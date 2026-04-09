@@ -488,6 +488,7 @@ const Input: React.FC<InputProps> = ({
 								<AppDropdownMenuItem
 									key={model.modelId}
 									onSelect={() => handleModelChange(model)}
+									aria-current={selectedModel.modelId === model.modelId ? 'true' : undefined}
 									className={cn(
 										'rounded-xl px-2.5 py-2.5',
 										selectedModel.modelId === model.modelId && 'bg-accent text-accent-foreground'
