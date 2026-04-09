@@ -164,6 +164,22 @@ export class ThemeService {
 		}
 	}
 
+	deleteTheme(id: string): void {
+		const themesDir = this.getThemesDirectory();
+		const themeDir = path.join(themesDir, id);
+
+		if (!themeDir.startsWith(themesDir + path.sep)) {
+			throw new Error('Invalid theme id');
+		}
+
+		if (!fs.existsSync(themeDir)) {
+			throw new Error(`Theme "${id}" not found`);
+		}
+
+		fs.rmSync(themeDir, { recursive: true });
+		this.logger.info('ThemeService', `Deleted theme "${id}"`);
+	}
+
 	private sanitizeFolderName(name: string): string {
 		return name
 			.replace(/[<>:"/\\|?*\p{Cc}]/gu, '')
