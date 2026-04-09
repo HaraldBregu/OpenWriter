@@ -40,6 +40,17 @@ export class Tray {
 		this.buildContextMenu();
 	}
 
+	destroy(): void {
+		if (this.tray) {
+			this.tray.destroy();
+			this.tray = null;
+		}
+	}
+
+	isCreated(): boolean {
+		return this.tray !== null;
+	}
+
 	updateLanguage(lng: string): void {
 		this.currentLanguage = lng;
 		this.buildContextMenu();
