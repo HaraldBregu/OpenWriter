@@ -176,6 +176,10 @@ const Input: React.FC<InputProps> = ({
 		CONTENT_GENERATOR_AGENT_OPTIONS.find((o) => o.value === agentId) ??
 		CONTENT_GENERATOR_AGENT_OPTIONS[0];
 
+	const handleFocus = useCallback(() => {
+		setIsFocused(true);
+	}, []);
+
 	const handleWrapperBlur = useCallback((e: React.FocusEvent<HTMLDivElement>) => {
 		if (wrapperRef.current?.contains(e.relatedTarget as Node | null)) return;
 		setIsFocused(false);
