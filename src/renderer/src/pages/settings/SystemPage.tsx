@@ -49,7 +49,7 @@ const APP_THEME_OPTIONS: readonly AppThemeOption[] = [
 // Page
 // ---------------------------------------------------------------------------
 
-const SystemSettingsPage: React.FC = () => {
+const SystemPage: React.FC = () => {
 	const { t } = useTranslation();
 	const themeMode = useThemeMode();
 	const appTheme = useAppTheme();
