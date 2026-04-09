@@ -102,6 +102,20 @@ export class ThemeService {
 		return themes;
 	}
 
+	getThemeById(id: string): CustomThemeManifest | null {
+		const manifestPath = path.join(this.getThemesDirectory(), id, THEME_FILE_NAME);
+		if (!fs.existsSync(manifestPath)) return null;
+
+		try {
+			const raw = fs.readFileSync(manifestPath, 'utf-8');
+			const parsed: unknown = JSON.parse(raw);
+			return this.validateManifest(parsed);
+		} catch (err) {
+			this.logger.warn('ThemeService', `Failed to load theme "${id}"`, err);
+			return null;
+		}
+	}
+
 	importThemeFromPath(sourcePath: string): CustomThemeInfo {
 		const manifestPath = path.join(sourcePath, THEME_FILE_NAME);
 		if (!fs.existsSync(manifestPath)) {
