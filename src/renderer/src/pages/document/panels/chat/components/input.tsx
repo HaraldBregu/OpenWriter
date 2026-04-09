@@ -453,7 +453,7 @@ const Input: React.FC<InputProps> = ({
 												<span className="text-xs text-muted-foreground">{description}</span>
 											</span>
 										</span>
-										{isSelected && <Check className="ml-auto h-4 w-4" />}
+										{isSelected && <Check className="ml-auto h-4 w-4" aria-hidden="true" />}
 									</AppDropdownMenuItem>
 								);
 							})}
