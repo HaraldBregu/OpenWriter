@@ -178,6 +178,7 @@ export const AppChannels = {
 	getCustomThemes: 'app:get-custom-themes',
 	openThemesFolder: 'app:open-themes-folder',
 	importTheme: 'app:import-theme',
+	getCustomThemeTokens: 'app:get-custom-theme-tokens',
 } as const;
 
 // ===========================================================================
