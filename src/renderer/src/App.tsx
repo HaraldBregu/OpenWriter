@@ -309,10 +309,18 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/resources/documents"
+													path="/resources/files"
 													element={
 														<RouteWrapper>
-															<DocumentsPage />
+															<FilesPage />
+														</RouteWrapper>
+													}
+												/>
+												<Route
+													path="/resources/content"
+													element={
+														<RouteWrapper>
+															<ContentPage />
 														</RouteWrapper>
 													}
 												/>
@@ -325,16 +333,16 @@ const App: React.FC = () => {
 													}
 												/>
 												<Route
-													path="/resources/files"
+													path="/resources/data"
 													element={
 														<RouteWrapper>
-															<FilesPage />
+															<DataPage />
 														</RouteWrapper>
 													}
 												/>
 												<Route
 													path="/library"
-													element={<Navigate to="/resources/documents" replace />}
+													element={<Navigate to="/resources/content" replace />}
 												/>
 												<Route
 													path="/resources"
