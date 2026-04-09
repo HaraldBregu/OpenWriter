@@ -162,14 +162,31 @@
 			"filesystem": "Filesystem",
 			"dialogs": "Dialogs",
 			"clipboard": "Clipboard",
-			"application": "Application"
+			"application": "Application",
+			"profile": "Profile"
+		},
+		"profile": {
+			"firstName": "First Name",
+			"firstNamePlaceholder": "Enter your first name",
+			"lastName": "Last Name",
+			"lastNamePlaceholder": "Enter your last name",
+			"cancel": "Cancel",
+			"saveChanges": "Save Changes"
 		},
 		"application": {
 			"name": "Name",
 			"description": "Description",
 			"version": "Version",
 			"author": "Author",
-			"license": "License"
+			"license": "License",
+			"accessibility": "Accessibility",
+			"accessibilityDescription": "Manage accessibility permissions",
+			"openAccessibility": "Open Accessibility",
+			"screenRecording": "Screen Recording",
+			"screenRecordingDescription": "Manage screen recording permissions",
+			"openScreenRecording": "Open Screen Recording",
+			"menuBar": "Menu Bar",
+			"menuBarDescription": "Show or hide the app icon in the menu bar"
 		},
 		"permissions": {
 			"microphone": "Microphone",
