@@ -134,8 +134,6 @@ export { AppSidebarInsetLayout } from './sidebar/AppSidebarInsetLayout';
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
 export { AppTitleBarContainer } from './titlebar/AppTitleBarContainer';
-export { AppTitleBarLayout } from './titlebar/AppTitleBarLayout';
-export { AppTitleBarSimpleLayout } from './titlebar/AppTitleBarSimpleLayout';
 
 export {
 	AppSidebar,
