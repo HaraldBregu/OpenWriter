@@ -44,57 +44,57 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 	const { t } = useTranslation();
 
 	return (
-		<div className="border-b px-6 py-3 shrink-0">
+		<AppPageHeader>
 			<div className="flex items-center gap-2">
 				<Icon className="h-5 w-5 text-muted-foreground" />
-				<h1 className="text-lg font-semibold">{title}</h1>
-				<div className="ml-auto flex items-center gap-2">
-					<AppButton
-						size="icon"
-						variant="outline"
-						className="h-8 w-8"
-						onClick={onOpenFolder}
-						disabled={editing}
-					>
-						<FolderOpen className="h-3.5 w-3.5" />
-					</AppButton>
-					{showIndexButton && (
-						<AppButton
-							size="icon"
-							variant="outline"
-							className="h-8 w-8"
-							onClick={onIndex}
-							disabled={indexing || editing}
-						>
-							<ListTree className="h-3.5 w-3.5" />
-						</AppButton>
-					)}
-					<AppButton
-						size="icon"
-						variant="outline"
-						className="h-8 w-8"
-						onClick={onUpload}
-						disabled={uploading || editing}
-						title={uploadLabel}
-					>
-						<Upload className="h-3.5 w-3.5" />
-					</AppButton>
-					{editing && selectedCount > 0 && (
-						<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
-							<Trash2 className="mr-1.5 h-3.5 w-3.5" />
-							{t('resources.removeWithCount', { count: selectedCount })}
-						</AppButton>
-					)}
-					<AppButton
-						size="icon"
-						variant={editing ? 'secondary' : 'outline'}
-						className="h-8 w-8"
-						onClick={onToggleEdit}
-					>
-						<Pencil className="h-3.5 w-3.5" />
-					</AppButton>
-				</div>
+				<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
 			</div>
-		</div>
+			<AppPageHeaderItems>
+				<AppButton
+					size="icon"
+					variant="outline"
+					className="h-8 w-8"
+					onClick={onOpenFolder}
+					disabled={editing}
+				>
+					<FolderOpen className="h-3.5 w-3.5" />
+				</AppButton>
+				{showIndexButton && (
+					<AppButton
+						size="icon"
+						variant="outline"
+						className="h-8 w-8"
+						onClick={onIndex}
+						disabled={indexing || editing}
+					>
+						<ListTree className="h-3.5 w-3.5" />
+					</AppButton>
+				)}
+				<AppButton
+					size="icon"
+					variant="outline"
+					className="h-8 w-8"
+					onClick={onUpload}
+					disabled={uploading || editing}
+					title={uploadLabel}
+				>
+					<Upload className="h-3.5 w-3.5" />
+				</AppButton>
+				{editing && selectedCount > 0 && (
+					<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
+						<Trash2 className="mr-1.5 h-3.5 w-3.5" />
+						{t('resources.removeWithCount', { count: selectedCount })}
+					</AppButton>
+				)}
+				<AppButton
+					size="icon"
+					variant={editing ? 'secondary' : 'outline'}
+					className="h-8 w-8"
+					onClick={onToggleEdit}
+				>
+					<Pencil className="h-3.5 w-3.5" />
+				</AppButton>
+			</AppPageHeaderItems>
+		</AppPageHeader>
 	);
 });
