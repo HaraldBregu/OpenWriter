@@ -353,36 +353,27 @@ export default function FilesPage(): React.ReactElement {
 						</AppDropdownMenuRadioGroup>
 					</AppDropdownMenuContent>
 				</AppDropdownMenu>
-				<div className="flex items-center rounded-md border border-input">
-					<button
-						type="button"
-						onClick={() => setViewMode('list')}
-						className={cn(
-							'flex h-9 w-9 items-center justify-center rounded-l-md transition-colors',
-							viewMode === 'list'
-								? 'bg-accent text-foreground'
-								: 'text-muted-foreground hover:bg-accent/50'
-						)}
-						aria-label="List view"
-						aria-pressed={viewMode === 'list'}
-					>
-						<List className="h-4 w-4" />
-					</button>
-					<button
-						type="button"
-						onClick={() => setViewMode('grid')}
-						className={cn(
-							'flex h-9 w-9 items-center justify-center rounded-r-md transition-colors',
-							viewMode === 'grid'
-								? 'bg-accent text-foreground'
-								: 'text-muted-foreground hover:bg-accent/50'
-						)}
-						aria-label="Grid view"
-						aria-pressed={viewMode === 'grid'}
-					>
-						<Grid3x3 className="h-4 w-4" />
-					</button>
-				</div>
+			
+				<AppButton
+					variant={viewMode === 'list' ? 'secondary' : 'outline'}
+					size="icon"
+					className="h-9 w-9"
+					onClick={() => setViewMode('list')}
+					aria-label="List view"
+					aria-pressed={viewMode === 'list'}
+				>
+					<List className="h-4 w-4" />
+				</AppButton>
+				<AppButton
+					variant={viewMode === 'grid' ? 'secondary' : 'outline'}
+					size="icon"
+					className="h-9 w-9"
+					onClick={() => setViewMode('grid')}
+					aria-label="Grid view"
+					aria-pressed={viewMode === 'grid'}
+				>
+					<Grid3x3 className="h-4 w-4" />
+				</AppButton>
 			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
