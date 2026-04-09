@@ -22,6 +22,7 @@ export {
 	useAppSelector,
 	useThemeMode,
 	useAppTheme,
+	useCustomThemeId,
 	useLanguageMode,
 	useCurrentUser,
 	useUIPreferences,
