@@ -108,9 +108,7 @@ const SystemPage: React.FC = () => {
 						<AppSelectValue />
 					</AppSelectTrigger>
 					<AppSelectContent>
-						<AppSelectItem value={DEFAULT_THEME_VALUE}>
-							{t(DEFAULT_THEME_LABEL_KEY)}
-						</AppSelectItem>
+						<AppSelectItem value={DEFAULT_THEME_VALUE}>{t(DEFAULT_THEME_LABEL_KEY)}</AppSelectItem>
 						{customThemes.map((theme) => (
 							<AppSelectItem key={theme.id} value={theme.id}>
 								{theme.name}

@@ -285,7 +285,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 										<button
 											type="button"
 											key={img.fileName}
-											className="group relative h-10 w-10 overflow-hidden rounded-md border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+											className="group relative h-[60px] w-[60px] overflow-hidden rounded-md border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
 											onClick={() =>
 												setPreviewImage({
 													src: toLocalResourceUrl(img.filePath),
