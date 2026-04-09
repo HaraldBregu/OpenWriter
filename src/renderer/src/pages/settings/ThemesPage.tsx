@@ -22,7 +22,7 @@ function extractErrorMessage(err: unknown): string {
 	return '';
 }
 
-const ThemesSettingsPage: React.FC = () => {
+const ThemesPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [themes, setThemes] = useState<CustomThemeInfo[]>([]);
 	const [feedback, setFeedback] = useState<ImportFeedback>(FEEDBACK_IDLE);
