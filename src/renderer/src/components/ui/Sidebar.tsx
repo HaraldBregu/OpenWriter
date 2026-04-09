@@ -3,11 +3,11 @@ import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { PanelLeft } from "lucide-react"
 
-import { useIsMobile } from "src/renderer/src/components/ui/hooks/use-mobile"
-import { cn } from "src/renderer/src/components/ui/lib/utils"
-import { Button } from "src/renderer/src/components/ui/ui/button"
-import { Input } from "src/renderer/src/components/ui/ui/input"
-import { Separator } from "src/renderer/src/components/ui/ui/separator"
+import { useIsMobile } from "@/components/hooks/UseMobile"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
+import { Separator } from "@/components/ui/Separator"
 import {
   Sheet,
   SheetContent,
