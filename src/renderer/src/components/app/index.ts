@@ -165,3 +165,8 @@ export {
 	AppSidebarTrigger,
 	useSidebar,
 } from './AppSidebar';
+
+export { AppPageHeader } from './base/AppPageHeader';
+export { AppPageHeaderTitle } from './base/AppPageHeaderTitle';
+export { AppPageHeaderItems } from './base/AppPageHeaderItems';
+export { AppPageContainer } from './base/AppPageContainer';
