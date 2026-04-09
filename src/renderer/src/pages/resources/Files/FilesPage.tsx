@@ -104,7 +104,7 @@ function FileRow({ file, isSelected, onToggle }: FileRowProps): React.ReactEleme
 	return (
 		<tr
 			className={cn(
-				'border-b transition-colors last:border-b-0',
+				'border-b transition-colors first:border-t-0 last:border-b-0',
 				isSelected ? 'bg-accent/50' : 'hover:bg-accent/30'
 			)}
 		>
