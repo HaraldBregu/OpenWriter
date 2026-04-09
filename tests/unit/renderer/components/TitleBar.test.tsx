@@ -58,7 +58,7 @@ const KEYS = {
 function renderOnWindows(props: Parameters<typeof TitleBar>[0] = {}) {
 	// The isMac check reads navigator.platform once at module load, so we
 	// manipulate it before each test via spyOn where needed.
-	return render(<TitleBar {...props} />);
+	return render(<AppTitleBar {...props} />);
 }
 
 // ---------------------------------------------------------------------------
@@ -307,7 +307,7 @@ describe('TitleBar — window.win unavailable (graceful degradation)', () => {
 		const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
 		// Does NOT throw synchronously
-		expect(() => render(<TitleBar title="No Bridge" />)).not.toThrow();
+		expect(() => render(<AppTitleBar title="No Bridge" />)).not.toThrow();
 		expect(screen.getByText('No Bridge')).toBeInTheDocument();
 
 		consoleSpy.mockRestore();
