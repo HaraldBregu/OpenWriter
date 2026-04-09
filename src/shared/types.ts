@@ -27,10 +27,10 @@ export interface ThemeTokens {
 }
 
 /**
- * Full theme manifest stored on disk at {userData}/themes/{folderName}/theme.json.
+ * Full theme stored on disk at {userData}/themes/{folderName}/theme.json.
  * Contains metadata and color tokens for both light and dark variants.
  */
-export interface CustomThemeManifest {
+export interface Theme {
 	readonly name: string;
 	readonly description: string;
 	readonly author: string;
