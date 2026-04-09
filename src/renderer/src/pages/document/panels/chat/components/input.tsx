@@ -237,9 +237,10 @@ const Input: React.FC<InputProps> = ({
 								</div>
 								<button
 									type="button"
+									data-index={index}
 									className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 dark:border-white/12 dark:bg-background"
 									onMouseDown={(e) => e.preventDefault()}
-									onClick={() => removeFile(index)}
+									onClick={handleRemoveClick}
 									aria-label={t('assistantNode.removeImage', 'Remove image')}
 								>
 									<X className="h-2.5 w-2.5" />
