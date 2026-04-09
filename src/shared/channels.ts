@@ -48,6 +48,7 @@ import type {
 	AppLogEntry,
 	AppStartupInfo,
 	ThemeMode,
+	CustomThemeInfo,
 } from './types';
 import type { ServiceProvider } from './types';
 
