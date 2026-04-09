@@ -71,6 +71,8 @@ export type {
 	IndexingInfo,
 	ResourceInfo,
 	DocumentFileChangeEvent,
+	FileEntry,
+	FileEntryChangeEvent,
 	TaskSubmitPayload,
 	TaskInfo,
 	TaskEvent,
