@@ -218,7 +218,7 @@ export const TitleBar = React.memo(function TitleBar({
 					</button>
 				</div>
 			)}
-		</div>
+		</AppTitleBarContainer>
 	);
 });
 TitleBar.displayName = 'TitleBar';
