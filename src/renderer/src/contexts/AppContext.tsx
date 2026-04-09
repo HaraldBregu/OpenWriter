@@ -297,9 +297,19 @@ export function useLanguageContext(): LanguageContextValue {
 // 3. AppThemeContext
 // ---------------------------------------------------------------------------
 
+function readPersistedCustomThemeId(): string | null {
+	try {
+		return localStorage.getItem(CUSTOM_THEME_STORAGE_KEY);
+	} catch {
+		return null;
+	}
+}
+
 interface AppThemeContextValue {
 	appTheme: AppTheme;
+	customThemeId: string | null;
 	setAppTheme: (theme: AppTheme) => void;
+	setCustomTheme: (id: string | null) => void;
 }
 
 const AppThemeContext = createContext<AppThemeContextValue | undefined>(undefined);
@@ -314,20 +324,73 @@ function AppThemeProvider({
 	const [appTheme, setAppThemeState] = useState<AppTheme>(
 		initialAppTheme ?? readPersistedAppTheme()
 	);
+	const [customThemeId, setCustomThemeIdState] = useState<string | null>(
+		readPersistedCustomThemeId
+	);
 
-	const setAppTheme = useCallback((next: AppTheme) => setAppThemeState(next), []);
+	const setAppTheme = useCallback((next: AppTheme) => {
+		setAppThemeState(next);
+		setCustomThemeIdState(null);
+	}, []);
 
+	const setCustomTheme = useCallback((id: string | null) => {
+		setCustomThemeIdState(id);
+		if (id) {
+			setAppThemeState('default');
+		}
+	}, []);
+
+	// Persist app theme selection.
 	useEffect(() => {
 		try {
 			localStorage.setItem(APP_THEME_STORAGE_KEY, appTheme);
-		} catch (error) {
-			console.error('Failed to save app theme:', error);
+		} catch {
+			// localStorage may be unavailable
 		}
 	}, [appTheme]);
 
+	// Persist custom theme ID.
+	useEffect(() => {
+		try {
+			if (customThemeId) {
+				localStorage.setItem(CUSTOM_THEME_STORAGE_KEY, customThemeId);
+			} else {
+				localStorage.removeItem(CUSTOM_THEME_STORAGE_KEY);
+			}
+		} catch {
+			// localStorage may be unavailable
+		}
+	}, [customThemeId]);
+
+	// Fetch and apply custom theme tokens when customThemeId changes.
+	useEffect(() => {
+		if (!customThemeId) {
+			clearThemeTokens();
+			return;
+		}
+
+		let cancelled = false;
+		(async () => {
+			try {
+				const manifest = await window.app?.getCustomThemeTokens(customThemeId);
+				if (cancelled || !manifest) return;
+
+				const isDark = document.documentElement.classList.contains(DARK_CLASS);
+				applyThemeTokens(isDark ? manifest.dark : manifest.light);
+			} catch {
+				// Theme loading failed — fall back to default
+				if (!cancelled) clearThemeTokens();
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [customThemeId]);
+
 	const value = useMemo<AppThemeContextValue>(
-		() => ({ appTheme, setAppTheme }),
-		[appTheme, setAppTheme]
+		() => ({ appTheme, customThemeId, setAppTheme, setCustomTheme }),
+		[appTheme, customThemeId, setAppTheme, setCustomTheme]
 	);
 
 	return <AppThemeContext.Provider value={value}>{children}</AppThemeContext.Provider>;
