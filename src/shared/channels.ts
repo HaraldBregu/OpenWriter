@@ -354,6 +354,11 @@ export interface InvokeChannelMap {
 		args: [documentId: string, content: string];
 		result: void;
 	};
+
+	// ---- Files: resources/files/ (IpcResult-wrapped) ----
+	[WorkspaceChannels.getFiles]: { args: []; result: FileEntry[] };
+	[WorkspaceChannels.insertFiles]: { args: [extensions?: string[]]; result: FileEntry[] };
+	[WorkspaceChannels.deleteFileEntry]: { args: [id: string]; result: void };
 }
 
 /**
