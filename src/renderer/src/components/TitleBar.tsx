@@ -86,11 +86,8 @@ export const TitleBar = React.memo(function TitleBar({
 	return (
 		<AppTitleBarContainer>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
-			{!isMac ? (
-				<div
-					className="flex items-center h-full z-10"
-					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-				>
+			<AppTitleBarLeftContainer isMac={isMac} isFullScreen={isFullScreen}>
+				{!isMac && (
 					<button
 						type="button"
 						onClick={() => window.app?.popupMenu()}
@@ -99,79 +96,62 @@ export const TitleBar = React.memo(function TitleBar({
 					>
 						<Menu className="h-[18px] w-[18px]" strokeWidth={1.5} />
 					</button>
+				)}
 
-					{onToggleSidebar && (
-						<button
-							type="button"
-							onClick={onToggleSidebar}
-							className={btnNoHover}
-							title={t('titleBar.toggleSidebar')}
-						>
-							<PanelLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
-						</button>
-					)}
+				{onToggleSidebar && (
+					<button
+						type="button"
+						onClick={onToggleSidebar}
+						className={
+							isMac
+								? 'flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground'
+								: btnNoHover
+						}
+						title={t('titleBar.toggleSidebar')}
+					>
+						<PanelLeft
+							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
+							strokeWidth={1.5}
+						/>
+					</button>
+				)}
 
-					{onNavigateBack && (
-						<button
-							type="button"
-							onClick={onNavigateBack}
-							className={btnNavNoHover}
-							title={t('titleBar.navigateBack')}
-						>
-							<ArrowLeft className="h-[18px] w-[18px]" strokeWidth={1.5} />
-						</button>
-					)}
+				{onNavigateBack && (
+					<button
+						type="button"
+						onClick={onNavigateBack}
+						className={
+							isMac
+								? 'flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground'
+								: btnNavNoHover
+						}
+						title={t('titleBar.navigateBack')}
+					>
+						<ArrowLeft
+							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
+							strokeWidth={1.5}
+						/>
+					</button>
+				)}
 
-					{onNavigateForward && (
-						<button
-							type="button"
-							onClick={onNavigateForward}
-							className={btnNavNoHover}
-							title={t('titleBar.navigateForward')}
-						>
-							<ArrowRight className="h-[18px] w-[18px]" strokeWidth={1.5} />
-						</button>
-					)}
-				</div>
-			) : (
-				<div
-					className={`flex items-center h-full z-10 ${isFullScreen ? 'ml-2' : 'ml-20 mt-1'}`}
-					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-				>
-					{onToggleSidebar && (
-						<button
-							type="button"
-							onClick={onToggleSidebar}
-							className="flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground"
-							title={t('titleBar.toggleSidebar')}
-						>
-							<PanelLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-						</button>
-					)}
-
-					{onNavigateBack && (
-						<button
-							type="button"
-							onClick={onNavigateBack}
-							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-							title={t('titleBar.navigateBack')}
-						>
-							<ArrowLeft className="h-[16px] w-[16px]" strokeWidth={1.5} />
-						</button>
-					)}
-
-					{onNavigateForward && (
-						<button
-							type="button"
-							onClick={onNavigateForward}
-							className="flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground"
-							title={t('titleBar.navigateForward')}
-						>
-							<ArrowRight className="h-[16px] w-[16px]" strokeWidth={1.5} />
-						</button>
-					)}
-				</div>
-			)}
+				{onNavigateForward && (
+					<button
+						type="button"
+						onClick={onNavigateForward}
+						className={
+							isMac
+								? 'flex items-center justify-center h-full px-1 text-muted-foreground transition-colors hover:text-foreground'
+								: btnNavNoHover
+						}
+						title={t('titleBar.navigateForward')}
+					>
+						<ArrowRight
+							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
+							strokeWidth={1.5}
+						/>
+					</button>
+				)}
+			</AppTitleBarLeftContainer>
 
 			{/* ── Center: app title (absolutely placed so it's always truly centered) ── */}
 			<AppTitleBarCenterContainer>
