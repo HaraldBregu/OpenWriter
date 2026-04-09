@@ -64,7 +64,12 @@ const DropdownMenuContent = React.forwardRef<
 		Pick<MenuPrimitive.Positioner.Props, 'sideOffset' | 'side' | 'align' | 'alignOffset'>
 >(({ className, sideOffset = 4, side, align, alignOffset, ...props }, ref) => (
 	<MenuPrimitive.Portal>
-		<MenuPrimitive.Positioner sideOffset={sideOffset} side={side} align={align} alignOffset={alignOffset}>
+		<MenuPrimitive.Positioner
+			sideOffset={sideOffset}
+			side={side}
+			align={align}
+			alignOffset={alignOffset}
+		>
 			<MenuPrimitive.Popup
 				ref={ref}
 				className={cn(

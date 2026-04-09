@@ -33,16 +33,14 @@ const buttonVariants = cva(
 );
 
 export interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
+	extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 	render?: useRender.ComponentProps<'button'>['render'];
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 	({ className, variant, size, asChild = false, render: renderProp, children, ...props }, ref) => {
-		const resolvedRender =
-			asChild && React.isValidElement(children) ? children : renderProp;
+		const resolvedRender = asChild && React.isValidElement(children) ? children : renderProp;
 
 		if (resolvedRender) {
 			return useRender({
@@ -60,11 +58,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 		}
 
 		return (
-			<button
-				className={cn(buttonVariants({ variant, size, className }))}
-				ref={ref}
-				{...props}
-			>
+			<button className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
 				{children}
 			</button>
 		);

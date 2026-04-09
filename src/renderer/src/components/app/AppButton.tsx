@@ -50,17 +50,18 @@ const buttonVariants = cva(
 );
 
 interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-		VariantProps<typeof buttonVariants> {
+	extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
 	render?: useRender.ComponentProps<'button'>['render'];
 }
 
 const AppButton = React.memo(
 	React.forwardRef<HTMLButtonElement, ButtonProps>(
-		({ className, variant, size, asChild = false, render: renderProp, children, ...props }, ref) => {
-			const resolvedRender =
-				asChild && React.isValidElement(children) ? children : renderProp;
+		(
+			{ className, variant, size, asChild = false, render: renderProp, children, ...props },
+			ref
+		) => {
+			const resolvedRender = asChild && React.isValidElement(children) ? children : renderProp;
 
 			if (resolvedRender) {
 				return useRender({

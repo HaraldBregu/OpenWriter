@@ -3,11 +3,12 @@ import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 
 import { cn } from '@/lib/utils';
 
-const Tabs = React.forwardRef<React.ElementRef<typeof TabsPrimitive.Root>, TabsPrimitive.Root.Props>(
-	({ className, ...props }, ref) => (
-		<TabsPrimitive.Root ref={ref} className={cn(className)} {...props} />
-	)
-);
+const Tabs = React.forwardRef<
+	React.ElementRef<typeof TabsPrimitive.Root>,
+	TabsPrimitive.Root.Props
+>(({ className, ...props }, ref) => (
+	<TabsPrimitive.Root ref={ref} className={cn(className)} {...props} />
+));
 Tabs.displayName = 'Tabs';
 
 const TabsList = React.forwardRef<

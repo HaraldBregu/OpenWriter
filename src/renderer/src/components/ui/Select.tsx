@@ -4,7 +4,7 @@ import { Check, ChevronDown, ChevronUp } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-function Select({ ...props }: SelectPrimitive.Root.Props) {
+function Select<Value = string>({ ...props }: SelectPrimitive.Root.Props<Value>) {
 	return <SelectPrimitive.Root {...props} />;
 }
 
@@ -67,7 +67,12 @@ const SelectContent = React.forwardRef<
 		Pick<SelectPrimitive.Positioner.Props, 'align' | 'alignOffset' | 'side' | 'sideOffset'>
 >(({ className, children, side = 'bottom', sideOffset = 4, align, alignOffset, ...props }, ref) => (
 	<SelectPrimitive.Portal>
-		<SelectPrimitive.Positioner side={side} sideOffset={sideOffset} align={align} alignOffset={alignOffset}>
+		<SelectPrimitive.Positioner
+			side={side}
+			sideOffset={sideOffset}
+			align={align}
+			alignOffset={alignOffset}
+		>
 			<SelectPrimitive.Popup
 				ref={ref}
 				className={cn(
@@ -77,9 +82,7 @@ const SelectContent = React.forwardRef<
 				{...props}
 			>
 				<SelectScrollUpButton />
-				<SelectPrimitive.List className="p-1">
-					{children}
-				</SelectPrimitive.List>
+				<SelectPrimitive.List className="p-1">{children}</SelectPrimitive.List>
 				<SelectScrollDownButton />
 			</SelectPrimitive.Popup>
 		</SelectPrimitive.Positioner>
