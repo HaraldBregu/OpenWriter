@@ -67,6 +67,8 @@ type: project
 - `SettingRow` renders label + optional description on the left, arbitrary child on the right (`flex items-center justify-between`).
 - Inline segmented controls: `role="group"` + `aria-label` on the wrapper `<div>`, `aria-pressed` on each `<button>`. Active state uses `bg-background text-foreground shadow-sm`; inactive uses `bg-transparent text-muted-foreground hover:text-foreground`. Outer wrapper: `bg-muted border border-border p-0.5 rounded-md`.
 - Language/select controls inside `SettingRow`: use `AppSelect` with a fixed width trigger (`w-32 h-8 text-sm`) and `aria-label` on `AppSelectTrigger` (no adjacent visible label in the trigger).
+- Inline alert banners (not native dialogs): use a flex row with `role="alert"` + `aria-live="assertive"` + `aria-atomic="true"` for errors, and `role="status"` + `aria-live="polite"` for success. Destructive style: `border-destructive/40 bg-destructive/10 text-destructive`. Success style: `border-green-500/40 bg-green-500/10 text-green-700 dark:text-green-400`. Always include a dismiss `<button>` with `aria-label`. Auto-dismiss success banners after 3000ms via `setTimeout` cleared in cleanup.
+- Simple boolean errors (e.g. load/save fail): use `<p role="alert" className="text-sm text-destructive">` (WorkspacePage pattern) — no banner needed for single-flag errors without a message string.
 
 ## InfoPanel / Document Sidebar Conventions
 
