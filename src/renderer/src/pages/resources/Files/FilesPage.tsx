@@ -356,26 +356,28 @@ export default function FilesPage(): React.ReactElement {
 					</AppDropdownMenuContent>
 				</AppDropdownMenu>
 
-				<AppButton
-					variant={viewMode === 'list' ? 'secondary' : 'outline'}
-					size="icon"
-					className="h-9 w-9"
-					onClick={() => setViewMode('list')}
-					aria-label="List view"
-					aria-pressed={viewMode === 'list'}
-				>
-					<List className="h-4 w-4" />
-				</AppButton>
-				<AppButton
-					variant={viewMode === 'grid' ? 'secondary' : 'outline'}
-					size="icon"
-					className="h-9 w-9"
-					onClick={() => setViewMode('grid')}
-					aria-label="Grid view"
-					aria-pressed={viewMode === 'grid'}
-				>
-					<Grid3x3 className="h-4 w-4" />
-				</AppButton>
+				<AppButtonGroup>
+					<AppButton
+						variant={viewMode === 'list' ? 'secondary' : 'outline'}
+						size="icon"
+						className="h-9 w-9"
+						onClick={() => setViewMode('list')}
+						aria-label="List view"
+						aria-pressed={viewMode === 'list'}
+					>
+						<List className="h-4 w-4" />
+					</AppButton>
+					<AppButton
+						variant={viewMode === 'grid' ? 'secondary' : 'outline'}
+						size="icon"
+						className="h-9 w-9"
+						onClick={() => setViewMode('grid')}
+						aria-label="Grid view"
+						aria-pressed={viewMode === 'grid'}
+					>
+						<Grid3x3 className="h-4 w-4" />
+					</AppButton>
+				</AppButtonGroup>
 			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
