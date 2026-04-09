@@ -283,6 +283,12 @@ export function ImageEditor({
 								active={activeMode === 'rotate'}
 							/>
 							<ToolbarButton
+								icon={<Scaling />}
+								label={t('imageNode.resize')}
+								onClick={() => handleModeChange('resize')}
+								active={activeMode === 'resize'}
+							/>
+							<ToolbarButton
 								icon={<Sparkles />}
 								label="AI Transform"
 								onClick={handleAIButtonClick}
