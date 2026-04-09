@@ -2,46 +2,22 @@ import { app } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
 import type { LoggerService } from './logger';
-import type { CustomThemeManifest, CustomThemeInfo, ThemeTokens } from '../../shared/types';
+import type { Theme, CustomThemeInfo, ThemeData } from '../../shared/types';
 
 const THEME_FILE_NAME = 'theme.json';
 
-const THEME_TOKEN_KEYS: readonly (keyof ThemeTokens)[] = [
-	'colorScheme',
+const THEME_DATA_KEYS: readonly (keyof Omit<ThemeData, 'titleBar'>)[] = [
 	'background',
 	'foreground',
-	'card',
-	'cardForeground',
-	'popover',
-	'popoverForeground',
-	'primary',
-	'primaryForeground',
-	'secondary',
-	'secondaryForeground',
-	'muted',
-	'mutedForeground',
-	'accent',
-	'accentForeground',
-	'destructive',
-	'destructiveForeground',
-	'border',
-	'input',
-	'ring',
-	'radius',
-	'success',
-	'successForeground',
-	'warning',
-	'warningForeground',
-	'info',
-	'infoForeground',
-	'sidebarBackground',
-	'sidebarForeground',
-	'sidebarPrimary',
-	'sidebarPrimaryForeground',
-	'sidebarAccent',
-	'sidebarAccentForeground',
-	'sidebarBorder',
-	'sidebarRing',
+	'text',
+	'icon',
+] as const;
+
+const TITLE_BAR_KEYS: readonly (keyof ThemeData['titleBar'])[] = [
+	'background',
+	'foreground',
+	'text',
+	'icon',
 ] as const;
 
 const MANIFEST_REQUIRED_FIELDS = ['name', 'description', 'author', 'version', 'license'] as const;
