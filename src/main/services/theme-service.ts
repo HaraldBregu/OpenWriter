@@ -141,15 +141,26 @@ export class ThemeService {
 		return data as Theme;
 	}
 
-	private validateTokens(tokens: unknown, variant: string): void {
-		if (typeof tokens !== 'object' || tokens === null) {
-			throw new Error(`Theme manifest is missing "${variant}" token object`);
+	private validateThemeData(data: unknown, variant: string): void {
+		if (typeof data !== 'object' || data === null) {
+			throw new Error(`Theme is missing "${variant}" data object`);
 		}
 
-		const obj = tokens as Record<string, unknown>;
-		for (const key of THEME_TOKEN_KEYS) {
+		const obj = data as Record<string, unknown>;
+		for (const key of THEME_DATA_KEYS) {
 			if (typeof obj[key] !== 'string') {
-				throw new Error(`Theme "${variant}" tokens missing required key: "${key}"`);
+				throw new Error(`Theme "${variant}" data missing required key: "${key}"`);
+			}
+		}
+
+		if (typeof obj['titleBar'] !== 'object' || obj['titleBar'] === null) {
+			throw new Error(`Theme "${variant}" data missing required "titleBar" object`);
+		}
+
+		const titleBar = obj['titleBar'] as Record<string, unknown>;
+		for (const key of TITLE_BAR_KEYS) {
+			if (typeof titleBar[key] !== 'string') {
+				throw new Error(`Theme "${variant}" titleBar missing required key: "${key}"`);
 			}
 		}
 	}
