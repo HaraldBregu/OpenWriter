@@ -77,7 +77,7 @@ function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
 		<AppErrorBoundary level="route">
 			<Suspense fallback={<LoadingSkeleton />}>{children}</Suspense>
-		</ErrorBoundary>
+		</AppErrorBoundary>
 	);
 }
 
@@ -133,7 +133,7 @@ const App: React.FC = () => {
 						<LoadingSkeleton />
 					</AppProvider>
 				</Provider>
-			</ErrorBoundary>
+			</AppErrorBoundary>
 		);
 	}
 
@@ -330,7 +330,7 @@ const App: React.FC = () => {
 					</Router>
 				</AppProvider>
 			</Provider>
-		</ErrorBoundary>
+		</AppErrorBoundary>
 	);
 };
 
