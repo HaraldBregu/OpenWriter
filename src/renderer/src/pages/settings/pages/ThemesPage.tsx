@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Upload, Check, AlertCircle, X, CheckCircle } from 'lucide-react';
+import { FolderOpen, Upload, Check, AlertCircle, X, CheckCircle, Trash2 } from 'lucide-react';
 import { AppButton } from '@/components/app';
 import { SectionHeader, SettingRow } from '../components';
 import { useCustomThemeId, useAppActions } from '../../../contexts';
@@ -15,6 +15,7 @@ interface ImportFeedback {
 
 const FEEDBACK_IDLE: ImportFeedback = { status: 'idle', message: '' };
 const SUCCESS_AUTO_DISMISS_MS = 3000;
+const CONFIRM_AUTO_DISMISS_MS = 3000;
 
 function extractErrorMessage(err: unknown): string {
 	if (err instanceof Error) return err.message;
@@ -26,6 +27,7 @@ const ThemesPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [themes, setThemes] = useState<CustomThemeInfo[]>([]);
 	const [feedback, setFeedback] = useState<ImportFeedback>(FEEDBACK_IDLE);
+	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 	const customThemeId = useCustomThemeId();
 	const { setCustomTheme } = useAppActions();
 
