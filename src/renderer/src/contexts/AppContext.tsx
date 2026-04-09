@@ -672,7 +672,7 @@ export interface AppActionsContextValue {
  */
 export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
-	const { setAppTheme } = useAppThemeContext();
+	const { setAppTheme, setCustomTheme } = useAppThemeContext();
 	const { setLanguage } = useLanguageContext();
 	const { setUser } = useUser();
 	const { updateUIPreferences } = useUIPreferencesContext();
@@ -685,6 +685,7 @@ export function useAppActions(): AppActionsContextValue {
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
 		setAppTheme(readPersistedAppTheme());
+		setCustomTheme(null);
 		setLanguage(readPersistedLanguage());
 		setUser(null);
 		updateUIPreferences(defaultUIPreferences);
@@ -696,6 +697,7 @@ export function useAppActions(): AppActionsContextValue {
 	}, [
 		setTheme,
 		setAppTheme,
+		setCustomTheme,
 		setLanguage,
 		setUser,
 		updateUIPreferences,
@@ -707,6 +709,7 @@ export function useAppActions(): AppActionsContextValue {
 		() => ({
 			setTheme,
 			setAppTheme,
+			setCustomTheme,
 			setLanguage,
 			setUser,
 			updateUIPreferences,
@@ -718,6 +721,7 @@ export function useAppActions(): AppActionsContextValue {
 		[
 			setTheme,
 			setAppTheme,
+			setCustomTheme,
 			setLanguage,
 			setUser,
 			updateUIPreferences,
