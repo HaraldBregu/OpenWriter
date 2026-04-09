@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AppErrorBoundary } from '../../../../src/renderer/src/components/AppErrorBoundary';
+import { AppErrorBoundary } from '../../../../src/renderer/src/components/app/base/AppErrorBoundary';
 
 // A component that throws on render
 function ThrowingComponent({ message }: { message: string }): React.ReactElement {
