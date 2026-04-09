@@ -77,6 +77,10 @@ const app: AppApi = {
 	importTheme: () => typedInvokeUnwrap(AppChannels.importTheme),
 	getCustomThemeTokens: (id: string) => typedInvokeUnwrap(AppChannels.getCustomThemeTokens, id),
 	deleteTheme: (id: string) => typedInvokeUnwrap(AppChannels.deleteTheme, id),
+	openSystemAccessibility: () => typedInvokeUnwrap(AppChannels.openSystemAccessibility),
+	openSystemScreenRecording: () => typedInvokeUnwrap(AppChannels.openSystemScreenRecording),
+	setTrayEnabled: (enabled: boolean) => typedInvokeUnwrap(AppChannels.setTrayEnabled, enabled),
+	getTrayEnabled: () => typedInvokeUnwrap(AppChannels.getTrayEnabled),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
