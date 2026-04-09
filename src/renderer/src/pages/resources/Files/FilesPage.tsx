@@ -301,19 +301,19 @@ export default function FilesPage(): React.ReactElement {
 				<AppPageHeaderTitle>Files</AppPageHeaderTitle>
 				<AppPageHeaderItems>
 					{selected.size > 0 && (
-						<AppButton variant="destructive" size="sm" onClick={handleDelete}>
+						<AppButton variant="destructive" size="lg" onClick={handleDelete}>
 							<Trash2 />
 							Delete ({selected.size})
 						</AppButton>
 					)}
-					<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
+					<AppButton variant="outline" size="lg" onClick={handleOpenFolder}>
 						<FolderOpen />
 					</AppButton>
-					<AppButton variant="outline" size="sm" disabled>
+					<AppButton variant="outline" size="lg" disabled>
 						<Plus />
 						New folder
 					</AppButton>
-					<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
+					<AppButton size="lg" onClick={handleUpload} disabled={uploading}>
 						<Upload />
 						Upload
 					</AppButton>
@@ -337,10 +337,7 @@ export default function FilesPage(): React.ReactElement {
 
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger>
-							<AppButton
-								variant={typeFilter === 'all' ? 'outline' : 'secondary'}
-								size="lg"
-							>
+							<AppButton variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg">
 								<Filter className="h-4 w-4" />
 							</AppButton>
 						</AppDropdownMenuTrigger>
