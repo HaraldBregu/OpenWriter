@@ -7,6 +7,15 @@ export { AppButtonGroup, AppButtonGroupSeparator, AppButtonGroupText } from './A
 
 export { AppInput } from './AppInput';
 
+export {
+	AppInputGroup,
+	AppInputGroupAddon,
+	AppInputGroupButton,
+	AppInputGroupInput,
+	AppInputGroupText,
+	AppInputGroupTextarea,
+} from './AppInputGroup';
+
 export { AppTextarea } from './AppTextarea';
 
 export { TextEditor } from '../editor/TextEditor';
