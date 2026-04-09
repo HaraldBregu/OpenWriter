@@ -36,14 +36,7 @@ import {
 	AppTableRow,
 } from '@/components/app';
 import { cn } from '@/lib/utils';
-import { useAppSelector } from '@/store';
-import { selectImporting } from '@/store/workspace';
-import {
-	filterResourcesBySection,
-	RESOURCE_SECTIONS,
-	getResourceSection,
-	type ResourceSectionId,
-} from '../shared/resource-sections';
+import { RESOURCE_SECTIONS, type ResourceSectionId } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
 
 const ResourcePreviewSheet = lazy(() =>
