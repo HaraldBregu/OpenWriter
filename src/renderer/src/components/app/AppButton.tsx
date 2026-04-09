@@ -4,7 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
-	'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
+	'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0',
 	{
 		variants: {
 			variant: {
@@ -23,27 +23,38 @@ const buttonVariants = cva(
 					'bg-transparent text-muted-foreground shadow-none hover:bg-accent hover:text-foreground aria-expanded:text-foreground',
 			},
 			size: {
-				default: 'h-10 rounded-full px-4 py-2 [&_svg]:size-4',
-				sm: 'h-9 rounded-full px-3 [&_svg]:h-4 [&_svg]:w-4',
-				lg: 'h-11 rounded-full px-8 [&_svg]:size-4',
-				'icon-lg': 'h-10 w-10 rounded-full p-0 [&_svg]:size-5',
-				icon: 'h-8 w-8 rounded-full p-0 [&_svg]:size-4',
-				'icon-xs': 'h-6 w-6 rounded p-0 [&_svg]:h-4 [&_svg]:w-4',
-				'editor-block-icons': 'h-6 w-6 rounded p-2 [&_svg]:h-[18px] [&_svg]:w-[18px]',
-				'editor-block-icons-sm': 'h-5 w-5 rounded p-2 [&_svg]:h-[16px] [&_svg]:w-[16px]',
-				'prompt-icon': 'h-6 w-6 rounded-full p-0 [&_svg]:size-3.5',
-				'prompt-icon-sm': 'h-5 w-5 rounded-full p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
+				default: 'h-10 px-4 py-2 [&_svg]:size-4',
+				sm: 'h-9 px-3 [&_svg]:h-4 [&_svg]:w-4',
+				lg: 'h-11 px-8 [&_svg]:size-4',
+				'icon-lg': 'h-10 w-10 p-0 [&_svg]:size-5',
+				icon: 'h-8 w-8 p-0 [&_svg]:size-4',
+				'icon-xs': 'h-6 w-6 p-0 [&_svg]:h-4 [&_svg]:w-4',
+				'editor-block-icons': 'h-6 w-6 p-2 [&_svg]:h-[18px] [&_svg]:w-[18px]',
+				'editor-block-icons-sm': 'h-5 w-5 p-2 [&_svg]:h-[16px] [&_svg]:w-[16px]',
+				'prompt-icon': 'h-6 w-6 p-0 [&_svg]:size-3.5',
+				'prompt-icon-sm': 'h-5 w-5 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-submit-md': 'h-6 w-6 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
 				'prompt-submit-sm': 'h-5 w-5 p-0 [&_svg]:h-[16px] [&_svg]:w-[16px]',
-				'header-icon': 'h-11 w-11 rounded-full p-0 [&_svg]:h-5 [&_svg]:w-5',
-				'header-icon-sm': 'h-8 w-8 rounded-full p-0 [&_svg]:h-4 [&_svg]:w-4',
-				'header-icon-md': 'h-10 w-10 rounded-full p-0 [&_svg]:h-5 [&_svg]:w-5',
-				'header-icon-lg': 'h-12 w-12 rounded-full p-0 [&_svg]:h-6 [&_svg]:w-6',
+				'header-icon': 'h-11 w-11 p-0 [&_svg]:h-5 [&_svg]:w-5',
+				'header-icon-sm': 'h-8 w-8 p-0 [&_svg]:h-4 [&_svg]:w-4',
+				'header-icon-md': 'h-10 w-10 p-0 [&_svg]:h-5 [&_svg]:w-5',
+				'header-icon-lg': 'h-12 w-12 p-0 [&_svg]:h-6 [&_svg]:w-6',
+			},
+			rounded: {
+				none: 'rounded-none',
+				sm: 'rounded-sm',
+				md: 'rounded-md',
+				lg: 'rounded-lg',
+				xl: 'rounded-xl',
+				'2xl': 'rounded-2xl',
+				'3xl': 'rounded-3xl',
+				full: 'rounded-full',
 			},
 		},
 		defaultVariants: {
 			variant: 'default',
 			size: 'default',
+			rounded: 'md',
 		},
 	}
 );
