@@ -1,5 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
-import { File, FileImage, FileText, FolderOpen, Grid3x3, List, Plus, Search, Trash2, Upload } from 'lucide-react';
+import {
+	File,
+	FileImage,
+	FileText,
+	FolderOpen,
+	Grid3x3,
+	List,
+	Plus,
+	Search,
+	Trash2,
+	Upload,
+} from 'lucide-react';
 import type { FileEntry } from '../../../../../shared/types';
 import { AppButton } from '@/components/app';
 import { AppCheckbox } from '@/components/app';
@@ -178,6 +189,22 @@ export default function FilesPage(): React.ReactElement {
 		dispatch(removeFiles([...selected]));
 		setSelected(new Set());
 	}, [dispatch, selected]);
+
+	const allChecked =
+		filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
+	const someChecked = !allChecked && filteredEntries.some((f) => selected.has(f.id));
+
+	const handleToggleAll = useCallback(() => {
+		setSelected((current) => {
+			const next = new Set(current);
+			if (allChecked) {
+				filteredEntries.forEach((f) => next.delete(f.id));
+			} else {
+				filteredEntries.forEach((f) => next.add(f.id));
+			}
+			return next;
+		});
+	}, [allChecked, filteredEntries]);
 
 	const handleToggleRow = useCallback((id: string) => {
 		setSelected((current) => {
