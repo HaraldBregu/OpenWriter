@@ -4,33 +4,33 @@ export const THEME_VARIANTS = ['light', 'dark'] as const satisfies readonly Them
 export const THEME_MODES = ['light', 'dark', 'system'] as const satisfies readonly ThemeMode[];
 export const DEFAULT_THEME_MODE: ThemeMode = 'system';
 
-export const LIGHT_THEME: ThemeTokens = {
-	background: '0 0% 97%',
-	foreground: '0 0% 8%',
-	text: '0 0% 9%',
-	icon: '0 0% 38%',
+export const LIGHT_THEME: ThemeData = {
+	background: '#f7f7f7',
+	foreground: '#141414',
+	text: '#171717',
+	icon: '#616161',
 	titleBar: {
-		background: '0 0% 95%',
-		foreground: '0 0% 14%',
-		text: '0 0% 9%',
-		icon: '0 0% 38%',
+		background: '#f2f2f2',
+		foreground: '#242424',
+		text: '#171717',
+		icon: '#616161',
 	},
 };
 
-export const DARK_THEME: ThemeTokens = {
-	background: '220 5% 8%',
-	foreground: '30 14% 86%',
-	text: '30 14% 86%',
-	icon: '28 10% 67%',
+export const DARK_THEME: ThemeData = {
+	background: '#141518',
+	foreground: '#d9d1c7',
+	text: '#d9d1c7',
+	icon: '#a69e93',
 	titleBar: {
-		background: '220 5% 9%',
-		foreground: '30 14% 84%',
-		text: '30 14% 86%',
-		icon: '28 10% 67%',
+		background: '#151618',
+		foreground: '#d4ccc2',
+		text: '#d9d1c7',
+		icon: '#a69e93',
 	},
 };
 
-export const THEMES: Record<ThemeVariant, ThemeTokens> = {
+export const THEMES: Record<ThemeVariant, ThemeData> = {
 	light: LIGHT_THEME,
 	dark: DARK_THEME,
 };
