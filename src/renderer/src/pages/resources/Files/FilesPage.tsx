@@ -242,14 +242,22 @@ export default function FilesPage(): React.ReactElement {
 				</div>
 			</div>
 
-			<div className="flex shrink-0 items-center gap-2 border-b px-6 py-2">
-				<button
-					type="button"
-					className="inline-flex items-center gap-1 rounded-full border border-input px-3 py-1 text-xs text-muted-foreground hover:bg-accent/50 transition-colors"
-				>
-					<Plus className="h-3 w-3" />
-					Owner
-				</button>
+			<div className="flex shrink-0 items-center gap-1.5 border-b px-6 py-2">
+				{FILE_TYPE_FILTERS.map(({ value, label }) => (
+					<button
+						key={value}
+						type="button"
+						onClick={() => setTypeFilter(value)}
+						className={cn(
+							'rounded-full border px-3 py-1 text-xs transition-colors',
+							typeFilter === value
+								? 'border-foreground bg-foreground text-background'
+								: 'border-input text-muted-foreground hover:bg-accent/50'
+						)}
+					>
+						{label}
+					</button>
+				))}
 			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
