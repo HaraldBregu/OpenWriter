@@ -207,7 +207,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<Plus className="h-4 w-4 shrink-0" />
+											<Plus className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.newWriting')}</span>
 											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 												Ctrl+Alt+N
