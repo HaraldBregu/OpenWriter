@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
-import * as DialogPrimitive from '@radix-ui/react-dialog';
+import { Dialog as DialogPrimitive } from '@base-ui/react/dialog';
 import { cn } from '@/lib/utils';
 import { Dialog, DialogPortal, DialogOverlay } from '@/components/ui/Dialog';
 
@@ -24,12 +24,12 @@ export function ImagePreviewDialog({
 		<Dialog open={open} onOpenChange={onOpenChange}>
 			<DialogPortal>
 				<DialogOverlay />
-				<DialogPrimitive.Content
+				<DialogPrimitive.Popup
 					aria-describedby={undefined}
 					className={cn(
 						'fixed inset-0 z-[9999] flex items-center justify-center p-8',
-						'data-[state=open]:animate-in data-[state=closed]:animate-out',
-						'data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0'
+						'data-open:animate-in data-closed:animate-out',
+						'data-closed:fade-out-0 data-open:fade-in-0'
 					)}
 					onClick={() => onOpenChange(false)}
 				>
@@ -61,7 +61,7 @@ export function ImagePreviewDialog({
 					<DialogPrimitive.Title className="sr-only">
 						{alt ?? t('imageNode.imagePreview', 'Image preview')}
 					</DialogPrimitive.Title>
-				</DialogPrimitive.Content>
+				</DialogPrimitive.Popup>
 			</DialogPortal>
 		</Dialog>
 	);
