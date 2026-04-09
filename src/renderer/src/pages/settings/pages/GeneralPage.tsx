@@ -26,8 +26,7 @@ const GeneralPage: React.FC = () => {
 
 	const hasProfileChanges = useMemo(
 		() =>
-			profile.firstName !== savedProfile.firstName ||
-			profile.lastName !== savedProfile.lastName,
+			profile.firstName !== savedProfile.firstName || profile.lastName !== savedProfile.lastName,
 		[profile, savedProfile]
 	);
 
@@ -67,8 +66,8 @@ const GeneralPage: React.FC = () => {
 			<SectionHeader title={t('settings.sections.profile')} />
 
 			<div className="flex items-start gap-4 py-4 border-b">
-				<div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-muted">
-					<User className="h-8 w-8 text-muted-foreground" />
+				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
+					<User className="h-5 w-5 text-muted-foreground" />
 				</div>
 				<div className="flex flex-1 flex-col gap-3">
 					<div className="flex gap-3">
