@@ -382,6 +382,28 @@ export default function FilesPage(): React.ReactElement {
 					</div>
 				)}
 			</div>
+
+			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+				<AppAlertDialogContent>
+					<AppAlertDialogHeader>
+						<AppAlertDialogTitle>Delete files</AppAlertDialogTitle>
+						<AppAlertDialogDescription>
+							{selected.size === 1
+								? 'This will permanently delete 1 file. This action cannot be undone.'
+								: `This will permanently delete ${selected.size} files. This action cannot be undone.`}
+						</AppAlertDialogDescription>
+					</AppAlertDialogHeader>
+					<AppAlertDialogFooter>
+						<AppAlertDialogCancel>Cancel</AppAlertDialogCancel>
+						<AppAlertDialogAction
+							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+							onClick={handleConfirmDelete}
+						>
+							Delete
+						</AppAlertDialogAction>
+					</AppAlertDialogFooter>
+				</AppAlertDialogContent>
+			</AppAlertDialog>
 		</div>
 	);
 }
