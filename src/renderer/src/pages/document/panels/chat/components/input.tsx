@@ -1,14 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	ArrowUp,
-	Check,
-	ChevronDown,
-	ImageIcon,
-	ImagePlus,
-	PenLine,
-	X,
-} from 'lucide-react';
+import { ArrowUp, Check, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
 import {
 	AppButton,
 	AppTextarea,
@@ -276,10 +268,7 @@ const Input: React.FC<InputProps> = ({
 									openFilePicker();
 								}
 							}}
-							aria-label={t(
-								'assistantNode.browseReferenceImages',
-								'Browse reference images'
-							)}
+							aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
 							className="flex min-h-[4.5rem] items-center justify-center px-4 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
 						>
 							<div className="flex items-center gap-2.5">
@@ -312,10 +301,7 @@ const Input: React.FC<InputProps> = ({
 					rows={3}
 					placeholder={
 						placeholder ??
-						t(
-							'agenticPanel.inputPlaceholder',
-							'Ask the assistant for context, facts, or ideas'
-						)
+						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
 					className="w-full resize-none border-none bg-transparent px-4 pb-3 pt-4 text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
@@ -351,9 +337,7 @@ const Input: React.FC<InputProps> = ({
 								size="sm"
 								className={cn(
 									'h-7 gap-1.5 rounded-full border border-border/80 bg-background/75 px-2.5 text-xs shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
-									isImage
-										? 'text-primary'
-										: 'text-foreground/80 dark:text-foreground/90'
+									isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
 								)}
 								disabled={disabled}
 								aria-label={t('assistantNode.switchAgent', 'Switch agent')}
@@ -377,10 +361,7 @@ const Input: React.FC<InputProps> = ({
 						>
 							{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
 								const label = t(option.labelKey, option.labelFallback);
-								const description = t(
-									option.descriptionKey,
-									option.descriptionFallback
-								);
+								const description = t(option.descriptionKey, option.descriptionFallback);
 								const isSelected = option.value === agentId;
 
 								return (
@@ -408,12 +389,8 @@ const Input: React.FC<InputProps> = ({
 												)}
 											</span>
 											<span className="flex min-w-0 flex-col gap-0.5">
-												<span className="truncate text-sm font-medium">
-													{label}
-												</span>
-												<span className="text-xs text-muted-foreground">
-													{description}
-												</span>
+												<span className="truncate text-sm font-medium">{label}</span>
+												<span className="text-xs text-muted-foreground">{description}</span>
 											</span>
 										</span>
 										{isSelected && <Check className="ml-auto h-4 w-4" />}
@@ -433,10 +410,7 @@ const Input: React.FC<InputProps> = ({
 								disabled={disabled}
 							>
 								<span className="min-w-0 truncate">{selectedModel.name}</span>
-								<ChevronDown
-									className="h-3 w-3 shrink-0 opacity-70"
-									aria-hidden="true"
-								/>
+								<ChevronDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden="true" />
 							</AppButton>
 						</AppDropdownMenuTrigger>
 						<AppDropdownMenuContent
@@ -451,17 +425,12 @@ const Input: React.FC<InputProps> = ({
 									onSelect={() => handleModelChange(model)}
 									className={cn(
 										'rounded-xl px-2.5 py-2.5',
-										selectedModel.modelId === model.modelId &&
-											'bg-accent text-accent-foreground'
+										selectedModel.modelId === model.modelId && 'bg-accent text-accent-foreground'
 									)}
 								>
 									<div className="flex min-w-0 flex-col gap-0.5">
-										<span className="truncate text-sm font-medium">
-											{model.name}
-										</span>
-										<span className="text-xs text-muted-foreground">
-											{model.provider}
-										</span>
+										<span className="truncate text-sm font-medium">{model.name}</span>
+										<span className="text-xs text-muted-foreground">{model.provider}</span>
 									</div>
 								</AppDropdownMenuItem>
 							))}
