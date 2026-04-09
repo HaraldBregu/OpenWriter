@@ -202,4 +202,4 @@ export const AppTitleBar = React.memo(function AppTitleBar({
 		</AppTitleBarContainer>
 	);
 });
-TitleBar.displayName = 'TitleBar';
+AppTitleBar.displayName = 'AppTitleBar';
