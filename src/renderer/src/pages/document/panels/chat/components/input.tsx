@@ -200,8 +200,32 @@ const Input: React.FC<InputProps> = ({
 		setIsFocused(false);
 	}, []);
 
+	// Stable id for the aria-live region that announces image attachment changes.
+	const dropStatusId = useId();
+
+	// Announced to screen readers whenever the image attachment count changes.
+	const imageCountAnnouncement =
+		files.length > 0
+			? t('agenticPanel.imageCountAnnouncement', '{{count}} reference image(s) attached', {
+					count: files.length,
+				})
+			: '';
+
+	const currentAgentLabel = t(currentAgent.labelKey, currentAgent.labelFallback);
+
 	return (
 		<div className="shrink-0 px-3 pb-3 pt-1">
+			{/* Hidden live region — announces image attachment changes to screen readers */}
+			<div
+				id={dropStatusId}
+				role="status"
+				aria-live="polite"
+				aria-atomic="true"
+				className="sr-only"
+			>
+				{imageCountAnnouncement}
+			</div>
+
 			<input
 				ref={fileInputRef}
 				type="file"
