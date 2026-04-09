@@ -302,6 +302,9 @@ const workspace: WorkspaceApi = {
 	openResourcesFolder: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openResourcesFolder);
 	},
+	openFilesFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openFilesFolder);
+	},
 	openDocumentFolder: (documentId: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDocumentFolder, documentId);
 	},
