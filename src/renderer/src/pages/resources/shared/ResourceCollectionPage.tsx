@@ -251,6 +251,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 					</AppAlertDialogFooter>
 				</AppAlertDialogContent>
 			</AppAlertDialog>
-		</div>
+		</AppPageContainer>
 	);
 }
