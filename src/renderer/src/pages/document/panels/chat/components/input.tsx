@@ -469,7 +469,7 @@ const Input: React.FC<InputProps> = ({
 						disabled={!canSend}
 						aria-label={t('agenticPanel.send', 'Send message')}
 						className={cn(
-							'h-7 w-7 rounded-full shadow-none transition-colors',
+							'h-8 w-8 rounded-full shadow-none transition-colors',
 							canSend
 								? 'bg-foreground text-background hover:bg-foreground/90 dark:bg-foreground dark:text-background dark:hover:bg-foreground/95'
 								: 'text-muted-foreground hover:bg-accent/80 hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent/80 dark:hover:text-foreground'
