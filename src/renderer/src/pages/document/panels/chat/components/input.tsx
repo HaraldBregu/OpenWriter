@@ -238,8 +238,7 @@ const Input: React.FC<InputProps> = ({
 					isFocused
 						? 'border-primary/45 dark:border-primary/55'
 						: 'border-border/85 hover:border-foreground/15 dark:border-border/90 dark:hover:border-foreground/15',
-					isDragOver &&
-						'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
+					isDragOver && 'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 				)}
 			>
 				{previewUrls.length > 0 && (

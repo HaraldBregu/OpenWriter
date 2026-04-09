@@ -205,6 +205,40 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.openLogsFolder)
 		);
 
+		// -----------------------------------------------------------------------
+		// Theme management handlers
+		// -----------------------------------------------------------------------
+
+		const themeService = container.get<ThemeService>('themeService');
+
+		ipcMain.handle(
+			AppChannels.getCustomThemes,
+			wrapSimpleHandler(() => themeService.listThemes(), AppChannels.getCustomThemes)
+		);
+
+		ipcMain.handle(
+			AppChannels.openThemesFolder,
+			wrapSimpleHandler(async () => {
+				const themesDir = themeService.getThemesDirectory();
+				await shell.openPath(themesDir);
+			}, AppChannels.openThemesFolder)
+		);
+
+		ipcMain.handle(
+			AppChannels.importTheme,
+			wrapSimpleHandler(async () => {
+				const result = await dialog.showOpenDialog({
+					properties: ['openDirectory'],
+					title: 'Select Theme Folder',
+					buttonLabel: 'Import Theme',
+				});
+				if (result.canceled || result.filePaths.length === 0) {
+					return null;
+				}
+				return themeService.importThemeFromPath(result.filePaths[0]);
+			}, AppChannels.importTheme)
+		);
+
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
