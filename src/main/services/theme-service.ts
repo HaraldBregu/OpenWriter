@@ -124,7 +124,7 @@ export class ThemeService {
 
 	private validateTheme(data: unknown): Theme {
 		if (typeof data !== 'object' || data === null) {
-			throw new Error('Theme manifest must be a JSON object');
+			throw new Error('Theme must be a JSON object');
 		}
 
 		const obj = data as Record<string, unknown>;
