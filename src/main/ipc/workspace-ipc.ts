@@ -152,10 +152,12 @@ export class WorkspaceIpc implements IpcModule {
 		ipcMain.handle(
 			WorkspaceChannels.openFilesFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
-				const filesDir = container
-					.get<FilesService>('filesService')
-					.getFilesDir(this.mgr(event, container).getCurrentWorkspacePath());
-				await shell.openPath(filesDir);
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const filesService = ctx.getService<FilesService>('filesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) return;
+				await shell.openPath(filesService.getFilesDir(currentPath));
 			}, WorkspaceChannels.openFilesFolder)
 		);
 
