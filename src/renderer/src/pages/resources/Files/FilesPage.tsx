@@ -72,7 +72,10 @@ function FileRow({ resource, isSelected, onToggle }: FileRowProps): React.ReactE
 					</div>
 					<div className="min-w-0">
 						<p className="truncate font-medium text-sm">{resource.name}</p>
-						<p className="truncate text-xs text-muted-foreground" title={formatDate(resource.importedAt)}>
+						<p
+							className="truncate text-xs text-muted-foreground"
+							title={formatDate(resource.importedAt)}
+						>
 							{resource.path}
 						</p>
 					</div>
@@ -120,10 +123,7 @@ export default function FilesPage(): React.ReactElement {
 	const status = useAppSelector(selectResourcesStatus);
 	const uploading = useAppSelector(selectImporting);
 
-	const resources = useMemo(
-		() => filterResourcesBySection(allResources, 'files'),
-		[allResources]
-	);
+	const resources = useMemo(() => filterResourcesBySection(allResources, 'files'), [allResources]);
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [viewMode, setViewMode] = useState<ViewMode>('list');

@@ -540,7 +540,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
 			<AppSidebarProvider
 				className="flex-col flex-1 min-h-0"
-				style={{ '--sidebar-width': '20rem' } as React.CSSProperties}
+				style={{ '--sidebar-width': '15rem' } as React.CSSProperties}
 			>
 				<AppLayoutInner>{children}</AppLayoutInner>
 			</AppSidebarProvider>
