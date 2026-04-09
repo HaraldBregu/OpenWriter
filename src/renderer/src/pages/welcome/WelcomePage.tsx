@@ -130,7 +130,7 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 
 	return (
 		<div className="flex flex-col h-screen bg-background">
-			<TitleBar title="OpenWriter" />
+			<AppTitleBar title="OpenWriter" />
 
 			{deletionReason && (
 				<div className="mx-8 mt-4 mb-0 flex items-center gap-3 rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3">
