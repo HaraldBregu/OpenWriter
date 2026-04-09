@@ -60,10 +60,11 @@ const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey, onSave
 	}, [draft, onSave, provider, saving]);
 
 	return (
-		<SettingRow label={PROVIDER_LABELS[provider]}>
+		<SettingRow label={PROVIDER_LABELS[provider]} labelFor={editing ? inputId : undefined}>
 			{editing ? (
 				<div className="flex items-center gap-1.5">
 					<AppInput
+						id={inputId}
 						type="password"
 						value={draft}
 						onChange={(e) => setDraft(e.target.value)}
