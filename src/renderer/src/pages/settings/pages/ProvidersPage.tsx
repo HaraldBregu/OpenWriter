@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProviderId, ServiceProvider } from '../../../../shared/types';
-import { PROVIDER_IDS } from '../../../../shared/providers';
-import { ProviderRow } from './components';
+import type { ProviderId, ServiceProvider } from '../../../../../shared/types';
+import { PROVIDER_IDS } from '../../../../../shared/providers';
+import { ProviderRow } from '../components';
 
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
