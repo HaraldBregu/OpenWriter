@@ -6,8 +6,6 @@ import {
 	ArrowUpDown,
 	Eye,
 	FolderOpen,
-	ListTree,
-	Loader2,
 	Pencil,
 	Search,
 	Trash2,
