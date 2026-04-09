@@ -363,6 +363,7 @@ function AppThemeProvider({
 	}, [customThemeId]);
 
 	// Fetch and apply custom theme tokens when customThemeId changes.
+	// Also re-apply when dark/light mode toggles (observed via MutationObserver).
 	useEffect(() => {
 		if (!customThemeId) {
 			clearThemeTokens();
@@ -370,21 +371,35 @@ function AppThemeProvider({
 		}
 
 		let cancelled = false;
+		let cachedManifest: { light: ThemeTokens; dark: ThemeTokens } | null = null;
+
+		const apply = (): void => {
+			if (!cachedManifest) return;
+			const isDark = document.documentElement.classList.contains(DARK_CLASS);
+			applyThemeTokens(isDark ? cachedManifest.dark : cachedManifest.light);
+		};
+
 		(async () => {
 			try {
 				const manifest = await window.app?.getCustomThemeTokens(customThemeId);
 				if (cancelled || !manifest) return;
-
-				const isDark = document.documentElement.classList.contains(DARK_CLASS);
-				applyThemeTokens(isDark ? manifest.dark : manifest.light);
+				cachedManifest = manifest;
+				apply();
 			} catch {
-				// Theme loading failed — fall back to default
 				if (!cancelled) clearThemeTokens();
 			}
 		})();
 
+		// Re-apply tokens when the dark class toggles on <html>.
+		const observer = new MutationObserver(() => apply());
+		observer.observe(document.documentElement, {
+			attributes: true,
+			attributeFilter: ['class'],
+		});
+
 		return () => {
 			cancelled = true;
+			observer.disconnect();
 		};
 	}, [customThemeId]);
 
