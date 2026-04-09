@@ -144,7 +144,8 @@
 			"devices": "Dispositivi",
 			"tools": "Strumenti",
 			"system": "Sistema",
-			"themes": "Temi"
+			"themes": "Temi",
+			"editor": "Editor"
 		},
 		"sections": {
 			"permissions": "Autorizzazioni",
