@@ -136,6 +136,7 @@ export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 export { AppTitleBarContainer } from './titlebar/AppTitleBarContainer';
 export { AppTitleBarCenterContainer } from './titlebar/AppTitleBarCenterContainer';
 export { AppTitleBarCenterContainerTitle } from './titlebar/AppTitleBarCenterContainerTitle';
+export { AppTitleBarLeftContainer } from './titlebar/AppTitleBarLeftContainer';
 
 export {
 	AppSidebar,
