@@ -9,15 +9,14 @@ const THEME_FILE_NAME = 'theme.json';
 const THEME_DATA_KEYS: readonly (keyof Omit<ThemeData, 'titleBar'>)[] = [
 	'background',
 	'foreground',
-	'text',
-	'icon',
 ] as const;
 
 const TITLE_BAR_KEYS: readonly (keyof ThemeData['titleBar'])[] = [
 	'background',
 	'foreground',
-	'text',
-	'icon',
+	'title',
+	'sidebarIcon',
+	'historyIcon',
 ] as const;
 
 const THEME_REQUIRED_FIELDS = ['name', 'description', 'author', 'version', 'license'] as const;
