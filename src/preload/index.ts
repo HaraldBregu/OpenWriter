@@ -425,6 +425,27 @@ const workspace: WorkspaceApi = {
 		});
 	},
 	// -------------------------------------------------------------------------
+	// Files (resources/files/)
+	// -------------------------------------------------------------------------
+	getFiles: () => typedInvokeUnwrap(WorkspaceChannels.getFiles),
+	insertFiles: (extensions?: string[]) => typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
+	deleteFileEntry: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteFileEntry, id),
+	onFilesChanged: (
+		callback: (event: {
+			type: 'added' | 'changed' | 'removed';
+			fileId: string;
+			filePath: string;
+			timestamp: number;
+		}) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.filesChanged, callback);
+	},
+	onFilesWatcherError: (
+		callback: (error: { error: string; timestamp: number }) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.filesWatcherError, callback);
+	},
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
