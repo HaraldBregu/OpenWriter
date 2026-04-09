@@ -84,6 +84,7 @@ export class Workspace implements Disposable {
 	async setCurrent(workspacePath: string): Promise<void> {
 		this.logger.info('Workspace', `Setting workspace: ${workspacePath}`);
 		this.workspace.setCurrent(workspacePath);
+		await this.ensureResourceSubfolders(workspacePath);
 		await this.projectWorkspace.getOrCreate();
 	}
 
