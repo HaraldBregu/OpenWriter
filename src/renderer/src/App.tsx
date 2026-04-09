@@ -233,6 +233,14 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
+														path="themes"
+														element={
+															<Suspense fallback={<LoadingSkeleton />}>
+																<ThemesSettingsPage />
+															</Suspense>
+														}
+													/>
+													<Route
 														path="system"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
