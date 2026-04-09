@@ -46,7 +46,7 @@ function readFileAsDataUri(file: File): Promise<string> {
 	});
 }
 
-export type EditMode = 'crop' | 'rotate' | 'ai';
+export type EditMode = 'crop' | 'rotate' | 'resize' | 'ai';
 
 export interface ImageEditorProps {
 	src: string;
