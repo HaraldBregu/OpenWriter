@@ -264,6 +264,15 @@
 			"temperature": "Temperature",
 			"thinkingMode": "Thinking Mode",
 			"thinkingModeDescription": "Enable extended reasoning for complex tasks"
+		},
+		"themes": {
+			"title": "Themes",
+			"description": "Install and manage custom color themes for the application.",
+			"actions": "Actions",
+			"openFolder": "Open Themes Folder",
+			"import": "Import Theme",
+			"installed": "Installed Themes",
+			"noThemes": "No custom themes installed yet. Import a theme folder or place one in the themes directory."
 		}
 	},
 	"dialogs": {
