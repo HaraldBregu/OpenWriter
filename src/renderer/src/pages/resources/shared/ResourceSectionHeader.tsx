@@ -5,7 +5,6 @@ import { AppButton, AppPageHeader, AppPageHeaderItems, AppPageHeaderTitle } from
 
 interface ResourceSectionHeaderProps {
 	readonly title: string;
-	readonly icon: LucideIcon;
 	readonly uploading: boolean;
 	readonly uploadLabel: string;
 	readonly onUpload: () => void;
