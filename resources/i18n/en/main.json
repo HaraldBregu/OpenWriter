@@ -166,7 +166,8 @@
 			"clipboard": "Clipboard",
 			"application": "Application",
 			"profile": "Profile",
-			"editor": "Editor"
+			"editor": "Editor",
+			"developer": "Developer"
 		},
 		"profile": {
 			"firstName": "First Name",
