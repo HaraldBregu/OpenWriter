@@ -42,12 +42,12 @@ export interface AppTitleBarProps {
 	onNavigateForward?: () => void;
 }
 
-export const TitleBar = React.memo(function TitleBar({
+export const AppTitleBar = React.memo(function AppTitleBar({
 	title = 'Application Name',
 	onToggleSidebar,
 	onNavigateBack,
 	onNavigateForward,
-}: TitleBarProps) {
+}: AppTitleBarProps) {
 	const { t } = useTranslation();
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullScreen, setIsFullScreen] = useState(false);
