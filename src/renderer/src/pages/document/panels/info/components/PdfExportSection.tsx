@@ -24,6 +24,8 @@ export function PdfExportSection({
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
 	const { title, content, images } = useDocumentState();
+	const [isExpanded, setIsExpanded] = useState(false);
+	const previewPanelId = useId();
 
 	const snapshotRef = useRef<DocumentPdfTemplateProps>({ title, content, images });
 	const [refreshKey, setRefreshKey] = useState(0);
