@@ -468,9 +468,13 @@ const Input: React.FC<InputProps> = ({
 								size="sm"
 								className="h-7 min-w-0 gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 text-xs text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
 								disabled={disabled}
-								aria-label={t('agenticPanel.selectModel', 'Select model')}
+								aria-label={t('agenticPanel.selectModelCurrent', 'Model: {{model}}', {
+									model: selectedModel.name,
+								})}
 							>
-								<span className="min-w-0 truncate">{selectedModel.name}</span>
+								<span className="min-w-0 truncate" aria-hidden="true">
+									{selectedModel.name}
+								</span>
 								<ChevronDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden="true" />
 							</AppButton>
 						</AppDropdownMenuTrigger>
