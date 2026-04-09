@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProjectWorkspaceInfo } from '../../../../shared/types';
+import type { ProjectWorkspaceInfo } from '../../../../../shared/types';
 import { AppInput } from '@/components/app/AppInput';
 import { useAppDispatch } from '@/store';
 import { loadProjectName } from '@/store/workspace/actions';
