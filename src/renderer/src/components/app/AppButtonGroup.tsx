@@ -1,13 +1,14 @@
 import React from 'react';
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '../ui/ButtonGroup';
+import type { VariantProps } from 'class-variance-authority';
+import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText, buttonGroupVariants } from '../ui/ButtonGroup';
 import { cn } from '@/lib/utils';
 
 const AppButtonGroup = React.memo(
 	React.forwardRef<
 		React.ElementRef<typeof ButtonGroup>,
-		React.ComponentPropsWithoutRef<typeof ButtonGroup>
-	>(({ className, ...props }, ref) => (
-		<ButtonGroup ref={ref} className={cn(className)} {...props} />
+		React.ComponentPropsWithoutRef<typeof ButtonGroup> & VariantProps<typeof buttonGroupVariants>
+	>(({ className, orientation, ...props }, ref) => (
+		<ButtonGroup ref={ref} orientation={orientation} className={cn(className)} {...props} />
 	))
 );
 AppButtonGroup.displayName = 'AppButtonGroup';
