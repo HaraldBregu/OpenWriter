@@ -13,7 +13,7 @@ import {
 	RESOURCE_SECTION_ORDER,
 	RESOURCE_SECTIONS,
 } from '../pages/resources/shared/resource-sections';
-import { TitleBar } from './TitleBar';
+import { AppTitleBar } from './AppTitleBar';
 import {
 	AppCollapsible,
 	AppCollapsibleTrigger,
