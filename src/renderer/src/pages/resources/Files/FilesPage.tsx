@@ -214,11 +214,25 @@ export default function FilesPage(): React.ReactElement {
 
 	const filteredEntries = useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		return entries.filter((f) => {
+		const result = entries.filter((f) => {
 			if (query && !f.name.toLowerCase().includes(query)) return false;
 			return matchesTypeFilter(f.mimeType, typeFilter);
 		});
-	}, [entries, searchQuery, typeFilter]);
+
+		if (sortDirection !== 'none') {
+			result.sort((a, b) => {
+				let cmp: number;
+				if (sortKey === 'name' || sortKey === 'mimeType') {
+					cmp = a[sortKey].localeCompare(b[sortKey]);
+				} else {
+					cmp = a[sortKey] - b[sortKey];
+				}
+				return sortDirection === 'asc' ? cmp : -cmp;
+			});
+		}
+
+		return result;
+	}, [entries, searchQuery, sortDirection, sortKey, typeFilter]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(insertFilesRequested(RESOURCE_SECTIONS.files.uploadExtensions));
