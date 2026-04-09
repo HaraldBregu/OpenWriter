@@ -225,6 +225,14 @@ export class AppIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			AppChannels.getCustomThemeTokens,
+			wrapSimpleHandler(
+				(id: string) => themeService.getThemeById(id),
+				AppChannels.getCustomThemeTokens
+			)
+		);
+
+		ipcMain.handle(
 			AppChannels.importTheme,
 			wrapSimpleHandler(async () => {
 				const result = await dialog.showOpenDialog({
