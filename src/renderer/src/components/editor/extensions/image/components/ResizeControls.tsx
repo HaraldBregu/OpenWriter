@@ -83,6 +83,14 @@ export function ResizeControls({
 
 	return (
 		<div className="flex flex-wrap items-end gap-2">
+			<span id="resize-dimensions-hint" className="sr-only">
+				{t('imageNode.resizeDimensionsHint', {
+					min: MIN_DIMENSION,
+					max: MAX_DIMENSION,
+					defaultValue: `Enter a value between ${MIN_DIMENSION} and ${MAX_DIMENSION}`,
+				})}
+			</span>
+
 			<div className="flex flex-col gap-1">
 				<label className="text-xs text-muted-foreground" htmlFor="resize-width">
 					{t('imageNode.width')}
@@ -95,6 +103,7 @@ export function ResizeControls({
 					value={widthInput}
 					onChange={handleWidthChange}
 					onKeyDown={handleKeyDown}
+					aria-describedby="resize-dimensions-hint"
 					className="h-7 w-20 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				/>
 			</div>
@@ -107,6 +116,7 @@ export function ResizeControls({
 						aria-label={
 							isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')
 						}
+						aria-pressed={isLocked}
 						onClick={toggleLock}
 						className="mb-0.5"
 					>
@@ -130,11 +140,17 @@ export function ResizeControls({
 					value={heightInput}
 					onChange={handleHeightChange}
 					onKeyDown={handleKeyDown}
+					aria-describedby="resize-dimensions-hint"
 					className="h-7 w-20 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 				/>
 			</div>
 
-			<AppButton size="sm" onClick={handleApply} className="mb-0.5 h-7 px-2 text-xs">
+			<AppButton
+				size="sm"
+				onClick={handleApply}
+				aria-label={t('imageNode.applyResize', 'Apply resize')}
+				className="mb-0.5 h-7 rounded-full px-2 text-xs"
+			>
 				{t('imageNode.resize')}
 			</AppButton>
 		</div>
