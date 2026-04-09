@@ -164,10 +164,7 @@ export const TitleBar = React.memo(function TitleBar({
 
 			{/* ── Right: minimize / maximize / close (Windows only) ── */}
 			{!isMac && (
-				<div
-					className="flex items-center h-full z-10"
-					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-				>
+				<AppTitleBarRightContainer>
 					<button
 						type="button"
 						onClick={() => window.win?.minimize()}
@@ -200,7 +197,7 @@ export const TitleBar = React.memo(function TitleBar({
 					>
 						<X className="h-[17px] w-[17px]" strokeWidth={1.5} />
 					</button>
-				</div>
+				</AppTitleBarRightContainer>
 			)}
 		</AppTitleBarContainer>
 	);
