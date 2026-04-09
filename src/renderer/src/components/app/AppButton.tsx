@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -49,16 +50,40 @@ const buttonVariants = cva(
 );
 
 interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+	extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+		VariantProps<typeof buttonVariants> {
 	asChild?: boolean;
+	render?: useRender.ComponentProps<'button'>['render'];
 }
 
 const AppButton = React.memo(
 	React.forwardRef<HTMLButtonElement, ButtonProps>(
-		({ className, variant, size, asChild = false, ...props }, ref) => {
-			const Comp = asChild ? Slot : 'button';
+		({ className, variant, size, asChild = false, render: renderProp, children, ...props }, ref) => {
+			const resolvedRender =
+				asChild && React.isValidElement(children) ? children : renderProp;
+
+			if (resolvedRender) {
+				return useRender({
+					defaultTagName: 'button',
+					props: mergeProps<'button'>(
+						{
+							className: cn(
+								buttonVariants({ variant, size }),
+								'transition-colors focus-visible:ring-ring',
+								className
+							),
+							ref,
+							'data-slot': 'button',
+						},
+						props
+					),
+					render: resolvedRender,
+					state: {},
+				});
+			}
+
 			return (
-				<Comp
+				<button
 					data-slot="button"
 					ref={ref}
 					className={cn(
@@ -67,7 +92,9 @@ const AppButton = React.memo(
 						className
 					)}
 					{...props}
-				/>
+				>
+					{children}
+				</button>
 			);
 		}
 	)
