@@ -280,12 +280,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 							</div>
 
 							{images.length > 0 ? (
-								<div className="grid grid-cols-5 gap-1.5">
+								<div className="flex flex-wrap gap-1">
 									{images.map((img) => (
 										<button
 											type="button"
 											key={img.fileName}
-											className="group relative aspect-square max-w-[48px] max-h-[48px] overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+											className="group relative h-10 w-10 overflow-hidden rounded-md border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
 											onClick={() =>
 												setPreviewImage({
 													src: toLocalResourceUrl(img.filePath),
@@ -299,8 +299,8 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 												className="h-full w-full object-cover"
 												loading="lazy"
 											/>
-											<div className="absolute inset-x-0 bottom-0 bg-black/55 px-1.5 py-1 opacity-0 transition-opacity group-hover:opacity-100">
-												<span className="block truncate text-[10px] text-white">
+											<div className="absolute inset-x-0 bottom-0 bg-black/55 px-0.5 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+												<span className="block truncate text-[8px] text-white">
 													{img.fileName}
 												</span>
 											</div>
@@ -309,11 +309,11 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 									<button
 										type="button"
 										onClick={handleUploadClick}
-										className="flex aspect-square max-w-[48px] max-h-[48px] items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
+										className="flex h-10 w-10 items-center justify-center rounded-md border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
 										aria-label={t('configSidebar.uploadImage')}
 										title={t('configSidebar.uploadImage')}
 									>
-										<Plus className="h-4 w-4" />
+										<Plus className="h-3.5 w-3.5" />
 									</button>
 								</div>
 							) : (
