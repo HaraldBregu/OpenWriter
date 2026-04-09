@@ -221,7 +221,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											isActive={location.pathname === '/search'}
 										>
 											<Link to="/search">
-												<Search className="h-4 w-4 shrink-0" />
+												<Search className="h-5 w-5 shrink-0" />
 												<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
 												<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 													Ctrl+K
@@ -300,7 +300,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 															isActive={location.pathname === section.route}
 														>
 															<Link to={section.route}>
-																<Icon className="h-4 w-4 shrink-0" />
+																<Icon className="h-5 w-5 shrink-0" />
 																<span className="flex-1 truncate">{t(section.titleKey)}</span>
 															</Link>
 														</AppSidebarMenuButton>
@@ -332,7 +332,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/tasks'}
 												>
 													<Link to="/debug/tasks">
-														<ListTodo className="h-4 w-4 shrink-0" />
+														<ListTodo className="h-5 w-5 shrink-0" />
 														<span className="flex-1 truncate">{t('debug.tasks')}</span>
 													</Link>
 												</AppSidebarMenuButton>
@@ -344,7 +344,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/redux'}
 												>
 													<Link to="/debug/redux">
-														<Database className="h-4 w-4 shrink-0" />
+														<Database className="h-5 w-5 shrink-0" />
 														<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
 													</Link>
 												</AppSidebarMenuButton>
@@ -356,7 +356,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													isActive={location.pathname === '/debug/logs'}
 												>
 													<Link to="/debug/logs">
-														<ScrollText className="h-4 w-4 shrink-0" />
+														<ScrollText className="h-5 w-5 shrink-0" />
 														<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
 													</Link>
 												</AppSidebarMenuButton>

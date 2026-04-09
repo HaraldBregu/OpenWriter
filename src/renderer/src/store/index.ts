@@ -4,15 +4,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import type { TypedUseSelectorHook } from 'react-redux';
 import workspaceReducer from './workspace/reducer';
 import documentsReducer from './documents/reducer';
+import filesReducer from './files/reducer';
 import { listenerMiddleware } from './listener-middleware';
 
 // Side-effect imports: register listener effects
 import './workspace/listeners';
+import './files/listeners';
 
 export const store = configureStore({
 	reducer: {
 		workspace: workspaceReducer,
 		documents: documentsReducer,
+		files: filesReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware().prepend(listenerMiddleware.middleware),
