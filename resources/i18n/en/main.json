@@ -190,6 +190,13 @@
 			"menuBar": "Menu Bar",
 			"menuBarDescription": "Show or hide the app icon in the menu bar"
 		},
+		"editor": {
+			"font": "Font",
+			"fontDescription": "Choose the font used in the editor",
+			"fontDefault": "Default",
+			"fontSansSystem": "Sans System",
+			"fontDyslexicFriendly": "Dyslexic Friendly"
+		},
 		"permissions": {
 			"microphone": "Microphone",
 			"camera": "Camera",
