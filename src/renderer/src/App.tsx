@@ -228,7 +228,7 @@ const App: React.FC = () => {
 														path="providers"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<ProvidersSettingsPage />
+																<ProvidersPage />
 															</Suspense>
 														}
 													/>
