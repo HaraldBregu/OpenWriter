@@ -280,12 +280,12 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 							</div>
 
 							{images.length > 0 ? (
-								<div className="grid grid-cols-4 gap-1.5">
+								<div className="grid grid-cols-5 gap-1.5">
 									{images.map((img) => (
 										<button
 											type="button"
 											key={img.fileName}
-											className="group relative aspect-square overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+											className="group relative aspect-square max-w-[48px] max-h-[48px] overflow-hidden rounded-lg border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
 											onClick={() =>
 												setPreviewImage({
 													src: toLocalResourceUrl(img.filePath),
@@ -309,7 +309,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 									<button
 										type="button"
 										onClick={handleUploadClick}
-										className="flex aspect-square items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
+										className="flex aspect-square max-w-[48px] max-h-[48px] items-center justify-center rounded-lg border border-dashed border-border/80 bg-card/65 text-muted-foreground transition-colors hover:border-foreground/25 hover:bg-accent/70 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:bg-background/40"
 										aria-label={t('configSidebar.uploadImage')}
 										title={t('configSidebar.uploadImage')}
 									>
