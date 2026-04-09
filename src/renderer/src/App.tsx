@@ -66,6 +66,7 @@ const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'))
 const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
 const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
+const EditorPage = lazy(() => import('./pages/settings/pages/EditorPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,
