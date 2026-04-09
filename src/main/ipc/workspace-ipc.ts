@@ -584,6 +584,90 @@ export class WorkspaceIpc implements IpcModule {
 			}, WorkspaceChannels.updateDocumentContent)
 		);
 
+		// -------------------------------------------------------------------------
+		// Files (resources/files/)
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getFiles,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const filesService = ctx.getService<FilesService>('filesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+				return filesService.getFiles(currentPath);
+			}, WorkspaceChannels.getFiles)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.insertFiles,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, extensions?: string[]) => {
+				const hasFilter = extensions && extensions.length > 0;
+				const filters: FileFilter[] = hasFilter
+					? [
+							{
+								name: `Supported Files (${extensions.join(', ')})`,
+								extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+							},
+						]
+					: [{ name: 'All Files', extensions: ['*'] }];
+
+				const result = await dialog.showOpenDialog({
+					properties: ['openFile', 'multiSelections'],
+					filters,
+					message: hasFilter ? `Supported formats: ${extensions.join(', ')}` : undefined,
+				});
+
+				if (result.canceled || result.filePaths.length === 0) {
+					return [];
+				}
+
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const filesService = ctx.getService<FilesService>('filesService', container);
+				const filesWatcher = ctx.container.has('filesWatcher')
+					? ctx.getService<FilesWatcherService>('filesWatcher', container)
+					: null;
+
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+
+				const markWritten = filesWatcher
+					? (destPath: string) => filesWatcher.markFileAsWritten(destPath)
+					: undefined;
+
+				return filesService.insertFiles(currentPath, result.filePaths, markWritten);
+			}, WorkspaceChannels.insertFiles)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.deleteFileEntry,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const filesService = ctx.getService<FilesService>('filesService', container);
+				const filesWatcher = ctx.container.has('filesWatcher')
+					? ctx.getService<FilesWatcherService>('filesWatcher', container)
+					: null;
+
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+
+				const markWritten = filesWatcher
+					? (filePath: string) => filesWatcher.markFileAsWritten(filePath)
+					: undefined;
+
+				await filesService.deleteFile(currentPath, id, markWritten);
+			}, WorkspaceChannels.deleteFileEntry)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
