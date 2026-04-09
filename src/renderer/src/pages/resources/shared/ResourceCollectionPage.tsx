@@ -144,7 +144,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 		<AppPageContainer>
 			<ResourceSectionHeader
 				title={t(section.titleKey)}
-				icon={section.icon}
 				uploading={uploading}
 				uploadLabel={t(section.uploadKey)}
 				onUpload={handleUpload}
