@@ -14,14 +14,14 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "src/renderer/src/components/ui/ui/sheet"
-import { Skeleton } from "src/renderer/src/components/ui/ui/skeleton"
+} from "@/components/ui/Sheet"
+import { Skeleton } from "@/components/ui/Skeleton"
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "src/renderer/src/components/ui/ui/tooltip"
+} from "@/components/ui/Tooltip"
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7
