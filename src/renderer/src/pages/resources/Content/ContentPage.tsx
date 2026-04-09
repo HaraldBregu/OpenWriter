@@ -343,6 +343,22 @@ export default function ContentPage(): React.ReactElement {
 				</AppPageHeaderItems>
 			</AppPageHeader>
 
+			<div className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
+				<div className="relative flex-1">
+					<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+					<input
+						type="text"
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.target.value)}
+						placeholder="Start typing to search"
+						className={cn(
+							'h-9 w-full rounded-md border border-input bg-background pl-9 pr-4 text-sm',
+							'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring'
+						)}
+					/>
+				</div>
+			</div>
+
 			{indexing && (
 				<div className="border-b px-6 py-3 shrink-0">
 					<div className="flex items-center gap-2">
