@@ -127,14 +127,7 @@ export default function ContentPage(): React.ReactElement {
 	const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
 	const [error, setError] = useState<string | null>(null);
 
-	const indexingTask = useTaskListener<{
-		indexedCount: number;
-		failedIds: string[];
-		totalChunks: number;
-	}>('index-resources');
-
 	const loading = status === 'idle' || status === 'loading';
-	const indexing = indexingTask.isRunning || indexingTask.isQueued;
 	const [editing, setEditing] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [removing, setRemoving] = useState(false);
