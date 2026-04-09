@@ -2,30 +2,30 @@ import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import i18next from 'i18next';
 
-interface ErrorBoundaryProps {
+interface AppErrorBoundaryProps {
 	children: React.ReactNode;
 	fallback?: React.ReactNode;
 	onReset?: () => void;
 	level?: 'root' | 'route' | 'feature';
 }
 
-interface ErrorBoundaryState {
+interface AppErrorBoundaryState {
 	hasError: boolean;
 	error: Error | null;
 }
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-	constructor(props: ErrorBoundaryProps) {
+export class AppErrorBoundary extends React.Component<AppErrorBoundaryProps, AppErrorBoundaryState> {
+	constructor(props: AppErrorBoundaryProps) {
 		super(props);
 		this.state = { hasError: false, error: null };
 	}
 
-	static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+	static getDerivedStateFromError(error: Error): AppErrorBoundaryState {
 		return { hasError: true, error };
 	}
 
 	componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
-		console.error('[ErrorBoundary]', error, errorInfo);
+		console.error('[AppErrorBoundary]', error, errorInfo);
 	}
 
 	handleReset = (): void => {
