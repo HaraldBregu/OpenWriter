@@ -15,6 +15,9 @@ export { ProjectWorkspaceService } from './project-workspace';
 export { DocumentsWatcherService } from './documents-watcher';
 export { FilesWatcherService } from './files-watcher';
 
+// Contents service (resources/content/)
+export { ContentsService } from './contents-service';
+
 // Files service (resources/files/)
 export { FilesService } from './files-service';
 
