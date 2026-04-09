@@ -40,49 +40,41 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 		<AppPageHeader>
 			<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
 			<AppPageHeaderItems>
-				<AppButton
-					size="icon"
-					variant="outline"
-					className="h-8 w-8"
-					onClick={onOpenFolder}
-					disabled={editing}
-				>
-					<FolderOpen className="h-3.5 w-3.5" />
+				{editing && selectedCount > 0 && (
+					<AppButton variant="destructive" size="lg" disabled={removing} onClick={onRemove}>
+						<Trash2 />
+						{t('resources.removeWithCount', { count: selectedCount })}
+					</AppButton>
+				)}
+				<AppButton variant="outline" size="lg" onClick={onOpenFolder} disabled={editing}>
+					<FolderOpen />
 				</AppButton>
 				{showIndexButton && (
 					<AppButton
-						size="icon"
 						variant="outline"
-						className="h-8 w-8"
+						size="lg"
 						onClick={onIndex}
 						disabled={indexing || editing}
 					>
-						<ListTree className="h-3.5 w-3.5" />
+						<ListTree />
 					</AppButton>
 				)}
 				<AppButton
-					size="icon"
 					variant="outline"
-					className="h-8 w-8"
+					size="lg"
 					onClick={onUpload}
 					disabled={uploading || editing}
 					title={uploadLabel}
 				>
-					<Upload className="h-3.5 w-3.5" />
+					<Upload />
+					{uploadLabel}
 				</AppButton>
-				{editing && selectedCount > 0 && (
-					<AppButton size="sm" variant="destructive" disabled={removing} onClick={onRemove}>
-						<Trash2 className="mr-1.5 h-3.5 w-3.5" />
-						{t('resources.removeWithCount', { count: selectedCount })}
-					</AppButton>
-				)}
 				<AppButton
-					size="icon"
 					variant={editing ? 'secondary' : 'outline'}
-					className="h-8 w-8"
+					size="lg"
 					onClick={onToggleEdit}
 				>
-					<Pencil className="h-3.5 w-3.5" />
+					<Pencil />
 				</AppButton>
 			</AppPageHeaderItems>
 		</AppPageHeader>
