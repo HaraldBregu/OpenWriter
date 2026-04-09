@@ -137,6 +137,7 @@ export { AppTitleBarContainer } from './titlebar/AppTitleBarContainer';
 export { AppTitleBarCenterContainer } from './titlebar/AppTitleBarCenterContainer';
 export { AppTitleBarCenterContainerTitle } from './titlebar/AppTitleBarCenterContainerTitle';
 export { AppTitleBarLeftContainer } from './titlebar/AppTitleBarLeftContainer';
+export { AppTitleBarRightContainer } from './titlebar/AppTitleBarRightContainer';
 
 export {
 	AppSidebar,
