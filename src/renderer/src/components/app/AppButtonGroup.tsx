@@ -1,6 +1,6 @@
 import React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { ButtonGroup, ButtonGroupSeparator, ButtonGroupText } from '../ui/ButtonGroup';
+import { ButtonGroupSeparator, ButtonGroupText } from '../ui/ButtonGroup';
 import { cn } from '@/lib/utils';
 
 const buttonGroupVariants = cva(
