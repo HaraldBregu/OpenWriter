@@ -225,10 +225,6 @@ export default function ContentPage(): React.ReactElement {
 		window.workspace.openResourcesFolder();
 	}, []);
 
-	const handleOpenDataFolder = useCallback(() => {
-		window.workspace.openDataFolder();
-	}, []);
-
 	const handleDelete = useCallback(() => {
 		if (selected.size === 0) return;
 		setConfirmOpen(true);
