@@ -185,6 +185,27 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
+	// Register files watcher (resources/files/)
+	factory.register({
+		key: 'filesWatcher',
+		factory: async ({ workspaceService, eventBus, globalContainer }) => {
+			const logger = globalContainer.get<LoggerService>('logger');
+			const service = new FilesWatcherService(eventBus, logger);
+			await service.initialize(workspaceService.getCurrent());
+			return service;
+		},
+	});
+
+	// Register files service (resources/files/)
+	factory.register({
+		key: 'filesService',
+		factory: ({ globalContainer }) => {
+			const fileManagement = globalContainer.get<FileManager>('fileManagement');
+			const logger = globalContainer.get<LoggerService>('logger');
+			return new FilesService(fileManagement, logger);
+		},
+	});
+
 	// Register workspace manager (Facade over all workspace services)
 	factory.register({
 		key: 'workspaceManager',
