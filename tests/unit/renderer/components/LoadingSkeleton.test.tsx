@@ -5,7 +5,7 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { LoadingSkeleton } from '../../../../src/renderer/src/components/LoadingSkeleton';
+import { AppLoadingSkeleton } from '../../../../src/renderer/src/components/AppLoadingSkeleton';
 
 describe('LoadingSkeleton', () => {
 	it('should render the loading text', () => {
