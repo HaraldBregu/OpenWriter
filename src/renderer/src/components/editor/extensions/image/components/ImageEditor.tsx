@@ -265,7 +265,7 @@ export function ImageEditor({
 			aria-label={t('imageNode.editorLabel', 'Image editor')}
 			onKeyDown={handleEditorKeyDown}
 		>
-			<AppTooltipProvider delayDuration={300}>
+			<AppTooltipProvider delay={300}>
 				<div className="border-b border-border">
 					{/* Primary toolbar row */}
 					<div className="flex items-center gap-1 px-3 py-2.5">
