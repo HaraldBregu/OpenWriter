@@ -230,9 +230,16 @@ export default function ContentPage(): React.ReactElement {
 		});
 	}, [indexing, workspacePath]);
 
-	const handleUpload = useCallback(() => {
-		dispatch(importResourcesRequested(section.uploadExtensions));
-	}, [dispatch, section]);
+	const handleUpload = useCallback(async () => {
+		try {
+			const imported = await window.workspace.importFiles(section.uploadExtensions);
+			if (imported.length > 0) {
+				await loadContent();
+			}
+		} catch (err) {
+			// Swallow picker-cancellation and validation errors
+		}
+	}, [section, loadContent]);
 
 	const handleToggleEdit = useCallback(() => {
 		setEditing((current) => {
