@@ -144,7 +144,8 @@
 			"devices": "Devices",
 			"tools": "Tools",
 			"system": "System",
-			"themes": "Themes"
+			"themes": "Themes",
+			"editor": "Editor"
 		},
 		"sections": {
 			"permissions": "Permissions",
