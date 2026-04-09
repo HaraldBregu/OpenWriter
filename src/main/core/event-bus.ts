@@ -59,7 +59,6 @@ export interface AppEvents {
 	};
 	'task:cancelled': { taskId: string; taskType: string; windowId?: number };
 	'tray:set-enabled': { enabled: boolean };
-	'tray:get-enabled': Record<string, never>;
 }
 
 /**
