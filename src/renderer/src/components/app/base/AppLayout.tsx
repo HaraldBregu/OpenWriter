@@ -182,10 +182,10 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									)}
 									{open && (
 										<div className="grid min-w-0 flex-1 text-left leading-tight">
-											<span className="truncate text-[0.95rem] font-medium tracking-tight text-sidebar-foreground">
+											<span className="truncate text-base font-medium tracking-tight text-sidebar-foreground">
 												OpenWriter
 											</span>
-											<span className="truncate text-xs text-sidebar-foreground/60">
+											<span className="truncate text-sm text-sidebar-foreground/60">
 												{sidebarSubtitle}
 											</span>
 										</div>
