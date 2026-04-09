@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LoadingSkeleton = React.memo(function LoadingSkeleton() {
+export const AppLoadingSkeleton = React.memo(function AppLoadingSkeleton() {
 	return (
 		<div className="flex items-center justify-center h-full">
 			<div className="flex flex-col items-center gap-3">
@@ -10,4 +10,4 @@ export const LoadingSkeleton = React.memo(function LoadingSkeleton() {
 		</div>
 	);
 });
-LoadingSkeleton.displayName = 'LoadingSkeleton';
+AppLoadingSkeleton.displayName = 'AppLoadingSkeleton';
