@@ -51,14 +51,7 @@ const AppInputGroupInput = React.memo(
 		React.ElementRef<typeof InputGroupInput>,
 		React.ComponentPropsWithoutRef<typeof InputGroupInput>
 	>(({ className, ...props }, ref) => (
-		<InputGroupInput
-			ref={ref}
-			className={cn(
-				'border-input bg-background text-foreground placeholder:text-muted-foreground',
-				className
-			)}
-			{...props}
-		/>
+		<InputGroupInput ref={ref} className={cn(className)} {...props} />
 	))
 );
 AppInputGroupInput.displayName = 'AppInputGroupInput';
