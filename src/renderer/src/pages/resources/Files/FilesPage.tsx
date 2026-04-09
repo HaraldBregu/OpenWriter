@@ -386,32 +386,29 @@ export default function FilesPage(): React.ReactElement {
 				)}
 
 				{!isLoading && entries.length > 0 && viewMode === 'list' && (
-					<table className="w-full text-left">
-						<thead className="sticky top-0 z-10 bg-background border-b">
-							<tr>
-								<th className="w-10 px-4 py-3">
+					<AppTable>
+						<AppTableHeader className="sticky top-0 z-10 bg-muted">
+							<AppTableRow>
+								<AppTableHead className="w-10">
 									<AppCheckbox
 										checked={someChecked ? 'indeterminate' : allChecked}
 										onCheckedChange={handleToggleAll}
 										aria-label="Select all"
 									/>
-								</th>
+								</AppTableHead>
 								{(
 									[
-										{ key: 'name', label: 'Name', className: 'px-4 py-3' },
-										{ key: 'createdAt', label: 'Added', className: 'whitespace-nowrap px-4 py-3' },
-										{ key: 'mimeType', label: 'Type', className: 'px-4 py-3' },
+										{ key: 'name', label: 'Name', className: '' },
+										{ key: 'createdAt', label: 'Added', className: 'whitespace-nowrap' },
+										{ key: 'mimeType', label: 'Type', className: '' },
 										{
 											key: 'size',
 											label: 'File size',
-											className: 'px-4 py-3 text-right',
+											className: 'text-right',
 										},
 									] as { key: SortKey; label: string; className: string }[]
 								).map(({ key, label, className }) => (
-									<th
-										key={key}
-										className={cn(className, 'text-xs font-medium text-muted-foreground')}
-									>
+									<AppTableHead key={key} className={className}>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -420,17 +417,20 @@ export default function FilesPage(): React.ReactElement {
 											{label}
 											<SortIcon active={sortKey === key} direction={sortDirection} />
 										</button>
-									</th>
+									</AppTableHead>
 								))}
-							</tr>
-						</thead>
-						<tbody>
+							</AppTableRow>
+						</AppTableHeader>
+						<AppTableBody>
 							{filteredEntries.length === 0 ? (
-								<tr>
-									<td colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+								<AppTableRow>
+									<AppTableCell
+										colSpan={5}
+										className="px-4 py-8 text-center text-sm text-muted-foreground"
+									>
 										No files match your search.
-									</td>
-								</tr>
+									</AppTableCell>
+								</AppTableRow>
 							) : (
 								filteredEntries.map((file) => (
 									<FileRow
@@ -441,8 +441,8 @@ export default function FilesPage(): React.ReactElement {
 									/>
 								))
 							)}
-						</tbody>
-					</table>
+						</AppTableBody>
+					</AppTable>
 				)}
 
 				{!isLoading && entries.length > 0 && viewMode === 'grid' && (
