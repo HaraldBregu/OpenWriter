@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="resources/svgs/app_logo_readme.svg" alt="OpenWriter" width="128" height="128" />
+  <img src="resources/svgs/app_logo_readme.svg" alt="OctoWriter" width="128" height="128" />
 </p>
 
-<h1 align="center">OpenWriter</h1>
+<h1 align="center">🦑 OctoWriter</h1>
 
 <p align="center">
   A modern, AI-powered desktop writing application built for creators, writers, and professionals.
