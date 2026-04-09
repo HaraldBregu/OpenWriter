@@ -1,7 +1,7 @@
-import { File, Film, ImageIcon, type LucideIcon } from 'lucide-react';
+import { Database, File, FileText, ImageIcon, type LucideIcon } from 'lucide-react';
 import type { ResourceInfo } from '../../../../../shared/types';
 
-export type ResourceSectionId = 'media' | 'images' | 'files';
+export type ResourceSectionId = 'files' | 'content' | 'images' | 'data';
 
 export interface ResourceSectionConfig {
 	readonly id: ResourceSectionId;
@@ -16,33 +16,9 @@ export interface ResourceSectionConfig {
 	readonly supportsIndexing: boolean;
 }
 
-export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['media', 'images', 'files'];
+export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['files', 'content', 'images', 'data'];
 
 export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig> = {
-	media: {
-		id: 'media',
-		route: '/resources/documents',
-		titleKey: 'appLayout.media',
-		emptyKey: 'resources.media.empty',
-		loadingKey: 'resources.media.loading',
-		uploadKey: 'resources.media.upload',
-		searchPlaceholderKey: 'resources.media.searchPlaceholder',
-		icon: Film,
-		uploadExtensions: ['.txt', '.md', '.html', '.csv', '.json'],
-		supportsIndexing: true,
-	},
-	images: {
-		id: 'images',
-		route: '/resources/images',
-		titleKey: 'appLayout.images',
-		emptyKey: 'resources.images.empty',
-		loadingKey: 'resources.images.loading',
-		uploadKey: 'resources.images.upload',
-		searchPlaceholderKey: 'resources.images.searchPlaceholder',
-		icon: ImageIcon,
-		uploadExtensions: ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'],
-		supportsIndexing: false,
-	},
 	files: {
 		id: 'files',
 		route: '/resources/files',
@@ -78,6 +54,42 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 			'.webm',
 		],
 		supportsIndexing: false,
+	},
+	content: {
+		id: 'content',
+		route: '/resources/content',
+		titleKey: 'appLayout.content',
+		emptyKey: 'resources.content.empty',
+		loadingKey: 'resources.content.loading',
+		uploadKey: 'resources.content.upload',
+		searchPlaceholderKey: 'resources.content.searchPlaceholder',
+		icon: FileText,
+		uploadExtensions: ['.txt', '.md', '.html', '.csv', '.json'],
+		supportsIndexing: true,
+	},
+	images: {
+		id: 'images',
+		route: '/resources/images',
+		titleKey: 'appLayout.images',
+		emptyKey: 'resources.images.empty',
+		loadingKey: 'resources.images.loading',
+		uploadKey: 'resources.images.upload',
+		searchPlaceholderKey: 'resources.images.searchPlaceholder',
+		icon: ImageIcon,
+		uploadExtensions: ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'],
+		supportsIndexing: false,
+	},
+	data: {
+		id: 'data',
+		route: '/resources/data',
+		titleKey: 'appLayout.data',
+		emptyKey: 'resources.data.empty',
+		loadingKey: 'resources.data.loading',
+		uploadKey: 'resources.data.upload',
+		searchPlaceholderKey: 'resources.data.searchPlaceholder',
+		icon: Database,
+		uploadExtensions: ['.csv', '.json', '.xml', '.yaml', '.yml', '.tsv', '.parquet', '.sqlite'],
+		supportsIndexing: true,
 	},
 };
 
