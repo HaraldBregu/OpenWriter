@@ -192,7 +192,11 @@ export default function ContentPage(): React.ReactElement {
 	);
 
 	const sortedResources = useMemo(() => {
-		const result = [...resources];
+		const query = searchQuery.trim().toLowerCase();
+		const result = resources.filter((r) => {
+			if (query && !r.name.toLowerCase().includes(query)) return false;
+			return true;
+		});
 
 		if (sortDirection !== 'none') {
 			result.sort((a, b) => {
@@ -207,7 +211,7 @@ export default function ContentPage(): React.ReactElement {
 		}
 
 		return result;
-	}, [resources, sortDirection, sortKey]);
+	}, [resources, sortDirection, sortKey, searchQuery]);
 
 	const handleIndex = useCallback(() => {
 		if (!workspacePath || indexing) {
