@@ -10,9 +10,10 @@ import {
 import { cn } from '@/lib/utils';
 
 const AppInputGroup = React.memo(
-	React.forwardRef<React.ElementRef<typeof InputGroup>, React.ComponentPropsWithoutRef<typeof InputGroup>>(
-		({ className, ...props }, ref) => <InputGroup ref={ref} className={cn(className)} {...props} />
-	)
+	React.forwardRef<
+		React.ElementRef<typeof InputGroup>,
+		React.ComponentPropsWithoutRef<typeof InputGroup>
+	>(({ className, ...props }, ref) => <InputGroup ref={ref} className={cn(className)} {...props} />)
 );
 AppInputGroup.displayName = 'AppInputGroup';
 
