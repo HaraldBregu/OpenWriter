@@ -61,11 +61,11 @@ const FilesPage = lazy(() => import('./pages/resources/Files/FilesPage'));
 const SearchPage = lazy(() => import('./pages/search/Page'));
 
 // Lazy-loaded settings pages
-const GeneralPage = lazy(() => import('./pages/settings/GeneralPage'));
-const ProvidersPage = lazy(() => import('./pages/settings/ProvidersPage'));
-const WorkspacePage = lazy(() => import('./pages/settings/WorkspacePage'));
-const SystemPage = lazy(() => import('./pages/settings/SystemPage'));
-const ThemesPage = lazy(() => import('./pages/settings/ThemesPage'));
+const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
+const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
+const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
+const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
+const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,
