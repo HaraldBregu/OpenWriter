@@ -273,10 +273,10 @@
 			"import": "Importa Tema",
 			"installed": "Temi Installati",
 			"noThemes": "Nessun tema personalizzato installato. Importa una cartella tema o inseriscine una nella directory temi.",
-			"activate": "Attiva",
-			"active": "Attivo",
 			"importSuccess": "Tema importato con successo.",
 			"importErrorFallback": "Importazione del tema non riuscita. Riprova.",
+			"confirmDelete": "Conferma",
+			"deleteErrorFallback": "Eliminazione del tema non riuscita. Riprova.",
 			"dismissError": "Chiudi errore",
 			"dismissSuccess": "Chiudi"
 		}
