@@ -75,7 +75,7 @@ const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 
 function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
-		<ErrorBoundary level="route">
+		<AppErrorBoundary level="route">
 			<Suspense fallback={<LoadingSkeleton />}>{children}</Suspense>
 		</ErrorBoundary>
 	);
@@ -127,7 +127,7 @@ const App: React.FC = () => {
 
 	if (!startupInfo) {
 		return (
-			<ErrorBoundary level="root">
+			<AppErrorBoundary level="root">
 				<Provider store={store}>
 					<AppProvider>
 						<LoadingSkeleton />
@@ -138,7 +138,7 @@ const App: React.FC = () => {
 	}
 
 	return (
-		<ErrorBoundary level="root">
+		<AppErrorBoundary level="root">
 			<Provider store={store}>
 				<AppProvider>
 					<Router>
