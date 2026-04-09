@@ -177,13 +177,16 @@ export default function ContentPage(): React.ReactElement {
 	}, [resources, sortDirection, sortKey, searchQuery]);
 
 	const handleUpload = useCallback(async () => {
+		setUploading(true);
 		try {
-			const imported = await window.workspace.importFiles(section.uploadExtensions);
+			const imported = await window.workspace.insertContents(section.uploadExtensions);
 			if (imported.length > 0) {
 				await loadContent();
 			}
-		} catch (err) {
+		} catch {
 			// Swallow picker-cancellation and validation errors
+		} finally {
+			setUploading(false);
 		}
 	}, [section, loadContent]);
 
