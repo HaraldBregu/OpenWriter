@@ -12,6 +12,7 @@ const NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/general', labelKey: 'settings.tabs.general' },
 	{ path: '/settings/workspace', labelKey: 'settings.tabs.workspace' },
 	{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
+	{ path: '/settings/editor', labelKey: 'settings.tabs.editor' },
 	{ path: '/settings/themes', labelKey: 'settings.tabs.themes' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
