@@ -203,17 +203,6 @@ export default function ContentPage(): React.ReactElement {
 		return result;
 	}, [resources, sortDirection, sortKey, searchQuery]);
 
-	const handleIndex = useCallback(() => {
-		if (!workspacePath || indexing) {
-			return;
-		}
-
-		window.task.submit('index-resources', {
-			workspacePath,
-			resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
-		});
-	}, [indexing, workspacePath]);
-
 	const handleUpload = useCallback(async () => {
 		try {
 			const imported = await window.workspace.importFiles(section.uploadExtensions);
