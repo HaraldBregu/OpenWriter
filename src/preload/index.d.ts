@@ -270,6 +270,19 @@ export interface WorkspaceApi {
 	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
 	onDocumentContentChanges: (documentId: string, callback: (content: string) => void) => () => void;
 	// -------------------------------------------------------------------------
+	// Contents (resources/content/ sub-folder)
+	// -------------------------------------------------------------------------
+	/** Load all files from the workspace resources/content/ directory. */
+	getContents: () => Promise<ResourceInfo[]>;
+	/** Open a file picker, copy selected files into resources/content/, return the new entries. */
+	insertContents: (extensions?: string[]) => Promise<ResourceInfo[]>;
+	/** Delete a file from resources/content/ by its ID. */
+	deleteContent: (id: string) => Promise<void>;
+	/** Subscribe to file change events in resources/content/. */
+	onContentsChanged: (callback: (event: ContentEntryChangeEvent) => void) => () => void;
+	/** Subscribe to contents watcher error events. */
+	onContentsWatcherError: (callback: (error: WatcherError) => void) => () => void;
+	// -------------------------------------------------------------------------
 	// Files (resources/files/ sub-folder)
 	// -------------------------------------------------------------------------
 	/** Load all files from the workspace resources/files/ directory. */
