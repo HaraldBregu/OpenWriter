@@ -82,15 +82,17 @@ export const BlockActions = React.memo(function BlockActions({
 			style={{ top: topValue }}
 		>
 			<AppDropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
-				<AppDropdownMenuTrigger asChild>
-					<AppButton
-						variant="editor-block-actions"
-						size="editor-block-icons"
-						aria-label={t('blockActions.title')}
-					>
-						<MoreVertical />
-					</AppButton>
-				</AppDropdownMenuTrigger>
+				<AppDropdownMenuTrigger
+					render={
+						<AppButton
+							variant="editor-block-actions"
+							size="editor-block-icons"
+							aria-label={t('blockActions.title')}
+						>
+							<MoreVertical />
+						</AppButton>
+					}
+				/>
 				<AppDropdownMenuContent align="end" sideOffset={4}>
 					<AppDropdownMenuItem onClick={deleteBlock}>
 						<Trash2 className="mr-2 h-4 w-4" />
