@@ -30,10 +30,7 @@ const Chat: React.FC = () => {
 	const hasSelectionRange = !!selection && selection.from !== selection.to;
 
 	const selectionLabel = useMemo(() => {
-		if (!selection) return null;
-		if (selection.from === selection.to) {
-			return `Position ${selection.from}`;
-		}
+		if (!selection || selection.from === selection.to) return null;
 		return `Selection ${selection.from}-${selection.to}`;
 	}, [selection]);
 
