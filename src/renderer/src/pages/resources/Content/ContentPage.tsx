@@ -256,38 +256,31 @@ export default function ContentPage(): React.ReactElement {
 			<AppPageHeader>
 				<AppPageHeaderTitle>{t(section.titleKey)}</AppPageHeaderTitle>
 				<AppPageHeaderItems>
-					<AppButton
-						size="icon"
-						variant="outline"
-						className="h-8 w-8"
-						onClick={handleOpenResourcesFolder}
-						disabled={editing}
-					>
-						<FolderOpen className="h-3.5 w-3.5" />
+					{editing && selected.size > 0 && (
+						<AppButton variant="destructive" size="lg" disabled={removing} onClick={handleDelete}>
+							<Trash2 />
+							{t('resources.removeWithCount', { count: selected.size })}
+						</AppButton>
+					)}
+					<AppButton variant="outline" size="lg" onClick={handleOpenResourcesFolder} disabled={editing}>
+						<FolderOpen />
 					</AppButton>
 					<AppButton
-						size="icon"
 						variant="outline"
-						className="h-8 w-8"
+						size="lg"
 						onClick={handleUpload}
 						disabled={uploading || editing}
 						title={t(section.uploadKey)}
 					>
-						<Upload className="h-3.5 w-3.5" />
+						<Upload />
+						{t(section.uploadKey)}
 					</AppButton>
-					{editing && selected.size > 0 && (
-						<AppButton size="sm" variant="destructive" disabled={removing} onClick={handleDelete}>
-							<Trash2 className="mr-1.5 h-3.5 w-3.5" />
-							{t('resources.removeWithCount', { count: selected.size })}
-						</AppButton>
-					)}
 					<AppButton
-						size="icon"
 						variant={editing ? 'secondary' : 'outline'}
-						className="h-8 w-8"
+						size="lg"
 						onClick={handleToggleEdit}
 					>
-						<Pencil className="h-3.5 w-3.5" />
+						<Pencil />
 					</AppButton>
 				</AppPageHeaderItems>
 			</AppPageHeader>
