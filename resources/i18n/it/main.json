@@ -166,7 +166,8 @@
 			"clipboard": "Appunti",
 			"application": "Applicazione",
 			"profile": "Profilo",
-			"editor": "Editor"
+			"editor": "Editor",
+			"developer": "Sviluppatore"
 		},
 		"profile": {
 			"firstName": "Nome",
