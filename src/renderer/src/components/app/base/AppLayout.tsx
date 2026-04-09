@@ -383,7 +383,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<div
 										className={
 											open
-												? 'flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
+												? 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
 												: 'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent/70 text-xs font-semibold text-sidebar-foreground ring-1 ring-sidebar-border/70'
 										}
 									>
