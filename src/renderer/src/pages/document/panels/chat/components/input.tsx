@@ -346,24 +346,8 @@ const Input: React.FC<InputProps> = ({
 					</div>
 				)}
 
-				<AppTextarea
-					ref={textareaRef}
-					value={value}
-					onChange={handleChange}
-					onKeyDown={handleKeyDown}
-					onFocus={handleFocus}
-					disabled={disabled}
-					rows={3}
-					placeholder={
-						placeholder ??
-						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
-					}
-					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none border-none bg-transparent px-4 pb-3 pt-4 text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
-				/>
-
-				<div className="flex items-center gap-2 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
-					{selectionLabel && (
+				{selectionLabel && (
+					<div className="flex items-center gap-2 px-3.5 pb-1 pt-3">
 						<div
 							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
 							title={selectionLabel}
@@ -383,8 +367,26 @@ const Input: React.FC<InputProps> = ({
 								</button>
 							)}
 						</div>
-					)}
+					</div>
+				)}
 
+				<AppTextarea
+					ref={textareaRef}
+					value={value}
+					onChange={handleChange}
+					onKeyDown={handleKeyDown}
+					onFocus={handleFocus}
+					disabled={disabled}
+					rows={3}
+					placeholder={
+						placeholder ??
+						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
+					}
+					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
+					className="w-full resize-none border-none bg-transparent px-4 pb-3 pt-4 text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
+				/>
+
+				<div className="flex items-center gap-2 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
 					<AppDropdownMenu>
 						<AppDropdownMenuTrigger asChild>
 							<AppButton
