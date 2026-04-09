@@ -378,7 +378,7 @@ function AppThemeProvider({
 		const apply = (): void => {
 			if (!cachedManifest) return;
 			const isDark = document.documentElement.classList.contains(DARK_CLASS);
-			applyThemeTokens(isDark ? cachedManifest.dark : cachedManifest.light);
+			applyThemeData(isDark ? cachedManifest.dark : cachedManifest.light);
 		};
 
 		(async () => {
