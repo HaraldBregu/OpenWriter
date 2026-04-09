@@ -173,6 +173,10 @@ export const AppChannels = {
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
 	openLogsFolder: 'app:open-logs-folder',
+	// Theme management
+	getCustomThemes: 'app:get-custom-themes',
+	openThemesFolder: 'app:open-themes-folder',
+	importTheme: 'app:import-theme',
 } as const;
 
 // ===========================================================================
