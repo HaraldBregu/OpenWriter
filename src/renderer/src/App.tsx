@@ -204,7 +204,7 @@ const App: React.FC = () => {
 														index
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<GeneralSettingsPage />
+																<GeneralPage />
 															</Suspense>
 														}
 													/>
@@ -212,7 +212,7 @@ const App: React.FC = () => {
 														path="general"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<GeneralSettingsPage />
+																<GeneralPage />
 															</Suspense>
 														}
 													/>
