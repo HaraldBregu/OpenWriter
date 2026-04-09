@@ -392,12 +392,13 @@ const Input: React.FC<InputProps> = ({
 							<AppButton
 								type="button"
 								variant="ghost"
-								size="sm"
+								size="icon"
 								className={cn(
-									'h-7 gap-1.5 rounded-full border border-border/80 bg-background/75 px-2.5 text-xs shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
+									'h-7 w-7 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
 									isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
 								)}
 								disabled={disabled}
+								title={currentAgentLabel}
 								aria-label={t('assistantNode.switchAgentCurrent', 'Agent: {{agent}}', {
 									agent: currentAgentLabel,
 								})}
@@ -407,10 +408,6 @@ const Input: React.FC<InputProps> = ({
 								) : (
 									<PenLine className="h-3.5 w-3.5" aria-hidden="true" />
 								)}
-								<span className="min-w-0 truncate" aria-hidden="true">
-									{currentAgentLabel}
-								</span>
-								<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
 							</AppButton>
 						</AppDropdownMenuTrigger>
 						<AppDropdownMenuContent
