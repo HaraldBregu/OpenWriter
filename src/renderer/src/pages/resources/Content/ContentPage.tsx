@@ -108,15 +108,12 @@ function ResourceRow({ resource, editing, isSelected, onToggle, onPreview }: Res
 
 export default function ContentPage(): React.ReactElement {
 	const { t } = useTranslation();
-	const dispatch = useAppDispatch();
 	const section = RESOURCE_SECTIONS[SECTION_ID];
-	const uploading = useAppSelector(selectImporting);
-	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
-	const indexingInfo = useAppSelector(selectIndexingInfo);
 
 	const [resources, setResources] = useState<ResourceInfo[]>([]);
 	const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
 	const [error, setError] = useState<string | null>(null);
+	const [uploading, setUploading] = useState(false);
 
 	const loading = status === 'idle' || status === 'loading';
 	const [editing, setEditing] = useState(false);
@@ -128,20 +125,15 @@ export default function ContentPage(): React.ReactElement {
 	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
 
-	const filteredResources = useMemo(
-		() => filterResourcesBySection(resources, SECTION_ID),
-		[resources]
-	);
-
 	const loadContent = useCallback(async () => {
 		try {
 			setStatus('loading');
 			setError(null);
-			const allResources = await window.workspace.loadDocuments();
-			setResources(allResources);
+			const contents = await window.workspace.getContents();
+			setResources(contents);
 			setStatus('ready');
 		} catch (err) {
-			setError((err as Error).message || 'Failed to load resources');
+			setError((err as Error).message || 'Failed to load contents');
 			setStatus('error');
 		}
 	}, []);
@@ -149,16 +141,6 @@ export default function ContentPage(): React.ReactElement {
 	useEffect(() => {
 		loadContent();
 	}, [loadContent]);
-
-	useEffect(() => {
-		setSelected((current) => {
-			const resourceIds = new Set(filteredResources.map((resource) => resource.id));
-			const nextSelected = new Set([...current].filter((id) => resourceIds.has(id)));
-			const hasChanged =
-				nextSelected.size !== current.size || [...current].some((id) => !resourceIds.has(id));
-			return hasChanged ? nextSelected : current;
-		});
-	}, [filteredResources]);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
