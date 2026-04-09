@@ -47,16 +47,37 @@ const SystemPage: React.FC = () => {
 	const { t } = useTranslation();
 	const themeMode = useThemeMode();
 	const appTheme = useAppTheme();
+	const customThemeId = useCustomThemeId();
 	const language = useLanguageMode();
-	const { setTheme, setAppTheme, setLanguage } = useAppActions();
+	const { setTheme, setAppTheme, setCustomTheme, setLanguage } = useAppActions();
+	const [customThemes, setCustomThemes] = useState<CustomThemeInfo[]>([]);
+
+	const loadCustomThemes = useCallback(async () => {
+		try {
+			const list = await window.app.getCustomThemes();
+			setCustomThemes(list);
+		} catch {
+			setCustomThemes([]);
+		}
+	}, []);
+
+	useEffect(() => {
+		loadCustomThemes();
+	}, [loadCustomThemes]);
+
+	const selectedThemeValue = customThemeId ?? appTheme;
 
 	const handleThemeChange = (next: ThemeMode): void => {
 		setTheme(next);
 	};
 
 	const handleAppThemeChange = (next: string): void => {
-		const option = APP_THEME_OPTIONS.find((o) => o.value === next);
-		if (option) setAppTheme(option.value);
+		if (next === DEFAULT_THEME_VALUE) {
+			setCustomTheme(null);
+			setAppTheme('default');
+		} else {
+			setCustomTheme(next);
+		}
 	};
 
 	const handleLanguageChange = (next: string): void => {
