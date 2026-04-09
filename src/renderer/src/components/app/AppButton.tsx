@@ -66,18 +66,20 @@ const AppButton = React.memo(
 			if (resolvedRender) {
 				return useRender({
 					defaultTagName: 'button',
-					props: mergeProps<'button'>(
-						{
-							className: cn(
-								buttonVariants({ variant, size }),
-								'transition-colors focus-visible:ring-ring',
-								className
-							),
-							ref,
-							'data-slot': 'button',
-						},
-						props
-					),
+					props: {
+						...mergeProps<'button'>(
+							{
+								className: cn(
+									buttonVariants({ variant, size }),
+									'transition-colors focus-visible:ring-ring',
+									className
+								),
+								ref,
+							},
+							props
+						),
+						'data-slot': 'button',
+					},
 					render: resolvedRender,
 					state: {},
 				});
