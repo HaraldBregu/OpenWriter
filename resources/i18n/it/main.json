@@ -199,6 +199,10 @@
 			"fontSansSystem": "Sans di Sistema",
 			"fontDyslexicFriendly": "Adatto alla Dislessia"
 		},
+		"developer": {
+			"mode": "Modalità Sviluppatore",
+			"modeDescription": "Abilita strumenti e opzioni avanzate per sviluppatori"
+		},
 		"permissions": {
 			"microphone": "Microfono",
 			"camera": "Fotocamera",
