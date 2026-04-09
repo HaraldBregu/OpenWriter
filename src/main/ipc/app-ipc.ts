@@ -1,4 +1,4 @@
-import { ipcMain, BrowserWindow, Menu, nativeTheme, shell } from 'electron';
+import { ipcMain, BrowserWindow, Menu, nativeTheme, shell, dialog } from 'electron';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import path from 'node:path';
