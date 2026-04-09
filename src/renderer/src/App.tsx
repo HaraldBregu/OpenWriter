@@ -242,6 +242,14 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
+														path="editor"
+														element={
+															<Suspense fallback={<AppLoadingSkeleton />}>
+																<EditorPage />
+															</Suspense>
+														}
+													/>
+													<Route
 														path="system"
 														element={
 															<Suspense fallback={<AppLoadingSkeleton />}>
