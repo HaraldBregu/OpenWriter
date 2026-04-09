@@ -301,7 +301,7 @@ export interface InvokeChannelMap {
 	[AppChannels.getCustomThemes]: { args: []; result: CustomThemeInfo[] };
 	[AppChannels.openThemesFolder]: { args: []; result: void };
 	[AppChannels.importTheme]: { args: []; result: CustomThemeInfo | null };
-	[AppChannels.getCustomThemeTokens]: { args: [id: string]; result: CustomThemeManifest | null };
+	[AppChannels.getCustomThemeTokens]: { args: [id: string]; result: Theme | null };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
