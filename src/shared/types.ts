@@ -13,7 +13,7 @@
 export type ThemeVariant = 'light' | 'dark';
 export type ThemeMode = ThemeVariant | 'system';
 
-export interface ThemeTokens {
+export interface ThemeData {
 	readonly background: string;
 	readonly foreground: string;
 	readonly text: string;
