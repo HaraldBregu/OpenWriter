@@ -300,9 +300,7 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 												loading="lazy"
 											/>
 											<div className="absolute inset-x-0 bottom-0 bg-black/55 px-0.5 py-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-												<span className="block truncate text-[8px] text-white">
-													{img.fileName}
-												</span>
+												<span className="block truncate text-[8px] text-white">{img.fileName}</span>
 											</div>
 										</button>
 									))}

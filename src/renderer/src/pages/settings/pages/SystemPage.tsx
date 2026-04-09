@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	AppSelect,
@@ -8,8 +8,15 @@ import {
 	AppSelectItem,
 } from '@/components/app';
 import { SectionHeader, SettingRow, ThemeSegmentControl } from '../components';
-import { useThemeMode, useAppTheme, useLanguageMode, useAppActions } from '../../../contexts';
-import type { ThemeMode, AppTheme, AppLanguage } from '../../../contexts';
+import {
+	useThemeMode,
+	useAppTheme,
+	useCustomThemeId,
+	useLanguageMode,
+	useAppActions,
+} from '../../../contexts';
+import type { ThemeMode, AppLanguage } from '../../../contexts';
+import type { CustomThemeInfo } from '../../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Language options
