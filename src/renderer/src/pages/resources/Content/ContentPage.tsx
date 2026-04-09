@@ -157,15 +157,7 @@ export default function ContentPage(): React.ReactElement {
 
 	useEffect(() => {
 		loadContent();
-		dispatch(selectIndexingInfo);
-	}, [loadContent, dispatch]);
-
-	useEffect(() => {
-		if (indexingTask.isCompleted) {
-			loadContent();
-			dispatch(selectIndexingInfo);
-		}
-	}, [loadContent, dispatch, indexingTask.isCompleted]);
+	}, [loadContent]);
 
 	useEffect(() => {
 		setSelected((current) => {
