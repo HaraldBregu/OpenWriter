@@ -4,7 +4,7 @@ import type { ProviderId, ServiceProvider } from '../../../../shared/types';
 import { PROVIDER_IDS } from '../../../../shared/providers';
 import { ProviderRow } from './components';
 
-const ProvidersSettingsPage: React.FC = () => {
+const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [providers, setProviders] = useState<Array<ServiceProvider & { id: string }>>([]);
 
