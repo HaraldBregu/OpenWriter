@@ -49,8 +49,8 @@ import {
 	selectResources,
 	selectResourcesError,
 	selectResourcesStatus,
+	importResourcesRequested,
 } from '@/store/workspace';
-import { importResourcesRequested } from '@/store/workspace/reducer';
 import {
 	filterResourcesBySection,
 	RESOURCE_SECTIONS,
