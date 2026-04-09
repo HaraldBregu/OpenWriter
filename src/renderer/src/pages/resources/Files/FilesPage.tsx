@@ -235,7 +235,6 @@ export default function FilesPage(): React.ReactElement {
 
 	return (
 		<div className="flex h-full flex-col">
-			
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<h1 className="text-xl font-bold">Files</h1>
 				<div className="flex items-center gap-2">
@@ -336,7 +335,7 @@ export default function FilesPage(): React.ReactElement {
 
 				{!isLoading && entries.length > 0 && viewMode === 'list' && (
 					<table className="w-full text-left">
-						<thead>
+						<thead className="sticky top-0 z-10 bg-background">
 							<tr className="border-b">
 								<th className="w-10 px-4 py-3">
 									<AppCheckbox
