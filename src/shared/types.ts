@@ -36,8 +36,8 @@ export interface Theme {
 	readonly author: string;
 	readonly version: string;
 	readonly license: string;
-	readonly light: ThemeTokens;
-	readonly dark: ThemeTokens;
+	readonly light: ThemeData;
+	readonly dark: ThemeData;
 }
 
 /**
