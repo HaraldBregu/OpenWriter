@@ -272,12 +272,13 @@ export default function ContentPage(): React.ReactElement {
 
 		setRemoving(true);
 		try {
-			await dispatch(removeResources(ids)).unwrap();
+			await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
+			await loadContent();
 			setSelected(new Set());
 		} finally {
 			setRemoving(false);
 		}
-	}, [dispatch, selected]);
+	}, [selected, loadContent]);
 
 	const allChecked = sortedResources.length > 0 && sortedResources.every((r) => selected.has(r.id));
 	const someChecked = !allChecked && sortedResources.some((r) => selected.has(r.id));
