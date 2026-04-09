@@ -57,9 +57,9 @@ import {
 	Monitor,
 	Moon,
 } from 'lucide-react';
-import { useAppActions, useCurrentUser, useThemeMode } from '../contexts';
-import type { ThemeMode } from '../contexts';
-import { cn } from '../lib/utils';
+import { useAppActions, useCurrentUser, useThemeMode } from '../../../contexts';
+import type { ThemeMode } from '../../../contexts';
+import { cn } from '../../../lib/utils';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
