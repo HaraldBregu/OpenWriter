@@ -131,20 +131,15 @@ interface FileRowProps {
 
 function FileRow({ file, isSelected, onToggle }: FileRowProps): React.ReactElement {
 	return (
-		<tr
-			className={cn(
-				'border-b transition-colors first:border-t-0 last:border-b-0',
-				isSelected ? 'bg-accent/50' : 'hover:bg-accent/30'
-			)}
-		>
-			<td className="w-10 px-4 py-3">
+		<AppTableRow data-state={isSelected ? 'selected' : undefined}>
+			<AppTableCell className="w-10">
 				<AppCheckbox
 					checked={isSelected}
 					onCheckedChange={() => onToggle(file.id)}
 					aria-label={`Select ${file.name}`}
 				/>
-			</td>
-			<td className="px-4 py-3">
+			</AppTableCell>
+			<AppTableCell>
 				<div className="flex items-center gap-3">
 					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
 						{getFileIcon(file.mimeType)}
@@ -159,17 +154,17 @@ function FileRow({ file, isSelected, onToggle }: FileRowProps): React.ReactEleme
 						</p>
 					</div>
 				</div>
-			</td>
-			<td className="whitespace-nowrap px-4 py-3 text-sm text-muted-foreground">
+			</AppTableCell>
+			<AppTableCell className="whitespace-nowrap text-muted-foreground">
 				{formatShortDate(file.createdAt)}
-			</td>
-			<td className="whitespace-nowrap px-4 py-3 text-sm text-muted-foreground">
+			</AppTableCell>
+			<AppTableCell className="whitespace-nowrap text-muted-foreground">
 				{getMimeTypeLabel(file.mimeType)}
-			</td>
-			<td className="whitespace-nowrap px-4 py-3 text-right text-sm text-muted-foreground">
+			</AppTableCell>
+			<AppTableCell className="whitespace-nowrap text-right text-muted-foreground">
 				{formatBytes(file.size)}
-			</td>
-		</tr>
+			</AppTableCell>
+		</AppTableRow>
 	);
 }
 
