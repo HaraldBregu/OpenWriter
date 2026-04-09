@@ -403,7 +403,10 @@ export default function FilesPage(): React.ReactElement {
 										},
 									] as { key: SortKey; label: string; className: string }[]
 								).map(({ key, label, className }) => (
-									<th key={key} className={cn(className, 'text-xs font-medium text-muted-foreground')}>
+									<th
+										key={key}
+										className={cn(className, 'text-xs font-medium text-muted-foreground')}
+									>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
