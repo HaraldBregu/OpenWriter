@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { File, FileImage, FileText, Grid3x3, List, Plus, Search, Upload } from 'lucide-react';
+import { File, FileImage, FileText, FolderOpen, Grid3x3, List, Plus, Search, Trash2, Upload } from 'lucide-react';
 import type { FileEntry } from '../../../../../shared/types';
 import { AppButton } from '@/components/app';
 import { AppCheckbox } from '@/components/app';
@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
 	insertFilesRequested,
+	removeFiles,
 	selectFileEntries,
 	selectFilesIsLoading,
 	selectFilesInserting,
