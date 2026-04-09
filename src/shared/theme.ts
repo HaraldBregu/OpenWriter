@@ -1,4 +1,4 @@
-import type { ThemeMode, ThemeTokens, ThemeVariant } from './types';
+import type { ThemeData, ThemeMode, ThemeVariant } from './types';
 
 export const THEME_VARIANTS = ['light', 'dark'] as const satisfies readonly ThemeVariant[];
 export const THEME_MODES = ['light', 'dark', 'system'] as const satisfies readonly ThemeMode[];
