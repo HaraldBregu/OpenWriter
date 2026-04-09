@@ -353,7 +353,7 @@ export default function FilesPage(): React.ReactElement {
 						</AppDropdownMenuRadioGroup>
 					</AppDropdownMenuContent>
 				</AppDropdownMenu>
-			
+
 				<AppButton
 					variant={viewMode === 'list' ? 'secondary' : 'outline'}
 					size="icon"

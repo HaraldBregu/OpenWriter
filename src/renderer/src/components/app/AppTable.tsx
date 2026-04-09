@@ -27,7 +27,7 @@ const AppTableHeader = React.memo(
 	>(({ className, sticky, ...props }, ref) => (
 		<TableHeader
 			ref={ref}
-			className={cn('bg-muted', sticky && 'sticky top-0 z-10', className)}
+			className={cn('bg-muted/50', sticky && 'sticky top-0 z-10', className)}
 			{...props}
 		/>
 	))
