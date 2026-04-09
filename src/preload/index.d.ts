@@ -16,6 +16,7 @@ import type {
 	WorkspaceDeletedEvent,
 	IndexingInfo,
 	ResourceInfo,
+	ContentEntryChangeEvent,
 	DocumentFileChangeEvent,
 	FileEntry,
 	FileEntryChangeEvent,
