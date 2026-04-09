@@ -141,7 +141,7 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	}, []);
 
 	return (
-		<div className="flex h-full flex-col">
+		<AppPageContainer>
 			<ResourceSectionHeader
 				title={t(section.titleKey)}
 				icon={section.icon}
