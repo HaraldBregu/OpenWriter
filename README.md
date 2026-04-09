@@ -5,7 +5,7 @@
 <h1 align="center">🦑 OctoWriter</h1>
 
 <p align="center">
-  A modern, AI-powered desktop writing application built for creators, writers, and professionals.
+  OctoWriter - a personal writer assistant.
 </p>
 
 ## About
