@@ -197,6 +197,16 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
+	// Register contents service (resources/content/)
+	factory.register({
+		key: 'contentsService',
+		factory: ({ globalContainer }) => {
+			const fileManagement = globalContainer.get<FileManager>('fileManagement');
+			const logger = globalContainer.get<LoggerService>('logger');
+			return new ContentsService(fileManagement, logger);
+		},
+	});
+
 	// Register files service (resources/files/)
 	factory.register({
 		key: 'filesService',
