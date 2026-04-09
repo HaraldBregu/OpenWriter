@@ -40,10 +40,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 
 	return (
 		<AppPageHeader>
-			<div className="flex items-center gap-2">
-				<Icon className="h-5 w-5 text-muted-foreground" />
-				<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
-			</div>
+			<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
 			<AppPageHeaderItems>
 				<AppButton
 					size="icon"
