@@ -49,7 +49,7 @@ import type {
 	AppStartupInfo,
 	ThemeMode,
 	CustomThemeInfo,
-	CustomThemeManifest,
+	Theme,
 } from './types';
 import type { ServiceProvider } from './types';
 
