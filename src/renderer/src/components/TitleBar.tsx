@@ -81,15 +81,7 @@ export const TitleBar = React.memo(function TitleBar({
   `;
 
 	return (
-		<div
-			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border backdrop-blur-md`}
-			style={
-				{
-					WebkitAppRegion: 'drag',
-					backgroundColor: 'var(--title-bar-background, hsl(var(--card) / 0.95))',
-				} as React.CSSProperties
-			}
-		>
+		<AppTitleBarContainer>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
 			{!isMac ? (
 				<div
