@@ -230,16 +230,15 @@ const Input: React.FC<InputProps> = ({
 			<div
 				ref={wrapperRef}
 				onBlur={handleWrapperBlur}
-				onDragOver={isImage ? handleDragOver : undefined}
-				onDragLeave={isImage ? handleDragLeave : undefined}
-				onDrop={isImage ? handleDrop : undefined}
+				onDragOver={handleDragOver}
+				onDragLeave={handleDragLeave}
+				onDrop={handleDrop}
 				className={cn(
 					'relative overflow-hidden rounded-[1.4rem] border bg-card/95 text-card-foreground shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 dark:bg-card/95',
 					isFocused
 						? 'border-primary/45 dark:border-primary/55'
 						: 'border-border/85 hover:border-foreground/15 dark:border-border/90 dark:hover:border-foreground/15',
-					isImage &&
-						isDragOver &&
+					isDragOver &&
 						'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 				)}
 			>
