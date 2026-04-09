@@ -90,6 +90,22 @@ function getFileIcon(mimeType: string): React.ReactNode {
 	return <File className="h-5 w-5 text-muted-foreground" />;
 }
 
+type SortKey = 'name' | 'createdAt' | 'mimeType' | 'size';
+type SortDirection = 'none' | 'asc' | 'desc';
+
+function nextSortDirection(current: SortDirection): SortDirection {
+	if (current === 'none') return 'asc';
+	if (current === 'asc') return 'desc';
+	return 'none';
+}
+
+function SortIcon({ active, direction }: { active: boolean; direction: SortDirection }) {
+	if (!active || direction === 'none')
+		return <ArrowUpDown className="ml-1 inline h-3 w-3 opacity-40" />;
+	if (direction === 'asc') return <ArrowUp className="ml-1 inline h-3 w-3" />;
+	return <ArrowDown className="ml-1 inline h-3 w-3" />;
+}
+
 function formatShortDate(timestamp: number): string {
 	return new Date(timestamp).toLocaleDateString(undefined, {
 		month: 'short',
