@@ -12,8 +12,18 @@ import {
 	Upload,
 } from 'lucide-react';
 import type { FileEntry } from '../../../../../shared/types';
-import { AppButton } from '@/components/app';
-import { AppCheckbox } from '@/components/app';
+import {
+	AppAlertDialog,
+	AppAlertDialogAction,
+	AppAlertDialogCancel,
+	AppAlertDialogContent,
+	AppAlertDialogDescription,
+	AppAlertDialogFooter,
+	AppAlertDialogHeader,
+	AppAlertDialogTitle,
+	AppButton,
+	AppCheckbox,
+} from '@/components/app';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
