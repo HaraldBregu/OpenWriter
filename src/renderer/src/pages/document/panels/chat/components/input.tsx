@@ -320,10 +320,14 @@ const Input: React.FC<InputProps> = ({
 								}
 							}}
 							aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
+							aria-describedby={dropStatusId}
 							className="flex min-h-[4.5rem] items-center justify-center px-4 py-3 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring"
 						>
 							<div className="flex items-center gap-2.5">
-								<div className="flex h-8 w-8 items-center justify-center rounded-xl border border-border/70 bg-background/85 text-muted-foreground dark:border-white/12 dark:bg-white/[0.05]">
+								<div
+									aria-hidden="true"
+									className="flex h-8 w-8 items-center justify-center rounded-xl border border-border/70 bg-background/85 text-muted-foreground dark:border-white/12 dark:bg-white/[0.05]"
+								>
 									<ImagePlus className="h-3.5 w-3.5" />
 								</div>
 								<div className="flex flex-col gap-0.5 text-left">
