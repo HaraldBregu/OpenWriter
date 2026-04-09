@@ -311,6 +311,14 @@ export interface InvokeChannelMap {
 	[AppChannels.getCustomThemeTokens]: { args: [id: string]; result: Theme | null };
 	[AppChannels.deleteTheme]: { args: [id: string]; result: void };
 
+	// ---- System settings (IpcResult-wrapped) ----
+	[AppChannels.openSystemAccessibility]: { args: []; result: void };
+	[AppChannels.openSystemScreenRecording]: { args: []; result: void };
+
+	// ---- Tray (IpcResult-wrapped) ----
+	[AppChannels.setTrayEnabled]: { args: [enabled: boolean]; result: void };
+	[AppChannels.getTrayEnabled]: { args: []; result: boolean };
+
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
