@@ -367,7 +367,6 @@ const Input: React.FC<InputProps> = ({
 						<div
 							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
 							title={selectionLabel}
-							aria-label={selectionLabel}
 						>
 							<span className="min-w-0 truncate">{selectionLabel}</span>
 							{canClearSelection && (
@@ -376,7 +375,9 @@ const Input: React.FC<InputProps> = ({
 									onMouseDown={(e) => e.preventDefault()}
 									onClick={onClearSelection}
 									className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
-									aria-label={t('agenticPanel.clearSelection', 'Clear selection')}
+									aria-label={t('agenticPanel.clearSelection', 'Clear selection: {{label}}', {
+										label: selectionLabel,
+									})}
 								>
 									<X className="h-3 w-3" aria-hidden="true" />
 								</button>
