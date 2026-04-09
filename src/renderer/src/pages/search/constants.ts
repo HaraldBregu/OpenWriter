@@ -44,6 +44,14 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 		meta: 'Route',
 	},
 	{
+		id: 'resources-data',
+		title: 'Open Data',
+		description: 'Browse imported data files and structured datasets.',
+		href: RESOURCE_SECTIONS.data.route,
+		icon: RESOURCE_SECTIONS.data.icon,
+		meta: 'Route',
+	},
+	{
 		id: 'documents',
 		title: 'Browse Writings',
 		description: 'Open recent writing outputs from your workspace.',
