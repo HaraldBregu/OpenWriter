@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useRef, useCallback, useMemo, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUp, Check, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
 import {
@@ -231,10 +231,7 @@ const Input: React.FC<InputProps> = ({
 				{previewUrls.length > 0 && (
 					<div className="flex items-center gap-2 overflow-x-auto px-3.5 pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 						{previewUrls.map((url, index) => (
-							<div
-								key={url}
-								className="group/thumb relative shrink-0"
-							>
+							<div key={url} className="group/thumb relative shrink-0">
 								<div className="h-14 w-14 overflow-hidden rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]">
 									<img
 										src={url}
