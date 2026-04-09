@@ -60,7 +60,7 @@ export class ThemeService {
 			try {
 				const raw = fs.readFileSync(manifestPath, 'utf-8');
 				const parsed: unknown = JSON.parse(raw);
-				const manifest = this.validateManifest(parsed);
+				const manifest = this.validateTheme(parsed);
 
 				themes.push({
 					id: entry.name,
@@ -85,7 +85,7 @@ export class ThemeService {
 		try {
 			const raw = fs.readFileSync(manifestPath, 'utf-8');
 			const parsed: unknown = JSON.parse(raw);
-			return this.validateManifest(parsed);
+			return this.validateTheme(parsed);
 		} catch (err) {
 			this.logger.warn('ThemeService', `Failed to load theme "${id}"`, err);
 			return null;
@@ -100,7 +100,7 @@ export class ThemeService {
 
 		const raw = fs.readFileSync(manifestPath, 'utf-8');
 		const parsed: unknown = JSON.parse(raw);
-		const manifest = this.validateManifest(parsed);
+		const manifest = this.validateTheme(parsed);
 
 		const folderName = this.sanitizeFolderName(manifest.name);
 		if (folderName.length === 0) {
@@ -122,7 +122,7 @@ export class ThemeService {
 		};
 	}
 
-	private validateManifest(data: unknown): Theme {
+	private validateTheme(data: unknown): Theme {
 		if (typeof data !== 'object' || data === null) {
 			throw new Error('Theme manifest must be a JSON object');
 		}
