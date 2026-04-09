@@ -180,6 +180,12 @@ export const AppChannels = {
 	importTheme: 'app:import-theme',
 	getCustomThemeTokens: 'app:get-custom-theme-tokens',
 	deleteTheme: 'app:delete-theme',
+	// System settings
+	openSystemAccessibility: 'app:open-system-accessibility',
+	openSystemScreenRecording: 'app:open-system-screen-recording',
+	// Tray
+	setTrayEnabled: 'app:set-tray-enabled',
+	getTrayEnabled: 'app:get-tray-enabled',
 } as const;
 
 // ===========================================================================
