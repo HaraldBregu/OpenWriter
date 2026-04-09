@@ -300,7 +300,7 @@ const Input: React.FC<InputProps> = ({
 					value={value}
 					onChange={handleChange}
 					onKeyDown={handleKeyDown}
-					onFocus={() => setIsFocused(true)}
+					onFocus={handleFocus}
 					disabled={disabled}
 					rows={3}
 					placeholder={
