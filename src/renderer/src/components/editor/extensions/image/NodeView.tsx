@@ -41,22 +41,24 @@ interface ActionButtonProps {
 function ActionButton({ icon, label, onClick, destructive }: ActionButtonProps): React.JSX.Element {
 	return (
 		<AppTooltip>
-			<AppTooltipTrigger asChild>
-				<AppButton
-					variant="ghost"
-					size="icon-xs"
-					aria-label={label}
-					onClick={onClick}
-					className={cn(
-						'h-5 w-5 [&_svg]:h-3 [&_svg]:w-3',
-						destructive
-							? 'text-muted-foreground hover:text-destructive'
-							: 'text-muted-foreground hover:text-foreground'
-					)}
-				>
-					{icon}
-				</AppButton>
-			</AppTooltipTrigger>
+			<AppTooltipTrigger
+				render={
+					<AppButton
+						variant="ghost"
+						size="icon-xs"
+						aria-label={label}
+						onClick={onClick}
+						className={cn(
+							'h-5 w-5 [&_svg]:h-3 [&_svg]:w-3',
+							destructive
+								? 'text-muted-foreground hover:text-destructive'
+								: 'text-muted-foreground hover:text-foreground'
+						)}
+					>
+						{icon}
+					</AppButton>
+				}
+			/>
 			<AppTooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
 				{label}
 			</AppTooltipContent>
