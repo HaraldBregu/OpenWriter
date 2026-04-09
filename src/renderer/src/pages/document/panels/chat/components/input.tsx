@@ -434,6 +434,7 @@ const Input: React.FC<InputProps> = ({
 									>
 										<span className="flex min-w-0 items-center gap-3">
 											<span
+												aria-hidden="true"
 												className={cn(
 													'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border',
 													option.value === 'image'
