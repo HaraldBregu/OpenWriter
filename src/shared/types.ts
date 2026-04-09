@@ -345,6 +345,13 @@ export interface FileEntryChangeEvent {
 	timestamp: number;
 }
 
+export interface ContentEntryChangeEvent {
+	type: 'added' | 'changed' | 'removed';
+	fileId: string;
+	filePath: string;
+	timestamp: number;
+}
+
 export interface DocumentFileChangeEvent {
 	type: 'added' | 'changed' | 'removed';
 	fileId: string;
