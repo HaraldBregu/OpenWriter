@@ -145,7 +145,8 @@
 			"tools": "Strumenti",
 			"system": "Sistema",
 			"themes": "Temi",
-			"editor": "Editor"
+			"editor": "Editor",
+			"developer": "Sviluppatore"
 		},
 		"sections": {
 			"permissions": "Autorizzazioni",
