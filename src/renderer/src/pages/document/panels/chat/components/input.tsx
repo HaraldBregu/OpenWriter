@@ -351,7 +351,7 @@ const Input: React.FC<InputProps> = ({
 								variant="ghost"
 								size="icon"
 								className={cn(
-									'h-7 w-7 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
+									'h-8 w-8 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
 									isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
 								)}
 								disabled={disabled}
@@ -361,9 +361,9 @@ const Input: React.FC<InputProps> = ({
 								})}
 							>
 								{isImage ? (
-									<ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
+									<ImageIcon className="h-4 w-4" aria-hidden="true" />
 								) : (
-									<PenLine className="h-3.5 w-3.5" aria-hidden="true" />
+									<PenLine className="h-4 w-4" aria-hidden="true" />
 								)}
 							</AppButton>
 						</AppDropdownMenuTrigger>
