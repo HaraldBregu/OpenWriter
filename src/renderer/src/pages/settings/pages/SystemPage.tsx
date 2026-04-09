@@ -103,14 +103,17 @@ const SystemPage: React.FC = () => {
 				label={t('settings.appTheme.title')}
 				description={t('settings.appTheme.description')}
 			>
-				<AppSelect value={appTheme} onValueChange={handleAppThemeChange}>
+				<AppSelect value={selectedThemeValue} onValueChange={handleAppThemeChange}>
 					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.appTheme.title')}>
 						<AppSelectValue />
 					</AppSelectTrigger>
 					<AppSelectContent>
-						{APP_THEME_OPTIONS.map((option) => (
-							<AppSelectItem key={option.value} value={option.value}>
-								{t(option.labelKey)}
+						<AppSelectItem value={DEFAULT_THEME_VALUE}>
+							{t(DEFAULT_THEME_LABEL_KEY)}
+						</AppSelectItem>
+						{customThemes.map((theme) => (
+							<AppSelectItem key={theme.id} value={theme.id}>
+								{theme.name}
 							</AppSelectItem>
 						))}
 					</AppSelectContent>
