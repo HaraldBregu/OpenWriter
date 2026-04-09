@@ -181,11 +181,7 @@ const ThemesPage: React.FC = () => {
 									{isActive ? t('settings.themes.active') : t('settings.themes.activate')}
 								</AppButton>
 								{isConfirming ? (
-									<AppButton
-										variant="destructive"
-										size="sm"
-										onClick={() => handleDelete(theme.id)}
-									>
+									<AppButton variant="destructive" size="sm" onClick={() => handleDelete(theme.id)}>
 										{t('settings.themes.confirmDelete')}
 									</AppButton>
 								) : (

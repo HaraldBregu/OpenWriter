@@ -2,7 +2,12 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ProviderId, ServiceProvider } from '../../../../../shared/types';
 import { PROVIDER_IDS } from '../../../../../shared/providers';
-import { ProviderRow } from '../components';
+import { ProviderRow, SectionHeader, SettingRow } from '../components';
+
+const LLM_PROVIDER_IDS: readonly ProviderId[] = PROVIDER_IDS;
+
+const EMAIL_PROVIDERS = ['smtp', 'sendgrid', 'mailgun'] as const;
+const CLOUD_STORAGE_PROVIDERS = ['aws-s3', 'google-cloud', 'dropbox'] as const;
 
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
@@ -47,7 +52,8 @@ const ProvidersPage: React.FC = () => {
 				)}
 			</p>
 
-			{PROVIDER_IDS.map((provider) => {
+			<SectionHeader title={t('settings.providers.llm', 'LLM Providers')} />
+			{LLM_PROVIDER_IDS.map((provider) => {
 				const existingKey = providers.find((m) => m.name === provider)?.apikey ?? '';
 				return (
 					<ProviderRow
@@ -58,6 +64,24 @@ const ProvidersPage: React.FC = () => {
 					/>
 				);
 			})}
+
+			<SectionHeader title={t('settings.providers.email', 'Email Providers')} />
+			{EMAIL_PROVIDERS.map((provider) => (
+				<SettingRow key={provider} label={provider}>
+					<span className="text-sm text-muted-foreground">
+						{t('settings.providers.comingSoon', 'Coming soon')}
+					</span>
+				</SettingRow>
+			))}
+
+			<SectionHeader title={t('settings.providers.cloudStorage', 'Cloud Storage')} />
+			{CLOUD_STORAGE_PROVIDERS.map((provider) => (
+				<SettingRow key={provider} label={provider}>
+					<span className="text-sm text-muted-foreground">
+						{t('settings.providers.comingSoon', 'Coming soon')}
+					</span>
+				</SettingRow>
+			))}
 		</div>
 	);
 };
