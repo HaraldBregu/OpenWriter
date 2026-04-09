@@ -306,17 +306,19 @@ export default function FilesPage(): React.ReactElement {
 							Delete ({selected.size})
 						</AppButton>
 					)}
-					<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
-						<FolderOpen />
-					</AppButton>
-					<AppButton variant="outline" size="sm" disabled>
-						<Plus />
-						New folder
-					</AppButton>
-					<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
-						<Upload />
-						Upload
-					</AppButton>
+					<AppButtonGroup>
+						<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
+							<FolderOpen />
+						</AppButton>
+						<AppButton variant="outline" size="sm" disabled>
+							<Plus />
+							New folder
+						</AppButton>
+						<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
+							<Upload />
+							Upload
+						</AppButton>
+					</AppButtonGroup>
 				</AppPageHeaderItems>
 			</AppPageHeader>
 
