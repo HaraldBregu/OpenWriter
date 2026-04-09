@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import type { SwitchProps } from '../ui/Switch';
 
 const AppSwitch = React.memo(
-	React.forwardRef<HTMLButtonElement, SwitchProps>(({ className, ...props }, ref) => (
+	React.forwardRef<HTMLElement, SwitchProps>(({ className, ...props }, ref) => (
 		<Switch ref={ref} className={cn(className)} {...props} />
 	))
 );
