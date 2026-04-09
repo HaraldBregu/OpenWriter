@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react';
 import i18n from '../i18n';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../../../shared/theme';
-import type { ThemeMode, ThemeTokens } from '../../../shared/types';
+import type { ThemeData, ThemeMode } from '../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Shared types
