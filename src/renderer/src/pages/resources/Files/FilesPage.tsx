@@ -1,5 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import {
+	ArrowDown,
+	ArrowUp,
+	ArrowUpDown,
 	File,
 	FileImage,
 	FileText,
