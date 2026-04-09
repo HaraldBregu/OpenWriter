@@ -55,6 +55,7 @@ import type {
 	ServiceProvider,
 	ThemeMode,
 	CustomThemeInfo,
+	CustomThemeManifest,
 } from '../shared/types';
 
 // ---------------------------------------------------------------------------
