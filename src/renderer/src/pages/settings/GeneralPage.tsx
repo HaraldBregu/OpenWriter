@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { SectionHeader, SettingRow } from './components';
 
-const GeneralSettingsPage: React.FC = () => {
+const GeneralPage: React.FC = () => {
 	const { t } = useTranslation();
 
 	return (
