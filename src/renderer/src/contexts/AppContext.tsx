@@ -373,7 +373,7 @@ function AppThemeProvider({
 		}
 
 		let cancelled = false;
-		let cachedManifest: { light: ThemeTokens; dark: ThemeTokens } | null = null;
+		let cachedManifest: { light: ThemeData; dark: ThemeData } | null = null;
 
 		const apply = (): void => {
 			if (!cachedManifest) return;
