@@ -5,6 +5,7 @@ import { AppTitleBarContainer } from './app/titlebar/AppTitleBarContainer';
 import { AppTitleBarCenterContainer } from './app/titlebar/AppTitleBarCenterContainer';
 import { AppTitleBarCenterContainerTitle } from './app/titlebar/AppTitleBarCenterContainerTitle';
 import { AppTitleBarLeftContainer } from './app/titlebar/AppTitleBarLeftContainer';
+import { AppTitleBarRightContainer } from './app/titlebar/AppTitleBarRightContainer';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
