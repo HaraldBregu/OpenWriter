@@ -16,13 +16,12 @@ export type ThemeMode = ThemeVariant | 'system';
 export interface ThemeData {
 	readonly background: string;
 	readonly foreground: string;
-	readonly text: string;
-	readonly icon: string;
 	titleBar: {
 		readonly background: string;
 		readonly foreground: string;
-		readonly text: string;
-		readonly icon: string;
+		readonly title: string;
+		readonly sidebarIcon: string;
+		readonly historyIcon: string;
 	};
 }
 
