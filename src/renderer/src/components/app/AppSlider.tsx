@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 import type { SliderProps } from '../ui/Slider';
 
 const AppSlider = React.memo(
-	React.forwardRef<HTMLInputElement, SliderProps>(({ className, ...props }, ref) => (
+	React.forwardRef<HTMLDivElement, SliderProps>(({ className, ...props }, ref) => (
 		<Slider ref={ref} className={cn('bg-muted', className)} {...props} />
 	))
 );
