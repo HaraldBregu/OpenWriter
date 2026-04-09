@@ -41,8 +41,7 @@ import { cn } from '@/lib/utils';
 import { useTaskListener } from '@/hooks/use-task-listener';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
-	importResourcesRequested,
-	loadIndexingInfo,
+	loadResources,
 	removeResources,
 	selectCurrentWorkspacePath,
 	selectImporting,
@@ -51,6 +50,7 @@ import {
 	selectResourcesError,
 	selectResourcesStatus,
 } from '@/store/workspace';
+import { importResourcesRequested } from '@/store/workspace/reducer';
 import {
 	filterResourcesBySection,
 	RESOURCE_SECTIONS,
