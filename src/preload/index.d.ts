@@ -145,6 +145,8 @@ export interface AppApi {
 	openThemesFolder: () => Promise<void>;
 	/** Open a folder picker to import a theme; returns the imported theme info, or null if cancelled. */
 	importTheme: () => Promise<CustomThemeInfo | null>;
+	/** Get the full theme manifest (including light/dark tokens) for a custom theme by its folder ID. */
+	getCustomThemeTokens: (id: string) => Promise<CustomThemeManifest | null>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
