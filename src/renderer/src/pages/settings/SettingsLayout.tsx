@@ -55,7 +55,7 @@ export function SettingsLayout(): React.JSX.Element {
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
 				<div className="space-y-0.5 px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
-					{NAV_ITEMS.map((item) => (
+					{navItems.map((item) => (
 						<NavLink
 							key={item.path}
 							to={item.path}
