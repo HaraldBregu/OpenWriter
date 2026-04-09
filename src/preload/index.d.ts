@@ -149,6 +149,14 @@ export interface AppApi {
 	getCustomThemeTokens: (id: string) => Promise<Theme | null>;
 	/** Delete a custom theme by its folder ID. */
 	deleteTheme: (id: string) => Promise<void>;
+	/** Open the macOS System Preferences > Accessibility pane. */
+	openSystemAccessibility: () => Promise<void>;
+	/** Open the macOS System Preferences > Screen Recording pane. */
+	openSystemScreenRecording: () => Promise<void>;
+	/** Enable or disable the menu bar tray icon. */
+	setTrayEnabled: (enabled: boolean) => Promise<void>;
+	/** Check whether the menu bar tray icon is currently enabled. */
+	getTrayEnabled: () => Promise<boolean>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
