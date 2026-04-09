@@ -42,8 +42,18 @@ type: project
 - `components/CropOverlay.tsx` — canvas crop interaction layer
 - `components/ToolbarButton.tsx` — shared icon button with tooltip
 - `components/DeleteConfirmDialog.tsx` — Radix alert dialog for delete confirm
-- `shared/use-image-canvas.ts` — all canvas operations (crop, rotate, AI filters, undo)
-- `shared/image-editor-constants.ts` — `MIN_CROP_SIZE`, `MIN_DIMENSION`, `MAX_DIMENSION`
+- `components/ResizeControls.tsx` — width/height inputs with aspect-ratio lock for resize mode
+- `shared/use-image-canvas.ts` — all canvas operations (crop, rotate, resize, AI filters, undo)
+- `shared/image-editor-constants.ts` — `MIN_CROP_SIZE`, `MIN_DIMENSION` (1), `MAX_DIMENSION` (8000)
+
+## ImageEditor Edit Modes
+
+`EditMode = 'crop' | 'rotate' | 'resize' | 'ai'`
+
+- Modes render a context controls row beneath the toolbar (except `ai`, which gets a full-width panel below the toolbar)
+- When a mode is activated, focus is sent to the primary interactive element: `ai` → textarea ref, `resize` → `#resize-width` input via `querySelector` on `editorRef`
+- Switching away from `crop` triggers `resetCrop()` + clears crop state; no teardown needed for `rotate` or `resize`
+- `ResizeControls` takes `currentWidth`, `currentHeight`, `onApply(w, h)` — all wired from `ImageEditor`'s `state.dimensions` and `applyResize` from `useImageCanvas`
 
 ## Settings Page Conventions
 
