@@ -9,7 +9,7 @@ import { LoadingSkeleton } from './components/LoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
 import WelcomePage from './pages/welcome/WelcomePage';
 import ConfigPage from './pages/welcome/ConfigPage';
-import { Layout as SettingsLayout } from './pages/settings/Layout';
+import { Layout as SettingsLayout } from './pages/settings';
 import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
