@@ -20,6 +20,7 @@ import type {
 	TaskPriority,
 	ResourceInfo,
 	DocumentFileChangeEvent,
+	ContentEntryChangeEvent,
 	FileEntry,
 	FileEntryChangeEvent,
 	OutputFile,
