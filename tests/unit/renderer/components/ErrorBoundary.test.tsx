@@ -36,7 +36,7 @@ describe('ErrorBoundary', () => {
 	it('should render children when no error occurs', () => {
 		// Act
 		render(
-			<ErrorBoundary>
+			<AppErrorBoundary>
 				<GoodComponent />
 			</ErrorBoundary>
 		);
@@ -49,7 +49,7 @@ describe('ErrorBoundary', () => {
 		it('should display an inline error with the error message', () => {
 			// Act
 			render(
-				<ErrorBoundary>
+				<AppErrorBoundary>
 					<ThrowingComponent message="Feature broke" />
 				</ErrorBoundary>
 			);
@@ -62,7 +62,7 @@ describe('ErrorBoundary', () => {
 		it('should show a "Try again" button that resets the boundary', () => {
 			// Act
 			render(
-				<ErrorBoundary>
+				<AppErrorBoundary>
 					<ThrowingComponent message="oops" />
 				</ErrorBoundary>
 			);
@@ -77,7 +77,7 @@ describe('ErrorBoundary', () => {
 		it('should display a page-level error UI', () => {
 			// Act
 			render(
-				<ErrorBoundary level="route">
+				<AppErrorBoundary level="route">
 					<ThrowingComponent message="Page crashed" />
 				</ErrorBoundary>
 			);
@@ -94,7 +94,7 @@ describe('ErrorBoundary', () => {
 		it('should display a full-screen error UI', () => {
 			// Act
 			render(
-				<ErrorBoundary level="root">
+				<AppErrorBoundary level="root">
 					<ThrowingComponent message="App died" />
 				</ErrorBoundary>
 			);
@@ -110,7 +110,7 @@ describe('ErrorBoundary', () => {
 		it('should render a custom fallback when provided', () => {
 			// Act
 			render(
-				<ErrorBoundary fallback={<div>Custom error view</div>}>
+				<AppErrorBoundary fallback={<div>Custom error view</div>}>
 					<ThrowingComponent message="error" />
 				</ErrorBoundary>
 			);
@@ -127,7 +127,7 @@ describe('ErrorBoundary', () => {
 
 			// Act
 			render(
-				<ErrorBoundary level="feature" onReset={onReset}>
+				<AppErrorBoundary level="feature" onReset={onReset}>
 					<ThrowingComponent message="oops" />
 				</ErrorBoundary>
 			);
