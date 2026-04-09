@@ -368,7 +368,7 @@ function AppThemeProvider({
 	// Also re-apply when dark/light mode toggles (observed via MutationObserver).
 	useEffect(() => {
 		if (!customThemeId) {
-			clearThemeTokens();
+			clearThemeData();
 			return;
 		}
 
@@ -388,7 +388,7 @@ function AppThemeProvider({
 				cachedManifest = manifest;
 				apply();
 			} catch {
-				if (!cancelled) clearThemeTokens();
+				if (!cancelled) clearThemeData();
 			}
 		})();
 
