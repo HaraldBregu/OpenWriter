@@ -170,30 +170,19 @@ const ThemesPage: React.FC = () => {
 							label={theme.name}
 							description={`${theme.author} · v${theme.version}`}
 						>
-							<div className="flex items-center gap-1.5">
-								<AppButton
-									variant={isActive ? 'default' : 'outline'}
-									size="sm"
-									onClick={() => handleSelect(theme.id)}
-									aria-pressed={isActive}
-								>
-									{isActive && <Check size={14} className="mr-1" />}
-									{isActive ? t('settings.themes.active') : t('settings.themes.activate')}
+							{isConfirming ? (
+								<AppButton variant="destructive" size="sm" onClick={() => handleDelete(theme.id)}>
+									{t('settings.themes.confirmDelete')}
 								</AppButton>
-								{isConfirming ? (
-									<AppButton variant="destructive" size="sm" onClick={() => handleDelete(theme.id)}>
-										{t('settings.themes.confirmDelete')}
-									</AppButton>
-								) : (
-									<AppButton
-										variant="outline"
-										size="sm"
-										onClick={() => setConfirmDeleteId(theme.id)}
-									>
-										<Trash2 size={14} />
-									</AppButton>
-								)}
-							</div>
+							) : (
+								<AppButton
+									variant="outline"
+									size="sm"
+									onClick={() => setConfirmDeleteId(theme.id)}
+								>
+									<Trash2 size={14} />
+								</AppButton>
+							)}
 						</SettingRow>
 					);
 				})
