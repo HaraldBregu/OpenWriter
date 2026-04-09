@@ -160,11 +160,13 @@ export default function ContentPage(): React.ReactElement {
 	const [searchQuery, setSearchQuery] = useState('');
 
 	useEffect(() => {
+		dispatch(loadResources());
 		dispatch(loadIndexingInfo());
 	}, [dispatch]);
 
 	useEffect(() => {
 		if (indexingTask.isCompleted) {
+			dispatch(loadResources());
 			dispatch(loadIndexingInfo());
 		}
 	}, [dispatch, indexingTask.isCompleted]);
