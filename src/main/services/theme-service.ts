@@ -166,7 +166,7 @@ export class ThemeService {
 
 	private sanitizeFolderName(name: string): string {
 		return name
-			.replace(/[<>:"/\\|?*\x00-\x1f]/g, '')
+			.replace(/[<>:"/\\|?*\p{Cc}]/gu, '')
 			.replace(/\s+/g, '_')
 			.trim();
 	}
