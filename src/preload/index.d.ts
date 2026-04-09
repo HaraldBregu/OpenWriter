@@ -102,6 +102,7 @@ export type {
 	AppLogEntry,
 	AppStartupInfo,
 	ThemeMode,
+	CustomThemeInfo,
 };
 
 // ---------------------------------------------------------------------------
