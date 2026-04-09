@@ -58,9 +58,19 @@ export function PdfExportSection({
 	return (
 		<>
 			<div className="flex items-center justify-between pt-6 pb-2">
-				<span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+				<button
+					type="button"
+					onClick={() => setIsExpanded((v) => !v)}
+					aria-expanded={isExpanded}
+					aria-controls={previewPanelId}
+					className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded transition-colors"
+				>
+					<ChevronDown
+						className={`h-3.5 w-3.5 shrink-0 transition-transform duration-200 ${isExpanded ? 'rotate-0' : '-rotate-90'}`}
+						aria-hidden="true"
+					/>
 					{exportLabel}
-				</span>
+				</button>
 				<div className="flex items-center gap-1">
 					<button
 						type="button"
@@ -93,23 +103,26 @@ export function PdfExportSection({
 				</div>
 			</div>
 
-			<div
-				className="overflow-hidden rounded-lg border border-border/70"
-				style={{ height: PREVIEW_HEIGHT }}
-			>
+			{isExpanded && (
 				<div
-					style={{
-						marginTop: -CROP,
-						marginLeft: -CROP,
-						width: `calc(100% + ${CROP * 2}px)`,
-						height: PREVIEW_HEIGHT + CROP * 2,
-					}}
+					id={previewPanelId}
+					className="overflow-hidden rounded-lg border border-border/70"
+					style={{ height: PREVIEW_HEIGHT }}
 				>
-					<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
-						{pdfDocument}
-					</PDFViewer>
+					<div
+						style={{
+							marginTop: -CROP,
+							marginLeft: -CROP,
+							width: `calc(100% + ${CROP * 2}px)`,
+							height: PREVIEW_HEIGHT + CROP * 2,
+						}}
+					>
+						<PDFViewer width="100%" height={PREVIEW_HEIGHT + CROP * 2} showToolbar={false}>
+							{pdfDocument}
+						</PDFViewer>
+					</div>
 				</div>
-			</div>
+			)}
 
 			<PdfPreviewDialog
 				open={previewOpen}
