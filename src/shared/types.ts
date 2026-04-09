@@ -14,41 +14,16 @@ export type ThemeVariant = 'light' | 'dark';
 export type ThemeMode = ThemeVariant | 'system';
 
 export interface ThemeTokens {
-	readonly colorScheme: ThemeVariant;
 	readonly background: string;
 	readonly foreground: string;
-	readonly card: string;
-	readonly cardForeground: string;
-	readonly popover: string;
-	readonly popoverForeground: string;
-	readonly primary: string;
-	readonly primaryForeground: string;
-	readonly secondary: string;
-	readonly secondaryForeground: string;
-	readonly muted: string;
-	readonly mutedForeground: string;
-	readonly accent: string;
-	readonly accentForeground: string;
-	readonly destructive: string;
-	readonly destructiveForeground: string;
-	readonly border: string;
-	readonly input: string;
-	readonly ring: string;
-	readonly radius: string;
-	readonly success: string;
-	readonly successForeground: string;
-	readonly warning: string;
-	readonly warningForeground: string;
-	readonly info: string;
-	readonly infoForeground: string;
-	readonly sidebarBackground: string;
-	readonly sidebarForeground: string;
-	readonly sidebarPrimary: string;
-	readonly sidebarPrimaryForeground: string;
-	readonly sidebarAccent: string;
-	readonly sidebarAccentForeground: string;
-	readonly sidebarBorder: string;
-	readonly sidebarRing: string;
+	readonly text: string;
+	readonly icon: string;
+	titleBar: {
+		readonly background: string;
+		readonly foreground: string;
+		readonly text: string;
+		readonly icon: string;
+	};
 }
 
 /**
