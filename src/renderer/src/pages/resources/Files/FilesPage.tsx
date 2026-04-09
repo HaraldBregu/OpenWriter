@@ -190,8 +190,7 @@ export default function FilesPage(): React.ReactElement {
 		setSelected(new Set());
 	}, [dispatch, selected]);
 
-	const allChecked =
-		filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
+	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
 	const someChecked = !allChecked && filteredEntries.some((f) => selected.has(f.id));
 
 	const handleToggleAll = useCallback(() => {
@@ -252,7 +251,7 @@ export default function FilesPage(): React.ReactElement {
 						onChange={(e) => setSearchQuery(e.target.value)}
 						placeholder="Start typing to search"
 						className={cn(
-							'h-9 w-full rounded-full border border-input bg-background pl-9 pr-4 text-sm',
+							'h-9 w-full rounded-md border border-input bg-background pl-9 pr-4 text-sm',
 							'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring'
 						)}
 					/>
