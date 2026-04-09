@@ -49,6 +49,20 @@ if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === '
 	});
 }
 
+// IPC → Redux bridge: load files from resources/files/ on startup and re-load on changes.
+let filesInitialized = false;
+if (!filesInitialized && typeof window.workspace?.onFilesChanged === 'function') {
+	filesInitialized = true;
+	store.dispatch(loadFiles());
+	window.workspace.onFilesChanged((event) => {
+		if (event.type === 'removed') {
+			store.dispatch(fileEntryRemoved(event.fileId));
+		} else {
+			store.dispatch(loadFiles());
+		}
+	});
+}
+
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
 const HomePage = lazy(() => import('./pages/HomePage'));
