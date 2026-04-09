@@ -498,20 +498,22 @@ export function ImageEditor({
 					<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
 						<div className="flex min-w-0 items-center gap-2">
 							<AppDropdownMenu>
-								<AppDropdownMenuTrigger asChild>
-									<AppButton
-										variant="ghost"
-										size="sm"
-										disabled={isProcessingAI}
-										className="h-7 gap-1 rounded-full px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
-									>
-										<span className="truncate">
-											{IMAGE_MODELS.find((m) => m.modelId === selectedModelId)?.name ??
-												selectedModelId}
-										</span>
-										<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
-									</AppButton>
-								</AppDropdownMenuTrigger>
+								<AppDropdownMenuTrigger
+									render={
+										<AppButton
+											variant="ghost"
+											size="sm"
+											disabled={isProcessingAI}
+											className="h-7 gap-1 rounded-full px-2 text-[11px] font-medium text-foreground/65 hover:text-foreground dark:text-muted-foreground/95 dark:hover:text-foreground"
+										>
+											<span className="truncate">
+												{IMAGE_MODELS.find((m) => m.modelId === selectedModelId)?.name ??
+													selectedModelId}
+											</span>
+											<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
+										</AppButton>
+									}
+								/>
 								<AppDropdownMenuContent align="start" side="top" className="min-w-[180px]">
 									{IMAGE_MODELS.map((model) => (
 										<AppDropdownMenuItem
