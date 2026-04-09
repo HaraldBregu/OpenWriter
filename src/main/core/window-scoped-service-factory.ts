@@ -6,6 +6,7 @@ import {
 	Workspace,
 	WorkspaceMetadataService,
 	DocumentsWatcherService,
+	ContentsService,
 	FilesWatcherService,
 	FilesService,
 	OutputFilesService,
