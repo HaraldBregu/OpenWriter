@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Check, Loader2, Pencil, X } from 'lucide-react';
 import type { ProviderId, ServiceProvider } from '../../../../shared/types';
