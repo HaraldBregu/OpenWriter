@@ -145,7 +145,8 @@
 			"tools": "Tools",
 			"system": "System",
 			"themes": "Themes",
-			"editor": "Editor"
+			"editor": "Editor",
+			"developer": "Developer"
 		},
 		"sections": {
 			"permissions": "Permissions",
