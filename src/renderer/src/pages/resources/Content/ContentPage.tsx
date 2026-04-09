@@ -120,17 +120,13 @@ export default function ContentPage(): React.ReactElement {
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
 	const section = RESOURCE_SECTIONS[SECTION_ID];
-	const allResources = useAppSelector(selectResources);
-	const status = useAppSelector(selectResourcesStatus);
-	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 	const indexingInfo = useAppSelector(selectIndexingInfo);
 
-	const resources = useMemo(
-		() => filterResourcesBySection(allResources, SECTION_ID),
-		[allResources]
-	);
+	const [resources, setResources] = useState<ResourceInfo[]>([]);
+	const [status, setStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle');
+	const [error, setError] = useState<string | null>(null);
 
 	const indexingTask = useTaskListener<{
 		indexedCount: number;
@@ -149,27 +145,45 @@ export default function ContentPage(): React.ReactElement {
 	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
 	const [searchQuery, setSearchQuery] = useState('');
 
+	const filteredResources = useMemo(
+		() => filterResourcesBySection(resources, SECTION_ID),
+		[resources]
+	);
+
+	const loadContent = useCallback(async () => {
+		try {
+			setStatus('loading');
+			setError(null);
+			const allResources = await window.workspace.loadDocuments();
+			setResources(allResources);
+			setStatus('ready');
+		} catch (err) {
+			setError((err as Error).message || 'Failed to load resources');
+			setStatus('error');
+		}
+	}, []);
+
 	useEffect(() => {
-		dispatch(loadResources());
-		dispatch(loadIndexingInfo());
-	}, [dispatch]);
+		loadContent();
+		dispatch(selectIndexingInfo);
+	}, [loadContent, dispatch]);
 
 	useEffect(() => {
 		if (indexingTask.isCompleted) {
-			dispatch(loadResources());
-			dispatch(loadIndexingInfo());
+			loadContent();
+			dispatch(selectIndexingInfo);
 		}
-	}, [dispatch, indexingTask.isCompleted]);
+	}, [loadContent, dispatch, indexingTask.isCompleted]);
 
 	useEffect(() => {
 		setSelected((current) => {
-			const resourceIds = new Set(resources.map((resource) => resource.id));
+			const resourceIds = new Set(filteredResources.map((resource) => resource.id));
 			const nextSelected = new Set([...current].filter((id) => resourceIds.has(id)));
 			const hasChanged =
 				nextSelected.size !== current.size || [...current].some((id) => !resourceIds.has(id));
 			return hasChanged ? nextSelected : current;
 		});
-	}, [resources]);
+	}, [filteredResources]);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
