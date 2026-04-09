@@ -75,6 +75,7 @@ const app: AppApi = {
 	getCustomThemes: () => typedInvokeUnwrap(AppChannels.getCustomThemes),
 	openThemesFolder: () => typedInvokeUnwrap(AppChannels.openThemesFolder),
 	importTheme: () => typedInvokeUnwrap(AppChannels.importTheme),
+	getCustomThemeTokens: (id: string) => typedInvokeUnwrap(AppChannels.getCustomThemeTokens, id),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
