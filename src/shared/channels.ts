@@ -91,6 +91,7 @@ export const WorkspaceChannels = {
 	// Shell
 	openDataFolder: 'workspace:open-data-folder',
 	openResourcesFolder: 'workspace:open-resources-folder',
+	openFilesFolder: 'workspace:open-files-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
 	openDocumentImagesFolder: 'workspace:open-document-images-folder',
 	getDocumentPath: 'workspace:get-document-path',
