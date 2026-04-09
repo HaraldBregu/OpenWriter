@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { SectionHeader, SettingRow } from './SettingsComponents';
+import { SectionHeader, SettingRow } from './components';
 
 const GeneralSettingsPage: React.FC = () => {
 	const { t } = useTranslation();
