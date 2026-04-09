@@ -62,4 +62,4 @@ const ProvidersPage: React.FC = () => {
 	);
 };
 
-export default ProvidersSettingsPage;
+export default ProvidersPage;
