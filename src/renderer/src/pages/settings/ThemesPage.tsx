@@ -161,4 +161,4 @@ const ThemesPage: React.FC = () => {
 	);
 };
 
-export default ThemesSettingsPage;
+export default ThemesPage;
