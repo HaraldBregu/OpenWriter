@@ -26,6 +26,7 @@ interface ProviderRowProps {
 
 const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey, onSave }) => {
 	const { t } = useTranslation();
+	const inputId = useId();
 	const [editing, setEditing] = useState(false);
 	const [draft, setDraft] = useState('');
 	const [saving, setSaving] = useState(false);
