@@ -100,9 +100,9 @@ export class ThemeService {
 
 		const raw = fs.readFileSync(themePath, 'utf-8');
 		const parsed: unknown = JSON.parse(raw);
-		const manifest = this.validateTheme(parsed);
+		const theme = this.validateTheme(parsed);
 
-		const folderName = this.sanitizeFolderName(manifest.name);
+		const folderName = this.sanitizeFolderName(theme.name);
 		if (folderName.length === 0) {
 			throw new Error('Theme name results in an empty folder name after sanitization');
 		}
@@ -110,15 +110,15 @@ export class ThemeService {
 		const destPath = path.join(this.getThemesDirectory(), folderName);
 		fs.cpSync(sourcePath, destPath, { recursive: true });
 
-		this.logger.info('ThemeService', `Imported theme "${manifest.name}" to ${destPath}`);
+		this.logger.info('ThemeService', `Imported theme "${theme.name}" to ${destPath}`);
 
 		return {
 			id: folderName,
-			name: manifest.name,
-			description: manifest.description,
-			author: manifest.author,
-			version: manifest.version,
-			license: manifest.license,
+			name: theme.name,
+			description: theme.description,
+			author: theme.author,
+			version: theme.version,
+			license: theme.license,
 		};
 	}
 
