@@ -55,7 +55,7 @@ import type {
 	ServiceProvider,
 	ThemeMode,
 	CustomThemeInfo,
-	CustomThemeManifest,
+	Theme,
 } from '../shared/types';
 
 // ---------------------------------------------------------------------------
@@ -104,7 +104,7 @@ export type {
 	AppStartupInfo,
 	ThemeMode,
 	CustomThemeInfo,
-	CustomThemeManifest,
+	Theme,
 };
 
 // ---------------------------------------------------------------------------
@@ -146,7 +146,7 @@ export interface AppApi {
 	/** Open a folder picker to import a theme; returns the imported theme info, or null if cancelled. */
 	importTheme: () => Promise<CustomThemeInfo | null>;
 	/** Get the full theme manifest (including light/dark tokens) for a custom theme by its folder ID. */
-	getCustomThemeTokens: (id: string) => Promise<CustomThemeManifest | null>;
+	getCustomThemeTokens: (id: string) => Promise<Theme | null>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
