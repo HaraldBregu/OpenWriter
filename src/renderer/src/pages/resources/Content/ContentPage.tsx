@@ -298,15 +298,6 @@ export default function ContentPage(): React.ReactElement {
 						size="icon"
 						variant="outline"
 						className="h-8 w-8"
-						onClick={handleIndex}
-						disabled={indexing || editing}
-					>
-						<ListTree className="h-3.5 w-3.5" />
-					</AppButton>
-					<AppButton
-						size="icon"
-						variant="outline"
-						className="h-8 w-8"
 						onClick={handleUpload}
 						disabled={uploading || editing}
 						title={t(section.uploadKey)}
