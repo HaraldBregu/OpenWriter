@@ -155,7 +155,6 @@ const ThemesPage: React.FC = () => {
 				<p className="text-sm text-muted-foreground py-3">{t('settings.themes.noThemes')}</p>
 			) : (
 				themes.map((theme) => {
-					const isActive = customThemeId === theme.id;
 					const isConfirming = confirmDeleteId === theme.id;
 					return (
 						<SettingRow
@@ -164,17 +163,21 @@ const ThemesPage: React.FC = () => {
 							description={`${theme.author} · v${theme.version}`}
 						>
 							{isConfirming ? (
-								<AppButton variant="destructive" size="sm" onClick={() => handleDelete(theme.id)}>
+								<button
+									type="button"
+									onClick={() => handleDelete(theme.id)}
+									className="text-sm text-destructive hover:text-destructive/80 transition-colors"
+								>
 									{t('settings.themes.confirmDelete')}
-								</AppButton>
+								</button>
 							) : (
-								<AppButton
-									variant="outline"
-									size="sm"
+								<button
+									type="button"
 									onClick={() => setConfirmDeleteId(theme.id)}
+									className="text-muted-foreground hover:text-destructive transition-colors"
 								>
 									<Trash2 size={14} />
-								</AppButton>
+								</button>
 							)}
 						</SettingRow>
 					);
