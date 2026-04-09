@@ -1,6 +1,5 @@
 @import 'tailwindcss';
-
-@source "../../../tailwind.config.cjs";
+@import 'tw-animate-css';
 
 @theme {
 	--color-border: hsl(var(--border));
