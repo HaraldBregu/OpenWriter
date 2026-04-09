@@ -78,7 +78,7 @@ export class ThemeService {
 		return themes;
 	}
 
-	getThemeById(id: string): CustomThemeManifest | null {
+	getThemeById(id: string): Theme | null {
 		const manifestPath = path.join(this.getThemesDirectory(), id, THEME_FILE_NAME);
 		if (!fs.existsSync(manifestPath)) return null;
 
@@ -122,7 +122,7 @@ export class ThemeService {
 		};
 	}
 
-	private validateManifest(data: unknown): CustomThemeManifest {
+	private validateManifest(data: unknown): Theme {
 		if (typeof data !== 'object' || data === null) {
 			throw new Error('Theme manifest must be a JSON object');
 		}
@@ -138,7 +138,7 @@ export class ThemeService {
 		this.validateTokens(obj['light'], 'light');
 		this.validateTokens(obj['dark'], 'dark');
 
-		return data as CustomThemeManifest;
+		return data as Theme;
 	}
 
 	private validateTokens(tokens: unknown, variant: string): void {
