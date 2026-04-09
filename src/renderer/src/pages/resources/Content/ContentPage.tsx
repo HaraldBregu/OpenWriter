@@ -228,7 +228,7 @@ export default function ContentPage(): React.ReactElement {
 
 	const handleUpload = useCallback(() => {
 		dispatch(importResourcesRequested(section.uploadExtensions));
-	}, [dispatch, section.uploadExtensions]);
+	}, [dispatch, section]);
 
 	const handleToggleEdit = useCallback(() => {
 		setEditing((current) => {
