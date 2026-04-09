@@ -14,7 +14,7 @@ import {
 
 interface DeleteConfirmDialogProps {
 	onConfirm: () => void;
-	trigger: React.ReactNode;
+	trigger: React.ReactElement;
 }
 
 export function DeleteConfirmDialog({
