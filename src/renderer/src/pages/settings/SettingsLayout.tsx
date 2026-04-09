@@ -27,6 +27,28 @@ const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-acce
 export function SettingsLayout(): React.JSX.Element {
 	const { t } = useTranslation();
 	useLanguage();
+	const [hasThemes, setHasThemes] = useState(false);
+
+	const loadThemes = useCallback(async () => {
+		try {
+			const list = await window.app.getCustomThemes();
+			setHasThemes(list.length > 0);
+		} catch {
+			setHasThemes(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		loadThemes();
+	}, [loadThemes]);
+
+	const navItems = useMemo(
+		() =>
+			hasThemes
+				? [...BASE_NAV_ITEMS.slice(0, 3), THEMES_NAV_ITEM, ...BASE_NAV_ITEMS.slice(3)]
+				: BASE_NAV_ITEMS,
+		[hasThemes]
+	);
 
 	return (
 		<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
