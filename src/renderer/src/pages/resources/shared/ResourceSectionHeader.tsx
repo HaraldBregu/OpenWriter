@@ -50,12 +50,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 					<FolderOpen />
 				</AppButton>
 				{showIndexButton && (
-					<AppButton
-						variant="outline"
-						size="lg"
-						onClick={onIndex}
-						disabled={indexing || editing}
-					>
+					<AppButton variant="outline" size="lg" onClick={onIndex} disabled={indexing || editing}>
 						<ListTree />
 					</AppButton>
 				)}
@@ -69,11 +64,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 					<Upload />
 					{uploadLabel}
 				</AppButton>
-				<AppButton
-					variant={editing ? 'secondary' : 'outline'}
-					size="lg"
-					onClick={onToggleEdit}
-				>
+				<AppButton variant={editing ? 'secondary' : 'outline'} size="lg" onClick={onToggleEdit}>
 					<Pencil />
 				</AppButton>
 			</AppPageHeaderItems>

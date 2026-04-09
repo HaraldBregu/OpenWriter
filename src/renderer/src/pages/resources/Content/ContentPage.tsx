@@ -262,7 +262,12 @@ export default function ContentPage(): React.ReactElement {
 							{t('resources.removeWithCount', { count: selected.size })}
 						</AppButton>
 					)}
-					<AppButton variant="outline" size="lg" onClick={handleOpenResourcesFolder} disabled={editing}>
+					<AppButton
+						variant="outline"
+						size="lg"
+						onClick={handleOpenResourcesFolder}
+						disabled={editing}
+					>
 						<FolderOpen />
 					</AppButton>
 					<AppButton
