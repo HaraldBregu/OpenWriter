@@ -131,7 +131,7 @@ export class ThemeService {
 
 		for (const field of THEME_REQUIRED_FIELDS) {
 			if (typeof obj[field] !== 'string' || (obj[field] as string).trim().length === 0) {
-				throw new Error(`Theme manifest is missing required field: "${field}"`);
+				throw new Error(`Theme is missing required field: "${field}"`);
 			}
 		}
 
