@@ -72,6 +72,9 @@ const app: AppApi = {
 	},
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
+	getCustomThemes: () => typedInvokeUnwrap(AppChannels.getCustomThemes),
+	openThemesFolder: () => typedInvokeUnwrap(AppChannels.openThemesFolder),
+	importTheme: () => typedInvokeUnwrap(AppChannels.importTheme),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
