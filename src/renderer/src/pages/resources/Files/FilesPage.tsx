@@ -387,7 +387,7 @@ export default function FilesPage(): React.ReactElement {
 
 				{!isLoading && entries.length > 0 && viewMode === 'list' && (
 					<AppTable>
-						<AppTableHeader className="sticky top-0 z-10 bg-muted">
+						<AppTableHeader sticky>
 							<AppTableRow>
 								<AppTableHead className="w-10">
 									<AppCheckbox
