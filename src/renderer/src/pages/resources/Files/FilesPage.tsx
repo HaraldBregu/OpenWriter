@@ -153,13 +153,16 @@ export default function FilesPage(): React.ReactElement {
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
+	const [typeFilter, setTypeFilter] = useState<FileTypeFilter>('all');
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	const filteredEntries = useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		if (!query) return entries;
-		return entries.filter((f) => f.name.toLowerCase().includes(query));
-	}, [entries, searchQuery]);
+		return entries.filter((f) => {
+			if (query && !f.name.toLowerCase().includes(query)) return false;
+			return matchesTypeFilter(f.mimeType, typeFilter);
+		});
+	}, [entries, searchQuery, typeFilter]);
 
 	const handleUpload = useCallback(() => {
 		dispatch(insertFilesRequested(RESOURCE_SECTIONS.files.uploadExtensions));
