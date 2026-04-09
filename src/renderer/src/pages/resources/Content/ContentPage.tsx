@@ -45,7 +45,6 @@ const ResourcePreviewSheet = lazy(() =>
 	}))
 );
 
-const RESOURCES_DIR = 'resources';
 const SECTION_ID: ResourceSectionId = 'content';
 
 type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';

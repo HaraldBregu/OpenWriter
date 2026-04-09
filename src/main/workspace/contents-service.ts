@@ -71,11 +71,7 @@ export class ContentsService {
 					lastModified: metadata.lastModified,
 				});
 			} catch (err) {
-				this.logger?.warn(
-					ContentsService.LOG_SOURCE,
-					`Failed to stat file ${entry.name}`,
-					err
-				);
+				this.logger?.warn(ContentsService.LOG_SOURCE, `Failed to stat file ${entry.name}`, err);
 			}
 		}
 
