@@ -157,6 +157,7 @@ export default function ContentPage(): React.ReactElement {
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDirection, setSortDirection] = useState<SortDirection>('none');
 	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
+	const [searchQuery, setSearchQuery] = useState('');
 
 	useEffect(() => {
 		dispatch(loadIndexingInfo());
