@@ -67,25 +67,27 @@ const CUSTOM_THEME_STORAGE_KEY = 'app-custom-theme-id';
 const DARK_CLASS = 'dark';
 
 /** Convert camelCase token key to kebab-case CSS variable name. */
-function tokenKeyToCssVar(key: string): string {
-	return '--' + key.replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+function tokenKeyToCssVar(key: string, prefix = ''): string {
+	const base = key.replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+	return prefix ? `--${prefix}-${base}` : `--${base}`;
 }
 
-/** Apply a set of ThemeTokens as CSS custom properties on the document root. */
-function applyThemeTokens(tokens: ThemeTokens): void {
+/** Apply a set of ThemeData as CSS custom properties on the document root. */
+function applyThemeData(data: ThemeData): void {
 	const root = document.documentElement;
-	const entries = Object.entries(tokens) as [string, string][];
-	for (const [key, value] of entries) {
-		if (key === 'colorScheme') {
-			root.style.setProperty('color-scheme', value);
+	for (const [key, value] of Object.entries(data)) {
+		if (key === 'titleBar' && typeof value === 'object' && value !== null) {
+			for (const [tbKey, tbValue] of Object.entries(value as Record<string, string>)) {
+				root.style.setProperty(tokenKeyToCssVar(tbKey, 'title-bar'), tbValue);
+			}
 		} else {
-			root.style.setProperty(tokenKeyToCssVar(key), value);
+			root.style.setProperty(tokenKeyToCssVar(key), value as string);
 		}
 	}
 }
 
-/** Remove all inline CSS custom properties previously set by applyThemeTokens. */
-function clearThemeTokens(): void {
+/** Remove all inline CSS custom properties previously set by applyThemeData. */
+function clearThemeData(): void {
 	document.documentElement.removeAttribute('style');
 }
 
