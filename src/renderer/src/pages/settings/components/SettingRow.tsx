@@ -7,7 +7,12 @@ interface SettingRowProps {
 	readonly children: React.ReactNode;
 }
 
-export const SettingRow: React.FC<SettingRowProps> = ({ label, description, labelFor, children }) => (
+export const SettingRow: React.FC<SettingRowProps> = ({
+	label,
+	description,
+	labelFor,
+	children,
+}) => (
 	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
 		<div className="min-w-0 mr-4">
 			{labelFor ? (
