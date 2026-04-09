@@ -236,7 +236,7 @@ const App: React.FC = () => {
 														path="themes"
 														element={
 															<Suspense fallback={<LoadingSkeleton />}>
-																<ThemesSettingsPage />
+																<ThemesPage />
 															</Suspense>
 														}
 													/>
