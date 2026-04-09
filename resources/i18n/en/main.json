@@ -164,7 +164,8 @@
 			"dialogs": "Dialogs",
 			"clipboard": "Clipboard",
 			"application": "Application",
-			"profile": "Profile"
+			"profile": "Profile",
+			"editor": "Editor"
 		},
 		"profile": {
 			"firstName": "First Name",
