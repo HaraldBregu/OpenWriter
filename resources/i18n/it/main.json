@@ -190,6 +190,13 @@
 			"menuBar": "Barra dei Menu",
 			"menuBarDescription": "Mostra o nascondi l'icona dell'app nella barra dei menu"
 		},
+		"editor": {
+			"font": "Carattere",
+			"fontDescription": "Scegli il carattere utilizzato nell'editor",
+			"fontDefault": "Predefinito",
+			"fontSansSystem": "Sans di Sistema",
+			"fontDyslexicFriendly": "Adatto alla Dislessia"
+		},
 		"permissions": {
 			"microphone": "Microfono",
 			"camera": "Fotocamera",
