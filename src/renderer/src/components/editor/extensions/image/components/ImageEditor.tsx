@@ -25,6 +25,7 @@ import { AppTooltipProvider } from '@/components/app/AppTooltip';
 import { MIN_CROP_SIZE } from '../shared';
 import { useImageCanvas } from '../shared/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
+import { ResizeControls } from './ResizeControls';
 import { AppTextarea } from '@/components/app/AppTextarea';
 import {
 	AppDropdownMenu,
