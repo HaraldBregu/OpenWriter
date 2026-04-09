@@ -7,26 +7,24 @@ export const DEFAULT_THEME_MODE: ThemeMode = 'system';
 export const LIGHT_THEME: ThemeData = {
 	background: '#f7f7f7',
 	foreground: '#141414',
-	text: '#171717',
-	icon: '#616161',
 	titleBar: {
 		background: '#f2f2f2',
 		foreground: '#242424',
-		text: '#171717',
-		icon: '#616161',
+		title: '#171717',
+		sidebarIcon: '#616161',
+		historyIcon: '#616161',
 	},
 };
 
 export const DARK_THEME: ThemeData = {
 	background: '#141518',
 	foreground: '#d9d1c7',
-	text: '#d9d1c7',
-	icon: '#a69e93',
 	titleBar: {
 		background: '#151618',
 		foreground: '#d4ccc2',
-		text: '#d9d1c7',
-		icon: '#a69e93',
+		title: '#d9d1c7',
+		sidebarIcon: '#a69e93',
+		historyIcon: '#a69e93',
 	},
 };
 
