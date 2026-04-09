@@ -306,23 +306,21 @@ export default function FilesPage(): React.ReactElement {
 							Delete ({selected.size})
 						</AppButton>
 					)}
-					<AppButtonGroup>
-						<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
-							<FolderOpen />
-						</AppButton>
-						<AppButton variant="outline" size="sm" disabled>
-							<Plus />
-							New folder
-						</AppButton>
-						<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
-							<Upload />
-							Upload
-						</AppButton>
-					</AppButtonGroup>
+					<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
+						<FolderOpen />
+					</AppButton>
+					<AppButton variant="outline" size="sm" disabled>
+						<Plus />
+						New folder
+					</AppButton>
+					<AppButton size="sm" onClick={handleUpload} disabled={uploading}>
+						<Upload />
+						Upload
+					</AppButton>
 				</AppPageHeaderItems>
 			</AppPageHeader>
 
-			<div className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
+			<AppButtonGroup className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
 				<AppInputGroup className="flex-1">
 					<AppInputGroupAddon>
 						<AppInputGroupText>
@@ -381,7 +379,7 @@ export default function FilesPage(): React.ReactElement {
 						<Grid3x3 className="h-4 w-4" />
 					</AppButton>
 				</AppButtonGroup>
-			</div>
+			</AppButtonGroup>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
 				{isLoading && (
