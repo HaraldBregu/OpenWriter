@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="resources/svgs/app_logo_dark.svg" />
-    <img src="resources/svgs/app_logo.svg" alt="OpenWriter" width="128" height="128" />
-  </picture>
+  <img src="resources/svgs/app_logo_readme.svg" alt="OpenWriter" width="128" height="128" />
 </p>
 
 <h1 align="center">OpenWriter</h1>
