@@ -196,6 +196,15 @@ export default function FilesPage(): React.ReactElement {
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<h1 className="text-xl font-bold">Files</h1>
 				<div className="flex items-center gap-2">
+					{selected.size > 0 && (
+						<AppButton variant="destructive" size="sm" onClick={handleDelete}>
+							<Trash2 />
+							Delete ({selected.size})
+						</AppButton>
+					)}
+					<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
+						<FolderOpen />
+					</AppButton>
 					<AppButton variant="outline" size="sm" disabled>
 						<Plus />
 						New folder
