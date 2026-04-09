@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { AppButton, AppIconOpenWriter, AppInput, AppLabel } from '@/components/app';
-import { TitleBar } from '@/components/TitleBar';
+import { AppTitleBar } from '@/components/AppTitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS } from '../../../../shared/providers';
 import type { ProviderId, ServiceProvider } from '../../../../shared/types';
 import type { AppStartupInfo } from '../../../../shared/types';
