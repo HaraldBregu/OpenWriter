@@ -426,6 +426,7 @@ const Input: React.FC<InputProps> = ({
 									<AppDropdownMenuItem
 										key={option.value}
 										onSelect={() => setAgentId(option.value)}
+										aria-current={isSelected ? 'true' : undefined}
 										className={cn(
 											'rounded-xl px-2.5 py-2.5',
 											isSelected && 'bg-accent text-accent-foreground'
