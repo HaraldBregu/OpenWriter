@@ -54,11 +54,11 @@ export class ThemeService {
 		for (const entry of entries) {
 			if (!entry.isDirectory()) continue;
 
-			const manifestPath = path.join(themesDir, entry.name, THEME_FILE_NAME);
-			if (!fs.existsSync(manifestPath)) continue;
+			const themePath = path.join(themesDir, entry.name, THEME_FILE_NAME);
+			if (!fs.existsSync(themePath)) continue;
 
 			try {
-				const raw = fs.readFileSync(manifestPath, 'utf-8');
+				const raw = fs.readFileSync(themePath, 'utf-8');
 				const parsed: unknown = JSON.parse(raw);
 				const manifest = this.validateTheme(parsed);
 
@@ -79,11 +79,11 @@ export class ThemeService {
 	}
 
 	getThemeById(id: string): Theme | null {
-		const manifestPath = path.join(this.getThemesDirectory(), id, THEME_FILE_NAME);
-		if (!fs.existsSync(manifestPath)) return null;
+		const themePath = path.join(this.getThemesDirectory(), id, THEME_FILE_NAME);
+		if (!fs.existsSync(themePath)) return null;
 
 		try {
-			const raw = fs.readFileSync(manifestPath, 'utf-8');
+			const raw = fs.readFileSync(themePath, 'utf-8');
 			const parsed: unknown = JSON.parse(raw);
 			return this.validateTheme(parsed);
 		} catch (err) {
@@ -93,12 +93,12 @@ export class ThemeService {
 	}
 
 	importThemeFromPath(sourcePath: string): CustomThemeInfo {
-		const manifestPath = path.join(sourcePath, THEME_FILE_NAME);
-		if (!fs.existsSync(manifestPath)) {
+		const themePath = path.join(sourcePath, THEME_FILE_NAME);
+		if (!fs.existsSync(themePath)) {
 			throw new Error(`No ${THEME_FILE_NAME} found in the selected folder`);
 		}
 
-		const raw = fs.readFileSync(manifestPath, 'utf-8');
+		const raw = fs.readFileSync(themePath, 'utf-8');
 		const parsed: unknown = JSON.parse(raw);
 		const manifest = this.validateTheme(parsed);
 
