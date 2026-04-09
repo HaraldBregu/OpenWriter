@@ -21,7 +21,6 @@ interface ResourceSectionHeaderProps {
 
 export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 	title,
-	icon: Icon,
 	uploading,
 	uploadLabel,
 	onUpload,
