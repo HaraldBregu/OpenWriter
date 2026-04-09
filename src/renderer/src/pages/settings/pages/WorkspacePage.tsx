@@ -4,7 +4,7 @@ import type { ProjectWorkspaceInfo } from '../../../../../shared/types';
 import { AppInput } from '@/components/app/AppInput';
 import { useAppDispatch } from '@/store';
 import { loadProjectName } from '@/store/workspace/actions';
-import { SectionHeader, SettingRow } from './components';
+import { SectionHeader, SettingRow } from '../components';
 
 // ---------------------------------------------------------------------------
 // Helpers
