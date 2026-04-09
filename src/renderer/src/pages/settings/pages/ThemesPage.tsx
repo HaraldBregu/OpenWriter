@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload, Check, AlertCircle, X, CheckCircle } from 'lucide-react';
 import { AppButton } from '@/components/app';
-import { SectionHeader, SettingRow } from './components';
-import { useCustomThemeId, useAppActions } from '../../contexts';
-import type { CustomThemeInfo } from '../../../../shared/types';
+import { SectionHeader, SettingRow } from '../components';
+import { useCustomThemeId, useAppActions } from '../../../contexts';
+import type { CustomThemeInfo } from '../../../../../shared/types';
 
 type ImportStatus = 'idle' | 'success' | 'error';
 
