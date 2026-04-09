@@ -195,6 +195,20 @@ export default function FilesPage(): React.ReactElement {
 	const [searchQuery, setSearchQuery] = useState('');
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
 	const [typeFilter, setTypeFilter] = useState<FileTypeFilter>('all');
+	const [sortKey, setSortKey] = useState<SortKey>('name');
+	const [sortDirection, setSortDirection] = useState<SortDirection>('none');
+
+	const handleSort = useCallback(
+		(key: SortKey) => {
+			if (key === sortKey) {
+				setSortDirection((d) => nextSortDirection(d));
+			} else {
+				setSortKey(key);
+				setSortDirection('asc');
+			}
+		},
+		[sortKey]
+	);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
