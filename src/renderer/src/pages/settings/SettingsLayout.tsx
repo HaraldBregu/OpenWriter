@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../hooks/use-language';
@@ -8,13 +8,17 @@ interface NavItemDefinition {
 	readonly labelKey: string;
 }
 
-const NAV_ITEMS: NavItemDefinition[] = [
+const BASE_NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/general', labelKey: 'settings.tabs.general' },
 	{ path: '/settings/workspace', labelKey: 'settings.tabs.workspace' },
 	{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
-	{ path: '/settings/themes', labelKey: 'settings.tabs.themes' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
+
+const THEMES_NAV_ITEM: NavItemDefinition = {
+	path: '/settings/themes',
+	labelKey: 'settings.tabs.themes',
+};
 
 const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-3 sm:py-1.5';
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
