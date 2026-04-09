@@ -20,7 +20,7 @@ const TITLE_BAR_KEYS: readonly (keyof ThemeData['titleBar'])[] = [
 	'icon',
 ] as const;
 
-const MANIFEST_REQUIRED_FIELDS = ['name', 'description', 'author', 'version', 'license'] as const;
+const THEME_REQUIRED_FIELDS = ['name', 'description', 'author', 'version', 'license'] as const;
 
 /**
  * Service responsible for discovering and importing custom themes
@@ -129,7 +129,7 @@ export class ThemeService {
 
 		const obj = data as Record<string, unknown>;
 
-		for (const field of MANIFEST_REQUIRED_FIELDS) {
+		for (const field of THEME_REQUIRED_FIELDS) {
 			if (typeof obj[field] !== 'string' || (obj[field] as string).trim().length === 0) {
 				throw new Error(`Theme manifest is missing required field: "${field}"`);
 			}
