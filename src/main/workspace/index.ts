@@ -13,6 +13,10 @@ export { ProjectWorkspaceService } from './project-workspace';
 
 // File watching
 export { DocumentsWatcherService } from './documents-watcher';
+export { FilesWatcherService } from './files-watcher';
+
+// Files service (resources/files/)
+export { FilesService } from './files-service';
 
 // Output file management
 export type {
