@@ -443,20 +443,6 @@ const Input: React.FC<InputProps> = ({
 						</AppDropdownMenuContent>
 					</AppDropdownMenu>
 
-					<AppButton
-						type="button"
-						variant="ghost"
-						size="icon"
-						className="h-7 w-7 rounded-full border border-border/80 bg-background/75 text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
-						disabled={disabled}
-						onClick={openFilePicker}
-						title={t('assistantNode.addImage', 'Add image')}
-						aria-label={t('assistantNode.addImage', 'Add image')}
-						aria-describedby={dropStatusId}
-					>
-						<ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
-
 					<div className="flex-1" />
 
 					<AppButton
