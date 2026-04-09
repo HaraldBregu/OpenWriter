@@ -320,66 +320,68 @@ export default function FilesPage(): React.ReactElement {
 				</AppPageHeaderItems>
 			</AppPageHeader>
 
-			<AppButtonGroup className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
-				<AppInputGroup className="flex-1">
-					<AppInputGroupAddon>
-						<AppInputGroupText>
-							<Search />
-						</AppInputGroupText>
-					</AppInputGroupAddon>
-					<AppInputGroupInput
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.target.value)}
-						placeholder="Start typing to search"
-					/>
-				</AppInputGroup>
-				<AppDropdownMenu>
-					<AppDropdownMenuTrigger asChild>
+			<div className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
+				<AppButtonGroup className="flex-1 gap-2">
+					<AppInputGroup>
+						<AppInputGroupAddon>
+							<AppInputGroupText>
+								<Search />
+							</AppInputGroupText>
+						</AppInputGroupAddon>
+						<AppInputGroupInput
+							value={searchQuery}
+							onChange={(e) => setSearchQuery(e.target.value)}
+							placeholder="Start typing to search"
+						/>
+					</AppInputGroup>
+					<AppDropdownMenu>
+						<AppDropdownMenuTrigger asChild>
+							<AppButton
+								variant={typeFilter === 'all' ? 'outline' : 'secondary'}
+								size="icon"
+								className="h-9 w-9"
+							>
+								<Filter className="h-4 w-4" />
+							</AppButton>
+						</AppDropdownMenuTrigger>
+						<AppDropdownMenuContent align="end">
+							<AppDropdownMenuRadioGroup
+								value={typeFilter}
+								onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+							>
+								{FILE_TYPE_FILTERS.map(({ value, label }) => (
+									<AppDropdownMenuRadioItem key={value} value={value}>
+										{label}
+									</AppDropdownMenuRadioItem>
+								))}
+							</AppDropdownMenuRadioGroup>
+						</AppDropdownMenuContent>
+					</AppDropdownMenu>
+
+					<AppButtonGroup>
 						<AppButton
-							variant={typeFilter === 'all' ? 'outline' : 'secondary'}
+							variant={viewMode === 'list' ? 'secondary' : 'outline'}
 							size="icon"
 							className="h-9 w-9"
+							onClick={() => setViewMode('list')}
+							aria-label="List view"
+							aria-pressed={viewMode === 'list'}
 						>
-							<Filter className="h-4 w-4" />
+							<List className="h-4 w-4" />
 						</AppButton>
-					</AppDropdownMenuTrigger>
-					<AppDropdownMenuContent align="end">
-						<AppDropdownMenuRadioGroup
-							value={typeFilter}
-							onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+						<AppButton
+							variant={viewMode === 'grid' ? 'secondary' : 'outline'}
+							size="icon"
+							className="h-9 w-9"
+							onClick={() => setViewMode('grid')}
+							aria-label="Grid view"
+							aria-pressed={viewMode === 'grid'}
 						>
-							{FILE_TYPE_FILTERS.map(({ value, label }) => (
-								<AppDropdownMenuRadioItem key={value} value={value}>
-									{label}
-								</AppDropdownMenuRadioItem>
-							))}
-						</AppDropdownMenuRadioGroup>
-					</AppDropdownMenuContent>
-				</AppDropdownMenu>
-
-				<AppButtonGroup>
-					<AppButton
-						variant={viewMode === 'list' ? 'secondary' : 'outline'}
-						size="icon"
-						className="h-9 w-9"
-						onClick={() => setViewMode('list')}
-						aria-label="List view"
-						aria-pressed={viewMode === 'list'}
-					>
-						<List className="h-4 w-4" />
-					</AppButton>
-					<AppButton
-						variant={viewMode === 'grid' ? 'secondary' : 'outline'}
-						size="icon"
-						className="h-9 w-9"
-						onClick={() => setViewMode('grid')}
-						aria-label="Grid view"
-						aria-pressed={viewMode === 'grid'}
-					>
-						<Grid3x3 className="h-4 w-4" />
-					</AppButton>
+							<Grid3x3 className="h-4 w-4" />
+						</AppButton>
+					</AppButtonGroup>
 				</AppButtonGroup>
-			</AppButtonGroup>
+			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
 				{isLoading && (
