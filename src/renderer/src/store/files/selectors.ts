@@ -11,8 +11,8 @@ export const selectFilesStatus = createSelector(selectFilesState, (state) => sta
 export const selectFilesError = createSelector(selectFilesState, (state) => state.error);
 
 export const selectFilesIsLoading = createSelector(
-  selectFilesStatus,
-  (status) => status === 'idle' || status === 'loading'
+	selectFilesStatus,
+	(status) => status === 'idle' || status === 'loading'
 );
 
 export const selectFilesInserting = createSelector(selectFilesState, (state) => state.inserting);

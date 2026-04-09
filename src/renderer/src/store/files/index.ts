@@ -9,20 +9,20 @@ export { loadFiles, removeFiles } from './actions';
 
 // Reducer, slice, and synchronous actions
 export {
-  filesSlice,
-  fileEntryRemoved,
-  insertFilesRequested,
-  insertFilesCompleted,
-  resetFiles,
+	filesSlice,
+	fileEntryRemoved,
+	insertFilesRequested,
+	insertFilesCompleted,
+	resetFiles,
 } from './reducer';
 export { default } from './reducer';
 
 // Selectors
 export {
-  selectFilesState,
-  selectFileEntries,
-  selectFilesStatus,
-  selectFilesError,
-  selectFilesIsLoading,
-  selectFilesInserting,
+	selectFilesState,
+	selectFileEntries,
+	selectFilesStatus,
+	selectFilesError,
+	selectFilesIsLoading,
+	selectFilesInserting,
 } from './selectors';

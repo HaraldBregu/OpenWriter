@@ -428,7 +428,8 @@ const workspace: WorkspaceApi = {
 	// Files (resources/files/)
 	// -------------------------------------------------------------------------
 	getFiles: () => typedInvokeUnwrap(WorkspaceChannels.getFiles),
-	insertFiles: (extensions?: string[]) => typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
+	insertFiles: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
 	deleteFileEntry: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteFileEntry, id),
 	onFilesChanged: (
 		callback: (event: {

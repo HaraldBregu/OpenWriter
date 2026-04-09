@@ -11,19 +11,19 @@ import { loadFiles } from './actions';
  * FilesWatcherService suppresses events for app-generated writes.
  */
 startAppListening({
-  actionCreator: insertFilesRequested,
-  effect: async (action, listenerApi) => {
-    const extensions = action.payload;
-    try {
-      const inserted = await window.workspace.insertFiles(extensions);
-      if (inserted.length > 0) {
-        await listenerApi.dispatch(loadFiles());
-      }
-    } catch {
-      // Swallow picker-cancellation and validation errors; the UI
-      // already shows an Electron dialog for validation failures.
-    } finally {
-      listenerApi.dispatch(insertFilesCompleted());
-    }
-  },
+	actionCreator: insertFilesRequested,
+	effect: async (action, listenerApi) => {
+		const extensions = action.payload;
+		try {
+			const inserted = await window.workspace.insertFiles(extensions);
+			if (inserted.length > 0) {
+				await listenerApi.dispatch(loadFiles());
+			}
+		} catch {
+			// Swallow picker-cancellation and validation errors; the UI
+			// already shows an Electron dialog for validation failures.
+		} finally {
+			listenerApi.dispatch(insertFilesCompleted());
+		}
+	},
 });
