@@ -335,8 +335,8 @@ export default function FilesPage(): React.ReactElement {
 
 				{!isLoading && entries.length > 0 && viewMode === 'list' && (
 					<table className="w-full text-left">
-						<thead className="sticky top-0 z-10 bg-background">
-							<tr className="border-b">
+						<thead className="sticky top-0 z-10 bg-background border-b">
+							<tr>
 								<th className="w-10 px-4 py-3">
 									<AppCheckbox
 										checked={someChecked ? 'indeterminate' : allChecked}
