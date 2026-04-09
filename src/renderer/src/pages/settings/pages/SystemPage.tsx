@@ -33,24 +33,11 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// App theme options
+// Default theme value
 // ---------------------------------------------------------------------------
 
-interface AppThemeOption {
-	readonly value: AppTheme;
-	readonly labelKey: string;
-}
-
-const APP_THEME_OPTIONS: readonly AppThemeOption[] = [
-	{ value: 'default', labelKey: 'settings.appTheme.default' },
-	{ value: 'aurora', labelKey: 'settings.appTheme.aurora' },
-	{ value: 'ember', labelKey: 'settings.appTheme.ember' },
-	{ value: 'ocean', labelKey: 'settings.appTheme.ocean' },
-	{ value: 'forest', labelKey: 'settings.appTheme.forest' },
-	{ value: 'lavender', labelKey: 'settings.appTheme.lavender' },
-	{ value: 'midnight', labelKey: 'settings.appTheme.midnight' },
-	{ value: 'sandstone', labelKey: 'settings.appTheme.sandstone' },
-] as const;
+const DEFAULT_THEME_VALUE = 'default';
+const DEFAULT_THEME_LABEL_KEY = 'settings.appTheme.default';
 
 // ---------------------------------------------------------------------------
 // Page
