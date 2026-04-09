@@ -51,6 +51,33 @@ export interface ThemeTokens {
 	readonly sidebarRing: string;
 }
 
+/**
+ * Full theme manifest stored on disk at {userData}/themes/{folderName}/theme.json.
+ * Contains metadata and color tokens for both light and dark variants.
+ */
+export interface CustomThemeManifest {
+	readonly name: string;
+	readonly description: string;
+	readonly author: string;
+	readonly version: string;
+	readonly license: string;
+	readonly light: ThemeTokens;
+	readonly dark: ThemeTokens;
+}
+
+/**
+ * Serializable theme metadata returned to the renderer over IPC.
+ * `id` is the folder name on disk (serves as a stable identifier).
+ */
+export interface CustomThemeInfo {
+	readonly id: string;
+	readonly name: string;
+	readonly description: string;
+	readonly author: string;
+	readonly version: string;
+	readonly license: string;
+}
+
 export type AppProviderName =
 	| 'OpenAI'
 	| 'Anthropic'
