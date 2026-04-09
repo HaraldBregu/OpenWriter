@@ -25,7 +25,7 @@ export function DeleteConfirmDialog({
 
 	return (
 		<AppAlertDialog>
-			<AppAlertDialogTrigger asChild>{trigger}</AppAlertDialogTrigger>
+			<AppAlertDialogTrigger render={trigger} />
 			<AppAlertDialogContent>
 				<AppAlertDialogHeader>
 					<AppAlertDialogTitle>{t('imageNode.deleteImage')}</AppAlertDialogTitle>
