@@ -169,6 +169,16 @@ export default function FilesPage(): React.ReactElement {
 		dispatch(insertFilesRequested(RESOURCE_SECTIONS.files.uploadExtensions));
 	}, [dispatch]);
 
+	const handleOpenFolder = useCallback(() => {
+		void window.workspace.openFilesFolder();
+	}, []);
+
+	const handleDelete = useCallback(() => {
+		if (selected.size === 0) return;
+		dispatch(removeFiles([...selected]));
+		setSelected(new Set());
+	}, [dispatch, selected]);
+
 	const handleToggleRow = useCallback((id: string) => {
 		setSelected((current) => {
 			const next = new Set(current);
