@@ -147,6 +147,8 @@ export interface AppApi {
 	importTheme: () => Promise<CustomThemeInfo | null>;
 	/** Get the full theme manifest (including light/dark tokens) for a custom theme by its folder ID. */
 	getCustomThemeTokens: (id: string) => Promise<Theme | null>;
+	/** Delete a custom theme by its folder ID. */
+	deleteTheme: (id: string) => Promise<void>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
