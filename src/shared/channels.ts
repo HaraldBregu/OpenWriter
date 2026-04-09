@@ -128,6 +128,12 @@ export const WorkspaceChannels = {
 	getDocumentContent: 'workspace:get-document-content',
 	updateDocumentContent: 'workspace:update-document-content',
 	documentContentChanged: 'workspace:document-content-changed',
+	// Files (resources/files/ sub-folder)
+	getFiles: 'files:get-all',
+	insertFiles: 'files:insert',
+	deleteFileEntry: 'files:delete',
+	filesChanged: 'files:changed',
+	filesWatcherError: 'files:watcher-error',
 } as const;
 
 export const WindowChannels = {
