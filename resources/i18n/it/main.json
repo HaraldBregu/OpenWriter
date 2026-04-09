@@ -143,7 +143,8 @@
 			"media": "Media",
 			"devices": "Dispositivi",
 			"tools": "Strumenti",
-			"system": "Sistema"
+			"system": "Sistema",
+			"themes": "Temi"
 		},
 		"sections": {
 			"permissions": "Autorizzazioni",
