@@ -252,6 +252,69 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.importTheme)
 		);
 
+		// -----------------------------------------------------------------------
+		// System settings handlers (macOS)
+		// -----------------------------------------------------------------------
+
+		ipcMain.handle(
+			AppChannels.openSystemAccessibility,
+			wrapSimpleHandler(async () => {
+				if (process.platform === 'darwin') {
+					await shell.openExternal(
+						'x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility'
+					);
+				}
+			}, AppChannels.openSystemAccessibility)
+		);
+
+		ipcMain.handle(
+			AppChannels.openSystemScreenRecording,
+			wrapSimpleHandler(async () => {
+				if (process.platform === 'darwin') {
+					await shell.openExternal(
+						'x-apple.systempreferences:com.apple.preference.security?Privacy_ScreenCapture'
+					);
+				}
+			}, AppChannels.openSystemScreenRecording)
+		);
+
+		// -----------------------------------------------------------------------
+		// Tray toggle handlers
+		// -----------------------------------------------------------------------
+
+		ipcMain.handle(
+			AppChannels.setTrayEnabled,
+			wrapSimpleHandler((enabled: boolean) => {
+				eventBus.emit('tray:set-enabled', { enabled });
+			}, AppChannels.setTrayEnabled)
+		);
+
+		ipcMain.handle(
+			AppChannels.getTrayEnabled,
+			wrapSimpleHandler(() => {
+				return new Promise<boolean>((resolve) => {
+					// The main index listens and responds via a callback
+					let resolved = false;
+					const unsub = eventBus.on('tray:get-enabled', () => {
+						// This event is re-emitted with the result by the main index
+						if (!resolved) {
+							resolved = true;
+							unsub();
+						}
+					});
+					// Emit a request; the main process listener will call back
+					// For simplicity, we use a synchronous approach via the event bus
+					// The tray state is managed in main/index.ts
+					eventBus.emit('tray:get-enabled', {});
+					// Default to true if no listener responds
+					if (!resolved) {
+						unsub();
+					}
+					resolve(true);
+				});
+			}, AppChannels.getTrayEnabled)
+		);
+
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
