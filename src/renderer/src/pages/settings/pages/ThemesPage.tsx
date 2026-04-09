@@ -50,6 +50,29 @@ const ThemesPage: React.FC = () => {
 		return () => clearTimeout(timer);
 	}, [feedback.status]);
 
+	useEffect(() => {
+		if (!confirmDeleteId) return;
+		const timer = setTimeout(() => setConfirmDeleteId(null), CONFIRM_AUTO_DISMISS_MS);
+		return () => clearTimeout(timer);
+	}, [confirmDeleteId]);
+
+	const handleDelete = useCallback(
+		async (id: string) => {
+			setConfirmDeleteId(null);
+			try {
+				if (customThemeId === id) {
+					setCustomTheme(null);
+				}
+				await window.app.deleteTheme(id);
+				await loadThemes();
+			} catch (err) {
+				const message = extractErrorMessage(err) || t('settings.themes.deleteErrorFallback');
+				setFeedback({ status: 'error', message });
+			}
+		},
+		[customThemeId, setCustomTheme, loadThemes, t]
+	);
+
 	const handleOpenFolder = useCallback(async () => {
 		await window.app.openThemesFolder();
 	}, []);
