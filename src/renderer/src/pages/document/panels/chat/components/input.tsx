@@ -178,11 +178,14 @@ const Input: React.FC<InputProps> = ({
 		[isImage]
 	);
 
-	const canSend = value.trim().length > 0 && !disabled;
+	const canSend = useMemo(() => value.trim().length > 0 && !disabled, [value, disabled]);
 
-	const currentAgent =
-		CONTENT_GENERATOR_AGENT_OPTIONS.find((o) => o.value === agentId) ??
-		CONTENT_GENERATOR_AGENT_OPTIONS[0];
+	const currentAgent = useMemo(
+		() =>
+			CONTENT_GENERATOR_AGENT_OPTIONS.find((o) => o.value === agentId) ??
+			CONTENT_GENERATOR_AGENT_OPTIONS[0],
+		[agentId]
+	);
 
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
