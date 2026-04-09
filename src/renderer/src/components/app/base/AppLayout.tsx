@@ -36,7 +36,7 @@ import {
 	AppSidebarHeader,
 	AppIconOpenWriter,
 	useSidebar,
-} from './app';
+} from '..';
 import {
 	Settings,
 	ChevronRight,
