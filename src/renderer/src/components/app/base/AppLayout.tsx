@@ -1,18 +1,18 @@
 import React, { useCallback, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useWorkspaceListener } from '../hooks/use-workspace-listener';
-import { useWorkspaceValidation } from '../hooks/use-workspace-validation';
-import { useCreateWriting } from '../hooks/use-create-writing';
-import { useAppDispatch, useAppSelector } from '../store';
-import { selectProjectName, selectWorkspaceName } from '../store/workspace/selectors';
-import { loadCurrentWorkspace, loadProjectName } from '../store/workspace/actions';
-import { selectAllDocuments } from '../store/documents/selectors';
-import { documentAdded } from '../store/documents/actions';
+import { useWorkspaceListener } from '../../../hooks/use-workspace-listener';
+import { useWorkspaceValidation } from '../../../hooks/use-workspace-validation';
+import { useCreateWriting } from '../../../hooks/use-create-writing';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { selectProjectName, selectWorkspaceName } from '../../../store/workspace/selectors';
+import { loadCurrentWorkspace, loadProjectName } from '../../../store/workspace/actions';
+import { selectAllDocuments } from '../../../store/documents/selectors';
+import { documentAdded } from '../../../store/documents/actions';
 import {
 	RESOURCE_SECTION_ORDER,
 	RESOURCE_SECTIONS,
-} from '../pages/resources/shared/resource-sections';
+} from '../../../pages/resources/shared/resource-sections';
 import { AppTitleBar } from './AppTitleBar';
 import {
 	AppCollapsible,
