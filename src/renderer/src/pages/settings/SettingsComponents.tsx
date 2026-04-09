@@ -26,7 +26,12 @@ interface SettingRowProps {
 	readonly labelFor?: string;
 }
 
-export const SettingRow: React.FC<SettingRowProps> = ({ label, description, children, labelFor }) => (
+export const SettingRow: React.FC<SettingRowProps> = ({
+	label,
+	description,
+	children,
+	labelFor,
+}) => (
 	<div className="flex items-center justify-between py-3 border-b last:border-b-0">
 		<div className="min-w-0 mr-4">
 			{labelFor ? (
