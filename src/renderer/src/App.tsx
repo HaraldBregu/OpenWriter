@@ -258,6 +258,14 @@ const App: React.FC = () => {
 															</Suspense>
 														}
 													/>
+													<Route
+														path="developer"
+														element={
+															<Suspense fallback={<AppLoadingSkeleton />}>
+																<DeveloperPage />
+															</Suspense>
+														}
+													/>
 												</Route>
 												<Route
 													path="/content/:id"
