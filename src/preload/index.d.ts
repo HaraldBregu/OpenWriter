@@ -104,6 +104,7 @@ export type {
 	AppStartupInfo,
 	ThemeMode,
 	CustomThemeInfo,
+	CustomThemeManifest,
 };
 
 // ---------------------------------------------------------------------------
