@@ -232,7 +232,7 @@ const Input: React.FC<InputProps> = ({
 					<div className="flex items-center gap-2 overflow-x-auto px-3.5 pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 						{previewUrls.map((url, index) => (
 							<div
-								key={`${files[index]?.name ?? 'image'}-${index}`}
+								key={url}
 								className="group/thumb relative shrink-0"
 							>
 								<div className="h-14 w-14 overflow-hidden rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]">
