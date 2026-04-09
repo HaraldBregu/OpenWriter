@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, ListTree, Pencil, Trash2, Upload, type LucideIcon } from 'lucide-react';
+import { FolderOpen, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
 import { AppButton, AppPageHeader, AppPageHeaderItems, AppPageHeaderTitle } from '@/components/app';
 
 interface ResourceSectionHeaderProps {
