@@ -655,6 +655,7 @@ export function useAppState(): AppState {
 export interface AppActionsContextValue {
 	setTheme: (theme: ThemeMode) => void;
 	setAppTheme: (theme: AppTheme) => void;
+	setCustomTheme: (id: string | null) => void;
 	setLanguage: (language: AppLanguage) => void;
 	setUser: (user: User | null) => void;
 	updateUIPreferences: (preferences: Partial<UIPreferences>) => void;
