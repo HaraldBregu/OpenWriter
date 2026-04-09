@@ -197,8 +197,13 @@ export default function FilesPage(): React.ReactElement {
 
 	const handleDelete = useCallback(() => {
 		if (selected.size === 0) return;
+		setConfirmOpen(true);
+	}, [selected]);
+
+	const handleConfirmDelete = useCallback(() => {
 		dispatch(removeFiles([...selected]));
 		setSelected(new Set());
+		setConfirmOpen(false);
 	}, [dispatch, selected]);
 
 	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
