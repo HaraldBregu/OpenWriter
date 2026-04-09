@@ -129,6 +129,12 @@ export const WorkspaceChannels = {
 	getDocumentContent: 'workspace:get-document-content',
 	updateDocumentContent: 'workspace:update-document-content',
 	documentContentChanged: 'workspace:document-content-changed',
+	// Contents (resources/content/ sub-folder)
+	getContents: 'contents:get-all',
+	insertContents: 'contents:insert',
+	deleteContent: 'contents:delete',
+	contentsChanged: 'contents:changed',
+	contentsWatcherError: 'contents:watcher-error',
 	// Files (resources/files/ sub-folder)
 	getFiles: 'files:get-all',
 	insertFiles: 'files:insert',
