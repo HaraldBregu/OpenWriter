@@ -453,6 +453,19 @@ export class Workspace implements Disposable {
 	// Private helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Ensure all resource sub-folders exist under the workspace.
+	 * Called when a workspace is opened or set.
+	 */
+	private async ensureResourceSubfolders(workspacePath: string): Promise<void> {
+		const resourcesDir = path.join(workspacePath, RESOURCES_DIR);
+		for (const subfolder of RESOURCE_SUBFOLDERS) {
+			const subDir = path.join(resourcesDir, subfolder);
+			await fsPromises.mkdir(subDir, { recursive: true });
+		}
+		this.logger.info('Workspace', `Ensured resource sub-folders at: ${resourcesDir}`);
+	}
+
 	private requireWorkspace(): string {
 		const current = this.workspace.getCurrent();
 		if (!current) {
