@@ -28,6 +28,12 @@ type: project
 - Live dimension readouts: `aria-live="polite"` + `aria-atomic="true"`
 - `ImageEditor` wrapper: `role="dialog"` + `aria-modal="true"` + `aria-label`
 - Toolbar groups: `role="group"` or `role="toolbar"` to segment semantically
+- Image thumbnail strips: `role="list"` on wrapper, `role="listitem"` on each thumb + "add" button
+- Remove buttons in thumbnail strips must be visible on focus-within (`group-focus-within/thumb:opacity-100`) not only on hover — keyboard users cannot trigger hover
+- Dropdown triggers whose visible label already conveys the current selection must still expose a descriptive `aria-label` (e.g. `Agent: {{agent}}`, `Model: {{model}}`), and the visible text span gets `aria-hidden="true"` to prevent double-reading
+- Selected items in menus use `aria-current="true"` (not `aria-selected`) when inside dropdown menus — `aria-selected` is for listbox/grid patterns
+- Drop zones that accept file input: add a polite `role="status"` live region (via `useId`) that announces the attachment count after each add/remove; link the drop-zone button to it with `aria-describedby`
+- Decorative icon containers inside interactive elements get `aria-hidden="true"` to prevent redundant announcements
 
 ## Animation Conventions
 
