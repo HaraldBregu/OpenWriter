@@ -391,14 +391,29 @@ export default function FilesPage(): React.ReactElement {
 										aria-label="Select all"
 									/>
 								</th>
-								<th className="px-4 py-3 text-xs font-medium text-muted-foreground">Name</th>
-								<th className="whitespace-nowrap px-4 py-3 text-xs font-medium text-muted-foreground">
-									Added
-								</th>
-								<th className="px-4 py-3 text-xs font-medium text-muted-foreground">Type</th>
-								<th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">
-									File size
-								</th>
+								{(
+									[
+										{ key: 'name', label: 'Name', className: 'px-4 py-3' },
+										{ key: 'createdAt', label: 'Added', className: 'whitespace-nowrap px-4 py-3' },
+										{ key: 'mimeType', label: 'Type', className: 'px-4 py-3' },
+										{
+											key: 'size',
+											label: 'File size',
+											className: 'px-4 py-3 text-right',
+										},
+									] as { key: SortKey; label: string; className: string }[]
+								).map(({ key, label, className }) => (
+									<th key={key} className={cn(className, 'text-xs font-medium text-muted-foreground')}>
+										<button
+											type="button"
+											className="inline-flex items-center transition-colors hover:text-foreground"
+											onClick={() => handleSort(key)}
+										>
+											{label}
+											<SortIcon active={sortKey === key} direction={sortDirection} />
+										</button>
+									</th>
+								))}
 							</tr>
 						</thead>
 						<tbody>
