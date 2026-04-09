@@ -116,6 +116,14 @@ const Input: React.FC<InputProps> = ({
 		setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
 	}, []);
 
+	const handleRemoveClick = useCallback(
+		(e: React.MouseEvent<HTMLButtonElement>) => {
+			const index = Number(e.currentTarget.dataset.index);
+			removeFile(index);
+		},
+		[removeFile]
+	);
+
 	const handleFileInputChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const selected = e.target.files;
