@@ -7,9 +7,9 @@ import {
 	AppSelectContent,
 	AppSelectItem,
 } from '@/components/app';
-import { SectionHeader, SettingRow, ThemeSegmentControl } from './components';
-import { useThemeMode, useAppTheme, useLanguageMode, useAppActions } from '../../contexts';
-import type { ThemeMode, AppTheme, AppLanguage } from '../../contexts';
+import { SectionHeader, SettingRow, ThemeSegmentControl } from '../components';
+import { useThemeMode, useAppTheme, useLanguageMode, useAppActions } from '../../../contexts';
+import type { ThemeMode, AppTheme, AppLanguage } from '../../../contexts';
 
 // ---------------------------------------------------------------------------
 // Language options
