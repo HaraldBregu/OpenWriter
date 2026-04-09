@@ -35,8 +35,6 @@ export interface TitleBarProps {
 	onNavigateBack?: () => void;
 	/** Called when the forward navigation button is clicked */
 	onNavigateForward?: () => void;
-	/** Extra Tailwind classes applied to the root element */
-	className?: string;
 }
 
 export const TitleBar = React.memo(function TitleBar({
@@ -44,7 +42,6 @@ export const TitleBar = React.memo(function TitleBar({
 	onToggleSidebar,
 	onNavigateBack,
 	onNavigateForward,
-	className = '',
 }: TitleBarProps) {
 	const { t } = useTranslation();
 	const [isMaximized, setIsMaximized] = useState(false);
@@ -84,7 +81,7 @@ export const TitleBar = React.memo(function TitleBar({
 
 	return (
 		<div
-			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border backdrop-blur-md ${className}`}
+			className={`relative z-20 flex h-12 shrink-0 items-center select-none border-b border-border backdrop-blur-md`}
 			style={
 				{
 					WebkitAppRegion: 'drag',
