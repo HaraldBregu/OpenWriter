@@ -81,6 +81,7 @@ export function ImageEditor({
 		applyCrop,
 		resetCrop,
 		setCropRegion,
+		applyResize,
 		applyAI,
 		undo,
 		canUndo,
