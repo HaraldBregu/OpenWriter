@@ -417,20 +417,20 @@ export default function ContentPage(): React.ReactElement {
 				)}
 
 				{!loading && !error && resources.length > 0 && (
-					<div className="flex-1 min-h-0 overflow-auto">
-						<table className="w-full text-left">
-							<thead className="sticky top-0 z-10 bg-background border-b">
-								<tr>
+					<div className="flex-1 min-h-0 overflow-auto rounded-md border">
+						<AppTable>
+							<AppTableHeader className="sticky top-0 z-10 bg-muted">
+								<AppTableRow>
 									{editing && (
-										<th className="w-10 px-4 py-3">
+										<AppTableHead className="w-10">
 											<AppCheckbox
 												checked={someChecked ? 'indeterminate' : allChecked}
 												onCheckedChange={handleToggleAll}
 												aria-label="Select all"
 											/>
-										</th>
+										</AppTableHead>
 									)}
-									<th className="px-4 py-3 text-xs font-medium text-muted-foreground">
+									<AppTableHead>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -439,8 +439,8 @@ export default function ContentPage(): React.ReactElement {
 											{t('library.name')}
 											<SortIcon active={sortKey === 'name'} direction={sortDirection} />
 										</button>
-									</th>
-									<th className="px-4 py-3 text-xs font-medium text-muted-foreground">
+									</AppTableHead>
+									<AppTableHead>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -449,8 +449,8 @@ export default function ContentPage(): React.ReactElement {
 											{t('library.type')}
 											<SortIcon active={sortKey === 'mimeType'} direction={sortDirection} />
 										</button>
-									</th>
-									<th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground">
+									</AppTableHead>
+									<AppTableHead className="text-right">
 										<button
 											type="button"
 											className="inline-flex items-center justify-end w-full transition-colors hover:text-foreground"
@@ -459,8 +459,8 @@ export default function ContentPage(): React.ReactElement {
 											{t('library.size')}
 											<SortIcon active={sortKey === 'size'} direction={sortDirection} />
 										</button>
-									</th>
-									<th className="px-4 py-3 text-xs font-medium text-muted-foreground">
+									</AppTableHead>
+									<AppTableHead>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -469,8 +469,8 @@ export default function ContentPage(): React.ReactElement {
 											{t('library.imported')}
 											<SortIcon active={sortKey === 'importedAt'} direction={sortDirection} />
 										</button>
-									</th>
-									<th className="px-4 py-3 text-xs font-medium text-muted-foreground">
+									</AppTableHead>
+									<AppTableHead>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -479,20 +479,20 @@ export default function ContentPage(): React.ReactElement {
 											{t('library.lastModified')}
 											<SortIcon active={sortKey === 'lastModified'} direction={sortDirection} />
 										</button>
-									</th>
-									<th className="w-10 px-4 py-3" />
-								</tr>
-							</thead>
-							<tbody>
+									</AppTableHead>
+									<AppTableHead className="w-[50px]" />
+								</AppTableRow>
+							</AppTableHeader>
+							<AppTableBody>
 								{sortedResources.length === 0 ? (
-									<tr>
-										<td
+									<AppTableRow>
+										<AppTableCell
 											colSpan={editing ? 7 : 6}
 											className="px-4 py-8 text-center text-sm text-muted-foreground"
 										>
 											No resources match your search.
-										</td>
-									</tr>
+										</AppTableCell>
+									</AppTableRow>
 								) : (
 									sortedResources.map((resource) => (
 										<ResourceRow
@@ -505,8 +505,8 @@ export default function ContentPage(): React.ReactElement {
 										/>
 									))
 								)}
-							</tbody>
-						</table>
+							</AppTableBody>
+						</AppTable>
 					</div>
 				)}
 
