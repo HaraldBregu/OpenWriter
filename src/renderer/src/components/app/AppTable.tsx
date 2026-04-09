@@ -23,9 +23,13 @@ AppTable.displayName = 'AppTable';
 const AppTableHeader = React.memo(
 	React.forwardRef<
 		React.ElementRef<typeof TableHeader>,
-		React.ComponentPropsWithoutRef<typeof TableHeader>
-	>(({ className, ...props }, ref) => (
-		<TableHeader ref={ref} className={cn('bg-muted/50', className)} {...props} />
+		React.ComponentPropsWithoutRef<typeof TableHeader> & { sticky?: boolean }
+	>(({ className, sticky, ...props }, ref) => (
+		<TableHeader
+			ref={ref}
+			className={cn('bg-muted/50', sticky && 'sticky top-0 z-10', className)}
+			{...props}
+		/>
 	))
 );
 AppTableHeader.displayName = 'AppTableHeader';
