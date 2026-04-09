@@ -403,4 +403,7 @@ export interface EventChannelMap {
 		data: { documentId: string; content: string };
 	};
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
+	// ---- Files watcher events ----
+	[WorkspaceChannels.filesChanged]: { data: FileEntryChangeEvent };
+	[WorkspaceChannels.filesWatcherError]: { data: WatcherError };
 }
