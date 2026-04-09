@@ -62,7 +62,7 @@ const AppButton = React.memo(
 					data-slot="button"
 					ref={ref}
 					className={cn(
-						buttonVariants({ variant, size, rounded }),
+						buttonVariants({ variant, size }),
 						'transition-colors focus-visible:ring-ring',
 						className
 					)}
