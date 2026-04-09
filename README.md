@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="resources/svgs/app_logo_readme.svg" alt="OctoWriter" width="128" height="128" />
+  <img src="resources/squid.png" alt="SquidWriter" width="128" height="128" />
 </p>
 
-<h1 align="center">🦑 OctoWriter</h1>
+<h1 align="center">🦑 SquidWriter</h1>
 
 <p align="center">
-  OctoWriter - a personal writer assistant.
+  SquidWriter - a personal writer assistant.
 </p>
 
 ## About
