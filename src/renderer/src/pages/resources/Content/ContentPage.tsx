@@ -217,7 +217,7 @@ export default function ContentPage(): React.ReactElement {
 
 		setRemoving(true);
 		try {
-			await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
+			await Promise.all(ids.map((id) => window.workspace.deleteContent(id)));
 			await loadContent();
 			setSelected(new Set());
 		} finally {
