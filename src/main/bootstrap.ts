@@ -78,6 +78,9 @@ export function bootstrapServices(): BootstrapResult {
 	const logger = new LoggerService(eventBus);
 	container.register('logger', logger);
 
+	// Theme management service
+	container.register('themeService', new ThemeService(logger));
+
 	// Create WindowFactory with logger access
 	const windowFactory = new WindowFactory(logger);
 	container.register('windowFactory', windowFactory);
