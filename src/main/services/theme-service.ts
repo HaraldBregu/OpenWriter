@@ -60,15 +60,15 @@ export class ThemeService {
 			try {
 				const raw = fs.readFileSync(themePath, 'utf-8');
 				const parsed: unknown = JSON.parse(raw);
-				const manifest = this.validateTheme(parsed);
+				const theme = this.validateTheme(parsed);
 
 				themes.push({
 					id: entry.name,
-					name: manifest.name,
-					description: manifest.description,
-					author: manifest.author,
-					version: manifest.version,
-					license: manifest.license,
+					name: theme.name,
+					description: theme.description,
+					author: theme.author,
+					version: theme.version,
+					license: theme.license,
 				});
 			} catch (err) {
 				this.logger.warn('ThemeService', `Skipping invalid theme "${entry.name}"`, err);
