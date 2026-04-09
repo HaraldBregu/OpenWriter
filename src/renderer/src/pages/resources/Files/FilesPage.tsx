@@ -15,6 +15,34 @@ import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
 
 type ViewMode = 'list' | 'grid';
+type FileTypeFilter = 'all' | 'image' | 'pdf' | 'text' | 'other';
+
+const FILE_TYPE_FILTERS: { value: FileTypeFilter; label: string }[] = [
+	{ value: 'all', label: 'All' },
+	{ value: 'image', label: 'Images' },
+	{ value: 'pdf', label: 'PDF' },
+	{ value: 'text', label: 'Text' },
+	{ value: 'other', label: 'Other' },
+];
+
+function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
+	switch (filter) {
+		case 'image':
+			return mimeType.startsWith(MIME_PREFIX_IMAGE);
+		case 'pdf':
+			return mimeType === MIME_TYPE_PDF;
+		case 'text':
+			return mimeType.startsWith(MIME_PREFIX_TEXT) && mimeType !== MIME_TYPE_PDF;
+		case 'other':
+			return (
+				!mimeType.startsWith(MIME_PREFIX_IMAGE) &&
+				!mimeType.startsWith(MIME_PREFIX_TEXT) &&
+				mimeType !== MIME_TYPE_PDF
+			);
+		default:
+			return true;
+	}
+}
 
 const MIME_PREFIX_IMAGE = 'image/';
 const MIME_PREFIX_TEXT = 'text/';
