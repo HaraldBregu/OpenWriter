@@ -150,6 +150,16 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.openFilesFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const filesDir = container
+					.get<FilesService>('filesService')
+					.getFilesDir(this.mgr(event, container).getCurrentWorkspacePath());
+				await shell.openPath(filesDir);
+			}, WorkspaceChannels.openFilesFolder)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.openDocumentFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string) => {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
