@@ -6,6 +6,8 @@ import {
 	Workspace,
 	WorkspaceMetadataService,
 	DocumentsWatcherService,
+	FilesWatcherService,
+	FilesService,
 	OutputFilesService,
 	ProjectWorkspaceService,
 } from '../workspace';
