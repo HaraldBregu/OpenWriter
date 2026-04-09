@@ -317,6 +317,34 @@ export interface ResourceInfo {
 	lastModified: number;
 }
 
+// ---- Files (workspace/resources/files/) ------------------------------------
+
+export interface FileEntry {
+	/** Unique identifier — the file's basename within resources/files/ */
+	id: string;
+	/** Display name (basename) */
+	name: string;
+	/** Absolute path on disk */
+	path: string;
+	/** Path relative to the workspace resources/files/ folder */
+	relativePath: string;
+	/** Size in bytes */
+	size: number;
+	/** Detected MIME type */
+	mimeType: string;
+	/** Timestamp (ms) when the file was first imported / detected */
+	createdAt: number;
+	/** Timestamp (ms) of the last modification on disk */
+	modifiedAt: number;
+}
+
+export interface FileEntryChangeEvent {
+	type: 'added' | 'changed' | 'removed';
+	fileId: string;
+	filePath: string;
+	timestamp: number;
+}
+
 export interface DocumentFileChangeEvent {
 	type: 'added' | 'changed' | 'removed';
 	fileId: string;
