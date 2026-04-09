@@ -54,6 +54,7 @@ import type {
 	IpcResult,
 	ServiceProvider,
 	ThemeMode,
+	CustomThemeInfo,
 } from '../shared/types';
 
 // ---------------------------------------------------------------------------
