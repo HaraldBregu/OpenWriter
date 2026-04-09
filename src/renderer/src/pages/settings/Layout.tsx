@@ -20,7 +20,7 @@ const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
 const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-accent/50';
 
-export function SettingsLayout(): React.JSX.Element {
+export function Layout(): React.JSX.Element {
 	const { t } = useTranslation();
 	useLanguage();
 
