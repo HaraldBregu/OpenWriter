@@ -272,7 +272,9 @@
 			"openFolder": "Apri Cartella Temi",
 			"import": "Importa Tema",
 			"installed": "Temi Installati",
-			"noThemes": "Nessun tema personalizzato installato. Importa una cartella tema o inseriscine una nella directory temi."
+			"noThemes": "Nessun tema personalizzato installato. Importa una cartella tema o inseriscine una nella directory temi.",
+			"activate": "Attiva",
+			"active": "Attivo"
 		}
 	},
 	"dialogs": {
