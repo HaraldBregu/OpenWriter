@@ -44,6 +44,9 @@ const DATA_DIR = 'data';
 const RESOURCES_DIR = 'resources';
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
+/** Sub-folders to auto-create under resources/ when a workspace is opened. */
+const RESOURCE_SUBFOLDERS = ['files', 'data', 'content', 'images'] as const;
+
 /**
  * Workspace is a Facade over all workspace domain services.
  *
