@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="resources/squid.png" alt="SquidWriter" width="128" height="128" />
+  <img src="resources/squid.png" alt="SquidWriter" width="256" height="256" />
 </p>
 
 <h1 align="center">🦑 SquidWriter</h1>
