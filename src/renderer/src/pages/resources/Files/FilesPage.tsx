@@ -330,6 +330,29 @@ export default function FilesPage(): React.ReactElement {
 						)}
 					/>
 				</div>
+				<AppDropdownMenu>
+					<AppDropdownMenuTrigger asChild>
+						<AppButton
+							variant={typeFilter === 'all' ? 'outline' : 'secondary'}
+							size="icon"
+							className="h-9 w-9"
+						>
+							<Filter className="h-4 w-4" />
+						</AppButton>
+					</AppDropdownMenuTrigger>
+					<AppDropdownMenuContent align="end">
+						<AppDropdownMenuRadioGroup
+							value={typeFilter}
+							onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+						>
+							{FILE_TYPE_FILTERS.map(({ value, label }) => (
+								<AppDropdownMenuRadioItem key={value} value={value}>
+									{label}
+								</AppDropdownMenuRadioItem>
+							))}
+						</AppDropdownMenuRadioGroup>
+					</AppDropdownMenuContent>
+				</AppDropdownMenu>
 				<div className="flex items-center rounded-md border border-input">
 					<button
 						type="button"
@@ -360,24 +383,6 @@ export default function FilesPage(): React.ReactElement {
 						<Grid3x3 className="h-4 w-4" />
 					</button>
 				</div>
-			</div>
-
-			<div className="flex shrink-0 items-center gap-1.5 border-b px-6 py-2">
-				{FILE_TYPE_FILTERS.map(({ value, label }) => (
-					<button
-						key={value}
-						type="button"
-						onClick={() => setTypeFilter(value)}
-						className={cn(
-							'rounded-full border px-3 py-1 text-xs transition-colors',
-							typeFilter === value
-								? 'border-foreground bg-foreground text-background'
-								: 'border-input text-muted-foreground hover:bg-accent/50'
-						)}
-					>
-						{label}
-					</button>
-				))}
 			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
