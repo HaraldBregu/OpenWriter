@@ -135,7 +135,7 @@ export function useAssistantTask(
 	);
 
 	const handleContinueWithAssistant = useCallback(
-		(before: string, after: string, cursorPos: number, closeMenu: () => void) => {
+		(before: string, after: string, _cursorPos: number, closeMenu: () => void) => {
 			if (assistantIsRunning) {
 				closeMenu();
 				return;
