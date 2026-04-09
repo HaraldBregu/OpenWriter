@@ -264,6 +264,15 @@
 			"temperature": "Temperatura",
 			"thinkingMode": "Modalità Ragionamento",
 			"thinkingModeDescription": "Abilita il ragionamento esteso per attività complesse"
+		},
+		"themes": {
+			"title": "Temi",
+			"description": "Installa e gestisci temi di colore personalizzati per l'applicazione.",
+			"actions": "Azioni",
+			"openFolder": "Apri Cartella Temi",
+			"import": "Importa Tema",
+			"installed": "Temi Installati",
+			"noThemes": "Nessun tema personalizzato installato. Importa una cartella tema o inseriscine una nella directory temi."
 		}
 	},
 	"dialogs": {
