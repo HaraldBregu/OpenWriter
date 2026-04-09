@@ -322,7 +322,13 @@ export default function FilesPage(): React.ReactElement {
 					<table className="w-full text-left">
 						<thead>
 							<tr className="border-b">
-								<th className="w-10 px-4 py-3" />
+								<th className="w-10 px-4 py-3">
+									<AppCheckbox
+										checked={someChecked ? 'indeterminate' : allChecked}
+										onCheckedChange={handleToggleAll}
+										aria-label="Select all"
+									/>
+								</th>
 								<th className="px-4 py-3 text-xs font-medium text-muted-foreground">Name</th>
 								<th className="whitespace-nowrap px-4 py-3 text-xs font-medium text-muted-foreground">
 									Added
