@@ -285,10 +285,10 @@ export default function FilesPage(): React.ReactElement {
 	}, []);
 
 	return (
-		<div className="flex h-full flex-col">
-			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
-				<h1 className="text-xl font-bold">Files</h1>
-				<div className="flex items-center gap-2">
+		<AppPageContainer>
+			<AppPageHeader>
+				<AppPageHeaderTitle>Files</AppPageHeaderTitle>
+				<AppPageHeaderItems>
 					{selected.size > 0 && (
 						<AppButton variant="destructive" size="sm" onClick={handleDelete}>
 							<Trash2 />
@@ -306,8 +306,8 @@ export default function FilesPage(): React.ReactElement {
 						<Upload />
 						Upload
 					</AppButton>
-				</div>
-			</div>
+				</AppPageHeaderItems>
+			</AppPageHeader>
 
 			<div className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
 				<div className="relative flex-1">
