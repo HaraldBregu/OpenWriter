@@ -1,7 +1,9 @@
-import React from 'react';
+import { mergeProps } from '@base-ui/react/merge-props';
+import { useRender } from '@base-ui/react/use-render';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { ButtonGroupSeparator, ButtonGroupText } from '../ui/ButtonGroup';
+
 import { cn } from '@/lib/utils';
+import { AppSeparator } from './AppSeparator';
 
 const buttonGroupVariants = cva(
 	"flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
@@ -20,41 +22,57 @@ const buttonGroupVariants = cva(
 	}
 );
 
-const AppButtonGroup = React.memo(
-	React.forwardRef<
-		HTMLDivElement,
-		React.ComponentPropsWithoutRef<'div'> & VariantProps<typeof buttonGroupVariants>
-	>(({ className, orientation, ...props }, ref) => (
+function AppButtonGroup({
+	className,
+	orientation,
+	...props
+}: React.ComponentProps<'div'> & VariantProps<typeof buttonGroupVariants>) {
+	return (
 		<div
-			ref={ref}
 			role="group"
 			data-slot="button-group"
 			data-orientation={orientation}
 			className={cn(buttonGroupVariants({ orientation }), className)}
 			{...props}
 		/>
-	))
-);
-AppButtonGroup.displayName = 'AppButtonGroup';
+	);
+}
 
-const AppButtonGroupSeparator = React.memo(
-	React.forwardRef<
-		React.ElementRef<typeof ButtonGroupSeparator>,
-		React.ComponentPropsWithoutRef<typeof ButtonGroupSeparator>
-	>(({ className, ...props }, ref) => (
-		<ButtonGroupSeparator ref={ref} className={cn(className)} {...props} />
-	))
-);
-AppButtonGroupSeparator.displayName = 'AppButtonGroupSeparator';
+function AppButtonGroupText({ className, render, ...props }: useRender.ComponentProps<'div'>) {
+	return useRender({
+		defaultTagName: 'div',
+		props: mergeProps<'div'>(
+			{
+				className: cn(
+					"flex items-center gap-2 rounded-lg border bg-muted px-2.5 text-sm font-medium [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4",
+					className
+				),
+			},
+			props
+		),
+		render,
+		state: {
+			slot: 'button-group-text',
+		},
+	});
+}
 
-const AppButtonGroupText = React.memo(
-	React.forwardRef<
-		React.ElementRef<typeof ButtonGroupText>,
-		React.ComponentPropsWithoutRef<typeof ButtonGroupText>
-	>(({ className, ...props }, ref) => (
-		<ButtonGroupText ref={ref} className={cn(className)} {...props} />
-	))
-);
-AppButtonGroupText.displayName = 'AppButtonGroupText';
+function AppButtonGroupSeparator({
+	className,
+	orientation = 'vertical',
+	...props
+}: React.ComponentProps<typeof AppSeparator>) {
+	return (
+		<AppSeparator
+			data-slot="button-group-separator"
+			orientation={orientation}
+			className={cn(
+				'relative self-stretch bg-input data-horizontal:mx-px data-horizontal:w-auto data-vertical:my-px data-vertical:h-auto',
+				className
+			)}
+			{...props}
+		/>
+	);
+}
 
-export { AppButtonGroup, AppButtonGroupSeparator, AppButtonGroupText };
+export { AppButtonGroup, AppButtonGroupSeparator, AppButtonGroupText, buttonGroupVariants };

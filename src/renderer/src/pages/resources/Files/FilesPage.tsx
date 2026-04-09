@@ -58,8 +58,6 @@ import {
 } from '@/store/files';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
-import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import { Button } from '@/components/ui/Button';
 
 type ViewMode = 'list' | 'grid';
 type FileTypeFilter = 'all' | 'image' | 'pdf' | 'text' | 'other';
@@ -336,12 +334,12 @@ export default function FilesPage(): React.ReactElement {
 							placeholder="Start typing to search"
 						/>
 					</AppInputGroup>
+
 					<AppDropdownMenu>
-						<AppDropdownMenuTrigger asChild>
+						<AppDropdownMenuTrigger>
 							<AppButton
 								variant={typeFilter === 'all' ? 'outline' : 'secondary'}
-								size="icon"
-								className="h-9 w-9"
+								size="lg"
 							>
 								<Filter className="h-4 w-4" />
 							</AppButton>
@@ -363,8 +361,7 @@ export default function FilesPage(): React.ReactElement {
 					<AppButtonGroup>
 						<AppButton
 							variant={viewMode === 'list' ? 'secondary' : 'outline'}
-							size="icon"
-							className="h-9 w-9"
+							size="lg"
 							onClick={() => setViewMode('list')}
 							aria-label="List view"
 							aria-pressed={viewMode === 'list'}
@@ -373,8 +370,7 @@ export default function FilesPage(): React.ReactElement {
 						</AppButton>
 						<AppButton
 							variant={viewMode === 'grid' ? 'secondary' : 'outline'}
-							size="icon"
-							className="h-9 w-9"
+							size="lg"
 							onClick={() => setViewMode('grid')}
 							aria-label="Grid view"
 							aria-pressed={viewMode === 'grid'}
@@ -383,24 +379,6 @@ export default function FilesPage(): React.ReactElement {
 						</AppButton>
 					</AppButtonGroup>
 				</AppButtonGroup>
-
-				<ButtonGroup>
-					<Button variant="outline" size="sm">
-						<List className="h-4 w-4" />
-					</Button>
-					<AppButton
-						variant={viewMode === 'list' ? 'secondary' : 'outline'}
-						size="icon"
-						onClick={() => setViewMode('list')}
-						aria-label="List view"
-						aria-pressed={viewMode === 'list'}
-					>
-						<List className="h-4 w-4" />
-					</AppButton>
-					<Button variant="outline" size="sm">
-						<List className="h-4 w-4" />
-					</Button>
-				</ButtonGroup>
 			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
