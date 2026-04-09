@@ -124,5 +124,8 @@
     ],
     "ask": []
   },
-  "hooks": {}
+  "hooks": {},
+  "enabledPlugins": {
+    "security-guidance@claude-plugins-official": true
+  }
 }
