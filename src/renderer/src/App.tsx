@@ -134,13 +134,13 @@ const App: React.FC = () => {
 	}, []);
 
 	useEffect(() => {
-		if (startupInfo) {
-			const splashTimer = setTimeout(() => {
-				setShowSplash(false);
-			}, 3000);
+		if (!startupInfo) return;
 
-			return () => clearTimeout(splashTimer);
-		}
+		const splashTimer = setTimeout(() => {
+			setShowSplash(false);
+		}, 3000);
+
+		return () => clearTimeout(splashTimer);
 	}, [startupInfo]);
 
 	if (!startupInfo) {
