@@ -330,7 +330,7 @@ export default function ContentPage(): React.ReactElement {
 				{!loading && !error && resources.length > 0 && (
 					<div className="flex-1 min-h-0 overflow-auto rounded-md border">
 						<AppTable>
-							<AppTableHeader className="sticky top-0 z-10 bg-muted">
+							<AppTableHeader sticky>
 								<AppTableRow>
 									{editing && (
 										<AppTableHead className="w-10">
