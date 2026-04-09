@@ -9,6 +9,7 @@ import {
 	ListTree,
 	Loader2,
 	Pencil,
+	Search,
 	Trash2,
 	Upload,
 } from 'lucide-react';
@@ -58,7 +59,9 @@ import {
 import { formatBytes, formatDate } from '../shared/resource-utils';
 
 const ResourcePreviewSheet = lazy(() =>
-	import('../shared/ResourcePreviewSheet').then((module) => ({ default: module.ResourcePreviewSheet }))
+	import('../shared/ResourcePreviewSheet').then((module) => ({
+		default: module.ResourcePreviewSheet,
+	}))
 );
 
 const RESOURCES_DIR = 'resources';
@@ -318,12 +321,7 @@ export default function ContentPage(): React.ReactElement {
 						<Upload className="h-3.5 w-3.5" />
 					</AppButton>
 					{editing && selected.size > 0 && (
-						<AppButton
-							size="sm"
-							variant="destructive"
-							disabled={removing}
-							onClick={handleDelete}
-						>
+						<AppButton size="sm" variant="destructive" disabled={removing} onClick={handleDelete}>
 							<Trash2 className="mr-1.5 h-3.5 w-3.5" />
 							{t('resources.removeWithCount', { count: selected.size })}
 						</AppButton>
