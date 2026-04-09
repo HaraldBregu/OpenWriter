@@ -177,6 +177,7 @@ export default function FilesPage(): React.ReactElement {
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
 	const [typeFilter, setTypeFilter] = useState<FileTypeFilter>('all');
 	const [selected, setSelected] = useState<Set<string>>(new Set());
+	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	const filteredEntries = useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
@@ -229,6 +230,7 @@ export default function FilesPage(): React.ReactElement {
 
 	return (
 		<div className="flex h-full flex-col">
+			
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<h1 className="text-xl font-bold">Files</h1>
 				<div className="flex items-center gap-2">
