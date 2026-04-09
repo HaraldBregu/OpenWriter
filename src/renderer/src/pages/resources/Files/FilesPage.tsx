@@ -30,6 +30,12 @@ import {
 	AppPageHeader,
 	AppPageHeaderItems,
 	AppPageHeaderTitle,
+	AppTable,
+	AppTableBody,
+	AppTableCell,
+	AppTableHead,
+	AppTableHeader,
+	AppTableRow,
 } from '@/components/app';
 import { cn } from '@/lib/utils';
 import { useAppDispatch, useAppSelector } from '@/store';
