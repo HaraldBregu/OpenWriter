@@ -8,8 +8,11 @@ import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { Workspace } from '../workspace';
+import type { FilesService } from '../workspace/files-service';
+import type { FilesWatcherService } from '../workspace/files-watcher';
+import type { WorkspaceService } from '../workspace/workspace-service';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
-import { getWindowService } from './ipc-helpers';
+import { getWindowService, getWindowContext } from './ipc-helpers';
 import { WorkspaceChannels } from '../../shared/channels';
 import type {
 	FsReadFileParams,
