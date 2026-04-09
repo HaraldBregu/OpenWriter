@@ -63,7 +63,31 @@ const THEME_STORAGE_KEY = 'app-theme-mode';
 const APP_THEME_STORAGE_KEY = 'app-theme';
 const LANGUAGE_STORAGE_KEY = 'app-language';
 const UI_PREFS_STORAGE_KEY = 'app-ui-preferences';
+const CUSTOM_THEME_STORAGE_KEY = 'app-custom-theme-id';
 const DARK_CLASS = 'dark';
+
+/** Convert camelCase token key to kebab-case CSS variable name. */
+function tokenKeyToCssVar(key: string): string {
+	return '--' + key.replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
+}
+
+/** Apply a set of ThemeTokens as CSS custom properties on the document root. */
+function applyThemeTokens(tokens: ThemeTokens): void {
+	const root = document.documentElement;
+	const entries = Object.entries(tokens) as [string, string][];
+	for (const [key, value] of entries) {
+		if (key === 'colorScheme') {
+			root.style.setProperty('color-scheme', value);
+		} else {
+			root.style.setProperty(tokenKeyToCssVar(key), value);
+		}
+	}
+}
+
+/** Remove all inline CSS custom properties previously set by applyThemeTokens. */
+function clearThemeTokens(): void {
+	document.documentElement.removeAttribute('style');
+}
 
 const VALID_APP_THEMES: readonly AppTheme[] = [
 	'default',
