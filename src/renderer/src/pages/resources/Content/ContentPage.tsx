@@ -484,16 +484,27 @@ export default function ContentPage(): React.ReactElement {
 								</tr>
 							</thead>
 							<tbody>
-								{sortedResources.map((resource) => (
-									<ResourceRow
-										key={resource.id}
-										resource={resource}
-										editing={editing}
-										isSelected={selected.has(resource.id)}
-										onToggle={handleToggleRow}
-										onPreview={setPreviewResource}
-									/>
-								))}
+								{sortedResources.length === 0 ? (
+									<tr>
+										<td
+											colSpan={editing ? 7 : 6}
+											className="px-4 py-8 text-center text-sm text-muted-foreground"
+										>
+											No resources match your search.
+										</td>
+									</tr>
+								) : (
+									sortedResources.map((resource) => (
+										<ResourceRow
+											key={resource.id}
+											resource={resource}
+											editing={editing}
+											isSelected={selected.has(resource.id)}
+											onToggle={handleToggleRow}
+											onPreview={setPreviewResource}
+										/>
+									))
+								)}
 							</tbody>
 						</table>
 					</div>
