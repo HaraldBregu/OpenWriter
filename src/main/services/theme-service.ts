@@ -135,8 +135,8 @@ export class ThemeService {
 			}
 		}
 
-		this.validateTokens(obj['light'], 'light');
-		this.validateTokens(obj['dark'], 'dark');
+		this.validateThemeData(obj['light'], 'light');
+		this.validateThemeData(obj['dark'], 'dark');
 
 		return data as Theme;
 	}
