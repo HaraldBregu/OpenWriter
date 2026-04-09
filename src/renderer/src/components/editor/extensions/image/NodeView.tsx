@@ -187,7 +187,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 				>
 					<figure className="relative inline-block max-w-full rounded-md">
 						{/* Floating toolbar overlay */}
-						<AppTooltipProvider delayDuration={300}>
+						<AppTooltipProvider delay={300}>
 							<div
 								className={cn(
 									'absolute top-2 right-2 z-10',
