@@ -109,20 +109,22 @@ export function ResizeControls({
 			</div>
 
 			<AppTooltip>
-				<AppTooltipTrigger asChild>
-					<AppButton
-						variant="ghost"
-						size="icon-xs"
-						aria-label={
-							isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')
-						}
-						aria-pressed={isLocked}
-						onClick={toggleLock}
-						className="mb-0.5"
-					>
-						{isLocked ? <Lock /> : <Unlock />}
-					</AppButton>
-				</AppTooltipTrigger>
+				<AppTooltipTrigger
+					render={
+						<AppButton
+							variant="ghost"
+							size="icon-xs"
+							aria-label={
+								isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')
+							}
+							aria-pressed={isLocked}
+							onClick={toggleLock}
+							className="mb-0.5"
+						>
+							{isLocked ? <Lock /> : <Unlock />}
+						</AppButton>
+					}
+				/>
 				<AppTooltipContent side="top" className="px-2 py-1 text-xs">
 					{isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')}
 				</AppTooltipContent>
