@@ -303,6 +303,7 @@ export interface InvokeChannelMap {
 	[AppChannels.openThemesFolder]: { args: []; result: void };
 	[AppChannels.importTheme]: { args: []; result: CustomThemeInfo | null };
 	[AppChannels.getCustomThemeTokens]: { args: [id: string]; result: Theme | null };
+	[AppChannels.deleteTheme]: { args: [id: string]; result: void };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
