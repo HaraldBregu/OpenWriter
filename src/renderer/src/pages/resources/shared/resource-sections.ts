@@ -101,7 +101,7 @@ export function getResourceSection(resource: ResourceInfo): ResourceSectionId {
 	}
 
 	if (resource.mimeType.startsWith('text/') || DOCUMENT_MIME_TYPES.has(resource.mimeType)) {
-		return 'media';
+		return 'content';
 	}
 
 	return 'files';
