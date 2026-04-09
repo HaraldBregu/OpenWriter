@@ -105,10 +105,14 @@ const Input: React.FC<InputProps> = ({
 	);
 
 	const addFile = useCallback((newFile: File) => {
-		setFiles((prev) => [...prev, newFile]);
 		readFileAsDataUri(newFile)
-			.then((result) => setPreviewUrls((prev) => [...prev, result]))
-			.catch(() => {});
+			.then((result) => {
+				setFiles((prev) => [...prev, newFile]);
+				setPreviewUrls((prev) => [...prev, result]);
+			})
+			.catch(() => {
+				// FileReader failed — do not add the file to avoid files/previewUrls desync
+			});
 	}, []);
 
 	const removeFile = useCallback((index: number) => {
