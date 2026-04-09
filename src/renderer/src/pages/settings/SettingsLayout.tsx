@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../hooks/use-language';
@@ -8,17 +8,13 @@ interface NavItemDefinition {
 	readonly labelKey: string;
 }
 
-const BASE_NAV_ITEMS: NavItemDefinition[] = [
+const NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/general', labelKey: 'settings.tabs.general' },
 	{ path: '/settings/workspace', labelKey: 'settings.tabs.workspace' },
 	{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
+	{ path: '/settings/themes', labelKey: 'settings.tabs.themes' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 ];
-
-const THEMES_NAV_ITEM: NavItemDefinition = {
-	path: '/settings/themes',
-	labelKey: 'settings.tabs.themes',
-};
 
 const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-3 sm:py-1.5';
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
@@ -27,35 +23,13 @@ const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-acce
 export function SettingsLayout(): React.JSX.Element {
 	const { t } = useTranslation();
 	useLanguage();
-	const [hasThemes, setHasThemes] = useState(false);
-
-	const loadThemes = useCallback(async () => {
-		try {
-			const list = await window.app.getCustomThemes();
-			setHasThemes(list.length > 0);
-		} catch {
-			setHasThemes(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		loadThemes();
-	}, [loadThemes]);
-
-	const navItems = useMemo(
-		() =>
-			hasThemes
-				? [...BASE_NAV_ITEMS.slice(0, 3), THEMES_NAV_ITEM, ...BASE_NAV_ITEMS.slice(3)]
-				: BASE_NAV_ITEMS,
-		[hasThemes]
-	);
 
 	return (
 		<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
 			{/* Left column — navigation (1/4 width) */}
 			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
 				<div className="space-y-0.5 px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
-					{navItems.map((item) => (
+					{NAV_ITEMS.map((item) => (
 						<NavLink
 							key={item.path}
 							to={item.path}
