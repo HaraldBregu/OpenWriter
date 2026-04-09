@@ -295,6 +295,11 @@ export interface InvokeChannelMap {
 	[LogChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
 	[AppChannels.openLogsFolder]: { args: []; result: void };
 
+	// ---- Theme management (IpcResult-wrapped) ----
+	[AppChannels.getCustomThemes]: { args: []; result: CustomThemeInfo[] };
+	[AppChannels.openThemesFolder]: { args: []; result: void };
+	[AppChannels.importTheme]: { args: []; result: CustomThemeInfo | null };
+
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };

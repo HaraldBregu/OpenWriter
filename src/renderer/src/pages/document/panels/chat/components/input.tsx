@@ -144,34 +144,25 @@ const Input: React.FC<InputProps> = ({
 		fileInputRef.current?.click();
 	}, []);
 
-	const handleDragOver = useCallback(
-		(e: React.DragEvent<HTMLDivElement>) => {
-			if (!isImage) return;
-			e.preventDefault();
-			setIsDragOver(true);
-		},
-		[isImage]
-	);
+	const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setIsDragOver(true);
+	}, []);
 
-	const handleDragLeave = useCallback(
-		(e: React.DragEvent<HTMLDivElement>) => {
-			if (!isImage) return;
-			e.preventDefault();
-			setIsDragOver(false);
-		},
-		[isImage]
-	);
+	const handleDragLeave = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+		e.preventDefault();
+		setIsDragOver(false);
+	}, []);
 
 	const handleDrop = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (!isImage) return;
 			e.preventDefault();
 			setIsDragOver(false);
 			for (const file of Array.from(e.dataTransfer.files)) {
 				if (file.type.startsWith('image/')) addFile(file);
 			}
 		},
-		[addFile, isImage]
+		[addFile]
 	);
 
 	const handleModelChange = useCallback(
