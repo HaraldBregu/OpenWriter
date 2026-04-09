@@ -1,0 +1,3 @@
+- [IPC Architecture](ipc-architecture.md) -- IPC channel patterns, type maps, and preload bridge conventions
+- [Workspace Services](workspace-services.md) -- Window-scoped service factory, Workspace facade, and watcher patterns
+- [Files Feature](files-feature.md) -- New files management system implemented in resources/files/ sub-folder
