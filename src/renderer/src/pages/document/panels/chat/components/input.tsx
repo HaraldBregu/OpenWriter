@@ -396,15 +396,17 @@ const Input: React.FC<InputProps> = ({
 									isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
 								)}
 								disabled={disabled}
-								aria-label={t('assistantNode.switchAgent', 'Switch agent')}
+								aria-label={t('assistantNode.switchAgentCurrent', 'Agent: {{agent}}', {
+									agent: currentAgentLabel,
+								})}
 							>
 								{isImage ? (
 									<ImageIcon className="h-3.5 w-3.5" aria-hidden="true" />
 								) : (
 									<PenLine className="h-3.5 w-3.5" aria-hidden="true" />
 								)}
-								<span className="min-w-0 truncate">
-									{t(currentAgent.labelKey, currentAgent.labelFallback)}
+								<span className="min-w-0 truncate" aria-hidden="true">
+									{currentAgentLabel}
 								</span>
 								<ChevronDown className="h-3 w-3 opacity-70" aria-hidden="true" />
 							</AppButton>
