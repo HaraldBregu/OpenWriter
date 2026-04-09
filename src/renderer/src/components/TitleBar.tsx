@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, PanelLeft, Minus, X, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AppTitleBarContainer } from './app/titlebar/AppTitleBarContainer';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
