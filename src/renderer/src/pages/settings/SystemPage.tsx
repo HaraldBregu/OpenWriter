@@ -123,4 +123,4 @@ const SystemPage: React.FC = () => {
 	);
 };
 
-export default SystemSettingsPage;
+export default SystemPage;
