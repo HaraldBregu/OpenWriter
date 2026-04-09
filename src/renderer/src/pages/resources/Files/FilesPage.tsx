@@ -6,6 +6,7 @@ import {
 	File,
 	FileImage,
 	FileText,
+	Filter,
 	FolderOpen,
 	Grid3x3,
 	List,
