@@ -272,7 +272,9 @@
 			"openFolder": "Open Themes Folder",
 			"import": "Import Theme",
 			"installed": "Installed Themes",
-			"noThemes": "No custom themes installed yet. Import a theme folder or place one in the themes directory."
+			"noThemes": "No custom themes installed yet. Import a theme folder or place one in the themes directory.",
+			"activate": "Activate",
+			"active": "Active"
 		}
 	},
 	"dialogs": {
