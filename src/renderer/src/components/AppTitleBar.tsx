@@ -31,7 +31,7 @@ function RestoreIcon() {
 	);
 }
 
-export interface TitleBarProps {
+export interface AppTitleBarProps {
 	/** Text displayed centered in the title bar */
 	title?: string;
 	/** Called when the sidebar toggle button is clicked */
