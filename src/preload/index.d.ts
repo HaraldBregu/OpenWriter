@@ -137,6 +137,12 @@ export interface AppApi {
 	getLogs: (limit?: number) => Promise<AppLogEntry[]>;
 	/** Open the application logs folder in the system file explorer. */
 	openLogsFolder: () => Promise<void>;
+	/** Get all installed custom themes from the themes folder. */
+	getCustomThemes: () => Promise<CustomThemeInfo[]>;
+	/** Open the themes folder in the system file explorer. */
+	openThemesFolder: () => Promise<void>;
+	/** Open a folder picker to import a theme; returns the imported theme info, or null if cancelled. */
+	importTheme: () => Promise<CustomThemeInfo | null>;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
