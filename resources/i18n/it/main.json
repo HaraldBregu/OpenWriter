@@ -162,14 +162,31 @@
 			"filesystem": "File System",
 			"dialogs": "Dialoghi",
 			"clipboard": "Appunti",
-			"application": "Applicazione"
+			"application": "Applicazione",
+			"profile": "Profilo"
+		},
+		"profile": {
+			"firstName": "Nome",
+			"firstNamePlaceholder": "Inserisci il tuo nome",
+			"lastName": "Cognome",
+			"lastNamePlaceholder": "Inserisci il tuo cognome",
+			"cancel": "Annulla",
+			"saveChanges": "Salva Modifiche"
 		},
 		"application": {
 			"name": "Nome",
 			"description": "Descrizione",
 			"version": "Versione",
 			"author": "Autore",
-			"license": "Licenza"
+			"license": "Licenza",
+			"accessibility": "Accessibilità",
+			"accessibilityDescription": "Gestisci i permessi di accessibilità",
+			"openAccessibility": "Apri Accessibilità",
+			"screenRecording": "Registrazione Schermo",
+			"screenRecordingDescription": "Gestisci i permessi di registrazione schermo",
+			"openScreenRecording": "Apri Registrazione Schermo",
+			"menuBar": "Barra dei Menu",
+			"menuBarDescription": "Mostra o nascondi l'icona dell'app nella barra dei menu"
 		},
 		"permissions": {
 			"microphone": "Microfono",
