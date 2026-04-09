@@ -12,7 +12,10 @@ export const AppTitleBarCenterContainer = memo(function AppTitleBarCenterContain
 }: AppTitleBarCenterContainerProps): ReactElement {
 	return (
 		<div
-			className={cn('absolute inset-0 flex items-center justify-center pointer-events-none', className)}
+			className={cn(
+				'absolute inset-0 flex items-center justify-center pointer-events-none',
+				className
+			)}
 		>
 			{children}
 		</div>
