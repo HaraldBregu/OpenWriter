@@ -150,7 +150,7 @@ export function PdfDialog(): ReactElement | null {
 	const handleDelete = useCallback(async () => {
 		if (!activeFile) return;
 		try {
-			await window.workspace.deleteFileEntry(activeFile.id);
+			await window.workspace.deleteResourcesFileEntry(activeFile.id);
 			handleFileDetailsOpenChange(false);
 		} catch (err) {
 			console.error('Failed to delete file:', err);
