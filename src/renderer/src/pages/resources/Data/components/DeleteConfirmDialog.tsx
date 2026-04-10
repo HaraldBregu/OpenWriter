@@ -1,15 +1,5 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	AppAlertDialog,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-	AppAlertDialogContent,
-	AppAlertDialogDescription,
-	AppAlertDialogFooter,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-} from '@/components/app';
 import { useDataContext } from '../context/DataContext';
 
 export function DeleteConfirmDialog(): ReactElement {
