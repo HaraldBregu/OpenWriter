@@ -14,7 +14,7 @@ import {
 	RESOURCE_SECTIONS,
 } from '../../../pages/resources/shared/resource-sections';
 import { TitleBar } from '../titlebar/TitleBar';
-import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/ui/Collapsible';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import {
@@ -302,7 +302,7 @@ function LayoutInner({ children }: LayoutProps) {
 										{t('sidebar.writings')}
 										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</SidebarGroupLabel>
-									<CollapsiblePanel>
+									<CollapsibleContent>
 										<SidebarGroupContent>
 											<SidebarMenu>
 												{documents.map((w) => (
@@ -328,7 +328,7 @@ function LayoutInner({ children }: LayoutProps) {
 												))}
 											</SidebarMenu>
 										</SidebarGroupContent>
-									</CollapsiblePanel>
+									</CollapsibleContent>
 								</SidebarGroup>
 							</Collapsible>
 						)}
@@ -344,7 +344,7 @@ function LayoutInner({ children }: LayoutProps) {
 									{t('appLayout.resources', 'Resources')}
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</SidebarGroupLabel>
-								<CollapsiblePanel>
+								<CollapsibleContent>
 									<SidebarGroupContent>
 										<SidebarMenu>
 											{RESOURCE_SECTION_ORDER.map((sectionId) => {
@@ -366,7 +366,7 @@ function LayoutInner({ children }: LayoutProps) {
 											})}
 										</SidebarMenu>
 									</SidebarGroupContent>
-								</CollapsiblePanel>
+								</CollapsibleContent>
 							</SidebarGroup>
 						</Collapsible>
 
@@ -381,7 +381,7 @@ function LayoutInner({ children }: LayoutProps) {
 									{t('appLayout.debug')}
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</SidebarGroupLabel>
-								<CollapsiblePanel>
+								<CollapsibleContent>
 									<SidebarGroupContent>
 										<SidebarMenu>
 											<SidebarMenuItem>
@@ -416,7 +416,7 @@ function LayoutInner({ children }: LayoutProps) {
 											</SidebarMenuItem>
 										</SidebarMenu>
 									</SidebarGroupContent>
-								</CollapsiblePanel>
+								</CollapsibleContent>
 							</SidebarGroup>
 						</Collapsible>
 					</SidebarContent>

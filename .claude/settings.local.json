@@ -116,7 +116,12 @@
       "Bash(mv SystemSettingsPage.tsx SystemPage.tsx)",
       "Bash(mv ProvidersSettingsPage.tsx ProvidersPage.tsx)",
       "Bash(mv ThemesSettingsPage.tsx ThemesPage.tsx)",
-      "Bash(mv SettingsLayout.tsx Layout.tsx)"
+      "Bash(mv SettingsLayout.tsx Layout.tsx)",
+      "WebFetch(domain:docs.x.ai)",
+      "WebFetch(domain:docs.cohere.com)",
+      "WebFetch(domain:developers.openai.com)",
+      "WebFetch(domain:docs.perplexity.ai)",
+      "WebFetch(domain:www.alibabacloud.com)"
     ],
     "deny": [
       "Bash(git push --force:*)",
