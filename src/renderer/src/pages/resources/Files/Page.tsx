@@ -43,7 +43,10 @@ import {
 	InputGroupInput,
 	InputGroupButton,
 } from '@/components/ui/InputGroup';
-import { FileTypeFilter, FILE_TYPE_FILTERS } from './types';
+import {
+	RESOURCES_FILE_TYPE_FILTERS as FILE_TYPE_FILTERS,
+	type ResourcesFileTypeFilter as FileTypeFilter,
+} from '../../../../../../shared/types';
 import { FilesTable } from './components/FilesTable';
 
 function PageContent(): ReactElement {
