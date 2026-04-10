@@ -1,9 +1,6 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import { Calendar, File, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { Button } from '@/components/ui/Button';
 import {
 	Dialog,
@@ -14,70 +11,17 @@ import {
 } from '@/components/ui/Dialog';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import type { FileEntry } from '../../../../../../shared/types';
-import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_JSON, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
-
-const MIME_TYPE_JSON = 'application/json';
-
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-	'pdfjs-dist/build/pdf.worker.min.mjs',
-	import.meta.url
-).toString();
-
-function useBlobUrl(path: string, mimeType: string) {
-	const [blobUrl, setBlobUrl] = useState<string | null>(null);
-	const [error, setError] = useState<string | null>(null);
-	const [loading, setLoading] = useState(true);
-
-	useEffect(() => {
-		let cancelled = false;
-		let objectUrl: string | null = null;
-
-		setLoading(true);
-		setError(null);
-		setBlobUrl(null);
-
-		window.workspace
-			.readFile({ filePath: path, encoding: 'latin1' })
-			.then((raw) => {
-				if (cancelled) return;
-				const bytes = new Uint8Array(raw.length);
-				for (let i = 0; i < raw.length; i += 1) {
-					bytes[i] = raw.charCodeAt(i);
-				}
-				const blob = new Blob([bytes], { type: mimeType });
-				objectUrl = URL.createObjectURL(blob);
-				setBlobUrl(objectUrl);
-			})
-			.catch((err: unknown) => {
-				if (!cancelled) {
-					setError(err instanceof Error ? err.message : 'Failed to load preview');
-				}
-			})
-			.finally(() => {
-				if (!cancelled) {
-					setLoading(false);
-				}
-			});
-
-		return () => {
-			cancelled = true;
-			if (objectUrl) {
-				URL.revokeObjectURL(objectUrl);
-			}
-		};
-	}, [mimeType, path]);
-
-	return { blobUrl, error, loading };
-}
+import { ImageDialog } from './ImageDialog';
+import { PdfDialog } from './PdfDialog';
 
 function PreviewLoading() {
 	return (
 		<div className="flex h-full items-center justify-center text-sm text-muted-foreground">
 			<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-			Loading preview…
+			Loading preview...
 		</div>
 	);
 }
@@ -88,61 +32,6 @@ function PreviewError({ message }: { message: string }) {
 			<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
 				{message}
 			</div>
-		</div>
-	);
-}
-
-function ImagePreview({ path, mimeType }: { path: string; mimeType: string }) {
-	const { blobUrl, error, loading } = useBlobUrl(path, mimeType);
-
-	if (error) return <PreviewError message={error} />;
-	if (loading || !blobUrl) return <PreviewLoading />;
-
-	return (
-		<div className="flex h-full items-center justify-center rounded-md bg-muted/20 p-4">
-			<img src={blobUrl} alt="" className="max-h-full max-w-full rounded object-contain" />
-		</div>
-	);
-}
-
-function PdfPreview({ path }: { path: string }) {
-	const { blobUrl, error, loading } = useBlobUrl(path, 'application/pdf');
-	const [numPages, setNumPages] = useState<number>(0);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const [containerWidth, setContainerWidth] = useState<number>(600);
-
-	useEffect(() => {
-		if (!containerRef.current) return;
-		const observer = new ResizeObserver((entries) => {
-			const entry = entries[0];
-			if (entry) {
-				setContainerWidth(entry.contentRect.width);
-			}
-		});
-		observer.observe(containerRef.current);
-		return () => observer.disconnect();
-	}, []);
-
-	if (error) return <PreviewError message={error} />;
-	if (loading || !blobUrl) return <PreviewLoading />;
-
-	return (
-		<div ref={containerRef} className="flex flex-col items-center gap-4">
-			<Document
-				file={blobUrl}
-				onLoadSuccess={({ numPages: n }) => setNumPages(n)}
-				loading={<PreviewLoading />}
-				error={<PreviewError message="Failed to load PDF" />}
-			>
-				{Array.from({ length: numPages }, (_, i) => (
-					<Page
-						key={i + 1}
-						pageNumber={i + 1}
-						width={containerWidth - 32}
-						className="mb-4 shadow-md"
-					/>
-				))}
-			</Document>
 		</div>
 	);
 }
@@ -161,19 +50,6 @@ function JsonPreview({ content }: { content: string }) {
 			{formatted}
 		</pre>
 	);
-}
-
-function FilePreview({ file, content }: { file: FileEntry; content: string | null }) {
-	if (file.mimeType.startsWith(MIME_PREFIX_IMAGE)) {
-		return <ImagePreview path={file.path} mimeType={file.mimeType} />;
-	}
-	if (file.mimeType === MIME_TYPE_PDF) {
-		return <PdfPreview path={file.path} />;
-	}
-	if (file.mimeType === MIME_TYPE_JSON && content !== null) {
-		return <JsonPreview content={content} />;
-	}
-	return null;
 }
 
 function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
