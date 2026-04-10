@@ -1,12 +1,12 @@
 import React from 'react';
 import { ChevronDown } from 'lucide-react';
-import { AppButton } from '@components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 import {
-	AppDropdownMenu,
-	AppDropdownMenuTrigger,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-} from '@components/app/AppDropdownMenu';
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuItem,
+} from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
 import type { ModelInfo } from '../../../../../../../shared/types';
 

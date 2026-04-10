@@ -21,7 +21,7 @@ export const ResourceEmptyState = memo(function ResourceEmptyState({
 		<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
 			<Icon className="mb-3 h-10 w-10 opacity-40" />
 			<p className="text-sm">{message}</p>
-			<AppButton
+			<Button
 				variant="outline"
 				size="sm"
 				className="mt-4"
@@ -30,7 +30,7 @@ export const ResourceEmptyState = memo(function ResourceEmptyState({
 			>
 				<Upload className="mr-1.5 h-3.5 w-3.5" />
 				{uploadLabel}
-			</AppButton>
+			</Button>
 		</div>
 	);
 });
