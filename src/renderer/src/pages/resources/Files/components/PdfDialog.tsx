@@ -92,7 +92,25 @@ export function PdfDialog(): ReactElement | null {
 										className="h-full w-full"
 										config={{
 											src: pdfBlobUrl,
-											theme: { preference: 'light' },
+											disabledCategories: [
+												'annotation',
+												'annotation-highlight',
+												'annotation-markup',
+												'print',
+												'redaction',
+												'zoom',
+												'document-print',
+												'export',
+												'document-export',
+												'annotation',
+												'redaction',
+												'tools',
+												'selection',
+												'history',
+											],
+											theme: {
+												preference: 'system',
+											},
 										}}
 									/>
 								)}
