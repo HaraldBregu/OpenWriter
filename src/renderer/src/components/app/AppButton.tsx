@@ -1,7 +1,6 @@
-import * as React from 'react';
-import { mergeProps } from '@base-ui/react/merge-props';
-import { useRender } from '@base-ui/react/use-render';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import { cva, type VariantProps } from "class-variance-authority"
+
 import { cn } from '@/lib/utils';
 
 const buttonVariants = cva(
@@ -49,60 +48,22 @@ const buttonVariants = cva(
 	}
 );
 
-interface ButtonProps
-	extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
-	asChild?: boolean;
-	render?: useRender.ComponentProps<'button'>['render'];
+function AppButton({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  return (
+	<ButtonPrimitive
+	  data-slot="button"
+	  className={cn(buttonVariants({ variant, size, className }))}
+	  {...props}
+	/>
+  )
 }
 
-const AppButton = React.memo(
-	React.forwardRef<HTMLButtonElement, ButtonProps>(
-		(
-			{ className, variant, size, asChild = false, render: renderProp, children, ...props },
-			ref
-		) => {
-			const resolvedRender = asChild && React.isValidElement(children) ? children : renderProp;
 
-			if (resolvedRender) {
-				return useRender({
-					defaultTagName: 'button',
-					props: {
-						...mergeProps<'button'>(
-							{
-								className: cn(
-									buttonVariants({ variant, size }),
-									'transition-colors focus-visible:ring-ring',
-									className
-								),
-								ref,
-							},
-							props
-						),
-						'data-slot': 'button',
-					},
-					render: resolvedRender,
-					state: {},
-				});
-			}
-
-			return (
-				<button
-					data-slot="button"
-					ref={ref}
-					className={cn(
-						buttonVariants({ variant, size }),
-						'transition-colors focus-visible:ring-ring',
-						className
-					)}
-					{...props}
-				>
-					{children}
-				</button>
-			);
-		}
-	)
-);
 AppButton.displayName = 'AppButton';
 
 export { AppButton, buttonVariants };
-export type { ButtonProps };

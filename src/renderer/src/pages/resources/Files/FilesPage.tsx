@@ -133,50 +133,6 @@ function formatShortDate(timestamp: number): string {
 	});
 }
 
-interface FileRowProps {
-	readonly file: FileEntry;
-	readonly isSelected: boolean;
-	readonly onToggle: (id: string) => void;
-}
-
-function FileRow({ file, isSelected, onToggle }: FileRowProps): React.ReactElement {
-	return (
-		<AppTableRow data-state={isSelected ? 'selected' : undefined}>
-			<AppTableCell className="w-10">
-				<AppCheckbox
-					checked={isSelected}
-					onCheckedChange={() => onToggle(file.id)}
-					aria-label={`Select ${file.name}`}
-				/>
-			</AppTableCell>
-			<AppTableCell>
-				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
-						{getFileIcon(file.mimeType)}
-					</div>
-					<div className="min-w-0">
-						<p className="truncate font-medium text-sm">{file.name}</p>
-						<p
-							className="truncate text-xs text-muted-foreground"
-							title={formatDate(file.createdAt)}
-						>
-							{file.path}
-						</p>
-					</div>
-				</div>
-			</AppTableCell>
-			<AppTableCell className="whitespace-nowrap text-muted-foreground">
-				{formatShortDate(file.createdAt)}
-			</AppTableCell>
-			<AppTableCell className="whitespace-nowrap text-muted-foreground">
-				{getMimeTypeLabel(file.mimeType)}
-			</AppTableCell>
-			<AppTableCell className="whitespace-nowrap text-right text-muted-foreground">
-				{formatBytes(file.size)}
-			</AppTableCell>
-		</AppTableRow>
-	);
-}
 
 interface EmptyStateProps {
 	readonly uploading: boolean;
