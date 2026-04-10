@@ -205,7 +205,7 @@ function CsvPreview({ content }: { content: string }) {
 
 	return (
 		<div className="overflow-auto rounded-md border">
-			<AppTable>
+			<Table>
 				{header && (
 					<AppTableHeader>
 						<AppTableRow>
@@ -226,7 +226,7 @@ function CsvPreview({ content }: { content: string }) {
 						</AppTableRow>
 					))}
 				</AppTableBody>
-			</AppTable>
+			</Table>
 		</div>
 	);
 }
