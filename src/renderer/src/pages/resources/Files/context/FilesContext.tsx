@@ -221,6 +221,8 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		handleConfirmDelete,
 		confirmOpen,
 		setConfirmOpen,
+		editMode,
+		toggleEditMode,
 	};
 
 	return <FilesContext.Provider value={value}>{children}</FilesContext.Provider>;
