@@ -85,7 +85,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		if (!mountedRef.current) return;
 		setIsLoading(true);
 		try {
-			const files = await window.workspace.getFiles();
+			const files = await window.workspace.getResourcesFiles();
 			if (!mountedRef.current) return;
 			setEntries(files);
 		} catch (err) {
