@@ -4,13 +4,13 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Sparkles, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { AppButton } from '@/components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 import {
-	AppTooltip,
-	AppTooltipTrigger,
-	AppTooltipContent,
-	AppTooltipProvider,
-} from '@/components/app/AppTooltip';
+	Tooltip,
+	TooltipTrigger,
+	TooltipContent,
+	TooltipProvider,
+} from '@/components/ui/Tooltip';
 import { ImageEditor } from './components/ImageEditor';
 import { DeleteConfirmDialog, ImagePreviewDialog } from './components';
 

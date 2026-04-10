@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ProjectWorkspaceInfo } from '../../../../../shared/types';
-import { AppInput } from '@/components/app/AppInput';
+import { Input } from '@/components/ui/Input';
 import { useAppDispatch } from '@/store';
 import { loadProjectName } from '@/store/workspace/actions';
 import { SectionHeader, SettingRow } from '../components';
