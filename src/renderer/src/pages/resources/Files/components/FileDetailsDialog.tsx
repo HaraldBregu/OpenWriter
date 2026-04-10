@@ -39,7 +39,7 @@ import { useFilesContext } from '../context/FilesContext';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	'pdfjs-dist/build/pdf.worker.min.mjs',
-	import.meta.url,
+	import.meta.url
 ).toString();
 
 SyntaxHighlighter.registerLanguage('json', json);
@@ -437,7 +437,7 @@ export function FileDetailsDialog(): ReactElement | null {
 							</div>
 
 							{/* Right column — details & actions */}
-							<div className="flex w-72 shrink-0 flex-col">
+							<div className="flex w-96 shrink-0 flex-col">
 								<ScrollArea className="flex-1">
 									<div className="space-y-4 p-4">
 										<div>
