@@ -101,6 +101,13 @@ export class FilesService {
 		const imported: FileEntry[] = [];
 
 		for (const sourcePath of sourcePaths) {
+			const ext = path.extname(sourcePath).toLowerCase();
+			if (!ALLOWED_FILE_EXTENSIONS.has(ext)) {
+				throw new Error(
+					`File type "${ext}" is not supported. Allowed types: ${[...ALLOWED_FILE_EXTENSIONS].join(', ')}`
+				);
+			}
+
 			try {
 				const metadata = await this.fileManager.copyFile(sourcePath, filesDir, markWritten);
 				imported.push({
