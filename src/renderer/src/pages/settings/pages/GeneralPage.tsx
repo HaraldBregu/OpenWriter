@@ -86,12 +86,12 @@ const GeneralPage: React.FC = () => {
 					</div>
 					{hasProfileChanges && (
 						<div className="flex justify-end gap-2">
-							<AppButton variant="outline" size="sm" onClick={handleCancel}>
+							<Button variant="outline" size="sm" onClick={handleCancel}>
 								{t('settings.profile.cancel')}
-							</AppButton>
-							<AppButton size="sm" onClick={handleSave}>
+							</Button>
+							<Button size="sm" onClick={handleSave}>
 								{t('settings.profile.saveChanges')}
-							</AppButton>
+							</Button>
 						</div>
 					)}
 				</div>
@@ -124,18 +124,18 @@ const GeneralPage: React.FC = () => {
 				label={t('settings.application.accessibility')}
 				description={t('settings.application.accessibilityDescription')}
 			>
-				<AppButton variant="outline" size="sm" onClick={handleOpenAccessibility}>
+				<Button variant="outline" size="sm" onClick={handleOpenAccessibility}>
 					{t('settings.application.openAccessibility')}
-				</AppButton>
+				</Button>
 			</SettingRow>
 
 			<SettingRow
 				label={t('settings.application.screenRecording')}
 				description={t('settings.application.screenRecordingDescription')}
 			>
-				<AppButton variant="outline" size="sm" onClick={handleOpenScreenRecording}>
+				<Button variant="outline" size="sm" onClick={handleOpenScreenRecording}>
 					{t('settings.application.openScreenRecording')}
-				</AppButton>
+				</Button>
 			</SettingRow>
 
 			<SettingRow

@@ -396,7 +396,7 @@ export function ResourcePreviewSheet({ resource, onClose }: ResourcePreviewSheet
 	}, [isBinary, resource]);
 
 	return (
-		<AppSheet
+		<Sheet
 			open={resource !== null}
 			onOpenChange={(open) => {
 				if (!open) {
@@ -404,13 +404,13 @@ export function ResourcePreviewSheet({ resource, onClose }: ResourcePreviewSheet
 				}
 			}}
 		>
-			<AppSheetContent className="flex flex-col sm:max-w-xl">
-				<AppSheetHeader>
-					<AppSheetTitle className="truncate">{resource?.name}</AppSheetTitle>
-					<AppSheetDescription>
+			<SheetContent className="flex flex-col sm:max-w-xl">
+				<SheetHeader>
+					<SheetTitle className="truncate">{resource?.name}</SheetTitle>
+					<SheetDescription>
 						{resource?.mimeType} &middot; {resource ? formatBytes(resource.size) : ''}
-					</AppSheetDescription>
-				</AppSheetHeader>
+					</SheetDescription>
+				</SheetHeader>
 				<div className="mt-4 flex-1 min-h-0 overflow-auto">
 					{loading && (
 						<div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -427,7 +427,7 @@ export function ResourcePreviewSheet({ resource, onClose }: ResourcePreviewSheet
 						<FileContentView resource={resource} content={content} />
 					)}
 				</div>
-			</AppSheetContent>
-		</AppSheet>
+			</SheetContent>
+		</Sheet>
 	);
 }
