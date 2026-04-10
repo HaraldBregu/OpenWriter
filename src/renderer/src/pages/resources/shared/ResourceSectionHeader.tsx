@@ -39,7 +39,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 
 	return (
 		<PageHeader>
-			<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
+			<PageHeaderTitle>{title}</AppPageHeaderTitle>
 			<AppPageHeaderItems>
 				{editing && selectedCount > 0 && (
 					<Button variant="destructive" size="lg" disabled={removing} onClick={onRemove}>
