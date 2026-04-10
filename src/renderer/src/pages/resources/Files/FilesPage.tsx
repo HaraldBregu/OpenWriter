@@ -444,6 +444,6 @@ export default function FilesPage(): React.ReactElement {
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
-		</AppPageContainer>
+		</div>
 	);
 }
