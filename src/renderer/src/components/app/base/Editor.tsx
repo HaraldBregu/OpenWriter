@@ -1,12 +1,12 @@
 import { memo, type ReactNode, type ReactElement } from 'react';
 
-interface AppEditorLayoutProps {
+interface EditorContainerProps {
 	readonly children: ReactNode;
 }
 
-export const AppEditorLayout = memo(function AppEditorLayout({
+export const EditorContainer = memo(function EditorContainer({
 	children,
-}: AppEditorLayoutProps): ReactElement {
+}: EditorContainerProps): ReactElement {
 	return (
 		<div className="h-full min-w-0 flex flex-col">
 			<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">

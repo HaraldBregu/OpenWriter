@@ -1,4 +1,4 @@
-export { AppEditorLayout } from './document/AppEditorLayout';
+export { EditorContainer } from './base/Editor';
 
 export { AppSidebarContainer } from './sidebar/AppSidebarContainer';
 export { AppSidebarLayout } from './sidebar/AppSidebarLayout';

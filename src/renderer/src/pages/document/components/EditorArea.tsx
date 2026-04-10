@@ -1,6 +1,6 @@
 import type { RefObject, ReactElement } from 'react';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
-import { AppEditorLayout } from '@/components/app/document/AppEditorLayout';
+import { EditorContainer } from '@/components/app/base/Editor';
 import type { Editor } from '@tiptap/core';
 import type { ModelInfo } from '../../../../../shared/types';
 
@@ -51,7 +51,7 @@ export function EditorArea({
 	onRedo,
 }: EditorAreaProps): ReactElement {
 	return (
-		<AppEditorLayout>
+		<EditorContainer>
 			{loaded && (
 				<TextEditor
 					disabled={disabled}
@@ -73,6 +73,6 @@ export function EditorArea({
 					onRedo={onRedo}
 				/>
 			)}
-		</AppEditorLayout>
+		</EditorContainer>
 	);
 }
