@@ -58,6 +58,8 @@ export class FilesService {
 		for (const entry of dirEntries) {
 			if (!entry.isFile()) continue;
 			if (entry.name.startsWith('.') || entry.name.endsWith('.tmp')) continue;
+			const ext = path.extname(entry.name).toLowerCase();
+			if (!ALLOWED_FILE_EXTENSIONS.has(ext)) continue;
 
 			const filePath = path.join(filesDir, entry.name);
 			try {
