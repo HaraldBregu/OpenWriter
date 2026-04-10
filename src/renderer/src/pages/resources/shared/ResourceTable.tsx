@@ -256,7 +256,8 @@ export const ResourceTable = memo(function ResourceTable({
 							{editing && (
 								<AppTableHead className="w-[40px]">
 									<AppCheckbox
-										checked={someChecked ? 'indeterminate' : allChecked}
+										checked={someChecked ? undefined : allChecked}
+										indeterminate={someChecked}
 										onCheckedChange={toggleAll}
 									/>
 								</AppTableHead>
