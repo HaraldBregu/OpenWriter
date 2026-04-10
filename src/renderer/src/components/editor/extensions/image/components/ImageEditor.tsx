@@ -537,7 +537,7 @@ export function ImageEditor({
 								</span>
 							)}
 						</div>
-						<AppButton
+						<Button
 							variant="prompt-submit"
 							size="prompt-submit-md"
 							className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
@@ -549,7 +549,7 @@ export function ImageEditor({
 							aria-label={t('imageNode.aiApply', 'Apply AI transform')}
 						>
 							{isProcessingAI ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-						</AppButton>
+						</Button>
 					</div>
 				</div>
 			)}
