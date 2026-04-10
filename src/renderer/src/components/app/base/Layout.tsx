@@ -74,7 +74,7 @@ interface LayoutProps {
 // AppLayoutInner — rendered inside SidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
-function AppLayoutInner({ children }: AppLayoutProps) {
+function AppLayoutInner({ children }: LayoutProps) {
 	const { t } = useTranslation();
 	const { toggleSidebar, open } = useSidebar();
 	const location = useLocation();
@@ -550,7 +550,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 // AppLayout
 // ---------------------------------------------------------------------------
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children }: LayoutProps) {
 	return (
 		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
 			<SidebarProvider
