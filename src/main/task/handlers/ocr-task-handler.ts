@@ -42,7 +42,7 @@ export interface OcrTaskOutput {
 /** Maps an AppProviderName to the ProviderId used by ProviderResolver. */
 const PROVIDER_NAME_TO_ID: Record<string, string> = {
 	Mistral: 'mistral',
-
+	Qwen: 'qwen',
 };
 
 export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> {
@@ -85,6 +85,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		}
 
 		const providerName = modelEntry.provider;
+		const providerId = PROVIDER_NAME_TO_ID[providerName] ?? providerName.toLowerCase();
 
 		const provider = this.providerResolver.resolve({
 			providerId: providerName,
@@ -99,7 +100,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(30, 'Processing OCR');
 
-		const text = await this.runOcr(provider, base64Data, input.modelId);
+		const text = await this.runOcr(providerId, provider, base64Data, input.modelId);
 
 		reporter.progress(80, 'Saving result');
 
@@ -116,16 +117,28 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 	}
 
 	private async runOcr(
+		providerId: string,
 		provider: { apiKey: string; baseUrl?: string },
 		base64Data: string,
 		model: string
 	): Promise<string> {
-		const client = new MistralOcrClient(provider.apiKey);
-		const result = await client.process({
+		if (providerId === 'qwen') {
+			const qwenClient = new QwenOcrClient(provider.apiKey, provider.baseUrl);
+			const imageUrl = `data:application/pdf;base64,${base64Data}`;
+			const qwenResult = await qwenClient.process({
+				imageUrl,
+				prompt: 'Extract all text from this document.',
+				model,
+			});
+			return qwenResult.text;
+		}
+
+		const mistralClient = new MistralOcrClient(provider.apiKey);
+		const mistralResult = await mistralClient.process({
 			document: { type: 'base64', data: base64Data },
 			model,
 		});
-		return result.pages.map((page) => page.markdown).join('\n\n');
+		return mistralResult.pages.map((page) => page.markdown).join('\n\n');
 	}
 
 	private async saveResult(
