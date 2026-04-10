@@ -7,7 +7,10 @@ import {
 	SelectContent,
 	SelectItem,
 } from '@/components/ui/Select';
-import { SectionHeader, SettingRow, ThemeSegmentControl } from '../components';
+import { Button } from '@/components/ui/Button';
+import { ButtonGroup } from '@/components/ui/ButtonGroup';
+import { Moon, Monitor, Sun } from 'lucide-react';
+import { SectionHeader, SettingRow } from '../components';
 import {
 	useThemeMode,
 	useAppTheme,
@@ -94,11 +97,35 @@ const SystemPage: React.FC = () => {
 			<SectionHeader title={t('settings.sections.layout')} />
 
 			<SettingRow label={t('settings.theme.title')} description={t('settings.theme.description')}>
-				<ThemeSegmentControl
-					value={themeMode}
-					onChange={handleThemeChange}
-					groupLabel={t('settings.theme.title')}
-				/>
+				<ButtonGroup>
+					<Button
+						variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
+						size="icon-sm"
+						onClick={() => handleThemeChange('light')}
+						aria-label={t('settings.theme.light')}
+						aria-pressed={themeMode === 'light'}
+					>
+						<Sun className="size-3.5" />
+					</Button>
+					<Button
+						variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
+						size="icon-sm"
+						onClick={() => handleThemeChange('system')}
+						aria-label={t('settings.theme.system')}
+						aria-pressed={themeMode === 'system'}
+					>
+						<Monitor className="size-3.5" />
+					</Button>
+					<Button
+						variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
+						size="icon-sm"
+						onClick={() => handleThemeChange('dark')}
+						aria-label={t('settings.theme.dark')}
+						aria-pressed={themeMode === 'dark'}
+					>
+						<Moon className="size-3.5" />
+					</Button>
+				</ButtonGroup>
 			</SettingRow>
 
 			<SettingRow
