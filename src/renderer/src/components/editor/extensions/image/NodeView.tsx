@@ -187,7 +187,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 				>
 					<figure className="relative inline-block max-w-full rounded-md">
 						{/* Floating toolbar overlay */}
-						<AppTooltipProvider delay={300}>
+						<TooltipProvider delay={300}>
 							<div
 								className={cn(
 									'absolute top-2 right-2 z-10',
@@ -202,7 +202,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								role="toolbar"
 								aria-label={t('imageNode.imageToolbar')}
 							>
-								<AppButton
+								<Button
 									variant="ghost"
 									size="icon-xs"
 									aria-label={t('imageNode.askAI')}
@@ -211,7 +211,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								>
 									<Sparkles />
 									<span className="text-xs font-medium">Ask AI</span>
-								</AppButton>
+								</Button>
 
 								<div className="h-4 w-px bg-border/50" />
 
