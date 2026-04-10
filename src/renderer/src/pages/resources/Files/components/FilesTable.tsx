@@ -18,8 +18,8 @@ import { SortIcon } from './SortIcon';
 
 function getMimeTypeLabel(mimeType: string): string {
 	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) return 'Image';
-	if (mimeType.startsWith(MIME_PREFIX_TEXT)) return 'Document';
 	if (mimeType === MIME_TYPE_PDF) return 'PDF';
+	if (mimeType === MIME_TYPE_JSON) return 'JSON';
 	return 'File';
 }
 
@@ -27,7 +27,7 @@ function getFileIcon(mimeType: string): ReactNode {
 	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) {
 		return <FileImage className="h-5 w-5 text-muted-foreground" />;
 	}
-	if (mimeType.startsWith(MIME_PREFIX_TEXT) || mimeType === MIME_TYPE_PDF) {
+	if (mimeType === MIME_TYPE_PDF || mimeType === MIME_TYPE_JSON) {
 		return <FileText className="h-5 w-5 text-muted-foreground" />;
 	}
 	return <File className="h-5 w-5 text-muted-foreground" />;
