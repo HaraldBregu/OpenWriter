@@ -187,14 +187,14 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 							</p>
 						</div>
 
-						<AppButton
+						<Button
 							variant="outline"
 							className="h-14 px-6 flex items-center gap-3 rounded-lg border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors shrink-0"
 							onClick={handleOpenProject}
 						>
 							<FolderOpen className="h-5 w-5 text-foreground/70" />
 							<span className="text-sm font-medium">{t('welcome.browse')}</span>
-						</AppButton>
+						</Button>
 					</div>
 				</div>
 
