@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
-import { Info } from 'lucide-react';
+import { ChevronDown, Info } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { useFilesContext } from '../context/FilesContext';
 
@@ -46,9 +54,7 @@ function SectionHeader({
 
 export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
-	const [selectedModel, setSelectedModel] = useState<string | null>(
-		OCR_MODELS[0]?.modelId ?? null
-	);
+	const [selectedModel, setSelectedModel] = useState<string | null>(OCR_MODELS[0]?.modelId ?? null);
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['intestazione']);
 	const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
