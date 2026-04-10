@@ -361,6 +361,12 @@ export const TEXT_MODELS: readonly ModelInfo[] = AI_MODELS.filter(
 /** Dedicated OCR models (Mistral OCR, Qwen VL OCR). */
 export const OCR_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'ocr');
 
+const _defaultOcrModel = OCR_MODELS.find((m) => m.modelId === DEFAULT_OCR_MODEL_ID);
+if (!_defaultOcrModel) {
+	throw new Error(`Default OCR model "${DEFAULT_OCR_MODEL_ID}" not found in OCR_MODELS`);
+}
+export const DEFAULT_OCR_MODEL: ModelInfo = _defaultOcrModel;
+
 // ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------
