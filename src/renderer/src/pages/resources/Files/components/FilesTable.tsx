@@ -104,7 +104,10 @@ export function FilesTable(): ReactElement {
 			<TableBody>
 				{filteredEntries.length === 0 ? (
 					<TableRow>
-						<TableCell colSpan={5} className="px-6 py-8 text-center text-sm text-muted-foreground">
+						<TableCell
+							colSpan={editMode ? 5 : 4}
+							className="px-6 py-8 text-center text-sm text-muted-foreground"
+						>
 							No files match your search.
 						</TableCell>
 					</TableRow>
@@ -118,14 +121,16 @@ export function FilesTable(): ReactElement {
 							onKeyDown={(event) => handleRowKeyDown(event, file)}
 							tabIndex={0}
 						>
-							<TableCell className="w-10 px-6">
-								<Checkbox
-									checked={selected.has(file.id)}
-									onClick={(event) => event.stopPropagation()}
-									onCheckedChange={() => handleToggleRow(file.id)}
-									aria-label={`Select ${file.name}`}
-								/>
-							</TableCell>
+							{editMode && (
+								<TableCell className="w-10 px-6">
+									<Checkbox
+										checked={selected.has(file.id)}
+										onClick={(event) => event.stopPropagation()}
+										onCheckedChange={() => handleToggleRow(file.id)}
+										aria-label={`Select ${file.name}`}
+									/>
+								</TableCell>
+							)}
 							<TableCell className="px-6">
 								<div className="flex items-center gap-3">
 									{getFileIcon(file.mimeType)}
