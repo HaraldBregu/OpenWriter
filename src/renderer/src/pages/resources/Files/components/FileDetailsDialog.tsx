@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/Button';
 import {
 	Dialog,
 	DialogContent,
-	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
@@ -61,18 +60,19 @@ export function FileDetailsDialog(): ReactElement | null {
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
 			<DialogContent
-				className="overflow-hidden p-0"
 				style={{ maxWidth: 'none', width: 'min(1120px, calc(100vw - 2rem))' }}
 			>
-				<div className="flex max-h-[85vh] flex-col">
-					<DialogHeader className="border-b bg-muted/30 px-6 py-5 text-left sm:text-left">
-						<div className="flex items-start gap-4">
+				<DialogHeader className="border-b bg-muted/30 px-6 py-5">
+					<DialogTitle className="truncate text-xl">{activeFile.name}</DialogTitle>
+				</DialogHeader>
+
+				<div className="grid gap-6 overflow-y-auto px-6 py-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+					<section className="space-y-4 lg:col-span-2">
+						<div className="flex items-start gap-4 rounded-xl border bg-card p-4">
 							<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-background shadow-sm">
 								{getFileIcon(activeFile.mimeType)}
 							</div>
-							<div className="min-w-0 flex-1 space-y-2">
-								<DialogTitle className="truncate text-xl">{activeFile.name}</DialogTitle>
-								<DialogDescription>Imported file details and location on disk.</DialogDescription>
+							<div className="min-w-0 flex-1 space-y-3">
 								<div className="flex flex-wrap gap-2">
 									<span className="rounded-full border bg-background px-3 py-1 text-xs font-medium text-foreground">
 										{getMimeTypeLabel(activeFile.mimeType)}
@@ -84,58 +84,59 @@ export function FileDetailsDialog(): ReactElement | null {
 										{activeFile.id}
 									</span>
 								</div>
-								<p className="break-all text-xs text-muted-foreground">{activeFile.path}</p>
-							</div>
-						</div>
-					</DialogHeader>
-
-					<div className="grid gap-6 overflow-y-auto px-6 py-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-						<section className="space-y-4">
-							<div className="rounded-xl border bg-card p-4">
-								<h3 className="font-medium text-sm">Location</h3>
-								<dl className="mt-4 grid gap-4">
-									<DetailRow label="Relative path" value={activeFile.relativePath} mono />
-									<DetailRow label="Absolute path" value={activeFile.path} mono />
-								</dl>
-							</div>
-
-							<div className="rounded-xl border bg-card p-4">
-								<h3 className="font-medium text-sm">Timeline</h3>
-								<dl className="mt-4 grid gap-4">
-									<DetailRow label="Created" value={formatDate(activeFile.createdAt)} />
-									<DetailRow label="Last modified" value={formatDate(activeFile.modifiedAt)} />
-								</dl>
-							</div>
-						</section>
-
-						<section className="space-y-4">
-							<div className="rounded-xl border bg-card p-4">
-								<h3 className="font-medium text-sm">Metadata</h3>
-								<dl className="mt-4 grid gap-4">
-									<DetailRow label="File name" value={activeFile.name} />
-									<DetailRow label="File ID" value={activeFile.id} mono />
-									<DetailRow label="MIME type" value={activeFile.mimeType} mono />
-									<DetailRow label="Type" value={getMimeTypeLabel(activeFile.mimeType)} />
-									<DetailRow label="Size" value={formatBytes(activeFile.size)} />
-								</dl>
-							</div>
-
-							<div className="rounded-xl border bg-card p-4">
-								<h3 className="font-medium text-sm">Summary</h3>
-								<p className="mt-4 text-sm leading-6 text-muted-foreground">
-									This file is stored inside the workspace resources files directory and can be
-									referenced by its absolute path or relative workspace path.
+								<p className="break-all text-sm text-muted-foreground">{activeFile.path}</p>
+								<p className="text-sm leading-6 text-muted-foreground">
+									Imported file details and location on disk.
 								</p>
 							</div>
-						</section>
-					</div>
+						</div>
+					</section>
 
-					<DialogFooter className="border-t bg-muted/20 px-6 py-4">
-						<Button variant="outline" size="sm" onClick={() => handleFileDetailsOpenChange(false)}>
-							Close
-						</Button>
-					</DialogFooter>
+					<section className="space-y-4">
+						<div className="rounded-xl border bg-card p-4">
+							<h3 className="font-medium text-sm">Location</h3>
+							<dl className="mt-4 grid gap-4">
+								<DetailRow label="Relative path" value={activeFile.relativePath} mono />
+								<DetailRow label="Absolute path" value={activeFile.path} mono />
+							</dl>
+						</div>
+
+						<div className="rounded-xl border bg-card p-4">
+							<h3 className="font-medium text-sm">Timeline</h3>
+							<dl className="mt-4 grid gap-4">
+								<DetailRow label="Created" value={formatDate(activeFile.createdAt)} />
+								<DetailRow label="Last modified" value={formatDate(activeFile.modifiedAt)} />
+							</dl>
+						</div>
+					</section>
+
+					<section className="space-y-4">
+						<div className="rounded-xl border bg-card p-4">
+							<h3 className="font-medium text-sm">Metadata</h3>
+							<dl className="mt-4 grid gap-4">
+								<DetailRow label="File name" value={activeFile.name} />
+								<DetailRow label="File ID" value={activeFile.id} mono />
+								<DetailRow label="MIME type" value={activeFile.mimeType} mono />
+								<DetailRow label="Type" value={getMimeTypeLabel(activeFile.mimeType)} />
+								<DetailRow label="Size" value={formatBytes(activeFile.size)} />
+							</dl>
+						</div>
+
+						<div className="rounded-xl border bg-card p-4">
+							<h3 className="font-medium text-sm">Summary</h3>
+							<p className="mt-4 text-sm leading-6 text-muted-foreground">
+								This file is stored inside the workspace resources files directory and can be
+								referenced by its absolute path or relative workspace path.
+							</p>
+						</div>
+					</section>
 				</div>
+
+				<DialogFooter>
+					<Button variant="outline" size="sm" onClick={() => handleFileDetailsOpenChange(false)}>
+						Close
+					</Button>
+				</DialogFooter>
 			</DialogContent>
 		</Dialog>
 	);
