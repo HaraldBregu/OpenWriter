@@ -313,7 +313,7 @@ export function ImageEditor({
 							role="group"
 							aria-label={t('imageNode.saveOrCancel', 'Save or cancel')}
 						>
-							<AppButton
+							<Button
 								variant="ghost"
 								size="icon-xs"
 								aria-label={t('imageNode.cancel')}
@@ -321,8 +321,8 @@ export function ImageEditor({
 								className="h-8 w-8 rounded-full text-muted-foreground hover:bg-destructive/10 hover:text-destructive [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<X />
-							</AppButton>
-							<AppButton
+							</Button>
+							<Button
 								variant="ghost"
 								size="icon-xs"
 								aria-label={t('imageNode.save')}
@@ -331,7 +331,7 @@ export function ImageEditor({
 								className="h-8 w-8 rounded-full bg-primary/10 text-primary hover:bg-primary/20 hover:text-primary [&_svg]:h-4 [&_svg]:w-4"
 							>
 								<Check />
-							</AppButton>
+							</Button>
 						</div>
 					</div>
 

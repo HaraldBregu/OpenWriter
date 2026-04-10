@@ -29,7 +29,7 @@ export function ThemeModeSelector(): React.ReactElement {
 	];
 
 	return (
-		<AppRadioGroup
+		<RadioGroup
 			value={themeMode}
 			onValueChange={(value) => setTheme(value as ThemeMode)}
 			className="grid gap-0"
@@ -50,7 +50,7 @@ export function ThemeModeSelector(): React.ReactElement {
 								{option.description}
 							</span>
 						</div>
-						<AppRadioGroupItem
+						<RadioGroupItem
 							id={`theme-${option.value}`}
 							value={option.value}
 							aria-describedby={descriptionId}
@@ -58,6 +58,6 @@ export function ThemeModeSelector(): React.ReactElement {
 					</div>
 				);
 			})}
-		</AppRadioGroup>
+		</RadioGroup>
 	);
 }
