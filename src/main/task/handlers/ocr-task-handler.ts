@@ -47,7 +47,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		_signal: AbortSignal,
 		reporter: ProgressReporter
 	): Promise<OcrTaskOutput> {
-		const _workspace = this.resolveWorkspace(input);
+		void this.resolveWorkspace(input);
 
 		reporter.progress(0, 'Starting OCR');
 
