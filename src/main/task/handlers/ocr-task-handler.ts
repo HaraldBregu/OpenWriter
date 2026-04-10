@@ -73,13 +73,13 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(0, 'Starting OCR');
 
-		const modelEntry = OCR_MODELS.find((m) => m.modelId === input.model);
+		const modelEntry = OCR_MODELS.find((m) => m.modelId === input.modelId);
 		const providerName = modelEntry?.provider ?? 'Mistral';
 		const providerId = PROVIDER_NAME_TO_ID[providerName] ?? providerName.toLowerCase();
 
 		const provider = this.providerResolver.resolve({
 			providerId: providerName,
-			modelId: input.model,
+			modelId: input.modelId,
 		});
 
 		reporter.progress(10, 'Reading file');
