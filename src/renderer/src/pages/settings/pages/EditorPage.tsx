@@ -32,18 +32,18 @@ const EditorPage: React.FC = () => {
 				label={t('settings.editor.font')}
 				description={t('settings.editor.fontDescription')}
 			>
-				<AppSelect value={font} onValueChange={handleFontChange}>
-					<AppSelectTrigger className="w-44 h-8 text-sm" aria-label={t('settings.editor.font')}>
-						<AppSelectValue />
-					</AppSelectTrigger>
-					<AppSelectContent>
+				<Select value={font} onValueChange={handleFontChange}>
+					<SelectTrigger className="w-44 h-8 text-sm" aria-label={t('settings.editor.font')}>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
 						{FONT_OPTIONS.map((option) => (
-							<AppSelectItem key={option.value} value={option.value}>
+							<SelectItem key={option.value} value={option.value}>
 								{t(option.labelKey)}
-							</AppSelectItem>
+							</SelectItem>
 						))}
-					</AppSelectContent>
-				</AppSelect>
+					</SelectContent>
+				</Select>
 			</SettingRow>
 		</div>
 	);
