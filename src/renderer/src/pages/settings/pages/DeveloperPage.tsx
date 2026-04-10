@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppSwitch } from '@/components/app';
+import { Switch } from '@/components/ui/Switch';
 import { SectionHeader, SettingRow } from '../components';
 
 const DeveloperPage: React.FC = () => {
