@@ -394,6 +394,11 @@ const workspace: WorkspaceApi = {
 	updateProjectDescription: (description: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
 	// -------------------------------------------------------------------------
+	// OCR model preference
+	// -------------------------------------------------------------------------
+	getOcrModelId: () => typedInvokeUnwrap(WorkspaceChannels.getOcrModelId),
+	setOcrModelId: (modelId: string) => typedInvokeUnwrap(WorkspaceChannels.setOcrModelId, modelId),
+	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
 	getDocumentConfig: (documentId: string) =>
