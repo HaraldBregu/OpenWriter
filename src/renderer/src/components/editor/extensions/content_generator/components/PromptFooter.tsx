@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
-import { AppButton } from '@components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 
 import { AgentDropdown } from './AgentDropdown';
 import { ModelDropdown } from './ModelDropdown';

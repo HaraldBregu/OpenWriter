@@ -231,17 +231,17 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
 						{open && (
-							<AppCollapsible defaultOpen className="py-0">
+							<Collapsible defaultOpen className="py-0">
 								<SidebarGroup className="py-0">
 									<SidebarGroupLabel
 										render={
-											<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+											<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 										}
 									>
 										{t('sidebar.writings')}
 										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</SidebarGroupLabel>
-									<AppCollapsiblePanel>
+									<CollapsiblePanel>
 										<SidebarGroupContent>
 											<SidebarMenu>
 												{documents.map((w) => (
@@ -267,23 +267,23 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												))}
 											</SidebarMenu>
 										</SidebarGroupContent>
-									</AppCollapsiblePanel>
+									</CollapsiblePanel>
 								</SidebarGroup>
-							</AppCollapsible>
+							</Collapsible>
 						)}
 
 						{/* Resources */}
-						<AppCollapsible defaultOpen className="py-0">
+						<Collapsible defaultOpen className="py-0">
 							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
-										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 									}
 								>
 									{t('appLayout.resources', 'Resources')}
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</SidebarGroupLabel>
-								<AppCollapsiblePanel>
+								<CollapsiblePanel>
 									<SidebarGroupContent>
 										<SidebarMenu>
 											{RESOURCE_SECTION_ORDER.map((sectionId) => {
@@ -305,22 +305,22 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											})}
 										</SidebarMenu>
 									</SidebarGroupContent>
-								</AppCollapsiblePanel>
+								</CollapsiblePanel>
 							</SidebarGroup>
-						</AppCollapsible>
+						</Collapsible>
 
 						{/* Debug */}
-						<AppCollapsible defaultOpen className="py-0">
+						<Collapsible defaultOpen className="py-0">
 							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
-										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 									}
 								>
 									{t('appLayout.debug')}
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</SidebarGroupLabel>
-								<AppCollapsiblePanel>
+								<CollapsiblePanel>
 									<SidebarGroupContent>
 										<SidebarMenu>
 											<SidebarMenuItem>
@@ -355,9 +355,9 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</SidebarMenuItem>
 										</SidebarMenu>
 									</SidebarGroupContent>
-								</AppCollapsiblePanel>
+								</CollapsiblePanel>
 							</SidebarGroup>
-						</AppCollapsible>
+						</Collapsible>
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
