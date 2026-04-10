@@ -89,7 +89,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						placeholder={t('common.search')}
 						className="h-auto flex-1 border-0 bg-transparent px-0 py-0 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon"
@@ -97,7 +97,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						onClick={closeSearch}
 					>
 						<X className="h-3.5 w-3.5" />
-					</AppButton>
+					</Button>
 				</div>
 			)}
 
@@ -114,7 +114,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 					/>
 				</div>
 				<div className="flex items-center gap-0 ml-3 shrink-0">
-					<AppButton
+					<Button
 						type="button"
 						variant="header-icon"
 						size="header-icon-md"
@@ -124,8 +124,8 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						disabled={!canUndo}
 					>
 						<Undo2 aria-hidden="true" />
-					</AppButton>
-					<AppButton
+					</Button>
+					<Button
 						type="button"
 						variant="header-icon"
 						size="header-icon-md"
@@ -135,14 +135,14 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						disabled={!canRedo}
 					>
 						<Redo2 aria-hidden="true" />
-					</AppButton>
+					</Button>
 					<HistoryMenu
 						entries={historyEntries}
 						currentEntryId={currentHistoryEntryId}
 						onRestoreEntry={onRestoreHistoryEntry}
 					/>
 					<AppSeparator orientation="vertical" className="mx-2 h-5" />
-					<AppButton
+					<Button
 						type="button"
 						variant="header-icon"
 						size="header-icon-md"
@@ -152,8 +152,8 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						onClick={() => toggleSidebar('agentic')}
 					>
 						<Bot aria-hidden="true" />
-					</AppButton>
-					<AppButton
+					</Button>
+					<Button
 						type="button"
 						variant="header-icon"
 						size="header-icon-md"
@@ -163,7 +163,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						onClick={() => toggleSidebar('config')}
 					>
 						<Info aria-hidden="true" />
-					</AppButton>
+					</Button>
 				</div>
 			</div>
 		</>

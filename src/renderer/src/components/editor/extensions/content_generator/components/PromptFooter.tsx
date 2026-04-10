@@ -49,7 +49,7 @@ export function PromptFooter({
 					onModelChange={handleModelChange}
 				/>
 				<div className="ml-auto shrink-0">
-					<AppButton
+					<Button
 						variant="prompt-submit"
 						size="prompt-submit-md"
 						className="h-10 w-10 shrink-0 rounded-full shadow-[0_10px_22px_hsl(var(--primary)/0.18)] dark:shadow-[0_12px_24px_hsl(var(--primary)/0.2)]"
@@ -61,7 +61,7 @@ export function PromptFooter({
 						aria-label={t('agenticPanel.send', 'Send message')}
 					>
 						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-					</AppButton>
+					</Button>
 				</div>
 			</div>
 		</div>
