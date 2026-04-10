@@ -1,5 +1,8 @@
 import { useCallback, useState } from 'react';
-import type { SortDirection, SortKey } from '../types';
+import type {
+	ResourcesFilesSortDirection as SortDirection,
+	ResourcesFilesSortKey as SortKey,
+} from '../../../../../../shared/types';
 
 function nextSortDirection(current: SortDirection): SortDirection {
 	if (current === 'none') return 'asc';
