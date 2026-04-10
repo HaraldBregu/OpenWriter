@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
-import { ChevronDown, Info } from 'lucide-react';
+import { ChevronDown, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
@@ -151,24 +151,24 @@ export function PdfDialog(): ReactElement | null {
 															value={selectedModel}
 															onValueChange={setSelectedModel}
 														>
-															{Array.from(
-																new Set(OCR_MODELS.map((m) => m.provider))
-															).map((provider, idx) => (
-																<div key={provider}>
-																	{idx > 0 && <DropdownMenuSeparator />}
-																	<DropdownMenuLabel>{provider}</DropdownMenuLabel>
-																	{OCR_MODELS.filter((m) => m.provider === provider).map(
-																		(model) => (
-																			<DropdownMenuRadioItem
-																				key={model.modelId}
-																				value={model.modelId}
-																			>
-																				{model.name}
-																			</DropdownMenuRadioItem>
-																		)
-																	)}
-																</div>
-															))}
+															{Array.from(new Set(OCR_MODELS.map((m) => m.provider))).map(
+																(provider, idx) => (
+																	<div key={provider}>
+																		{idx > 0 && <DropdownMenuSeparator />}
+																		<DropdownMenuLabel>{provider}</DropdownMenuLabel>
+																		{OCR_MODELS.filter((m) => m.provider === provider).map(
+																			(model) => (
+																				<DropdownMenuRadioItem
+																					key={model.modelId}
+																					value={model.modelId}
+																				>
+																					{model.name}
+																				</DropdownMenuRadioItem>
+																			)
+																		)}
+																	</div>
+																)
+															)}
 														</DropdownMenuRadioGroup>
 													</DropdownMenuContent>
 												</DropdownMenu>
