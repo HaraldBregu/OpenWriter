@@ -49,6 +49,7 @@
 		"@base-ui/react": "^1.2.0",
 		"@electron-toolkit/preload": "^3.0.1",
 		"@electron-toolkit/utils": "^4.0.0",
+		"@embedpdf/react-pdf-viewer": "^2.14.0",
 		"@floating-ui/dom": "^1.7.5",
 		"@fontsource/alegreya": "^5.2.8",
 		"@fontsource/merriweather": "^5.2.11",

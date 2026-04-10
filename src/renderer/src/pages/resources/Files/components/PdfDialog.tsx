@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
+import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { Info } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
