@@ -157,7 +157,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 			<AppSidebarContainer>
 				<AppSidebarLayout>
 					{/* Header */}
-					<AppSidebarHeader>
+					<SidebarHeader>
 						<AppSidebarMenu>
 							<AppSidebarMenuItem>
 								<AppSidebarMenuButton
@@ -186,7 +186,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarMenuButton>
 							</AppSidebarMenuItem>
 						</AppSidebarMenu>
-					</AppSidebarHeader>
+					</SidebarHeader>
 
 					{/* Nav */}
 					<AppSidebarContent className="gap-4 py-2">
