@@ -51,8 +51,6 @@ export {
 
 export { AppRadioGroup, AppRadioGroupItem } from './AppRadioGroup';
 
-export { AppTooltip, AppTooltipTrigger, AppTooltipContent, AppTooltipProvider } from './AppTooltip';
-
 export { AppPopover, AppPopoverTrigger, AppPopoverContent } from './AppPopover';
 
 export { AppEmojiPicker } from './AppEmojiPicker';
