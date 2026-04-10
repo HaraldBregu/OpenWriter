@@ -362,7 +362,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 					<SidebarFooter className="border-t p-2">
 						<AppPopover>
-							<AppPopoverTrigger
+							<PopoverTrigger
 								render={
 									<button
 										type="button"
