@@ -104,18 +104,18 @@ export default function DebugLogsPage(): React.JSX.Element {
 					className="h-8 flex-1 min-w-0 text-sm"
 				/>
 
-				<AppSelect value={filterLevel} onValueChange={(v) => setFilterLevel(v as LogLevel | 'ALL')}>
-					<AppSelectTrigger className="h-8 w-28 text-sm">
-						<AppSelectValue />
-					</AppSelectTrigger>
-					<AppSelectContent>
+				<Select value={filterLevel} onValueChange={(v) => setFilterLevel(v as LogLevel | 'ALL')}>
+					<SelectTrigger className="h-8 w-28 text-sm">
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
 						{LEVEL_OPTIONS.map((opt) => (
-							<AppSelectItem key={opt.value} value={opt.value}>
+							<SelectItem key={opt.value} value={opt.value}>
 								{opt.label}
-							</AppSelectItem>
+							</SelectItem>
 						))}
-					</AppSelectContent>
-				</AppSelect>
+					</SelectContent>
+				</Select>
 
 				<Button
 					variant={autoRefresh ? 'default' : 'outline'}
