@@ -115,22 +115,10 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 	}
 
 	private async runOcr(
-		providerId: string,
 		provider: { apiKey: string; baseUrl?: string },
 		base64Data: string,
 		model: string
 	): Promise<string> {
-		if (providerId === 'qwen') {
-			const client = new QwenOcrClient(provider.apiKey, provider.baseUrl);
-			const imageUrl = `data:application/pdf;base64,${base64Data}`;
-			const result = await client.process({
-				imageUrl,
-				prompt: 'Extract all text from this document.',
-				model,
-			});
-			return result.text;
-		}
-
 		const client = new MistralOcrClient(provider.apiKey);
 		const result = await client.process({
 			document: { type: 'base64', data: base64Data },
