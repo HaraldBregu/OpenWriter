@@ -19,10 +19,10 @@ export function ToolbarButton({
 	disabled,
 }: ToolbarButtonProps): React.JSX.Element {
 	return (
-		<AppTooltip>
-			<AppTooltipTrigger
+		<Tooltip>
+			<TooltipTrigger
 				render={
-					<AppButton
+					<Button
 						variant="ghost"
 						size="icon-xs"
 						aria-label={label}
@@ -35,12 +35,12 @@ export function ToolbarButton({
 						)}
 					>
 						{icon}
-					</AppButton>
+					</Button>
 				}
 			/>
-			<AppTooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
+			<TooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
 				{label}
-			</AppTooltipContent>
-		</AppTooltip>
+			</TooltipContent>
+		</Tooltip>
 	);
 }
