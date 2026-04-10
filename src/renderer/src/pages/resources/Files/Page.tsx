@@ -42,6 +42,34 @@ function FilesPageBootstrap(): null {
 	return null;
 }
 
+function FileDialog(): ReactElement | null {
+	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
+
+	if (!activeFile) return null;
+
+	if (activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE)) {
+		return (
+			<ImageDialog
+				file={activeFile}
+				open={fileDetailsOpen}
+				onOpenChange={handleFileDetailsOpenChange}
+			/>
+		);
+	}
+
+	if (activeFile.mimeType === MIME_TYPE_PDF) {
+		return (
+			<PdfDialog
+				file={activeFile}
+				open={fileDetailsOpen}
+				onOpenChange={handleFileDetailsOpenChange}
+			/>
+		);
+	}
+
+	return <FileDetailsDialog />;
+}
+
 export default function FilesPage(): ReactElement {
 	return (
 		<FilesProvider>
@@ -50,7 +78,7 @@ export default function FilesPage(): ReactElement {
 				<FilesHeader />
 				<FilesToolbar />
 				<FilesContent />
-				<FileDetailsDialog />
+				<FileDialog />
 				<DeleteConfirmDialog />
 			</div>
 		</FilesProvider>
