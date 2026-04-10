@@ -9,7 +9,4 @@ export type {
 	OcrResult,
 } from './mistral-ocr-client';
 export { QwenOcrClient } from './qwen-ocr-client';
-export type {
-	QwenOcrRequestOptions,
-	QwenOcrResult,
-} from './qwen-ocr-client';
+export type { QwenOcrRequestOptions, QwenOcrResult } from './qwen-ocr-client';
