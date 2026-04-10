@@ -188,7 +188,7 @@ const App: React.FC = () => {
 								<Route
 									path="*"
 									element={
-										<AppLayout>
+										<Layout>
 											<Suspense fallback={<LoadingSkeleton />}>
 												<Routes>
 													<Route
@@ -354,7 +354,7 @@ const App: React.FC = () => {
 													/>
 												</Routes>
 											</Suspense>
-										</AppLayout>
+										</Layout>
 									}
 								/>
 							</Routes>
