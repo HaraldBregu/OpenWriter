@@ -282,7 +282,7 @@ export const ResourceTable = memo(function ResourceTable({
 							<TableHead className="w-[50px]" />
 						</TableRow>
 					</TableHeader>
-					<AppTableBody>
+					<TableBody>
 						{filteredResources.map((resource) => (
 							<ResourceRow
 								key={resource.id}
@@ -293,7 +293,7 @@ export const ResourceTable = memo(function ResourceTable({
 								onPreview={setPreviewResource}
 							/>
 						))}
-					</AppTableBody>
+					</TableBody>
 				</Table>
 			</div>
 

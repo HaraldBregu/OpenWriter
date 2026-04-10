@@ -147,14 +147,14 @@ export function ResizeControls({
 				/>
 			</div>
 
-			<AppButton
+			<Button
 				size="sm"
 				onClick={handleApply}
 				aria-label={t('imageNode.applyResize', 'Apply resize')}
 				className="mb-0.5 h-7 rounded-full px-2 text-xs"
 			>
 				{t('imageNode.resize')}
-			</AppButton>
+			</Button>
 		</div>
 	);
 }
