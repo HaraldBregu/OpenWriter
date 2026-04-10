@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Check, Loader2, Pencil, X } from 'lucide-react';
 import type { ProviderId } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE } from '../../../../../shared/providers';
-import { AppButton, AppInput } from '@/components/app';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { SettingRow } from './SettingRow';
 
 const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
