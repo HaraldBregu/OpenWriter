@@ -4,13 +4,13 @@ import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react';
 import { useEditorContext } from './EditorContext';
 import { cn } from '@/lib/utils';
 import type { HoveredBlock } from './BlockControls';
-import { AppButton } from '../app/AppButton';
+import { Button } from '@/components/ui/Button';
 import {
-	AppDropdownMenu,
-	AppDropdownMenuTrigger,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-} from '../app/AppDropdownMenu';
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuItem,
+} from '@/components/ui/DropdownMenu';
 
 interface BlockActionsProps {
 	containerRef: React.RefObject<HTMLDivElement | null>;

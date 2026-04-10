@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Loader2 } from 'lucide-react';
+import { AppPageContainer } from '@/components/app';
 import {
-	AppAlertDialog,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-	AppAlertDialogContent,
-	AppAlertDialogDescription,
-	AppAlertDialogFooter,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-	AppButton,
-	AppPageContainer,
-} from '@/components/app';
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/AlertDialog';
+import { Button } from '@/components/ui/Button';
 import { useTaskListener } from '@/hooks/use-task-listener';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {

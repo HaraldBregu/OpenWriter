@@ -1,12 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	AppSelect,
-	AppSelectTrigger,
-	AppSelectValue,
-	AppSelectContent,
-	AppSelectItem,
-} from '@/components/app';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
 import { SectionHeader, SettingRow, ThemeSegmentControl } from '../components';
 import {
 	useThemeMode,
