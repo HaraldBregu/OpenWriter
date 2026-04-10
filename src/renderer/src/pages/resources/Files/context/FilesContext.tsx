@@ -68,6 +68,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [activeFile, setActiveFile] = useState<FileEntry | null>(null);
 	const [fileDetailsOpen, setFileDetailsOpen] = useState(false);
+	const [editMode, setEditMode] = useState(false);
 
 	const { sortKey, sortDirection, handleSort } = useFilesSort();
 	const filteredEntries = useFilesFilter({
