@@ -37,6 +37,11 @@ import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+	'pdfjs-dist/build/pdf.worker.min.mjs',
+	import.meta.url,
+).toString();
+
 SyntaxHighlighter.registerLanguage('json', json);
 SyntaxHighlighter.registerLanguage('xml', xml);
 SyntaxHighlighter.registerLanguage('css', css);
