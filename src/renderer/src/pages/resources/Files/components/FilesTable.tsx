@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/Table';
 import type { FileEntry } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
-import { MIME_PREFIX_IMAGE, MIME_PREFIX_TEXT, MIME_TYPE_PDF } from '../types';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_JSON, MIME_TYPE_PDF } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 import { SortIcon } from './SortIcon';
