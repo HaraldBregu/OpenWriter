@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { Info } from 'lucide-react';
+import { OCR_MODELS } from '@shared/models';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/Select';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { useFilesContext } from '../context/FilesContext';
 
