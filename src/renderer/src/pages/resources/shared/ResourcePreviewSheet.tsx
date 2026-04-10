@@ -210,7 +210,7 @@ function CsvPreview({ content }: { content: string }) {
 					<TableHeader>
 						<TableRow>
 							{header.map((cell, index) => (
-								<AppTableHead key={index}>{cell}</AppTableHead>
+								<TableHead key={index}>{cell}</TableHead>
 							))}
 						</TableRow>
 					</TableHeader>
