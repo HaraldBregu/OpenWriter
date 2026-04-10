@@ -366,26 +366,26 @@ const InfoPanel: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 				</div>
 			</div>
 
-			<AppAlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
-				<AppAlertDialogContent>
-					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>{t('configSidebar.deleteDocumentTitle')}</AppAlertDialogTitle>
-						<AppAlertDialogDescription>
+			<AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>{t('configSidebar.deleteDocumentTitle')}</AlertDialogTitle>
+						<AlertDialogDescription>
 							{t('configSidebar.deleteDocumentConfirm')}
-						</AppAlertDialogDescription>
-					</AppAlertDialogHeader>
-					<AppAlertDialogFooter>
-						<AppAlertDialogCancel disabled={isDeleting}>{t('common.cancel')}</AppAlertDialogCancel>
-						<AppAlertDialogAction
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel disabled={isDeleting}>{t('common.cancel')}</AlertDialogCancel>
+						<AlertDialogAction
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleDeletePermanently}
 							disabled={isDeleting}
 						>
 							{t('configSidebar.deletePermanently')}
-						</AppAlertDialogAction>
-					</AppAlertDialogFooter>
-				</AppAlertDialogContent>
-			</AppAlertDialog>
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 
 			<ImagePreviewDialog
 				open={previewImage !== null}

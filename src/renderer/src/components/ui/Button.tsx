@@ -38,8 +38,7 @@ const buttonVariants = cva(
 				'icon-sm':
 					'size-7 rounded-[min(var(--radius-md),12px)] in-data-[slot=button-group]:rounded-lg',
 				'icon-lg': 'size-9',
-				['editor-block-icons']:
-					"size-6 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
+				['editor-block-icons']: "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
 				['prompt-submit-md']: 'size-8',
 				['header-icon-md']: 'size-8',
 				['header-icon-lg']: 'size-9',

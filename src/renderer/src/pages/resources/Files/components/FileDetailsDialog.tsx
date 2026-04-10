@@ -1,21 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import {
-	Calendar,
-	File,
-	FileWarning,
-	FolderOpen,
-	HardDrive,
-	Loader2,
-	Trash2,
-} from 'lucide-react';
+import { Calendar, File, FileWarning, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	'pdfjs-dist/build/pdf.worker.min.mjs',
-	import.meta.url,
+	import.meta.url
 ).toString();
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
