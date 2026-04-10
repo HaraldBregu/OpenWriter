@@ -345,28 +345,30 @@ const Input: React.FC<InputProps> = ({
 
 				<div className="flex items-center gap-2 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
 					<AppDropdownMenu>
-						<AppDropdownMenuTrigger asChild>
-							<AppButton
-								type="button"
-								variant="ghost"
-								size="icon"
-								className={cn(
-									'h-8 w-8 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
-									isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
-								)}
-								disabled={disabled}
-								title={currentAgentLabel}
-								aria-label={t('assistantNode.switchAgentCurrent', 'Agent: {{agent}}', {
-									agent: currentAgentLabel,
-								})}
-							>
-								{isImage ? (
-									<ImageIcon className="h-4 w-4" aria-hidden="true" />
-								) : (
-									<PenLine className="h-4 w-4" aria-hidden="true" />
-								)}
-							</AppButton>
-						</AppDropdownMenuTrigger>
+						<AppDropdownMenuTrigger
+							render={
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="icon"
+									className={cn(
+										'h-8 w-8 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
+										isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
+									)}
+									disabled={disabled}
+									title={currentAgentLabel}
+									aria-label={t('assistantNode.switchAgentCurrent', 'Agent: {{agent}}', {
+										agent: currentAgentLabel,
+									})}
+								>
+									{isImage ? (
+										<ImageIcon className="h-4 w-4" aria-hidden="true" />
+									) : (
+										<PenLine className="h-4 w-4" aria-hidden="true" />
+									)}
+								</AppButton>
+							}
+						/>
 						<AppDropdownMenuContent
 							align="start"
 							side="top"
