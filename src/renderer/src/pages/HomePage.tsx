@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PenLine, Bot, FolderOpen, ArrowRight, Star, Clock3 } from 'lucide-react';
-import { AppSeparator } from '@/components/app';
+import { Separator } from '@/components/ui/Separator';
 import { useCreateWriting } from '@/hooks/use-create-writing';
 import { useAppSelector } from '@/store';
 import { selectAllDocuments } from '@/store/documents';
