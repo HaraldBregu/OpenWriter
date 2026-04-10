@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { User } from 'lucide-react';
 import { SectionHeader, SettingRow } from '../components';
-import { AppButton } from '@/components/app/AppButton';
-import { AppInput } from '@/components/app/AppInput';
-import { AppSwitch } from '@/components/app/AppSwitch';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Switch } from '@/components/ui/Switch';
 
 interface ProfileState {
 	firstName: string;
