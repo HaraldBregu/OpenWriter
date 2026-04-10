@@ -547,10 +547,10 @@ function LayoutInner({ children }: LayoutProps) {
 }
 
 // ---------------------------------------------------------------------------
-// AppLayout
+// Layout
 // ---------------------------------------------------------------------------
 
-export function AppLayout({ children }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
 	return (
 		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
 			<SidebarProvider
