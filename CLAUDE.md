@@ -16,6 +16,8 @@ After each file edit, run `yarn format` to format the code with Prettier.
 
 Always use the primary UI components from `src/renderer/src/components/ui/` first before creating new ones or importing from external libraries directly.
 
+**Do NOT modify any files under `src/renderer/src/components/ui/` unless the user explicitly requests it.**
+
 ## SonarQube Best Practices
 
 After implementing or modifying code, verify it follows SonarQube best practices:

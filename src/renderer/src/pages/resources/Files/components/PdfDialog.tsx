@@ -12,11 +12,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/Dialog';
-import {
-	ResizableHandle,
-	ResizablePanel,
-	ResizablePanelGroup,
-} from '@/components/ui/Resizable';
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
@@ -172,7 +168,7 @@ export function PdfDialog(): ReactElement | null {
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
-						<ResizablePanelGroup direction="horizontal" className="h-full w-full">
+						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							{/* Left panel — PDF preview */}
 							<ResizablePanel defaultSize={70} minSize={40}>
 								<ScrollArea className="h-full p-4">
