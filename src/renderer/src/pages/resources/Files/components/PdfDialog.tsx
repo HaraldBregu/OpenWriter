@@ -54,7 +54,9 @@ function SectionHeader({
 
 export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
-	const [selectedModel, setSelectedModel] = useState<string | null>(OCR_MODELS[0]?.modelId ?? null);
+	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
+	const selectedModelName =
+		OCR_MODELS.find((m) => m.modelId === selectedModel)?.name ?? 'Seleziona modello';
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['intestazione']);
 	const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
