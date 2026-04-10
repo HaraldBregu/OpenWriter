@@ -670,7 +670,7 @@ export class WorkspaceIpc implements IpcModule {
 		// -------------------------------------------------------------------------
 
 		ipcMain.handle(
-			WorkspaceChannels.getFiles,
+			WorkspaceChannels.getResourcesFiles,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
@@ -680,11 +680,11 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected. Please select a workspace first.');
 				}
 				return filesService.getFiles(currentPath);
-			}, WorkspaceChannels.getFiles)
+			}, WorkspaceChannels.getResourcesFiles)
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.insertFiles,
+			WorkspaceChannels.insertResourcesFiles,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, extensions?: string[]) => {
 				const hasFilter = extensions && extensions.length > 0;
 				const filters: FileFilter[] = hasFilter
@@ -723,11 +723,11 @@ export class WorkspaceIpc implements IpcModule {
 					: undefined;
 
 				return filesService.insertFiles(currentPath, result.filePaths, markWritten);
-			}, WorkspaceChannels.insertFiles)
+			}, WorkspaceChannels.insertResourcesFiles)
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.deleteFileEntry,
+			WorkspaceChannels.deleteResourcesFileEntry,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
@@ -746,7 +746,7 @@ export class WorkspaceIpc implements IpcModule {
 					: undefined;
 
 				await filesService.deleteFile(currentPath, id, markWritten);
-			}, WorkspaceChannels.deleteFileEntry)
+			}, WorkspaceChannels.deleteResourcesFileEntry)
 		);
 
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
