@@ -1,19 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import { Calendar, File, FileWarning, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
+import { Calendar, File, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
-import Markdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
-import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
-import json from 'react-syntax-highlighter/dist/esm/languages/hljs/json';
-import xml from 'react-syntax-highlighter/dist/esm/languages/hljs/xml';
-import css from 'react-syntax-highlighter/dist/esm/languages/hljs/css';
-import javascript from 'react-syntax-highlighter/dist/esm/languages/hljs/javascript';
-import typescript from 'react-syntax-highlighter/dist/esm/languages/hljs/typescript';
-import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
-import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import { Button } from '@/components/ui/Button';
 import {
 	Dialog,
@@ -24,36 +14,17 @@ import {
 } from '@/components/ui/Dialog';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/Table';
 import type { FileEntry } from '../../../../../../shared/types';
-import {
-	BINARY_MIME_TYPES,
-	MIME_PREFIX_IMAGE,
-	MIME_TO_LANGUAGE,
-	MIME_TYPE_PDF,
-	parseCsv,
-} from '../../shared/resource-preview-utils';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
+
+const MIME_TYPE_JSON = 'application/json';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 	'pdfjs-dist/build/pdf.worker.min.mjs',
 	import.meta.url
 ).toString();
-
-SyntaxHighlighter.registerLanguage('json', json);
-SyntaxHighlighter.registerLanguage('xml', xml);
-SyntaxHighlighter.registerLanguage('css', css);
-SyntaxHighlighter.registerLanguage('javascript', javascript);
-SyntaxHighlighter.registerLanguage('typescript', typescript);
-SyntaxHighlighter.registerLanguage('python', python);
 
 function useBlobUrl(path: string, mimeType: string) {
 	const [blobUrl, setBlobUrl] = useState<string | null>(null);
@@ -176,74 +147,6 @@ function PdfPreview({ path }: { path: string }) {
 	);
 }
 
-function CsvPreview({ content }: { content: string }) {
-	const rows = useMemo(() => parseCsv(content), [content]);
-	const [header, ...body] = rows;
-
-	if (rows.length === 0) {
-		return <p className="text-sm text-muted-foreground">Empty CSV file</p>;
-	}
-
-	return (
-		<div className="overflow-auto rounded-md border">
-			<Table>
-				{header && (
-					<TableHeader>
-						<TableRow>
-							{header.map((cell, index) => (
-								<TableHead key={index}>{cell}</TableHead>
-							))}
-						</TableRow>
-					</TableHeader>
-				)}
-				<TableBody>
-					{body.map((row, rowIndex) => (
-						<TableRow key={rowIndex}>
-							{row.map((cell, cellIndex) => (
-								<TableCell key={cellIndex} className="text-sm">
-									{cell}
-								</TableCell>
-							))}
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-		</div>
-	);
-}
-
-function HtmlPreview({ content }: { content: string }) {
-	return (
-		<iframe
-			title="HTML preview"
-			srcDoc={content}
-			className="h-full w-full rounded border-0 bg-white"
-			sandbox="allow-same-origin"
-		/>
-	);
-}
-
-function MarkdownPreview({ content }: { content: string }) {
-	return (
-		<div className="prose prose-sm max-w-none dark:prose-invert">
-			<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>
-		</div>
-	);
-}
-
-function CodePreview({ content, language }: { content: string; language: string }) {
-	return (
-		<SyntaxHighlighter
-			language={language}
-			style={vs2015}
-			customStyle={{ margin: 0, borderRadius: '0.375rem', fontSize: '0.875rem' }}
-			wrapLongLines
-		>
-			{content}
-		</SyntaxHighlighter>
-	);
-}
-
 function JsonPreview({ content }: { content: string }) {
 	const formatted = useMemo(() => {
 		try {
@@ -253,23 +156,10 @@ function JsonPreview({ content }: { content: string }) {
 		}
 	}, [content]);
 
-	return <CodePreview content={formatted} language="json" />;
-}
-
-function PlainTextPreview({ content }: { content: string }) {
 	return (
-		<pre className="whitespace-pre-wrap break-words font-mono text-sm text-foreground">
-			{content}
+		<pre className="whitespace-pre-wrap break-words rounded-md bg-muted/30 p-4 font-mono text-sm text-foreground">
+			{formatted}
 		</pre>
-	);
-}
-
-function UnsupportedPreview({ mimeType }: { mimeType: string }) {
-	return (
-		<div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
-			<FileWarning className="h-10 w-10" />
-			<p className="text-sm">Preview not available for {mimeType}</p>
-		</div>
 	);
 }
 
@@ -280,19 +170,10 @@ function FilePreview({ file, content }: { file: FileEntry; content: string | nul
 	if (file.mimeType === MIME_TYPE_PDF) {
 		return <PdfPreview path={file.path} />;
 	}
-	if (BINARY_MIME_TYPES.has(file.mimeType)) {
-		return <UnsupportedPreview mimeType={file.mimeType} />;
+	if (file.mimeType === MIME_TYPE_JSON && content !== null) {
+		return <JsonPreview content={content} />;
 	}
-	if (content === null) return null;
-	if (file.mimeType === 'text/csv') return <CsvPreview content={content} />;
-	if (file.mimeType === 'text/html') return <HtmlPreview content={content} />;
-	if (file.mimeType === 'text/markdown') return <MarkdownPreview content={content} />;
-	if (file.mimeType === 'application/json') return <JsonPreview content={content} />;
-
-	const language = MIME_TO_LANGUAGE[file.mimeType];
-	if (language) return <CodePreview content={content} language={language} />;
-
-	return <PlainTextPreview content={content} />;
+	return null;
 }
 
 function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
@@ -315,14 +196,10 @@ export function FileDetailsDialog(): ReactElement | null {
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
-	const isBinary =
-		activeFile !== null &&
-		(BINARY_MIME_TYPES.has(activeFile.mimeType) ||
-			activeFile.mimeType === MIME_TYPE_PDF ||
-			activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE));
+	const shouldReadContent = activeFile !== null && activeFile.mimeType === MIME_TYPE_JSON;
 
 	useEffect(() => {
-		if (!activeFile || isBinary) {
+		if (!activeFile || !shouldReadContent) {
 			setContent(null);
 			setError(null);
 			setLoading(false);
@@ -352,7 +229,7 @@ export function FileDetailsDialog(): ReactElement | null {
 		return () => {
 			cancelled = true;
 		};
-	}, [activeFile, isBinary]);
+	}, [activeFile, shouldReadContent]);
 
 	const handleDeleteSingle = useCallback(async () => {
 		if (!activeFile) return;
