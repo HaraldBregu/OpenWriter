@@ -1,21 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
-import { Calendar, File, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import type { ReactElement } from 'react';
+import { Info, Loader2 } from 'lucide-react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import 'react-pdf/dist/Page/AnnotationLayer.css';
 import 'react-pdf/dist/Page/TextLayer.css';
+import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
-import {
-	Dialog,
-	DialogContent,
-	DialogDescription,
-	DialogHeader,
-} from '@/components/ui/Dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
-import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
-import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
@@ -131,31 +125,47 @@ function PdfPreview({ path }: { path: string }) {
 	);
 }
 
-function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
+const EXTRA_OPTIONS = [
+	{ value: 'immagine', label: 'Immagine' },
+	{ value: 'intestazione', label: 'Intestazione' },
+	{ value: 'per-pagina', label: 'Per di pagina' },
+] as const;
+
+type ExtraValue = (typeof EXTRA_OPTIONS)[number]['value'];
+
+function SectionHeader({
+	label,
+	hasInfo = false,
+	onAdd,
+}: {
+	label: string;
+	hasInfo?: boolean;
+	onAdd?: () => void;
+}) {
 	return (
-		<div className="flex items-start gap-3">
-			<span className="mt-0.5 text-muted-foreground">{icon}</span>
-			<div className="min-w-0 flex-1">
-				<p className="text-xs text-muted-foreground">{label}</p>
-				<p className="truncate text-sm">{value}</p>
+		<div className="flex items-center justify-between">
+			<div className="flex items-center gap-1">
+				<span className="text-xs font-medium text-muted-foreground">{label}</span>
+				{hasInfo && <Info className="h-3 w-3 text-muted-foreground/50" />}
 			</div>
+			{onAdd && (
+				<Button variant="ghost" size="xs" onClick={onAdd}>
+					Aggiungi
+				</Button>
+			)}
 		</div>
 	);
 }
 
 export function PdfDialog(): ReactElement | null {
-	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
-		useFilesContext();
+	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
+	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['intestazione']);
 
-	const handleDelete = useCallback(async () => {
-		if (!activeFile) return;
-		try {
-			await window.workspace.deleteResourcesFileEntry(activeFile.id);
-			handleFileDetailsOpenChange(false);
-		} catch (err) {
-			console.error('Failed to delete file:', err);
-		}
-	}, [activeFile, handleFileDetailsOpenChange]);
+	const toggleExtra = (value: ExtraValue) => {
+		setSelectedExtras((prev) =>
+			prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+		);
+	};
 
 	if (!activeFile || activeFile.mimeType !== MIME_TYPE_PDF) {
 		return null;
@@ -165,81 +175,75 @@ export function PdfDialog(): ReactElement | null {
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
 			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col py-0">
 				<DialogHeader className="contents space-y-0 text-left py-0">
-					{/* <DialogTitle className="truncate">{activeFile.name}</DialogTitle> */}
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-							<ResizablePanel defaultSize={70} minSize={40}>
+							<ResizablePanel defaultSize={70} minSize="40%">
 								<ScrollArea className="h-full p-4">
 									<PdfPreview path={activeFile.path} />
 								</ScrollArea>
 							</ResizablePanel>
-
 							<ResizableHandle withHandle />
-
-							{/* Right panel — details & actions */}
-							<ResizablePanel defaultSize={30} minSize={20}>
+							<ResizablePanel defaultSize={30} minSize="30%">
 								<ScrollArea className="h-full">
-									<div className="space-y-4 p-4">
-										<div>
-											<h3 className="mb-3 text-sm font-semibold">Details</h3>
-											<div className="space-y-3">
-												<DetailRow
-													icon={<HardDrive className="h-4 w-4" />}
-													label="Size"
-													value={formatBytes(activeFile.size)}
-												/>
-												<DetailRow
-													icon={<File className="h-4 w-4" />}
-													label="Type"
-													value={activeFile.mimeType}
-												/>
-												<DetailRow
-													icon={<Calendar className="h-4 w-4" />}
-													label="Added"
-													value={formatDate(activeFile.createdAt)}
-												/>
-												<DetailRow
-													icon={<Calendar className="h-4 w-4" />}
-													label="Modified"
-													value={formatDate(activeFile.modifiedAt)}
-												/>
+									<div className="divide-y divide-border">
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Modello" hasInfo onAdd={() => {}} />
+											<Badge variant="secondary">Mistral OCR Latest</Badge>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader
+												label="Formato della risposta"
+												hasInfo
+												onAdd={() => {}}
+											/>
+											<p className="text-xs text-muted-foreground">All 0s: '1-4.8'</p>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Extra tabelle" />
+											<p className="text-xs">Markdown autonomo</p>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Extra" onAdd={() => {}} />
+											<div className="flex flex-wrap gap-1.5">
+												{EXTRA_OPTIONS.map((option) => (
+													<Button
+														key={option.value}
+														variant={
+															selectedExtras.includes(option.value)
+																? 'outline-selected'
+																: 'outline'
+														}
+														size="xs"
+														onClick={() => toggleExtra(option.value)}
+													>
+														{option.label}
+													</Button>
+												))}
 											</div>
 										</div>
 
-										<Separator />
+										<div className="flex items-center justify-between p-4">
+											<span className="text-xs font-medium text-muted-foreground">
+												Aggiungi immagine
+											</span>
+											<Button variant="ghost" size="xs">
+												Aggiungi
+											</Button>
+										</div>
 
-										<div>
-											<h3 className="mb-3 text-sm font-semibold">Location</h3>
-											<p
-												className="break-all text-xs text-muted-foreground"
-												title={activeFile.path}
-											>
-												{activeFile.relativePath}
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Punteggio di confidenza" />
+											<Badge variant="outline">Nessuno</Badge>
+										</div>
+
+										<div className="p-4">
+											<p className="text-xs text-muted-foreground">
+												Funzionalità aggiuntive disponibili tramite{' '}
+												<span className="font-medium text-primary">OWR Document AI</span>
 											</p>
-										</div>
-
-										<Separator />
-
-										<div>
-											<h3 className="mb-3 text-sm font-semibold">Actions</h3>
-											<div className="space-y-2">
-												<Button
-													variant="outline"
-													className="w-full justify-start"
-													onClick={handleOpenFolder}
-												>
-													<FolderOpen className="mr-2 h-4 w-4" />
-													Open in Folder
-												</Button>
-												<Button
-													variant="outline"
-													className="w-full justify-start text-destructive hover:bg-destructive/10 hover:text-destructive"
-													onClick={() => void handleDelete()}
-												>
-													<Trash2 className="mr-2 h-4 w-4" />
-													Delete File
-												</Button>
-											</div>
 										</div>
 									</div>
 								</ScrollArea>
