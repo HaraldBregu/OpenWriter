@@ -18,6 +18,8 @@ export const PROVIDER_IDS: readonly ProviderId[] = [
 	'meta',
 	'mistral',
 	'xai',
+	'deepseek',
+	'qwen',
 ];
 
 // ---------------------------------------------------------------------------
