@@ -245,7 +245,7 @@ export default function FilesPage(): React.ReactElement {
 						<Upload />
 						Upload
 					</Button>
-				</AppPageHeaderItems>
+				</div>
 			</div>
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<ButtonGroup className="flex-1 gap-2">
