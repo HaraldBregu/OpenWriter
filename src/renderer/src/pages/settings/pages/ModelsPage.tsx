@@ -82,10 +82,14 @@ const ModelsPage: React.FC = () => {
 			</div>
 
 			{Array.from(groupedByProvider.entries()).map(([provider, models]) => (
-				<div key={provider}>
+				<div key={provider} className="mb-8">
 					<SectionHeader title={`${provider} (${models.length})`} />
 					{models.map((model) => (
-						<SettingRow key={model.modelId} label={model.name} description={buildDescription(model)}>
+						<SettingRow
+							key={model.modelId}
+							label={model.name}
+							description={buildDescription(model)}
+						>
 							<span className="font-mono text-sm text-muted-foreground">{model.modelId}</span>
 						</SettingRow>
 					))}
