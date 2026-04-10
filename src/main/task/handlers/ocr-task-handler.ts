@@ -15,6 +15,7 @@ import { MistralOcrClient } from '../../ocr';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
+import type { LoggerService } from '../../services/logger';
 
 export interface OcrTaskInput {
 	/** URL or file path to the document to process. */

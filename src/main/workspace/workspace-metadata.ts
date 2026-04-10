@@ -4,6 +4,7 @@ import type { WorkspaceService } from './workspace-service';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
+import { DEFAULT_OCR_MODEL_ID } from '../../shared/models';
 
 // ---------------------------------------------------------------------------
 // Types
