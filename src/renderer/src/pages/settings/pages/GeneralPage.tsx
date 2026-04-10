@@ -71,13 +71,13 @@ const GeneralPage: React.FC = () => {
 				</div>
 				<div className="flex flex-1 flex-col gap-3">
 					<div className="flex gap-3">
-						<AppInput
+						<Input
 							placeholder={t('settings.profile.firstNamePlaceholder')}
 							value={profile.firstName}
 							onChange={handleProfileChange('firstName')}
 							className="flex-1"
 						/>
-						<AppInput
+						<Input
 							placeholder={t('settings.profile.lastNamePlaceholder')}
 							value={profile.lastName}
 							onChange={handleProfileChange('lastName')}

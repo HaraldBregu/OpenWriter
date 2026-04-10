@@ -458,7 +458,7 @@ export function ImageEditor({
 											className="h-full w-full object-contain"
 										/>
 									</div>
-									<AppButton
+									<Button
 										variant="ghost"
 										size="icon-xs"
 										className="absolute -right-1.5 -top-1.5 z-10 h-5 w-5 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-sm transition-opacity group-hover/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background"
@@ -469,7 +469,7 @@ export function ImageEditor({
 										aria-label={t('imageNode.removeImage', 'Remove image')}
 									>
 										<X className="h-3 w-3" />
-									</AppButton>
+									</Button>
 								</div>
 							))}
 						</div>
