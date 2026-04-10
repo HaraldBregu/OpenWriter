@@ -349,7 +349,7 @@ export default function FilesPage(): React.ReactElement {
 					<AppTable>
 						<AppTableHeader sticky>
 							<AppTableRow>
-								<AppTableHead className="w-10">
+								<AppTableHead className="w-10 px-6">
 									<AppCheckbox
 										checked={someChecked ? undefined : allChecked}
 										indeterminate={someChecked}
