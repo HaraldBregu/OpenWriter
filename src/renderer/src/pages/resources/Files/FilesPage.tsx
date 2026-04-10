@@ -27,11 +27,31 @@ import {
 import type { FileEntry } from '../../../../../shared/types';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+	InputGroupText,
+} from '@/components/ui/InputGroup';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Button } from '@/components/ui/Button';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/AlertDialog';
+import {
+	AlertDialog,
+	AlertDialogContent,
+	AlertDialogHeader,
+	AlertDialogTitle,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogCancel,
+	AlertDialogAction,
+} from '@/components/ui/AlertDialog';
 
 type ViewMode = 'list' | 'grid';
 type FileTypeFilter = 'all' | 'image' | 'pdf' | 'text' | 'other';
