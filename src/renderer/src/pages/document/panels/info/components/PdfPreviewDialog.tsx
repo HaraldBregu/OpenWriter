@@ -26,8 +26,8 @@ export function PdfPreviewDialog({
 	);
 
 	return (
-		<AppDialog open={open} onOpenChange={onOpenChange}>
-			<AppDialogContent
+		<Dialog open={open} onOpenChange={onOpenChange}>
+			<DialogContent
 				className={cn(
 					'fixed inset-0 z-[9999] h-screen w-screen',
 					'max-w-none translate-x-0 translate-y-0',
@@ -35,7 +35,7 @@ export function PdfPreviewDialog({
 					'border-0 p-0 gap-0 shadow-none'
 				)}
 			>
-				<AppDialogTitle className="sr-only">{title || 'Document'}</AppDialogTitle>
+				<DialogTitle className="sr-only">{title || 'Document'}</DialogTitle>
 				<button
 					type="button"
 					onClick={() => onOpenChange(false)}
@@ -59,7 +59,7 @@ export function PdfPreviewDialog({
 						{pdfDocument}
 					</PDFViewer>
 				)}
-			</AppDialogContent>
-		</AppDialog>
+			</DialogContent>
+		</Dialog>
 	);
 }
