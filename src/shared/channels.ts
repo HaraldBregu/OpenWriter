@@ -112,6 +112,7 @@ export const WorkspaceChannels = {
 	outputWatcherError: 'output:watcher-error',
 	// Filesystem
 	fsReadFile: 'fs:read-file',
+	fsReadFileBinary: 'fs:read-file-binary',
 	fsWriteFile: 'fs:write-file',
 	fsCreateFile: 'fs:create-file',
 	fsCreateFolder: 'fs:create-folder',
