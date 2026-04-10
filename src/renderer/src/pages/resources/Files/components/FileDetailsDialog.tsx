@@ -59,9 +59,7 @@ export function FileDetailsDialog(): ReactElement | null {
 
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
-			<DialogContent
-				style={{ maxWidth: 'none', width: 'min(1120px, calc(100vw - 2rem))' }}
-			>
+			<DialogContent className="w-[min(1120px,calc(100vw-2rem))] max-w-none">
 				<DialogHeader className="border-b bg-muted/30 px-6 py-5">
 					<DialogTitle className="truncate text-xl">{activeFile.name}</DialogTitle>
 				</DialogHeader>
