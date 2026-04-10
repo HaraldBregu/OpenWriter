@@ -147,8 +147,9 @@ const App: React.FC = () => {
 		<AppErrorBoundary level="root">
 			<Provider store={store}>
 				<AppProvider>
-					<Router>
-						<Routes>
+					<TooltipProvider>
+						<Router>
+							<Routes>
 							<Route
 								path="/splash"
 								element={
