@@ -127,8 +127,19 @@ export function PdfDialog(): ReactElement | null {
 									<ScrollArea className="flex-1">
 										<div className="divide-y divide-border">
 											<div className="space-y-2 p-4">
-												<SectionHeader label="Modello" hasInfo onAdd={() => {}} />
-												<Badge variant="secondary">Mistral OCR Latest</Badge>
+												<SectionHeader label="Modello" hasInfo />
+												<Select value={selectedModel} onValueChange={setSelectedModel}>
+													<SelectTrigger className="h-8 text-xs" aria-label="Modello OCR">
+														<SelectValue />
+													</SelectTrigger>
+													<SelectContent>
+														{OCR_MODELS.map((model) => (
+															<SelectItem key={model.modelId} value={model.modelId}>
+																{model.name}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
 											</div>
 
 											<div className="space-y-2 p-4">
