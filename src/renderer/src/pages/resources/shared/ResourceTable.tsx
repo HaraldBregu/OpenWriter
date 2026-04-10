@@ -109,7 +109,7 @@ const ResourceRow = memo(function ResourceRow({
 				{formatDate(resource.lastModified)}
 			</TableCell>
 			<TableCell>
-				<AppButton
+				<Button
 					type="button"
 					variant="ghost"
 					size="icon"
@@ -117,7 +117,7 @@ const ResourceRow = memo(function ResourceRow({
 					onClick={() => onPreview(resource)}
 				>
 					<Eye className="h-4 w-4" />
-				</AppButton>
+				</Button>
 			</TableCell>
 		</TableRow>
 	);
