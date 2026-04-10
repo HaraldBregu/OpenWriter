@@ -226,14 +226,17 @@ export function PdfDialog(): ReactElement | null {
 											</div>
 										</div>
 									</ScrollArea>
-									<div className="space-y-2 border-t p-4">
-										<Button className="w-full">Esegui OCR</Button>
+									<div className="flex gap-2 border-t p-4">
 										<Button
 											variant="outline"
-											className="w-full"
+											className="flex-1"
 											onClick={() => handleFileDetailsOpenChange(false)}
 										>
-											Chiudi
+											Annulla
+										</Button>
+										<Button className="flex-1 gap-1.5">
+											<Play className="h-3.5 w-3.5" />
+											Esegui OCR
 										</Button>
 									</div>
 								</div>
