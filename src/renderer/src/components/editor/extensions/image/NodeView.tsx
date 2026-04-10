@@ -234,7 +234,7 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 									}
 								/>
 							</div>
-						</AppTooltipProvider>
+						</TooltipProvider>
 
 						{loadError || !resolvedSrc ? (
 							<div
