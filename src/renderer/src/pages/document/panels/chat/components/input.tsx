@@ -242,7 +242,7 @@ const Input: React.FC<InputProps> = ({
 				)}
 			>
 				<div className="flex items-center gap-2 px-3.5 pt-3">
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon"
@@ -254,7 +254,7 @@ const Input: React.FC<InputProps> = ({
 						aria-describedby={dropStatusId}
 					>
 						<ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
+					</Button>
 				</div>
 
 				{previewUrls.length > 0 && (
@@ -347,7 +347,7 @@ const Input: React.FC<InputProps> = ({
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={
-								<AppButton
+								<Button
 									type="button"
 									variant="ghost"
 									size="icon"
@@ -366,7 +366,7 @@ const Input: React.FC<InputProps> = ({
 									) : (
 										<PenLine className="h-4 w-4" aria-hidden="true" />
 									)}
-								</AppButton>
+								</Button>
 							}
 						/>
 						<DropdownMenuContent
@@ -421,7 +421,7 @@ const Input: React.FC<InputProps> = ({
 					<DropdownMenu>
 						<DropdownMenuTrigger
 							render={
-								<AppButton
+								<Button
 									type="button"
 									variant="ghost"
 									size="sm"
@@ -435,7 +435,7 @@ const Input: React.FC<InputProps> = ({
 										{selectedModel.name}
 									</span>
 									<ChevronDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden="true" />
-								</AppButton>
+								</Button>
 							}
 						/>
 						<DropdownMenuContent
@@ -465,7 +465,7 @@ const Input: React.FC<InputProps> = ({
 
 					<div className="flex-1" />
 
-					<AppButton
+					<Button
 						type="button"
 						variant={canSend ? 'default' : 'ghost'}
 						size="icon"
@@ -480,7 +480,7 @@ const Input: React.FC<InputProps> = ({
 						)}
 					>
 						<ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
-					</AppButton>
+					</Button>
 				</div>
 			</div>
 		</div>
