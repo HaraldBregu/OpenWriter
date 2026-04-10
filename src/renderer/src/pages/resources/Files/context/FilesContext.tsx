@@ -100,7 +100,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	}, []);
 
 	useEffect(() => {
-		const unsubscribeFiles = window.workspace.onFilesChanged(() => {
+		const unsubscribeFiles = window.workspace.onResourcesFilesChanged(() => {
 			void refreshFiles();
 		});
 
