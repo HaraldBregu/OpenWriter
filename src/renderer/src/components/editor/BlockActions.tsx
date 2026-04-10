@@ -81,33 +81,33 @@ export const BlockActions = React.memo(function BlockActions({
 			)}
 			style={{ top: topValue }}
 		>
-			<AppDropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
-				<AppDropdownMenuTrigger
+			<DropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
+				<DropdownMenuTrigger
 					render={
-						<AppButton
+						<Button
 							variant="editor-block-actions"
 							size="editor-block-icons"
 							aria-label={t('blockActions.title')}
 						>
 							<MoreVertical />
-						</AppButton>
+						</Button>
 					}
 				/>
-				<AppDropdownMenuContent align="end" sideOffset={4}>
-					<AppDropdownMenuItem onClick={deleteBlock}>
+				<DropdownMenuContent align="end" sideOffset={4}>
+					<DropdownMenuItem onClick={deleteBlock}>
 						<Trash2 className="mr-2 h-4 w-4" />
 						{t('common.delete')}
-					</AppDropdownMenuItem>
-					<AppDropdownMenuItem onClick={duplicateBlock}>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={duplicateBlock}>
 						<Copy className="mr-2 h-4 w-4" />
 						{t('common.duplicate')}
-					</AppDropdownMenuItem>
-					<AppDropdownMenuItem onClick={copyBlockText}>
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={copyBlockText}>
 						<Clipboard className="mr-2 h-4 w-4" />
 						{t('blockActions.copyToClipboard')}
-					</AppDropdownMenuItem>
-				</AppDropdownMenuContent>
-			</AppDropdownMenu>
+					</DropdownMenuItem>
+				</DropdownMenuContent>
+			</DropdownMenu>
 		</div>
 	);
 });
