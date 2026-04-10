@@ -140,14 +140,14 @@ const ThemesPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.themes.actions')} />
 			<div className="flex gap-2 py-3 border-b">
-				<AppButton variant="outline" size="sm" onClick={handleOpenFolder}>
+				<Button variant="outline" size="sm" onClick={handleOpenFolder}>
 					<FolderOpen size={14} className="mr-1.5" />
 					{t('settings.themes.openFolder')}
-				</AppButton>
-				<AppButton variant="outline" size="sm" onClick={handleImport}>
+				</Button>
+				<Button variant="outline" size="sm" onClick={handleImport}>
 					<Upload size={14} className="mr-1.5" />
 					{t('settings.themes.import')}
-				</AppButton>
+				</Button>
 			</div>
 
 			<SectionHeader title={t('settings.themes.installed')} />
