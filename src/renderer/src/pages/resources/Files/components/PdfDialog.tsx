@@ -1,9 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import { Info, Loader2 } from 'lucide-react';
-import { Document, Page, pdfjs } from 'react-pdf';
-import 'react-pdf/dist/Page/AnnotationLayer.css';
-import 'react-pdf/dist/Page/TextLayer.css';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
@@ -192,11 +189,7 @@ export function PdfDialog(): ReactElement | null {
 										</div>
 
 										<div className="space-y-2 p-4">
-											<SectionHeader
-												label="Formato della risposta"
-												hasInfo
-												onAdd={() => {}}
-											/>
+											<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
 											<p className="text-xs text-muted-foreground">All 0s: '1-4.8'</p>
 										</div>
 
@@ -212,9 +205,7 @@ export function PdfDialog(): ReactElement | null {
 													<Button
 														key={option.value}
 														variant={
-															selectedExtras.includes(option.value)
-																? 'outline-selected'
-																: 'outline'
+															selectedExtras.includes(option.value) ? 'outline-selected' : 'outline'
 														}
 														size="xs"
 														onClick={() => toggleExtra(option.value)}
