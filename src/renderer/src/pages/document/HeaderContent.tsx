@@ -81,7 +81,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 			{searchOpen && (
 				<div className="flex items-center gap-2 px-6 py-2 border-b border-border bg-muted/50 shrink-0">
 					<Search className="h-4 w-4 text-muted-foreground shrink-0" />
-					<AppInput
+					<Input
 						ref={searchInputRef}
 						type="search"
 						value={searchQuery}
@@ -105,7 +105,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
 					<AppEmojiPicker value={emoji} onSelect={onEmojiChange} />
-					<AppInput
+					<Input
 						type="text"
 						value={title}
 						onChange={(e) => onTitleChange(e.target.value)}
