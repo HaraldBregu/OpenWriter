@@ -1,5 +1,12 @@
-import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
+import {
+	createContext,
+	useCallback,
+	useContext,
+	useEffect,
+	useRef,
+	useState,
+} from 'react';
+import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
 import type { FileEntry } from '../../../../../../shared/types';
 import type { FileTypeFilter, SortDirection, SortKey, ViewMode } from '../types';
 import { useFilesSort } from '../hooks/use-files-sort';
@@ -12,7 +19,8 @@ interface FilesContextValue {
 	filteredEntries: FileEntry[];
 	isLoading: boolean;
 	uploading: boolean;
-	loadFiles: () => Promise<void>;
+	setEntries: Dispatch<SetStateAction<FileEntry[]>>;
+	setIsLoading: Dispatch<SetStateAction<boolean>>;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 	viewMode: ViewMode;
@@ -71,7 +79,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
 		useFilesSelection({ filteredEntries });
 
-	const loadFiles = useCallback(async () => {
+	const refreshFiles = useCallback(async () => {
 		if (!mountedRef.current) return;
 		setIsLoading(true);
 		try {
@@ -91,12 +99,12 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 
 	useEffect(() => {
 		const unsubscribeFiles = window.workspace.onFilesChanged(() => {
-			void loadFiles();
+			void refreshFiles();
 		});
 
 		const unsubscribeWorkspace = window.workspace.onChange((event) => {
 			if (event.currentPath) {
-				void loadFiles();
+				void refreshFiles();
 				return;
 			}
 
@@ -109,7 +117,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 			unsubscribeFiles();
 			unsubscribeWorkspace();
 		};
-	}, [loadFiles, setSelected]);
+	}, [refreshFiles, setSelected]);
 
 	useEffect(() => {
 		setSelected((current) => {
@@ -126,7 +134,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		try {
 			const imported = await window.workspace.insertFiles(RESOURCE_SECTIONS.files.uploadExtensions);
 			if (imported.length > 0) {
-				await loadFiles();
+				await refreshFiles();
 			}
 		} catch (err) {
 			console.error('Failed to upload files:', err);
@@ -135,7 +143,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 				setUploading(false);
 			}
 		}
-	}, [loadFiles]);
+	}, [refreshFiles]);
 
 	const handleOpenFolder = useCallback(() => {
 		void window.workspace.openFilesFolder();
@@ -151,18 +159,19 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 			await Promise.all([...selected].map((id) => window.workspace.deleteFileEntry(id)));
 			setSelected(new Set());
 			setConfirmOpen(false);
-			await loadFiles();
+			await refreshFiles();
 		} catch (err) {
 			console.error('Failed to delete files:', err);
 		}
-	}, [loadFiles, selected, setSelected]);
+	}, [refreshFiles, selected, setSelected]);
 
 	const value: FilesContextValue = {
 		entries,
 		filteredEntries,
 		isLoading,
 		uploading,
-		loadFiles,
+		setEntries,
+		setIsLoading,
 		searchQuery,
 		setSearchQuery,
 		viewMode,

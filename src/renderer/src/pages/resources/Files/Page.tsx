@@ -6,11 +6,34 @@ import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { FilesProvider, useFilesContext } from './context/FilesContext';
 
 function FilesPageBootstrap(): null {
-	const { loadFiles } = useFilesContext();
+	const { setEntries, setIsLoading } = useFilesContext();
 
 	useEffect(() => {
+		let active = true;
+
+		const loadFiles = async (): Promise<void> => {
+			setIsLoading(true);
+			try {
+				const files = await window.workspace.getFiles();
+				if (!active) return;
+				setEntries(files);
+			} catch (err) {
+				if (!active) return;
+				console.error('Failed to load files:', err);
+				setEntries([]);
+			} finally {
+				if (active) {
+					setIsLoading(false);
+				}
+			}
+		};
+
 		void loadFiles();
-	}, [loadFiles]);
+
+		return () => {
+			active = false;
+		};
+	}, [setEntries, setIsLoading]);
 
 	return null;
 }
