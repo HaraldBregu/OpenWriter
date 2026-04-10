@@ -2,9 +2,8 @@
  * OcrTaskHandler — task handler for OCR operations.
  *
  * Receives a document URL (or file path) with a model identifier and input type,
- * delegates text extraction to the appropriate OCR client (Mistral or Qwen)
- * based on the model's provider, and saves the extracted markdown to the
- * workspace resources/files/ folder.
+ * delegates text extraction to the Mistral OCR client, and saves the extracted
+ * markdown to the workspace resources/files/ folder.
  */
 
 import fs from 'node:fs/promises';
@@ -12,7 +11,7 @@ import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
-import { MistralOcrClient, QwenOcrClient } from '../../ocr';
+import { MistralOcrClient } from '../../ocr';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
@@ -20,7 +19,7 @@ import type { FilesService } from '../../workspace/files-service';
 export interface OcrTaskInput {
 	/** URL or file path to the document to process. */
 	url: string;
-	/** OCR model identifier (e.g. "mistral-ocr-latest" or "qwen-vl-ocr-2025-11-20"). */
+	/** OCR model identifier (e.g. "mistral-ocr-latest"). */
 	modelId: string;
 	/** Input type: 'url' for URL-based input. */
 	inputType: string;
@@ -38,12 +37,6 @@ export interface OcrTaskOutput {
 	/** Path of the saved markdown file in resources/files/. */
 	savedPath: string;
 }
-
-/** Maps an AppProviderName to the ProviderId used by ProviderResolver. */
-const PROVIDER_NAME_TO_ID: Record<string, string> = {
-	Mistral: 'mistral',
-	Qwen: 'qwen',
-};
 
 export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> {
 	readonly type = 'ocr';
@@ -85,7 +78,6 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		}
 
 		const providerName = modelEntry.provider;
-		const providerId = PROVIDER_NAME_TO_ID[providerName] ?? providerName.toLowerCase();
 
 		const provider = this.providerResolver.resolve({
 			providerId: providerName,
@@ -100,7 +92,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(30, 'Processing OCR');
 
-		const text = await this.runOcr(providerId, provider, base64Data, input.modelId);
+		const text = await this.runOcr(provider, base64Data, input.modelId);
 
 		reporter.progress(80, 'Saving result');
 
@@ -117,28 +109,16 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 	}
 
 	private async runOcr(
-		providerId: string,
 		provider: { apiKey: string; baseUrl?: string },
 		base64Data: string,
 		model: string
 	): Promise<string> {
-		if (providerId === 'qwen') {
-			const qwenClient = new QwenOcrClient(provider.apiKey, provider.baseUrl);
-			const imageUrl = `data:application/pdf;base64,${base64Data}`;
-			const qwenResult = await qwenClient.process({
-				imageUrl,
-				prompt: 'Extract all text from this document.',
-				model,
-			});
-			return qwenResult.text;
-		}
-
-		const mistralClient = new MistralOcrClient(provider.apiKey);
-		const mistralResult = await mistralClient.process({
+		const client = new MistralOcrClient(provider.apiKey);
+		const result = await client.process({
 			document: { type: 'base64', data: base64Data },
 			model,
 		});
-		return mistralResult.pages.map((page) => page.markdown).join('\n\n');
+		return result.pages.map((page) => page.markdown).join('\n\n');
 	}
 
 	private async saveResult(
