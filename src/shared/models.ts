@@ -197,6 +197,14 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		contextWindow: 262144,
 		maxOutputTokens: 8192,
 	},
+	{
+		provider: 'Mistral',
+		modelId: 'mistral-ocr-latest',
+		name: 'Mistral OCR',
+		type: 'ocr',
+		contextWindow: 262144,
+		maxOutputTokens: 8192,
+	},
 
 	// ========================== Cohere ========================================
 	{
