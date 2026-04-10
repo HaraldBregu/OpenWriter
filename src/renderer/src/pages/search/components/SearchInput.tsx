@@ -13,7 +13,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ value, placeholder, onChange,
 	return (
 		<div className="relative">
 			<Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-			<AppInput
+			<Input
 				autoFocus
 				type="search"
 				value={value}
