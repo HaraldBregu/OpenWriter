@@ -333,7 +333,8 @@ export default function ContentPage(): React.ReactElement {
 									{editing && (
 										<AppTableHead className="w-10">
 											<AppCheckbox
-												checked={someChecked ? 'indeterminate' : allChecked}
+												checked={someChecked ? undefined : allChecked}
+												indeterminate={someChecked}
 												onCheckedChange={handleToggleAll}
 												aria-label="Select all"
 											/>

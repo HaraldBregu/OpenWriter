@@ -249,23 +249,21 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												{documents.map((w) => (
 													<AppSidebarMenuItem key={w.id}>
 														<AppSidebarMenuButton
-															asChild
+															render={<Link to={`/content/${w.id}`} />}
 															className="h-9 px-3"
 															isActive={location.pathname === `/content/${w.id}`}
 														>
-															<Link to={`/content/${w.id}`}>
-																{w.emoji && (
-																	<span
-																		aria-hidden="true"
-																		className="shrink-0 text-base leading-none"
-																	>
-																		{w.emoji}
-																	</span>
-																)}
-																<span className="flex-1 truncate">
-																	{w.title || t('sidebar.untitledWriting')}
+															{w.emoji && (
+																<span
+																	aria-hidden="true"
+																	className="shrink-0 text-base leading-none"
+																>
+																	{w.emoji}
 																</span>
-															</Link>
+															)}
+															<span className="flex-1 truncate">
+																{w.title || t('sidebar.untitledWriting')}
+															</span>
 														</AppSidebarMenuButton>
 													</AppSidebarMenuItem>
 												))}
@@ -279,11 +277,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						{/* Resources */}
 						<AppCollapsible defaultOpen className="py-0">
 							<AppSidebarGroup className="py-0">
-								<AppSidebarGroupLabel asChild>
-									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
-										{t('appLayout.resources', 'Resources')}
-										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
-									</AppCollapsibleTrigger>
+								<AppSidebarGroupLabel
+									render={
+										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+									}
+								>
+									{t('appLayout.resources', 'Resources')}
+									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
@@ -295,14 +295,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												return (
 													<AppSidebarMenuItem key={section.id}>
 														<AppSidebarMenuButton
-															asChild
+															render={<Link to={section.route} />}
 															className="h-9 px-3"
 															isActive={location.pathname === section.route}
 														>
-															<Link to={section.route}>
-																<Icon className="h-5 w-5 shrink-0" />
-																<span className="flex-1 truncate">{t(section.titleKey)}</span>
-															</Link>
+															<Icon className="h-5 w-5 shrink-0" />
+															<span className="flex-1 truncate">{t(section.titleKey)}</span>
 														</AppSidebarMenuButton>
 													</AppSidebarMenuItem>
 												);
@@ -316,49 +314,45 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						{/* Debug */}
 						<AppCollapsible defaultOpen className="py-0">
 							<AppSidebarGroup className="py-0">
-								<AppSidebarGroupLabel asChild>
-									<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
-										{t('appLayout.debug')}
-										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
-									</AppCollapsibleTrigger>
+								<AppSidebarGroupLabel
+									render={
+										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+									}
+								>
+									{t('appLayout.debug')}
+									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
 										<AppSidebarMenu>
 											<AppSidebarMenuItem>
 												<AppSidebarMenuButton
-													asChild
+													render={<Link to="/debug/tasks" />}
 													className="h-9 px-3"
 													isActive={location.pathname === '/debug/tasks'}
 												>
-													<Link to="/debug/tasks">
-														<ListTodo className="h-5 w-5 shrink-0" />
-														<span className="flex-1 truncate">{t('debug.tasks')}</span>
-													</Link>
+													<ListTodo className="h-5 w-5 shrink-0" />
+													<span className="flex-1 truncate">{t('debug.tasks')}</span>
 												</AppSidebarMenuButton>
 											</AppSidebarMenuItem>
 											<AppSidebarMenuItem>
 												<AppSidebarMenuButton
-													asChild
+													render={<Link to="/debug/redux" />}
 													className="h-9 px-3"
 													isActive={location.pathname === '/debug/redux'}
 												>
-													<Link to="/debug/redux">
-														<Database className="h-5 w-5 shrink-0" />
-														<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
-													</Link>
+													<Database className="h-5 w-5 shrink-0" />
+													<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
 												</AppSidebarMenuButton>
 											</AppSidebarMenuItem>
 											<AppSidebarMenuItem>
 												<AppSidebarMenuButton
-													asChild
+													render={<Link to="/debug/logs" />}
 													className="h-9 px-3"
 													isActive={location.pathname === '/debug/logs'}
 												>
-													<Link to="/debug/logs">
-														<ScrollText className="h-5 w-5 shrink-0" />
-														<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
-													</Link>
+													<ScrollText className="h-5 w-5 shrink-0" />
+													<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
 												</AppSidebarMenuButton>
 											</AppSidebarMenuItem>
 										</AppSidebarMenu>
@@ -370,7 +364,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 					<AppSidebarFooter className="border-t p-2">
 						<AppPopover>
-							<AppPopoverTrigger asChild>
+							<AppPopoverTrigger
+							render={
 								<button
 									type="button"
 									className={
@@ -408,7 +403,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</>
 									)}
 								</button>
-							</AppPopoverTrigger>
+							}
+							/>
 							<AppPopoverContent
 								align="start"
 								side="top"
