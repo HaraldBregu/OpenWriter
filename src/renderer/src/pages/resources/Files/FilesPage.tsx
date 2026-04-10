@@ -131,10 +131,9 @@ function EmptyState({ uploading, onUpload }: EmptyStateProps): React.ReactElemen
 }
 
 export default function FilesPage(): React.ReactElement {
-	const dispatch = useAppDispatch();
-	const entries = useAppSelector(selectFileEntries);
-	const isLoading = useAppSelector(selectFilesIsLoading);
-	const uploading = useAppSelector(selectFilesInserting);
+	const entries: FileEntry[] = [];
+	const isLoading = false;
+	const uploading = false;
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -228,7 +227,7 @@ export default function FilesPage(): React.ReactElement {
 		<div className="flex h-full flex-col">
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<h1 className="text-xl font-bold">Files</h1>
-				<AppPageHeaderItems>
+				<div className="flex items-center gap-2">
 					{selected.size > 0 && (
 						<Button variant="destructive" size="lg" onClick={handleDelete}>
 							<Trash2 />
