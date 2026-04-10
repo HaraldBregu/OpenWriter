@@ -1,13 +1,13 @@
 import { memo, type ReactNode, type ReactElement } from 'react';
 import { Sidebar } from '@/components/ui/Sidebar';
 
-interface SidebarLayoutProps {
+interface AppSidebarLayoutProps {
 	readonly children: ReactNode;
 }
 
-export const SidebarLayout = memo(function SidebarLayout({
+export const AppSidebarLayout = memo(function AppSidebarLayout({
 	children,
-}: SidebarLayoutProps): ReactElement {
+}: AppSidebarLayoutProps): ReactElement {
 	return (
 		<Sidebar collapsible="icon" className="border-r top-12 h-[calc(100svh-3rem)]">
 			{children}
