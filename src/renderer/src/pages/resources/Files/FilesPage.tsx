@@ -178,8 +178,8 @@ export default function FilesPage(): React.ReactElement {
 	}, [entries, searchQuery, sortDirection, sortKey, typeFilter]);
 
 	const handleUpload = useCallback(() => {
-		dispatch(insertFilesRequested(RESOURCE_SECTIONS.files.uploadExtensions));
-	}, [dispatch]);
+		void window.workspace.insertFiles(RESOURCE_SECTIONS.files.uploadExtensions);
+	}, []);
 
 	const handleOpenFolder = useCallback(() => {
 		void window.workspace.openFilesFolder();
@@ -190,11 +190,11 @@ export default function FilesPage(): React.ReactElement {
 		setConfirmOpen(true);
 	}, [selected]);
 
-	const handleConfirmDelete = useCallback(() => {
-		dispatch(removeFiles([...selected]));
+	const handleConfirmDelete = useCallback(async () => {
+		await Promise.all([...selected].map((id) => window.workspace.deleteFileEntry(id)));
 		setSelected(new Set());
 		setConfirmOpen(false);
-	}, [dispatch, selected]);
+	}, [selected]);
 
 	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
 	const someChecked = !allChecked && filteredEntries.some((f) => selected.has(f.id));
