@@ -557,7 +557,7 @@ export function Layout({ children }: LayoutProps) {
 				className="flex-col flex-1 min-h-0"
 				style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
 			>
-				<AppLayoutInner>{children}</AppLayoutInner>
+				<LayoutInner>{children}</LayoutInner>
 			</SidebarProvider>
 		</div>
 	);
