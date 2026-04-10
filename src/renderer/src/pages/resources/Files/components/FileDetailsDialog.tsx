@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import {
 	Calendar,
 	File,
-	FileImage,
-	FileText,
 	FileWarning,
 	FolderOpen,
 	HardDrive,
@@ -29,7 +27,6 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/Dialog';
-import { Badge } from '@/components/ui/Badge';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import {
@@ -41,7 +38,7 @@ import {
 	TableRow,
 } from '@/components/ui/Table';
 import type { FileEntry } from '../../../../../../shared/types';
-import { MIME_PREFIX_IMAGE, MIME_TYPE_JSON, MIME_TYPE_PDF } from '../types';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 
@@ -317,23 +314,6 @@ function FilePreview({ file, content }: { file: FileEntry; content: string | nul
 	return <PlainTextPreview content={content} />;
 }
 
-function getMimeTypeLabel(mimeType: string): string {
-	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) return 'Image';
-	if (mimeType === MIME_TYPE_PDF) return 'PDF';
-	if (mimeType === MIME_TYPE_JSON) return 'JSON';
-	return 'File';
-}
-
-function getFileIcon(mimeType: string): ReactNode {
-	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) {
-		return <FileImage className="h-5 w-5 text-muted-foreground" />;
-	}
-	if (mimeType === MIME_TYPE_PDF || mimeType === MIME_TYPE_JSON) {
-		return <FileText className="h-5 w-5 text-muted-foreground" />;
-	}
-	return <File className="h-5 w-5 text-muted-foreground" />;
-}
-
 function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
 	return (
 		<div className="flex items-start gap-3">
@@ -411,13 +391,7 @@ export function FileDetailsDialog(): ReactElement | null {
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
 			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col">
 				<DialogHeader className="contents space-y-0 text-left">
-					<div className="flex items-center gap-3 px-6 pt-6">
-						{getFileIcon(activeFile.mimeType)}
-						<div className="min-w-0 flex-1">
-							<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
-						</div>
-						<Badge variant="secondary">{getMimeTypeLabel(activeFile.mimeType)}</Badge>
-					</div>
+					<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
 					<DialogDescription className="flex min-h-0 flex-1">
 						<div className="flex w-full gap-0">
 							{/* Left column — file preview */}
