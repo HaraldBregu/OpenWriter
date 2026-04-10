@@ -65,8 +65,6 @@ import {
 	Moon,
 } from 'lucide-react';
 import { useAppActions, useCurrentUser, useThemeMode } from '../../../contexts';
-import type { ThemeMode } from '../../../contexts';
-import { cn } from '../../../lib/utils';
 
 interface AppLayoutProps {
 	readonly children: React.ReactNode;
@@ -142,23 +140,6 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const footerUserName = currentUser?.name?.trim() || 'User';
 	const footerUserEmail = currentUser?.email?.trim() || 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
-	const themeOptions: { value: ThemeMode; label: string; icon: typeof Sun }[] = [
-		{
-			value: 'light',
-			label: t('settings.theme.light', 'Light'),
-			icon: Sun,
-		},
-		{
-			value: 'system',
-			label: t('settings.theme.system', 'System'),
-			icon: Monitor,
-		},
-		{
-			value: 'dark',
-			label: t('settings.theme.dark', 'Dark'),
-			icon: Moon,
-		},
-	];
 
 	const accountMenuItems = [
 		{
@@ -524,19 +505,34 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 								<div className="flex items-center justify-between px-3 py-2">
 									<span className="text-sm">{t('settings.theme.title')}</span>
-									<ButtonGroup className="rounded-full border border-border bg-muted p-0.5">
-										{themeOptions.map(({ value, label, icon: Icon }) => (
-											<Button
-												key={value}
-												variant={themeMode === value ? 'outline-selected' : 'outline'}
-												size="icon-sm"
-												onClick={() => setTheme(value)}
-												aria-label={label}
-												aria-pressed={themeMode === value}
-											>
-												<Icon className="size-3.5" />
-											</Button>
-										))}
+									<ButtonGroup>
+										<Button
+											variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
+											size="icon-sm"
+											onClick={() => setTheme('light')}
+											aria-label={t('settings.theme.light', 'Light')}
+											aria-pressed={themeMode === 'light'}
+										>
+											<Sun className="size-3.5" />
+										</Button>
+										<Button
+											variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
+											size="icon-sm"
+											onClick={() => setTheme('system')}
+											aria-label={t('settings.theme.system', 'System')}
+											aria-pressed={themeMode === 'system'}
+										>
+											<Monitor className="size-3.5" />
+										</Button>
+										<Button
+											variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
+											size="icon-sm"
+											onClick={() => setTheme('dark')}
+											aria-label={t('settings.theme.dark', 'Dark')}
+											aria-pressed={themeMode === 'dark'}
+										>
+											<Moon className="size-3.5" />
+										</Button>
 									</ButtonGroup>
 								</div>
 							</ComboboxContent>
