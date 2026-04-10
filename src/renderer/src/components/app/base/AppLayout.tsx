@@ -235,11 +235,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						{open && (
 							<AppCollapsible defaultOpen className="py-0">
 								<AppSidebarGroup className="py-0">
-									<AppSidebarGroupLabel asChild>
-										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors">
-											{t('sidebar.writings')}
-											<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
-										</AppCollapsibleTrigger>
+									<AppSidebarGroupLabel
+										render={
+											<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										}
+									>
+										{t('sidebar.writings')}
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</AppSidebarGroupLabel>
 									<AppCollapsiblePanel>
 										<AppSidebarGroupContent>
