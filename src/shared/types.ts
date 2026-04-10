@@ -322,7 +322,10 @@ export interface ResourceInfo {
 /** Allowed file extensions for the resources/files/ folder. */
 export const RESOURCES_FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
 
+export type ResourcesFilesViewMode = 'list' | 'grid';
 export type ResourcesFileTypeFilter = 'all' | 'json' | 'markdown' | 'text' | 'pdf';
+export type ResourcesFilesSortKey = 'name' | 'createdAt' | 'mimeType' | 'size';
+export type ResourcesFilesSortDirection = 'none' | 'asc' | 'desc';
 
 export const RESOURCES_FILE_TYPE_FILTERS: { value: ResourcesFileTypeFilter; label: string }[] = [
 	{ value: 'all', label: 'All' },
