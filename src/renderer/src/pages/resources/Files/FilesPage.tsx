@@ -394,12 +394,43 @@ export default function FilesPage(): React.ReactElement {
 								</AppTableRow>
 							) : (
 								filteredEntries.map((file) => (
-									<FileRow
+									<AppTableRow
 										key={file.id}
-										file={file}
-										isSelected={selected.has(file.id)}
-										onToggle={handleToggleRow}
-									/>
+										data-state={selected.has(file.id) ? 'selected' : undefined}
+									>
+										<AppTableCell className="w-10 px-6">
+											<AppCheckbox
+												checked={selected.has(file.id)}
+												onCheckedChange={() => handleToggleRow(file.id)}
+												aria-label={`Select ${file.name}`}
+											/>
+										</AppTableCell>
+										<AppTableCell>
+											<div className="flex items-center gap-3">
+												<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+													{getFileIcon(file.mimeType)}
+												</div>
+												<div className="min-w-0">
+													<p className="truncate font-medium text-sm">{file.name}</p>
+													<p
+														className="truncate text-xs text-muted-foreground"
+														title={formatDate(file.createdAt)}
+													>
+														{file.path}
+													</p>
+												</div>
+											</div>
+										</AppTableCell>
+										<AppTableCell className="whitespace-nowrap text-muted-foreground">
+											{formatShortDate(file.createdAt)}
+										</AppTableCell>
+										<AppTableCell className="whitespace-nowrap text-muted-foreground">
+											{getMimeTypeLabel(file.mimeType)}
+										</AppTableCell>
+										<AppTableCell className="whitespace-nowrap text-right text-muted-foreground">
+											{formatBytes(file.size)}
+										</AppTableCell>
+									</AppTableRow>
 								))
 							)}
 						</AppTableBody>
