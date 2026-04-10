@@ -94,7 +94,7 @@ const ResourceRow = memo(function ResourceRow({
 		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
 			{editing && (
 				<TableCell className="w-[40px]">
-					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
+					<Checkbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
 				</TableCell>
 			)}
 			<TableCell className="max-w-[300px] truncate font-medium">{resource.name}</TableCell>
@@ -260,7 +260,7 @@ export const ResourceTable = memo(function ResourceTable({
 						<TableRow>
 							{editing && (
 								<AppTableHead className="w-[40px]">
-									<AppCheckbox
+									<Checkbox
 										checked={someChecked ? undefined : allChecked}
 										indeterminate={someChecked}
 										onCheckedChange={toggleAll}
