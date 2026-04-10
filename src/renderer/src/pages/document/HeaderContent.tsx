@@ -141,7 +141,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						currentEntryId={currentHistoryEntryId}
 						onRestoreEntry={onRestoreHistoryEntry}
 					/>
-					<AppSeparator orientation="vertical" className="mx-2 h-5" />
+					<Separator orientation="vertical" className="mx-2 h-5" />
 					<Button
 						type="button"
 						variant="header-icon"
