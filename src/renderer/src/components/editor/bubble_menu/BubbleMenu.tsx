@@ -72,7 +72,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 			className={menuContainerClass}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
-			<AppButton
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Bold"
@@ -80,8 +80,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleBold().run()}
 			>
 				<Bold className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Italic"
@@ -89,8 +89,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleItalic().run()}
 			>
 				<Italic className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Underline"
@@ -98,8 +98,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleUnderline().run()}
 			>
 				<Underline className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Strikethrough"
@@ -107,11 +107,11 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleStrike().run()}
 			>
 				<Strikethrough className="h-3.5 w-3.5" />
-			</AppButton>
+			</Button>
 
 			<div className={separatorClass} />
 
-			<AppButton
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Text"
@@ -119,8 +119,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().setParagraph().run()}
 			>
 				<Type className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 1"
@@ -128,8 +128,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
 			>
 				<Heading1 className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 2"
@@ -137,8 +137,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
 			>
 				<Heading2 className="h-3.5 w-3.5" />
-			</AppButton>
-			<AppButton
+			</Button>
+			<Button
 				variant="ghost"
 				size="icon"
 				aria-label="Heading 3"
@@ -146,7 +146,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
 			>
 				<Heading3 className="h-3.5 w-3.5" />
-			</AppButton>
+			</Button>
 		</div>
 	);
 });

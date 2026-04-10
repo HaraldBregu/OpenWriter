@@ -93,22 +93,22 @@ const ResourceRow = memo(function ResourceRow({
 	return (
 		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
 			{editing && (
-				<AppTableCell className="w-[40px]">
+				<TableCell className="w-[40px]">
 					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
-				</AppTableCell>
+				</TableCell>
 			)}
-			<AppTableCell className="max-w-[300px] truncate font-medium">{resource.name}</AppTableCell>
-			<AppTableCell className="text-muted-foreground">{resource.mimeType}</AppTableCell>
-			<AppTableCell className="text-right tabular-nums text-muted-foreground">
+			<TableCell className="max-w-[300px] truncate font-medium">{resource.name}</TableCell>
+			<TableCell className="text-muted-foreground">{resource.mimeType}</TableCell>
+			<TableCell className="text-right tabular-nums text-muted-foreground">
 				{formatBytes(resource.size)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.importedAt)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.lastModified)}
-			</AppTableCell>
-			<AppTableCell>
+			</TableCell>
+			<TableCell>
 				<AppButton
 					type="button"
 					variant="ghost"
@@ -118,7 +118,7 @@ const ResourceRow = memo(function ResourceRow({
 				>
 					<Eye className="h-4 w-4" />
 				</AppButton>
-			</AppTableCell>
+			</TableCell>
 		</TableRow>
 	);
 });
