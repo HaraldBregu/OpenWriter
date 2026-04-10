@@ -59,6 +59,7 @@ export function FilesTable(): ReactElement {
 		someChecked,
 		sortKey,
 		sortDirection,
+		editMode,
 		handleSort,
 		handleToggleAll,
 		handleToggleRow,
