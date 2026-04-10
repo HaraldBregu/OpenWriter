@@ -78,7 +78,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		const providerId = PROVIDER_NAME_TO_ID[providerName] ?? providerName.toLowerCase();
 
 		const provider = this.providerResolver.resolve({
-			providerId,
+			providerId: providerName,
 			modelId: input.model,
 		});
 
