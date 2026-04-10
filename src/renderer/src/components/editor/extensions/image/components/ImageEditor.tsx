@@ -475,7 +475,7 @@ export function ImageEditor({
 						</div>
 					</div>
 					{/* Prompt textarea */}
-					<AppTextarea
+					<Textarea
 						ref={aiTextareaRef}
 						id="ai-prompt"
 						value={aiPrompt}
