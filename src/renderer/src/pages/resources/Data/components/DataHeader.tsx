@@ -31,20 +31,10 @@ export function DataHeader(): ReactElement {
 						{t('resources.removeWithCount', { count: selected.size })}
 					</Button>
 				)}
-				<Button
-					variant="outline"
-					size="lg"
-					onClick={handleOpenResourcesFolder}
-					disabled={editing}
-				>
+				<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder} disabled={editing}>
 					<FolderOpen />
 				</Button>
-				<Button
-					variant="outline"
-					size="lg"
-					onClick={handleIndex}
-					disabled={indexing || editing}
-				>
+				<Button variant="outline" size="lg" onClick={handleIndex} disabled={indexing || editing}>
 					<ListTree />
 				</Button>
 				<Button
@@ -57,11 +47,7 @@ export function DataHeader(): ReactElement {
 					<Upload />
 					{t(section.uploadKey)}
 				</Button>
-				<Button
-					variant={editing ? 'secondary' : 'outline'}
-					size="lg"
-					onClick={handleToggleEdit}
-				>
+				<Button variant={editing ? 'secondary' : 'outline'} size="lg" onClick={handleToggleEdit}>
 					<Pencil />
 				</Button>
 			</div>

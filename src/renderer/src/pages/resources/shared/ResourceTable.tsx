@@ -1,16 +1,16 @@
 import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import {
-	AppButton,
-	AppCheckbox,
-	AppTable,
-	AppTableBody,
-	AppTableCell,
-	AppTableHead,
-	AppTableHeader,
-	AppTableRow,
-} from '@/components/app';
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import { Input } from '@/components/ui/Input';
 import {
 	Select,

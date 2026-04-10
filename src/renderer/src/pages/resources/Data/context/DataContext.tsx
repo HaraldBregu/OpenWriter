@@ -15,10 +15,7 @@ import {
 	selectResourcesStatus,
 } from '@/store/workspace';
 import { useTaskListener } from '@/hooks/use-task-listener';
-import {
-	filterResourcesBySection,
-	RESOURCE_SECTIONS,
-} from '../../shared/resource-sections';
+import { filterResourcesBySection, RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useDataSort } from '../hooks/use-data-sort';
 import { useDataFilter } from '../hooks/use-data-filter';
 import { useDataSelection } from '../hooks/use-data-selection';
@@ -88,7 +85,7 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 
 	const resources = useMemo(
 		() => filterResourcesBySection(allResources, SECTION_ID),
-		[allResources],
+		[allResources]
 	);
 
 	const indexingTask = useTaskListener<{

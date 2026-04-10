@@ -8,14 +8,13 @@ import { ContentTable } from './ContentTable';
 const ResourcePreviewSheet = lazy(() =>
 	import('../../shared/ResourcePreviewSheet').then((module) => ({
 		default: module.ResourcePreviewSheet,
-	})),
+	}))
 );
 
 export function ContentContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
-	const { resources, isLoading, error, previewResource, setPreviewResource } =
-		useContentContext();
+	const { resources, isLoading, error, previewResource, setPreviewResource } = useContentContext();
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">

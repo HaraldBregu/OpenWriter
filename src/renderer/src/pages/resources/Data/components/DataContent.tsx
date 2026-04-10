@@ -11,7 +11,7 @@ import { DataTable } from './DataTable';
 const ResourcePreviewSheet = lazy(() =>
 	import('../../shared/ResourcePreviewSheet').then((module) => ({
 		default: module.ResourcePreviewSheet,
-	})),
+	}))
 );
 
 function EmptyState({
@@ -29,13 +29,7 @@ function EmptyState({
 		<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
 			<Icon className="mb-3 h-10 w-10 opacity-40" />
 			<p className="text-sm">{t(section.emptyKey)}</p>
-			<Button
-				variant="outline"
-				size="sm"
-				className="mt-4"
-				onClick={onUpload}
-				disabled={uploading}
-			>
+			<Button variant="outline" size="sm" className="mt-4" onClick={onUpload} disabled={uploading}>
 				<Upload className="mr-1.5 h-3.5 w-3.5" />
 				{t(section.uploadKey)}
 			</Button>

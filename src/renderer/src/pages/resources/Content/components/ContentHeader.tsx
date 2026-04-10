@@ -29,12 +29,7 @@ export function ContentHeader(): ReactElement {
 						{t('resources.removeWithCount', { count: selected.size })}
 					</Button>
 				)}
-				<Button
-					variant="outline"
-					size="lg"
-					onClick={handleOpenResourcesFolder}
-					disabled={editing}
-				>
+				<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder} disabled={editing}>
 					<FolderOpen />
 				</Button>
 				<Button
@@ -47,11 +42,7 @@ export function ContentHeader(): ReactElement {
 					<Upload />
 					{t(section.uploadKey)}
 				</Button>
-				<Button
-					variant={editing ? 'secondary' : 'outline'}
-					size="lg"
-					onClick={handleToggleEdit}
-				>
+				<Button variant={editing ? 'secondary' : 'outline'} size="lg" onClick={handleToggleEdit}>
 					<Pencil />
 				</Button>
 			</div>

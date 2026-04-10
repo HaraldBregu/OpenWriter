@@ -26,7 +26,7 @@ export function useDataSort(): UseDataSortReturn {
 				setSortDirection('asc');
 			}
 		},
-		[sortKey],
+		[sortKey]
 	);
 
 	return { sortKey, sortDirection, handleSort };

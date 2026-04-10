@@ -52,12 +52,8 @@ function DataRow({
 			<TableCell className="text-right tabular-nums text-muted-foreground">
 				{formatBytes(resource.size)}
 			</TableCell>
-			<TableCell className="text-muted-foreground">
-				{formatDate(resource.importedAt)}
-			</TableCell>
-			<TableCell className="text-muted-foreground">
-				{formatDate(resource.lastModified)}
-			</TableCell>
+			<TableCell className="text-muted-foreground">{formatDate(resource.importedAt)}</TableCell>
+			<TableCell className="text-muted-foreground">{formatDate(resource.lastModified)}</TableCell>
 			<TableCell>
 				<Button
 					type="button"
