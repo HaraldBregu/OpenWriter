@@ -77,44 +77,11 @@ function PreviewError({ message }: { message: string }) {
 
 function PdfPreview({ path }: { path: string }) {
 	const { blobUrl, error, loading } = useBlobUrl(path, 'application/pdf');
-	const [numPages, setNumPages] = useState<number>(0);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const [containerWidth, setContainerWidth] = useState<number>(600);
-
-	useEffect(() => {
-		if (!containerRef.current) return;
-		const observer = new ResizeObserver((entries) => {
-			const entry = entries[0];
-			if (entry) {
-				setContainerWidth(entry.contentRect.width);
-			}
-		});
-		observer.observe(containerRef.current);
-		return () => observer.disconnect();
-	}, []);
 
 	if (error) return <PreviewError message={error} />;
 	if (loading || !blobUrl) return <PreviewLoading />;
 
-	return (
-		<div ref={containerRef} className="flex flex-col items-center gap-4">
-			<Document
-				file={blobUrl}
-				onLoadSuccess={({ numPages: n }) => setNumPages(n)}
-				loading={<PreviewLoading />}
-				error={<PreviewError message="Failed to load PDF" />}
-			>
-				{Array.from({ length: numPages }, (_, i) => (
-					<Page
-						key={i + 1}
-						pageNumber={i + 1}
-						width={containerWidth - 32}
-						className="mb-4 shadow-md"
-					/>
-				))}
-			</Document>
-		</div>
-	);
+	return <iframe src={blobUrl} className="h-full w-full border-0" title="PDF Preview" />;
 }
 
 const EXTRA_OPTIONS = [
