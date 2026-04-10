@@ -71,7 +71,8 @@ const SystemPage: React.FC = () => {
 		setTheme(next);
 	};
 
-	const handleAppThemeChange = (next: string): void => {
+	const handleAppThemeChange = (next: string | null): void => {
+		if (next === null) return;
 		if (next === DEFAULT_THEME_VALUE) {
 			setCustomTheme(null);
 			setAppTheme('default');
@@ -80,7 +81,8 @@ const SystemPage: React.FC = () => {
 		}
 	};
 
-	const handleLanguageChange = (next: string): void => {
+	const handleLanguageChange = (next: string | null): void => {
+		if (next === null) return;
 		const option = LANGUAGE_OPTIONS.find((o) => o.value === next);
 		if (option) setLanguage(option.value);
 	};
