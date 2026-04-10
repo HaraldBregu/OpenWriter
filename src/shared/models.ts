@@ -45,6 +45,7 @@ const REASONING_PREFIXES = ['o1', 'o3', 'o4-mini', 'o3-mini', 'o1-mini', 'o1-pre
 
 export const DEFAULT_EMBEDDING_MODEL_ID = 'text-embedding-3-small';
 export const DEFAULT_IMAGE_MODEL_ID = 'gpt-image-1';
+export const DEFAULT_OCR_MODEL_ID = 'mistral-ocr-latest';
 
 // ---------------------------------------------------------------------------
 // Flagship model registry
