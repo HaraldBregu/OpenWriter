@@ -1,12 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppButton } from '@components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 import {
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-	AppDropdownMenuTrigger,
-} from '@components/app/AppDropdownMenu';
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { Check, ImageIcon, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CONTENT_GENERATOR_AGENT_OPTIONS, type ContentGeneratorAgentId } from '../agents';
