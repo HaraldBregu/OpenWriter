@@ -327,7 +327,7 @@ const Input: React.FC<InputProps> = ({
 					</div>
 				)}
 
-				<AppTextarea
+				<Textarea
 					ref={textareaRef}
 					value={value}
 					onChange={handleChange}
