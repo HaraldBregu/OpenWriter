@@ -76,7 +76,7 @@ export function ContentGeneratorContent({
 					onFileInputChange={onFileInputChange}
 				/>
 			)}
-			<AppTextarea
+			<Textarea
 				ref={textareaRef}
 				value={prompt}
 				onChange={(e) => {
