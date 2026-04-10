@@ -104,7 +104,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 			{/* Header */}
 			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
 				<div className="flex items-center gap-3 flex-1 min-w-0">
-					<AppEmojiPicker value={emoji} onSelect={onEmojiChange} />
+					<EmojiPicker value={emoji} onSelect={onEmojiChange} />
 					<Input
 						type="text"
 						value={title}
