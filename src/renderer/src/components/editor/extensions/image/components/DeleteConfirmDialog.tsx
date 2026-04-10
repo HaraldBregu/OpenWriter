@@ -1,16 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	AppAlertDialog,
-	AppAlertDialogTrigger,
-	AppAlertDialogContent,
-	AppAlertDialogHeader,
-	AppAlertDialogFooter,
-	AppAlertDialogTitle,
-	AppAlertDialogDescription,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-} from '@/components/app/AppAlertDialog';
+	AlertDialog,
+	AlertDialogTrigger,
+	AlertDialogContent,
+	AlertDialogHeader,
+	AlertDialogFooter,
+	AlertDialogTitle,
+	AlertDialogDescription,
+	AlertDialogAction,
+	AlertDialogCancel,
+} from '@/components/ui/AlertDialog';
 
 interface DeleteConfirmDialogProps {
 	onConfirm: () => void;
