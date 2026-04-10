@@ -39,9 +39,7 @@ function ModelCard({ model }: { readonly model: ModelInfo }): React.JSX.Element 
 			<div className="flex items-start justify-between gap-2">
 				<div className="min-w-0 flex-1">
 					<p className="text-sm font-medium truncate">{model.name}</p>
-					<p className="text-xs text-muted-foreground font-mono mt-0.5 truncate">
-						{model.modelId}
-					</p>
+					<p className="text-xs text-muted-foreground font-mono mt-0.5 truncate">{model.modelId}</p>
 				</div>
 				<Badge className={`shrink-0 text-[10px] font-medium ${typeColor}`}>{model.type}</Badge>
 			</div>
@@ -121,10 +119,7 @@ const ModelsPage: React.FC = () => {
 		<div className="w-full max-w-2xl p-4 sm:p-6">
 			<h1 className="text-lg font-normal mb-1">{t('settings.models.title', 'Models')}</h1>
 			<p className="text-sm text-muted-foreground mb-6">
-				{t(
-					'settings.models.subtitle',
-					'Browse all available AI models across providers.'
-				)}
+				{t('settings.models.subtitle', 'Browse all available AI models across providers.')}
 			</p>
 
 			<div className="mb-6">
