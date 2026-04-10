@@ -22,7 +22,7 @@ function ModelRow({ model }: { readonly model: ModelInfo }): React.JSX.Element {
 					<p className="text-sm">{model.name}</p>
 					<p className="text-xs text-muted-foreground mt-0.5">{model.modelId}</p>
 				</div>
-				<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-[panel-open]:rotate-90" />
+				<ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-transform group-data-panel-open:rotate-90" />
 			</CollapsibleTrigger>
 			<CollapsibleContent className="px-1 pb-3">
 				<div className="rounded-md border bg-muted/30 p-3 space-y-2">
