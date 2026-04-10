@@ -476,6 +476,7 @@ const workspace: WorkspaceApi = {
 	// Filesystem
 	// -------------------------------------------------------------------------
 	readFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsReadFile, params),
+	readFileBinary: (filePath) => typedInvokeUnwrap(WorkspaceChannels.fsReadFileBinary, filePath),
 	writeFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsWriteFile, params),
 	createFile: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFile, params),
 	createFolder: (params) => typedInvokeUnwrap(WorkspaceChannels.fsCreateFolder, params),
