@@ -115,7 +115,11 @@ export function FileDetailsDialog(): ReactElement | null {
 		}
 	}, [activeFile, handleFileDetailsOpenChange]);
 
-	if (!activeFile) {
+	if (
+		!activeFile ||
+		activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE) ||
+		activeFile.mimeType === MIME_TYPE_PDF
+	) {
 		return null;
 	}
 
