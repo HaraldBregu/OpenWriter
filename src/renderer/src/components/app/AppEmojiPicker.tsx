@@ -27,24 +27,26 @@ const AppEmojiPicker: React.FC<AppEmojiPickerProps> = ({ onSelect, value, classN
 
 	return (
 		<AppPopover>
-			<AppPopoverTrigger asChild>
-				<AppButton
-					type="button"
-					variant="header-icon"
-					size="header-icon-lg"
-					aria-label="Select emoji"
-					title="Select emoji"
-					className={cn('shrink-0 text-2xl leading-none', className)}
-				>
-					{value ? (
-						<span aria-hidden="true" className="text-2xl leading-none">
-							{value}
-						</span>
-					) : (
-						<Smile aria-hidden="true" />
-					)}
-				</AppButton>
-			</AppPopoverTrigger>
+			<AppPopoverTrigger
+				render={
+					<AppButton
+						type="button"
+						variant="header-icon"
+						size="header-icon-lg"
+						aria-label="Select emoji"
+						title="Select emoji"
+						className={cn('shrink-0 text-2xl leading-none', className)}
+					>
+						{value ? (
+							<span aria-hidden="true" className="text-2xl leading-none">
+								{value}
+							</span>
+						) : (
+							<Smile aria-hidden="true" />
+						)}
+					</AppButton>
+				}
+			/>
 			<AppPopoverContent
 				className="w-auto p-0"
 				align="start"
