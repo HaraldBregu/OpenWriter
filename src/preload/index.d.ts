@@ -286,15 +286,15 @@ export interface WorkspaceApi {
 	// Files (resources/files/ sub-folder)
 	// -------------------------------------------------------------------------
 	/** Load all files from the workspace resources/files/ directory. */
-	getFiles: () => Promise<FileEntry[]>;
+	getResourcesFiles: () => Promise<FileEntry[]>;
 	/** Open a file picker, copy selected files into resources/files/, return the new entries. */
-	insertFiles: (extensions?: string[]) => Promise<FileEntry[]>;
+	insertResourcesFiles: (extensions?: string[]) => Promise<FileEntry[]>;
 	/** Delete a file from resources/files/ by its ID. */
-	deleteFileEntry: (id: string) => Promise<void>;
+	deleteResourcesFileEntry: (id: string) => Promise<void>;
 	/** Subscribe to file change events in resources/files/. */
-	onFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
+	onResourcesFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
 	/** Subscribe to files watcher error events. */
-	onFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
+	onResourcesFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
