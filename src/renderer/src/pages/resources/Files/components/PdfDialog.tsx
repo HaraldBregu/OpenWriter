@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
-import { ChevronDown, Info, Play } from 'lucide-react';
+import { ChevronDown, FileText, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import type { AppProviderName } from '../../../../../../shared/types';
 import { Badge } from '@/components/ui/Badge';
