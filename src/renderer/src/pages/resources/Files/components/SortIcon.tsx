@@ -1,6 +1,6 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react';
 import type { ReactElement } from 'react';
-import type { SortDirection } from '../types';
+import type { ResourcesFilesSortDirection as SortDirection } from '../../../../../../shared/types';
 
 interface SortIconProps {
 	readonly active: boolean;
