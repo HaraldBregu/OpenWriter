@@ -12,18 +12,20 @@ import typescript from 'react-syntax-highlighter/dist/esm/languages/hljs/typescr
 import python from 'react-syntax-highlighter/dist/esm/languages/hljs/python';
 import { vs2015 } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import {
-	AppSheet,
-	AppSheetContent,
-	AppSheetDescription,
-	AppSheetHeader,
-	AppSheetTitle,
-	AppTable,
-	AppTableBody,
-	AppTableCell,
-	AppTableHead,
-	AppTableHeader,
-	AppTableRow,
-} from '@/components/app';
+	Sheet,
+	SheetContent,
+	SheetDescription,
+	SheetHeader,
+	SheetTitle,
+} from '@/components/ui/Sheet';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import type { ResourceInfo } from '../../../../../shared/types';
 import { formatBytes } from './resource-utils';
 
