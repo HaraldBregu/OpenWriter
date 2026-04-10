@@ -181,7 +181,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 
 	const handleConfirmDelete = useCallback(async () => {
 		try {
-			await Promise.all([...selected].map((id) => window.workspace.deleteFileEntry(id)));
+			await Promise.all([...selected].map((id) => window.workspace.deleteResourcesFileEntry(id)));
 			setSelected(new Set());
 			setConfirmOpen(false);
 			await refreshFiles();
