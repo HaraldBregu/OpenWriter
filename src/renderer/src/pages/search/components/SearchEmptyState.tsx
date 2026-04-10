@@ -1,7 +1,7 @@
 import React from 'react';
 import { SearchX } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AppButton } from '@/components/app';
+import { Button } from '@/components/ui/Button';
 
 interface SearchEmptyStateProps {
 	query: string;
