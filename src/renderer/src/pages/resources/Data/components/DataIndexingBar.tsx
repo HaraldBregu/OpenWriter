@@ -1,7 +1,7 @@
 import { FolderOpen, Loader2 } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppButton } from '@/components/app';
+import { Button } from '@/components/ui/Button';
 import { useDataContext } from '../context/DataContext';
 
 export function DataIndexingBar(): ReactElement | null {
@@ -41,14 +41,14 @@ export function DataIndexingBar(): ReactElement | null {
 						{indexingInfo.failedCount} {t('library.failed')}
 					</span>
 				)}
-				<AppButton
+				<Button
 					variant="ghost"
-					size="icon-xs"
-					className="ml-auto"
+					size="icon"
+					className="ml-auto h-6 w-6"
 					onClick={handleOpenDataFolder}
 				>
-					<FolderOpen />
-				</AppButton>
+					<FolderOpen className="h-3.5 w-3.5" />
+				</Button>
 			</div>
 		</div>
 	);
