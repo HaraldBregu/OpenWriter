@@ -58,8 +58,8 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		) {
 			throw new Error('OcrTaskInput.filePath must be a non-empty string');
 		}
-		if (!input.model || typeof input.model !== 'string' || input.model.trim().length === 0) {
-			throw new Error('OcrTaskInput.model must be a non-empty string');
+		if (!input.modelId || typeof input.modelId !== 'string' || input.modelId.trim().length === 0) {
+			throw new Error('OcrTaskInput.modelId must be a non-empty string');
 		}
 	}
 
