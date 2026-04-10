@@ -80,7 +80,7 @@ const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 function RouteWrapper({ children }: { children: React.ReactNode }) {
 	return (
 		<ErrorBoundary level="route">
-			<Suspense fallback={<AppLoadingSkeleton />}>{children}</Suspense>
+			<Suspense fallback={<LoadingSkeleton />}>{children}</Suspense>
 		</ErrorBoundary>
 	);
 }
@@ -135,7 +135,7 @@ const App: React.FC = () => {
 				<Provider store={store}>
 					<AppProvider>
 						<TooltipProvider>
-							<AppLoadingSkeleton />
+							<LoadingSkeleton />
 						</TooltipProvider>
 					</AppProvider>
 				</Provider>
@@ -189,7 +189,7 @@ const App: React.FC = () => {
 									path="*"
 									element={
 										<AppLayout>
-											<Suspense fallback={<AppLoadingSkeleton />}>
+											<Suspense fallback={<LoadingSkeleton />}>
 												<Routes>
 													<Route
 														path="/home"
@@ -210,7 +210,7 @@ const App: React.FC = () => {
 														<Route
 															index
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<GeneralPage />
 																</Suspense>
 															}
@@ -218,7 +218,7 @@ const App: React.FC = () => {
 														<Route
 															path="general"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<GeneralPage />
 																</Suspense>
 															}
@@ -226,7 +226,7 @@ const App: React.FC = () => {
 														<Route
 															path="workspace"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<WorkspacePage />
 																</Suspense>
 															}
@@ -234,7 +234,7 @@ const App: React.FC = () => {
 														<Route
 															path="providers"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<ProvidersPage />
 																</Suspense>
 															}
@@ -242,7 +242,7 @@ const App: React.FC = () => {
 														<Route
 															path="themes"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<ThemesPage />
 																</Suspense>
 															}
@@ -250,7 +250,7 @@ const App: React.FC = () => {
 														<Route
 															path="editor"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<EditorPage />
 																</Suspense>
 															}
@@ -258,7 +258,7 @@ const App: React.FC = () => {
 														<Route
 															path="system"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<SystemPage />
 																</Suspense>
 															}
@@ -266,7 +266,7 @@ const App: React.FC = () => {
 														<Route
 															path="developer"
 															element={
-																<Suspense fallback={<AppLoadingSkeleton />}>
+																<Suspense fallback={<LoadingSkeleton />}>
 																	<DeveloperPage />
 																</Suspense>
 															}
