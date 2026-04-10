@@ -118,6 +118,9 @@ export function PdfDialog(): ReactElement | null {
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
 								<div className="flex h-full flex-col">
+									<div className="border-b p-4">
+										<h2 className="text-sm font-semibold">Impostazioni OCR</h2>
+									</div>
 									<ScrollArea className="flex-1">
 										<div className="divide-y divide-border">
 											<div className="space-y-2 p-4">
