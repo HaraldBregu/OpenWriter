@@ -401,7 +401,7 @@ export function ImageEditor({
 						</div>
 					)}
 				</div>
-			</AppTooltipProvider>
+			</TooltipProvider>
 
 			{/* AI transform panel — full-width, matches AssistantContent painter style */}
 			{activeMode === 'ai' && (

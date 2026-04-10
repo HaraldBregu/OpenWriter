@@ -79,7 +79,7 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 							if (e.key === 'Escape') handleCancel();
 						}}
 					/>
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon-xs"
@@ -88,8 +88,8 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 						onClick={() => void handleConfirm()}
 					>
 						{saving ? <Loader2 className="animate-spin" /> : <Check />}
-					</AppButton>
-					<AppButton
+					</Button>
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon-xs"
@@ -99,14 +99,14 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 						className="text-muted-foreground hover:text-destructive"
 					>
 						<X />
-					</AppButton>
+					</Button>
 				</div>
 			) : (
 				<div className="flex items-center gap-1.5">
 					<span className="text-sm font-mono text-muted-foreground">
 						{hasKey ? MASKED_API_KEY : t('models.form.notSet', 'Not set')}
 					</span>
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon-xs"
@@ -115,7 +115,7 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 						className="text-muted-foreground hover:text-foreground"
 					>
 						<Pencil />
-					</AppButton>
+					</Button>
 				</div>
 			)}
 		</SettingRow>
