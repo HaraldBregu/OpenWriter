@@ -7,6 +7,7 @@
  */
 
 import OpenAI from 'openai';
+import type { ChatCompletionUserMessageParam } from 'openai/resources/chat/completions';
 
 const DEFAULT_MODEL = 'qwen-vl-ocr-2025-11-20';
 const DEFAULT_BASE_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1';
@@ -45,25 +46,22 @@ export class QwenOcrClient {
 	}
 
 	async process(options: QwenOcrRequestOptions): Promise<QwenOcrResult> {
-		const response = await this.client.chat.completions.create({
-			model: options.model ?? DEFAULT_MODEL,
-			messages: [
+		const userMessage: ChatCompletionUserMessageParam = {
+			role: 'user',
+			content: [
+				{ type: 'text', text: options.prompt },
 				{
-					role: 'user',
-					content: [
-						{ type: 'text', text: options.prompt },
-						{
-							type: 'image_url',
-							image_url: {
-								url: options.imageUrl,
-								// @ts-expect-error -- DashScope extension: pixel bounds are not in the OpenAI type
-								min_pixels: options.minPixels ?? DEFAULT_MIN_PIXELS,
-								max_pixels: options.maxPixels ?? DEFAULT_MAX_PIXELS,
-							},
-						},
-					],
+					type: 'image_url',
+					image_url: {
+						url: options.imageUrl,
+					},
 				},
 			],
+		};
+
+		const response = await this.client.chat.completions.create({
+			model: options.model ?? DEFAULT_MODEL,
+			messages: [userMessage],
 		});
 
 		const text = response.choices[0]?.message?.content ?? '';
