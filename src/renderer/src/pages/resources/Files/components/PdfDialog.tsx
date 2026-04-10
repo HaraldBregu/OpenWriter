@@ -270,7 +270,7 @@ export function PdfDialog(): ReactElement | null {
 												if (activeFile?.path && selectedModel) {
 													window.task.submit('ocr', {
 														filePath: activeFile.path,
-														model: selectedModel,
+														modelId: selectedModel,
 													});
 												}
 											}}
