@@ -68,6 +68,8 @@ export class MistralOcrClient {
 			includeImageBase64: options.includeImageBase64 ?? false,
 		});
 
+		console.log("response ocr mistral", response);
+
 		const pages: OcrPage[] = response.pages.map((page) => ({
 			index: page.index,
 			markdown: page.markdown,
