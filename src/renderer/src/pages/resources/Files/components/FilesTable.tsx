@@ -1,0 +1,142 @@
+import { File, FileImage, FileText } from 'lucide-react';
+import type { ReactElement, ReactNode } from 'react';
+import { Checkbox } from '@/components/ui/Checkbox';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
+import type { SortKey } from '../types';
+import { MIME_PREFIX_IMAGE, MIME_PREFIX_TEXT, MIME_TYPE_PDF } from '../types';
+import { formatBytes, formatDate } from '../../shared/resource-utils';
+import { useFilesContext } from '../context/FilesContext';
+import { SortIcon } from './SortIcon';
+
+function getMimeTypeLabel(mimeType: string): string {
+	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) return 'Image';
+	if (mimeType.startsWith(MIME_PREFIX_TEXT)) return 'Document';
+	if (mimeType === MIME_TYPE_PDF) return 'PDF';
+	return 'File';
+}
+
+function getFileIcon(mimeType: string): ReactNode {
+	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) {
+		return <FileImage className="h-5 w-5 text-muted-foreground" />;
+	}
+	if (mimeType.startsWith(MIME_PREFIX_TEXT) || mimeType === MIME_TYPE_PDF) {
+		return <FileText className="h-5 w-5 text-muted-foreground" />;
+	}
+	return <File className="h-5 w-5 text-muted-foreground" />;
+}
+
+function formatShortDate(timestamp: number): string {
+	return new Date(timestamp).toLocaleDateString(undefined, {
+		month: 'short',
+		day: 'numeric',
+	});
+}
+
+const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
+	{ key: 'name', label: 'Name', className: '' },
+	{ key: 'createdAt', label: 'Added', className: 'whitespace-nowrap' },
+	{ key: 'mimeType', label: 'Type', className: '' },
+	{ key: 'size', label: 'File size', className: 'text-right' },
+];
+
+export function FilesTable(): ReactElement {
+	const {
+		filteredEntries,
+		selected,
+		allChecked,
+		someChecked,
+		sortKey,
+		sortDirection,
+		handleSort,
+		handleToggleAll,
+		handleToggleRow,
+	} = useFilesContext();
+
+	return (
+		<Table className="text-foreground">
+			<TableHeader className="bg-muted sticky top-0 z-10">
+				<TableRow>
+					<TableHead className="w-10 px-6 text-muted-foreground">
+						<Checkbox
+							checked={someChecked ? undefined : allChecked}
+							indeterminate={someChecked}
+							onCheckedChange={handleToggleAll}
+							aria-label="Select all"
+						/>
+					</TableHead>
+					{SORT_COLUMNS.map(({ key, label, className }) => (
+						<TableHead key={key} className={`text-muted-foreground ${className}`}>
+							<button
+								type="button"
+								className="inline-flex items-center transition-colors hover:text-foreground"
+								onClick={() => handleSort(key)}
+							>
+								{label}
+								<SortIcon active={sortKey === key} direction={sortDirection} />
+							</button>
+						</TableHead>
+					))}
+				</TableRow>
+			</TableHeader>
+			<TableBody>
+				{filteredEntries.length === 0 ? (
+					<TableRow>
+						<TableCell
+							colSpan={5}
+							className="px-4 py-8 text-center text-sm text-muted-foreground"
+						>
+							No files match your search.
+						</TableCell>
+					</TableRow>
+				) : (
+					filteredEntries.map((file) => (
+						<TableRow
+							key={file.id}
+							data-state={selected.has(file.id) ? 'selected' : undefined}
+						>
+							<TableCell className="w-10 px-6">
+								<Checkbox
+									checked={selected.has(file.id)}
+									onCheckedChange={() => handleToggleRow(file.id)}
+									aria-label={`Select ${file.name}`}
+								/>
+							</TableCell>
+							<TableCell>
+								<div className="flex items-center gap-3">
+									<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
+										{getFileIcon(file.mimeType)}
+									</div>
+									<div className="min-w-0">
+										<p className="truncate font-medium text-sm">{file.name}</p>
+										<p
+											className="truncate text-xs text-muted-foreground"
+											title={formatDate(file.createdAt)}
+										>
+											{file.path}
+										</p>
+									</div>
+								</div>
+							</TableCell>
+							<TableCell className="whitespace-nowrap text-muted-foreground">
+								{formatShortDate(file.createdAt)}
+							</TableCell>
+							<TableCell className="whitespace-nowrap text-muted-foreground">
+								{getMimeTypeLabel(file.mimeType)}
+							</TableCell>
+							<TableCell className="whitespace-nowrap text-right text-muted-foreground">
+								{formatBytes(file.size)}
+							</TableCell>
+						</TableRow>
+					))
+				)}
+			</TableBody>
+		</Table>
+	);
+}
