@@ -2,13 +2,9 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Clock3, Plus, Search, Trash2 } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
-import {
-	AppButton,
-	AppInput,
-	AppPopover,
-	AppPopoverContent,
-	AppPopoverTrigger,
-} from '@/components/app';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 import { useDocumentDispatch, useDocumentState } from '../../../hooks';
 import { useChatState, useChatDispatch } from '../hooks';
 import type { ChatSessionFile } from '../shared';

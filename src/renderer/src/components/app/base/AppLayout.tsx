@@ -14,29 +14,22 @@ import {
 	RESOURCE_SECTIONS,
 } from '../../../pages/resources/shared/resource-sections';
 import { AppTitleBar } from './AppTitleBar';
+import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/ui/Collapsible';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
 import {
-	AppCollapsible,
-	AppCollapsibleTrigger,
-	AppCollapsiblePanel,
-	AppPopover,
-	AppPopoverContent,
-	AppPopoverTrigger,
-	AppSidebarContainer,
-	AppSidebarLayout,
-	AppSidebarInsetLayout,
-	AppSidebarContent,
-	AppSidebarFooter,
-	AppSidebarGroup,
-	AppSidebarGroupContent,
-	AppSidebarGroupLabel,
-	AppSidebarMenu,
-	AppSidebarMenuButton,
-	AppSidebarMenuItem,
-	AppSidebarProvider,
-	AppSidebarHeader,
-	AppIconOpenWriter,
+	SidebarContent,
+	SidebarFooter,
+	SidebarGroup,
+	SidebarGroupContent,
+	SidebarGroupLabel,
+	SidebarMenu,
+	SidebarMenuButton,
+	SidebarMenuItem,
+	SidebarProvider,
+	SidebarHeader,
 	useSidebar,
-} from '..';
+} from '@/components/ui/Sidebar';
+import { AppSidebarContainer, AppSidebarLayout, AppSidebarInsetLayout, AppIconOpenWriter } from '..';
 import {
 	Settings,
 	ChevronRight,
