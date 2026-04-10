@@ -6,7 +6,4 @@ export { AppSidebarInsetLayout } from './sidebar/AppSidebarInsetLayout';
 
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
-export { PageHeader } from './base/PageHeader';
-export { PageHeaderTitle } from './base/PageHeaderTitle';
-export { PageHeaderItems } from './base/PageHeaderItems';
-export { PageContainer } from './base/PageContainer';
+export { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from './base/Page';
