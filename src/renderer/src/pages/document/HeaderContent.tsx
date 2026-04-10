@@ -1,7 +1,10 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, X, Bot, Undo2, Redo2, Info } from 'lucide-react';
-import { AppButton, AppInput, AppSeparator, AppEmojiPicker } from '@/components/app';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Separator } from '@/components/ui/Separator';
+import { EmojiPicker } from '@/components/ui/EmojiPicker';
 import { useSidebarVisibility } from './providers';
 import HistoryMenu from './components/HistoryMenu';
 import type { HistoryEntry } from './services/history-service';
