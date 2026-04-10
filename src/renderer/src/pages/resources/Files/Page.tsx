@@ -43,11 +43,8 @@ import {
 	InputGroupInput,
 	InputGroupButton,
 } from '@/components/ui/InputGroup';
-import {
-	RESOURCES_FILE_TYPE_FILTERS as FILE_TYPE_FILTERS,
-	type ResourcesFileTypeFilter as FileTypeFilter,
-} from '../../../../../../shared/types';
 import { FilesTable } from './components/FilesTable';
+import { RESOURCES_FILE_TYPE_FILTERS, ResourcesFileTypeFilter } from 'src/shared';
 
 function PageContent(): ReactElement {
 	const {
@@ -136,9 +133,9 @@ function PageContent(): ReactElement {
 								<DropdownMenuContent align="end" sideOffset={8} alignOffset={-4}>
 									<DropdownMenuRadioGroup
 										value={typeFilter}
-										onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+										onValueChange={(value) => setTypeFilter(value as ResourcesFileTypeFilter)}
 									>
-										{FILE_TYPE_FILTERS.map(({ value, label }) => (
+										{RESOURCES_FILE_TYPE_FILTERS.map(({ value, label }) => (
 											<DropdownMenuRadioItem key={value} value={value}>
 												{label}
 											</DropdownMenuRadioItem>
