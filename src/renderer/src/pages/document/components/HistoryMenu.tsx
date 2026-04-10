@@ -31,17 +31,19 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 
 	return (
 		<AppDropdownMenu>
-			<AppDropdownMenuTrigger asChild>
-				<AppButton
-					type="button"
-					variant="header-icon"
-					size="header-icon-md"
-					title="Version history"
-					aria-label="Version history"
-				>
-					<History aria-hidden="true" />
-				</AppButton>
-			</AppDropdownMenuTrigger>
+			<AppDropdownMenuTrigger
+				render={
+					<AppButton
+						type="button"
+						variant="header-icon"
+						size="header-icon-md"
+						title="Version history"
+						aria-label="Version history"
+					>
+						<History aria-hidden="true" />
+					</AppButton>
+				}
+			/>
 			<AppDropdownMenuContent align="end" className="w-64">
 				<div className="max-h-72 overflow-y-auto">
 					{reversedEntries.length === 0 ? (
