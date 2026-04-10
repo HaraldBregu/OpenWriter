@@ -3,13 +3,13 @@ import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { ChevronDown, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
+import type { AppProviderName } from '../../../../../../shared/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
-	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
@@ -19,6 +19,26 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { useFilesContext } from '../context/FilesContext';
+
+const PROVIDER_COLORS: Record<string, string> = {
+	OpenAI: 'bg-green-600',
+	Anthropic: 'bg-amber-700',
+	Google: 'bg-blue-600',
+	Meta: 'bg-blue-500',
+	Mistral: 'bg-orange-500',
+	Amazon: 'bg-yellow-600',
+};
+
+function ProviderIcon({ provider }: { provider: AppProviderName }) {
+	const bg = PROVIDER_COLORS[provider] ?? 'bg-zinc-500';
+	return (
+		<span
+			className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-semibold leading-none text-white ${bg}`}
+		>
+			{provider.charAt(0)}
+		</span>
+	);
+}
 
 const EXTRA_OPTIONS = [
 	{ value: 'immagine', label: 'Immagine' },
