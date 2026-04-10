@@ -1,11 +1,11 @@
 import { memo, type ReactNode } from 'react';
 
-interface AppPageHeaderTitleProps {
+interface PageHeaderTitleProps {
 	readonly children: ReactNode;
 }
 
-export const AppPageHeaderTitle = memo(function AppPageHeaderTitle({
+export const PageHeaderTitle = memo(function PageHeaderTitle({
 	children,
-}: AppPageHeaderTitleProps): React.ReactElement {
+}: PageHeaderTitleProps): React.ReactElement {
 	return <h1 className="text-xl font-bold">{children}</h1>;
 });
