@@ -5,7 +5,7 @@ import { AppIconOpenWriter } from '@/components/app';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { AppTitleBar } from '@/components/app/base/AppTitleBar';
+import { TitleBar } from '@/components/app/base/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS } from '../../../../shared/providers';
 import type { ProviderId, ServiceProvider } from '../../../../shared/types';
 import type { AppStartupInfo } from '../../../../shared/types';
