@@ -36,12 +36,12 @@ export function LanguageSelector(): React.ReactElement {
 				return (
 					<div key={option.value} className="flex items-center justify-between px-4 py-3">
 						<div className="flex flex-col gap-0.5">
-							<AppLabel
+							<Label
 								htmlFor={`language-${option.value}`}
 								className="text-sm font-normal cursor-pointer"
 							>
 								{option.label}
-							</AppLabel>
+							</Label>
 							<span id={descriptionId} className="text-xs text-muted-foreground">
 								{option.description}
 							</span>

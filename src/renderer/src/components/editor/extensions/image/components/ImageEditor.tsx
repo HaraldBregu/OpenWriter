@@ -497,10 +497,10 @@ export function ImageEditor({
 					{/* Footer */}
 					<div className="flex items-center justify-between gap-3 border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.22)_0%,hsl(var(--background)/0.22)_100%)] px-3.5 py-2.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.16)_100%)]">
 						<div className="flex min-w-0 items-center gap-2">
-							<AppDropdownMenu>
-								<AppDropdownMenuTrigger
+							<DropdownMenu>
+								<DropdownMenuTrigger
 									render={
-										<AppButton
+										<Button
 											variant="ghost"
 											size="sm"
 											disabled={isProcessingAI}
@@ -511,12 +511,12 @@ export function ImageEditor({
 													selectedModelId}
 											</span>
 											<ChevronDown className="h-3 w-3 shrink-0 opacity-50" />
-										</AppButton>
+										</Button>
 									}
 								/>
-								<AppDropdownMenuContent align="start" side="top" className="min-w-[180px]">
+								<DropdownMenuContent align="start" side="top" className="min-w-[180px]">
 									{IMAGE_MODELS.map((model) => (
-										<AppDropdownMenuItem
+										<DropdownMenuItem
 											key={model.modelId}
 											onSelect={() => setSelectedModelId(model.modelId)}
 											className={cn(
@@ -527,10 +527,10 @@ export function ImageEditor({
 												<span className="text-xs font-medium">{model.name}</span>
 												<span className="text-[10px] text-muted-foreground">{model.provider}</span>
 											</div>
-										</AppDropdownMenuItem>
+										</DropdownMenuItem>
 									))}
-								</AppDropdownMenuContent>
-							</AppDropdownMenu>
+								</DropdownMenuContent>
+							</DropdownMenu>
 							{isProcessingAI && (
 								<span className="truncate text-[11px] font-medium text-foreground/65 dark:text-muted-foreground/95">
 									{t('imageNode.aiProcessing', 'Processing...')}

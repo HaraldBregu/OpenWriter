@@ -184,14 +184,14 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 								{indexingInfo.failedCount} {t('library.failed')}
 							</span>
 						)}
-						<AppButton
+						<Button
 							variant="ghost"
 							size="icon-xs"
 							className="ml-auto"
 							onClick={handleOpenDataFolder}
 						>
 							<FolderOpen />
-						</AppButton>
+						</Button>
 					</div>
 				</div>
 			)}
