@@ -62,7 +62,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 
 	return (
 		<div className="flex h-screen flex-col bg-background">
-			<AppTitleBar title="OpenWriter" />
+			<TitleBar title="OpenWriter" />
 
 			<div className="flex flex-1 items-center justify-center px-6 py-10">
 				<div className="grid w-full max-w-6xl gap-8 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
