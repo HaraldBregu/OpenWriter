@@ -1,7 +1,6 @@
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import type { FileEntry } from '../../shared/types';
-import { RESOURCES_FILES_EXTENSIONS } from '../../shared/file-type-validator';
+import { RESOURCES_FILES_EXTENSIONS, type FileEntry } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
 import type { LoggerService } from '../services/logger';
 
