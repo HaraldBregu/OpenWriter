@@ -391,6 +391,13 @@ export class Workspace implements Disposable {
 		return manager.readFile(params.filePath, { encoding: params.encoding });
 	}
 
+	async readFileBinary(filePath: string): Promise<string> {
+		this.validateFsParams({ filePath }, ['filePath']);
+		const manager = this.buildFileManager();
+		const buffer = await manager.readFileBinary(filePath);
+		return buffer.toString('base64');
+	}
+
 	async writeFile(params: FsWriteFileParams): Promise<void> {
 		this.validateFsParams(params, ['filePath', 'content']);
 		if (typeof params.content !== 'string') {
