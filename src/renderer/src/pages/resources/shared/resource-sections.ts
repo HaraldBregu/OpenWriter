@@ -28,7 +28,7 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 		uploadKey: 'resources.files.upload',
 		searchPlaceholderKey: 'resources.files.searchPlaceholder',
 		icon: File,
-		uploadExtensions: [],
+		uploadExtensions: ['.json', '.pdf', '.png', '.jpeg', '.jpg'],
 		supportsIndexing: false,
 	},
 	content: {
