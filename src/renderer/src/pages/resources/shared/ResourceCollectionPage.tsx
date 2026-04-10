@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Loader2 } from 'lucide-react';
-import { AppPageContainer } from '@/components/app';
+import { PageContainer } from '@/components/app';
 import {
 	AlertDialog,
 	AlertDialogAction,
