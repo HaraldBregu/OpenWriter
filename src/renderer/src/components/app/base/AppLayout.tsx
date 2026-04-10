@@ -59,7 +59,7 @@ interface AppLayoutProps {
 }
 
 // ---------------------------------------------------------------------------
-// AppLayoutInner — rendered inside AppSidebarProvider so it can call useSidebar
+// AppLayoutInner — rendered inside SidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
 function AppLayoutInner({ children }: AppLayoutProps) {
@@ -527,12 +527,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 export function AppLayout({ children }: AppLayoutProps) {
 	return (
 		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
-			<AppSidebarProvider
+			<SidebarProvider
 				className="flex-col flex-1 min-h-0"
 				style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
 			>
 				<AppLayoutInner>{children}</AppLayoutInner>
-			</AppSidebarProvider>
+			</SidebarProvider>
 		</div>
 	);
 }

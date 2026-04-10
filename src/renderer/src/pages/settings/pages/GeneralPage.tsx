@@ -142,7 +142,7 @@ const GeneralPage: React.FC = () => {
 				label={t('settings.application.menuBar')}
 				description={t('settings.application.menuBarDescription')}
 			>
-				<AppSwitch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
+				<Switch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
 			</SettingRow>
 		</div>
 	);
