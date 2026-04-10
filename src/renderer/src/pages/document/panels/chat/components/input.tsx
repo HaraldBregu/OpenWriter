@@ -344,8 +344,8 @@ const Input: React.FC<InputProps> = ({
 				/>
 
 				<div className="flex items-center gap-2 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
-					<AppDropdownMenu>
-						<AppDropdownMenuTrigger
+					<DropdownMenu>
+						<DropdownMenuTrigger
 							render={
 								<AppButton
 									type="button"
@@ -369,7 +369,7 @@ const Input: React.FC<InputProps> = ({
 								</AppButton>
 							}
 						/>
-						<AppDropdownMenuContent
+						<DropdownMenuContent
 							align="start"
 							side="top"
 							sideOffset={8}
@@ -381,7 +381,7 @@ const Input: React.FC<InputProps> = ({
 								const isSelected = option.value === agentId;
 
 								return (
-									<AppDropdownMenuItem
+									<DropdownMenuItem
 										key={option.value}
 										onSelect={() => setAgentId(option.value)}
 										aria-current={isSelected ? 'true' : undefined}
@@ -412,14 +412,14 @@ const Input: React.FC<InputProps> = ({
 											</span>
 										</span>
 										{isSelected && <Check className="ml-auto h-4 w-4" aria-hidden="true" />}
-									</AppDropdownMenuItem>
+									</DropdownMenuItem>
 								);
 							})}
-						</AppDropdownMenuContent>
-					</AppDropdownMenu>
+						</DropdownMenuContent>
+					</DropdownMenu>
 
-					<AppDropdownMenu>
-						<AppDropdownMenuTrigger
+					<DropdownMenu>
+						<DropdownMenuTrigger
 							render={
 								<AppButton
 									type="button"
@@ -438,14 +438,14 @@ const Input: React.FC<InputProps> = ({
 								</AppButton>
 							}
 						/>
-						<AppDropdownMenuContent
+						<DropdownMenuContent
 							align="start"
 							side="top"
 							sideOffset={8}
 							className="z-[120] flex max-h-[280px] min-w-[200px] flex-col gap-1 overflow-y-auto rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
 						>
 							{modelOptions.map((model) => (
-								<AppDropdownMenuItem
+								<DropdownMenuItem
 									key={model.modelId}
 									onSelect={() => handleModelChange(model)}
 									aria-current={selectedModel.modelId === model.modelId ? 'true' : undefined}
@@ -458,10 +458,10 @@ const Input: React.FC<InputProps> = ({
 										<span className="truncate text-sm font-medium">{model.name}</span>
 										<span className="text-xs text-muted-foreground">{model.provider}</span>
 									</div>
-								</AppDropdownMenuItem>
+								</DropdownMenuItem>
 							))}
-						</AppDropdownMenuContent>
-					</AppDropdownMenu>
+						</DropdownMenuContent>
+					</DropdownMenu>
 
 					<div className="flex-1" />
 
