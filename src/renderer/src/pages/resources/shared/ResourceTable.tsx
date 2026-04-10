@@ -256,7 +256,7 @@ export const ResourceTable = memo(function ResourceTable({
 			</div>
 			<div className="flex-1 min-h-0 overflow-auto rounded-md border">
 				<Table>
-					<AppTableHeader sticky>
+					<TableHeader sticky>
 						<TableRow>
 							{editing && (
 								<AppTableHead className="w-[40px]">
@@ -281,7 +281,7 @@ export const ResourceTable = memo(function ResourceTable({
 							))}
 							<AppTableHead className="w-[50px]" />
 						</TableRow>
-					</AppTableHeader>
+					</TableHeader>
 					<AppTableBody>
 						{filteredResources.map((resource) => (
 							<ResourceRow
