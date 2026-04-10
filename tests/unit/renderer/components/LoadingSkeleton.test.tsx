@@ -10,7 +10,7 @@ import { LoadingSkeleton } from '../../../../src/renderer/src/components/app/bas
 describe('LoadingSkeleton', () => {
 	it('should render the loading text', () => {
 		// Act
-		render(<AppLoadingSkeleton />);
+		render(<LoadingSkeleton />);
 
 		// Assert
 		expect(screen.getByText(/loading/i)).toBeInTheDocument();
@@ -18,7 +18,7 @@ describe('LoadingSkeleton', () => {
 
 	it('should render the spinner element', () => {
 		// Act
-		const { container } = render(<AppLoadingSkeleton />);
+		const { container } = render(<LoadingSkeleton />);
 
 		// Assert - look for the animated spinner div
 		const spinner = container.querySelector('.animate-spin');
