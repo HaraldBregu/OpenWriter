@@ -1,5 +1,5 @@
 import { memo, type ReactNode, type ReactElement } from 'react';
-import { AppSidebar } from '../AppSidebar';
+import { Sidebar } from '@/components/ui/Sidebar';
 
 interface AppSidebarLayoutProps {
 	readonly children: ReactNode;
