@@ -452,11 +452,12 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	// Files (resources/files/)
 	// -------------------------------------------------------------------------
-	getFiles: () => typedInvokeUnwrap(WorkspaceChannels.getFiles),
-	insertFiles: (extensions?: string[]) =>
-		typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
-	deleteFileEntry: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteFileEntry, id),
-	onFilesChanged: (
+	getResourcesFiles: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesFiles),
+	insertResourcesFiles: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertResourcesFiles, extensions),
+	deleteResourcesFileEntry: (id: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.deleteResourcesFileEntry, id),
+	onResourcesFilesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
 			fileId: string;
@@ -464,12 +465,12 @@ const workspace: WorkspaceApi = {
 			timestamp: number;
 		}) => void
 	): (() => void) => {
-		return typedOn(WorkspaceChannels.filesChanged, callback);
+		return typedOn(WorkspaceChannels.resourcesFilesChanged, callback);
 	},
-	onFilesWatcherError: (
+	onResourcesFilesWatcherError: (
 		callback: (error: { error: string; timestamp: number }) => void
 	): (() => void) => {
-		return typedOn(WorkspaceChannels.filesWatcherError, callback);
+		return typedOn(WorkspaceChannels.resourcesFilesWatcherError, callback);
 	},
 	// -------------------------------------------------------------------------
 	// Filesystem
