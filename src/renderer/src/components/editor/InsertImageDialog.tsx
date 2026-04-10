@@ -62,7 +62,8 @@ export function InsertImageDialog({
 		[onOpenChange, reset]
 	);
 
-	const handleSourceChange = useCallback((value: string) => {
+	const handleSourceChange = useCallback((value: string | null) => {
+		if (value === null) return;
 		setSource(value as ImageSource);
 		setUrl('');
 		setPreview(null);
