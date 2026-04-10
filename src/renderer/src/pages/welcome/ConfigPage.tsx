@@ -91,12 +91,12 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							<div className="space-y-5">
 								{PROVIDER_IDS.map((providerId) => (
 									<div key={providerId} className="space-y-2">
-										<AppLabel
+										<Label
 											htmlFor={`first-run-${providerId}`}
 											className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground"
 										>
 											{PROVIDER_LABELS[providerId]}
-										</AppLabel>
+										</Label>
 										<AppInput
 											id={`first-run-${providerId}`}
 											type="password"
