@@ -3,8 +3,11 @@ import { FilesHeader } from './components/FilesHeader';
 import { FilesToolbar } from './components/FilesToolbar';
 import { FilesContent } from './components/FilesContent';
 import { FileDetailsDialog } from './components/FileDetailsDialog';
+import { ImageDialog } from './components/ImageDialog';
+import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { FilesProvider, useFilesContext } from './context/FilesContext';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../shared/resource-preview-utils';
 
 function FilesPageBootstrap(): null {
 	const { setEntries, setIsLoading } = useFilesContext();
