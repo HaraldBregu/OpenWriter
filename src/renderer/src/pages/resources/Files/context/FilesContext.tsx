@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import type { FileEntry } from '../../../../../../shared/types';
 import type { FileTypeFilter, SortDirection, SortKey, ViewMode } from '../types';
@@ -49,9 +49,10 @@ interface FilesProviderProps {
 }
 
 export function FilesProvider({ children }: FilesProviderProps): ReactElement {
-	const entries: FileEntry[] = [];
-	const isLoading = false;
-	const uploading = false;
+	const mountedRef = useRef(true);
+	const [entries, setEntries] = useState<FileEntry[]>([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [uploading, setUploading] = useState(false);
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
@@ -69,9 +70,73 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
 		useFilesSelection({ filteredEntries });
 
-	const handleUpload = useCallback(() => {
-		void window.workspace.insertFiles(RESOURCE_SECTIONS.files.uploadExtensions);
+	const loadFiles = useCallback(async () => {
+		if (!mountedRef.current) return;
+		setIsLoading(true);
+		try {
+			const files = await window.workspace.getFiles();
+			if (!mountedRef.current) return;
+			setEntries(files);
+		} catch (err) {
+			if (!mountedRef.current) return;
+			console.error('Failed to load files:', err);
+			setEntries([]);
+		} finally {
+			if (mountedRef.current) {
+				setIsLoading(false);
+			}
+		}
 	}, []);
+
+	useEffect(() => {
+		void loadFiles();
+
+		const unsubscribeFiles = window.workspace.onFilesChanged(() => {
+			void loadFiles();
+		});
+
+		const unsubscribeWorkspace = window.workspace.onChange((event) => {
+			if (event.currentPath) {
+				void loadFiles();
+				return;
+			}
+
+			setEntries([]);
+			setSelected(new Set());
+		});
+
+		return () => {
+			mountedRef.current = false;
+			unsubscribeFiles();
+			unsubscribeWorkspace();
+		};
+	}, [loadFiles, setSelected]);
+
+	useEffect(() => {
+		setSelected((current) => {
+			const entryIds = new Set(entries.map((entry) => entry.id));
+			const nextSelected = new Set([...current].filter((id) => entryIds.has(id)));
+			const hasChanged =
+				nextSelected.size !== current.size || [...current].some((id) => !entryIds.has(id));
+			return hasChanged ? nextSelected : current;
+		});
+	}, [entries, setSelected]);
+
+	const handleUpload = useCallback(async () => {
+		setUploading(true);
+		try {
+			const imported = await window.workspace.insertFiles(RESOURCE_SECTIONS.files.uploadExtensions);
+			if (imported.length > 0) {
+				await loadFiles();
+			}
+		} catch (err) {
+			console.error('Failed to upload files:', err);
+		} finally {
+			if (mountedRef.current) {
+				setUploading(false);
+			}
+		}
+	}, [loadFiles]);
 
 	const handleOpenFolder = useCallback(() => {
 		void window.workspace.openFilesFolder();
@@ -83,10 +148,15 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	}, [selected]);
 
 	const handleConfirmDelete = useCallback(async () => {
-		await Promise.all([...selected].map((id) => window.workspace.deleteFileEntry(id)));
-		setSelected(new Set());
-		setConfirmOpen(false);
-	}, [selected, setSelected]);
+		try {
+			await Promise.all([...selected].map((id) => window.workspace.deleteFileEntry(id)));
+			setSelected(new Set());
+			setConfirmOpen(false);
+			await loadFiles();
+		} catch (err) {
+			console.error('Failed to delete files:', err);
+		}
+	}, [loadFiles, selected, setSelected]);
 
 	const value: FilesContextValue = {
 		entries,
