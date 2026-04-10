@@ -56,15 +56,13 @@ export function PdfDialog(): ReactElement | null {
 		let objectUrl: string | null = null;
 		let cancelled = false;
 
-		window.workspace
-			.readFileBinary(activeFile.path)
-			.then((base64: string) => {
-				if (cancelled) return;
-				const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-				const blob = new Blob([bytes], { type: 'application/pdf' });
-				objectUrl = URL.createObjectURL(blob);
-				setPdfBlobUrl(objectUrl);
-			});
+		window.workspace.readFileBinary(activeFile.path).then((base64: string) => {
+			if (cancelled) return;
+			const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+			const blob = new Blob([bytes], { type: 'application/pdf' });
+			objectUrl = URL.createObjectURL(blob);
+			setPdfBlobUrl(objectUrl);
+		});
 
 		return () => {
 			cancelled = true;
@@ -89,16 +87,15 @@ export function PdfDialog(): ReactElement | null {
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							<ResizablePanel defaultSize={70} minSize="40%">
-								<div className="h-full w-full">
-									{pdfBlobUrl && (
-										<PDFViewer
-											config={{
-												src: pdfBlobUrl,
-												theme: { preference: 'light' },
-											}}
-										/>
-									)}
-								</div>
+								{pdfBlobUrl && (
+									<PDFViewer
+										className="h-full w-full"
+										config={{
+											src: pdfBlobUrl,
+											theme: { preference: 'light' },
+										}}
+									/>
+								)}
 							</ResizablePanel>
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
