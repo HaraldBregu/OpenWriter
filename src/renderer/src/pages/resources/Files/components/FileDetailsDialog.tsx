@@ -9,6 +9,9 @@ import {
 	Loader2,
 	Trash2,
 } from 'lucide-react';
+import { Document, Page, pdfjs } from 'react-pdf';
+import 'react-pdf/dist/Page/AnnotationLayer.css';
+import 'react-pdf/dist/Page/TextLayer.css';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
