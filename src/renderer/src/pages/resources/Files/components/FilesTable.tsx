@@ -72,7 +72,7 @@ export function FilesTable(): ReactElement {
 						/>
 					</TableHead>
 					{SORT_COLUMNS.map(({ key, label, className }) => (
-						<TableHead key={key} className={`text-muted-foreground ${className}`}>
+						<TableHead key={key} className={`px-6 text-muted-foreground ${className}`}>
 							<button
 								type="button"
 								className="inline-flex items-center transition-colors hover:text-foreground"
@@ -88,7 +88,7 @@ export function FilesTable(): ReactElement {
 			<TableBody>
 				{filteredEntries.length === 0 ? (
 					<TableRow>
-						<TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
+						<TableCell colSpan={5} className="px-6 py-8 text-center text-sm text-muted-foreground">
 							No files match your search.
 						</TableCell>
 					</TableRow>
@@ -102,7 +102,7 @@ export function FilesTable(): ReactElement {
 									aria-label={`Select ${file.name}`}
 								/>
 							</TableCell>
-							<TableCell>
+							<TableCell className="px-6">
 								<div className="flex items-center gap-3">
 									<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
 										{getFileIcon(file.mimeType)}
@@ -118,13 +118,13 @@ export function FilesTable(): ReactElement {
 									</div>
 								</div>
 							</TableCell>
-							<TableCell className="whitespace-nowrap text-muted-foreground">
+							<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
 								{formatShortDate(file.createdAt)}
 							</TableCell>
-							<TableCell className="whitespace-nowrap text-muted-foreground">
+							<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
 								{getMimeTypeLabel(file.mimeType)}
 							</TableCell>
-							<TableCell className="whitespace-nowrap text-right text-muted-foreground">
+							<TableCell className="px-6 whitespace-nowrap text-right text-muted-foreground">
 								{formatBytes(file.size)}
 							</TableCell>
 						</TableRow>
