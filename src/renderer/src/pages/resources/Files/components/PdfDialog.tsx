@@ -56,9 +56,9 @@ export function PdfDialog(): ReactElement | null {
 		let objectUrl: string | null = null;
 		let cancelled = false;
 
-		window.api.workspace
+		window.workspace
 			.readFileBinary(activeFile.path)
-			.then((base64) => {
+			.then((base64: string) => {
 				if (cancelled) return;
 				const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
 				const blob = new Blob([bytes], { type: 'application/pdf' });
