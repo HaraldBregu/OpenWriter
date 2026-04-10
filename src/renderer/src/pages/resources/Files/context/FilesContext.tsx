@@ -12,6 +12,7 @@ interface FilesContextValue {
 	filteredEntries: FileEntry[];
 	isLoading: boolean;
 	uploading: boolean;
+	loadFiles: () => Promise<void>;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 	viewMode: ViewMode;
@@ -89,8 +90,6 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	}, []);
 
 	useEffect(() => {
-		void loadFiles();
-
 		const unsubscribeFiles = window.workspace.onFilesChanged(() => {
 			void loadFiles();
 		});
@@ -163,6 +162,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		filteredEntries,
 		isLoading,
 		uploading,
+		loadFiles,
 		searchQuery,
 		setSearchQuery,
 		viewMode,
