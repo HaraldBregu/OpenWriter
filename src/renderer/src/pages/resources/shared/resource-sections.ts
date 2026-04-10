@@ -1,6 +1,5 @@
 import { Database, File, FileText, ImageIcon, type LucideIcon } from 'lucide-react';
-import type { ResourceInfo } from '../../../../../shared/types';
-import { RESOURCES_FILES_EXTENSIONS } from '../../../../../shared/file-type-validator';
+import { RESOURCES_FILES_EXTENSIONS, type ResourceInfo } from '../../../../../shared/types';
 
 export type ResourceSectionId = 'files' | 'content' | 'images' | 'data';
 
