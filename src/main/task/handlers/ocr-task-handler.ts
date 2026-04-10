@@ -109,7 +109,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		return {
 			text,
-			filePath: input.filePath,
+			filePath: input.url,
 			pageCount: 1,
 			savedPath,
 		};
