@@ -430,7 +430,7 @@ export function ImageEditor({
 								<img src={src} alt={alt ?? ''} className="h-full w-full object-contain" />
 							</div>
 							{/* Add image button */}
-							<AppButton
+							<Button
 								variant="ghost"
 								size="sm"
 								className="h-16 shrink-0 rounded-[1.15rem] border border-dashed border-border/80 bg-background/76 px-3 text-xs font-medium text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
@@ -444,7 +444,7 @@ export function ImageEditor({
 									<ImagePlus className="h-4 w-4" />
 									<span>{t('imageNode.addImage', 'Add image')}</span>
 								</div>
-							</AppButton>
+							</Button>
 							{/* Uploaded reference thumbnails */}
 							{aiPreviewUrls.map((url, index) => (
 								<div
