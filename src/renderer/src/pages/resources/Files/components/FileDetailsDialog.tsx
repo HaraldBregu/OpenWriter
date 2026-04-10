@@ -112,7 +112,7 @@ export function FileDetailsDialog(): ReactElement | null {
 	const handleDeleteSingle = useCallback(async () => {
 		if (!activeFile) return;
 		try {
-			await window.workspace.deleteFileEntry(activeFile.id);
+			await window.workspace.deleteResourcesFileEntry(activeFile.id);
 			handleFileDetailsOpenChange(false);
 		} catch (err) {
 			console.error('Failed to delete file:', err);
