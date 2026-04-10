@@ -121,7 +121,7 @@ const HomePage: React.FC = () => {
 					</div>
 				</section>
 
-				<AppSeparator />
+				<Separator />
 
 				{/* Recent documents */}
 				<section className="space-y-3">
@@ -166,7 +166,7 @@ const HomePage: React.FC = () => {
 					)}
 				</section>
 
-				<AppSeparator />
+				<Separator />
 
 				{/* Tips */}
 				<section className="flex items-start gap-3 rounded-xl border border-border bg-card px-5 py-4">
