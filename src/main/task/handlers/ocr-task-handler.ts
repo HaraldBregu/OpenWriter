@@ -1,9 +1,10 @@
 /**
  * OcrTaskHandler — task handler for OCR operations.
  *
- * Receives a document file path and model identifier, delegates text
- * extraction to the appropriate OCR client (Mistral or Qwen), and
- * saves the extracted markdown to the workspace resources/files/ folder.
+ * Receives a document URL (or file path) with a model identifier and input type,
+ * delegates text extraction to the appropriate OCR client (Mistral or Qwen)
+ * based on the model's provider, and saves the extracted markdown to the
+ * workspace resources/files/ folder.
  */
 
 import fs from 'node:fs/promises';
@@ -11,7 +12,7 @@ import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
-import { MistralOcrClient, QwenOcrClient } from '../../ocr';
+import { MistralOcrClient } from '../../ocr';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
