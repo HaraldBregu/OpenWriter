@@ -287,6 +287,14 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		contextWindow: 1000000,
 		maxOutputTokens: 65536,
 	},
+	{
+		provider: 'Qwen',
+		modelId: 'qwen-vl-ocr-2025-11-20',
+		name: 'Qwen VL OCR',
+		type: 'ocr',
+		contextWindow: 131072,
+		maxOutputTokens: 8192,
+	},
 
 	// ========================== Inception =====================================
 	{
