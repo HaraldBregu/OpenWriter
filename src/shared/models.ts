@@ -350,7 +350,7 @@ export const TEXT_MODELS: readonly ModelInfo[] = AI_MODELS.filter(
 	(m) => m.type === 'text' || m.type === 'multimodal' || m.type === 'code'
 );
 
-/** Dedicated OCR models (Mistral OCR, Qwen VL OCR). */
+/** Dedicated OCR models (Mistral OCR). */
 export const OCR_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'ocr');
 
 const _defaultOcrModel = OCR_MODELS.find((m) => m.modelId === DEFAULT_OCR_MODEL_ID);
