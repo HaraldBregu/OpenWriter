@@ -134,7 +134,9 @@ const App: React.FC = () => {
 			<AppErrorBoundary level="root">
 				<Provider store={store}>
 					<AppProvider>
-						<AppLoadingSkeleton />
+						<TooltipProvider>
+							<AppLoadingSkeleton />
+						</TooltipProvider>
 					</AppProvider>
 				</Provider>
 			</AppErrorBoundary>
