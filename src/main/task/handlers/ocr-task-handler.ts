@@ -11,7 +11,7 @@ import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
-import { MistralOcrClient, QwenOcrClient } from '../../ocr';
+import { MistralOcrClient } from '../../ocr';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
