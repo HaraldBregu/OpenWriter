@@ -33,6 +33,7 @@ import { TaskReactionRegistry } from './task/task-reaction-registry';
 import { TaskReactionBus } from './task/task-reaction-bus';
 import { RagIndexingTaskHandler } from './task/handlers/rag-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
+import { OcrTaskHandler } from './task/handlers/ocr-task-handler';
 import { ProviderResolver } from './shared/provider-resolver';
 
 // RAG infrastructure
