@@ -252,7 +252,7 @@ export const ResourceTable = memo(function ResourceTable({
 			</div>
 			<div className="flex-1 min-h-0 overflow-auto rounded-md border">
 				<Table>
-					<TableHeader sticky>
+					<TableHeader className="sticky top-0 z-10 bg-background">
 						<TableRow>
 							{editing && (
 								<TableHead className="w-[40px]">
