@@ -90,7 +90,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(30, 'Processing OCR');
 
-		const text = await this.runOcr(providerId, provider, base64Data, input.model);
+		const text = await this.runOcr(providerId, provider, base64Data, input.modelId);
 
 		reporter.progress(80, 'Saving result');
 
