@@ -38,7 +38,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 	const { t } = useTranslation();
 
 	return (
-		<AppPageHeader>
+		<PageHeader>
 			<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
 			<AppPageHeaderItems>
 				{editing && selectedCount > 0 && (
