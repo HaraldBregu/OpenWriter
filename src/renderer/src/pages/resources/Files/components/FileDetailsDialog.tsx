@@ -33,7 +33,13 @@ import {
 	TableRow,
 } from '@/components/ui/Table';
 import type { FileEntry } from '../../../../../../shared/types';
-import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../types';
+import {
+	BINARY_MIME_TYPES,
+	MIME_PREFIX_IMAGE,
+	MIME_TO_LANGUAGE,
+	MIME_TYPE_PDF,
+	parseCsv,
+} from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 
