@@ -478,6 +478,27 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		// -------------------------------------------------------------------------
+		// OCR model preference
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getOcrModelId,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent) => this.mgr(event, container).getOcrModelId(),
+				WorkspaceChannels.getOcrModelId
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.setOcrModelId,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, modelId: string) =>
+					this.mgr(event, container).setOcrModelId(modelId),
+				WorkspaceChannels.setOcrModelId
+			)
+		);
+
+		// -------------------------------------------------------------------------
 		// Filesystem
 		// -------------------------------------------------------------------------
 
