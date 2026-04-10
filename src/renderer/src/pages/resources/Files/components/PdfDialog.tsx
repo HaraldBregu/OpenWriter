@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/Dialog';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import type { FileEntry } from '../../../../../../shared/types';
+import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
 
@@ -143,35 +143,35 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
 	);
 }
 
-interface PdfDialogProps {
-	readonly file: FileEntry;
-	readonly open: boolean;
-	readonly onOpenChange: (open: boolean) => void;
-}
-
-export function PdfDialog({ file, open, onOpenChange }: PdfDialogProps): ReactElement {
-	const { handleOpenFolder } = useFilesContext();
+export function PdfDialog(): ReactElement | null {
+	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
+		useFilesContext();
 
 	const handleDelete = useCallback(async () => {
+		if (!activeFile) return;
 		try {
-			await window.workspace.deleteFileEntry(file.id);
-			onOpenChange(false);
+			await window.workspace.deleteFileEntry(activeFile.id);
+			handleFileDetailsOpenChange(false);
 		} catch (err) {
 			console.error('Failed to delete file:', err);
 		}
-	}, [file.id, onOpenChange]);
+	}, [activeFile, handleFileDetailsOpenChange]);
+
+	if (!activeFile || activeFile.mimeType !== MIME_TYPE_PDF) {
+		return null;
+	}
 
 	return (
-		<Dialog open={open} onOpenChange={onOpenChange}>
+		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
 			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col">
 				<DialogHeader className="contents space-y-0 text-left">
-					<DialogTitle className="truncate">{file.name}</DialogTitle>
+					<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
 					<DialogDescription className="flex min-h-0 flex-1">
 						<div className="flex h-full min-h-0 w-full gap-0">
 							{/* Left column — PDF preview */}
 							<div className="flex min-h-0 flex-1 flex-col overflow-hidden border-r">
 								<ScrollArea className="h-full flex-1 p-4">
-									<PdfPreview path={file.path} />
+									<PdfPreview path={activeFile.path} />
 								</ScrollArea>
 							</div>
 
@@ -185,22 +185,22 @@ export function PdfDialog({ file, open, onOpenChange }: PdfDialogProps): ReactEl
 												<DetailRow
 													icon={<HardDrive className="h-4 w-4" />}
 													label="Size"
-													value={formatBytes(file.size)}
+													value={formatBytes(activeFile.size)}
 												/>
 												<DetailRow
 													icon={<File className="h-4 w-4" />}
 													label="Type"
-													value={file.mimeType}
+													value={activeFile.mimeType}
 												/>
 												<DetailRow
 													icon={<Calendar className="h-4 w-4" />}
 													label="Added"
-													value={formatDate(file.createdAt)}
+													value={formatDate(activeFile.createdAt)}
 												/>
 												<DetailRow
 													icon={<Calendar className="h-4 w-4" />}
 													label="Modified"
-													value={formatDate(file.modifiedAt)}
+													value={formatDate(activeFile.modifiedAt)}
 												/>
 											</div>
 										</div>
@@ -209,8 +209,11 @@ export function PdfDialog({ file, open, onOpenChange }: PdfDialogProps): ReactEl
 
 										<div>
 											<h3 className="mb-3 text-sm font-semibold">Location</h3>
-											<p className="break-all text-xs text-muted-foreground" title={file.path}>
-												{file.relativePath}
+											<p
+												className="break-all text-xs text-muted-foreground"
+												title={activeFile.path}
+											>
+												{activeFile.relativePath}
 											</p>
 										</div>
 
