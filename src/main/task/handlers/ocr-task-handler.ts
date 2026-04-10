@@ -20,7 +20,7 @@ export interface OcrTaskInput {
 	/** Absolute path to the file to process. */
 	filePath: string;
 	/** OCR model identifier (e.g. "mistral-ocr-latest" or "qwen-vl-ocr-2025-11-20"). */
-	model: string;
+	modelId: string;
 	/** Window ID for resolving the workspace context (stamped server-side). */
 	windowId?: number;
 }
