@@ -1,9 +1,9 @@
 import { lazy, Suspense } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Upload } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
-import { ResourceEmptyState } from '../../shared/ResourceEmptyState';
 import { useDataContext } from '../context/DataContext';
 import { DataToolbar } from './DataToolbar';
 import { DataTable } from './DataTable';
@@ -13,6 +13,35 @@ const ResourcePreviewSheet = lazy(() =>
 		default: module.ResourcePreviewSheet,
 	})),
 );
+
+function EmptyState({
+	uploading,
+	onUpload,
+}: {
+	readonly uploading: boolean;
+	readonly onUpload: () => void;
+}): ReactElement {
+	const { t } = useTranslation();
+	const section = RESOURCE_SECTIONS.data;
+	const Icon = section.icon;
+
+	return (
+		<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
+			<Icon className="mb-3 h-10 w-10 opacity-40" />
+			<p className="text-sm">{t(section.emptyKey)}</p>
+			<Button
+				variant="outline"
+				size="sm"
+				className="mt-4"
+				onClick={onUpload}
+				disabled={uploading}
+			>
+				<Upload className="mr-1.5 h-3.5 w-3.5" />
+				{t(section.uploadKey)}
+			</Button>
+		</div>
+	);
+}
 
 export function DataContent(): ReactElement {
 	const { t } = useTranslation();
@@ -43,13 +72,7 @@ export function DataContent(): ReactElement {
 			)}
 
 			{!isLoading && !error && resources.length === 0 && (
-				<ResourceEmptyState
-					icon={section.icon}
-					message={t(section.emptyKey)}
-					uploadLabel={t(section.uploadKey)}
-					uploading={uploading}
-					onUpload={handleUpload}
-				/>
+				<EmptyState uploading={uploading} onUpload={handleUpload} />
 			)}
 
 			{!isLoading && !error && resources.length > 0 && (
