@@ -1,6 +1,6 @@
 import { memo } from 'react';
 import { Upload, type LucideIcon } from 'lucide-react';
-import { AppButton } from '@/components/app';
+import { Button } from '@/components/ui/Button';
 
 interface ResourceEmptyStateProps {
 	readonly icon: LucideIcon;

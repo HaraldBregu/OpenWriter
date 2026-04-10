@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { GripVertical, Plus } from 'lucide-react';
-import { AppButton } from '@components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useEditorContext } from './EditorContext';
 
