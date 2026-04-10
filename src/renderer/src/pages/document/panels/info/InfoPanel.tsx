@@ -18,15 +18,15 @@ import { findModelById, DEFAULT_IMAGE_MODEL_ID } from '../../../../../../shared/
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import type { DocumentConfig } from '../../../../../../shared/types';
 import {
-	AppAlertDialog,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-	AppAlertDialogContent,
-	AppAlertDialogDescription,
-	AppAlertDialogFooter,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-} from '@/components/app';
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/AlertDialog';
 import { ImagePreviewDialog } from '@/components/editor/extensions/image/components/ImagePreviewDialog';
 import { SectionHeader, SettingRow } from '@pages/settings/components';
 
