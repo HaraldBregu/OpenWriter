@@ -213,7 +213,7 @@ function LayoutInner({ children }: LayoutProps) {
 
 	return (
 		<>
-			<AppTitleBar
+			<TitleBar
 				title={displayWorkspaceName}
 				onToggleSidebar={toggleSidebar}
 				onNavigateBack={isLandingPage ? undefined : handleNavigateBack}
