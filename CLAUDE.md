@@ -1,9 +1,5 @@
 # CLAUDE.md
 
-## Formatting
-
-After each file edit, run `yarn format` to format the code with Prettier.
-
 ## File Naming Conventions
 
 - **`.ts`** files: lowercase kebab-case (e.g., `my-component.ts`)

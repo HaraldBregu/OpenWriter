@@ -264,7 +264,18 @@ export function PdfDialog(): ReactElement | null {
 										>
 											Annulla
 										</Button>
-										<Button className="flex-1 gap-1.5">
+										<Button
+											className="flex-1 gap-1.5"
+											onClick={() => {
+												if (activeFile?.path && selectedModel) {
+													window.task.submit('ocr', {
+														filePath: activeFile.path,
+														model: selectedModel,
+													});
+													handleFileDetailsOpenChange(false);
+												}
+											}}
+										>
 											<Play className="h-3.5 w-3.5" />
 											Esegui OCR
 										</Button>
