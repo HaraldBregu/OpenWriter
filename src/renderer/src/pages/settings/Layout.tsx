@@ -16,6 +16,7 @@ const NAV_ITEMS: NavItemDefinition[] = [
 	{ path: '/settings/themes', labelKey: 'settings.tabs.themes' },
 	{ path: '/settings/system', labelKey: 'settings.tabs.system' },
 	{ path: '/settings/developer', labelKey: 'settings.tabs.developer' },
+	{ path: '/settings/models', labelKey: 'settings.tabs.models' },
 ];
 
 const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-3 sm:py-1.5';
