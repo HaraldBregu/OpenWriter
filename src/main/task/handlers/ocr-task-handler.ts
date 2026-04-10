@@ -41,6 +41,7 @@ export interface OcrTaskOutput {
 /** Maps an AppProviderName to the ProviderId used by ProviderResolver. */
 const PROVIDER_NAME_TO_ID: Record<string, string> = {
 	Mistral: 'mistral',
+	Qwen: 'qwen',
 };
 
 export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> {

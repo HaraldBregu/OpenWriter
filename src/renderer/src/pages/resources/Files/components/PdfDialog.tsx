@@ -103,6 +103,12 @@ export function PdfDialog(): ReactElement | null {
 	);
 
 	useEffect(() => {
+		if (activeFile?.name) {
+			setOutputFileName(getFileNameWithoutExtension(activeFile.name));
+		}
+	}, [activeFile?.name]);
+
+	useEffect(() => {
 		if (!activeFile?.path || activeFile.mimeType !== MIME_TYPE_PDF) {
 			setPdfBlobUrl(null);
 			return;
