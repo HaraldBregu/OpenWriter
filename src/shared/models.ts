@@ -341,6 +341,9 @@ export const TEXT_MODELS: readonly ModelInfo[] = AI_MODELS.filter(
 	(m) => m.type === 'text' || m.type === 'multimodal' || m.type === 'code'
 );
 
+/** Models that support OCR (vision-capable multimodal models). */
+export const OCR_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'multimodal');
+
 // ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------

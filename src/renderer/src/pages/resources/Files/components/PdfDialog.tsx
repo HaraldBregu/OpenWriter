@@ -82,11 +82,11 @@ export function PdfDialog(): ReactElement | null {
 
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
-			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col py-0">
+			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col py-0 p-0">
 				<DialogHeader className="contents space-y-0 text-left py-0">
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-							<ResizablePanel defaultSize={70} minSize="40%">
+							<ResizablePanel defaultSize={70} minSize="40%" className="rounded-l-xl">
 								{pdfBlobUrl && (
 									<PDFViewer
 										className="h-full w-full"
@@ -118,7 +118,7 @@ export function PdfDialog(): ReactElement | null {
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
 								<div className="flex h-full flex-col">
-									<div className="border-b p-4">
+									<div className=" p-4">
 										<h2 className="text-sm font-semibold">Impostazioni OCR</h2>
 									</div>
 									<ScrollArea className="flex-1">
