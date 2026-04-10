@@ -104,9 +104,7 @@ export function FilesTable(): ReactElement {
 							</TableCell>
 							<TableCell className="px-6">
 								<div className="flex items-center gap-3">
-									<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
-										{getFileIcon(file.mimeType)}
-									</div>
+									{getFileIcon(file.mimeType)}
 									<div className="min-w-0">
 										<p className="truncate font-medium text-sm">{file.name}</p>
 										<p
