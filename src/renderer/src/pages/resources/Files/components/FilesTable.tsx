@@ -1,5 +1,5 @@
 import { File, FileImage, FileText } from 'lucide-react';
-import type { ReactElement, ReactNode } from 'react';
+import type { KeyboardEvent, ReactElement, ReactNode } from 'react';
 import { Checkbox } from '@/components/ui/Checkbox';
 import {
 	Table,
@@ -9,6 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
+import type { FileEntry } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
 import { MIME_PREFIX_IMAGE, MIME_PREFIX_TEXT, MIME_TYPE_PDF } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
@@ -57,7 +58,15 @@ export function FilesTable(): ReactElement {
 		handleSort,
 		handleToggleAll,
 		handleToggleRow,
+		handleOpenFileDetails,
 	} = useFilesContext();
+
+	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			event.preventDefault();
+			handleOpenFileDetails(file);
+		}
+	};
 
 	return (
 		<Table className="text-foreground">
@@ -94,10 +103,18 @@ export function FilesTable(): ReactElement {
 					</TableRow>
 				) : (
 					filteredEntries.map((file) => (
-						<TableRow key={file.id} data-state={selected.has(file.id) ? 'selected' : undefined}>
+						<TableRow
+							key={file.id}
+							className="cursor-pointer"
+							data-state={selected.has(file.id) ? 'selected' : undefined}
+							onClick={() => handleOpenFileDetails(file)}
+							onKeyDown={(event) => handleRowKeyDown(event, file)}
+							tabIndex={0}
+						>
 							<TableCell className="w-10 px-6">
 								<Checkbox
 									checked={selected.has(file.id)}
+									onClick={(event) => event.stopPropagation()}
 									onCheckedChange={() => handleToggleRow(file.id)}
 									aria-label={`Select ${file.name}`}
 								/>

@@ -35,6 +35,10 @@ interface FilesContextValue {
 	someChecked: boolean;
 	handleToggleAll: () => void;
 	handleToggleRow: (id: string) => void;
+	activeFile: FileEntry | null;
+	fileDetailsOpen: boolean;
+	handleOpenFileDetails: (file: FileEntry) => void;
+	handleFileDetailsOpenChange: (open: boolean) => void;
 	handleUpload: () => void;
 	handleOpenFolder: () => void;
 	handleDelete: () => void;
@@ -67,6 +71,8 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	const [viewMode, setViewMode] = useState<ViewMode>('list');
 	const [typeFilter, setTypeFilter] = useState<FileTypeFilter>('all');
 	const [confirmOpen, setConfirmOpen] = useState(false);
+	const [activeFile, setActiveFile] = useState<FileEntry | null>(null);
+	const [fileDetailsOpen, setFileDetailsOpen] = useState(false);
 
 	const { sortKey, sortDirection, handleSort } = useFilesSort();
 	const filteredEntries = useFilesFilter({
@@ -129,6 +135,25 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		});
 	}, [entries, setSelected]);
 
+	useEffect(() => {
+		if (activeFile && !entries.some((entry) => entry.id === activeFile.id)) {
+			setActiveFile(null);
+			setFileDetailsOpen(false);
+		}
+	}, [activeFile, entries]);
+
+	const handleOpenFileDetails = useCallback((file: FileEntry) => {
+		setActiveFile(file);
+		setFileDetailsOpen(true);
+	}, []);
+
+	const handleFileDetailsOpenChange = useCallback((open: boolean) => {
+		setFileDetailsOpen(open);
+		if (!open) {
+			setActiveFile(null);
+		}
+	}, []);
+
 	const handleUpload = useCallback(async () => {
 		setUploading(true);
 		try {
@@ -186,6 +211,10 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		someChecked,
 		handleToggleAll,
 		handleToggleRow,
+		activeFile,
+		fileDetailsOpen,
+		handleOpenFileDetails,
+		handleFileDetailsOpenChange,
 		handleUpload,
 		handleOpenFolder,
 		handleDelete,

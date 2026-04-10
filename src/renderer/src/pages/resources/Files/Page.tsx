@@ -2,6 +2,7 @@ import { useEffect, type ReactElement } from 'react';
 import { FilesHeader } from './components/FilesHeader';
 import { FilesToolbar } from './components/FilesToolbar';
 import { FilesContent } from './components/FilesContent';
+import { FileDetailsDialog } from './components/FileDetailsDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { FilesProvider, useFilesContext } from './context/FilesContext';
 
@@ -46,6 +47,7 @@ export default function FilesPage(): ReactElement {
 				<FilesHeader />
 				<FilesToolbar />
 				<FilesContent />
+				<FileDetailsDialog />
 				<DeleteConfirmDialog />
 			</div>
 		</FilesProvider>
