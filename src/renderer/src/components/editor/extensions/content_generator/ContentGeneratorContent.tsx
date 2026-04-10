@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppTextarea } from '@components/app/AppTextarea';
+import { Textarea } from '@/components/ui/Textarea';
 import { cn } from '@/lib/utils';
 import { ImageAttachmentBar, PromptFooter, PromptHeader } from './components';
 import type { ContentGeneratorAgentId } from './agents';
