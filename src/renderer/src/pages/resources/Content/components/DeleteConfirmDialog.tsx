@@ -1,15 +1,15 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	AppAlertDialog,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-	AppAlertDialogContent,
-	AppAlertDialogDescription,
-	AppAlertDialogFooter,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-} from '@/components/app';
+	AlertDialog,
+	AlertDialogAction,
+	AlertDialogCancel,
+	AlertDialogContent,
+	AlertDialogDescription,
+	AlertDialogFooter,
+	AlertDialogHeader,
+	AlertDialogTitle,
+} from '@/components/ui/AlertDialog';
 import { useContentContext } from '../context/ContentContext';
 
 export function DeleteConfirmDialog(): ReactElement {
@@ -17,24 +17,24 @@ export function DeleteConfirmDialog(): ReactElement {
 	const { selected, confirmOpen, setConfirmOpen, handleConfirmDelete } = useContentContext();
 
 	return (
-		<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-			<AppAlertDialogContent>
-				<AppAlertDialogHeader>
-					<AppAlertDialogTitle>{t('resources.removeItems')}</AppAlertDialogTitle>
-					<AppAlertDialogDescription>
+		<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>{t('resources.removeItems')}</AlertDialogTitle>
+					<AlertDialogDescription>
 						{t('resources.removeConfirm', { count: selected.size })}
-					</AppAlertDialogDescription>
-				</AppAlertDialogHeader>
-				<AppAlertDialogFooter>
-					<AppAlertDialogCancel>{t('common.cancel')}</AppAlertDialogCancel>
-					<AppAlertDialogAction
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+					<AlertDialogAction
 						className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 						onClick={handleConfirmDelete}
 					>
 						{t('resources.remove')}
-					</AppAlertDialogAction>
-				</AppAlertDialogFooter>
-			</AppAlertDialogContent>
-		</AppAlertDialog>
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	);
 }
