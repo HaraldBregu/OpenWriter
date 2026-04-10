@@ -1,14 +1,14 @@
 import React, { useState, useRef, useCallback, useMemo, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUp, Check, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Textarea } from '@/components/ui/Textarea';
 import {
-	AppButton,
-	AppTextarea,
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-	AppDropdownMenuTrigger,
-} from '@/components/app';
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
 import {
 	CONTENT_GENERATOR_AGENT_OPTIONS,
