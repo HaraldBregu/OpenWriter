@@ -41,10 +41,10 @@ function formatShortDate(timestamp: number): string {
 }
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
-	{ key: 'name', label: 'Name', className: '' },
-	{ key: 'createdAt', label: 'Added', className: 'whitespace-nowrap' },
-	{ key: 'mimeType', label: 'Type', className: '' },
-	{ key: 'size', label: 'File size', className: 'text-right' },
+	{ key: 'name', label: 'Name', className: 'w-auto' },
+	{ key: 'createdAt', label: 'Added', className: 'w-28 whitespace-nowrap' },
+	{ key: 'mimeType', label: 'Type', className: 'w-28' },
+	{ key: 'size', label: 'File size', className: 'w-28 text-right' },
 ];
 
 export function FilesTable(): ReactElement {
