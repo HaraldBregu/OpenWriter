@@ -172,17 +172,19 @@ export function PdfDialog(): ReactElement | null {
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
-						<div className="flex h-full min-h-0 w-full gap-0">
-							{/* Left column — PDF preview */}
-							<div className="flex min-h-0 flex-1 flex-col overflow-hidden border-r">
-								<ScrollArea className="h-full flex-1 p-4">
+						<ResizablePanelGroup direction="horizontal" className="h-full w-full">
+							{/* Left panel — PDF preview */}
+							<ResizablePanel defaultSize={70} minSize={40}>
+								<ScrollArea className="h-full p-4">
 									<PdfPreview path={activeFile.path} />
 								</ScrollArea>
-							</div>
+							</ResizablePanel>
 
-							{/* Right column — details & actions */}
-							<div className="flex w-96 shrink-0 flex-col">
-								<ScrollArea className="flex-1">
+							<ResizableHandle withHandle />
+
+							{/* Right panel — details & actions */}
+							<ResizablePanel defaultSize={30} minSize={20}>
+								<ScrollArea className="h-full">
 									<div className="space-y-4 p-4">
 										<div>
 											<h3 className="mb-3 text-sm font-semibold">Details</h3>
@@ -247,8 +249,8 @@ export function PdfDialog(): ReactElement | null {
 										</div>
 									</div>
 								</ScrollArea>
-							</div>
-						</div>
+							</ResizablePanel>
+						</ResizablePanelGroup>
 					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
