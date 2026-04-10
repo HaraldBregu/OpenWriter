@@ -158,7 +158,10 @@ export function PdfDialog(): ReactElement | null {
 											<div className="space-y-2 p-4">
 												<SectionHeader label="Modello" hasInfo />
 												<DropdownMenu>
-													<DropdownMenuTrigger render={<Button variant="outline" />} className="w-full justify-between h-8 text-xs font-normal">
+													<DropdownMenuTrigger
+														render={<Button variant="outline" />}
+														className="w-full justify-between h-8 text-xs font-normal"
+													>
 														<span className="flex items-center gap-2 truncate">
 															{selectedModelEntry && (
 																<ProviderIcon provider={selectedModelEntry.provider} />
