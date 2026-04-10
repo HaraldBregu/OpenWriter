@@ -40,11 +40,11 @@ export function AgentDropdown({
 	const currentLabel = t(current.labelKey, current.labelFallback);
 
 	return (
-		<AppDropdownMenu modal={false}>
-			<AppDropdownMenuTrigger
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger
 				disabled={disabled}
 				render={
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon"
@@ -60,10 +60,10 @@ export function AgentDropdown({
 						}}
 					>
 						{getAgentIcon(current.value)}
-					</AppButton>
+					</Button>
 				}
 			/>
-			<AppDropdownMenuContent
+			<DropdownMenuContent
 				align="start"
 				side="top"
 				sideOffset={8}
@@ -75,7 +75,7 @@ export function AgentDropdown({
 					const isSelected = option.value === current.value;
 
 					return (
-						<AppDropdownMenuItem
+						<DropdownMenuItem
 							key={option.value}
 							onSelect={() => onAgentChange(option.value)}
 							className={cn(
@@ -100,10 +100,10 @@ export function AgentDropdown({
 								</span>
 							</span>
 							{isSelected && <Check className="ml-auto h-4 w-4" />}
-						</AppDropdownMenuItem>
+						</DropdownMenuItem>
 					);
 				})}
-			</AppDropdownMenuContent>
-		</AppDropdownMenu>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
