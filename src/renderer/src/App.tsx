@@ -3,9 +3,9 @@ import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AppProvider } from './contexts';
-import { AppLayout } from './components/app/base/AppLayout';
-import { AppErrorBoundary } from './components/app/base/AppErrorBoundary';
-import { AppLoadingSkeleton } from './components/app/base/AppLoadingSkeleton';
+import { Layout } from './components/app/base/Layout';
+import { ErrorBoundary } from './components/app/base/ErrorBoundary';
+import { LoadingSkeleton } from './components/app/base/LoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
 import WelcomePage from './pages/welcome/WelcomePage';
 import ConfigPage from './pages/welcome/ConfigPage';
