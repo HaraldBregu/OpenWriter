@@ -29,7 +29,12 @@ import {
 	SidebarHeader,
 	useSidebar,
 } from '@/components/ui/Sidebar';
-import { AppSidebarContainer, AppSidebarLayout, AppSidebarInsetLayout, AppIconOpenWriter } from '..';
+import {
+	AppSidebarContainer,
+	AppSidebarLayout,
+	AppSidebarInsetLayout,
+	AppIconOpenWriter,
+} from '..';
 import {
 	Settings,
 	ChevronRight,

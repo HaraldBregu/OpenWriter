@@ -30,8 +30,8 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 	const reversedEntries = useMemo(() => [...entries].reverse(), [entries]);
 
 	return (
-		<AppDropdownMenu>
-			<AppDropdownMenuTrigger
+		<DropdownMenu>
+			<DropdownMenuTrigger
 				render={
 					<AppButton
 						type="button"
@@ -44,7 +44,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 					</AppButton>
 				}
 			/>
-			<AppDropdownMenuContent align="end" className="w-64">
+			<DropdownMenuContent align="end" className="w-64">
 				<div className="max-h-72 overflow-y-auto">
 					{reversedEntries.length === 0 ? (
 						<p className="px-2 py-3 text-sm text-muted-foreground text-center">No history yet</p>
@@ -52,7 +52,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 						reversedEntries.map((entry) => {
 							const isCurrent = entry.id === currentEntryId;
 							return (
-								<AppDropdownMenuItem
+								<DropdownMenuItem
 									key={entry.id}
 									onClick={() => onRestoreEntry(entry.id)}
 									className={isCurrent ? 'font-semibold' : undefined}
@@ -68,13 +68,13 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 											<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
 										)}
 									</div>
-								</AppDropdownMenuItem>
+								</DropdownMenuItem>
 							);
 						})
 					)}
 				</div>
-			</AppDropdownMenuContent>
-		</AppDropdownMenu>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 };
 

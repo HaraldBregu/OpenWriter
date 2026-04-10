@@ -5,12 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Sparkles, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import {
-	Tooltip,
-	TooltipTrigger,
-	TooltipContent,
-	TooltipProvider,
-} from '@/components/ui/Tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
 import { ImageEditor } from './components/ImageEditor';
 import { DeleteConfirmDialog, ImagePreviewDialog } from './components';
 

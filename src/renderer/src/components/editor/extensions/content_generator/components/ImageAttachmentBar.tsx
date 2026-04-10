@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImagePlus, X } from 'lucide-react';
-import { AppButton } from '@components/app/AppButton';
+import { Button } from '@/components/ui/Button';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 

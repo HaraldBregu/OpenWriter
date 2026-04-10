@@ -29,9 +29,7 @@ export function DeleteConfirmDialog({
 			<AlertDialogContent>
 				<AlertDialogHeader>
 					<AlertDialogTitle>{t('imageNode.deleteImage')}</AlertDialogTitle>
-					<AlertDialogDescription>
-						{t('imageNode.deleteImageDescription')}
-					</AlertDialogDescription>
+					<AlertDialogDescription>{t('imageNode.deleteImageDescription')}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>{t('imageNode.cancel')}</AlertDialogCancel>
