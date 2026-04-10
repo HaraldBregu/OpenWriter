@@ -41,10 +41,10 @@ function DetailRow({
 }): ReactElement {
 	return (
 		<div className="grid gap-1.5">
-			<dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-				{label}
-			</dt>
-			<dd className={mono ? 'break-all font-mono text-sm text-foreground' : 'text-sm text-foreground'}>
+			<dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</dt>
+			<dd
+				className={mono ? 'break-all font-mono text-sm text-foreground' : 'text-sm text-foreground'}
+			>
 				{value}
 			</dd>
 		</div>
@@ -60,7 +60,10 @@ export function FileDetailsDialog(): ReactElement | null {
 
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
-			<DialogContent className="max-w-5xl overflow-hidden p-0 sm:rounded-2xl">
+			<DialogContent
+				className="overflow-hidden p-0"
+				style={{ maxWidth: 'none', width: 'min(1120px, calc(100vw - 2rem))' }}
+			>
 				<div className="flex max-h-[85vh] flex-col">
 					<DialogHeader className="border-b bg-muted/30 px-6 py-5 text-left sm:text-left">
 						<div className="flex items-start gap-4">
@@ -86,7 +89,7 @@ export function FileDetailsDialog(): ReactElement | null {
 						</div>
 					</DialogHeader>
 
-					<div className="grid gap-6 overflow-y-auto px-6 py-5 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]">
+					<div className="grid gap-6 overflow-y-auto px-6 py-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
 						<section className="space-y-4">
 							<div className="rounded-xl border bg-card p-4">
 								<h3 className="font-medium text-sm">Location</h3>
