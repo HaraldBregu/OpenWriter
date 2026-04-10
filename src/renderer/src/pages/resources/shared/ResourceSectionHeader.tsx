@@ -68,7 +68,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 				<Button variant={editing ? 'secondary' : 'outline'} size="lg" onClick={onToggleEdit}>
 					<Pencil />
 				</Button>
-			</AppPageHeaderItems>
+			</PageHeaderItems>
 		</PageHeader>
 	);
 });
