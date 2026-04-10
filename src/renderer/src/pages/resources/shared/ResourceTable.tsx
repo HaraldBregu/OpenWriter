@@ -259,16 +259,16 @@ export const ResourceTable = memo(function ResourceTable({
 					<TableHeader sticky>
 						<TableRow>
 							{editing && (
-								<AppTableHead className="w-[40px]">
+								<TableHead className="w-[40px]">
 									<Checkbox
 										checked={someChecked ? undefined : allChecked}
 										indeterminate={someChecked}
 										onCheckedChange={toggleAll}
 									/>
-								</AppTableHead>
+								</TableHead>
 							)}
 							{COLUMN_KEYS.map((column) => (
-								<AppTableHead key={column.key} className={column.className}>
+								<TableHead key={column.key} className={column.className}>
 									<button
 										type="button"
 										className="inline-flex items-center transition-colors hover:text-foreground"
@@ -277,9 +277,9 @@ export const ResourceTable = memo(function ResourceTable({
 										{t(column.i18nKey)}
 										<SortIcon column={column.key} sortKey={sortKey} sortDirection={sortDirection} />
 									</button>
-								</AppTableHead>
+								</TableHead>
 							))}
-							<AppTableHead className="w-[50px]" />
+							<TableHead className="w-[50px]" />
 						</TableRow>
 					</TableHeader>
 					<AppTableBody>

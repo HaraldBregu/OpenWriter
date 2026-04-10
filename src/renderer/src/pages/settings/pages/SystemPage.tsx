@@ -99,37 +99,37 @@ const SystemPage: React.FC = () => {
 				label={t('settings.appTheme.title')}
 				description={t('settings.appTheme.description')}
 			>
-				<AppSelect value={selectedThemeValue} onValueChange={handleAppThemeChange}>
-					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.appTheme.title')}>
-						<AppSelectValue />
-					</AppSelectTrigger>
-					<AppSelectContent>
-						<AppSelectItem value={DEFAULT_THEME_VALUE}>{t(DEFAULT_THEME_LABEL_KEY)}</AppSelectItem>
+				<Select value={selectedThemeValue} onValueChange={handleAppThemeChange}>
+					<SelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.appTheme.title')}>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value={DEFAULT_THEME_VALUE}>{t(DEFAULT_THEME_LABEL_KEY)}</SelectItem>
 						{customThemes.map((theme) => (
-							<AppSelectItem key={theme.id} value={theme.id}>
+							<SelectItem key={theme.id} value={theme.id}>
 								{theme.name}
-							</AppSelectItem>
+							</SelectItem>
 						))}
-					</AppSelectContent>
-				</AppSelect>
+					</SelectContent>
+				</Select>
 			</SettingRow>
 
 			<SettingRow
 				label={t('settings.language.title')}
 				description={t('settings.language.description')}
 			>
-				<AppSelect value={language} onValueChange={handleLanguageChange}>
-					<AppSelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.language.title')}>
-						<AppSelectValue />
-					</AppSelectTrigger>
-					<AppSelectContent>
+				<Select value={language} onValueChange={handleLanguageChange}>
+					<SelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.language.title')}>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
 						{LANGUAGE_OPTIONS.map((option) => (
-							<AppSelectItem key={option.value} value={option.value}>
+							<SelectItem key={option.value} value={option.value}>
 								{t(option.labelKey)}
-							</AppSelectItem>
+							</SelectItem>
 						))}
-					</AppSelectContent>
-				</AppSelect>
+					</SelectContent>
+				</Select>
 			</SettingRow>
 		</div>
 	);
