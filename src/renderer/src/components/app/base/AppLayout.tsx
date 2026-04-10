@@ -192,7 +192,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					<SidebarContent className="gap-4 py-2">
 						{/* New Writing + Quick Actions */}
 						<AppSidebarGroup className="py-0">
-							<AppSidebarGroupContent>
+							<SidebarGroupContent>
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton
@@ -221,7 +221,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 								</SidebarMenu>
-							</AppSidebarGroupContent>
+							</SidebarGroupContent>
 						</AppSidebarGroup>
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
@@ -237,7 +237,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</AppSidebarGroupLabel>
 									<AppCollapsiblePanel>
-										<AppSidebarGroupContent>
+										<SidebarGroupContent>
 											<SidebarMenu>
 												{documents.map((w) => (
 													<SidebarMenuItem key={w.id}>
@@ -261,7 +261,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													</SidebarMenuItem>
 												))}
 											</SidebarMenu>
-										</AppSidebarGroupContent>
+										</SidebarGroupContent>
 									</AppCollapsiblePanel>
 								</AppSidebarGroup>
 							</AppCollapsible>
@@ -279,7 +279,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
-									<AppSidebarGroupContent>
+									<SidebarGroupContent>
 										<SidebarMenu>
 											{RESOURCE_SECTION_ORDER.map((sectionId) => {
 												const section = RESOURCE_SECTIONS[sectionId];
@@ -299,7 +299,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												);
 											})}
 										</SidebarMenu>
-									</AppSidebarGroupContent>
+									</SidebarGroupContent>
 								</AppCollapsiblePanel>
 							</AppSidebarGroup>
 						</AppCollapsible>
@@ -316,7 +316,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
-									<AppSidebarGroupContent>
+									<SidebarGroupContent>
 										<SidebarMenu>
 											<SidebarMenuItem>
 												<SidebarMenuButton
@@ -349,7 +349,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												</SidebarMenuButton>
 											</SidebarMenuItem>
 										</SidebarMenu>
-									</AppSidebarGroupContent>
+									</SidebarGroupContent>
 								</AppCollapsiblePanel>
 							</AppSidebarGroup>
 						</AppCollapsible>
