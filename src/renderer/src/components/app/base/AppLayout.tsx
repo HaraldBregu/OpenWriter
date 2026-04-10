@@ -1,5 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useWorkspaceListener } from '../../../hooks/use-workspace-listener';
@@ -16,6 +15,14 @@ import {
 } from '../../../pages/resources/shared/resource-sections';
 import { AppTitleBar } from './AppTitleBar';
 import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/ui/Collapsible';
+import {
+	Combobox,
+	ComboboxContent,
+	ComboboxItem,
+	ComboboxList,
+	ComboboxSeparator,
+	ComboboxTrigger,
+} from '@/components/ui/Combobox';
 import {
 	SidebarContent,
 	SidebarFooter,
@@ -73,10 +80,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const accountMenuButtonRef = useRef<HTMLButtonElement | null>(null);
-	const accountMenuPanelRef = useRef<HTMLDivElement | null>(null);
 	const [accountMenuOpen, setAccountMenuOpen] = useState(false);
-	const [accountMenuStyle, setAccountMenuStyle] = useState<React.CSSProperties>({});
 	const handleNavigateBack = useCallback(() => navigate(-1), [navigate]);
 	const handleNavigateForward = useCallback(() => navigate(1), [navigate]);
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
@@ -154,59 +158,75 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 		},
 	];
 
-	const updateAccountMenuPosition = useCallback(() => {
-		const trigger = accountMenuButtonRef.current;
-		if (!trigger) return;
+	const accountMenuItems = [
+		{
+			value: 'settings',
+			label: t('menu.settings'),
+			icon: Settings,
+		},
+		{
+			value: 'language',
+			label: t('menu.language', 'Language'),
+			icon: Globe,
+		},
+		{
+			value: 'help',
+			label: t('menu.getHelp', 'Get help'),
+			icon: CircleHelp,
+		},
+		{
+			value: 'upgrade',
+			label: t('menu.upgradePlan', 'Upgrade plan'),
+			icon: CircleArrowUp,
+		},
+		{
+			value: 'extensions',
+			label: t('menu.appsAndExtensions', 'Get apps and extensions'),
+			icon: Download,
+		},
+		{
+			value: 'gift',
+			label: t('menu.giftClaude', 'Gift Claude'),
+			icon: Gift,
+		},
+		{
+			value: 'learnMore',
+			label: t('menu.learnMore', 'Learn more'),
+			icon: Info,
+		},
+		{
+			value: 'logOut',
+			label: t('menu.logOut', 'Log out'),
+			icon: LogOut,
+		},
+	] as const;
 
-		const rect = trigger.getBoundingClientRect();
-
-		setAccountMenuStyle({
-			position: 'fixed',
-			left: rect.left,
-			bottom: window.innerHeight - rect.top + 8,
-			width: open ? rect.width : 256,
-			maxWidth: 'calc(100vw - 16px)',
-			zIndex: 9999,
-		});
-	}, [open]);
-
-	useEffect(() => {
-		if (!accountMenuOpen) return undefined;
-
-		updateAccountMenuPosition();
-
-		const handlePointerDown = (event: PointerEvent) => {
-			const target = event.target as Node;
-			if (
-				accountMenuButtonRef.current?.contains(target) ||
-				accountMenuPanelRef.current?.contains(target)
-			) {
-				return;
-			}
+	const handleAccountMenuValueChange = useCallback(
+		(value: string | null) => {
+			if (!value) return;
 
 			setAccountMenuOpen(false);
-		};
 
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') {
-				setAccountMenuOpen(false);
+			switch (value) {
+				case 'settings':
+					navigate('/settings');
+					break;
+				case 'language':
+					navigate('/settings/general');
+					break;
+				case 'upgrade':
+				case 'extensions':
+				case 'gift':
+				case 'learnMore':
+				case 'help':
+				case 'logOut':
+					break;
+				default:
+					break;
 			}
-		};
-
-		const handleWindowChange = () => updateAccountMenuPosition();
-
-		document.addEventListener('pointerdown', handlePointerDown);
-		document.addEventListener('keydown', handleKeyDown);
-		window.addEventListener('resize', handleWindowChange);
-		window.addEventListener('scroll', handleWindowChange, true);
-
-		return () => {
-			document.removeEventListener('pointerdown', handlePointerDown);
-			document.removeEventListener('keydown', handleKeyDown);
-			window.removeEventListener('resize', handleWindowChange);
-			window.removeEventListener('scroll', handleWindowChange, true);
-		};
-	}, [accountMenuOpen, updateAccountMenuPosition]);
+		},
+		[navigate]
+	);
 
 	return (
 		<>
@@ -419,168 +439,115 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
-						<button
-							ref={accountMenuButtonRef}
-							type="button"
-							onClick={() => {
-								setAccountMenuOpen((value) => !value);
-							}}
-							className={
-								open
-									? 'flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-									: 'flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-sidebar p-0 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-							}
-							aria-haspopup="menu"
-							aria-expanded={accountMenuOpen}
-							aria-label={t('appLayout.accountMenu', 'Open account menu')}
+						<Combobox<string>
+							open={accountMenuOpen}
+							onOpenChange={setAccountMenuOpen}
+							onValueChange={handleAccountMenuValueChange}
+							defaultValue={null}
 						>
-							<div
-								className={
-									open
-										? 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
-										: 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent/70 text-xs font-semibold text-sidebar-foreground ring-1 ring-sidebar-border/70'
-								}
-							>
-								{footerUserInitial}
-							</div>
-							{open && (
-								<>
-									<div className="min-w-0 flex-1">
-										<p className="truncate text-[0.95rem] font-medium text-sidebar-foreground">
-											{footerUserName}
-										</p>
-										<p className="truncate text-[0.85rem] text-muted-foreground">
-											{t('appLayout.plan', 'Pro plan')}
-										</p>
-									</div>
-									<div className="flex items-center gap-1">
-										<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground">
-											<Download className="h-4 w-4" />
-										</div>
-										<ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-									</div>
-								</>
-							)}
-						</button>
-						{accountMenuOpen &&
-							createPortal(
-								<div
-									ref={accountMenuPanelRef}
-									role="menu"
-									aria-label={t('appLayout.accountMenu', 'Open account menu')}
-									style={accountMenuStyle}
-									className="rounded-2xl border border-border bg-popover p-2 text-popover-foreground shadow-lg backdrop-blur-sm"
-								>
-									<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
-										{footerUserEmail}
-									</div>
+							<ComboboxTrigger
+								render={
 									<button
 										type="button"
-										onClick={() => {
-											setAccountMenuOpen(false);
-											navigate('/settings');
-										}}
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
+										className={
+											open
+												? 'flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+												: 'flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-sidebar p-0 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
+										}
+										aria-label={t('appLayout.accountMenu', 'Open account menu')}
 									>
-										<Settings className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.settings')}</span>
-										<span className="text-xs text-muted-foreground">⇧⌘,</span>
-									</button>
-									<button
-										type="button"
-										onClick={() => {
-											setAccountMenuOpen(false);
-											navigate('/settings/general');
-										}}
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<Globe className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.language', 'Language')}</span>
-										<ChevronRight className="h-4 w-4 text-muted-foreground" />
-									</button>
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<CircleHelp className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.getHelp', 'Get help')}</span>
-									</button>
-
-									<div className="my-2 h-px bg-border" />
-
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<CircleArrowUp className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.upgradePlan', 'Upgrade plan')}</span>
-									</button>
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<Download className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">
-											{t('menu.appsAndExtensions', 'Get apps and extensions')}
-										</span>
-									</button>
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<Gift className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.giftClaude', 'Gift Claude')}</span>
-									</button>
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<Info className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.learnMore', 'Learn more')}</span>
-										<ChevronRight className="h-4 w-4 text-muted-foreground" />
-									</button>
-
-									<div className="my-2 h-px bg-border" />
-
-									<div className="flex items-center justify-between px-3 py-2">
-										<span className="text-sm">{t('settings.theme.title')}</span>
 										<div
-											role="group"
-											aria-label={t('settings.theme.title')}
-											className="inline-flex rounded-full border border-border bg-muted p-0.5"
+											className={
+												open
+													? 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
+													: 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent/70 text-xs font-semibold text-sidebar-foreground ring-1 ring-sidebar-border/70'
+											}
 										>
-											{themeOptions.map(({ value, label, icon: Icon }) => (
-												<button
-													key={value}
-													type="button"
-													onClick={() => setTheme(value)}
-													className={cn(
-														'relative rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-														themeMode === value
-															? 'bg-background text-foreground shadow-sm'
-															: 'bg-transparent text-muted-foreground hover:text-foreground'
-													)}
-													aria-label={label}
-													aria-pressed={themeMode === value}
-												>
-													<Icon size={16} />
-												</button>
-											))}
+											{footerUserInitial}
 										</div>
-									</div>
-
-									<div className="my-2 h-px bg-border" />
-
-									<button
-										type="button"
-										className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent hover:text-accent-foreground"
-									>
-										<LogOut className="h-4 w-4 text-muted-foreground" />
-										<span className="flex-1 text-left">{t('menu.logOut', 'Log out')}</span>
+										{open && (
+											<>
+												<div className="min-w-0 flex-1">
+													<p className="truncate text-[0.95rem] font-medium text-sidebar-foreground">
+														{footerUserName}
+													</p>
+													<p className="truncate text-[0.85rem] text-muted-foreground">
+														{t('appLayout.plan', 'Pro plan')}
+													</p>
+												</div>
+												<div className="flex items-center gap-1">
+													<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground">
+														<Download className="h-4 w-4" />
+													</div>
+													<ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+												</div>
+											</>
+										)}
 									</button>
-								</div>,
-								document.body
-							)}
+								}
+								className="[&>svg:last-child]:hidden"
+							/>
+							<ComboboxContent
+								side="top"
+								align="start"
+								sideOffset={8}
+								className="min-w-64 rounded-2xl p-2"
+							>
+								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
+									{footerUserEmail}
+								</div>
+								<ComboboxList className="p-0">
+									{accountMenuItems.map(({ value, label, icon: Icon }, index) => (
+										<React.Fragment key={value}>
+											<ComboboxItem
+												value={value}
+												className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors data-highlighted:bg-accent data-highlighted:text-accent-foreground"
+											>
+												<Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
+												<span className="flex-1 text-left">{label}</span>
+												{value === 'settings' && (
+													<span className="text-xs text-muted-foreground">⇧⌘,</span>
+												)}
+												{value === 'language' && (
+													<ChevronRight className="h-4 w-4 text-muted-foreground" />
+												)}
+											</ComboboxItem>
+											{index === 2 && <ComboboxSeparator className="my-2" />}
+											{index === 6 && <ComboboxSeparator className="my-2" />}
+										</React.Fragment>
+									))}
+								</ComboboxList>
+
+								<div className="my-2 h-px bg-border" />
+
+								<div className="flex items-center justify-between px-3 py-2">
+									<span className="text-sm">{t('settings.theme.title')}</span>
+									<div
+										role="group"
+										aria-label={t('settings.theme.title')}
+										className="inline-flex rounded-full border border-border bg-muted p-0.5"
+									>
+										{themeOptions.map(({ value, label, icon: Icon }) => (
+											<button
+												key={value}
+												type="button"
+												onClick={() => setTheme(value)}
+												className={cn(
+													'relative rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
+													themeMode === value
+														? 'bg-background text-foreground shadow-sm'
+														: 'bg-transparent text-muted-foreground hover:text-foreground'
+												)}
+												aria-label={label}
+												aria-pressed={themeMode === value}
+											>
+												<Icon size={16} />
+											</button>
+										))}
+									</div>
+								</div>
+							</ComboboxContent>
+						</Combobox>
 					</SidebarFooter>
 				</AppSidebarLayout>
 
