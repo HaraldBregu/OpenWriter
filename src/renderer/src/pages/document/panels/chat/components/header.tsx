@@ -132,7 +132,7 @@ const Header: React.FC = () => {
 							<div className="border-b border-border/60 px-1.5 pb-1.5 dark:border-border/80">
 								<div className="relative rounded-lg bg-muted/75 px-2 dark:bg-accent/85">
 									<Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground/90" />
-									<AppInput
+									<Input
 										value={search}
 										onChange={(event) => setSearch(event.target.value)}
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
