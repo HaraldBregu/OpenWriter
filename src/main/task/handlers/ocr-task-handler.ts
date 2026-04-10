@@ -41,10 +41,12 @@ export interface OcrTaskOutput {
 
 export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> {
 	readonly type = 'ocr';
+	private static readonly LOG_SOURCE = 'OcrTaskHandler';
 
 	constructor(
 		private readonly windowContextManager: WindowContextManager,
-		private readonly providerResolver: ProviderResolver
+		private readonly providerResolver: ProviderResolver,
+		private readonly logger?: LoggerService
 	) {}
 
 	validate(input: OcrTaskInput): void {
