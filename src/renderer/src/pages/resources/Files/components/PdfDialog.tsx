@@ -294,6 +294,17 @@ export function PdfDialog(): ReactElement | null {
 											</div>
 										</div>
 									</ScrollArea>
+									<div className="space-y-1.5 border-t px-4 pt-3 pb-2">
+										<label className="text-xs font-medium text-muted-foreground">
+											Nome file di output
+										</label>
+										<Input
+											value={outputFileName}
+											onChange={(e) => setOutputFileName(e.target.value)}
+											placeholder="Nome file di output"
+											className="h-8 text-xs"
+										/>
+									</div>
 									<div className="flex gap-2 border-t p-4">
 										<Button
 											variant="outline"

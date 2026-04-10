@@ -11,7 +11,7 @@ import path from 'node:path';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
-import { MistralOcrClient } from '../../ocr';
+import { MistralOcrClient, QwenOcrClient } from '../../ocr';
 import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
@@ -41,7 +41,6 @@ export interface OcrTaskOutput {
 /** Maps an AppProviderName to the ProviderId used by ProviderResolver. */
 const PROVIDER_NAME_TO_ID: Record<string, string> = {
 	Mistral: 'mistral',
-	Qwen: 'qwen',
 };
 
 export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> {
