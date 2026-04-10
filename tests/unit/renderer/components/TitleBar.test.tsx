@@ -36,7 +36,7 @@ jest.mock('lucide-react', () => ({
 		React.createElement('svg', { ...props, 'data-testid': 'x-icon' }),
 }));
 
-import { AppTitleBar } from '../../../../src/renderer/src/components/app/base/AppTitleBar';
+import { TitleBar } from '../../../../src/renderer/src/components/app/base/TitleBar';
 
 // ---------------------------------------------------------------------------
 // i18n key constants — must match what TitleBar passes to t()
