@@ -292,6 +292,18 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
+	// OCR model preference
+	// -------------------------------------------------------------------------
+
+	getOcrModelId(): string {
+		return this.metadata.getOcrModelId();
+	}
+
+	setOcrModelId(modelId: string): void {
+		this.metadata.setOcrModelId(modelId);
+	}
+
+	// -------------------------------------------------------------------------
 	// Directories
 	// -------------------------------------------------------------------------
 
