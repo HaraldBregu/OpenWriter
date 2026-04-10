@@ -21,7 +21,7 @@ const DeveloperPage: React.FC = () => {
 				label={t('settings.developer.mode')}
 				description={t('settings.developer.modeDescription')}
 			>
-				<AppSwitch checked={developerMode} onCheckedChange={handleToggle} />
+				<Switch checked={developerMode} onCheckedChange={handleToggle} />
 			</SettingRow>
 		</div>
 	);
