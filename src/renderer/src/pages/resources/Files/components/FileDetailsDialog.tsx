@@ -66,7 +66,7 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
 	);
 }
 
-export function FileDetailsDialog(): ReactElement | null {
+export function TextDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
 		useFilesContext();
 
