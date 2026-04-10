@@ -215,7 +215,7 @@ function CsvPreview({ content }: { content: string }) {
 						</TableRow>
 					</TableHeader>
 				)}
-				<AppTableBody>
+				<TableBody>
 					{body.map((row, rowIndex) => (
 						<TableRow key={rowIndex}>
 							{row.map((cell, cellIndex) => (
@@ -225,7 +225,7 @@ function CsvPreview({ content }: { content: string }) {
 							))}
 						</TableRow>
 					))}
-				</AppTableBody>
+				</TableBody>
 			</Table>
 		</div>
 	);
