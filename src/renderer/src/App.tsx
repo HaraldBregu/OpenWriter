@@ -357,8 +357,9 @@ const App: React.FC = () => {
 									</AppLayout>
 								}
 							/>
-						</Routes>
-					</Router>
+							</Routes>
+						</Router>
+					</TooltipProvider>
 				</AppProvider>
 			</Provider>
 		</AppErrorBoundary>
