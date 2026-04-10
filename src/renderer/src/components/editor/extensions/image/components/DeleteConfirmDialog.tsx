@@ -24,25 +24,25 @@ export function DeleteConfirmDialog({
 	const { t } = useTranslation();
 
 	return (
-		<AppAlertDialog>
-			<AppAlertDialogTrigger render={trigger} />
-			<AppAlertDialogContent>
-				<AppAlertDialogHeader>
-					<AppAlertDialogTitle>{t('imageNode.deleteImage')}</AppAlertDialogTitle>
-					<AppAlertDialogDescription>
+		<AlertDialog>
+			<AlertDialogTrigger render={trigger} />
+			<AlertDialogContent>
+				<AlertDialogHeader>
+					<AlertDialogTitle>{t('imageNode.deleteImage')}</AlertDialogTitle>
+					<AlertDialogDescription>
 						{t('imageNode.deleteImageDescription')}
-					</AppAlertDialogDescription>
-				</AppAlertDialogHeader>
-				<AppAlertDialogFooter>
-					<AppAlertDialogCancel>{t('imageNode.cancel')}</AppAlertDialogCancel>
-					<AppAlertDialogAction
+					</AlertDialogDescription>
+				</AlertDialogHeader>
+				<AlertDialogFooter>
+					<AlertDialogCancel>{t('imageNode.cancel')}</AlertDialogCancel>
+					<AlertDialogAction
 						onClick={onConfirm}
 						className="bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive"
 					>
 						{t('imageNode.delete')}
-					</AppAlertDialogAction>
-				</AppAlertDialogFooter>
-			</AppAlertDialogContent>
-		</AppAlertDialog>
+					</AlertDialogAction>
+				</AlertDialogFooter>
+			</AlertDialogContent>
+		</AlertDialog>
 	);
 }

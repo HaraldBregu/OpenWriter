@@ -42,20 +42,20 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 			<AppPageHeaderTitle>{title}</AppPageHeaderTitle>
 			<AppPageHeaderItems>
 				{editing && selectedCount > 0 && (
-					<AppButton variant="destructive" size="lg" disabled={removing} onClick={onRemove}>
+					<Button variant="destructive" size="lg" disabled={removing} onClick={onRemove}>
 						<Trash2 />
 						{t('resources.removeWithCount', { count: selectedCount })}
-					</AppButton>
+					</Button>
 				)}
-				<AppButton variant="outline" size="lg" onClick={onOpenFolder} disabled={editing}>
+				<Button variant="outline" size="lg" onClick={onOpenFolder} disabled={editing}>
 					<FolderOpen />
-				</AppButton>
+				</Button>
 				{showIndexButton && (
-					<AppButton variant="outline" size="lg" onClick={onIndex} disabled={indexing || editing}>
+					<Button variant="outline" size="lg" onClick={onIndex} disabled={indexing || editing}>
 						<ListTree />
-					</AppButton>
+					</Button>
 				)}
-				<AppButton
+				<Button
 					variant="outline"
 					size="lg"
 					onClick={onUpload}
@@ -64,10 +64,10 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 				>
 					<Upload />
 					{uploadLabel}
-				</AppButton>
-				<AppButton variant={editing ? 'secondary' : 'outline'} size="lg" onClick={onToggleEdit}>
+				</Button>
+				<Button variant={editing ? 'secondary' : 'outline'} size="lg" onClick={onToggleEdit}>
 					<Pencil />
-				</AppButton>
+				</Button>
 			</AppPageHeaderItems>
 		</AppPageHeader>
 	);
