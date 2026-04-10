@@ -232,7 +232,7 @@ export default function FilesPage(): React.ReactElement {
 	}, []);
 
 	return (
-		<AppPageContainer>
+		<div className="flex h-full flex-col">
 			<AppPageHeader>
 				<AppPageHeaderTitle>Files</AppPageHeaderTitle>
 				<AppPageHeaderItems>

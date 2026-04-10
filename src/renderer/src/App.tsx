@@ -13,7 +13,6 @@ import { Layout as SettingsLayout } from './pages/settings';
 import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
-import { loadFiles, fileEntryRemoved } from './store/files';
 import './index.css';
 
 initializeTaskStore();
