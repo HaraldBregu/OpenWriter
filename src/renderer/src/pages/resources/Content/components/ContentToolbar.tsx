@@ -17,7 +17,7 @@ export function ContentToolbar(): ReactElement {
 					placeholder="Start typing to search"
 					className={cn(
 						'h-9 w-full rounded-md border border-input bg-background pl-9 pr-4 text-sm',
-						'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring',
+						'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring'
 					)}
 				/>
 			</div>

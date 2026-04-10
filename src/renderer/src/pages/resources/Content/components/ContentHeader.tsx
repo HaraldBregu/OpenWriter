@@ -1,12 +1,7 @@
 import { FolderOpen, Pencil, Trash2, Upload } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	AppButton,
-	AppPageHeader,
-	AppPageHeaderItems,
-	AppPageHeaderTitle,
-} from '@/components/app';
+import { AppButton, AppPageHeader, AppPageHeaderItems, AppPageHeaderTitle } from '@/components/app';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useContentContext } from '../context/ContentContext';
 
@@ -52,11 +47,7 @@ export function ContentHeader(): ReactElement {
 					<Upload />
 					{t(section.uploadKey)}
 				</AppButton>
-				<AppButton
-					variant={editing ? 'secondary' : 'outline'}
-					size="lg"
-					onClick={handleToggleEdit}
-				>
+				<AppButton variant={editing ? 'secondary' : 'outline'} size="lg" onClick={handleToggleEdit}>
 					<Pencil />
 				</AppButton>
 			</AppPageHeaderItems>

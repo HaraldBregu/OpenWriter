@@ -26,7 +26,7 @@ export function useContentSort(): UseContentSortReturn {
 				setSortDirection('asc');
 			}
 		},
-		[sortKey],
+		[sortKey]
 	);
 
 	return { sortKey, sortDirection, handleSort };
