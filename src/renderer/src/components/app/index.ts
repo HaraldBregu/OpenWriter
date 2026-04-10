@@ -1,5 +1,3 @@
-export { AppCollapsible, AppCollapsibleTrigger, AppCollapsiblePanel } from './AppCollapsible';
-
 export { AppButton, buttonVariants } from './AppButton';
 
 export { AppInput } from './AppInput';
@@ -13,15 +11,10 @@ export {
 	AppInputGroupTextarea,
 } from './AppInputGroup';
 
-export { AppTextarea } from './AppTextarea';
-
 export { TextEditor } from '../editor/TextEditor';
 export type { TextEditorProps } from '../editor/TextEditor';
 
 export { AppLabel } from './AppLabel';
-
-export { AppBadge, badgeVariants } from './AppBadge';
-export type { BadgeProps } from './AppBadge';
 
 export {
 	AppCard,
@@ -99,12 +92,6 @@ export {
 	AppDialogTitle,
 	AppDialogDescription,
 } from './AppDialog';
-
-export { AppSlider } from './AppSlider';
-
-export { AppCheckbox } from './AppCheckbox';
-
-export { AppSwitch } from './AppSwitch';
 
 export { AppEditorLayout } from './document/AppEditorLayout';
 

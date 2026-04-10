@@ -1,5 +1,4 @@
 import type { ReactElement } from 'react';
-import { AppPageContainer } from '@/components/app';
 import { ContentProvider } from './context/ContentContext';
 import { ContentHeader } from './components/ContentHeader';
 import { ContentToolbar } from './components/ContentToolbar';
@@ -9,12 +8,12 @@ import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 export default function ContentPage(): ReactElement {
 	return (
 		<ContentProvider>
-			<AppPageContainer>
+			<div className="flex h-full flex-col">
 				<ContentHeader />
 				<ContentToolbar />
 				<ContentContent />
 				<DeleteConfirmDialog />
-			</AppPageContainer>
+			</div>
 		</ContentProvider>
 	);
 }
