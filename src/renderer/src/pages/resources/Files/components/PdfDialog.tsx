@@ -138,18 +138,40 @@ export function PdfDialog(): ReactElement | null {
 										<div className="divide-y divide-border">
 											<div className="space-y-2 p-4">
 												<SectionHeader label="Modello" hasInfo />
-												<Select value={selectedModel} onValueChange={setSelectedModel}>
-													<SelectTrigger className="h-8 text-xs" aria-label="Modello OCR">
-														<SelectValue />
-													</SelectTrigger>
-													<SelectContent>
-														{OCR_MODELS.map((model) => (
-															<SelectItem key={model.modelId} value={model.modelId}>
-																{model.name}
-															</SelectItem>
-														))}
-													</SelectContent>
-												</Select>
+												<DropdownMenu>
+													<DropdownMenuTrigger
+														className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-xs ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+														aria-label="Modello OCR"
+													>
+														<span className="truncate">{selectedModelName}</span>
+														<ChevronDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-50" />
+													</DropdownMenuTrigger>
+													<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
+														<DropdownMenuRadioGroup
+															value={selectedModel}
+															onValueChange={setSelectedModel}
+														>
+															{Array.from(
+																new Set(OCR_MODELS.map((m) => m.provider))
+															).map((provider, idx) => (
+																<div key={provider}>
+																	{idx > 0 && <DropdownMenuSeparator />}
+																	<DropdownMenuLabel>{provider}</DropdownMenuLabel>
+																	{OCR_MODELS.filter((m) => m.provider === provider).map(
+																		(model) => (
+																			<DropdownMenuRadioItem
+																				key={model.modelId}
+																				value={model.modelId}
+																			>
+																				{model.name}
+																			</DropdownMenuRadioItem>
+																		)
+																	)}
+																</div>
+															))}
+														</DropdownMenuRadioGroup>
+													</DropdownMenuContent>
+												</DropdownMenu>
 											</div>
 
 											<div className="space-y-2 p-4">
