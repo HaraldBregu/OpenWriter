@@ -24,10 +24,10 @@ export function ModelDropdown({
 	onModelChange,
 }: ModelDropdownProps): React.JSX.Element {
 	return (
-		<AppDropdownMenu modal={false}>
-			<AppDropdownMenuTrigger
+		<DropdownMenu modal={false}>
+			<DropdownMenuTrigger
 				render={
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="sm"
@@ -42,17 +42,17 @@ export function ModelDropdown({
 							{selectedModel.name}
 						</span>
 						<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
-					</AppButton>
+					</Button>
 				}
 			/>
-			<AppDropdownMenuContent
+			<DropdownMenuContent
 				align="start"
 				side="top"
 				sideOffset={8}
 				className="z-[120] flex max-h-[280px] min-w-[220px] flex-col gap-1 overflow-y-auto rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
 			>
 				{models.map((model) => (
-					<AppDropdownMenuItem
+					<DropdownMenuItem
 						key={model.modelId}
 						onSelect={() => onModelChange(model)}
 						className={cn(
@@ -64,9 +64,9 @@ export function ModelDropdown({
 							<span className="truncate text-sm font-medium">{model.name}</span>
 							<span className="text-xs text-muted-foreground">{model.provider}</span>
 						</div>
-					</AppDropdownMenuItem>
+					</DropdownMenuItem>
 				))}
-			</AppDropdownMenuContent>
-		</AppDropdownMenu>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 }
