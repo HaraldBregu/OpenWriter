@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { AppRadioGroup, AppRadioGroupItem, AppLabel } from '@/components/app';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
+import { Label } from '@/components/ui/Label';
 import { useThemeMode, useAppActions } from '../../../contexts';
 import type { ThemeMode } from '../../../contexts';
 
