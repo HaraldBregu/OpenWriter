@@ -12,33 +12,6 @@ export { AppTitleBarCenterContainerTitle } from './titlebar/AppTitleBarCenterCon
 export { AppTitleBarLeftContainer } from './titlebar/AppTitleBarLeftContainer';
 export { AppTitleBarRightContainer } from './titlebar/AppTitleBarRightContainer';
 
-export {
-	AppSidebar,
-	AppSidebarContent,
-	AppSidebarFooter,
-	AppSidebarGroup,
-	AppSidebarGroupAction,
-	AppSidebarGroupContent,
-	AppSidebarGroupLabel,
-	AppSidebarHeader,
-	AppSidebarInput,
-	AppSidebarInset,
-	AppSidebarMenu,
-	AppSidebarMenuAction,
-	AppSidebarMenuBadge,
-	AppSidebarMenuButton,
-	AppSidebarMenuItem,
-	AppSidebarMenuSkeleton,
-	AppSidebarMenuSub,
-	AppSidebarMenuSubButton,
-	AppSidebarMenuSubItem,
-	AppSidebarProvider,
-	AppSidebarRail,
-	AppSidebarSeparator,
-	AppSidebarTrigger,
-	useSidebar,
-} from './AppSidebar';
-
 export { AppPageHeader } from './base/AppPageHeader';
 export { AppPageHeaderTitle } from './base/AppPageHeaderTitle';
 export { AppPageHeaderItems } from './base/AppPageHeaderItems';
