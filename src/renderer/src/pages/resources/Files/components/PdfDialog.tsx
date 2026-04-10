@@ -45,6 +45,30 @@ function SectionHeader({
 export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['intestazione']);
+	const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+
+	useEffect(() => {
+		if (!activeFile?.path || activeFile.mimeType !== MIME_TYPE_PDF) {
+			setPdfBlobUrl(null);
+			return;
+		}
+
+		let objectUrl: string | null = null;
+		let cancelled = false;
+
+		fetch(`local-resource://${activeFile.path}`)
+			.then((res) => res.blob())
+			.then((blob) => {
+				if (cancelled) return;
+				objectUrl = URL.createObjectURL(blob);
+				setPdfBlobUrl(objectUrl);
+			});
+
+		return () => {
+			cancelled = true;
+			if (objectUrl) URL.revokeObjectURL(objectUrl);
+		};
+	}, [activeFile?.path, activeFile?.mimeType]);
 
 	const toggleExtra = (value: ExtraValue) => {
 		setSelectedExtras((prev) =>
@@ -64,12 +88,14 @@ export function PdfDialog(): ReactElement | null {
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							<ResizablePanel defaultSize={70} minSize="40%">
 								<div className="h-full w-full">
-									<PDFViewer
-										config={{
-											src: `local-resource://${activeFile.path}`,
-											theme: { preference: 'light' },
-										}}
-									/>
+									{pdfBlobUrl && (
+										<PDFViewer
+											config={{
+												src: pdfBlobUrl,
+												theme: { preference: 'light' },
+											}}
+										/>
+									)}
 								</div>
 							</ResizablePanel>
 							<ResizableHandle withHandle />
