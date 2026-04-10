@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { FileEntry } from '../../../../../../shared/types';
 import type { FileTypeFilter, SortDirection, SortKey } from '../types';
-import { MIME_PREFIX_IMAGE, MIME_PREFIX_TEXT, MIME_TYPE_PDF } from '../types';
+import { MIME_PREFIX_IMAGE, MIME_TYPE_JSON, MIME_TYPE_PDF } from '../types';
 
 function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
 	switch (filter) {
@@ -9,14 +9,8 @@ function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
 			return mimeType.startsWith(MIME_PREFIX_IMAGE);
 		case 'pdf':
 			return mimeType === MIME_TYPE_PDF;
-		case 'text':
-			return mimeType.startsWith(MIME_PREFIX_TEXT) && mimeType !== MIME_TYPE_PDF;
-		case 'other':
-			return (
-				!mimeType.startsWith(MIME_PREFIX_IMAGE) &&
-				!mimeType.startsWith(MIME_PREFIX_TEXT) &&
-				mimeType !== MIME_TYPE_PDF
-			);
+		case 'json':
+			return mimeType === MIME_TYPE_JSON;
 		default:
 			return true;
 	}
