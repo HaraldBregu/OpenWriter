@@ -303,6 +303,8 @@ export interface WorkspaceApi {
 	 * Files larger than 64 MB are rejected before any buffer is allocated.
 	 */
 	readFile: (params: FsReadFileParams) => Promise<string>;
+	/** Read a binary file and return its content as a base64-encoded string. */
+	readFileBinary: (filePath: string) => Promise<string>;
 	/**
 	 * Write (or atomically overwrite) a text file.
 	 * By default uses a write-to-temp-then-rename strategy to prevent
