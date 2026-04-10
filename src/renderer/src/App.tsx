@@ -150,213 +150,213 @@ const App: React.FC = () => {
 					<TooltipProvider>
 						<Router>
 							<Routes>
-							<Route
-								path="/splash"
-								element={
-									<RouteWrapper>
-										<SplashPage />
-									</RouteWrapper>
-								}
-							/>
-							<Route path="/">
 								<Route
-									index
-									element={
-										showSplash ? (
-											<RouteWrapper>
-												<SplashPage />
-											</RouteWrapper>
-										) : startupInfo.isInitialized ? (
-											<WelcomePage />
-										) : (
-											<RouteWrapper>
-												<ConfigPage onConfigured={setStartupInfo} />
-											</RouteWrapper>
-										)
-									}
-								/>
-								<Route
-									path="config"
+									path="/splash"
 									element={
 										<RouteWrapper>
-											<ConfigPage onConfigured={setStartupInfo} />
+											<SplashPage />
 										</RouteWrapper>
 									}
 								/>
-							</Route>
+								<Route path="/">
+									<Route
+										index
+										element={
+											showSplash ? (
+												<RouteWrapper>
+													<SplashPage />
+												</RouteWrapper>
+											) : startupInfo.isInitialized ? (
+												<WelcomePage />
+											) : (
+												<RouteWrapper>
+													<ConfigPage onConfigured={setStartupInfo} />
+												</RouteWrapper>
+											)
+										}
+									/>
+									<Route
+										path="config"
+										element={
+											<RouteWrapper>
+												<ConfigPage onConfigured={setStartupInfo} />
+											</RouteWrapper>
+										}
+									/>
+								</Route>
 
-							<Route
-								path="*"
-								element={
-									<AppLayout>
-										<Suspense fallback={<AppLoadingSkeleton />}>
-											<Routes>
-												<Route
-													path="/home"
-													element={
-														<RouteWrapper>
-															<HomePage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/settings/*"
-													element={
-														<RouteWrapper>
-															<SettingsLayout />
-														</RouteWrapper>
-													}
-												>
+								<Route
+									path="*"
+									element={
+										<AppLayout>
+											<Suspense fallback={<AppLoadingSkeleton />}>
+												<Routes>
 													<Route
-														index
+														path="/home"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<GeneralPage />
-															</Suspense>
+															<RouteWrapper>
+																<HomePage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="general"
+														path="/settings/*"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<GeneralPage />
-															</Suspense>
+															<RouteWrapper>
+																<SettingsLayout />
+															</RouteWrapper>
+														}
+													>
+														<Route
+															index
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<GeneralPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="general"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<GeneralPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="workspace"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<WorkspacePage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="providers"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<ProvidersPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="themes"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<ThemesPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="editor"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<EditorPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="system"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<SystemPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="developer"
+															element={
+																<Suspense fallback={<AppLoadingSkeleton />}>
+																	<DeveloperPage />
+																</Suspense>
+															}
+														/>
+													</Route>
+													<Route
+														path="/content/:id"
+														element={
+															<RouteWrapper>
+																<DocumentPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="workspace"
+														path="/debug/tasks"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<WorkspacePage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugTasksPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="providers"
+														path="/debug/redux"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<ProvidersPage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugReduxPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="themes"
+														path="/debug/logs"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<ThemesPage />
-															</Suspense>
+															<RouteWrapper>
+																<DebugLogsPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="editor"
+														path="/search"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<EditorPage />
-															</Suspense>
+															<RouteWrapper>
+																<SearchPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="system"
+														path="/resources/files"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<SystemPage />
-															</Suspense>
+															<RouteWrapper>
+																<FilesPage />
+															</RouteWrapper>
 														}
 													/>
 													<Route
-														path="developer"
+														path="/resources/content"
 														element={
-															<Suspense fallback={<AppLoadingSkeleton />}>
-																<DeveloperPage />
-															</Suspense>
+															<RouteWrapper>
+																<ContentPage />
+															</RouteWrapper>
 														}
 													/>
-												</Route>
-												<Route
-													path="/content/:id"
-													element={
-														<RouteWrapper>
-															<DocumentPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/tasks"
-													element={
-														<RouteWrapper>
-															<DebugTasksPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/redux"
-													element={
-														<RouteWrapper>
-															<DebugReduxPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/debug/logs"
-													element={
-														<RouteWrapper>
-															<DebugLogsPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/search"
-													element={
-														<RouteWrapper>
-															<SearchPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/resources/files"
-													element={
-														<RouteWrapper>
-															<FilesPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/resources/content"
-													element={
-														<RouteWrapper>
-															<ContentPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/resources/images"
-													element={
-														<RouteWrapper>
-															<ImagesPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/resources/data"
-													element={
-														<RouteWrapper>
-															<DataPage />
-														</RouteWrapper>
-													}
-												/>
-												<Route
-													path="/library"
-													element={<Navigate to="/resources/content" replace />}
-												/>
-												<Route
-													path="/resources"
-													element={<Navigate to="/resources/documents" replace />}
-												/>
-											</Routes>
-										</Suspense>
-									</AppLayout>
-								}
-							/>
+													<Route
+														path="/resources/images"
+														element={
+															<RouteWrapper>
+																<ImagesPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route
+														path="/resources/data"
+														element={
+															<RouteWrapper>
+																<DataPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route
+														path="/library"
+														element={<Navigate to="/resources/content" replace />}
+													/>
+													<Route
+														path="/resources"
+														element={<Navigate to="/resources/documents" replace />}
+													/>
+												</Routes>
+											</Suspense>
+										</AppLayout>
+									}
+								/>
 							</Routes>
 						</Router>
 					</TooltipProvider>
