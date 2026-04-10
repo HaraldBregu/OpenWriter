@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, PanelLeft, Minus, X, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { AppTitleBarContainer } from '../titlebar/AppTitleBarContainer';
-import { AppTitleBarCenterContainer } from '../titlebar/AppTitleBarCenterContainer';
-import { AppTitleBarCenterContainerTitle } from '../titlebar/AppTitleBarCenterContainerTitle';
-import { AppTitleBarLeftContainer } from '../titlebar/AppTitleBarLeftContainer';
-import { AppTitleBarRightContainer } from '../titlebar/AppTitleBarRightContainer';
+import { TitleBarContainer } from '../titlebar/TitleBarContainer';
+import { TitleBarCenterContainer } from '../titlebar/TitleBarCenterContainer';
+import { TitleBarCenterContainerTitle } from '../titlebar/TitleBarCenterContainerTitle';
+import { TitleBarLeftContainer } from '../titlebar/TitleBarLeftContainer';
+import { TitleBarRightContainer } from '../titlebar/TitleBarRightContainer';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
@@ -31,7 +31,7 @@ function RestoreIcon() {
 	);
 }
 
-export interface AppTitleBarProps {
+export interface TitleBarProps {
 	/** Text displayed centered in the title bar */
 	title?: string;
 	/** Called when the sidebar toggle button is clicked */
@@ -42,12 +42,12 @@ export interface AppTitleBarProps {
 	onNavigateForward?: () => void;
 }
 
-export const AppTitleBar = React.memo(function AppTitleBar({
+export const TitleBar = React.memo(function TitleBar({
 	title = 'Application Name',
 	onToggleSidebar,
 	onNavigateBack,
 	onNavigateForward,
-}: AppTitleBarProps) {
+}: TitleBarProps) {
 	const { t } = useTranslation();
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullScreen, setIsFullScreen] = useState(false);
@@ -85,9 +85,9 @@ export const AppTitleBar = React.memo(function AppTitleBar({
   `;
 
 	return (
-		<AppTitleBarContainer>
+		<TitleBarContainer>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
-			<AppTitleBarLeftContainer isMac={isMac} isFullScreen={isFullScreen}>
+			<TitleBarLeftContainer isMac={isMac} isFullScreen={isFullScreen}>
 				{!isMac && (
 					<button
 						type="button"
@@ -152,19 +152,19 @@ export const AppTitleBar = React.memo(function AppTitleBar({
 						/>
 					</button>
 				)}
-			</AppTitleBarLeftContainer>
+			</TitleBarLeftContainer>
 
 			{/* ── Center: app title (absolutely placed so it's always truly centered) ── */}
-			<AppTitleBarCenterContainer>
-				<AppTitleBarCenterContainerTitle>{title}</AppTitleBarCenterContainerTitle>
-			</AppTitleBarCenterContainer>
+			<TitleBarCenterContainer>
+				<TitleBarCenterContainerTitle>{title}</TitleBarCenterContainerTitle>
+			</TitleBarCenterContainer>
 
 			{/* ── Spacer (pushes right buttons to the right) ── */}
 			<div className="flex-1" />
 
 			{/* ── Right: minimize / maximize / close (Windows only) ── */}
 			{!isMac && (
-				<AppTitleBarRightContainer>
+				<TitleBarRightContainer>
 					<button
 						type="button"
 						onClick={() => window.win?.minimize()}
@@ -197,9 +197,9 @@ export const AppTitleBar = React.memo(function AppTitleBar({
 					>
 						<X className="h-[17px] w-[17px]" strokeWidth={1.5} />
 					</button>
-				</AppTitleBarRightContainer>
+				</TitleBarRightContainer>
 			)}
-		</AppTitleBarContainer>
+		</TitleBarContainer>
 	);
 });
-AppTitleBar.displayName = 'AppTitleBar';
+TitleBar.displayName = 'TitleBar';
