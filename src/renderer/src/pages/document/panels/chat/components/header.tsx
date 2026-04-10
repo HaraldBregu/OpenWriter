@@ -114,18 +114,20 @@ const Header: React.FC = () => {
 				</h2>
 				<div className="flex items-center gap-2">
 					<AppPopover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
-						<AppPopoverTrigger asChild>
-							<AppButton
-								type="button"
-								variant="ghost"
-								size="icon"
-								disabled={!hasHistory}
-								className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground"
-								aria-label={t('agenticPanel.openHistory', 'Open chat history')}
-							>
-								<Clock3 className="h-4 w-4" />
-							</AppButton>
-						</AppPopoverTrigger>
+						<AppPopoverTrigger
+							render={
+								<AppButton
+									type="button"
+									variant="ghost"
+									size="icon"
+									disabled={!hasHistory}
+									className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground"
+									aria-label={t('agenticPanel.openHistory', 'Open chat history')}
+								>
+									<Clock3 className="h-4 w-4" />
+								</AppButton>
+							}
+						/>
 						<AppPopoverContent
 							align="end"
 							sideOffset={8}
