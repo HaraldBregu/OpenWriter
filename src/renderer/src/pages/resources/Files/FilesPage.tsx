@@ -317,17 +317,17 @@ export default function FilesPage(): React.ReactElement {
 				)}
 
 				{!isLoading && entries.length > 0 && viewMode === 'list' && (
-					<AppTable>
-						<AppTableHeader sticky>
-							<AppTableRow>
-								<AppTableHead className="w-10 px-6">
-									<AppCheckbox
+					<Table className="text-foreground">
+						<TableHeader className="bg-muted sticky top-0 z-10">
+							<TableRow>
+								<TableHead className="w-10 px-6 text-muted-foreground">
+									<Checkbox
 										checked={someChecked ? undefined : allChecked}
 										indeterminate={someChecked}
 										onCheckedChange={handleToggleAll}
 										aria-label="Select all"
 									/>
-								</AppTableHead>
+								</TableHead>
 								{(
 									[
 										{ key: 'name', label: 'Name', className: '' },
@@ -340,7 +340,7 @@ export default function FilesPage(): React.ReactElement {
 										},
 									] as { key: SortKey; label: string; className: string }[]
 								).map(({ key, label, className }) => (
-									<AppTableHead key={key} className={className}>
+									<TableHead key={key} className={`text-muted-foreground ${className}`}>
 										<button
 											type="button"
 											className="inline-flex items-center transition-colors hover:text-foreground"
@@ -349,34 +349,34 @@ export default function FilesPage(): React.ReactElement {
 											{label}
 											<SortIcon active={sortKey === key} direction={sortDirection} />
 										</button>
-									</AppTableHead>
+									</TableHead>
 								))}
-							</AppTableRow>
-						</AppTableHeader>
-						<AppTableBody>
+							</TableRow>
+						</TableHeader>
+						<TableBody>
 							{filteredEntries.length === 0 ? (
-								<AppTableRow>
-									<AppTableCell
+								<TableRow>
+									<TableCell
 										colSpan={5}
 										className="px-4 py-8 text-center text-sm text-muted-foreground"
 									>
 										No files match your search.
-									</AppTableCell>
-								</AppTableRow>
+									</TableCell>
+								</TableRow>
 							) : (
 								filteredEntries.map((file) => (
-									<AppTableRow
+									<TableRow
 										key={file.id}
 										data-state={selected.has(file.id) ? 'selected' : undefined}
 									>
-										<AppTableCell className="w-10 px-6">
-											<AppCheckbox
+										<TableCell className="w-10 px-6">
+											<Checkbox
 												checked={selected.has(file.id)}
 												onCheckedChange={() => handleToggleRow(file.id)}
 												aria-label={`Select ${file.name}`}
 											/>
-										</AppTableCell>
-										<AppTableCell>
+										</TableCell>
+										<TableCell>
 											<div className="flex items-center gap-3">
 												<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-muted">
 													{getFileIcon(file.mimeType)}
@@ -391,21 +391,21 @@ export default function FilesPage(): React.ReactElement {
 													</p>
 												</div>
 											</div>
-										</AppTableCell>
-										<AppTableCell className="whitespace-nowrap text-muted-foreground">
+										</TableCell>
+										<TableCell className="whitespace-nowrap text-muted-foreground">
 											{formatShortDate(file.createdAt)}
-										</AppTableCell>
-										<AppTableCell className="whitespace-nowrap text-muted-foreground">
+										</TableCell>
+										<TableCell className="whitespace-nowrap text-muted-foreground">
 											{getMimeTypeLabel(file.mimeType)}
-										</AppTableCell>
-										<AppTableCell className="whitespace-nowrap text-right text-muted-foreground">
+										</TableCell>
+										<TableCell className="whitespace-nowrap text-right text-muted-foreground">
 											{formatBytes(file.size)}
-										</AppTableCell>
-									</AppTableRow>
+										</TableCell>
+									</TableRow>
 								))
 							)}
-						</AppTableBody>
-					</AppTable>
+						</TableBody>
+					</Table>
 				)}
 
 				{!isLoading && entries.length > 0 && viewMode === 'grid' && (
