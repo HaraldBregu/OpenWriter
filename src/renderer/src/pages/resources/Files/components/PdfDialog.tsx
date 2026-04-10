@@ -173,7 +173,22 @@ export function PdfDialog(): ReactElement | null {
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
 								<div className="flex h-full flex-col">
-									<div className=" p-4">
+									<div className="border-b p-4">
+										<div className="flex items-start gap-3">
+											<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+												<FileText className="h-5 w-5 text-muted-foreground" />
+											</div>
+											<div className="min-w-0 flex-1">
+												<p className="truncate text-sm font-semibold">{activeFile.name}</p>
+												<div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-[11px] text-muted-foreground">
+													<span>{getFileExtension(activeFile.name)}</span>
+													<span>{formatFileSize(activeFile.size)}</span>
+													<span>{new Date(activeFile.modifiedAt).toLocaleDateString()}</span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div className="p-4">
 										<h2 className="text-sm font-semibold">Impostazioni OCR</h2>
 									</div>
 									<ScrollArea className="flex-1">
