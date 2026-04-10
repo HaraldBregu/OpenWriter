@@ -54,6 +54,6 @@ export function FilesHeader(): ReactElement {
 					)}
 				</Button>
 			</div>
-		</div>
+		</PageHeader>
 	);
 }
