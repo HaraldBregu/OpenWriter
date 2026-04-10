@@ -63,7 +63,7 @@ export function PdfDialog(): ReactElement | null {
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							<ResizablePanel defaultSize={70} minSize="40%">
 								<iframe
-									src={`file://${activeFile.path}`}
+									src={`local-resource://${activeFile.path}`}
 									className="h-full w-full border-0"
 									title="PDF Preview"
 								/>
@@ -80,7 +80,7 @@ export function PdfDialog(): ReactElement | null {
 
 											<div className="space-y-2 p-4">
 												<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
-												<p className="text-xs text-muted-foreground">All 0s: '1-4.8'</p>
+												<p className="text-xs text-muted-foreground">All 0s: 1 2 3</p>
 											</div>
 
 											<div className="space-y-2 p-4">
