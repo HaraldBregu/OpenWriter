@@ -17,10 +17,12 @@ import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
 
 export interface OcrTaskInput {
-	/** Absolute path to the file to process. */
-	filePath: string;
+	/** URL or file path to the document to process. */
+	url: string;
 	/** OCR model identifier (e.g. "mistral-ocr-latest" or "qwen-vl-ocr-2025-11-20"). */
 	modelId: string;
+	/** Input type: 'url' for URL-based input. */
+	inputType: string;
 	/** Window ID for resolving the workspace context (stamped server-side). */
 	windowId?: number;
 }
