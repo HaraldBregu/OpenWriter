@@ -319,6 +319,19 @@ export interface ResourceInfo {
 
 // ---- Files (workspace/resources/files/) ------------------------------------
 
+/** Allowed file extensions for the resources/files/ folder. */
+export const RESOURCES_FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
+
+export type ResourcesFileTypeFilter = 'all' | 'json' | 'markdown' | 'text' | 'pdf';
+
+export const RESOURCES_FILE_TYPE_FILTERS: { value: ResourcesFileTypeFilter; label: string }[] = [
+	{ value: 'all', label: 'All' },
+	{ value: 'json', label: 'JSON' },
+	{ value: 'markdown', label: 'Markdown' },
+	{ value: 'text', label: 'Text' },
+	{ value: 'pdf', label: 'PDF' },
+];
+
 export interface FileEntry {
 	/** Unique identifier — the file's basename within resources/files/ */
 	id: string;
