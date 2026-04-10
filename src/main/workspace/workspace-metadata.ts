@@ -270,6 +270,28 @@ export class WorkspaceMetadataService implements Disposable {
 	}
 
 	/**
+	 * Get the workspace's default OCR model ID.
+	 * Returns the stored value or falls back to DEFAULT_OCR_MODEL_ID.
+	 */
+	getOcrModelId(): string {
+		return this.getMetadata().settings.ocrModelId ?? DEFAULT_OCR_MODEL_ID;
+	}
+
+	/**
+	 * Set the workspace's default OCR model ID.
+	 */
+	setOcrModelId(modelId: string): void {
+		this.requireWorkspace();
+
+		const metadata = this.getMetadata();
+		metadata.settings.ocrModelId = modelId;
+		metadata.metadata.updatedAt = Date.now();
+
+		this.scheduleSave(metadata);
+		this.logger?.info('WorkspaceMetadataService', `Set OCR model ID: ${modelId}`);
+	}
+
+	/**
 	 * Validate a directory path without adding it.
 	 * Useful for UI validation before presenting confirmation.
 	 */

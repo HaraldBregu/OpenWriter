@@ -50,6 +50,13 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 	) {}
 
 	validate(input: OcrTaskInput): void {
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Validating input', {
+			url: input?.url,
+			modelId: input?.modelId,
+			inputType: input?.inputType,
+			windowId: input?.windowId,
+		});
+
 		if (!input?.url || typeof input.url !== 'string' || input.url.trim().length === 0) {
 			throw new Error('OcrTaskInput.url must be a non-empty string');
 		}
@@ -63,6 +70,8 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		) {
 			throw new Error('OcrTaskInput.inputType must be a non-empty string');
 		}
+
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Validation passed');
 	}
 
 	async execute(
