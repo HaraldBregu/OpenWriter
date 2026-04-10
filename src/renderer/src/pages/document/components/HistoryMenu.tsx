@@ -33,7 +33,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 		<DropdownMenu>
 			<DropdownMenuTrigger
 				render={
-					<AppButton
+					<Button
 						type="button"
 						variant="header-icon"
 						size="header-icon-md"
@@ -41,7 +41,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 						aria-label="Version history"
 					>
 						<History aria-hidden="true" />
-					</AppButton>
+					</Button>
 				}
 			/>
 			<DropdownMenuContent align="end" className="w-64">

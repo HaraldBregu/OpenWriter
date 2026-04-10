@@ -360,7 +360,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						</AppCollapsible>
 					</SidebarContent>
 
-					<AppSidebarFooter className="border-t p-2">
+					<SidebarFooter className="border-t p-2">
 						<AppPopover>
 							<AppPopoverTrigger
 								render={
@@ -516,7 +516,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</button>
 							</AppPopoverContent>
 						</AppPopover>
-					</AppSidebarFooter>
+					</SidebarFooter>
 				</AppSidebarLayout>
 
 				<AppSidebarInsetLayout>{children}</AppSidebarInsetLayout>

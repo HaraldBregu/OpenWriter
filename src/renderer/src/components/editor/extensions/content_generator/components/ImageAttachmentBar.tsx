@@ -76,7 +76,7 @@ export function ImageAttachmentBar({
 					>
 						<ImagePlus className="h-4 w-4" />
 						<span>{t('assistantNode.addImage', 'Add image')}</span>
-					</AppButton>
+					</Button>
 				</div>
 				{previewUrls.length > 0 ? (
 					<div className="mt-3 flex items-stretch gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
@@ -111,7 +111,7 @@ export function ImageAttachmentBar({
 									aria-label={t('assistantNode.removeImage', 'Remove image')}
 								>
 									<X className="h-3 w-3" />
-								</AppButton>
+								</Button>
 							</div>
 						))}
 						<Button
@@ -126,7 +126,7 @@ export function ImageAttachmentBar({
 								<ImagePlus className="h-4 w-4" />
 								<span>{t('assistantNode.addImage', 'Add image')}</span>
 							</span>
-						</AppButton>
+						</Button>
 					</div>
 				) : (
 					<div
