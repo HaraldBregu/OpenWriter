@@ -207,13 +207,13 @@ function CsvPreview({ content }: { content: string }) {
 		<div className="overflow-auto rounded-md border">
 			<Table>
 				{header && (
-					<AppTableHeader>
+					<TableHeader>
 						<AppTableRow>
 							{header.map((cell, index) => (
 								<AppTableHead key={index}>{cell}</AppTableHead>
 							))}
 						</AppTableRow>
-					</AppTableHeader>
+					</TableHeader>
 				)}
 				<AppTableBody>
 					{body.map((row, rowIndex) => (
