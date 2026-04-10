@@ -1,11 +1,11 @@
 import { memo, type ReactNode } from 'react';
 
-interface AppPageContainerProps {
+interface PageContainerProps {
 	readonly children: ReactNode;
 }
 
-export const AppPageContainer = memo(function AppPageContainer({
+export const PageContainer = memo(function PageContainer({
 	children,
-}: AppPageContainerProps): React.ReactElement {
+}: PageContainerProps): React.ReactElement {
 	return <div className="flex h-full flex-col">{children}</div>;
 });
