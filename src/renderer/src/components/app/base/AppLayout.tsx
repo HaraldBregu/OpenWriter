@@ -196,7 +196,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					{/* Nav */}
 					<SidebarContent className="gap-4 py-2">
 						{/* New Writing + Quick Actions */}
-						<AppSidebarGroup className="py-0">
+						<SidebarGroup className="py-0">
 							<SidebarGroupContent>
 								<SidebarMenu>
 									<SidebarMenuItem>
@@ -227,12 +227,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									</SidebarMenuItem>
 								</SidebarMenu>
 							</SidebarGroupContent>
-						</AppSidebarGroup>
+						</SidebarGroup>
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
 						{open && (
 							<AppCollapsible defaultOpen className="py-0">
-								<AppSidebarGroup className="py-0">
+								<SidebarGroup className="py-0">
 									<SidebarGroupLabel
 										render={
 											<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
@@ -268,13 +268,13 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</SidebarMenu>
 										</SidebarGroupContent>
 									</AppCollapsiblePanel>
-								</AppSidebarGroup>
+								</SidebarGroup>
 							</AppCollapsible>
 						)}
 
 						{/* Resources */}
 						<AppCollapsible defaultOpen className="py-0">
-							<AppSidebarGroup className="py-0">
+							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
 										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
@@ -306,12 +306,12 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</SidebarMenu>
 									</SidebarGroupContent>
 								</AppCollapsiblePanel>
-							</AppSidebarGroup>
+							</SidebarGroup>
 						</AppCollapsible>
 
 						{/* Debug */}
 						<AppCollapsible defaultOpen className="py-0">
-							<AppSidebarGroup className="py-0">
+							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
 										<AppCollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
@@ -356,7 +356,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</SidebarMenu>
 									</SidebarGroupContent>
 								</AppCollapsiblePanel>
-							</AppSidebarGroup>
+							</SidebarGroup>
 						</AppCollapsible>
 					</SidebarContent>
 
