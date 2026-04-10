@@ -202,7 +202,7 @@ function PageContent(): ReactElement {
 			{/* Dialogs */}
 			<ImageDialog />
 			<PdfDialog />
-			<FileDetailsDialog />
+			<TextDialog />
 			<DeleteConfirmDialog />
 		</PageContainer>
 	);
