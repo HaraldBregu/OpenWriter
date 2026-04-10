@@ -27,6 +27,7 @@ import {
 	TableRow,
 } from '@/components/ui/Table';
 import type { ResourceInfo } from '../../../../../shared/types';
+import { BINARY_MIME_TYPES, MIME_TO_LANGUAGE, parseCsv } from './resource-preview-utils';
 import { formatBytes } from './resource-utils';
 
 SyntaxHighlighter.registerLanguage('json', json);
