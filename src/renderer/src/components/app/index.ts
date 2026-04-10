@@ -12,7 +12,7 @@ export { AppTitleBarCenterContainerTitle } from './titlebar/AppTitleBarCenterCon
 export { AppTitleBarLeftContainer } from './titlebar/AppTitleBarLeftContainer';
 export { AppTitleBarRightContainer } from './titlebar/AppTitleBarRightContainer';
 
-export { AppPageHeader } from './base/AppPageHeader';
-export { AppPageHeaderTitle } from './base/AppPageHeaderTitle';
-export { AppPageHeaderItems } from './base/AppPageHeaderItems';
-export { AppPageContainer } from './base/AppPageContainer';
+export { PageHeader } from './base/PageHeader';
+export { PageHeaderTitle } from './base/PageHeaderTitle';
+export { PageHeaderItems } from './base/PageHeaderItems';
+export { PageContainer } from './base/PageContainer';
