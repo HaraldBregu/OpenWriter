@@ -119,26 +119,6 @@ export function FileDetailsDialog(): ReactElement | null {
 		return null;
 	}
 
-	if (activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE)) {
-		return (
-			<ImageDialog
-				file={activeFile}
-				open={fileDetailsOpen}
-				onOpenChange={handleFileDetailsOpenChange}
-			/>
-		);
-	}
-
-	if (activeFile.mimeType === MIME_TYPE_PDF) {
-		return (
-			<PdfDialog
-				file={activeFile}
-				open={fileDetailsOpen}
-				onOpenChange={handleFileDetailsOpenChange}
-			/>
-		);
-	}
-
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
 			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col">
