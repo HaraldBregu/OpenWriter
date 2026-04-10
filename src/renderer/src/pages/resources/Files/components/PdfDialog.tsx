@@ -12,6 +12,11 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from '@/components/ui/Dialog';
+import {
+	ResizableHandle,
+	ResizablePanel,
+	ResizablePanelGroup,
+} from '@/components/ui/Resizable';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
