@@ -36,7 +36,7 @@ export interface OcrPage {
 
 export interface OcrPageImage {
 	id: string;
-	imageBase64?: string;
+	imageBase64?: string | null;
 }
 
 export interface OcrResult {
@@ -53,8 +53,14 @@ export class MistralOcrClient {
 	async process(options: OcrRequestOptions): Promise<OcrResult> {
 		const document =
 			options.document.type === 'document_url'
-				? { type: 'document_url' as const, documentUrl: options.document.documentUrl }
-				: { type: 'base64' as const, data: options.document.data };
+				? {
+						type: 'document_url' as const,
+						documentUrl: options.document.documentUrl,
+					}
+				: {
+						type: 'image_url' as const,
+						imageUrl: `data:${options.document.mimeType ?? 'application/pdf'};base64,${options.document.data}`,
+					};
 
 		const response = await this.client.ocr.process({
 			model: options.model ?? DEFAULT_MODEL,
@@ -62,17 +68,13 @@ export class MistralOcrClient {
 			includeImageBase64: options.includeImageBase64 ?? false,
 		});
 
-		const pages: OcrPage[] = (response.pages ?? []).map((page, index) => ({
-			index,
-			markdown: (page as Record<string, unknown>).markdown as string,
-			images: Array.isArray((page as Record<string, unknown>).images)
-				? ((page as Record<string, unknown>).images as Array<Record<string, unknown>>).map(
-						(img) => ({
-							id: img.id as string,
-							imageBase64: img.imageBase64 as string | undefined,
-						})
-					)
-				: [],
+		const pages: OcrPage[] = response.pages.map((page) => ({
+			index: page.index,
+			markdown: page.markdown,
+			images: page.images.map((img) => ({
+				id: img.id,
+				imageBase64: img.imageBase64,
+			})),
 		}));
 
 		return { pages };
