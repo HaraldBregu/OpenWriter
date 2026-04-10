@@ -7,7 +7,6 @@ import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { FilesProvider, useFilesContext } from './context/FilesContext';
-import { MIME_PREFIX_IMAGE, MIME_TYPE_PDF } from '../shared/resource-preview-utils';
 
 function FilesPageBootstrap(): null {
 	const { setEntries, setIsLoading } = useFilesContext();
@@ -42,34 +41,6 @@ function FilesPageBootstrap(): null {
 	return null;
 }
 
-function FileDialog(): ReactElement | null {
-	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
-
-	if (!activeFile) return null;
-
-	if (activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE)) {
-		return (
-			<ImageDialog
-				file={activeFile}
-				open={fileDetailsOpen}
-				onOpenChange={handleFileDetailsOpenChange}
-			/>
-		);
-	}
-
-	if (activeFile.mimeType === MIME_TYPE_PDF) {
-		return (
-			<PdfDialog
-				file={activeFile}
-				open={fileDetailsOpen}
-				onOpenChange={handleFileDetailsOpenChange}
-			/>
-		);
-	}
-
-	return <FileDetailsDialog />;
-}
-
 export default function FilesPage(): ReactElement {
 	return (
 		<FilesProvider>
@@ -78,7 +49,9 @@ export default function FilesPage(): ReactElement {
 				<FilesHeader />
 				<FilesToolbar />
 				<FilesContent />
-				<FileDialog />
+				<ImageDialog />
+				<PdfDialog />
+				<FileDetailsDialog />
 				<DeleteConfirmDialog />
 			</div>
 		</FilesProvider>
