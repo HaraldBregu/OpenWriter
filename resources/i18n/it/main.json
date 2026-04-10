@@ -815,6 +815,12 @@
 			"upload": "Importa media",
 			"searchPlaceholder": "Cerca media..."
 		},
+		"content": {
+			"loading": "Caricamento contenuti…",
+			"empty": "Nessun contenuto in questa sezione.",
+			"upload": "Importa contenuti",
+			"searchPlaceholder": "Cerca contenuti..."
+		},
 		"images": {
 			"loading": "Caricamento immagini…",
 			"empty": "Nessuna immagine in questa sezione.",

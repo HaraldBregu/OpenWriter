@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useContentContext } from '../context/ContentContext';
+import { EmptyState } from './EmptyState';
 import { ContentTable } from './ContentTable';
 
 const ResourcePreviewSheet = lazy(() =>
@@ -14,7 +15,15 @@ const ResourcePreviewSheet = lazy(() =>
 export function ContentContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
-	const { resources, isLoading, error, previewResource, setPreviewResource } = useContentContext();
+	const {
+		resources,
+		isLoading,
+		error,
+		uploading,
+		handleUpload,
+		previewResource,
+		setPreviewResource,
+	} = useContentContext();
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
@@ -31,9 +40,7 @@ export function ContentContent(): ReactElement {
 			)}
 
 			{!isLoading && !error && resources.length === 0 && (
-				<div className="flex flex-1 items-center justify-center">
-					<p className="text-sm text-muted-foreground">{t(section.emptyKey)}</p>
-				</div>
+				<EmptyState uploading={uploading} onUpload={handleUpload} />
 			)}
 
 			{!isLoading && !error && resources.length > 0 && <ContentTable />}

@@ -1,9 +1,13 @@
 import { Search } from 'lucide-react';
 import type { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/utils';
+import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useContentContext } from '../context/ContentContext';
 
 export function ContentToolbar(): ReactElement {
+	const { t } = useTranslation();
+	const section = RESOURCE_SECTIONS.content;
 	const { searchQuery, setSearchQuery } = useContentContext();
 
 	return (
@@ -14,7 +18,7 @@ export function ContentToolbar(): ReactElement {
 					type="text"
 					value={searchQuery}
 					onChange={(e) => setSearchQuery(e.target.value)}
-					placeholder="Start typing to search"
+					placeholder={t(section.searchPlaceholderKey)}
 					className={cn(
 						'h-9 w-full rounded-md border border-input bg-background pl-9 pr-4 text-sm',
 						'placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring'
