@@ -235,7 +235,12 @@ export const ResourceTable = memo(function ResourceTable({
 						className="pl-9"
 					/>
 				</div>
-				<Select value={typeFilter} onValueChange={(value) => { if (value !== null) setTypeFilter(value); }}>
+				<Select
+					value={typeFilter}
+					onValueChange={(value) => {
+						if (value !== null) setTypeFilter(value);
+					}}
+				>
 					<SelectTrigger className="w-[200px]">
 						<SelectValue placeholder={t('library.allTypes')} />
 					</SelectTrigger>
