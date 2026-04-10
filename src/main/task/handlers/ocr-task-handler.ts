@@ -79,6 +79,13 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		_signal: AbortSignal,
 		reporter: ProgressReporter
 	): Promise<OcrTaskOutput> {
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Execute started', {
+			url: input.url,
+			modelId: input.modelId,
+			inputType: input.inputType,
+			windowId: input.windowId,
+		});
+
 		const workspace = this.resolveWorkspace(input);
 		const filesService = this.resolveFilesService(input);
 
@@ -86,29 +93,37 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		const modelEntry = OCR_MODELS.find((m) => m.modelId === input.modelId);
 		if (!modelEntry) {
+			this.logger?.error(OcrTaskHandler.LOG_SOURCE, `Unknown OCR model: ${input.modelId}`);
 			throw new Error(`Unknown OCR model: ${input.modelId}`);
 		}
 
 		const providerName = modelEntry.provider;
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Resolved provider: ${providerName}`);
 
 		const provider = this.providerResolver.resolve({
 			providerId: providerName,
 			modelId: input.modelId,
 		});
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Provider resolved successfully');
 
 		reporter.progress(10, 'Reading file');
 
 		const resolvedPath = this.resolveFilePath(input.url, workspace);
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Reading file: ${resolvedPath}`);
 		const fileBuffer = await fs.readFile(resolvedPath);
 		const base64Data = fileBuffer.toString('base64');
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `File read, base64 length: ${base64Data.length}`);
 
 		reporter.progress(30, 'Processing OCR');
 
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Calling OCR API with model: ${input.modelId}`);
 		const text = await this.runOcr(provider, base64Data, input.modelId);
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `OCR returned ${text.length} characters`);
 
 		reporter.progress(80, 'Saving result');
 
 		const savedPath = await this.saveResult(workspace, filesService, resolvedPath, text);
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Result saved to: ${savedPath}`);
 
 		reporter.progress(100, 'OCR complete');
 
