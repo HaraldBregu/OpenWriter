@@ -6,6 +6,7 @@ import { OCR_MODELS } from '../../../../../../shared/models';
 import type { AppProviderName } from '../../../../../../shared/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
 import {
 	DropdownMenu,
