@@ -252,6 +252,13 @@ export interface WorkspaceApi {
 	/** Update the project description. */
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 	// -------------------------------------------------------------------------
+	// OCR model preference
+	// -------------------------------------------------------------------------
+	/** Get the workspace's default OCR model ID. Falls back to DEFAULT_OCR_MODEL_ID. */
+	getOcrModelId: () => Promise<string>;
+	/** Set the workspace's default OCR model ID. */
+	setOcrModelId: (modelId: string) => Promise<void>;
+	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
 	/** Get the combined config for a document (metadata + model overrides). */
