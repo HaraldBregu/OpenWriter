@@ -170,6 +170,10 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		void window.workspace.openFilesFolder();
 	}, []);
 
+	const toggleEditMode = useCallback(() => {
+		setEditMode((prev) => !prev);
+	}, []);
+
 	const handleDelete = useCallback(() => {
 		if (selected.size === 0) return;
 		setConfirmOpen(true);
