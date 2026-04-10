@@ -133,24 +133,24 @@ export const BlockControls = React.memo(function BlockControls({
 				style={{ top: hoveredBlock?.top ?? 0 }}
 			>
 				{/* Add block below */}
-				<AppButton
+				<Button
 					variant="editor-block-actions"
 					size="editor-block-icons"
 					aria-label="Add block below"
 					onClick={handleAdd}
 				>
 					<Plus />
-				</AppButton>
+				</Button>
 
 				{/* Drag to reorder */}
-				<AppButton
+				<Button
 					variant="editor-block-actions"
 					size="editor-block-icons"
 					aria-label="Drag to reorder"
 					onMouseDown={handleDragStart}
 				>
 					<GripVertical />
-				</AppButton>
+				</Button>
 			</div>
 
 			{/* Drop indicator line */}
