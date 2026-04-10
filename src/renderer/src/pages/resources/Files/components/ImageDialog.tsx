@@ -172,10 +172,7 @@ export function ImageDialog({ file, open, onOpenChange }: ImageDialogProps): Rea
 
 										<div>
 											<h3 className="mb-3 text-sm font-semibold">Location</h3>
-											<p
-												className="break-all text-xs text-muted-foreground"
-												title={file.path}
-											>
+											<p className="break-all text-xs text-muted-foreground" title={file.path}>
 												{file.relativePath}
 											</p>
 										</div>

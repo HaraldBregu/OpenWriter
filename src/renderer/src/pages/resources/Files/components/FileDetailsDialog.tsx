@@ -11,11 +11,9 @@ import {
 } from '@/components/ui/Dialog';
 import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import { MIME_PREFIX_IMAGE, MIME_TYPE_JSON, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
+import { MIME_TYPE_JSON } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useFilesContext } from '../context/FilesContext';
-import { ImageDialog } from './ImageDialog';
-import { PdfDialog } from './PdfDialog';
 
 function PreviewLoading() {
 	return (
@@ -153,9 +151,10 @@ export function FileDetailsDialog(): ReactElement | null {
 								<ScrollArea className="h-full flex-1 p-4">
 									{loading && <PreviewLoading />}
 									{error && <PreviewError message={error} />}
-									{!loading && !error && activeFile.mimeType === MIME_TYPE_JSON && content !== null && (
-										<JsonPreview content={content} />
-									)}
+									{!loading &&
+										!error &&
+										activeFile.mimeType === MIME_TYPE_JSON &&
+										content !== null && <JsonPreview content={content} />}
 								</ScrollArea>
 							</div>
 
