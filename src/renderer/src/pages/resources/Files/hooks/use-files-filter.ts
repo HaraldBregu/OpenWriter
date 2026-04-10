@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
-import type { FileEntry } from '../../../../../../shared/types';
-import type { FileTypeFilter, SortDirection, SortKey } from '../types';
+import type {
+	FileEntry,
+	ResourcesFileTypeFilter as FileTypeFilter,
+	ResourcesFilesSortDirection as SortDirection,
+	ResourcesFilesSortKey as SortKey,
+} from '../../../../../../shared/types';
 import { MIME_TYPE_JSON, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 
 const MIME_TYPE_MARKDOWN = 'text/markdown';
