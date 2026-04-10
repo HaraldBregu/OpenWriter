@@ -64,7 +64,7 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 		<SettingRow label={PROVIDER_LABELS[provider]} labelFor={editing ? inputId : undefined}>
 			{editing ? (
 				<div className="flex items-center gap-1.5">
-					<AppInput
+					<Input
 						id={inputId}
 						type="password"
 						value={draft}
