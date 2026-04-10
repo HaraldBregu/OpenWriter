@@ -56,10 +56,12 @@ export function PdfDialog(): ReactElement | null {
 		let objectUrl: string | null = null;
 		let cancelled = false;
 
-		fetch(`local-resource://${activeFile.path}`)
-			.then((res) => res.blob())
-			.then((blob) => {
+		window.api.workspace
+			.readFileBinary(activeFile.path)
+			.then((base64) => {
 				if (cancelled) return;
+				const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+				const blob = new Blob([bytes], { type: 'application/pdf' });
 				objectUrl = URL.createObjectURL(blob);
 				setPdfBlobUrl(objectUrl);
 			});
