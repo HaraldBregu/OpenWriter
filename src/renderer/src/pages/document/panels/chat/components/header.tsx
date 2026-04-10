@@ -112,7 +112,7 @@ const Header: React.FC = () => {
 					<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<PopoverTrigger
 							render={
-								<AppButton
+								<Button
 									type="button"
 									variant="ghost"
 									size="icon"
@@ -121,7 +121,7 @@ const Header: React.FC = () => {
 									aria-label={t('agenticPanel.openHistory', 'Open chat history')}
 								>
 									<Clock3 className="h-4 w-4" />
-								</AppButton>
+								</Button>
 							}
 						/>
 						<PopoverContent
@@ -169,7 +169,7 @@ const Header: React.FC = () => {
 											</button>
 											<div className="flex shrink-0 items-center gap-1 pl-1.5">
 												<span className="text-xs text-muted-foreground">{item.ageLabel}</span>
-												<AppButton
+												<Button
 													type="button"
 													variant="ghost"
 													size="icon-xs"
@@ -181,7 +181,7 @@ const Header: React.FC = () => {
 													}}
 												>
 													<Trash2 className="h-3.5 w-3.5" />
-												</AppButton>
+												</Button>
 											</div>
 										</li>
 									);
@@ -189,7 +189,7 @@ const Header: React.FC = () => {
 							</ul>
 						</PopoverContent>
 					</Popover>
-					<AppButton
+					<Button
 						type="button"
 						variant="ghost"
 						size="icon"
@@ -199,7 +199,7 @@ const Header: React.FC = () => {
 						onClick={handleNewChat}
 					>
 						<Plus className="h-4 w-4" />
-					</AppButton>
+					</Button>
 				</div>
 			</div>
 		</div>

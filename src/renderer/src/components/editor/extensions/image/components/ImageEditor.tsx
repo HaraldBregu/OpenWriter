@@ -340,15 +340,15 @@ export function ImageEditor({
 						<div className="border-t border-border/60 bg-muted/30 px-2 py-1.5">
 							{activeMode === 'crop' && (
 								<div className="flex flex-wrap items-center gap-2">
-									<AppButton
+									<Button
 										size="sm"
 										onClick={handleApplyCrop}
 										disabled={!hasCropSelection}
 										className="h-7 rounded-full px-2 text-xs"
 									>
 										{t('imageNode.applyCrop')}
-									</AppButton>
-									<AppButton
+									</Button>
+									<Button
 										variant="outline"
 										size="sm"
 										onClick={handleResetCrop}
@@ -356,7 +356,7 @@ export function ImageEditor({
 										className="h-7 rounded-full px-2 text-xs"
 									>
 										{t('imageNode.resetCrop')}
-									</AppButton>
+									</Button>
 									<span
 										className="ml-1 text-xs tabular-nums text-muted-foreground"
 										aria-live="polite"
