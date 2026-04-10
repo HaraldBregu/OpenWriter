@@ -1,7 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
-import type { FileEntry } from '../../../../../../shared/types';
-import type { FileTypeFilter, SortDirection, SortKey, ViewMode } from '../types';
+import type {
+	FileEntry,
+	ResourcesFileTypeFilter as FileTypeFilter,
+	ResourcesFilesSortDirection as SortDirection,
+	ResourcesFilesSortKey as SortKey,
+	ResourcesFilesViewMode as ViewMode,
+} from '../../../../../../shared/types';
 import { useFilesSort } from '../hooks/use-files-sort';
 import { useFilesFilter } from '../hooks/use-files-filter';
 import { useFilesSelection } from '../hooks/use-files-selection';
