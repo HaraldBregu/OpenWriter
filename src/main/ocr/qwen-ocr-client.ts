@@ -11,9 +11,6 @@ import type { ChatCompletionUserMessageParam } from 'openai/resources/chat/compl
 
 const DEFAULT_MODEL = 'qwen-vl-ocr-2025-11-20';
 const DEFAULT_BASE_URL = 'https://dashscope-intl.aliyuncs.com/compatible-mode/v1';
-const DEFAULT_MIN_PIXELS = 32 * 32 * 3;
-const DEFAULT_MAX_PIXELS = 32 * 32 * 8192;
-
 export interface QwenOcrRequestOptions {
 	/** The image URL to process. */
 	imageUrl: string;
@@ -21,10 +18,6 @@ export interface QwenOcrRequestOptions {
 	prompt: string;
 	/** Model identifier (defaults to qwen-vl-ocr-2025-11-20). */
 	model?: string;
-	/** Minimum pixel count — images below this are upscaled. */
-	minPixels?: number;
-	/** Maximum pixel count — images above this are downscaled. */
-	maxPixels?: number;
 }
 
 export interface QwenOcrResult {
