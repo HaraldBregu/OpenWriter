@@ -255,7 +255,7 @@ export const ResourceTable = memo(function ResourceTable({
 				</Select>
 			</div>
 			<div className="flex-1 min-h-0 overflow-auto rounded-md border">
-				<AppTable>
+				<Table>
 					<AppTableHeader sticky>
 						<TableRow>
 							{editing && (
@@ -294,7 +294,7 @@ export const ResourceTable = memo(function ResourceTable({
 							/>
 						))}
 					</AppTableBody>
-				</AppTable>
+				</Table>
 			</div>
 
 			{previewResource && (
