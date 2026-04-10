@@ -77,14 +77,16 @@ export function FilesTable(): ReactElement {
 		<Table className="table-fixed text-foreground">
 			<TableHeader className="bg-muted sticky top-0 z-10">
 				<TableRow>
-					<TableHead className="w-12 px-6 text-muted-foreground">
-						<Checkbox
-							checked={someChecked ? undefined : allChecked}
-							indeterminate={someChecked}
-							onCheckedChange={handleToggleAll}
-							aria-label="Select all"
-						/>
-					</TableHead>
+					{editMode && (
+						<TableHead className="w-12 px-6 text-muted-foreground">
+							<Checkbox
+								checked={someChecked ? undefined : allChecked}
+								indeterminate={someChecked}
+								onCheckedChange={handleToggleAll}
+								aria-label="Select all"
+							/>
+						</TableHead>
+					)}
 					{SORT_COLUMNS.map(({ key, label, className }) => (
 						<TableHead key={key} className={`px-6 text-muted-foreground ${className}`}>
 							<button
