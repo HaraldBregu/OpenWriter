@@ -1,11 +1,4 @@
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
 import type { FileEntry } from '../../../../../../shared/types';
 import type { FileTypeFilter, SortDirection, SortKey, ViewMode } from '../types';

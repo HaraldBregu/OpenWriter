@@ -59,12 +59,12 @@ export function FileDetailsDialog(): ReactElement | null {
 
 	return (
 		<Dialog open={fileDetailsOpen} onOpenChange={handleFileDetailsOpenChange}>
-			<DialogContent className="sm:max-w-lg">
+			<DialogContent className="sm:max-w-full">
 				<DialogHeader>
 					<DialogTitle className="truncate text-xl">{activeFile.name}</DialogTitle>
 				</DialogHeader>
 
-				<div className="grid gap-6 overflow-y-auto px-6 py-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
+				<div className="grid gap-6 overflow-y-auto px-6 py-5">
 					<section className="space-y-4 lg:col-span-2">
 						<div className="flex items-start gap-4 rounded-xl border bg-card p-4">
 							<div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border bg-background shadow-sm">
