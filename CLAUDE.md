@@ -12,6 +12,10 @@ After each file edit, run `yarn format` to format the code with Prettier.
 - **`.json`** files: kebab-case, or lowercase if a single word (e.g., `tsconfig.json`, `my-config.json`)
 - **Folders**: lowercase snake_case (e.g., `my_folder`, `user_settings`)
 
+## Components
+
+Always use the primary UI components from `src/renderer/src/components/ui/` first before creating new ones or importing from external libraries directly.
+
 ## SonarQube Best Practices
 
 After implementing or modifying code, verify it follows SonarQube best practices:

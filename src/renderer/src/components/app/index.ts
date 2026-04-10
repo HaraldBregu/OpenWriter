@@ -88,17 +88,6 @@ export {
 } from './AppDropdownMenu';
 
 export {
-	AppTable,
-	AppTableHeader,
-	AppTableBody,
-	AppTableFooter,
-	AppTableHead,
-	AppTableRow,
-	AppTableCell,
-	AppTableCaption,
-} from './AppTable';
-
-export {
 	AppDialog,
 	AppDialogPortal,
 	AppDialogOverlay,
