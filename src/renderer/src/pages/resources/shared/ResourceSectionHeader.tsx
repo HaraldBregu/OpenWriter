@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
-import { AppPageHeader, AppPageHeaderItems, AppPageHeaderTitle } from '@/components/app';
+import { PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
 import { Button } from '@/components/ui/Button';
 
 interface ResourceSectionHeaderProps {
