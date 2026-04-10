@@ -1,6 +1,6 @@
 import { FolderOpen, Pencil, Plus, Trash2, Upload, X } from 'lucide-react';
 import type { ReactElement } from 'react';
-import { PageHeader } from '@/components/app/base/PageHeader';
+import { PageHeader } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
 import { useFilesContext } from '../context/FilesContext';
 
