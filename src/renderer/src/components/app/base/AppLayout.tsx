@@ -15,6 +15,8 @@ import {
 } from '../../../pages/resources/shared/resource-sections';
 import { AppTitleBar } from './AppTitleBar';
 import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/ui/Collapsible';
+import { Button } from '@/components/ui/Button';
+import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import {
 	Combobox,
 	ComboboxContent,
@@ -522,29 +524,20 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 
 								<div className="flex items-center justify-between px-3 py-2">
 									<span className="text-sm">{t('settings.theme.title')}</span>
-									<div
-										role="group"
-										aria-label={t('settings.theme.title')}
-										className="inline-flex rounded-full border border-border bg-muted p-0.5"
-									>
+									<ButtonGroup className="rounded-full border border-border bg-muted p-0.5">
 										{themeOptions.map(({ value, label, icon: Icon }) => (
-											<button
+											<Button
 												key={value}
-												type="button"
+												variant={themeMode === value ? 'outline-selected' : 'outline'}
+												size="icon-sm"
 												onClick={() => setTheme(value)}
-												className={cn(
-													'relative rounded-full p-1.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1',
-													themeMode === value
-														? 'bg-background text-foreground shadow-sm'
-														: 'bg-transparent text-muted-foreground hover:text-foreground'
-												)}
 												aria-label={label}
 												aria-pressed={themeMode === value}
 											>
-												<Icon size={16} />
-											</button>
+												<Icon className="size-3.5" />
+											</Button>
 										))}
-									</div>
+									</ButtonGroup>
 								</div>
 							</ComboboxContent>
 						</Combobox>
