@@ -66,7 +66,7 @@ import {
 } from 'lucide-react';
 import { useAppActions, useCurrentUser, useThemeMode } from '../../../contexts';
 
-interface AppLayoutProps {
+interface LayoutProps {
 	readonly children: React.ReactNode;
 }
 
