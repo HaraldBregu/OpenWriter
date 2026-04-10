@@ -1,9 +1,16 @@
 import { Eye } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import {
-	AppButton,
-} from '@/components/app';
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import type { ResourceInfo } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
@@ -34,27 +41,25 @@ function DataRow({
 	onPreview,
 }: DataRowProps): ReactElement {
 	return (
-		<AppTableRow data-state={editing && isSelected ? 'selected' : undefined}>
+		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
 			{editing && (
-				<AppTableCell className="w-[40px]">
-					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
-				</AppTableCell>
+				<TableCell className="w-[40px]">
+					<Checkbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
+				</TableCell>
 			)}
-			<AppTableCell className="max-w-[300px] truncate font-medium">
-				{resource.name}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">{resource.mimeType}</AppTableCell>
-			<AppTableCell className="text-right tabular-nums text-muted-foreground">
+			<TableCell className="max-w-[300px] truncate font-medium">{resource.name}</TableCell>
+			<TableCell className="text-muted-foreground">{resource.mimeType}</TableCell>
+			<TableCell className="text-right tabular-nums text-muted-foreground">
 				{formatBytes(resource.size)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.importedAt)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.lastModified)}
-			</AppTableCell>
-			<AppTableCell>
-				<AppButton
+			</TableCell>
+			<TableCell>
+				<Button
 					type="button"
 					variant="ghost"
 					size="icon"
@@ -62,9 +67,9 @@ function DataRow({
 					onClick={() => onPreview(resource)}
 				>
 					<Eye className="h-4 w-4" />
-				</AppButton>
-			</AppTableCell>
-		</AppTableRow>
+				</Button>
+			</TableCell>
+		</TableRow>
 	);
 }
 
@@ -86,20 +91,20 @@ export function DataTable(): ReactElement {
 
 	return (
 		<div className="flex-1 min-h-0 overflow-auto rounded-md border">
-			<AppTable>
-				<AppTableHeader sticky>
-					<AppTableRow>
+			<Table>
+				<TableHeader className="bg-muted sticky top-0 z-10">
+					<TableRow>
 						{editing && (
-							<AppTableHead className="w-[40px]">
-								<AppCheckbox
+							<TableHead className="w-[40px]">
+								<Checkbox
 									checked={someChecked ? undefined : allChecked}
 									indeterminate={someChecked}
 									onCheckedChange={handleToggleAll}
 								/>
-							</AppTableHead>
+							</TableHead>
 						)}
 						{SORT_COLUMNS.map(({ key, labelKey, headClassName }) => (
-							<AppTableHead key={key} className={headClassName}>
+							<TableHead key={key} className={headClassName}>
 								<button
 									type="button"
 									className="inline-flex items-center transition-colors hover:text-foreground"
@@ -108,12 +113,12 @@ export function DataTable(): ReactElement {
 									{t(labelKey)}
 									<SortIcon active={sortKey === key} direction={sortDirection} />
 								</button>
-							</AppTableHead>
+							</TableHead>
 						))}
-						<AppTableHead className="w-[50px]" />
-					</AppTableRow>
-				</AppTableHeader>
-				<AppTableBody>
+						<TableHead className="w-[50px]" />
+					</TableRow>
+				</TableHeader>
+				<TableBody>
 					{filteredResources.map((resource) => (
 						<DataRow
 							key={resource.id}
@@ -124,8 +129,8 @@ export function DataTable(): ReactElement {
 							onPreview={setPreviewResource}
 						/>
 					))}
-				</AppTableBody>
-			</AppTable>
+				</TableBody>
+			</Table>
 		</div>
 	);
 }
