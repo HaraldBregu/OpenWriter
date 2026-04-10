@@ -137,9 +137,7 @@ export function PdfDialog(): ReactElement | null {
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							<ResizablePanel defaultSize={70} minSize="40%">
-								<ScrollArea className="h-full p-4">
-									<PdfPreview path={activeFile.path} />
-								</ScrollArea>
+								<PdfPreview path={activeFile.path} />
 							</ResizablePanel>
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
