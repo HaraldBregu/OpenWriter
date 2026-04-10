@@ -69,6 +69,6 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 					<Pencil />
 				</Button>
 			</AppPageHeaderItems>
-		</AppPageHeader>
+		</PageHeader>
 	);
 });
