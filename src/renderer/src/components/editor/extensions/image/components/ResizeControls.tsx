@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Lock, Unlock } from 'lucide-react';
-import { AppButton } from '@/components/app/AppButton';
-import { AppTooltip, AppTooltipContent, AppTooltipTrigger } from '@/components/app/AppTooltip';
+import { Button } from '@/components/ui/Button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { MAX_DIMENSION, MIN_DIMENSION } from '../shared';
 
 interface ResizeControlsProps {
