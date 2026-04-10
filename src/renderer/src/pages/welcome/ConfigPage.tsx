@@ -97,7 +97,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										>
 											{PROVIDER_LABELS[providerId]}
 										</Label>
-										<AppInput
+										<Input
 											id={`first-run-${providerId}`}
 											type="password"
 											value={tokens[providerId]}
