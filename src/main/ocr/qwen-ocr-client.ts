@@ -28,10 +28,7 @@ export interface QwenOcrResult {
 export class QwenOcrClient {
 	private readonly client: OpenAI;
 
-	constructor(
-		apiKey: string,
-		baseUrl?: string
-	) {
+	constructor(apiKey: string, baseUrl?: string) {
 		this.client = new OpenAI({
 			apiKey,
 			baseURL: baseUrl ?? DEFAULT_BASE_URL,
