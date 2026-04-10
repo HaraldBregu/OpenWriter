@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload, AlertCircle, X, CheckCircle, Trash2 } from 'lucide-react';
-import { AppButton } from '@/components/app';
+import { Button } from '@/components/ui/Button';
 import { SectionHeader, SettingRow } from '../components';
 import { useCustomThemeId, useAppActions } from '../../../contexts';
 import type { CustomThemeInfo } from '../../../../../shared/types';
