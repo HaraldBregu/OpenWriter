@@ -98,6 +98,9 @@ export function PdfDialog(): ReactElement | null {
 	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['intestazione']);
 	const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+	const [outputFileName, setOutputFileName] = useState(
+		activeFile ? getFileNameWithoutExtension(activeFile.name) : ''
+	);
 
 	useEffect(() => {
 		if (!activeFile?.path || activeFile.mimeType !== MIME_TYPE_PDF) {

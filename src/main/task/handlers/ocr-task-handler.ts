@@ -93,7 +93,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(10, 'Reading file');
 
-		const resolvedPath = this.resolveFilePath(input.filePath, workspace);
+		const resolvedPath = this.resolveFilePath(input.url, workspace);
 		const fileBuffer = await fs.readFile(resolvedPath);
 		const base64Data = fileBuffer.toString('base64');
 
