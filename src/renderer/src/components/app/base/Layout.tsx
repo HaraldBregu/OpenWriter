@@ -71,10 +71,10 @@ interface LayoutProps {
 }
 
 // ---------------------------------------------------------------------------
-// AppLayoutInner — rendered inside SidebarProvider so it can call useSidebar
+// LayoutInner — rendered inside SidebarProvider so it can call useSidebar
 // ---------------------------------------------------------------------------
 
-function AppLayoutInner({ children }: LayoutProps) {
+function LayoutInner({ children }: LayoutProps) {
 	const { t } = useTranslation();
 	const { toggleSidebar, open } = useSidebar();
 	const location = useLocation();
