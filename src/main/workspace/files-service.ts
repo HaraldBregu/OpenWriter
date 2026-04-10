@@ -1,12 +1,13 @@
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { FileEntry } from '../../shared/types';
+import { RESOURCES_FILES_EXTENSIONS } from '../../shared/file-type-validator';
 import type { FileManager } from '../shared/file_manager';
 import type { LoggerService } from '../services/logger';
 
 const FILES_SUBFOLDER = 'files';
 
-const ALLOWED_FILE_EXTENSIONS = new Set(['.json', '.png', '.jpg', '.jpeg', '.pdf']);
+const ALLOWED_FILE_EXTENSIONS = new Set<string>(RESOURCES_FILES_EXTENSIONS);
 
 /**
  * FilesService manages files within the workspace `resources/files/` sub-folder.
