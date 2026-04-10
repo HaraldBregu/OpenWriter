@@ -361,7 +361,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
-						<AppPopover>
+						<Popover>
 							<PopoverTrigger
 								render={
 									<button
@@ -515,7 +515,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<span className="flex-1 text-left">{t('menu.logOut', 'Log out')}</span>
 								</button>
 							</PopoverContent>
-						</AppPopover>
+						</Popover>
 					</SidebarFooter>
 				</AppSidebarLayout>
 
