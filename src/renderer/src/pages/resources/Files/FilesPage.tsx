@@ -227,7 +227,7 @@ export default function FilesPage(): React.ReactElement {
 	return (
 		<div className="flex h-full flex-col">
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
-				<h1 className="text-xl font-bold">Files</AppPageHeaderTitle>
+				<h1 className="text-xl font-bold">Files</h1>
 				<AppPageHeaderItems>
 					{selected.size > 0 && (
 						<Button variant="destructive" size="lg" onClick={handleDelete}>
