@@ -69,10 +69,10 @@ export function FilesTable(): ReactElement {
 	};
 
 	return (
-		<Table className="text-foreground">
+		<Table className="table-fixed text-foreground">
 			<TableHeader className="bg-muted sticky top-0 z-10">
 				<TableRow>
-					<TableHead className="w-10 px-6 text-muted-foreground">
+					<TableHead className="w-12 px-6 text-muted-foreground">
 						<Checkbox
 							checked={someChecked ? undefined : allChecked}
 							indeterminate={someChecked}
