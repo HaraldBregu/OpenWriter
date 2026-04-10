@@ -425,9 +425,7 @@ export function FileDetailsDialog(): ReactElement | null {
 								<ScrollArea className="flex-1 p-4">
 									{loading && <PreviewLoading />}
 									{error && <PreviewError message={error} />}
-									{!loading && !error && (
-										<FilePreview file={activeFile} content={content} />
-									)}
+									{!loading && !error && <FilePreview file={activeFile} content={content} />}
 								</ScrollArea>
 							</div>
 

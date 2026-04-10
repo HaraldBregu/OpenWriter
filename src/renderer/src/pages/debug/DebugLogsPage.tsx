@@ -117,7 +117,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 					</AppSelectContent>
 				</AppSelect>
 
-				<AppButton
+				<Button
 					variant={autoRefresh ? 'default' : 'outline'}
 					size="sm"
 					onClick={() => setAutoRefresh((v) => !v)}
@@ -125,9 +125,9 @@ export default function DebugLogsPage(): React.JSX.Element {
 				>
 					<RefreshCw className={autoRefresh ? 'animate-spin' : ''} />
 					{t('debug.autoRefresh', 'Auto-refresh')}
-				</AppButton>
+				</Button>
 
-				<AppButton
+				<Button
 					variant="header-icon"
 					size="icon-xs"
 					onClick={fetchLogs}
@@ -135,16 +135,16 @@ export default function DebugLogsPage(): React.JSX.Element {
 					aria-label={t('debug.refresh', 'Refresh')}
 				>
 					<RefreshCw className={loading ? 'animate-spin' : ''} />
-				</AppButton>
+				</Button>
 
-				<AppButton
+				<Button
 					variant="header-icon"
 					size="icon-xs"
 					onClick={() => window.app.openLogsFolder()}
 					aria-label={t('debug.openLogsFolder', 'Open logs folder')}
 				>
 					<FolderOpen />
-				</AppButton>
+				</Button>
 			</div>
 
 			{/* Stats bar */}
