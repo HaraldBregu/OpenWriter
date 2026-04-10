@@ -15,39 +15,15 @@ import {
 	Trash2,
 	Upload,
 } from 'lucide-react';
-import type { FileEntry } from '../../../../../shared/types';
+import { Checkbox } from '@/components/ui/Checkbox';
 import {
-	AppAlertDialog,
-	AppAlertDialogAction,
-	AppAlertDialogCancel,
-	AppAlertDialogContent,
-	AppAlertDialogDescription,
-	AppAlertDialogFooter,
-	AppAlertDialogHeader,
-	AppAlertDialogTitle,
-	AppButton,
-	AppButtonGroup,
-	AppCheckbox,
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuRadioGroup,
-	AppDropdownMenuRadioItem,
-	AppDropdownMenuTrigger,
-	AppInputGroup,
-	AppInputGroupAddon,
-	AppInputGroupInput,
-	AppInputGroupText,
-	AppPageContainer,
-	AppPageHeader,
-	AppPageHeaderItems,
-	AppPageHeaderTitle,
-	AppTable,
-	AppTableBody,
-	AppTableCell,
-	AppTableHead,
-	AppTableHeader,
-	AppTableRow,
-} from '@/components/app';
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
 	insertFilesRequested,
@@ -58,6 +34,11 @@ import {
 } from '@/store/files';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
+import { ButtonGroup } from '@/components/ui/ButtonGroup';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { Button } from '@/components/ui/Button';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/AlertDialog';
 
 type ViewMode = 'list' | 'grid';
 type FileTypeFilter = 'all' | 'image' | 'pdf' | 'text' | 'other';
@@ -133,7 +114,6 @@ function formatShortDate(timestamp: number): string {
 	});
 }
 
-
 interface EmptyStateProps {
 	readonly uploading: boolean;
 	readonly onUpload: () => void;
@@ -149,10 +129,10 @@ function EmptyState({ uploading, onUpload }: EmptyStateProps): React.ReactElemen
 				<p className="font-medium text-sm">No files yet</p>
 				<p className="text-sm text-muted-foreground">Upload files to get started</p>
 			</div>
-			<AppButton onClick={onUpload} disabled={uploading} size="sm">
+			<Button onClick={onUpload} disabled={uploading} size="sm">
 				<Upload />
 				Upload files
-			</AppButton>
+			</Button>
 		</div>
 	);
 }
@@ -257,62 +237,61 @@ export default function FilesPage(): React.ReactElement {
 				<AppPageHeaderTitle>Files</AppPageHeaderTitle>
 				<AppPageHeaderItems>
 					{selected.size > 0 && (
-						<AppButton variant="destructive" size="lg" onClick={handleDelete}>
+						<Button variant="destructive" size="lg" onClick={handleDelete}>
 							<Trash2 />
 							Delete ({selected.size})
-						</AppButton>
+						</Button>
 					)}
-					<AppButton variant="outline" size="lg" onClick={handleOpenFolder}>
+					<Button variant="outline" size="lg" onClick={handleOpenFolder}>
 						<FolderOpen />
-					</AppButton>
-					<AppButton variant="outline" size="lg" disabled>
+					</Button>
+					<Button variant="outline" size="lg" disabled>
 						<Plus />
 						New folder
-					</AppButton>
-					<AppButton size="lg" onClick={handleUpload} disabled={uploading}>
+					</Button>
+					<Button size="lg" onClick={handleUpload} disabled={uploading}>
 						<Upload />
 						Upload
-					</AppButton>
+					</Button>
 				</AppPageHeaderItems>
 			</AppPageHeader>
-
-			<div className="flex shrink-0 items-center gap-3 border-b px-6 py-3">
-				<AppButtonGroup className="flex-1 gap-2">
-					<AppInputGroup>
-						<AppInputGroupAddon>
-							<AppInputGroupText>
+			<AppPageHeader>
+				<ButtonGroup className="flex-1 gap-2">
+					<InputGroup>
+						<InputGroupAddon>
+							<InputGroupText>
 								<Search />
-							</AppInputGroupText>
-						</AppInputGroupAddon>
-						<AppInputGroupInput
+							</InputGroupText>
+						</InputGroupAddon>
+						<InputGroupInput
 							value={searchQuery}
 							onChange={(e) => setSearchQuery(e.target.value)}
 							placeholder="Start typing to search"
 						/>
-					</AppInputGroup>
+					</InputGroup>
 
-					<AppDropdownMenu>
-						<AppDropdownMenuTrigger>
-							<AppButton variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg">
+					<DropdownMenu>
+						<DropdownMenuTrigger>
+							<Button variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg">
 								<Filter className="h-4 w-4" />
-							</AppButton>
-						</AppDropdownMenuTrigger>
-						<AppDropdownMenuContent align="end">
-							<AppDropdownMenuRadioGroup
+							</Button>
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuRadioGroup
 								value={typeFilter}
 								onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
 							>
 								{FILE_TYPE_FILTERS.map(({ value, label }) => (
-									<AppDropdownMenuRadioItem key={value} value={value}>
+									<DropdownMenuRadioItem key={value} value={value}>
 										{label}
-									</AppDropdownMenuRadioItem>
+									</DropdownMenuRadioItem>
 								))}
-							</AppDropdownMenuRadioGroup>
-						</AppDropdownMenuContent>
-					</AppDropdownMenu>
+							</DropdownMenuRadioGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
 
-					<AppButtonGroup>
-						<AppButton
+					<ButtonGroup>
+						<Button
 							variant={viewMode === 'list' ? 'secondary' : 'outline'}
 							size="lg"
 							onClick={() => setViewMode('list')}
@@ -320,8 +299,8 @@ export default function FilesPage(): React.ReactElement {
 							aria-pressed={viewMode === 'list'}
 						>
 							<List className="h-4 w-4" />
-						</AppButton>
-						<AppButton
+						</Button>
+						<Button
 							variant={viewMode === 'grid' ? 'secondary' : 'outline'}
 							size="lg"
 							onClick={() => setViewMode('grid')}
@@ -329,10 +308,10 @@ export default function FilesPage(): React.ReactElement {
 							aria-pressed={viewMode === 'grid'}
 						>
 							<Grid3x3 className="h-4 w-4" />
-						</AppButton>
-					</AppButtonGroup>
-				</AppButtonGroup>
-			</div>
+						</Button>
+					</ButtonGroup>
+				</ButtonGroup>
+			</AppPageHeader>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
 				{isLoading && (
@@ -444,27 +423,27 @@ export default function FilesPage(): React.ReactElement {
 				)}
 			</div>
 
-			<AppAlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-				<AppAlertDialogContent>
-					<AppAlertDialogHeader>
-						<AppAlertDialogTitle>Delete files</AppAlertDialogTitle>
-						<AppAlertDialogDescription>
+			<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+				<AlertDialogContent>
+					<AlertDialogHeader>
+						<AlertDialogTitle>Delete files</AlertDialogTitle>
+						<AlertDialogDescription>
 							{selected.size === 1
 								? 'This will permanently delete 1 file. This action cannot be undone.'
 								: `This will permanently delete ${selected.size} files. This action cannot be undone.`}
-						</AppAlertDialogDescription>
-					</AppAlertDialogHeader>
-					<AppAlertDialogFooter>
-						<AppAlertDialogCancel>Cancel</AppAlertDialogCancel>
-						<AppAlertDialogAction
+						</AlertDialogDescription>
+					</AlertDialogHeader>
+					<AlertDialogFooter>
+						<AlertDialogCancel>Cancel</AlertDialogCancel>
+						<AlertDialogAction
 							className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
 							onClick={handleConfirmDelete}
 						>
 							Delete
-						</AppAlertDialogAction>
-					</AppAlertDialogFooter>
-				</AppAlertDialogContent>
-			</AppAlertDialog>
+						</AlertDialogAction>
+					</AlertDialogFooter>
+				</AlertDialogContent>
+			</AlertDialog>
 		</AppPageContainer>
 	);
 }

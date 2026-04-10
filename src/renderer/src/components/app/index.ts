@@ -2,8 +2,6 @@ export { AppCollapsible, AppCollapsibleTrigger, AppCollapsiblePanel } from './Ap
 
 export { AppButton, buttonVariants } from './AppButton';
 
-export { AppButtonGroup, AppButtonGroupSeparator, AppButtonGroupText } from './AppButtonGroup';
-
 export { AppInput } from './AppInput';
 
 export {
