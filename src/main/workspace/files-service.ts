@@ -6,6 +6,8 @@ import type { LoggerService } from '../services/logger';
 
 const FILES_SUBFOLDER = 'files';
 
+const ALLOWED_FILE_EXTENSIONS = new Set(['.json', '.png', '.jpg', '.jpeg', '.pdf']);
+
 /**
  * FilesService manages files within the workspace `resources/files/` sub-folder.
  *
