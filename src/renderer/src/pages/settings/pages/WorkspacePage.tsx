@@ -181,7 +181,7 @@ const WorkspacePage: React.FC = () => {
 						description={t('workspacePage.nameDescription')}
 					>
 						{editingField === 'name' ? (
-							<AppInput
+							<Input
 								autoFocus
 								value={draft}
 								onChange={(e) => setDraft(e.target.value)}
@@ -214,7 +214,7 @@ const WorkspacePage: React.FC = () => {
 						description={t('workspacePage.descriptionDescription')}
 					>
 						{editingField === 'description' ? (
-							<AppInput
+							<Input
 								ref={descriptionInputRef}
 								value={draft}
 								onChange={(e) => setDraft(e.target.value)}
