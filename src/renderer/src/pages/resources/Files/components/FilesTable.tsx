@@ -9,8 +9,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import type { FileEntry } from '../../../../../../shared/types';
-import type { SortKey } from '../types';
+import type { FileEntry, ResourcesFilesSortKey as SortKey } from '../../../../../../shared/types';
 import {
 	MIME_PREFIX_IMAGE,
 	MIME_TYPE_JSON,
