@@ -137,11 +137,11 @@ export const WorkspaceChannels = {
 	contentsChanged: 'contents:changed',
 	contentsWatcherError: 'contents:watcher-error',
 	// Files (resources/files/ sub-folder)
-	getFiles: 'files:get-all',
-	insertFiles: 'files:insert',
-	deleteFileEntry: 'files:delete',
-	filesChanged: 'files:changed',
-	filesWatcherError: 'files:watcher-error',
+	getResourcesFiles: 'files:get-all',
+	insertResourcesFiles: 'files:insert',
+	deleteResourcesFileEntry: 'files:delete',
+	resourcesFilesChanged: 'files:changed',
+	resourcesFilesWatcherError: 'files:watcher-error',
 } as const;
 
 export const WindowChannels = {

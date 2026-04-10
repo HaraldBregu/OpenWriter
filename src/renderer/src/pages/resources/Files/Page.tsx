@@ -1,5 +1,4 @@
 import type { ReactElement } from 'react';
-import { FilesContent } from './components/FilesContent';
 import { FileDetailsDialog } from './components/FileDetailsDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
@@ -17,8 +16,10 @@ import {
 	Trash2,
 	Upload,
 	X,
+	File,
 } from 'lucide-react';
 import {
+	PageBody,
 	PageContainer,
 	PageHeader,
 	PageHeaderItems,
@@ -43,6 +44,7 @@ import {
 	InputGroupButton,
 } from '@/components/ui/InputGroup';
 import { FileTypeFilter, FILE_TYPE_FILTERS } from './types';
+import { FilesTable } from './components/FilesTable';
 
 function PageContent(): ReactElement {
 	const {
@@ -59,6 +61,8 @@ function PageContent(): ReactElement {
 		setViewMode,
 		typeFilter,
 		setTypeFilter,
+		entries,
+		isLoading,
 	} = useFilesContext();
 
 	return (
@@ -163,9 +167,38 @@ function PageContent(): ReactElement {
 					</Button>
 				</ButtonGroup>
 			</PageSubHeader>
-			<FilesContent />
+			<PageBody>
+				{isLoading && (
+					<div className="flex flex-1 items-center justify-center py-16">
+						<p className="text-sm text-muted-foreground">Loading files...</p>
+					</div>
+				)}
 
-			
+				{!isLoading && entries.length === 0 && (
+					<div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
+						<div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+							<File className="h-7 w-7 text-muted-foreground" />
+						</div>
+						<div className="space-y-1">
+							<p className="font-medium text-sm">No files yet</p>
+							<p className="text-sm text-muted-foreground">Upload files to get started</p>
+						</div>
+						<Button onClick={handleUpload} disabled={uploading} size="sm">
+							<Upload />
+							Upload files
+						</Button>
+					</div>
+				)}
+
+				{!isLoading && entries.length > 0 && viewMode === 'list' && <FilesTable />}
+
+				{!isLoading && entries.length > 0 && viewMode === 'grid' && (
+					<div className="flex flex-1 items-center justify-center py-16">
+						<p className="text-sm text-muted-foreground">Grid view coming soon.</p>
+					</div>
+				)}
+			</PageBody>
+
 			{/* Dialogs */}
 			<ImageDialog />
 			<PdfDialog />

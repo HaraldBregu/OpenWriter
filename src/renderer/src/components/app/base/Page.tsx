@@ -56,8 +56,6 @@ interface PageBodyProps {
 	readonly children: ReactNode;
 }
 
-export const PageBody = memo(function PageBody({
-	children,
-}: PageBodyProps): React.ReactElement {
+export const PageBody = memo(function PageBody({ children }: PageBodyProps): React.ReactElement {
 	return <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">{children}</div>;
 });
