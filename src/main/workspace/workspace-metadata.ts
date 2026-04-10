@@ -30,6 +30,8 @@ export interface IndexedDirectory {
  */
 export interface WorkspaceSettings {
 	directories: IndexedDirectory[];
+	/** Default OCR model ID for the workspace. Falls back to DEFAULT_OCR_MODEL_ID when absent. */
+	ocrModelId?: string;
 }
 
 /**
