@@ -159,7 +159,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					{/* Header */}
 					<SidebarHeader>
 						<AppSidebarMenu>
-							<AppSidebarMenuItem>
+							<SidebarMenuItem>
 								<SidebarMenuButton
 									onClick={() => navigate('/home')}
 									className={
@@ -184,7 +184,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										</div>
 									)}
 								</SidebarMenuButton>
-							</AppSidebarMenuItem>
+							</SidebarMenuItem>
 						</AppSidebarMenu>
 					</SidebarHeader>
 
@@ -194,7 +194,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
 								<AppSidebarMenu>
-									<AppSidebarMenuItem>
+									<SidebarMenuItem>
 										<SidebarMenuButton
 											className="group/btn h-9 px-3"
 											onClick={createWriting}
@@ -206,8 +206,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												Ctrl+Alt+N
 											</span>
 										</SidebarMenuButton>
-									</AppSidebarMenuItem>
-									<AppSidebarMenuItem>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
 										<SidebarMenuButton
 											render={<Link to="/search" />}
 											className="group/btn h-9 px-3"
@@ -219,7 +219,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												Ctrl+K
 											</span>
 										</SidebarMenuButton>
-									</AppSidebarMenuItem>
+									</SidebarMenuItem>
 								</AppSidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
@@ -240,7 +240,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 										<AppSidebarGroupContent>
 											<AppSidebarMenu>
 												{documents.map((w) => (
-													<AppSidebarMenuItem key={w.id}>
+													<SidebarMenuItem key={w.id}>
 														<SidebarMenuButton
 															render={<Link to={`/content/${w.id}`} />}
 															className="h-9 px-3"
@@ -258,7 +258,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 																{w.title || t('sidebar.untitledWriting')}
 															</span>
 														</SidebarMenuButton>
-													</AppSidebarMenuItem>
+													</SidebarMenuItem>
 												))}
 											</AppSidebarMenu>
 										</AppSidebarGroupContent>
@@ -286,7 +286,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 												const Icon = section.icon;
 
 												return (
-													<AppSidebarMenuItem key={section.id}>
+													<SidebarMenuItem key={section.id}>
 														<SidebarMenuButton
 															render={<Link to={section.route} />}
 															className="h-9 px-3"
@@ -295,7 +295,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 															<Icon className="h-5 w-5 shrink-0" />
 															<span className="flex-1 truncate">{t(section.titleKey)}</span>
 														</SidebarMenuButton>
-													</AppSidebarMenuItem>
+													</SidebarMenuItem>
 												);
 											})}
 										</AppSidebarMenu>
@@ -318,7 +318,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
 										<AppSidebarMenu>
-											<AppSidebarMenuItem>
+											<SidebarMenuItem>
 												<SidebarMenuButton
 													render={<Link to="/debug/tasks" />}
 													className="h-9 px-3"
@@ -327,8 +327,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<ListTodo className="h-5 w-5 shrink-0" />
 													<span className="flex-1 truncate">{t('debug.tasks')}</span>
 												</SidebarMenuButton>
-											</AppSidebarMenuItem>
-											<AppSidebarMenuItem>
+											</SidebarMenuItem>
+											<SidebarMenuItem>
 												<SidebarMenuButton
 													render={<Link to="/debug/redux" />}
 													className="h-9 px-3"
@@ -337,8 +337,8 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<Database className="h-5 w-5 shrink-0" />
 													<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
 												</SidebarMenuButton>
-											</AppSidebarMenuItem>
-											<AppSidebarMenuItem>
+											</SidebarMenuItem>
+											<SidebarMenuItem>
 												<SidebarMenuButton
 													render={<Link to="/debug/logs" />}
 													className="h-9 px-3"
@@ -347,7 +347,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<ScrollText className="h-5 w-5 shrink-0" />
 													<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
 												</SidebarMenuButton>
-											</AppSidebarMenuItem>
+											</SidebarMenuItem>
 										</AppSidebarMenu>
 									</AppSidebarGroupContent>
 								</AppCollapsiblePanel>
