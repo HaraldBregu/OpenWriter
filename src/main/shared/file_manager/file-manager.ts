@@ -148,6 +148,33 @@ export class FileManager {
 		}
 	}
 
+	async readFileBinary(filePath: string): Promise<Buffer> {
+		const resolved = assertPathSafe(filePath, this.extraRoots);
+
+		let stats: Awaited<ReturnType<typeof fs.stat>>;
+		try {
+			stats = await fs.stat(resolved);
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'ENOENT') throw new Error(`File not found: ${resolved}`);
+			throw new Error(`Cannot stat "${resolved}": ${error.message}`);
+		}
+
+		if (stats.isDirectory()) throw new Error(`Path is a directory, not a file: ${resolved}`);
+		if (stats.size > MAX_READ_SIZE_BYTES) {
+			throw new Error(`File size exceeds the ${MAX_READ_SIZE_BYTES}-byte limit: "${resolved}"`);
+		}
+
+		try {
+			return await fs.readFile(resolved);
+		} catch (err) {
+			const error = asErrno(err);
+			if (error.code === 'ENOENT') throw new Error(`File not found: ${resolved}`);
+			if (error.code === 'EACCES') throw new Error(`Permission denied reading file: ${resolved}`);
+			throw new Error(`Failed to read file "${resolved}": ${error.message}`);
+		}
+	}
+
 	// -------------------------------------------------------------------------
 	// Write
 	// -------------------------------------------------------------------------
