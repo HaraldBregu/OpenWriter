@@ -491,6 +491,15 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.fsReadFileBinary,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, filePath: string) =>
+					this.mgr(event, container).readFileBinary(filePath),
+				WorkspaceChannels.fsReadFileBinary
+			)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.fsWriteFile,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: FsWriteFileParams) =>
