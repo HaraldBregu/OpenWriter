@@ -5,6 +5,12 @@
  */
 
 /**
+ * Allowed file extensions for the resources/files/ folder.
+ * Used by both the main-process FilesService and the renderer file-type filter UI.
+ */
+export const RESOURCES_FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
+
+/**
  * Supported text file extensions categorized by type.
  */
 export const TEXT_FILE_EXTENSIONS = {
