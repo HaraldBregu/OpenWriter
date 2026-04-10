@@ -208,22 +208,22 @@ function CsvPreview({ content }: { content: string }) {
 			<Table>
 				{header && (
 					<TableHeader>
-						<AppTableRow>
+						<TableRow>
 							{header.map((cell, index) => (
 								<AppTableHead key={index}>{cell}</AppTableHead>
 							))}
-						</AppTableRow>
+						</TableRow>
 					</TableHeader>
 				)}
 				<AppTableBody>
 					{body.map((row, rowIndex) => (
-						<AppTableRow key={rowIndex}>
+						<TableRow key={rowIndex}>
 							{row.map((cell, cellIndex) => (
 								<AppTableCell key={cellIndex} className="text-sm">
 									{cell}
 								</AppTableCell>
 							))}
-						</AppTableRow>
+						</TableRow>
 					))}
 				</AppTableBody>
 			</Table>
