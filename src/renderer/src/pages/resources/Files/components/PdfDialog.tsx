@@ -234,7 +234,7 @@ export function PdfDialog(): ReactElement | null {
 													<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
 														<DropdownMenuRadioGroup
 															value={selectedModel}
-															onValueChange={setSelectedModel}
+															onValueChange={handleModelChange}
 														>
 															{Array.from(new Set(OCR_MODELS.map((m) => m.provider))).map(
 																(provider, idx) => (
