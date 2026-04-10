@@ -165,7 +165,7 @@ export function PdfDialog(): ReactElement | null {
 												<DropdownMenu>
 													<DropdownMenuTrigger
 														render={<Button variant="outline" />}
-														className="h-8 shrink-0 gap-2 text-xs font-normal"
+														className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
 													>
 														{selectedModelEntry && (
 															<ProviderIcon provider={selectedModelEntry.provider} />
