@@ -108,10 +108,10 @@ export function ResizeControls({
 				/>
 			</div>
 
-			<AppTooltip>
-				<AppTooltipTrigger
+			<Tooltip>
+				<TooltipTrigger
 					render={
-						<AppButton
+						<Button
 							variant="ghost"
 							size="icon-xs"
 							aria-label={
@@ -122,13 +122,13 @@ export function ResizeControls({
 							className="mb-0.5"
 						>
 							{isLocked ? <Lock /> : <Unlock />}
-						</AppButton>
+						</Button>
 					}
 				/>
-				<AppTooltipContent side="top" className="px-2 py-1 text-xs">
+				<TooltipContent side="top" className="px-2 py-1 text-xs">
 					{isLocked ? t('imageNode.unlockAspectRatio') : t('imageNode.lockAspectRatio')}
-				</AppTooltipContent>
-			</AppTooltip>
+				</TooltipContent>
+			</Tooltip>
 
 			<div className="flex flex-col gap-1">
 				<label className="text-xs text-muted-foreground" htmlFor="resize-height">
