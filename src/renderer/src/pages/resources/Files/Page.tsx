@@ -5,18 +5,43 @@ import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { useFilesContext } from './context/FilesContext';
-import { ChevronDownIcon, Filter, FolderOpen, Grid3x3, List, Pencil, Plus, Search, Trash2, Upload, X } from 'lucide-react';
+import {
+	ChevronDownIcon,
+	Filter,
+	FolderOpen,
+	Grid3x3,
+	List,
+	Pencil,
+	Plus,
+	Search,
+	Trash2,
+	Upload,
+	X,
+} from 'lucide-react';
 import {
 	PageContainer,
 	PageHeader,
 	PageHeaderItems,
 	PageHeaderTitle,
+	PageSubHeader,
 } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
 import Layout from './Layout';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem } from '@/components/ui/DropdownMenu';
-import { InputGroup, InputGroupAddon, InputGroupText, InputGroupInput, InputGroupButton } from '@/components/ui/InputGroup';
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
+} from '@/components/ui/DropdownMenu';
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupText,
+	InputGroupInput,
+	InputGroupButton,
+} from '@/components/ui/InputGroup';
 import { FileTypeFilter, FILE_TYPE_FILTERS } from './types';
 
 function PageContent(): ReactElement {
@@ -77,8 +102,7 @@ function PageContent(): ReactElement {
 					</Button>
 				</PageHeaderItems>
 			</PageHeader>
-
-			<div className="flex shrink-0 items-center gap-4 border-b px-6 py-4">
+			<PageSubHeader>
 				<ButtonGroup className="min-w-0 flex-1">
 					<InputGroup>
 						<InputGroupAddon>
@@ -138,9 +162,11 @@ function PageContent(): ReactElement {
 						<Grid3x3 className="h-4 w-4" />
 					</Button>
 				</ButtonGroup>
-			</div>
-
+			</PageSubHeader>
 			<FilesContent />
+
+			
+			{/* Dialogs */}
 			<ImageDialog />
 			<PdfDialog />
 			<FileDetailsDialog />

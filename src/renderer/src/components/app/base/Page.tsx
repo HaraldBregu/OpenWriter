@@ -51,3 +51,13 @@ export const PageSubHeader = memo(function PageSubHeader({
 }: PageSubHeaderProps): React.ReactElement {
 	return <div className="flex shrink-0 items-center gap-4 border-b px-6 py-4">{children}</div>;
 });
+
+interface PageBodyProps {
+	readonly children: ReactNode;
+}
+
+export const PageBody = memo(function PageBody({
+	children,
+}: PageBodyProps): React.ReactElement {
+	return <div className="flex min-h-0 flex-1 flex-col overflow-y-auto">{children}</div>;
+});
