@@ -16,8 +16,8 @@ function formatTokens(value: number | null): string {
 
 function ModelRow({ model }: { readonly model: ModelInfo }): React.JSX.Element {
 	return (
-		<Collapsible className="border-b last:border-b-0">
-			<CollapsibleTrigger className="flex w-full items-center justify-between py-3 text-left hover:bg-accent/30 transition-colors rounded-sm px-1 group">
+		<Collapsible className="group border-b last:border-b-0">
+			<CollapsibleTrigger className="flex w-full items-center justify-between py-3 text-left hover:bg-accent/30 transition-colors rounded-sm px-1">
 				<div className="min-w-0 mr-4">
 					<p className="text-sm">{model.name}</p>
 					<p className="text-xs text-muted-foreground mt-0.5">{model.modelId}</p>
