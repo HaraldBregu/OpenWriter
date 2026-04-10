@@ -25,7 +25,7 @@ export function LanguageSelector(): React.ReactElement {
 		];
 
 	return (
-		<AppRadioGroup
+		<RadioGroup
 			value={language}
 			onValueChange={(value) => setLanguage(value as AppLanguage)}
 			className="grid gap-0"
@@ -46,7 +46,7 @@ export function LanguageSelector(): React.ReactElement {
 								{option.description}
 							</span>
 						</div>
-						<AppRadioGroupItem
+						<RadioGroupItem
 							id={`language-${option.value}`}
 							value={option.value}
 							aria-describedby={descriptionId}
@@ -54,6 +54,6 @@ export function LanguageSelector(): React.ReactElement {
 					</div>
 				);
 			})}
-		</AppRadioGroup>
+		</RadioGroup>
 	);
 }
