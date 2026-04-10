@@ -158,7 +158,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 				<AppSidebarLayout>
 					{/* Header */}
 					<SidebarHeader>
-						<AppSidebarMenu>
+						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton
 									onClick={() => navigate('/home')}
@@ -185,7 +185,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									)}
 								</SidebarMenuButton>
 							</SidebarMenuItem>
-						</AppSidebarMenu>
+						</SidebarMenu>
 					</SidebarHeader>
 
 					{/* Nav */}
@@ -193,7 +193,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 						{/* New Writing + Quick Actions */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
-								<AppSidebarMenu>
+								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton
 											className="group/btn h-9 px-3"
@@ -220,7 +220,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 											</span>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
-								</AppSidebarMenu>
+								</SidebarMenu>
 							</AppSidebarGroupContent>
 						</AppSidebarGroup>
 
@@ -238,7 +238,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									</AppSidebarGroupLabel>
 									<AppCollapsiblePanel>
 										<AppSidebarGroupContent>
-											<AppSidebarMenu>
+											<SidebarMenu>
 												{documents.map((w) => (
 													<SidebarMenuItem key={w.id}>
 														<SidebarMenuButton
@@ -260,7 +260,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 														</SidebarMenuButton>
 													</SidebarMenuItem>
 												))}
-											</AppSidebarMenu>
+											</SidebarMenu>
 										</AppSidebarGroupContent>
 									</AppCollapsiblePanel>
 								</AppSidebarGroup>
@@ -280,7 +280,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
-										<AppSidebarMenu>
+										<SidebarMenu>
 											{RESOURCE_SECTION_ORDER.map((sectionId) => {
 												const section = RESOURCE_SECTIONS[sectionId];
 												const Icon = section.icon;
@@ -298,7 +298,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													</SidebarMenuItem>
 												);
 											})}
-										</AppSidebarMenu>
+										</SidebarMenu>
 									</AppSidebarGroupContent>
 								</AppCollapsiblePanel>
 							</AppSidebarGroup>
@@ -317,7 +317,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppSidebarGroupLabel>
 								<AppCollapsiblePanel>
 									<AppSidebarGroupContent>
-										<AppSidebarMenu>
+										<SidebarMenu>
 											<SidebarMenuItem>
 												<SidebarMenuButton
 													render={<Link to="/debug/tasks" />}
@@ -348,7 +348,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 													<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
 												</SidebarMenuButton>
 											</SidebarMenuItem>
-										</AppSidebarMenu>
+										</SidebarMenu>
 									</AppSidebarGroupContent>
 								</AppCollapsiblePanel>
 							</AppSidebarGroup>
