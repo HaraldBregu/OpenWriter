@@ -94,12 +94,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		reporter.progress(80, 'Saving result');
 
-		const savedPath = await this.saveResult(
-			workspace,
-			filesService,
-			resolvedPath,
-			text
-		);
+		const savedPath = await this.saveResult(workspace, filesService, resolvedPath, text);
 
 		reporter.progress(100, 'OCR complete');
 
