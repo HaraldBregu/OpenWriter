@@ -24,14 +24,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import { useAppDispatch, useAppSelector } from '@/store';
-import {
-	insertFilesRequested,
-	removeFiles,
-	selectFileEntries,
-	selectFilesIsLoading,
-	selectFilesInserting,
-} from '@/store/files';
+import type { FileEntry } from '../../../../../shared/types';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { formatBytes, formatDate } from '../shared/resource-utils';
 import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
@@ -254,7 +247,7 @@ export default function FilesPage(): React.ReactElement {
 						Upload
 					</Button>
 				</AppPageHeaderItems>
-			</AppPageHeader>
+			</div>
 			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<ButtonGroup className="flex-1 gap-2">
 					<InputGroup>
@@ -311,7 +304,7 @@ export default function FilesPage(): React.ReactElement {
 						</Button>
 					</ButtonGroup>
 				</ButtonGroup>
-			</AppPageHeader>
+			</div>
 
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto">
 				{isLoading && (
