@@ -250,6 +250,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
-		</AppPageContainer>
+		</PageContainer>
 	);
 }
