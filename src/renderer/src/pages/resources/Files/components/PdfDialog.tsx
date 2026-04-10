@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { Info } from 'lucide-react';
-import { OCR_MODELS } from '@shared/models';
+import { OCR_MODELS } from '../../../../../../shared/models';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
