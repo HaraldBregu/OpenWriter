@@ -24,8 +24,8 @@ const EditorPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [font, setFont] = useState('default');
 
-	const handleFontChange = useCallback((next: string) => {
-		setFont(next);
+	const handleFontChange = useCallback((next: string | null) => {
+		if (next !== null) setFont(next);
 	}, []);
 
 	return (
