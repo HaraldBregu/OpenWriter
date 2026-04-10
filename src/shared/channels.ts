@@ -137,6 +137,9 @@ export const WorkspaceChannels = {
 	deleteContent: 'contents:delete',
 	contentsChanged: 'contents:changed',
 	contentsWatcherError: 'contents:watcher-error',
+	// OCR model preference
+	getOcrModelId: 'workspace:get-ocr-model-id',
+	setOcrModelId: 'workspace:set-ocr-model-id',
 	// Files (resources/files/ sub-folder)
 	getResourcesFiles: 'files:get-all',
 	insertResourcesFiles: 'files:insert',
