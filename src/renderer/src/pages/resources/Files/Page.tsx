@@ -1,5 +1,5 @@
 import type { ReactElement } from 'react';
-import { FileDetailsDialog } from './components/FileDetailsDialog';
+import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
