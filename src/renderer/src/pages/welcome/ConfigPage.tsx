@@ -130,7 +130,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										'You can revisit provider tokens at any time from the Providers settings page.'
 									)}
 								</p>
-								<AppButton type="submit" className="min-w-44" disabled={isSaving}>
+								<Button type="submit" className="min-w-44" disabled={isSaving}>
 									{isSaving ? (
 										<>
 											<Loader2 className="animate-spin" />
@@ -139,7 +139,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 									) : (
 										t('startup.firstTime.save', 'Save and Continue')
 									)}
-								</AppButton>
+								</Button>
 							</div>
 						</form>
 					</section>
