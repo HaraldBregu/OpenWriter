@@ -199,6 +199,17 @@ export function PdfDialog(): ReactElement | null {
 										</div>
 									</div>
 								</ScrollArea>
+								<div className="space-y-2 border-t p-4">
+									<Button className="w-full">Esegui OCR</Button>
+									<Button
+										variant="outline"
+										className="w-full"
+										onClick={() => handleFileDetailsOpenChange(false)}
+									>
+										Chiudi
+									</Button>
+								</div>
+								</div>
 							</ResizablePanel>
 						</ResizablePanelGroup>
 					</DialogDescription>
