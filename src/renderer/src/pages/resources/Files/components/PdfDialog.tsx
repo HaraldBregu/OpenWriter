@@ -155,20 +155,25 @@ export function PdfDialog(): ReactElement | null {
 									</div>
 									<ScrollArea className="flex-1">
 										<div className="divide-y divide-border">
-											<div className="space-y-2 p-4">
-												<SectionHeader label="Modello" hasInfo />
+											<div className="flex items-center justify-between gap-4 p-4">
+												<div>
+													<p className="text-xs font-medium">Modello</p>
+													<p className="text-[11px] text-muted-foreground">
+														{selectedModelEntry?.provider ?? 'AI'}
+													</p>
+												</div>
 												<DropdownMenu>
 													<DropdownMenuTrigger
 														render={<Button variant="outline" />}
-														className="w-full justify-between h-8 text-xs font-normal"
+														className="h-8 shrink-0 gap-2 text-xs font-normal"
 													>
-														<span className="flex items-center gap-2 truncate">
-															{selectedModelEntry && (
-																<ProviderIcon provider={selectedModelEntry.provider} />
-															)}
+														{selectedModelEntry && (
+															<ProviderIcon provider={selectedModelEntry.provider} />
+														)}
+														<span className="truncate">
 															{selectedModelEntry?.name ?? 'Seleziona modello'}
 														</span>
-														<ChevronDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-50" />
+														<ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
 													</DropdownMenuTrigger>
 													<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
 														<DropdownMenuRadioGroup
