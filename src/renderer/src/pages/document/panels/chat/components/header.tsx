@@ -109,8 +109,8 @@ const Header: React.FC = () => {
 					{t('agenticPanel.headerTitle', 'Chat history')}
 				</h2>
 				<div className="flex items-center gap-2">
-					<AppPopover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
-						<AppPopoverTrigger
+					<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
+						<PopoverTrigger
 							render={
 								<AppButton
 									type="button"
@@ -124,7 +124,7 @@ const Header: React.FC = () => {
 								</AppButton>
 							}
 						/>
-						<AppPopoverContent
+						<PopoverContent
 							align="end"
 							sideOffset={8}
 							className="w-80 rounded-xl border border-border/80 bg-card p-1.5 shadow-none ring-1 ring-black/8 backdrop-blur-sm dark:border-border dark:bg-card/95 dark:ring-1 dark:ring-[hsl(var(--border)/0.7)]"
@@ -187,8 +187,8 @@ const Header: React.FC = () => {
 									);
 								})}
 							</ul>
-						</AppPopoverContent>
-					</AppPopover>
+						</PopoverContent>
+					</Popover>
 					<AppButton
 						type="button"
 						variant="ghost"

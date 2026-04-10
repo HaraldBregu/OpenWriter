@@ -1,5 +1,5 @@
 import { memo, type ReactNode, type ReactElement } from 'react';
-import { AppSidebarInset } from '../AppSidebar';
+import { SidebarInset } from '@/components/ui/Sidebar';
 
 interface AppSidebarInsetLayoutProps {
 	readonly children: ReactNode;
