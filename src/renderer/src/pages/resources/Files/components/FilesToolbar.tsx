@@ -41,9 +41,7 @@ export function FilesToolbar(): ReactElement {
 
 				<DropdownMenu>
 					<DropdownMenuTrigger
-						render={
-							<Button variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg" />
-						}
+						render={<Button variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg" />}
 					>
 						<Filter className="h-4 w-4" />
 					</DropdownMenuTrigger>

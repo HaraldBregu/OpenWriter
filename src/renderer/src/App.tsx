@@ -13,6 +13,7 @@ import { Layout as SettingsLayout } from './pages/settings';
 import { initializeTaskStore } from './services/task-store';
 import { loadDocuments, refreshDocument, documentRemoved } from './store/documents/actions';
 import { loadResources, resourceRemoved } from './store/workspace';
+import { TooltipProvider } from './components/ui/Tooltip';
 import './index.css';
 
 initializeTaskStore();
