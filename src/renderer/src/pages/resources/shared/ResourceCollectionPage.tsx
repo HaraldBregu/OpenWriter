@@ -141,7 +141,7 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	}, []);
 
 	return (
-		<AppPageContainer>
+		<PageContainer>
 			<ResourceSectionHeader
 				title={t(section.titleKey)}
 				uploading={uploading}
