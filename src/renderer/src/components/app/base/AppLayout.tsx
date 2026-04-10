@@ -403,7 +403,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									</button>
 								}
 							/>
-							<AppPopoverContent
+							<PopoverContent
 								align="start"
 								side="top"
 								sideOffset={8}
@@ -514,7 +514,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 									<LogOut className="h-4 w-4 text-muted-foreground" />
 									<span className="flex-1 text-left">{t('menu.logOut', 'Log out')}</span>
 								</button>
-							</AppPopoverContent>
+							</PopoverContent>
 						</AppPopover>
 					</SidebarFooter>
 				</AppSidebarLayout>
