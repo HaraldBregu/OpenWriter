@@ -251,10 +251,10 @@ export function FileDetailsDialog(): ReactElement | null {
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="truncate">{activeFile.name}</DialogTitle>
 					<DialogDescription className="flex min-h-0 flex-1">
-						<div className="flex w-full gap-0">
+						<div className="flex h-full min-h-0 w-full gap-0">
 							{/* Left column — file preview */}
-							<div className="flex min-h-0 flex-1 flex-col border-r">
-								<ScrollArea className="flex-1 p-4">
+							<div className="flex min-h-0 flex-1 flex-col overflow-hidden border-r">
+								<ScrollArea className="h-full flex-1 p-4">
 									{loading && <PreviewLoading />}
 									{error && <PreviewError message={error} />}
 									{!loading && !error && <FilePreview file={activeFile} content={content} />}
