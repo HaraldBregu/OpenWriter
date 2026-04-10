@@ -158,11 +158,13 @@ export function PdfDialog(): ReactElement | null {
 											<div className="space-y-2 p-4">
 												<SectionHeader label="Modello" hasInfo />
 												<DropdownMenu>
-													<DropdownMenuTrigger
-														className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-xs ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-														aria-label="Modello OCR"
-													>
-														<span className="truncate">{selectedModelName}</span>
+													<DropdownMenuTrigger render={<Button variant="outline" />} className="w-full justify-between h-8 text-xs font-normal">
+														<span className="flex items-center gap-2 truncate">
+															{selectedModelEntry && (
+																<ProviderIcon provider={selectedModelEntry.provider} />
+															)}
+															{selectedModelEntry?.name ?? 'Seleziona modello'}
+														</span>
 														<ChevronDown className="ml-2 h-3.5 w-3.5 shrink-0 opacity-50" />
 													</DropdownMenuTrigger>
 													<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
@@ -174,13 +176,14 @@ export function PdfDialog(): ReactElement | null {
 																(provider, idx) => (
 																	<div key={provider}>
 																		{idx > 0 && <DropdownMenuSeparator />}
-																		<DropdownMenuLabel>{provider}</DropdownMenuLabel>
 																		{OCR_MODELS.filter((m) => m.provider === provider).map(
 																			(model) => (
 																				<DropdownMenuRadioItem
 																					key={model.modelId}
 																					value={model.modelId}
+																					className="gap-2"
 																				>
+																					<ProviderIcon provider={model.provider} />
 																					{model.name}
 																				</DropdownMenuRadioItem>
 																			)
