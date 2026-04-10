@@ -66,7 +66,7 @@ export function ImageAttachmentBar({
 								: t('assistantNode.referenceImagesEmpty', 'Optional references for style or mood.')}
 						</span>
 					</div>
-					<AppButton
+					<Button
 						variant="ghost"
 						size="sm"
 						className="h-9 shrink-0 rounded-full border border-dashed border-border/80 bg-background/76 px-3 text-xs font-semibold text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
@@ -102,7 +102,7 @@ export function ImageAttachmentBar({
 										</span>
 									</div>
 								</div>
-								<AppButton
+								<Button
 									variant="ghost"
 									size="icon-xs"
 									className="absolute -right-1.5 -top-1.5 z-10 h-6 w-6 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-sm transition-opacity group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 hover:bg-background hover:text-foreground dark:border-white/12 dark:bg-background"
@@ -114,7 +114,7 @@ export function ImageAttachmentBar({
 								</AppButton>
 							</div>
 						))}
-						<AppButton
+						<Button
 							variant="ghost"
 							size="sm"
 							className="h-auto min-h-[6.5rem] min-w-[5rem] shrink-0 rounded-[1.25rem] border border-dashed border-border/80 bg-background/62 px-3 text-[11px] font-semibold text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
