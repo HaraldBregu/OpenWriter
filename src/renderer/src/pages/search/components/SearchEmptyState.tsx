@@ -28,9 +28,9 @@ const SearchEmptyState: React.FC<SearchEmptyStateProps> = ({ query, onClear }) =
 						})}
 					</p>
 				</div>
-				<AppButton variant="outline" onClick={onClear}>
+				<Button variant="outline" onClick={onClear}>
 					{t('common.clear', 'Clear')}
-				</AppButton>
+				</Button>
 			</div>
 		</div>
 	);
