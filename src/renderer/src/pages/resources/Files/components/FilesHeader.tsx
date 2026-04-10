@@ -1,5 +1,6 @@
 import { FolderOpen, Pencil, Plus, Trash2, Upload, X } from 'lucide-react';
 import type { ReactElement } from 'react';
+import { PageHeader } from '@/components/app/base/PageHeader';
 import { Button } from '@/components/ui/Button';
 import { useFilesContext } from '../context/FilesContext';
 
@@ -15,8 +16,7 @@ export function FilesHeader(): ReactElement {
 	} = useFilesContext();
 
 	return (
-		
-		<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
+		<PageHeader>
 			<h1 className="text-xl font-bold">Files</h1>
 			<div className="flex items-center gap-2">
 				{editMode && selected.size > 0 && (

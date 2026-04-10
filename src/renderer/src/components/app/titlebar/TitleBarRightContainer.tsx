@@ -1,15 +1,15 @@
 import React, { memo, type ReactNode, type ReactElement } from 'react';
 import { cn } from '@/lib/utils';
 
-interface AppTitleBarRightContainerProps {
+interface TitleBarRightContainerProps {
 	readonly className?: string;
 	readonly children: ReactNode;
 }
 
-export const AppTitleBarRightContainer = memo(function AppTitleBarRightContainer({
+export const TitleBarRightContainer = memo(function AppTitleBarRightContainer({
 	className,
 	children,
-}: AppTitleBarRightContainerProps): ReactElement {
+}: TitleBarRightContainerProps): ReactElement {
 	return (
 		<div
 			className={cn('flex items-center h-full z-10', className)}

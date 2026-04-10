@@ -1,15 +1,15 @@
 import React, { memo, type ReactNode, type ReactElement } from 'react';
 import { cn } from '@/lib/utils';
 
-interface AppTitleBarContainerProps {
+interface TitleBarContainerProps {
 	readonly className?: string;
 	readonly children: ReactNode;
 }
 
-export const AppTitleBarContainer = memo(function AppTitleBarContainer({
+export const TitleBarContainer = memo(function AppTitleBarContainer({
 	className,
 	children,
-}: AppTitleBarContainerProps): ReactElement {
+}: TitleBarContainerProps): ReactElement {
 	return (
 		<div
 			className={cn(

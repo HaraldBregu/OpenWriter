@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Menu, PanelLeft, Minus, X, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { TitleBarContainer } from '../titlebar/TitleBarContainer';
-import { TitleBarCenterContainer } from '../titlebar/TitleBarCenterContainer';
-import { TitleBarCenterContainerTitle } from '../titlebar/TitleBarCenterContainerTitle';
-import { TitleBarLeftContainer } from '../titlebar/TitleBarLeftContainer';
-import { TitleBarRightContainer } from '../titlebar/TitleBarRightContainer';
+import { TitleBarContainer } from './TitleBarContainer';
+import { TitleBarCenterContainer } from './TitleBarCenterContainer';
+import { TitleBarLeftContainer } from './TitleBarLeftContainer';
+import { TitleBarRightContainer } from './TitleBarRightContainer';
+import { TitleBarCenterContainerTitle } from './TitleBarCenterContainerTitle';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.

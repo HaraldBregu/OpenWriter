@@ -13,7 +13,7 @@ import {
 	RESOURCE_SECTION_ORDER,
 	RESOURCE_SECTIONS,
 } from '../../../pages/resources/shared/resource-sections';
-import { TitleBar } from './TitleBar';
+import { TitleBar } from '../titlebar/TitleBar';
 import { Collapsible, CollapsibleTrigger, CollapsiblePanel } from '@/components/ui/Collapsible';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
