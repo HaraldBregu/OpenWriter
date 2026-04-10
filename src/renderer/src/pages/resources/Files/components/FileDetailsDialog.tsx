@@ -55,23 +55,6 @@ SyntaxHighlighter.registerLanguage('javascript', javascript);
 SyntaxHighlighter.registerLanguage('typescript', typescript);
 SyntaxHighlighter.registerLanguage('python', python);
 
-const MIME_TO_LANGUAGE: Record<string, string> = {
-	'application/json': 'json',
-	'application/xml': 'xml',
-	'text/css': 'css',
-	'text/javascript': 'javascript',
-	'text/typescript': 'typescript',
-	'text/jsx': 'javascript',
-	'text/tsx': 'typescript',
-	'text/x-python': 'python',
-};
-
-const BINARY_MIME_TYPES = new Set([
-	'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-	'application/msword',
-	'application/rtf',
-]);
-
 function useBlobUrl(path: string, mimeType: string) {
 	const [blobUrl, setBlobUrl] = useState<string | null>(null);
 	const [error, setError] = useState<string | null>(null);
