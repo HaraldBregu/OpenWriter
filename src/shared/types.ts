@@ -92,7 +92,8 @@ export type ModelType =
 	| 'embedding'
 	| 'audio'
 	| 'code'
-	| 'reasoning';
+	| 'reasoning'
+	| 'ocr';
 
 export interface ModelInfo {
 	readonly provider: AppProviderName;
