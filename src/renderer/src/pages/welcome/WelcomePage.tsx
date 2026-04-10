@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
 import { AppIconOpenWriter } from '@/components/app';
 import { Button } from '@/components/ui/Button';
-import { AppTitleBar } from '@/components/app/base/AppTitleBar';
+import { TitleBar } from '@/components/app/base/TitleBar';
 import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
