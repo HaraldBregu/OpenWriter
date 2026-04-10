@@ -41,3 +41,13 @@ export const PageHeaderItems = memo(function PageHeaderItems({
 }: PageHeaderItemsProps): React.ReactElement {
 	return <div className="flex items-center gap-2">{children}</div>;
 });
+
+interface PageSubHeaderProps {
+	readonly children: ReactNode;
+}
+
+export const PageSubHeader = memo(function PageSubHeader({
+	children,
+}: PageSubHeaderProps): React.ReactElement {
+	return <div className="flex shrink-0 items-center gap-4 border-b px-6 py-4">{children}</div>;
+});

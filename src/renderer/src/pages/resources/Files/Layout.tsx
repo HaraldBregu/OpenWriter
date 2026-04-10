@@ -1,7 +1,7 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
 import { FilesProvider, useFilesContext } from './context/FilesContext';
 
-function FilesBootstrap(): null {
+function Bootstrap(): null {
 	const { setEntries, setIsLoading } = useFilesContext();
 
 	useEffect(() => {
@@ -13,7 +13,7 @@ function FilesBootstrap(): null {
 				const files = await window.workspace.getFiles();
 				if (!active) return;
 				setEntries(files);
-			} catch (err) {
+			} catch {
 				if (!active) return;
 				setEntries([]);
 			} finally {
@@ -33,14 +33,14 @@ function FilesBootstrap(): null {
 	return null;
 }
 
-interface FilesLayoutProps {
+interface LayoutProps {
 	readonly children: ReactNode;
 }
 
-export default function FilesLayout({ children }: FilesLayoutProps): ReactElement {
+export default function Layout({ children }: LayoutProps): ReactElement {
 	return (
 		<FilesProvider>
-			<FilesBootstrap />
+			<Bootstrap />
 			{children}
 		</FilesProvider>
 	);
