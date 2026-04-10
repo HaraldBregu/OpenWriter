@@ -63,11 +63,14 @@ export function PdfDialog(): ReactElement | null {
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 							<ResizablePanel defaultSize={70} minSize="40%">
-								<iframe
-									src={`local-resource://${activeFile.path}`}
-									className="h-full w-full border-0"
-									title="PDF Preview"
-								/>
+								<div className="h-full w-full">
+									<PDFViewer
+										config={{
+											src: `local-resource://${activeFile.path}`,
+											theme: { preference: 'light' },
+										}}
+									/>
+								</div>
 							</ResizablePanel>
 							<ResizableHandle withHandle />
 							<ResizablePanel defaultSize={30} minSize="30%">
