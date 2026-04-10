@@ -1,16 +1,16 @@
 import { Eye } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/Button';
+import { Checkbox } from '@/components/ui/Checkbox';
 import {
-	AppButton,
-	AppCheckbox,
-	AppTable,
-	AppTableBody,
-	AppTableCell,
-	AppTableHead,
-	AppTableHeader,
-	AppTableRow,
-} from '@/components/app';
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import type { ResourceInfo } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
@@ -51,27 +51,25 @@ function ContentRow({
 	onPreview,
 }: ContentRowProps): ReactElement {
 	return (
-		<AppTableRow data-state={editing && isSelected ? 'selected' : undefined}>
+		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
 			{editing && (
-				<AppTableCell className="w-10">
-					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
-				</AppTableCell>
+				<TableCell className="w-10">
+					<Checkbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
+				</TableCell>
 			)}
-			<AppTableCell className="max-w-[300px] truncate font-medium">
-				{resource.name}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">{resource.mimeType}</AppTableCell>
-			<AppTableCell className="text-right tabular-nums text-muted-foreground">
+			<TableCell className="max-w-[300px] truncate font-medium">{resource.name}</TableCell>
+			<TableCell className="text-muted-foreground">{resource.mimeType}</TableCell>
+			<TableCell className="text-right tabular-nums text-muted-foreground">
 				{formatBytes(resource.size)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.importedAt)}
-			</AppTableCell>
-			<AppTableCell className="text-muted-foreground">
+			</TableCell>
+			<TableCell className="text-muted-foreground">
 				{formatDate(resource.lastModified)}
-			</AppTableCell>
-			<AppTableCell>
-				<AppButton
+			</TableCell>
+			<TableCell>
+				<Button
 					type="button"
 					variant="ghost"
 					size="icon"
@@ -79,9 +77,9 @@ function ContentRow({
 					onClick={() => onPreview(resource)}
 				>
 					<Eye className="h-4 w-4" />
-				</AppButton>
-			</AppTableCell>
-		</AppTableRow>
+				</Button>
+			</TableCell>
+		</TableRow>
 	);
 }
 
@@ -103,21 +101,21 @@ export function ContentTable(): ReactElement {
 
 	return (
 		<div className="flex-1 min-h-0 overflow-auto rounded-md border">
-			<AppTable>
-				<AppTableHeader sticky>
-					<AppTableRow>
+			<Table>
+				<TableHeader className="bg-muted sticky top-0 z-10">
+					<TableRow>
 						{editing && (
-							<AppTableHead className="w-10">
-								<AppCheckbox
+							<TableHead className="w-10">
+								<Checkbox
 									checked={someChecked ? undefined : allChecked}
 									indeterminate={someChecked}
 									onCheckedChange={handleToggleAll}
 									aria-label="Select all"
 								/>
-							</AppTableHead>
+							</TableHead>
 						)}
 						{SORT_COLUMNS.map(({ key, labelKey, headClassName, buttonClassName }) => (
-							<AppTableHead key={key} className={headClassName}>
+							<TableHead key={key} className={headClassName}>
 								<button
 									type="button"
 									className={`inline-flex items-center transition-colors hover:text-foreground ${buttonClassName ?? ''}`}
@@ -126,21 +124,21 @@ export function ContentTable(): ReactElement {
 									{t(labelKey)}
 									<SortIcon active={sortKey === key} direction={sortDirection} />
 								</button>
-							</AppTableHead>
+							</TableHead>
 						))}
-						<AppTableHead className="w-[50px]" />
-					</AppTableRow>
-				</AppTableHeader>
-				<AppTableBody>
+						<TableHead className="w-[50px]" />
+					</TableRow>
+				</TableHeader>
+				<TableBody>
 					{filteredResources.length === 0 ? (
-						<AppTableRow>
-							<AppTableCell
+						<TableRow>
+							<TableCell
 								colSpan={editing ? 7 : 6}
 								className="px-4 py-8 text-center text-sm text-muted-foreground"
 							>
 								No resources match your search.
-							</AppTableCell>
-						</AppTableRow>
+							</TableCell>
+						</TableRow>
 					) : (
 						filteredResources.map((resource) => (
 							<ContentRow
@@ -153,8 +151,8 @@ export function ContentTable(): ReactElement {
 							/>
 						))
 					)}
-				</AppTableBody>
-			</AppTable>
+				</TableBody>
+			</Table>
 		</div>
 	);
 }

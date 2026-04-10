@@ -3,13 +3,6 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	AppButton,
-	AppCheckbox,
-	AppTable,
-	AppTableBody,
-	AppTableCell,
-	AppTableHead,
-	AppTableHeader,
-	AppTableRow,
 } from '@/components/app';
 import type { ResourceInfo } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
