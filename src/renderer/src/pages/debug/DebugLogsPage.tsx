@@ -2,15 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollText, RefreshCw, FolderOpen } from 'lucide-react';
 import type { AppLogEntry } from '../../../../shared/types';
-import {
-	AppButton,
-	AppInput,
-	AppSelect,
-	AppSelectTrigger,
-	AppSelectValue,
-	AppSelectContent,
-	AppSelectItem,
-} from '@components/app';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/Select';
 
 type LogLevel = AppLogEntry['level'];
 

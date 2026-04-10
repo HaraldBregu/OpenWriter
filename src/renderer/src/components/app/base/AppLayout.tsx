@@ -189,7 +189,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 					</SidebarHeader>
 
 					{/* Nav */}
-					<AppSidebarContent className="gap-4 py-2">
+					<SidebarContent className="gap-4 py-2">
 						{/* New Writing + Quick Actions */}
 						<AppSidebarGroup className="py-0">
 							<AppSidebarGroupContent>
@@ -353,7 +353,7 @@ function AppLayoutInner({ children }: AppLayoutProps) {
 								</AppCollapsiblePanel>
 							</AppSidebarGroup>
 						</AppCollapsible>
-					</AppSidebarContent>
+					</SidebarContent>
 
 					<AppSidebarFooter className="border-t p-2">
 						<AppPopover>
