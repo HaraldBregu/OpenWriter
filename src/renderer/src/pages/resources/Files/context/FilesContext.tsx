@@ -38,6 +38,8 @@ interface FilesContextValue {
 	handleConfirmDelete: () => Promise<void>;
 	confirmOpen: boolean;
 	setConfirmOpen: (open: boolean) => void;
+	editMode: boolean;
+	toggleEditMode: () => void;
 }
 
 const FilesContext = createContext<FilesContextValue | null>(null);
