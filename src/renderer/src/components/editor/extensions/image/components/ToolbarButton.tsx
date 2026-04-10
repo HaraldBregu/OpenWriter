@@ -1,7 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { AppButton } from '@/components/app/AppButton';
-import { AppTooltip, AppTooltipContent, AppTooltipTrigger } from '@/components/app/AppTooltip';
+import { Button } from '@/components/ui/Button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 
 interface ToolbarButtonProps {
 	icon: React.ReactNode;
