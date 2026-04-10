@@ -219,9 +219,9 @@ function CsvPreview({ content }: { content: string }) {
 					{body.map((row, rowIndex) => (
 						<TableRow key={rowIndex}>
 							{row.map((cell, cellIndex) => (
-								<AppTableCell key={cellIndex} className="text-sm">
+								<TableCell key={cellIndex} className="text-sm">
 									{cell}
-								</AppTableCell>
+								</TableCell>
 							))}
 						</TableRow>
 					))}

@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import { History, Check } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import {
-	AppButton,
-	AppDropdownMenu,
-	AppDropdownMenuContent,
-	AppDropdownMenuItem,
-	AppDropdownMenuTrigger,
-} from '@/components/app';
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import type { HistoryEntry } from '../services/history-service';
 
 interface HistoryMenuProps {
