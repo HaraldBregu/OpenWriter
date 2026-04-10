@@ -233,7 +233,7 @@ export default function FilesPage(): React.ReactElement {
 
 	return (
 		<div className="flex h-full flex-col">
-			<AppPageHeader>
+			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<AppPageHeaderTitle>Files</AppPageHeaderTitle>
 				<AppPageHeaderItems>
 					{selected.size > 0 && (
@@ -255,7 +255,7 @@ export default function FilesPage(): React.ReactElement {
 					</Button>
 				</AppPageHeaderItems>
 			</AppPageHeader>
-			<AppPageHeader>
+			<div className="flex shrink-0 items-center justify-between border-b px-6 py-4">
 				<ButtonGroup className="flex-1 gap-2">
 					<InputGroup>
 						<InputGroupAddon>
