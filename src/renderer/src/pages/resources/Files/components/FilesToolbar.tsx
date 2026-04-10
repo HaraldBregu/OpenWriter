@@ -40,10 +40,12 @@ export function FilesToolbar(): ReactElement {
 				</InputGroup>
 
 				<DropdownMenu>
-					<DropdownMenuTrigger>
-						<Button variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg">
-							<Filter className="h-4 w-4" />
-						</Button>
+					<DropdownMenuTrigger
+						render={
+							<Button variant={typeFilter === 'all' ? 'outline' : 'secondary'} size="lg" />
+						}
+					>
+						<Filter className="h-4 w-4" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
 						<DropdownMenuRadioGroup

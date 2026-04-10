@@ -26,7 +26,7 @@ export function useFilesSort(): UseFilesSortReturn {
 				setSortDirection('asc');
 			}
 		},
-		[sortKey],
+		[sortKey]
 	);
 
 	return { sortKey, sortDirection, handleSort };

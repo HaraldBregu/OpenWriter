@@ -88,19 +88,13 @@ export function FilesTable(): ReactElement {
 			<TableBody>
 				{filteredEntries.length === 0 ? (
 					<TableRow>
-						<TableCell
-							colSpan={5}
-							className="px-4 py-8 text-center text-sm text-muted-foreground"
-						>
+						<TableCell colSpan={5} className="px-4 py-8 text-center text-sm text-muted-foreground">
 							No files match your search.
 						</TableCell>
 					</TableRow>
 				) : (
 					filteredEntries.map((file) => (
-						<TableRow
-							key={file.id}
-							data-state={selected.has(file.id) ? 'selected' : undefined}
-						>
+						<TableRow key={file.id} data-state={selected.has(file.id) ? 'selected' : undefined}>
 							<TableCell className="w-10 px-6">
 								<Checkbox
 									checked={selected.has(file.id)}

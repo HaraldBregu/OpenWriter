@@ -20,8 +20,7 @@ export function useFilesSelection({
 }: UseFilesSelectionParams): UseFilesSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
-	const allChecked =
-		filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
+	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
 	const someChecked = !allChecked && filteredEntries.some((f) => selected.has(f.id));
 
 	const handleToggleAll = useCallback(() => {
