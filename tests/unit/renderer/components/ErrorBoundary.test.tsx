@@ -38,7 +38,7 @@ describe('ErrorBoundary', () => {
 		render(
 			<ErrorBoundary>
 				<GoodComponent />
-			</AppErrorBoundary>
+			</ErrorBoundary>
 		);
 
 		// Assert
@@ -51,7 +51,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary>
 					<ThrowingComponent message="Feature broke" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			// Assert
@@ -64,7 +64,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary>
 					<ThrowingComponent message="oops" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			// Assert
@@ -79,7 +79,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary level="route">
 					<ThrowingComponent message="Page crashed" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			// Assert
@@ -96,7 +96,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary level="root">
 					<ThrowingComponent message="App died" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			// Assert
@@ -112,7 +112,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary fallback={<div>Custom error view</div>}>
 					<ThrowingComponent message="error" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			// Assert
@@ -129,7 +129,7 @@ describe('ErrorBoundary', () => {
 			render(
 				<ErrorBoundary level="feature" onReset={onReset}>
 					<ThrowingComponent message="oops" />
-				</AppErrorBoundary>
+				</ErrorBoundary>
 			);
 
 			fireEvent.click(screen.getByText('Try again'));
