@@ -91,7 +91,7 @@ const ResourceRow = memo(function ResourceRow({
 	onPreview,
 }: ResourceRowProps) {
 	return (
-		<AppTableRow data-state={editing && isSelected ? 'selected' : undefined}>
+		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
 			{editing && (
 				<AppTableCell className="w-[40px]">
 					<AppCheckbox checked={isSelected} onCheckedChange={() => onToggle(resource.id)} />
@@ -119,7 +119,7 @@ const ResourceRow = memo(function ResourceRow({
 					<Eye className="h-4 w-4" />
 				</AppButton>
 			</AppTableCell>
-		</AppTableRow>
+		</TableRow>
 	);
 });
 
@@ -257,7 +257,7 @@ export const ResourceTable = memo(function ResourceTable({
 			<div className="flex-1 min-h-0 overflow-auto rounded-md border">
 				<AppTable>
 					<AppTableHeader sticky>
-						<AppTableRow>
+						<TableRow>
 							{editing && (
 								<AppTableHead className="w-[40px]">
 									<AppCheckbox
@@ -280,7 +280,7 @@ export const ResourceTable = memo(function ResourceTable({
 								</AppTableHead>
 							))}
 							<AppTableHead className="w-[50px]" />
-						</AppTableRow>
+						</TableRow>
 					</AppTableHeader>
 					<AppTableBody>
 						{filteredResources.map((resource) => (

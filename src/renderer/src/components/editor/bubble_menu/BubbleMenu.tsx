@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
-import { AppButton } from '../../app/AppButton';
+import { Button } from '@/components/ui/Button';
 import { useEditorContext } from '../EditorContext';
 import { cn } from '@/lib/utils';
 
