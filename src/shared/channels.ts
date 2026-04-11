@@ -329,6 +329,10 @@ export interface InvokeChannelMap {
 	[LogChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
 	[AppChannels.openLogsFolder]: { args: []; result: void };
 
+	// ---- App data folder (IpcResult-wrapped) ----
+	[AppChannels.openAppDataFolder]: { args: []; result: void };
+	[AppChannels.getAppDataFolder]: { args: []; result: string };
+
 	// ---- Theme management (IpcResult-wrapped) ----
 	[AppChannels.getCustomThemes]: { args: []; result: CustomThemeInfo[] };
 	[AppChannels.openThemesFolder]: { args: []; result: void };
