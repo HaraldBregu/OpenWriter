@@ -100,7 +100,6 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 	const [editing, setEditing] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [removing, setRemoving] = useState(false);
-	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
 
 	const { sortKey, sortDirection, handleSort } = useDataSort();
 	const filteredResources = useDataFilter({
