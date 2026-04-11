@@ -124,7 +124,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			(documentModelId ? findCatalogueModel(documentModelId)?.providerId : undefined) ??
 			defaultCfg?.providerId;
 
-		const provider = this.providerResolver.resolve({ providerId, modelId });
+		const provider = this.resolveProviderContext({ providerId, modelId });
 
 		// 3. Resolve per-node models when the definition declares them.
 		//
