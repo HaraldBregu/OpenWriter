@@ -438,6 +438,7 @@ const workspace: WorkspaceApi = {
 	// Contents (resources/content/)
 	// -------------------------------------------------------------------------
 	getContents: () => typedInvokeUnwrap(WorkspaceChannels.getContents),
+	getResourcesContents: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesContents),
 	insertContents: (extensions?: string[]) =>
 		typedInvokeUnwrap(WorkspaceChannels.insertContents, extensions),
 	deleteContent: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteContent, id),
