@@ -55,12 +55,12 @@ const ProvidersPage: React.FC = () => {
 			</p>
 
 			<SectionHeader title={t('settings.providers.llm', 'LLM Providers')} />
-			{LLM_PROVIDER_IDS.map((provider) => {
-				const existingKey = providers.find((m) => m.name === provider)?.apikey ?? '';
+			{LLM_PROVIDER_IDS.map((providerId) => {
+				const existingKey = services.find((s) => s.provider.id === providerId)?.apiKey ?? '';
 				return (
 					<ProviderRow
-						key={provider}
-						provider={provider}
+						key={providerId}
+						provider={providerId}
 						existingKey={existingKey}
 						onSave={handleSave}
 					/>
