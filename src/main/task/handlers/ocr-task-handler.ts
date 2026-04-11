@@ -154,41 +154,27 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		model: string,
 		signal: AbortSignal
 	): Promise<{ text: string; pageCount: number }> {
-		const client = new MistralOcrClient(provider.apiKey);
-		const content = new Uint8Array(
-			fileBuffer.buffer,
-			fileBuffer.byteOffset,
-			fileBuffer.byteLength
-		);
-		const fileName = path.basename(filePath);
+		const client = new MistralOcrClient(provider.apiKey, this.logger);
+		const base64 = fileBuffer.toString('base64');
 		const mimeType = this.detectMimeType(filePath);
 
 		const document = mimeType.startsWith('image/')
-			? ({ type: 'image_base64', data: fileBuffer.toString('base64'), mimeType } as const)
-			: ({ type: 'file', fileName, content } as const);
+			? ({ type: 'image_base64', data: base64, mimeType } as const)
+			: ({ type: 'document_base64', data: base64, mimeType } as const);
 
-		let uploadedFileId: string | undefined;
 		try {
 			const result = await client.process({ document, model, signal });
-			uploadedFileId = result.uploadedFileId;
 			const text = result.pages.map((page) => page.markdown).join('\n\n');
 			return { text, pageCount: result.pages.length };
-		} finally {
-			if (uploadedFileId) {
-				try {
-					await client.deleteFile(uploadedFileId);
-					this.logger?.info(
-						OcrTaskHandler.LOG_SOURCE,
-						`Deleted uploaded Mistral file: ${uploadedFileId}`
-					);
-				} catch (err) {
-					this.logger?.warn(
-						OcrTaskHandler.LOG_SOURCE,
-						`Failed to delete uploaded Mistral file ${uploadedFileId}`,
-						{ error: err instanceof Error ? err.message : String(err) }
-					);
-				}
-			}
+		} catch (err) {
+			this.logger?.error(OcrTaskHandler.LOG_SOURCE, 'OCR processing failed', {
+				model,
+				filePath,
+				mimeType,
+				error: err instanceof Error ? err.message : String(err),
+				stack: err instanceof Error ? err.stack : undefined,
+			});
+			throw err;
 		}
 	}
 
