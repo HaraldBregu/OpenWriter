@@ -224,16 +224,16 @@ export const AppChannels = {
  * `result` = the logical return type.
  */
 export interface InvokeChannelMap {
-	// ---- App / Provider management (IpcResult-wrapped) ----
-	[AppChannels.getProviders]: { args: []; result: Array<ServiceProvider & { id: string }> };
-	[AppChannels.addProvider]: {
-		args: [provider: ServiceProvider];
-		result: ServiceProvider & { id: string };
+	// ---- App / Service management (IpcResult-wrapped) ----
+	[AppChannels.getServices]: { args: []; result: Array<Service & { id: string }> };
+	[AppChannels.addService]: {
+		args: [service: Service];
+		result: Service & { id: string };
 	};
-	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
+	[AppChannels.deleteService]: { args: [id: string]; result: void };
 	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
 	[AppChannels.completeFirstRunConfiguration]: {
-		args: [providers: ServiceProvider[]];
+		args: [services: Service[]];
 		result: AppStartupInfo;
 	};
 	// ---- Workspace (IpcResult-wrapped) ----
