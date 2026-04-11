@@ -1,28 +1,30 @@
 /**
  * MistralOcrClient — wraps the Mistral SDK to perform OCR on documents.
  *
- * Accepts a document URL, raw bytes for upload, or an image as a base64 data
- * URL, and returns the extracted text pages produced by the
+ * Accepts a document URL, a base64-encoded PDF/document, or a base64-encoded
+ * image and returns the extracted text pages produced by the
  * `mistral-ocr-latest` model.
  *
- * For local PDFs the Mistral OCR API does not accept inline base64 payloads,
- * so we upload the file via the Files API (purpose: "ocr") and reference it
- * by id on the OCR request. Images can still be sent inline as data URLs.
+ * For local PDFs we follow Mistral's base64 approach: encode the bytes and
+ * pass them on `document.documentUrl` as a `data:application/pdf;base64,...`
+ * URI. Images follow the same pattern via `image_url`.
  */
 
 import { Mistral } from '@mistralai/mistralai';
+import type { LoggerService } from '../services/logger';
 
 const DEFAULT_MODEL = 'mistral-ocr-latest';
+const LOG_SOURCE = 'MistralOcrClient';
 
 export interface OcrDocumentUrl {
 	type: 'document_url';
 	documentUrl: string;
 }
 
-export interface OcrFileUpload {
-	type: 'file';
-	fileName: string;
-	content: Uint8Array;
+export interface OcrDocumentBase64 {
+	type: 'document_base64';
+	data: string;
+	mimeType: string;
 }
 
 export interface OcrImageBase64 {
@@ -31,12 +33,13 @@ export interface OcrImageBase64 {
 	mimeType: string;
 }
 
-export type OcrDocumentSource = OcrDocumentUrl | OcrFileUpload | OcrImageBase64;
+export type OcrDocumentSource = OcrDocumentUrl | OcrDocumentBase64 | OcrImageBase64;
 
 export interface OcrRequestOptions {
 	document: OcrDocumentSource;
 	model?: string;
 	includeImageBase64?: boolean;
+	tableFormat?: 'markdown' | 'html';
 	signal?: AbortSignal;
 }
 
@@ -53,19 +56,19 @@ export interface OcrPageImage {
 
 export interface OcrResult {
 	pages: OcrPage[];
-	/** File id returned by the Files API when the source was uploaded. */
-	uploadedFileId?: string;
 }
 
 type OcrDocument =
 	| { type: 'document_url'; documentUrl: string }
-	| { type: 'file'; fileId: string }
 	| { type: 'image_url'; imageUrl: string };
 
 export class MistralOcrClient {
 	private readonly client: Mistral;
 
-	constructor(apiKey: string) {
+	constructor(
+		apiKey: string,
+		private readonly logger?: LoggerService
+	) {
 		this.client = new Mistral({ apiKey });
 	}
 
@@ -73,63 +76,104 @@ export class MistralOcrClient {
 		const { signal } = options;
 		throwIfAborted(signal);
 
-		const { document, uploadedFileId } = await this.buildDocument(options.document, signal);
-		throwIfAborted(signal);
+		const model = options.model ?? DEFAULT_MODEL;
+		const document = this.buildDocument(options.document);
 
-		const response = await this.client.ocr.process(
-			{
-				model: options.model ?? DEFAULT_MODEL,
-				document,
-				includeImageBase64: options.includeImageBase64 ?? false,
-			},
-			{ signal }
-		);
+		this.logger?.info(LOG_SOURCE, 'Calling Mistral OCR API', {
+			model,
+			documentType: document.type,
+			tableFormat: options.tableFormat ?? 'default',
+			includeImageBase64: options.includeImageBase64 ?? true,
+		});
 
-		const pages: OcrPage[] = response.pages.map((page) => ({
-			index: page.index,
-			markdown: page.markdown,
-			images: page.images.map((img) => ({
-				id: img.id,
-				imageBase64: img.imageBase64,
-			})),
-		}));
+		try {
+			const response = await this.client.ocr.process(
+				{
+					model,
+					document,
+					tableFormat: options.tableFormat ?? 'html',
+					includeImageBase64: options.includeImageBase64 ?? true,
+				},
+				{ signal }
+			);
 
-		return { pages, uploadedFileId };
+			const pages: OcrPage[] = response.pages.map((page) => ({
+				index: page.index,
+				markdown: page.markdown,
+				images: page.images.map((img) => ({
+					id: img.id,
+					imageBase64: img.imageBase64,
+				})),
+			}));
+
+			this.logger?.info(LOG_SOURCE, 'Mistral OCR API returned', {
+				pageCount: pages.length,
+				totalMarkdownChars: pages.reduce((sum, p) => sum + p.markdown.length, 0),
+			});
+
+			return { pages };
+		} catch (err) {
+			this.logError(err, { model, documentType: document.type });
+			throw err;
+		}
 	}
 
-	async deleteFile(fileId: string): Promise<void> {
-		await this.client.files.delete({ fileId });
-	}
-
-	private async buildDocument(
-		source: OcrDocumentSource,
-		signal: AbortSignal | undefined
-	): Promise<{ document: OcrDocument; uploadedFileId?: string }> {
+	private buildDocument(source: OcrDocumentSource): OcrDocument {
 		if (source.type === 'document_url') {
-			return { document: { type: 'document_url', documentUrl: source.documentUrl } };
+			return { type: 'document_url', documentUrl: source.documentUrl };
 		}
 
-		if (source.type === 'image_base64') {
+		if (source.type === 'document_base64') {
 			return {
-				document: {
-					type: 'image_url',
-					imageUrl: `data:${source.mimeType};base64,${source.data}`,
-				},
+				type: 'document_url',
+				documentUrl: `data:${source.mimeType};base64,${source.data}`,
 			};
 		}
 
-		const uploaded = await this.client.files.upload(
-			{
-				file: { fileName: source.fileName, content: source.content },
-				purpose: 'ocr',
-			},
-			{ signal }
-		);
-
 		return {
-			document: { type: 'file', fileId: uploaded.id },
-			uploadedFileId: uploaded.id,
+			type: 'image_url',
+			imageUrl: `data:${source.mimeType};base64,${source.data}`,
 		};
+	}
+
+	private logError(err: unknown, context: Record<string, unknown>): void {
+		if (!this.logger) {
+			return;
+		}
+
+		const payload: Record<string, unknown> = { ...context };
+
+		if (err instanceof Error) {
+			payload.name = err.name;
+			payload.message = err.message;
+			payload.stack = err.stack;
+		} else {
+			payload.error = String(err);
+		}
+
+		const candidate = err as {
+			statusCode?: number;
+			status?: number;
+			body?: unknown;
+			rawResponse?: { status?: number; statusText?: string };
+		};
+		if (typeof candidate.statusCode === 'number') {
+			payload.statusCode = candidate.statusCode;
+		}
+		if (typeof candidate.status === 'number') {
+			payload.status = candidate.status;
+		}
+		if (candidate.body !== undefined) {
+			payload.body = candidate.body;
+		}
+		if (candidate.rawResponse) {
+			payload.rawResponse = {
+				status: candidate.rawResponse.status,
+				statusText: candidate.rawResponse.statusText,
+			};
+		}
+
+		this.logger.error(LOG_SOURCE, 'Mistral OCR API call failed', payload);
 	}
 }
 
