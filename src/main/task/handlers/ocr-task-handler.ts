@@ -111,14 +111,16 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		const resolvedPath = this.resolveFilePath(input.url, workspace);
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Reading file: ${resolvedPath}`);
 		const fileBuffer = await fs.readFile(resolvedPath);
-		const base64Data = fileBuffer.toString('base64');
-		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `File read, base64 length: ${base64Data.length}`);
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `File read, bytes: ${fileBuffer.byteLength}`);
 
 		reporter.progress(30, 'Processing OCR');
 
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Calling OCR API with model: ${input.modelId}`);
-		const text = await this.runOcr(provider, base64Data, input.modelId);
-		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `OCR returned ${text.length} characters`);
+		const { text, pageCount } = await this.runOcr(provider, resolvedPath, fileBuffer, input.modelId);
+		this.logger?.info(
+			OcrTaskHandler.LOG_SOURCE,
+			`OCR returned ${text.length} characters across ${pageCount} page(s)`
+		);
 
 		reporter.progress(80, 'Saving result');
 
@@ -130,22 +132,52 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		return {
 			text,
 			filePath: input.url,
-			pageCount: 1,
+			pageCount,
 			savedPath,
 		};
 	}
 
 	private async runOcr(
 		provider: { apiKey: string; baseUrl?: string },
-		base64Data: string,
+		filePath: string,
+		fileBuffer: Buffer,
 		model: string
-	): Promise<string> {
+	): Promise<{ text: string; pageCount: number }> {
 		const client = new MistralOcrClient(provider.apiKey);
-		const result = await client.process({
-			document: { type: 'base64', data: base64Data },
-			model,
-		});
-		return result.pages.map((page) => page.markdown).join('\n\n');
+		const content = new Uint8Array(
+			fileBuffer.buffer,
+			fileBuffer.byteOffset,
+			fileBuffer.byteLength
+		);
+		const fileName = path.basename(filePath);
+		const mimeType = this.detectMimeType(filePath);
+
+		const document = mimeType.startsWith('image/')
+			? ({ type: 'image_base64', data: fileBuffer.toString('base64'), mimeType } as const)
+			: ({ type: 'file', fileName, content } as const);
+
+		const result = await client.process({ document, model });
+		const text = result.pages.map((page) => page.markdown).join('\n\n');
+		return { text, pageCount: result.pages.length };
+	}
+
+	private detectMimeType(filePath: string): string {
+		const ext = path.extname(filePath).toLowerCase();
+		switch (ext) {
+			case '.pdf':
+				return 'application/pdf';
+			case '.png':
+				return 'image/png';
+			case '.jpg':
+			case '.jpeg':
+				return 'image/jpeg';
+			case '.webp':
+				return 'image/webp';
+			case '.gif':
+				return 'image/gif';
+			default:
+				return 'application/octet-stream';
+		}
 	}
 
 	private async saveResult(
