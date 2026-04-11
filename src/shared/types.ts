@@ -147,6 +147,18 @@ export interface Provider {
 	name: string;
 }
 
+/** Canonical list of known providers. Source of truth for ProviderId and AppProviderName. */
+export const PROVIDERS = [
+	{ id: 'openai', name: 'OpenAI' },
+	{ id: 'anthropic', name: 'Anthropic' },
+	{ id: 'google', name: 'Google' },
+	{ id: 'meta', name: 'Meta' },
+	{ id: 'mistral', name: 'Mistral' },
+	{ id: 'xai', name: 'xAI' },
+	{ id: 'deepseek', name: 'DeepSeek' },
+	{ id: 'qwen', name: 'Qwen' },
+] as const satisfies readonly Provider[];
+
 export interface Service {
 	provider: Provider;
 	apiKey: string;
