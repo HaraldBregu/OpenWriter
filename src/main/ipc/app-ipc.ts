@@ -13,7 +13,7 @@ import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
-import type { ServiceProvider, ThemeMode, WritingContextMenuAction } from '../../shared/types';
+import type { Service, ThemeMode, WritingContextMenuAction } from '../../shared/types';
 
 const execFileAsync = promisify(execFile);
 
