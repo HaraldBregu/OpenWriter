@@ -97,7 +97,7 @@ export default function ImagesPage(): ReactElement {
 				</ButtonGroup>
 			</PageSubHeader>
 			<PageBody>
-				<></>
+				<Gallery sections={GALLERY_SECTIONS} />
 			</PageBody>
 		</PageContainer>
 	);
