@@ -54,7 +54,7 @@ export const DEFAULT_OCR_MODEL_ID = 'mistral-ocr-latest';
 export const AI_MODELS: readonly ModelInfo[] = [
 	// ========================== OpenAI ========================================
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'gpt-5.4',
 		name: 'GPT-5.4',
 		type: 'multimodal',
@@ -63,7 +63,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		notes: 'Flagship unified reasoning + coding + agent model',
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'gpt-5.4-mini',
 		name: 'GPT-5.4 Mini',
 		type: 'multimodal',
@@ -71,7 +71,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 128000,
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'gpt-4.1',
 		name: 'GPT-4.1',
 		type: 'multimodal',
@@ -79,7 +79,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 32768,
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'o3',
 		name: 'o3',
 		type: 'reasoning',
@@ -87,7 +87,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 100000,
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'o4-mini',
 		name: 'o4 Mini',
 		type: 'reasoning',
@@ -95,7 +95,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 100000,
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'gpt-image-1',
 		name: 'GPT Image 1',
 		type: 'image',
@@ -103,7 +103,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: null,
 	},
 	{
-		provider: 'OpenAI',
+		providerId: 'openai',
 		modelId: 'text-embedding-3-small',
 		name: 'Text Embedding 3 Small',
 		type: 'embedding',
