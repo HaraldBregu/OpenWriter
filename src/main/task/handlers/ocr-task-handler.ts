@@ -46,7 +46,8 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 	constructor(
 		private readonly windowContextManager: WindowContextManager,
-		private readonly providerResolver: ProviderResolver,
+		private readonly serviceResolver: ServiceResolver,
+		private readonly modelResolver: ModelResolver,
 		private readonly logger?: LoggerService
 	) {}
 
