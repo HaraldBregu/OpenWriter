@@ -55,7 +55,7 @@ import type {
 	AppLogEntry,
 	AppStartupInfo,
 	IpcResult,
-	ServiceProvider,
+	Service,
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
