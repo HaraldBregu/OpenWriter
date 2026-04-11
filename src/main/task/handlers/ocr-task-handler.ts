@@ -8,13 +8,14 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
 import { MistralOcrClient } from '../../ocr';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
-import type { FilesService } from '../../workspace/files-service';
+import type { ContentsService } from '../../workspace/contents-service';
 import type { LoggerService } from '../../services/logger';
 import type { Service } from '../../../shared/types';
 
