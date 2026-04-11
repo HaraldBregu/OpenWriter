@@ -3,52 +3,67 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { ServiceProvider } from '../../shared/types';
+import type { Service } from '../../shared/types';
+import { isKnownProvider } from '../../shared/providers';
 
 export class StoreValidators {
 	private static readonly MAX_TOKEN_LENGTH = 500;
 	private static readonly MAX_FIELD_LENGTH = 200;
 	private static readonly DANGEROUS_CHARS = /[<>;"'`]/;
 
-	/**
-	 * Validates a model ID string.
-	 * @param id - The model ID to validate
-	 * @throws Error if the model ID is invalid
-	 */
-	static validateModelId(id: string): void {
+	static validateServiceId(id: string): void {
 		if (typeof id !== 'string' || id.trim().length === 0) {
-			throw new Error('Model ID must be a non-empty string');
+			throw new Error('Service ID must be a non-empty string');
 		}
 		if (id.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Model ID exceeds maximum length');
+			throw new Error('Service ID exceeds maximum length');
 		}
 	}
 
-	/**
-	 * Validates a model payload for security and correctness.
-	 * @param model - The model config to validate
-	 * @throws Error if any field is invalid
-	 */
-	static validateModelConfig(model: ServiceProvider): void {
-		if (typeof model.name !== 'string' || model.name.trim().length === 0) {
-			throw new Error('Provider is required');
+	static validateService(service: Service): void {
+		if (typeof service !== 'object' || service === null) {
+			throw new Error('Service must be an object');
 		}
-		if (model.name.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Provider exceeds maximum length');
+
+		const { provider, apiKey } = service;
+		if (typeof provider !== 'object' || provider === null) {
+			throw new Error('Service provider is required');
 		}
-		if (typeof model.apikey === 'string' && model.apikey.length > 0) {
-			if (model.apikey.length > this.MAX_TOKEN_LENGTH) {
-				throw new Error(`API key exceeds maximum length of ${this.MAX_TOKEN_LENGTH} characters`);
-			}
-			if (this.DANGEROUS_CHARS.test(model.apikey)) {
-				throw new Error('API key contains invalid characters');
-			}
+		if (typeof provider.id !== 'string' || provider.id.trim().length === 0) {
+			throw new Error('Service provider id is required');
 		}
-		if (typeof model.baseurl === 'string' && model.baseurl.length > 0) {
-			if (model.baseurl.length > this.MAX_FIELD_LENGTH) {
-				throw new Error('Base URL exceeds maximum length');
-			}
+		if (provider.id.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Service provider id exceeds maximum length');
 		}
+		if (!isKnownProvider(provider.id)) {
+			throw new Error(`Unknown provider: ${provider.id}`);
+		}
+		if (typeof provider.name !== 'string' || provider.name.trim().length === 0) {
+			throw new Error('Service provider name is required');
+		}
+		if (provider.name.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Service provider name exceeds maximum length');
+		}
+
+		if (typeof apiKey !== 'string') {
+			throw new Error('Service apiKey must be a string');
+		}
+		if (apiKey.length > this.MAX_TOKEN_LENGTH) {
+			throw new Error(`API key exceeds maximum length of ${this.MAX_TOKEN_LENGTH} characters`);
+		}
+		if (apiKey.length > 0 && this.DANGEROUS_CHARS.test(apiKey)) {
+			throw new Error('API key contains invalid characters');
+		}
+	}
+
+	static validateServices(services: Service[]): void {
+		if (!Array.isArray(services)) {
+			throw new Error('Services must be an array');
+		}
+
+		services.forEach((service) => {
+			this.validateService(service);
+		});
 	}
 
 	static validateAgentName(agentName: string): void {
@@ -67,16 +82,6 @@ export class StoreValidators {
 		if (providerName.length > this.MAX_FIELD_LENGTH) {
 			throw new Error('Provider name exceeds maximum length');
 		}
-	}
-
-	static validateProviderConfigs(providers: ServiceProvider[]): void {
-		if (!Array.isArray(providers)) {
-			throw new Error('Providers must be an array');
-		}
-
-		providers.forEach((provider) => {
-			this.validateModelConfig(provider);
-		});
 	}
 }
 
