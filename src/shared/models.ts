@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 
 import type {
-	AppProviderName,
+	ProviderName,
 	ModelType,
 	ModelInfo,
 	ModelCapabilities,
@@ -364,7 +364,7 @@ export const DEFAULT_OCR_MODEL: ModelInfo = _defaultOcrModel;
 // ---------------------------------------------------------------------------
 
 /** Get all models for a specific provider. */
-export function getModelsByProvider(provider: AppProviderName): readonly ModelInfo[] {
+export function getModelsByProvider(provider: ProviderName): readonly ModelInfo[] {
 	return AI_MODELS.filter((m) => m.provider === provider);
 }
 
