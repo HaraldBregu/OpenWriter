@@ -67,7 +67,7 @@ export type ModelType =
 	| 'ocr';
 
 export interface ModelInfo {
-	readonly provider: ProviderName;
+	readonly providerId: ProviderId;
 	readonly modelId: string;
 	readonly name: string;
 	readonly type: ModelType;
