@@ -23,21 +23,22 @@ import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { useFilesContext } from '../context/FilesContext';
 
 const PROVIDER_COLORS: Record<string, string> = {
-	OpenAI: 'bg-green-600',
-	Anthropic: 'bg-amber-700',
-	Google: 'bg-blue-600',
-	Meta: 'bg-blue-500',
-	Mistral: 'bg-orange-500',
-	Amazon: 'bg-yellow-600',
+	openai: 'bg-green-600',
+	anthropic: 'bg-amber-700',
+	google: 'bg-blue-600',
+	meta: 'bg-blue-500',
+	mistral: 'bg-orange-500',
+	amazon: 'bg-yellow-600',
 };
 
-function ProviderIcon({ provider }: { provider: ProviderName }) {
-	const bg = PROVIDER_COLORS[provider] ?? 'bg-zinc-500';
+function ProviderIcon({ providerId }: { providerId: ProviderId }) {
+	const bg = PROVIDER_COLORS[providerId] ?? 'bg-zinc-500';
+	const name = getProvider(providerId)?.name ?? providerId;
 	return (
 		<span
 			className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-semibold leading-none text-white ${bg}`}
 		>
-			{provider.charAt(0)}
+			{name.charAt(0)}
 		</span>
 	);
 }
