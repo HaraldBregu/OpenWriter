@@ -55,8 +55,6 @@ interface DataContextValue {
 	removing: boolean;
 	indexing: boolean;
 	indexingInfo: ReturnType<typeof selectIndexingInfo>;
-	previewResource: ResourceInfo | null;
-	setPreviewResource: (resource: ResourceInfo | null) => void;
 }
 
 const DataContext = createContext<DataContextValue | null>(null);
