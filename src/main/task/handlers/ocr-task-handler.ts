@@ -12,11 +12,11 @@ import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
 import { MistralOcrClient } from '../../ocr';
-import type { ProviderResolver } from '../../shared/provider-resolver';
-import { OCR_MODELS } from '../../../shared/models';
+import type { ServiceResolver } from '../../shared/service-resolver';
+import type { ModelResolver } from '../../shared/model-resolver';
 import type { FilesService } from '../../workspace/files-service';
 import type { LoggerService } from '../../services/logger';
-import { Service } from '../../../shared';
+import type { Service } from '../../../shared/types';
 
 export interface OcrTaskInput {
 	/** URL or file path to the document to process. */
