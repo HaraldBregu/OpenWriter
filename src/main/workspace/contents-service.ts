@@ -79,6 +79,49 @@ export class ContentsService {
 	}
 
 	/**
+	 * Load all sub-folders from the workspace resources/content/ directory.
+	 * Files at the root of resources/content/ are ignored — only directories are returned.
+	 */
+	async getFolders(workspacePath: string): Promise<FolderEntry[]> {
+		const contentsDir = this.getContentsDir(workspacePath);
+
+		try {
+			await fsPromises.access(contentsDir);
+		} catch {
+			return [];
+		}
+
+		const dirEntries = await fsPromises.readdir(contentsDir, { withFileTypes: true });
+		const folders: FolderEntry[] = [];
+
+		for (const entry of dirEntries) {
+			if (!entry.isDirectory()) continue;
+			if (entry.name.startsWith('.')) continue;
+
+			const folderPath = path.join(contentsDir, entry.name);
+			try {
+				const stats = await fsPromises.stat(folderPath);
+				folders.push({
+					id: entry.name,
+					name: entry.name,
+					path: folderPath,
+					relativePath: entry.name,
+					createdAt: stats.birthtimeMs || stats.ctimeMs,
+					modifiedAt: stats.mtimeMs,
+				});
+			} catch (err) {
+				this.logger?.warn(
+					ContentsService.LOG_SOURCE,
+					`Failed to stat folder ${entry.name}`,
+					err
+				);
+			}
+		}
+
+		return folders;
+	}
+
+	/**
 	 * Insert (copy) files into the workspace resources/content/ directory.
 	 *
 	 * @param workspacePath - Workspace root path
