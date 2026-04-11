@@ -139,7 +139,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Google ========================================
 	{
-		provider: 'Google',
+		providerId: 'google',
 		modelId: 'gemini-3.1-pro-preview',
 		name: 'Gemini 3.1 Pro',
 		type: 'multimodal',
@@ -147,7 +147,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 65536,
 	},
 	{
-		provider: 'Google',
+		providerId: 'google',
 		modelId: 'gemini-2.5-pro',
 		name: 'Gemini 2.5 Pro',
 		type: 'multimodal',
@@ -155,7 +155,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 65536,
 	},
 	{
-		provider: 'Google',
+		providerId: 'google',
 		modelId: 'gemini-2.5-flash',
 		name: 'Gemini 2.5 Flash',
 		type: 'multimodal',
