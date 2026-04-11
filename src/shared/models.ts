@@ -209,7 +209,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Cohere ========================================
 	{
-		provider: 'Cohere',
+		providerId: 'cohere',
 		modelId: 'command-a-03-2025',
 		name: 'Command A',
 		type: 'text',
