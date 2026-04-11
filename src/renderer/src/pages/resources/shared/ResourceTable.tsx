@@ -121,7 +121,6 @@ export const ResourceTable = memo(function ResourceTable({
 	const [typeFilter, setTypeFilter] = useState(ALL_TYPES_VALUE);
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDirection, setSortDirection] = useState<SortDirection>('none');
-	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
 
 	const handleSort = useCallback(
 		(key: SortKey) => {
