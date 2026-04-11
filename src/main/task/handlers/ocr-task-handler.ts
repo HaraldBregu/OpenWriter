@@ -207,7 +207,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 	private async saveResult(
 		workspace: Workspace,
-		filesService: FilesService,
+		contentsService: ContentsService,
 		sourcePath: string,
 		text: string
 	): Promise<string> {
@@ -216,14 +216,14 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 			throw new Error('No active workspace to save OCR result');
 		}
 
-		await filesService.ensureFilesDir(workspacePath);
-		const filesDir = filesService.getFilesDir(workspacePath);
+		await contentsService.ensureContentsDir(workspacePath);
+		const contentsDir = contentsService.getContentsDir(workspacePath);
 
-		const baseName = path.basename(sourcePath, path.extname(sourcePath));
-		const timestamp = Date.now();
-		const fileName = `${baseName}-ocr-${timestamp}.md`;
-		const destPath = path.join(filesDir, fileName);
+		const folderName = path.basename(sourcePath, path.extname(sourcePath));
+		const targetDir = path.join(contentsDir, folderName);
+		await fs.mkdir(targetDir, { recursive: true });
 
+		const destPath = path.join(targetDir, `${randomUUID()}.md`);
 		await fs.writeFile(destPath, text, 'utf-8');
 
 		return destPath;
