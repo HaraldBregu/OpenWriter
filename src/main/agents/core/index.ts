@@ -1,6 +1,7 @@
 export type {
 	AgentDefinition,
 	AgentDefinitionInfo,
+	AgentProviderContext,
 	CustomAgentExecutionInput,
 	AgentRuntimeContext,
 	GraphInputContext,
