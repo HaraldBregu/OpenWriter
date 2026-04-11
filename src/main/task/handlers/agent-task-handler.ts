@@ -60,11 +60,27 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 	constructor(
 		private readonly agentId: string,
 		private readonly agentsRegistry: AgentRegistry,
-		private readonly providerResolver: ProviderResolver,
+		private readonly serviceResolver: ServiceResolver,
+		private readonly modelResolver: ModelResolver,
 		private readonly windowContextManager: WindowContextManager,
 		private readonly logger?: LoggerService
 	) {
 		this.type = `agent-${agentId}`;
+	}
+
+	private resolveProviderContext(options: {
+		providerId?: string;
+		modelId?: string;
+	}): AgentProviderContext {
+		const model = this.modelResolver.resolve({ modelId: options.modelId });
+		const service = this.serviceResolver.resolve({
+			providerId: options.providerId ?? model.providerId,
+		});
+		return {
+			apiKey: service.apiKey,
+			modelName: model.modelId,
+			providerId: service.provider.id,
+		};
 	}
 
 	// -------------------------------------------------------------------------
