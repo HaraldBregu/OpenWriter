@@ -94,20 +94,19 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		reporter.progress(0, 'Starting OCR');
 		OcrTaskHandler.throwIfAborted(signal);
 
-		const modelEntry = OCR_MODELS.find((m) => m.modelId === input.modelId);
-		if (!modelEntry) {
-			this.logger?.error(OcrTaskHandler.LOG_SOURCE, `Unknown OCR model: ${input.modelId}`);
-			throw new Error(`Unknown OCR model: ${input.modelId}`);
+		const modelEntry = this.modelResolver.resolve({ modelId: input.modelId });
+		if (modelEntry.type !== 'ocr') {
+			this.logger?.error(
+				OcrTaskHandler.LOG_SOURCE,
+				`Model "${input.modelId}" is not an OCR model (type=${modelEntry.type})`
+			);
+			throw new Error(`Model "${input.modelId}" is not an OCR model`);
 		}
 
-		const providerId = modelEntry.providerId;
-		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Resolved provider: ${providerId}`);
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Resolved provider: ${modelEntry.providerId}`);
 
-		const provider = this.providerResolver.resolve({
-			providerId,
-			modelId: input.modelId,
-		});
-		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Provider resolved successfully');
+		const service = this.serviceResolver.resolve({ providerId: modelEntry.providerId });
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Service resolved successfully');
 
 		reporter.progress(10, 'Reading file');
 		OcrTaskHandler.throwIfAborted(signal);
