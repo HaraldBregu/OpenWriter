@@ -101,11 +101,16 @@ describe('AgentTaskHandler', () => {
 			)
 		);
 
-		const providerResolver = {
+		const serviceResolver = {
+			resolve: jest.fn().mockReturnValue({
+				provider: { id: 'openai', name: 'OpenAI' },
+				apiKey: 'sk-test',
+			}),
+		};
+		const modelResolver = {
 			resolve: jest.fn().mockReturnValue({
 				providerId: 'openai',
-				apiKey: 'sk-test',
-				modelName: 'gpt-4o',
+				modelId: 'gpt-4o',
 			}),
 		};
 		const workspaceManager = {
@@ -168,11 +173,16 @@ describe('AgentTaskHandler', () => {
 	});
 
 	it('falls back to an empty history when the chat transcript does not exist', async () => {
-		const providerResolver = {
+		const serviceResolver = {
+			resolve: jest.fn().mockReturnValue({
+				provider: { id: 'openai', name: 'OpenAI' },
+				apiKey: 'sk-test',
+			}),
+		};
+		const modelResolver = {
 			resolve: jest.fn().mockReturnValue({
 				providerId: 'openai',
-				apiKey: 'sk-test',
-				modelName: 'gpt-4o',
+				modelId: 'gpt-4o',
 			}),
 		};
 		const windowContextManager = {
