@@ -151,6 +151,10 @@ export const WorkspaceChannels = {
 	resourcesFilesWatcherError: 'files:watcher-error',
 	// Images (resources/images/ sub-folder)
 	getResourcesImages: 'images:get-all',
+	insertResourcesImages: 'images:insert',
+	deleteResourcesImageEntry: 'images:delete',
+	resourcesImagesChanged: 'images:changed',
+	resourcesImagesWatcherError: 'images:watcher-error',
 } as const;
 
 export const WindowChannels = {
