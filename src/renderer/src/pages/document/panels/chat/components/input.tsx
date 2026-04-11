@@ -15,6 +15,7 @@ import {
 	type ContentGeneratorAgentId,
 } from '@/components/editor/extensions/content_generator/agents';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../../shared/models';
+import { getProvider } from '../../../../../../../shared/providers';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../../shared/types';
 import type { ModelInfo } from '../../../../../../../shared/types';
 
