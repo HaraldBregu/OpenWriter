@@ -76,7 +76,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 	async execute(
 		input: OcrTaskInput,
-		_signal: AbortSignal,
+		signal: AbortSignal,
 		reporter: ProgressReporter
 	): Promise<OcrTaskOutput> {
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Execute started', {
@@ -90,6 +90,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		const filesService = this.resolveFilesService(input);
 
 		reporter.progress(0, 'Starting OCR');
+		OcrTaskHandler.throwIfAborted(signal);
 
 		const modelEntry = OCR_MODELS.find((m) => m.modelId === input.modelId);
 		if (!modelEntry) {
@@ -107,6 +108,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Provider resolved successfully');
 
 		reporter.progress(10, 'Reading file');
+		OcrTaskHandler.throwIfAborted(signal);
 
 		const resolvedPath = this.resolveFilePath(input.url, workspace);
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Reading file: ${resolvedPath}`);
@@ -114,15 +116,23 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `File read, bytes: ${fileBuffer.byteLength}`);
 
 		reporter.progress(30, 'Processing OCR');
+		OcrTaskHandler.throwIfAborted(signal);
 
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Calling OCR API with model: ${input.modelId}`);
-		const { text, pageCount } = await this.runOcr(provider, resolvedPath, fileBuffer, input.modelId);
+		const { text, pageCount } = await this.runOcr(
+			provider,
+			resolvedPath,
+			fileBuffer,
+			input.modelId,
+			signal
+		);
 		this.logger?.info(
 			OcrTaskHandler.LOG_SOURCE,
 			`OCR returned ${text.length} characters across ${pageCount} page(s)`
 		);
 
 		reporter.progress(80, 'Saving result');
+		OcrTaskHandler.throwIfAborted(signal);
 
 		const savedPath = await this.saveResult(workspace, filesService, resolvedPath, text);
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Result saved to: ${savedPath}`);
@@ -141,7 +151,8 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		provider: { apiKey: string; baseUrl?: string },
 		filePath: string,
 		fileBuffer: Buffer,
-		model: string
+		model: string,
+		signal: AbortSignal
 	): Promise<{ text: string; pageCount: number }> {
 		const client = new MistralOcrClient(provider.apiKey);
 		const content = new Uint8Array(
@@ -156,9 +167,35 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 			? ({ type: 'image_base64', data: fileBuffer.toString('base64'), mimeType } as const)
 			: ({ type: 'file', fileName, content } as const);
 
-		const result = await client.process({ document, model });
-		const text = result.pages.map((page) => page.markdown).join('\n\n');
-		return { text, pageCount: result.pages.length };
+		let uploadedFileId: string | undefined;
+		try {
+			const result = await client.process({ document, model, signal });
+			uploadedFileId = result.uploadedFileId;
+			const text = result.pages.map((page) => page.markdown).join('\n\n');
+			return { text, pageCount: result.pages.length };
+		} finally {
+			if (uploadedFileId) {
+				try {
+					await client.deleteFile(uploadedFileId);
+					this.logger?.info(
+						OcrTaskHandler.LOG_SOURCE,
+						`Deleted uploaded Mistral file: ${uploadedFileId}`
+					);
+				} catch (err) {
+					this.logger?.warn(
+						OcrTaskHandler.LOG_SOURCE,
+						`Failed to delete uploaded Mistral file ${uploadedFileId}`,
+						{ error: err instanceof Error ? err.message : String(err) }
+					);
+				}
+			}
+		}
+	}
+
+	private static throwIfAborted(signal: AbortSignal): void {
+		if (signal.aborted) {
+			throw new DOMException('Aborted', 'AbortError');
+		}
 	}
 
 	private detectMimeType(filePath: string): string {
