@@ -111,17 +111,13 @@ export class StoreService {
 
 	// --- Service methods ---
 
-	getServices(): Array<Service & { id: string }> {
-		return this.store.get('services').map((service, index) => toServiceConfig(service, index));
+	getServices(): Service[] {
+		return this.store.get('services').map(cloneService);
 	}
 
-	getServiceByProviderId(providerId: string): (Service & { id: string }) | undefined {
+	getServiceByProviderId(providerId: string): Service | undefined {
 		const normalized = providerId.trim();
 		return this.getServices().find((service) => service.provider.id === normalized);
-	}
-
-	getFirstService(): (Service & { id: string }) | undefined {
-		return this.getServices()[0];
 	}
 
 	addService(service: Service): Service & { id: string } {
