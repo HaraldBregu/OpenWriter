@@ -20,7 +20,9 @@ import type {
 } from '../../agents';
 import { executeAIAgentsStream } from '../../agents';
 import type { AgentRuntimeContext } from '../../agents/core';
-import type { ProviderResolver } from '../../shared/provider-resolver';
+import type { ServiceResolver } from '../../shared/service-resolver';
+import type { ModelResolver } from '../../shared/model-resolver';
+import type { AgentProviderContext } from '../../agents/core';
 import { createChatModel } from '../../shared/chat-model-factory';
 import type { LoggerService } from '../../services/logger';
 import type { WindowContextManager } from '../../core/window-context';
