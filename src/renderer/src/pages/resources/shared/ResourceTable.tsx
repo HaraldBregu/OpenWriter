@@ -1,7 +1,6 @@
-import { lazy, memo, Suspense, useCallback, useMemo, useState } from 'react';
+import { memo, useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, ArrowUpDown, Eye, Search } from 'lucide-react';
-import { Button } from '@/components/ui/Button';
+import { ArrowDown, ArrowUp, ArrowUpDown, Search } from 'lucide-react';
 import { Checkbox } from '@/components/ui/Checkbox';
 import {
 	Table,
@@ -21,10 +20,6 @@ import {
 } from '@/components/ui/Select';
 import type { ResourceInfo } from '../../../../../shared/types';
 import { formatBytes, formatDate } from './resource-utils';
-
-const ResourcePreviewSheet = lazy(() =>
-	import('./ResourcePreviewSheet').then((module) => ({ default: module.ResourcePreviewSheet }))
-);
 
 const ALL_TYPES_VALUE = 'all';
 
