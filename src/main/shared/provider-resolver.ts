@@ -57,7 +57,7 @@ export class ProviderResolver {
 
 		if (!apiKey) {
 			throw new Error(
-				`No API key configured for provider "${found.provider.}". ` +
+				`No API key configured for provider "${found.provider.name}". ` +
 					'Please configure the API key in the Providers page.'
 			);
 		}
@@ -67,7 +67,7 @@ export class ProviderResolver {
 		return {
 			apiKey,
 			modelName,
-			providerId: found.name,
+			providerId: found.provider.id,
 			baseUrl: found.baseurl || undefined,
 		};
 	}

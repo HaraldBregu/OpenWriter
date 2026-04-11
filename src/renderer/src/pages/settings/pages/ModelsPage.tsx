@@ -27,7 +27,10 @@ function ModelRow({ model }: { readonly model: ModelInfo }): React.JSX.Element {
 			</CollapsibleTrigger>
 			<CollapsibleContent className="px-1 pb-3 space-y-2">
 				<DetailRow label="Model ID" value={model.modelId} mono />
-				<DetailRow label="Provider" value={model.provider} />
+				<DetailRow
+					label="Provider"
+					value={getProvider(model.providerId)?.name ?? model.providerId}
+				/>
 				<DetailRow label="Type" value={model.type} />
 				<DetailRow label="Context Window" value={formatTokens(model.contextWindow)} />
 				<DetailRow label="Max Output Tokens" value={formatTokens(model.maxOutputTokens)} />
