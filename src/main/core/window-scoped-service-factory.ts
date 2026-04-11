@@ -218,6 +218,16 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
+	// Register images service (resources/images/)
+	factory.register({
+		key: 'imagesService',
+		factory: ({ globalContainer }) => {
+			const fileManagement = globalContainer.get<FileManager>('fileManagement');
+			const logger = globalContainer.get<LoggerService>('logger');
+			return new ImagesService(fileManagement, logger);
+		},
+	});
+
 	// Register workspace manager (Facade over all workspace services)
 	factory.register({
 		key: 'workspaceManager',
