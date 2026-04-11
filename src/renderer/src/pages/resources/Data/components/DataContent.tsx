@@ -58,15 +58,6 @@ export function DataContent(): ReactElement {
 				<div className="flex flex-1 min-h-0 flex-col gap-3">
 					<DataToolbar />
 					<DataTable />
-
-					{previewResource && (
-						<Suspense fallback={null}>
-							<ResourcePreviewSheet
-								resource={previewResource}
-								onClose={() => setPreviewResource(null)}
-							/>
-						</Suspense>
-					)}
 				</div>
 			)}
 		</div>
