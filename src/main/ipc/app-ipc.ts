@@ -164,13 +164,10 @@ export class AppIpc implements IpcModule {
 
 		ipcMain.handle(
 			AppChannels.getServices,
-			wrapSimpleHandler(() => {
-				const services = store.getServices();
-				return services.map((service, index) => ({
-					id: `service-${index}-${service.provider.id}`,
-					...service,
-				}));
-			}, AppChannels.getServices)
+			wrapSimpleHandler(
+				() => store.getServices().map((service, index) => toServiceConfig(service, index)),
+				AppChannels.getServices
+			)
 		);
 
 		ipcMain.handle(
