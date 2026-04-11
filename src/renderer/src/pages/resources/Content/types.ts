@@ -1,2 +1,2 @@
-export type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
+export type SortKey = 'name' | 'createdAt' | 'modifiedAt';
 export type SortDirection = 'none' | 'asc' | 'desc';
