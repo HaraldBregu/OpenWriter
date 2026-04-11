@@ -75,7 +75,6 @@ interface ResourceRowProps {
 	readonly editing: boolean;
 	readonly isSelected: boolean;
 	readonly onToggle: (id: string) => void;
-	readonly onPreview: (resource: ResourceInfo) => void;
 }
 
 const ResourceRow = memo(function ResourceRow({
@@ -83,7 +82,6 @@ const ResourceRow = memo(function ResourceRow({
 	editing,
 	isSelected,
 	onToggle,
-	onPreview,
 }: ResourceRowProps) {
 	return (
 		<TableRow data-state={editing && isSelected ? 'selected' : undefined}>
@@ -99,17 +97,6 @@ const ResourceRow = memo(function ResourceRow({
 			</TableCell>
 			<TableCell className="text-muted-foreground">{formatDate(resource.importedAt)}</TableCell>
 			<TableCell className="text-muted-foreground">{formatDate(resource.lastModified)}</TableCell>
-			<TableCell>
-				<Button
-					type="button"
-					variant="ghost"
-					size="icon"
-					className="h-7 w-7"
-					onClick={() => onPreview(resource)}
-				>
-					<Eye className="h-4 w-4" />
-				</Button>
-			</TableCell>
 		</TableRow>
 	);
 });
