@@ -301,7 +301,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Zhipu AI (GLM) ================================
 	{
-		provider: 'Zhipu AI',
+		providerId: 'zhipu-ai',
 		modelId: 'glm-4-plus',
 		name: 'GLM-4 Plus',
 		type: 'text',
