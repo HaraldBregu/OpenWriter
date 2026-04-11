@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { ChevronDown, FileText, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
-import type { AppProviderName } from '../../../../../../shared/types';
+import type { ProviderName } from '../../../../../../shared/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -30,7 +30,7 @@ const PROVIDER_COLORS: Record<string, string> = {
 	Amazon: 'bg-yellow-600',
 };
 
-function ProviderIcon({ provider }: { provider: AppProviderName }) {
+function ProviderIcon({ provider }: { provider: ProviderName }) {
 	const bg = PROVIDER_COLORS[provider] ?? 'bg-zinc-500';
 	return (
 		<span
