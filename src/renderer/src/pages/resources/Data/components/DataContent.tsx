@@ -1,4 +1,3 @@
-import { lazy, Suspense } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Loader2, Upload } from 'lucide-react';
@@ -7,12 +6,6 @@ import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useDataContext } from '../context/DataContext';
 import { DataToolbar } from './DataToolbar';
 import { DataTable } from './DataTable';
-
-const ResourcePreviewSheet = lazy(() =>
-	import('../../shared/ResourcePreviewSheet').then((module) => ({
-		default: module.ResourcePreviewSheet,
-	}))
-);
 
 function EmptyState({
 	uploading,
