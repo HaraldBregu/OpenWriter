@@ -398,6 +398,13 @@ export interface ImageEntry {
 	modifiedAt: number;
 }
 
+export interface ImageEntryChangeEvent {
+	type: 'added' | 'changed' | 'removed';
+	fileId: string;
+	filePath: string;
+	timestamp: number;
+}
+
 export interface ContentEntryChangeEvent {
 	type: 'added' | 'changed' | 'removed';
 	fileId: string;
