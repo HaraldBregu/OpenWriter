@@ -6,8 +6,8 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
-import { PROVIDER_CATALOGUE, PROVIDER_IDS } from '../../../../shared/providers';
-import type { ProviderId, ServiceProvider } from '../../../../shared/types';
+import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
+import type { ProviderId, Service } from '../../../../shared/types';
 import type { AppStartupInfo } from '../../../../shared/types';
 
 interface ConfigPageProps {
