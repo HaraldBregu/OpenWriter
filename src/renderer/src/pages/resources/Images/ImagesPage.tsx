@@ -80,7 +80,9 @@ export default function ImagesPage(): ReactElement {
 					</InputGroup>
 				</ButtonGroup>
 			</PageSubHeader>
-			<PageBody />
+			<PageBody>
+				<></>
+			</PageBody>
 		</PageContainer>
 	);
 }
