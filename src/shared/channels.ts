@@ -23,6 +23,7 @@ import type {
 	ContentEntryChangeEvent,
 	FileEntry,
 	FileEntryChangeEvent,
+	FolderEntry,
 	OutputFile,
 	OutputFileChangeEvent,
 	SaveOutputInput,
