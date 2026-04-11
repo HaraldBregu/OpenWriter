@@ -237,7 +237,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Amazon ========================================
 	{
-		provider: 'Amazon',
+		providerId: 'amazon',
 		modelId: 'amazon.nova-2-pro-v1:0',
 		name: 'Nova 2 Pro',
 		type: 'multimodal',
@@ -245,7 +245,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 16384,
 	},
 	{
-		provider: 'Amazon',
+		providerId: 'amazon',
 		modelId: 'amazon.nova-2-lite-v1:0',
 		name: 'Nova 2 Lite',
 		type: 'multimodal',
