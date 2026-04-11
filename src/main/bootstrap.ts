@@ -134,7 +134,9 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Register handlers that depend on WindowContextManager
 	taskHandlerRegistry.register(new RagIndexingTaskHandler());
-	taskHandlerRegistry.register(new OcrTaskHandler(windowContextManager, providerResolver, logger));
+	taskHandlerRegistry.register(
+		new OcrTaskHandler(windowContextManager, serviceResolver, modelResolver, logger)
+	);
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
