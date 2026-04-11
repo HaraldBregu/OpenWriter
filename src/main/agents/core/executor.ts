@@ -33,7 +33,7 @@ const LOG_PREFIX = 'AgentExecutor';
 
 export interface ExecutorInput {
 	runId: string;
-	provider: ResolvedProvider;
+	provider: AgentProviderContext;
 	systemPrompt: string;
 	temperature: number;
 	maxTokens: number | undefined;
