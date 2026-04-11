@@ -794,6 +794,24 @@ export class WorkspaceIpc implements IpcModule {
 			}, WorkspaceChannels.deleteResourcesFileEntry)
 		);
 
+		// -------------------------------------------------------------------------
+		// Images (resources/images/)
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getResourcesImages,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const imagesService = ctx.getService<ImagesService>('imagesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+				return imagesService.getImages(currentPath);
+			}, WorkspaceChannels.getResourcesImages)
+		);
+
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
 	}
 }
