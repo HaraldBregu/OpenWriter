@@ -1,11 +1,11 @@
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
-import type { GallerySection } from '@/components/app/Gallery';
+import type { ImageEntry } from '../../../../../../shared/types';
 
 interface ImagesContextValue {
-	sections: GallerySection[];
-	setSections: Dispatch<SetStateAction<GallerySection[]>>;
-	filteredSections: GallerySection[];
+	images: ImageEntry[];
+	setImages: Dispatch<SetStateAction<ImageEntry[]>>;
+	filteredImages: ImageEntry[];
 	isLoading: boolean;
 	setIsLoading: Dispatch<SetStateAction<boolean>>;
 	searchQuery: string;
@@ -31,12 +31,16 @@ interface ImagesProviderProps {
 }
 
 export function ImagesProvider({ children }: ImagesProviderProps): ReactElement {
-	const [sections, setSections] = useState<GallerySection[]>([]);
+	const [images, setImages] = useState<ImageEntry[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [editing, setEditing] = useState(false);
 
-	const filteredSections = sections;
+	const filteredImages = useMemo(() => {
+		const query = searchQuery.trim().toLowerCase();
+		if (!query) return images;
+		return images.filter((image) => image.name.toLowerCase().includes(query));
+	}, [images, searchQuery]);
 
 	const handleToggleEdit = useCallback(() => {
 		setEditing((current) => !current);
@@ -51,9 +55,9 @@ export function ImagesProvider({ children }: ImagesProviderProps): ReactElement 
 	}, []);
 
 	const value: ImagesContextValue = {
-		sections,
-		setSections,
-		filteredSections,
+		images,
+		setImages,
+		filteredImages,
 		isLoading,
 		setIsLoading,
 		searchQuery,
