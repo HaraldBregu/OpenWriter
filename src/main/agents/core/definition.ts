@@ -11,7 +11,16 @@ import type { AgentHistoryMessage } from './types';
 import type { AgentStreamEvent } from './types';
 import type { LoggerService } from '../../services/logger';
 import type { WorkspaceService } from '../../workspace/workspace-service';
-import type { ResolvedProvider } from '../../shared/provider-resolver';
+
+/**
+ * Runtime provider + model context assembled by AgentTaskHandler.
+ * Built from a Service (provider + apiKey) and a resolved ModelInfo.
+ */
+export interface AgentProviderContext {
+	apiKey: string;
+	modelName: string;
+	providerId: string;
+}
 // AgentDefinitionInfo is the canonical IPC-safe snapshot type shared across
 // all three process contexts (main, preload, renderer).
 export type { AgentDefinitionInfo } from '../../../shared/types';
