@@ -194,6 +194,9 @@ export const AppChannels = {
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
 	openLogsFolder: 'app:open-logs-folder',
+	// App data folder
+	openAppDataFolder: 'app:open-app-data-folder',
+	getAppDataFolder: 'app:get-app-data-folder',
 	// Theme management
 	getCustomThemes: 'app:get-custom-themes',
 	openThemesFolder: 'app:open-themes-folder',
