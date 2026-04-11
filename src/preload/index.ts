@@ -53,22 +53,22 @@ const app: AppApi = {
 		return typedOn(AppChannels.writingContextMenuAction, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Provider management
+	// Service management
 	// -------------------------------------------------------------------------
-	getProviders: (): Promise<Array<ServiceProvider & { id: string }>> => {
-		return typedInvokeUnwrap(AppChannels.getProviders);
+	getServices: (): Promise<Array<Service & { id: string }>> => {
+		return typedInvokeUnwrap(AppChannels.getServices);
 	},
-	addProvider: (provider: ServiceProvider): Promise<ServiceProvider & { id: string }> => {
-		return typedInvokeUnwrap(AppChannels.addProvider, provider);
+	addService: (service: Service): Promise<Service & { id: string }> => {
+		return typedInvokeUnwrap(AppChannels.addService, service);
 	},
-	deleteProvider: (id: string): Promise<void> => {
-		return typedInvokeUnwrap(AppChannels.deleteProvider, id);
+	deleteService: (id: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.deleteService, id);
 	},
 	getStartupInfo: () => {
 		return typedInvokeUnwrap(AppChannels.getStartupInfo);
 	},
-	completeFirstRunConfiguration: (providers: ServiceProvider[]) => {
-		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, providers);
+	completeFirstRunConfiguration: (services: Service[]) => {
+		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, services);
 	},
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
