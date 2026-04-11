@@ -5,39 +5,32 @@
 // This file must be valid in all three process contexts (main, renderer, preload).
 // ---------------------------------------------------------------------------
 
+import { PROVIDERS } from './types';
 import type { Provider, ProviderId, Service } from './types';
 
 // ---------------------------------------------------------------------------
-// Provider constants
+// Provider constants — sourced from PROVIDERS tuple in ./types
 // ---------------------------------------------------------------------------
 
-export const OPENAI: Provider = { id: 'openai', name: 'OpenAI' };
-export const ANTHROPIC: Provider = { id: 'anthropic', name: 'Anthropic' };
-export const GOOGLE: Provider = { id: 'google', name: 'Google' };
-export const META: Provider = { id: 'meta', name: 'Meta' };
-export const MISTRAL: Provider = { id: 'mistral', name: 'Mistral' };
-export const XAI: Provider = { id: 'xai', name: 'xAI' };
-export const DEEPSEEK: Provider = { id: 'deepseek', name: 'DeepSeek' };
-export const QWEN: Provider = { id: 'qwen', name: 'Qwen' };
+const findProvider = <TId extends ProviderId>(id: TId): Extract<(typeof PROVIDERS)[number], { id: TId }> =>
+	PROVIDERS.find((p) => p.id === id) as Extract<(typeof PROVIDERS)[number], { id: TId }>;
+
+export const OPENAI = findProvider('openai');
+export const ANTHROPIC = findProvider('anthropic');
+export const GOOGLE = findProvider('google');
+export const META = findProvider('meta');
+export const MISTRAL = findProvider('mistral');
+export const XAI = findProvider('xai');
+export const DEEPSEEK = findProvider('deepseek');
+export const QWEN = findProvider('qwen');
 
 // ---------------------------------------------------------------------------
 // Provider catalogue
 // ---------------------------------------------------------------------------
 
-export const PROVIDER_CATALOGUE: readonly Provider[] = [
-	OPENAI,
-	ANTHROPIC,
-	GOOGLE,
-	META,
-	MISTRAL,
-	XAI,
-	DEEPSEEK,
-	QWEN,
-];
+export const PROVIDER_CATALOGUE: readonly Provider[] = PROVIDERS;
 
-export const PROVIDER_IDS: readonly ProviderId[] = PROVIDER_CATALOGUE.map(
-	(p) => p.id as ProviderId
-);
+export const PROVIDER_IDS: readonly ProviderId[] = PROVIDERS.map((p) => p.id);
 
 // ---------------------------------------------------------------------------
 // Derived lookup map (built once at module load)
