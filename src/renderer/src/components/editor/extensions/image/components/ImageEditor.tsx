@@ -526,7 +526,9 @@ export function ImageEditor({
 										>
 											<div className="flex flex-col gap-0.5">
 												<span className="text-xs font-medium">{model.name}</span>
-												<span className="text-[10px] text-muted-foreground">{model.provider}</span>
+												<span className="text-[10px] text-muted-foreground">
+													{getProvider(model.providerId)?.name ?? model.providerId}
+												</span>
 											</div>
 										</DropdownMenuItem>
 									))}
