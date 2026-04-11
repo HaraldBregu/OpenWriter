@@ -1,32 +1,32 @@
 import { useMemo } from 'react';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { FolderEntry } from '../../../../../../shared/types';
 import type { SortDirection, SortKey } from '../types';
 
 interface UseContentFilterParams {
-	resources: ResourceInfo[];
+	folders: FolderEntry[];
 	searchQuery: string;
 	sortKey: SortKey;
 	sortDirection: SortDirection;
 }
 
 export function useContentFilter({
-	resources,
+	folders,
 	searchQuery,
 	sortKey,
 	sortDirection,
-}: UseContentFilterParams): ResourceInfo[] {
+}: UseContentFilterParams): FolderEntry[] {
 	return useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		const result = resources.filter((r) => {
-			if (query && !r.name.toLowerCase().includes(query)) return false;
+		const result = folders.filter((folder) => {
+			if (query && !folder.name.toLowerCase().includes(query)) return false;
 			return true;
 		});
 
 		if (sortDirection !== 'none') {
 			result.sort((a, b) => {
 				let cmp: number;
-				if (sortKey === 'name' || sortKey === 'mimeType') {
-					cmp = a[sortKey].localeCompare(b[sortKey]);
+				if (sortKey === 'name') {
+					cmp = a.name.localeCompare(b.name);
 				} else {
 					cmp = a[sortKey] - b[sortKey];
 				}
@@ -35,5 +35,5 @@ export function useContentFilter({
 		}
 
 		return result;
-	}, [resources, searchQuery, sortDirection, sortKey]);
+	}, [folders, searchQuery, sortDirection, sortKey]);
 }
