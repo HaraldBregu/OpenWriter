@@ -98,11 +98,11 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 			throw new Error(`Unknown OCR model: ${input.modelId}`);
 		}
 
-		const providerName = modelEntry.provider;
-		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Resolved provider: ${providerName}`);
+		const providerId = modelEntry.providerId;
+		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Resolved provider: ${providerId}`);
 
 		const provider = this.providerResolver.resolve({
-			providerId: providerName,
+			providerId,
 			modelId: input.modelId,
 		});
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, 'Provider resolved successfully');
