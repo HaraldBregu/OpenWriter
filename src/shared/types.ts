@@ -53,7 +53,7 @@ export interface CustomThemeInfo {
 }
 
 export type ProviderId = (typeof PROVIDERS)[number]['id'];
-export type AppProviderName = (typeof PROVIDERS)[number]['name'];
+export type ProviderName = (typeof PROVIDERS)[number]['name'];
 
 export type ModelType =
 	| 'text'
@@ -67,7 +67,7 @@ export type ModelType =
 	| 'ocr';
 
 export interface ModelInfo {
-	readonly provider: AppProviderName;
+	readonly provider: ProviderName;
 	readonly modelId: string;
 	readonly name: string;
 	readonly type: ModelType;
@@ -147,7 +147,7 @@ export interface Provider {
 	name: string;
 }
 
-/** Canonical list of known providers. Source of truth for ProviderId and AppProviderName. */
+/** Canonical list of known providers. Source of truth for ProviderId and ProviderName. */
 export const PROVIDERS = [
 	{ id: 'openai', name: 'OpenAI' },
 	{ id: 'anthropic', name: 'Anthropic' },
