@@ -241,18 +241,18 @@ export function PdfDialog(): ReactElement | null {
 															value={selectedModel}
 															onValueChange={handleModelChange}
 														>
-															{Array.from(new Set(OCR_MODELS.map((m) => m.provider))).map(
-																(provider, idx) => (
-																	<div key={provider}>
+															{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
+																(providerId, idx) => (
+																	<div key={providerId}>
 																		{idx > 0 && <DropdownMenuSeparator />}
-																		{OCR_MODELS.filter((m) => m.provider === provider).map(
+																		{OCR_MODELS.filter((m) => m.providerId === providerId).map(
 																			(model) => (
 																				<DropdownMenuRadioItem
 																					key={model.modelId}
 																					value={model.modelId}
 																					className="gap-2"
 																				>
-																					<ProviderIcon provider={model.provider} />
+																					<ProviderIcon providerId={model.providerId} />
 																					{model.name}
 																				</DropdownMenuRadioItem>
 																			)
