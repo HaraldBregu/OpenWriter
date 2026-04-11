@@ -92,7 +92,7 @@ export interface AgentRuntimeContext {
 
 export interface CustomAgentExecutionInput {
 	runId: string;
-	provider: ResolvedProvider;
+	provider: AgentProviderContext;
 	prompt: string;
 	temperature: number;
 	maxTokens?: number;
