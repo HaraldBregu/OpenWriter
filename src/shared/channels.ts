@@ -53,8 +53,8 @@ import type {
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
+	Service,
 } from './types';
-import type { ServiceProvider } from './types';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
