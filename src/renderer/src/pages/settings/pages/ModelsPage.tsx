@@ -185,9 +185,11 @@ const ModelsPage: React.FC = () => {
 				</p>
 			</div>
 
-			{Array.from(groupedByProvider.entries()).map(([provider, models]) => (
-				<div key={provider} className="mb-8">
-					<SectionHeader title={`${provider} (${models.length})`} />
+			{Array.from(groupedByProvider.entries()).map(([providerId, models]) => (
+				<div key={providerId} className="mb-8">
+					<SectionHeader
+						title={`${getProvider(providerId)?.name ?? providerId} (${models.length})`}
+					/>
 					{models.map((model) => (
 						<ModelRow key={model.modelId} model={model} />
 					))}
