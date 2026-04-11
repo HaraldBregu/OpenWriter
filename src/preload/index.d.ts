@@ -287,6 +287,8 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	/** Load all files from the workspace resources/content/ directory. */
 	getContents: () => Promise<ResourceInfo[]>;
+	/** Load all sub-folders from the workspace resources/content/ directory. */
+	getResourcesContents: () => Promise<FolderEntry[]>;
 	/** Open a file picker, copy selected files into resources/content/, return the new entries. */
 	insertContents: (extensions?: string[]) => Promise<ResourceInfo[]>;
 	/** Delete a file from resources/content/ by its ID. */
