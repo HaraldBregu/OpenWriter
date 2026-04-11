@@ -259,9 +259,9 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		return windowContext.container.get<Workspace>('workspaceManager');
 	}
 
-	private resolveFilesService(input: OcrTaskInput): FilesService {
+	private resolveContentsService(input: OcrTaskInput): ContentsService {
 		if (typeof input.windowId !== 'number') {
-			throw new Error('OcrTaskInput.windowId is required to resolve files service');
+			throw new Error('OcrTaskInput.windowId is required to resolve contents service');
 		}
 
 		const windowContext = this.windowContextManager.tryGet(input.windowId);
@@ -269,10 +269,10 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 			throw new Error(`No window context found for windowId ${input.windowId}`);
 		}
 
-		if (!windowContext.container.has('filesService')) {
-			throw new Error(`No files service available for windowId ${input.windowId}`);
+		if (!windowContext.container.has('contentsService')) {
+			throw new Error(`No contents service available for windowId ${input.windowId}`);
 		}
 
-		return windowContext.container.get<FilesService>('filesService');
+		return windowContext.container.get<ContentsService>('contentsService');
 	}
 }
