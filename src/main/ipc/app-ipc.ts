@@ -158,28 +158,34 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Provider management handlers
+		// Service management handlers
 		// -----------------------------------------------------------------------
 
 		ipcMain.handle(
-			AppChannels.getProviders,
-			wrapSimpleHandler(() => store.getProviders(), AppChannels.getProviders)
+			AppChannels.getServices,
+			wrapSimpleHandler(() => {
+				const services = store.getServices();
+				return services.map((service, index) => ({
+					id: `service-${index}-${service.provider.id}`,
+					...service,
+				}));
+			}, AppChannels.getServices)
 		);
 
 		ipcMain.handle(
-			AppChannels.addProvider,
-			wrapSimpleHandler((provider: ServiceProvider) => {
-				StoreValidators.validateModelConfig(provider);
-				return store.addProvider(provider);
-			}, AppChannels.addProvider)
+			AppChannels.addService,
+			wrapSimpleHandler((service: Service) => {
+				StoreValidators.validateService(service);
+				return store.addService(service);
+			}, AppChannels.addService)
 		);
 
 		ipcMain.handle(
-			AppChannels.deleteProvider,
+			AppChannels.deleteService,
 			wrapSimpleHandler((id: string) => {
-				StoreValidators.validateModelId(id);
-				return store.deleteProvider(id);
-			}, AppChannels.deleteProvider)
+				StoreValidators.validateServiceId(id);
+				return store.deleteService(id);
+			}, AppChannels.deleteService)
 		);
 
 		ipcMain.handle(
@@ -189,9 +195,9 @@ export class AppIpc implements IpcModule {
 
 		ipcMain.handle(
 			AppChannels.completeFirstRunConfiguration,
-			wrapSimpleHandler((providers: ServiceProvider[]) => {
-				StoreValidators.validateProviderConfigs(providers);
-				return store.completeFirstRunConfiguration(providers);
+			wrapSimpleHandler((services: Service[]) => {
+				StoreValidators.validateServices(services);
+				return store.completeFirstRunConfiguration(services);
 			}, AppChannels.completeFirstRunConfiguration)
 		);
 
