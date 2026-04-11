@@ -63,7 +63,9 @@ export function ModelDropdown({
 					>
 						<div className="flex min-w-0 flex-col gap-0.5">
 							<span className="truncate text-sm font-medium">{model.name}</span>
-							<span className="text-xs text-muted-foreground">{model.provider}</span>
+							<span className="text-xs text-muted-foreground">
+								{getProvider(model.providerId)?.name ?? model.providerId}
+							</span>
 						</div>
 					</DropdownMenuItem>
 				))}
