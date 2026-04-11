@@ -145,6 +145,10 @@ export interface AppApi {
 	getLogs: (limit?: number) => Promise<AppLogEntry[]>;
 	/** Open the application logs folder in the system file explorer. */
 	openLogsFolder: () => Promise<void>;
+	/** Open the application user-data folder in the system file explorer. */
+	openAppDataFolder: () => Promise<void>;
+	/** Get the absolute path of the application user-data folder. */
+	getAppDataFolder: () => Promise<string>;
 	/** Get all installed custom themes from the themes folder. */
 	getCustomThemes: () => Promise<CustomThemeInfo[]>;
 	/** Open the themes folder in the system file explorer. */
