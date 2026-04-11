@@ -121,7 +121,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 
 		this.logger?.info(OcrTaskHandler.LOG_SOURCE, `Calling OCR API with model: ${input.modelId}`);
 		const { text, pageCount } = await this.runOcr(
-			provider,
+			service,
 			resolvedPath,
 			fileBuffer,
 			input.modelId,
