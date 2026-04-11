@@ -20,6 +20,7 @@ export interface AgentProviderContext {
 	apiKey: string;
 	modelName: string;
 	providerId: string;
+	baseUrl?: string;
 }
 // AgentDefinitionInfo is the canonical IPC-safe snapshot type shared across
 // all three process contexts (main, preload, renderer).
