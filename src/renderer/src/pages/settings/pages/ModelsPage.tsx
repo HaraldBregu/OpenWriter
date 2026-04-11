@@ -5,7 +5,8 @@ import { SectionHeader } from '../components';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/Collapsible';
 import { Input } from '@/components/ui/Input';
 import { AI_MODELS } from '../../../../../shared/models';
-import type { ProviderName, ModelInfo } from '../../../../../shared/types';
+import { getProvider } from '../../../../../shared/providers';
+import type { ProviderId, ModelInfo } from '../../../../../shared/types';
 
 function formatTokens(value: number | null): string {
 	if (value === null) return 'N/A';

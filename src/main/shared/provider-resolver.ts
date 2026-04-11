@@ -53,11 +53,11 @@ export class ProviderResolver {
 			throw new Error('No providers configured. Please add a provider in the Providers page.');
 		}
 
-		const apiKey = found.apikey.trim();
+		const apiKey = found.apiKey.trim();
 
 		if (!apiKey) {
 			throw new Error(
-				`No API key configured for provider "${found.name}". ` +
+				`No API key configured for provider "${found.provider.}". ` +
 					'Please configure the API key in the Providers page.'
 			);
 		}
