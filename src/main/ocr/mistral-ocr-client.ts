@@ -70,13 +70,20 @@ export class MistralOcrClient {
 	}
 
 	async process(options: OcrRequestOptions): Promise<OcrResult> {
-		const document = await this.buildDocument(options.document);
+		const { signal } = options;
+		throwIfAborted(signal);
 
-		const response = await this.client.ocr.process({
-			model: options.model ?? DEFAULT_MODEL,
-			document,
-			includeImageBase64: options.includeImageBase64 ?? false,
-		});
+		const { document, uploadedFileId } = await this.buildDocument(options.document, signal);
+		throwIfAborted(signal);
+
+		const response = await this.client.ocr.process(
+			{
+				model: options.model ?? DEFAULT_MODEL,
+				document,
+				includeImageBase64: options.includeImageBase64 ?? false,
+			},
+			{ signal }
+		);
 
 		const pages: OcrPage[] = response.pages.map((page) => ({
 			index: page.index,
@@ -87,26 +94,47 @@ export class MistralOcrClient {
 			})),
 		}));
 
-		return { pages };
+		return { pages, uploadedFileId };
 	}
 
-	private async buildDocument(source: OcrDocumentSource): Promise<OcrDocument> {
+	async deleteFile(fileId: string): Promise<void> {
+		await this.client.files.delete({ fileId });
+	}
+
+	private async buildDocument(
+		source: OcrDocumentSource,
+		signal: AbortSignal | undefined
+	): Promise<{ document: OcrDocument; uploadedFileId?: string }> {
 		if (source.type === 'document_url') {
-			return { type: 'document_url', documentUrl: source.documentUrl };
+			return { document: { type: 'document_url', documentUrl: source.documentUrl } };
 		}
 
 		if (source.type === 'image_base64') {
 			return {
-				type: 'image_url',
-				imageUrl: `data:${source.mimeType};base64,${source.data}`,
+				document: {
+					type: 'image_url',
+					imageUrl: `data:${source.mimeType};base64,${source.data}`,
+				},
 			};
 		}
 
-		const uploaded = await this.client.files.upload({
-			file: { fileName: source.fileName, content: source.content },
-			purpose: 'ocr',
-		});
+		const uploaded = await this.client.files.upload(
+			{
+				file: { fileName: source.fileName, content: source.content },
+				purpose: 'ocr',
+			},
+			{ signal }
+		);
 
-		return { type: 'file', fileId: uploaded.id };
+		return {
+			document: { type: 'file', fileId: uploaded.id },
+			uploadedFileId: uploaded.id,
+		};
+	}
+}
+
+function throwIfAborted(signal: AbortSignal | undefined): void {
+	if (signal?.aborted) {
+		throw new DOMException('Aborted', 'AbortError');
 	}
 }
