@@ -329,7 +329,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== AI21 Labs =====================================
 	{
-		provider: 'AI21 Labs',
+		providerId: 'ai21-labs',
 		modelId: 'jamba-1.5-large',
 		name: 'Jamba 1.5 Large',
 		type: 'text',
