@@ -219,7 +219,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== xAI ===========================================
 	{
-		provider: 'xAI',
+		providerId: 'xai',
 		modelId: 'grok-4.20-0309-non-reasoning',
 		name: 'Grok 4.20',
 		type: 'text',
@@ -227,7 +227,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 16384,
 	},
 	{
-		provider: 'xAI',
+		providerId: 'xai',
 		modelId: 'grok-4.20-0309-reasoning',
 		name: 'Grok 4.20 Reasoning',
 		type: 'reasoning',
