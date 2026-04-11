@@ -52,37 +52,8 @@ export interface CustomThemeInfo {
 	readonly license: string;
 }
 
-export type AppProviderName =
-	| 'OpenAI'
-	| 'Anthropic'
-	| 'Google'
-	| 'Meta'
-	| 'Mistral'
-	| 'Cohere'
-	| 'xAI'
-	| 'Amazon'
-	| 'DeepSeek'
-	| 'Qwen'
-	| 'Inception'
-	| 'Zhipu AI'
-	| 'Perplexity'
-	| 'AI21 Labs';
-
-export type ProviderId =
-	| 'openai'
-	| 'anthropic'
-	| 'google'
-	| 'meta'
-	| 'mistral'
-	| 'cohere'
-	| 'xai'
-	| 'amazon'
-	| 'deepseek'
-	| 'qwen'
-	| 'inception'
-	| 'zhipu-ai'
-	| 'perplexity'
-	| 'ai21-labs';
+export type ProviderId = (typeof PROVIDERS)[number]['id'];
+export type AppProviderName = (typeof PROVIDERS)[number]['name'];
 
 export type ModelType =
 	| 'text'
