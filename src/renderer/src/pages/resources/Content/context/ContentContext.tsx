@@ -56,7 +56,18 @@ interface ContentProviderProps {
 
 export function ContentProvider({ children }: ContentProviderProps): ReactElement {
 	const section = RESOURCE_SECTIONS.content;
-	const { resources, isLoading, error, uploading, loadContent, setUploading } = useContentData();
+	const {
+		resources,
+		isLoading: dataLoading,
+		error,
+		uploading,
+		loadContent,
+		setUploading,
+	} = useContentData();
+
+	const [folders, setFolders] = useState<FolderEntry[]>([]);
+	const [bootstrapLoading, setBootstrapLoading] = useState(true);
+	const isLoading = dataLoading || bootstrapLoading;
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [editing, setEditing] = useState(false);
