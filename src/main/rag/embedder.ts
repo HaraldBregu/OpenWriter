@@ -19,7 +19,7 @@ import { chunkText } from './text-splitter';
 import type { ExtractorRegistry } from './document-loaders';
 import { DocumentIndexStore } from './document-index-store';
 import { VectorStore } from './vector-store';
-import { ProviderResolver } from '../shared/provider-resolver';
+import { ServiceResolver } from '../shared/service-resolver';
 import { createEmbeddingModel } from '../shared/embedding-factory';
 import { getTaskExecutionContext } from '../task/task-execution-context';
 
