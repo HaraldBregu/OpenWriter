@@ -457,4 +457,7 @@ export interface EventChannelMap {
 	// ---- Files watcher events ----
 	[WorkspaceChannels.resourcesFilesChanged]: { data: FileEntryChangeEvent };
 	[WorkspaceChannels.resourcesFilesWatcherError]: { data: WatcherError };
+	// ---- Images watcher events ----
+	[WorkspaceChannels.resourcesImagesChanged]: { data: ImageEntryChangeEvent };
+	[WorkspaceChannels.resourcesImagesWatcherError]: { data: WatcherError };
 }
