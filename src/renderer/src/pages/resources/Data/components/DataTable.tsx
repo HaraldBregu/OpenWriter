@@ -1,7 +1,5 @@
-import { Eye } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
 import {
 	Table,
