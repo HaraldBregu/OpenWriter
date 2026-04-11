@@ -133,6 +133,7 @@ export const WorkspaceChannels = {
 	documentContentChanged: 'workspace:document-content-changed',
 	// Contents (resources/content/ sub-folder)
 	getContents: 'contents:get-all',
+	getResourcesContents: 'contents:get-folders',
 	insertContents: 'contents:insert',
 	deleteContent: 'contents:delete',
 	contentsChanged: 'contents:changed',
