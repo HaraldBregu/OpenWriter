@@ -10,6 +10,7 @@ import type { StoreService } from '../services/store';
 import type { LoggerService } from '../services/logger';
 import type { ThemeService } from '../services/theme-service';
 import { StoreValidators } from '../shared/validators';
+import { toServiceConfig } from '../../shared/providers';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
