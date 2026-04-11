@@ -90,7 +90,7 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		});
 
 		const workspace = this.resolveWorkspace(input);
-		const filesService = this.resolveFilesService(input);
+		const contentsService = this.resolveContentsService(input);
 
 		reporter.progress(0, 'Starting OCR');
 		OcrTaskHandler.throwIfAborted(signal);
