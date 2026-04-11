@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
+import type { FolderEntry, ResourceInfo } from '../../../../../../shared/types';
 import type { SortDirection, SortKey } from '../types';
 import { useContentSort } from '../hooks/use-content-sort';
 import { useContentFilter } from '../hooks/use-content-filter';
