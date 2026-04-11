@@ -8,6 +8,7 @@ import {
 	DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
+import { getProvider } from '../../../../../../../shared/providers';
 import type { ModelInfo } from '../../../../../../../shared/types';
 
 interface ModelDropdownProps {
