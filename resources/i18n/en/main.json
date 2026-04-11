@@ -190,7 +190,10 @@
 			"screenRecordingDescription": "Manage screen recording permissions",
 			"openScreenRecording": "Open Screen Recording",
 			"menuBar": "Menu Bar",
-			"menuBarDescription": "Show or hide the app icon in the menu bar"
+			"menuBarDescription": "Show or hide the app icon in the menu bar",
+			"appData": "AppData",
+			"appDataDescription": "Folder where the application stores its data",
+			"openAppData": "Open Folder"
 		},
 		"editor": {
 			"font": "Font",
