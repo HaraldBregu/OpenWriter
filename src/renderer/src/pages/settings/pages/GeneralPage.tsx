@@ -148,6 +148,15 @@ const GeneralPage: React.FC = () => {
 			>
 				<Switch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
 			</SettingRow>
+
+			<SettingRow
+				label={t('settings.application.appData')}
+				description={t('settings.application.appDataDescription')}
+			>
+				<Button variant="outline" size="sm" onClick={handleOpenAppDataFolder}>
+					{t('settings.application.openAppData')}
+				</Button>
+			</SettingRow>
 		</div>
 	);
 };
