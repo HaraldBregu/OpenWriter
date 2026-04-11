@@ -206,6 +206,20 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.openLogsFolder)
 		);
 
+		// Open application data folder in system file explorer
+		ipcMain.handle(
+			AppChannels.openAppDataFolder,
+			wrapSimpleHandler(async () => {
+				await shell.openPath(app.getPath('userData'));
+			}, AppChannels.openAppDataFolder)
+		);
+
+		// Get the application data folder path
+		ipcMain.handle(
+			AppChannels.getAppDataFolder,
+			wrapSimpleHandler(() => app.getPath('userData'), AppChannels.getAppDataFolder)
+		);
+
 		// -----------------------------------------------------------------------
 		// Theme management handlers
 		// -----------------------------------------------------------------------
