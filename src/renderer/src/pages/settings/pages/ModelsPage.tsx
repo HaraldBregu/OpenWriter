@@ -5,7 +5,7 @@ import { SectionHeader } from '../components';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '@/components/ui/Collapsible';
 import { Input } from '@/components/ui/Input';
 import { AI_MODELS } from '../../../../../shared/models';
-import type { AppProviderName, ModelInfo } from '../../../../../shared/types';
+import type { ProviderName, ModelInfo } from '../../../../../shared/types';
 
 function formatTokens(value: number | null): string {
 	if (value === null) return 'N/A';
@@ -142,7 +142,7 @@ const ModelsPage: React.FC = () => {
 	}, [search]);
 
 	const groupedByProvider = useMemo(() => {
-		const groups = new Map<AppProviderName, ModelInfo[]>();
+		const groups = new Map<ProviderName, ModelInfo[]>();
 		for (const model of filteredModels) {
 			const list = groups.get(model.provider) ?? [];
 			list.push(model);
