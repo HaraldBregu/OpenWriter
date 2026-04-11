@@ -171,15 +171,14 @@ export interface ModelDescriptor {
 	imageGenerationConfig?: ImageGenerationConfig;
 }
 
-export interface ProviderDescriptor {
+export interface Provider {
 	id: string;
 	name: string;
 }
 
-export interface ServiceProvider {
-	name: string;
-	apikey: string;
-	baseurl: string;
+export interface Service {
+	provider: Provider;
+	apiKey: string;
 }
 
 // ---- Logs -----------------------------------------------------------------
