@@ -76,12 +76,12 @@ function PageContent(): ReactElement {
 						{editing ? (
 							<>
 								<X />
-								{t('common.done')}
+								Done
 							</>
 						) : (
 							<>
 								<Pencil />
-								{t('common.edit')}
+								Edit
 							</>
 						)}
 					</Button>
