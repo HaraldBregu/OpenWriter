@@ -465,6 +465,7 @@ const workspace: WorkspaceApi = {
 		typedInvokeUnwrap(WorkspaceChannels.insertResourcesFiles, extensions),
 	deleteResourcesFileEntry: (id: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.deleteResourcesFileEntry, id),
+	getResourcesImages: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesImages),
 	onResourcesFilesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
