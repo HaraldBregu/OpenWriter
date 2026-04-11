@@ -140,17 +140,18 @@ const ModelsPage: React.FC = () => {
 			(m) =>
 				m.name.toLowerCase().includes(query) ||
 				m.modelId.toLowerCase().includes(query) ||
-				m.provider.toLowerCase().includes(query) ||
+				(getProvider(m.providerId)?.name.toLowerCase().includes(query) ?? false) ||
+				m.providerId.toLowerCase().includes(query) ||
 				m.type.toLowerCase().includes(query)
 		);
 	}, [search]);
 
 	const groupedByProvider = useMemo(() => {
-		const groups = new Map<ProviderName, ModelInfo[]>();
+		const groups = new Map<ProviderId, ModelInfo[]>();
 		for (const model of filteredModels) {
-			const list = groups.get(model.provider) ?? [];
+			const list = groups.get(model.providerId) ?? [];
 			list.push(model);
-			groups.set(model.provider, list);
+			groups.set(model.providerId, list);
 		}
 		return groups;
 	}, [filteredModels]);
