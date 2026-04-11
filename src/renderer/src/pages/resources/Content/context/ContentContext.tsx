@@ -1,21 +1,18 @@
 import { createContext, useCallback, useContext, useState } from 'react';
 import type { Dispatch, ReactElement, ReactNode, SetStateAction } from 'react';
-import type { FolderEntry, ResourceInfo } from '../../../../../../shared/types';
+import type { FolderEntry } from '../../../../../../shared/types';
 import type { SortDirection, SortKey } from '../types';
 import { useContentSort } from '../hooks/use-content-sort';
 import { useContentFilter } from '../hooks/use-content-filter';
 import { useContentSelection } from '../hooks/use-content-selection';
-import { useContentData } from '../hooks/use-content-data';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 
 interface ContentContextValue {
-	resources: ResourceInfo[];
-	filteredResources: ResourceInfo[];
 	folders: FolderEntry[];
 	setFolders: Dispatch<SetStateAction<FolderEntry[]>>;
+	filteredFolders: FolderEntry[];
 	isLoading: boolean;
 	setIsLoading: Dispatch<SetStateAction<boolean>>;
-	error: string | null;
 	uploading: boolean;
 	editing: boolean;
 	searchQuery: string;
@@ -36,8 +33,6 @@ interface ContentContextValue {
 	confirmOpen: boolean;
 	setConfirmOpen: (open: boolean) => void;
 	removing: boolean;
-	previewResource: ResourceInfo | null;
-	setPreviewResource: (resource: ResourceInfo | null) => void;
 }
 
 const ContentContext = createContext<ContentContextValue | null>(null);
@@ -56,48 +51,51 @@ interface ContentProviderProps {
 
 export function ContentProvider({ children }: ContentProviderProps): ReactElement {
 	const section = RESOURCE_SECTIONS.content;
-	const {
-		resources,
-		isLoading: dataLoading,
-		error,
-		uploading,
-		loadContent,
-		setUploading,
-	} = useContentData();
 
 	const [folders, setFolders] = useState<FolderEntry[]>([]);
-	const [bootstrapLoading, setBootstrapLoading] = useState(true);
-	const isLoading = dataLoading || bootstrapLoading;
+	const [isLoading, setIsLoading] = useState(true);
+	const [uploading, setUploading] = useState(false);
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [editing, setEditing] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [removing, setRemoving] = useState(false);
-	const [previewResource, setPreviewResource] = useState<ResourceInfo | null>(null);
 
 	const { sortKey, sortDirection, handleSort } = useContentSort();
-	const filteredResources = useContentFilter({
-		resources,
+	const filteredFolders = useContentFilter({
+		folders,
 		searchQuery,
 		sortKey,
 		sortDirection,
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
-		useContentSelection({ filteredResources });
+		useContentSelection({ filteredFolders });
+
+	const refreshFolders = useCallback(async () => {
+		setIsLoading(true);
+		try {
+			const next = await window.workspace.getResourcesContents();
+			setFolders(next);
+		} catch {
+			setFolders([]);
+		} finally {
+			setIsLoading(false);
+		}
+	}, []);
 
 	const handleUpload = useCallback(async () => {
 		setUploading(true);
 		try {
 			const imported = await window.workspace.insertContents(section.uploadExtensions);
 			if (imported.length > 0) {
-				await loadContent();
+				await refreshFolders();
 			}
 		} catch {
 			// Swallow picker-cancellation and validation errors
 		} finally {
 			setUploading(false);
 		}
-	}, [section, loadContent, setUploading]);
+	}, [section, refreshFolders]);
 
 	const handleToggleEdit = useCallback(() => {
 		setEditing((current) => {
@@ -125,21 +123,19 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		setRemoving(true);
 		try {
 			await Promise.all(ids.map((id) => window.workspace.deleteContent(id)));
-			await loadContent();
+			await refreshFolders();
 			setSelected(new Set());
 		} finally {
 			setRemoving(false);
 		}
-	}, [selected, loadContent, setSelected]);
+	}, [selected, refreshFolders, setSelected]);
 
 	const value: ContentContextValue = {
-		resources,
-		filteredResources,
 		folders,
 		setFolders,
+		filteredFolders,
 		isLoading,
-		setIsLoading: setBootstrapLoading,
-		error,
+		setIsLoading,
 		uploading,
 		editing,
 		searchQuery,
@@ -160,8 +156,6 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		confirmOpen,
 		setConfirmOpen,
 		removing,
-		previewResource,
-		setPreviewResource,
 	};
 
 	return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
