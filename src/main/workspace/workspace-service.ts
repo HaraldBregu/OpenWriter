@@ -211,33 +211,6 @@ export class WorkspaceService implements Disposable {
 		return path.join(this.currentPath, 'resources');
 	}
 
-	// -------------------------------------------------------------------------
-	// Provider access (delegates to StoreService)
-	// -------------------------------------------------------------------------
-
-	/**
-	 * Get all configured providers from the app store.
-	 */
-	getProviders(): Array<ServiceProvider & { id: string }> {
-		return this.store.getProviders();
-	}
-
-	/**
-	 * Get a specific provider by name.
-	 * Returns undefined if not found.
-	 */
-	getProviderByName(name: string): (ServiceProvider & { id: string }) | undefined {
-		return this.store.getProviderByName(name);
-	}
-
-	/**
-	 * Get the first configured provider (default fallback).
-	 * Returns undefined if no providers are configured.
-	 */
-	getFirstProvider(): (ServiceProvider & { id: string }) | undefined {
-		return this.store.getFirstProvider();
-	}
-
 	/**
 	 * Cleanup on shutdown.
 	 */
