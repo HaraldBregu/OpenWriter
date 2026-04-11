@@ -86,11 +86,11 @@ export class Embedder {
 		// Create embeddings model
 		const storeService =
 			this.globalContainer.get<import('../services/store').StoreService>('store');
-		const providerResolver = new ProviderResolver(storeService);
-		const resolved = providerResolver.resolve({ providerId: 'openai' });
+		const serviceResolver = new ServiceResolver(storeService);
+		const service = serviceResolver.resolve({ providerId: 'openai' });
 		const embeddingModel = createEmbeddingModel({
-			providerId: resolved.providerId,
-			apiKey: resolved.apiKey,
+			providerId: service.provider.id,
+			apiKey: service.apiKey,
 		});
 
 		const vectorStore = VectorStore.create(embeddingModel);
