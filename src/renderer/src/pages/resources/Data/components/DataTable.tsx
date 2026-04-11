@@ -90,7 +90,6 @@ export function DataTable(): ReactElement {
 								</button>
 							</TableHead>
 						))}
-						<TableHead className="w-[50px]" />
 					</TableRow>
 				</TableHeader>
 				<TableBody>
@@ -101,7 +100,6 @@ export function DataTable(): ReactElement {
 							editing={editing}
 							isSelected={selected.has(resource.id)}
 							onToggle={handleToggleRow}
-							onPreview={setPreviewResource}
 						/>
 					))}
 				</TableBody>
