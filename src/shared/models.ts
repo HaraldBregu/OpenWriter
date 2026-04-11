@@ -273,7 +273,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Qwen (Alibaba) ================================
 	{
-		provider: 'Qwen',
+		providerId: 'qwen',
 		modelId: 'qwen3.6-plus',
 		name: 'Qwen 3.6 Plus',
 		type: 'text',
@@ -281,7 +281,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 65536,
 	},
 	{
-		provider: 'Qwen',
+		providerId: 'qwen',
 		modelId: 'qwen3.5-flash',
 		name: 'Qwen 3.5 Flash',
 		type: 'text',
