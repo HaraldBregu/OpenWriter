@@ -256,7 +256,6 @@ export const ResourceTable = memo(function ResourceTable({
 									</button>
 								</TableHead>
 							))}
-							<TableHead className="w-[50px]" />
 						</TableRow>
 					</TableHeader>
 					<TableBody>
@@ -267,21 +266,11 @@ export const ResourceTable = memo(function ResourceTable({
 								editing={editing}
 								isSelected={selected.has(resource.id)}
 								onToggle={toggleOne}
-								onPreview={setPreviewResource}
 							/>
 						))}
 					</TableBody>
 				</Table>
 			</div>
-
-			{previewResource && (
-				<Suspense fallback={null}>
-					<ResourcePreviewSheet
-						resource={previewResource}
-						onClose={() => setPreviewResource(null)}
-					/>
-				</Suspense>
-			)}
 		</div>
 	);
 });
