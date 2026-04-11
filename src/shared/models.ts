@@ -255,7 +255,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== DeepSeek ======================================
 	{
-		provider: 'DeepSeek',
+		providerId: 'deepseek',
 		modelId: 'deepseek-chat',
 		name: 'DeepSeek V3',
 		type: 'text',
@@ -263,7 +263,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 8192,
 	},
 	{
-		provider: 'DeepSeek',
+		providerId: 'deepseek',
 		modelId: 'deepseek-reasoner',
 		name: 'DeepSeek R1',
 		type: 'reasoning',
