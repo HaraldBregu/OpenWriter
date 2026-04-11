@@ -16,6 +16,7 @@ import type { ProviderResolver } from '../../shared/provider-resolver';
 import { OCR_MODELS } from '../../../shared/models';
 import type { FilesService } from '../../workspace/files-service';
 import type { LoggerService } from '../../services/logger';
+import { Service } from '../../../shared';
 
 export interface OcrTaskInput {
 	/** URL or file path to the document to process. */
@@ -148,13 +149,13 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 	}
 
 	private async runOcr(
-		provider: { apiKey: string; baseUrl?: string },
+		service: Service,
 		filePath: string,
 		fileBuffer: Buffer,
 		model: string,
 		signal: AbortSignal
 	): Promise<{ text: string; pageCount: number }> {
-		const client = new MistralOcrClient(provider.apiKey, this.logger);
+		const client = new MistralOcrClient(service.apiKey, this.logger);
 		const base64 = fileBuffer.toString('base64');
 		const mimeType = this.detectMimeType(filePath);
 
