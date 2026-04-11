@@ -34,6 +34,7 @@ import {
 	DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
 import { IMAGE_MODELS } from '../../../../../../../shared/models';
+import { getProvider } from '../../../../../../../shared/providers';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
