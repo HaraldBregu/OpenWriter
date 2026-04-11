@@ -217,7 +217,10 @@ export function PdfDialog(): ReactElement | null {
 												<div>
 													<p className="text-xs font-medium">Modello</p>
 													<p className="text-[11px] text-muted-foreground">
-														{selectedModelEntry?.provider ?? 'AI'}
+														{selectedModelEntry
+															? (getProvider(selectedModelEntry.providerId)?.name ??
+																selectedModelEntry.providerId)
+															: 'AI'}
 													</p>
 												</div>
 												<DropdownMenu>
