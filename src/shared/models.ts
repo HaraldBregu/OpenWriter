@@ -113,7 +113,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Anthropic =====================================
 	{
-		provider: 'Anthropic',
+		providerId: 'anthropic',
 		modelId: 'claude-opus-4-6',
 		name: 'Claude Opus 4.6',
 		type: 'multimodal',
@@ -121,7 +121,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 128000,
 	},
 	{
-		provider: 'Anthropic',
+		providerId: 'anthropic',
 		modelId: 'claude-sonnet-4-6',
 		name: 'Claude Sonnet 4.6',
 		type: 'multimodal',
@@ -129,7 +129,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 64000,
 	},
 	{
-		provider: 'Anthropic',
+		providerId: 'anthropic',
 		modelId: 'claude-haiku-4-5-20251001',
 		name: 'Claude Haiku 4.5',
 		type: 'multimodal',

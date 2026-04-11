@@ -46,8 +46,8 @@ export class ProviderResolver {
 		const providerId = options?.providerId?.trim();
 
 		const found = providerId
-			? this.storeService.getProviderByName(providerId)
-			: this.storeService.getFirstProvider();
+			? this.storeService.getServiceByProviderId(providerId)
+			: this.storeService.getFirstService();
 
 		if (!found) {
 			throw new Error('No providers configured. Please add a provider in the Providers page.');
