@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ProviderId, ServiceProvider } from '../../../../../shared/types';
-import { PROVIDER_IDS } from '../../../../../shared/providers';
+import type { ProviderId, Service } from '../../../../../shared/types';
+import { PROVIDER_IDS, getProvider } from '../../../../../shared/providers';
 import { ProviderRow, SectionHeader, SettingRow } from '../components';
 
 const LLM_PROVIDER_IDS: readonly ProviderId[] = PROVIDER_IDS;
@@ -11,35 +11,37 @@ const CLOUD_STORAGE_PROVIDERS = ['aws-s3', 'google-cloud', 'dropbox'] as const;
 
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [providers, setProviders] = useState<Array<ServiceProvider & { id: string }>>([]);
+	const [services, setServices] = useState<Array<Service & { id: string }>>([]);
 
-	const loadProviders = useCallback(async () => {
-		const loaded = await window.app.getProviders();
-		setProviders(loaded);
+	const loadServices = useCallback(async () => {
+		const loaded = await window.app.getServices();
+		setServices(loaded);
 		return loaded;
 	}, []);
 
 	useEffect(() => {
-		loadProviders().catch(() => {
-			setProviders([]);
+		loadServices().catch(() => {
+			setServices([]);
 		});
-	}, [loadProviders]);
+	}, [loadServices]);
 
 	const handleSave = useCallback(
-		async (provider: ProviderId, apiKey: string) => {
-			const added = await window.app.addProvider({
-				name: provider,
-				apikey: apiKey,
-				baseurl: '',
+		async (providerId: ProviderId, apiKey: string) => {
+			const provider = getProvider(providerId);
+			if (!provider) return;
+
+			const added = await window.app.addService({
+				provider,
+				apiKey,
 			});
 
-			const staleEntries = providers.filter(
-				(entry) => entry.name === provider && entry.id !== added.id
+			const staleEntries = services.filter(
+				(entry) => entry.provider.id === providerId && entry.id !== added.id
 			);
-			await Promise.all(staleEntries.map((entry) => window.app.deleteProvider(entry.id)));
-			await loadProviders();
+			await Promise.all(staleEntries.map((entry) => window.app.deleteService(entry.id)));
+			await loadServices();
 		},
-		[loadProviders, providers]
+		[loadServices, services]
 	);
 
 	return (
