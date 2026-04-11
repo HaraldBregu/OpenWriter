@@ -134,7 +134,8 @@ describe('AgentTaskHandler', () => {
 		const handler = new AgentTaskHandler(
 			'researcher',
 			agentsRegistry as never,
-			providerResolver as never,
+			serviceResolver as never,
+			modelResolver as never,
 			windowContextManager as never
 		);
 
@@ -205,7 +206,8 @@ describe('AgentTaskHandler', () => {
 		const handler = new AgentTaskHandler(
 			'researcher',
 			agentsRegistry as never,
-			providerResolver as never,
+			serviceResolver as never,
+			modelResolver as never,
 			windowContextManager as never
 		);
 
