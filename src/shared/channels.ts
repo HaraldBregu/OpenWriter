@@ -186,10 +186,10 @@ export const AppChannels = {
 	// Writing context menu (formerly ContextMenuChannels)
 	showWritingContextMenu: 'context-menu:writing',
 	writingContextMenuAction: 'context-menu:writing-action',
-	// Store / Provider management
-	getProviders: 'store-get-providers',
-	addProvider: 'store-add-provider',
-	deleteProvider: 'store-delete-provider',
+	// Store / Service management
+	getServices: 'app:get-services',
+	addService: 'app:add-service',
+	deleteService: 'app:delete-service',
 	getStartupInfo: 'app:get-startup-info',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
