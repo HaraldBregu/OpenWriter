@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 
 import type {
-	ProviderName,
+	ProviderId,
 	ModelType,
 	ModelInfo,
 	ModelCapabilities,
