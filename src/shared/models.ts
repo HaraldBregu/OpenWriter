@@ -183,7 +183,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Mistral =======================================
 	{
-		provider: 'Mistral',
+		providerId: 'mistral',
 		modelId: 'mistral-large-latest',
 		name: 'Mistral Large',
 		type: 'multimodal',
@@ -191,7 +191,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 8192,
 	},
 	{
-		provider: 'Mistral',
+		providerId: 'mistral',
 		modelId: 'codestral-latest',
 		name: 'Codestral',
 		type: 'code',
@@ -199,7 +199,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 8192,
 	},
 	{
-		provider: 'Mistral',
+		providerId: 'mistral',
 		modelId: 'mistral-ocr-latest',
 		name: 'Mistral OCR',
 		type: 'ocr',
