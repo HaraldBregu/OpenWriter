@@ -24,6 +24,7 @@ import type {
 	FileEntry,
 	FileEntryChangeEvent,
 	FolderEntry,
+	ImageEntry,
 	OutputFile,
 	OutputFileChangeEvent,
 	SaveOutputInput,
