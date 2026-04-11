@@ -33,15 +33,7 @@ function EmptyState({
 export function DataContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.data;
-	const {
-		resources,
-		isLoading,
-		error,
-		uploading,
-		handleUpload,
-		previewResource,
-		setPreviewResource,
-	} = useDataContext();
+	const { resources, isLoading, error, uploading, handleUpload } = useDataContext();
 
 	return (
 		<div className="flex flex-1 min-h-0 flex-col overflow-y-auto p-6">
