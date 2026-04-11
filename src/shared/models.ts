@@ -364,8 +364,8 @@ export const DEFAULT_OCR_MODEL: ModelInfo = _defaultOcrModel;
 // ---------------------------------------------------------------------------
 
 /** Get all models for a specific provider. */
-export function getModelsByProvider(provider: ProviderName): readonly ModelInfo[] {
-	return AI_MODELS.filter((m) => m.provider === provider);
+export function getModelsByProvider(providerId: ProviderId): readonly ModelInfo[] {
+	return AI_MODELS.filter((m) => m.providerId === providerId);
 }
 
 /** Get all models of a specific type. */
