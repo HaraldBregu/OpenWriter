@@ -11,6 +11,7 @@ import type { Workspace } from '../workspace';
 import type { ContentsService } from '../workspace/contents-service';
 import type { FilesService } from '../workspace/files-service';
 import type { FilesWatcherService } from '../workspace/files-watcher';
+import type { ImagesService } from '../workspace/images-service';
 import type { WorkspaceService } from '../workspace/workspace-service';
 import { wrapSimpleHandler, wrapIpcHandler } from './ipc-error-handler';
 import { getWindowService, getWindowContext } from './ipc-helpers';
