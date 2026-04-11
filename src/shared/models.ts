@@ -291,7 +291,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Inception =====================================
 	{
-		provider: 'Inception',
+		providerId: 'inception',
 		modelId: 'mercury-coder-small',
 		name: 'Mercury Coder Small',
 		type: 'code',
