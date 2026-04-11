@@ -313,6 +313,11 @@ export interface WorkspaceApi {
 	/** Subscribe to files watcher error events. */
 	onResourcesFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
+	// Images (resources/images/ sub-folder)
+	// -------------------------------------------------------------------------
+	/** Load all image files from the workspace resources/images/ directory. */
+	getResourcesImages: () => Promise<ImageEntry[]>;
+	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
