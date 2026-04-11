@@ -2,7 +2,7 @@ export { MistralOcrClient } from './mistral-ocr-client';
 export type {
 	OcrDocumentSource,
 	OcrDocumentUrl,
-	OcrFileUpload,
+	OcrDocumentBase64,
 	OcrImageBase64,
 	OcrRequestOptions,
 	OcrPage,
