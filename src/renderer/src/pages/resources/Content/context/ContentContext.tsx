@@ -11,7 +11,10 @@ import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 interface ContentContextValue {
 	resources: ResourceInfo[];
 	filteredResources: ResourceInfo[];
+	folders: FolderEntry[];
+	setFolders: Dispatch<SetStateAction<FolderEntry[]>>;
 	isLoading: boolean;
+	setIsLoading: Dispatch<SetStateAction<boolean>>;
 	error: string | null;
 	uploading: boolean;
 	editing: boolean;
