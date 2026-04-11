@@ -37,6 +37,7 @@ export interface OcrRequestOptions {
 	document: OcrDocumentSource;
 	model?: string;
 	includeImageBase64?: boolean;
+	signal?: AbortSignal;
 }
 
 export interface OcrPage {
@@ -52,6 +53,8 @@ export interface OcrPageImage {
 
 export interface OcrResult {
 	pages: OcrPage[];
+	/** File id returned by the Files API when the source was uploaded. */
+	uploadedFileId?: string;
 }
 
 type OcrDocument =

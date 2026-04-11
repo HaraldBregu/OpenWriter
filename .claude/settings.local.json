@@ -122,7 +122,8 @@
       "WebFetch(domain:developers.openai.com)",
       "WebFetch(domain:docs.perplexity.ai)",
       "WebFetch(domain:www.alibabacloud.com)",
-      "WebFetch(domain:docs.mistral.ai)"
+      "WebFetch(domain:docs.mistral.ai)",
+      "Bash(echo \"---exit:$?---\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
