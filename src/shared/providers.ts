@@ -5,7 +5,7 @@
 // This file must be valid in all three process contexts (main, renderer, preload).
 // ---------------------------------------------------------------------------
 
-import type { ProviderDescriptor, ProviderId, ServiceProvider } from './types';
+import type { Provider, ProviderId, Service } from './types';
 
 // ---------------------------------------------------------------------------
 // Provider IDs
@@ -23,25 +23,38 @@ export const PROVIDER_IDS: readonly ProviderId[] = [
 ];
 
 // ---------------------------------------------------------------------------
+// Provider constants
+// ---------------------------------------------------------------------------
+
+export const OPENAI: Provider = { id: 'openai', name: 'OpenAI' };
+export const ANTHROPIC: Provider = { id: 'anthropic', name: 'Anthropic' };
+export const GOOGLE: Provider = { id: 'google', name: 'Google' };
+export const META: Provider = { id: 'meta', name: 'Meta' };
+export const MISTRAL: Provider = { id: 'mistral', name: 'Mistral' };
+export const XAI: Provider = { id: 'xai', name: 'xAI' };
+export const DEEPSEEK: Provider = { id: 'deepseek', name: 'DeepSeek' };
+export const QWEN: Provider = { id: 'qwen', name: 'Qwen' };
+
+// ---------------------------------------------------------------------------
 // Provider catalogue
 // ---------------------------------------------------------------------------
 
-export const PROVIDER_CATALOGUE: readonly ProviderDescriptor[] = [
-	{ id: 'openai', name: 'OpenAI' },
-	{ id: 'anthropic', name: 'Anthropic' },
-	{ id: 'google', name: 'Google' },
-	{ id: 'meta', name: 'Meta' },
-	{ id: 'mistral', name: 'Mistral' },
-	{ id: 'xai', name: 'xAI' },
-	{ id: 'deepseek', name: 'DeepSeek' },
-	{ id: 'qwen', name: 'Qwen' },
+export const PROVIDER_CATALOGUE: readonly Provider[] = [
+	OPENAI,
+	ANTHROPIC,
+	GOOGLE,
+	META,
+	MISTRAL,
+	XAI,
+	DEEPSEEK,
+	QWEN,
 ];
 
 // ---------------------------------------------------------------------------
 // Derived lookup map (built once at module load)
 // ---------------------------------------------------------------------------
 
-const PROVIDER_MAP: Readonly<Record<string, ProviderDescriptor>> = Object.fromEntries(
+const PROVIDER_MAP: Readonly<Record<string, Provider>> = Object.fromEntries(
 	PROVIDER_CATALOGUE.map((p) => [p.id, p])
 );
 
@@ -50,12 +63,12 @@ const PROVIDER_MAP: Readonly<Record<string, ProviderDescriptor>> = Object.fromEn
 // ---------------------------------------------------------------------------
 
 /** Look up a provider by ID. */
-export function getProvider(providerId: string): ProviderDescriptor | undefined {
+export function getProvider(providerId: string): Provider | undefined {
 	return PROVIDER_MAP[providerId];
 }
 
 /** Get all providers for UI display. */
-export function getProvidersForDisplay(): readonly ProviderDescriptor[] {
+export function getProvidersForDisplay(): readonly Provider[] {
 	return PROVIDER_CATALOGUE;
 }
 
@@ -65,7 +78,7 @@ export function isKnownProvider(providerId: string): providerId is ProviderId {
 }
 
 // ---------------------------------------------------------------------------
-// Service Provider helpers
+// Service helpers
 // ---------------------------------------------------------------------------
 
 function slugify(segment: string): string {
@@ -87,27 +100,16 @@ function hashModelIdentity(value: string): string {
 	return (hash >>> 0).toString(36);
 }
 
-export function createProviderId(
-	provider: Pick<ServiceProvider, 'name' | 'apikey' | 'baseurl'>,
-	index: number
-): string {
-	return `model-${slugify(provider.name)}-${index}-${hashModelIdentity(
-		[provider.name, provider.baseurl, provider.apikey].join('\u0000')
+export function createServiceId(service: Service, index: number): string {
+	return `model-${slugify(service.provider.id)}-${index}-${hashModelIdentity(
+		[service.provider.id, service.apiKey].join('\u0000')
 	)}`;
 }
 
-export function toProviderConfig(
-	provider: ServiceProvider,
-	index: number
-): ServiceProvider & { id: string } {
-	const normalizedName = provider.name.trim();
+export function toServiceConfig(service: Service, index: number): Service & { id: string } {
 	return {
-		id: createProviderId(
-			{ name: normalizedName, apikey: provider.apikey, baseurl: provider.baseurl },
-			index
-		),
-		name: normalizedName,
-		apikey: provider.apikey,
-		baseurl: provider.baseurl,
+		id: createServiceId(service, index),
+		provider: service.provider,
+		apiKey: service.apiKey,
 	};
 }
