@@ -229,7 +229,7 @@ export function PdfDialog(): ReactElement | null {
 														className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
 													>
 														{selectedModelEntry && (
-															<ProviderIcon provider={selectedModelEntry.provider} />
+															<ProviderIcon providerId={selectedModelEntry.providerId} />
 														)}
 														<span className="truncate">
 															{selectedModelEntry?.name ?? 'Seleziona modello'}
