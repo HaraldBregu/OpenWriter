@@ -135,7 +135,10 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	const value: ContentContextValue = {
 		resources,
 		filteredResources,
+		folders,
+		setFolders,
 		isLoading,
+		setIsLoading: setBootstrapLoading,
 		error,
 		uploading,
 		editing,
