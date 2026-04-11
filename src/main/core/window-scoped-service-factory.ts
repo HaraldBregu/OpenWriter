@@ -199,6 +199,17 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
+	// Register images watcher (resources/images/)
+	factory.register({
+		key: 'imagesWatcher',
+		factory: async ({ workspaceService, eventBus, globalContainer }) => {
+			const logger = globalContainer.get<LoggerService>('logger');
+			const service = new ImagesWatcherService(eventBus, logger);
+			await service.initialize(workspaceService.getCurrent());
+			return service;
+		},
+	});
+
 	// Register contents service (resources/content/)
 	factory.register({
 		key: 'contentsService',
