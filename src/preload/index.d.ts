@@ -105,7 +105,7 @@ export type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	DocumentConfig,
-	ServiceProvider,
+	Service,
 	AppLogEntry,
 	AppStartupInfo,
 	ThemeMode,
