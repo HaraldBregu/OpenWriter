@@ -1,9 +1,8 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
 import { ImagesProvider, useImagesContext } from './context/ImagesContext';
-import { loadImagesSections } from './hooks/use-images-sections';
 
 function Bootstrap(): null {
-	const { setSections, setIsLoading } = useImagesContext();
+	const { setImages, setIsLoading } = useImagesContext();
 
 	useEffect(() => {
 		let active = true;
@@ -11,12 +10,12 @@ function Bootstrap(): null {
 		const load = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const sections = await loadImagesSections();
+				const images = await window.workspace.getResourcesImages();
 				if (!active) return;
-				setSections(sections);
+				setImages(images);
 			} catch {
 				if (!active) return;
-				setSections([]);
+				setImages([]);
 			} finally {
 				if (active) {
 					setIsLoading(false);
@@ -29,7 +28,7 @@ function Bootstrap(): null {
 		return () => {
 			active = false;
 		};
-	}, [setSections, setIsLoading]);
+	}, [setImages, setIsLoading]);
 
 	return null;
 }
