@@ -311,7 +311,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Perplexity ====================================
 	{
-		provider: 'Perplexity',
+		providerId: 'perplexity',
 		modelId: 'sonar-pro',
 		name: 'Sonar Pro',
 		type: 'text',
@@ -319,7 +319,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 8192,
 	},
 	{
-		provider: 'Perplexity',
+		providerId: 'perplexity',
 		modelId: 'sonar-reasoning-pro',
 		name: 'Sonar Reasoning Pro',
 		type: 'reasoning',
