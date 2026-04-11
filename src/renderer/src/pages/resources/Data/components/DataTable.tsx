@@ -62,7 +62,6 @@ export function DataTable(): ReactElement {
 		handleSort,
 		handleToggleAll,
 		handleToggleRow,
-		setPreviewResource,
 	} = useDataContext();
 
 	return (
