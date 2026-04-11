@@ -165,7 +165,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 
 	// ========================== Meta ==========================================
 	{
-		provider: 'Meta',
+		providerId: 'meta',
 		modelId: 'llama-4-scout-17b-16e-instruct',
 		name: 'Llama 4 Scout',
 		type: 'multimodal',
@@ -173,7 +173,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 		maxOutputTokens: 16384,
 	},
 	{
-		provider: 'Meta',
+		providerId: 'meta',
 		modelId: 'llama-4-maverick-17b-128e-instruct',
 		name: 'Llama 4 Maverick',
 		type: 'multimodal',
