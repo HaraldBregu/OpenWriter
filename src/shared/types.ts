@@ -350,6 +350,21 @@ export interface FileEntryChangeEvent {
 	timestamp: number;
 }
 
+export interface FolderEntry {
+	/** Unique identifier — the folder's basename within resources/content/ */
+	id: string;
+	/** Display name (basename) */
+	name: string;
+	/** Absolute path on disk */
+	path: string;
+	/** Path relative to the workspace resources/content/ folder */
+	relativePath: string;
+	/** Timestamp (ms) when the folder was first created on disk */
+	createdAt: number;
+	/** Timestamp (ms) of the last modification on disk */
+	modifiedAt: number;
+}
+
 export interface ContentEntryChangeEvent {
 	type: 'added' | 'changed' | 'removed';
 	fileId: string;
