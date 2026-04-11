@@ -1,8 +1,13 @@
 /**
  * MistralOcrClient — wraps the Mistral SDK to perform OCR on documents.
  *
- * Accepts either a document URL or a base64-encoded file and returns
- * the extracted text pages produced by the `mistral-ocr-latest` model.
+ * Accepts a document URL, raw bytes for upload, or an image as a base64 data
+ * URL, and returns the extracted text pages produced by the
+ * `mistral-ocr-latest` model.
+ *
+ * For local PDFs the Mistral OCR API does not accept inline base64 payloads,
+ * so we upload the file via the Files API (purpose: "ocr") and reference it
+ * by id on the OCR request. Images can still be sent inline as data URLs.
  */
 
 import { Mistral } from '@mistralai/mistralai';
@@ -14,13 +19,19 @@ export interface OcrDocumentUrl {
 	documentUrl: string;
 }
 
-export interface OcrBase64 {
-	type: 'base64';
-	data: string;
-	mimeType?: string;
+export interface OcrFileUpload {
+	type: 'file';
+	fileName: string;
+	content: Uint8Array;
 }
 
-export type OcrDocumentSource = OcrDocumentUrl | OcrBase64;
+export interface OcrImageBase64 {
+	type: 'image_base64';
+	data: string;
+	mimeType: string;
+}
+
+export type OcrDocumentSource = OcrDocumentUrl | OcrFileUpload | OcrImageBase64;
 
 export interface OcrRequestOptions {
 	document: OcrDocumentSource;
@@ -43,6 +54,11 @@ export interface OcrResult {
 	pages: OcrPage[];
 }
 
+type OcrDocument =
+	| { type: 'document_url'; documentUrl: string }
+	| { type: 'file'; fileId: string }
+	| { type: 'image_url'; imageUrl: string };
+
 export class MistralOcrClient {
 	private readonly client: Mistral;
 
@@ -51,24 +67,13 @@ export class MistralOcrClient {
 	}
 
 	async process(options: OcrRequestOptions): Promise<OcrResult> {
-		const document =
-			options.document.type === 'document_url'
-				? {
-						type: 'document_url' as const,
-						documentUrl: options.document.documentUrl,
-					}
-				: {
-						type: 'image_url' as const,
-						imageUrl: `data:${options.document.mimeType ?? 'application/pdf'};base64,${options.document.data}`,
-					};
+		const document = await this.buildDocument(options.document);
 
 		const response = await this.client.ocr.process({
 			model: options.model ?? DEFAULT_MODEL,
 			document,
 			includeImageBase64: options.includeImageBase64 ?? false,
 		});
-
-		console.log('response ocr mistral', response);
 
 		const pages: OcrPage[] = response.pages.map((page) => ({
 			index: page.index,
@@ -80,5 +85,25 @@ export class MistralOcrClient {
 		}));
 
 		return { pages };
+	}
+
+	private async buildDocument(source: OcrDocumentSource): Promise<OcrDocument> {
+		if (source.type === 'document_url') {
+			return { type: 'document_url', documentUrl: source.documentUrl };
+		}
+
+		if (source.type === 'image_base64') {
+			return {
+				type: 'image_url',
+				imageUrl: `data:${source.mimeType};base64,${source.data}`,
+			};
+		}
+
+		const uploaded = await this.client.files.upload({
+			file: { fileName: source.fileName, content: source.content },
+			purpose: 'ocr',
+		});
+
+		return { type: 'file', fileId: uploaded.id };
 	}
 }
