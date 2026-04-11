@@ -11,17 +11,6 @@ import type { Provider, ProviderId, Service } from './types';
 // Provider IDs
 // ---------------------------------------------------------------------------
 
-export const PROVIDER_IDS: readonly ProviderId[] = [
-	'openai',
-	'anthropic',
-	'google',
-	'meta',
-	'mistral',
-	'xai',
-	'deepseek',
-	'qwen',
-];
-
 // ---------------------------------------------------------------------------
 // Provider constants
 // ---------------------------------------------------------------------------
@@ -49,6 +38,10 @@ export const PROVIDER_CATALOGUE: readonly Provider[] = [
 	DEEPSEEK,
 	QWEN,
 ];
+
+export const PROVIDER_IDS: readonly ProviderId[] = PROVIDER_CATALOGUE.map(
+	(p) => p.id as ProviderId
+);
 
 // ---------------------------------------------------------------------------
 // Derived lookup map (built once at module load)
