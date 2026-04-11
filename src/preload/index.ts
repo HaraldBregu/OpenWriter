@@ -466,6 +466,10 @@ const workspace: WorkspaceApi = {
 	deleteResourcesFileEntry: (id: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.deleteResourcesFileEntry, id),
 	getResourcesImages: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesImages),
+	insertResourcesImages: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertResourcesImages, extensions),
+	deleteResourcesImageEntry: (id: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.deleteResourcesImageEntry, id),
 	onResourcesFilesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
@@ -480,6 +484,21 @@ const workspace: WorkspaceApi = {
 		callback: (error: { error: string; timestamp: number }) => void
 	): (() => void) => {
 		return typedOn(WorkspaceChannels.resourcesFilesWatcherError, callback);
+	},
+	onResourcesImagesChanged: (
+		callback: (event: {
+			type: 'added' | 'changed' | 'removed';
+			fileId: string;
+			filePath: string;
+			timestamp: number;
+		}) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.resourcesImagesChanged, callback);
+	},
+	onResourcesImagesWatcherError: (
+		callback: (error: { error: string; timestamp: number }) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.resourcesImagesWatcherError, callback);
 	},
 	// -------------------------------------------------------------------------
 	// Filesystem
