@@ -146,7 +146,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		if (def.nodeModels && !def.execute) {
 			nodeModels = {};
 			for (const [nodeName, cfg] of Object.entries(def.nodeModels)) {
-				const nodeProvider = this.providerResolver.resolve({
+				const nodeProvider = this.resolveProviderContext({
 					providerId: cfg.providerId,
 					modelId: cfg.modelId,
 				});
