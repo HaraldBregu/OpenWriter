@@ -217,8 +217,6 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 		removing,
 		indexing,
 		indexingInfo,
-		previewResource,
-		setPreviewResource,
 	};
 
 	return <DataContext.Provider value={value}>{children}</DataContext.Provider>;
