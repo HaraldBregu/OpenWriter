@@ -402,6 +402,11 @@ export interface InvokeChannelMap {
 
 	// ---- Images: resources/images/ (IpcResult-wrapped) ----
 	[WorkspaceChannels.getResourcesImages]: { args: []; result: ImageEntry[] };
+	[WorkspaceChannels.insertResourcesImages]: {
+		args: [extensions?: string[]];
+		result: ImageEntry[];
+	};
+	[WorkspaceChannels.deleteResourcesImageEntry]: { args: [id: string]; result: void };
 }
 
 /**
