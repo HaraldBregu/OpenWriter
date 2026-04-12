@@ -2,9 +2,9 @@ import { useCallback, useEffect, useReducer, useRef, type ReactElement, type Rea
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
-import { useFilesSort } from './hooks/use-sort';
-import { useFilesFilter } from './hooks/use-filter';
-import { useFilesSelection } from './hooks/use-selection';
+import { useSort } from './hooks/use-sort';
+import { useFilter } from './hooks/use-filter';
+import { useSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { Context } from './Context';
 
