@@ -74,8 +74,6 @@ function PageContent(): ReactElement {
 		[filteredImages]
 	);
 
-	const bentoGroups = useMemo(() => chunkArray(galleryImages, 4), [galleryImages]);
-
 	return (
 		<PageContainer>
 			<PageHeader>
