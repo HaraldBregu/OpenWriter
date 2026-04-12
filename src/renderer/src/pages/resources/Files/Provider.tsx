@@ -51,7 +51,10 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 				RESOURCE_SECTIONS.files.uploadExtensions,
 			);
 			if (imported.length > 0) {
-				await refreshFiles();
+				dispatch({
+					type: 'SET_ENTRIES',
+					payload: [...state.entries, ...imported],
+				});
 			}
 		} catch {
 			/* upload failed */
@@ -60,7 +63,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 				dispatch({ type: 'SET_UPLOADING', payload: false });
 			}
 		}
-	}, [refreshFiles]);
+	}, [state.entries]);
 
 	const handleOpenFolder = useCallback(() => {
 		void window.workspace.openFilesFolder();
