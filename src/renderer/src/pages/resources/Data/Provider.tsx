@@ -55,6 +55,7 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 	const [editing, setEditing] = useState(false);
 	const [confirmOpen, setConfirmOpen] = useState(false);
 	const [removing, setRemoving] = useState(false);
+	const [kbDialogOpen, setKbDialogOpen] = useState(false);
 
 	const { sortKey, sortDirection, handleSort } = useDataSort();
 	const filteredResources = useDataFilter({
