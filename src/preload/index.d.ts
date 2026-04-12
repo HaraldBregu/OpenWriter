@@ -311,19 +311,6 @@ export interface WorkspaceApi {
 	/** Subscribe to files watcher error events. */
 	onResourcesFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Images (resources/images/ sub-folder)
-	// -------------------------------------------------------------------------
-	/** Load all image files from the workspace resources/images/ directory. */
-	getResourcesImages: () => Promise<ImageEntry[]>;
-	/** Open a file picker, copy selected images into resources/images/, return the new entries. */
-	insertResourcesImages: (extensions?: string[]) => Promise<ImageEntry[]>;
-	/** Delete an image from resources/images/ by its ID. */
-	deleteResourcesImageEntry: (id: string) => Promise<void>;
-	/** Subscribe to image change events in resources/images/. */
-	onResourcesImagesChanged: (callback: (event: ImageEntryChangeEvent) => void) => () => void;
-	/** Subscribe to images watcher error events. */
-	onResourcesImagesWatcherError: (callback: (error: WatcherError) => void) => () => void;
-	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
 	/**
