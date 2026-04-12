@@ -11,5 +11,6 @@ export type FilesAction =
 	| { type: 'OPEN_FILE_DETAILS'; payload: FileEntry }
 	| { type: 'CLOSE_FILE_DETAILS' }
 	| { type: 'TOGGLE_EDIT_MODE' }
+	| { type: 'REMOVE_ENTRY'; payload: string }
 	| { type: 'DELETE_SUCCESS' }
 	| { type: 'RESET_ENTRIES' };
