@@ -6,7 +6,7 @@ interface UseSelectionParams {
 	filteredEntries: FileEntry[];
 }
 
-interface UseFilesSelectionReturn {
+interface UseSelectionReturn {
 	selected: Set<string>;
 	setSelected: Dispatch<SetStateAction<Set<string>>>;
 	allChecked: boolean;
@@ -17,7 +17,7 @@ interface UseFilesSelectionReturn {
 
 export function useSelection({
 	filteredEntries,
-}: UseSelectionParams): UseFilesSelectionReturn {
+}: UseSelectionParams): UseSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
