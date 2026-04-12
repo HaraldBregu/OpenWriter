@@ -34,74 +34,18 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-function chunkArray<T>(array: T[], size: number): T[][] {
-	const chunks: T[][] = [];
-	for (let i = 0; i < array.length; i += size) {
-		chunks.push(array.slice(i, i + size));
-	}
-	return chunks;
-}
-
-function ImageCard({
-	image,
-	titleClass,
-}: {
-	readonly image: GalleryItem;
-	readonly titleClass?: string;
-}): ReactElement {
+function ImageCard({ image }: { readonly image: GalleryItem }): ReactElement {
 	return (
 		<Card className="group relative overflow-hidden rounded-2xl border-none p-0 after:absolute after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:from-60% after:to-gray-950">
 			<img
 				src={image.src}
 				alt={image.alt}
-				className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+				className="aspect-square h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
 			/>
-			<div className="absolute bottom-0 z-10 flex flex-col gap-1 ps-6 pb-6">
-				<h3 className={`truncate font-semibold text-white ${titleClass ?? 'text-sm'}`}>
-					{image.name}
-				</h3>
+			<div className="absolute bottom-0 z-10 flex flex-col gap-1 ps-4 pb-4">
+				<h3 className="truncate text-xs font-semibold text-white">{image.name}</h3>
 			</div>
 		</Card>
-	);
-}
-
-function BentoGroup({ images }: { readonly images: GalleryItem[] }): ReactElement {
-	if (images.length === 1) {
-		return <ImageCard image={images[0]} titleClass="text-2xl" />;
-	}
-
-	if (images.length === 2) {
-		return (
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<ImageCard image={images[0]} titleClass="text-2xl" />
-				<ImageCard image={images[1]} titleClass="text-xl" />
-			</div>
-		);
-	}
-
-	if (images.length === 3) {
-		return (
-			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-				<ImageCard image={images[0]} titleClass="text-2xl" />
-				<div className="grid grid-rows-2 gap-6">
-					<ImageCard image={images[1]} titleClass="text-xl" />
-					<ImageCard image={images[2]} titleClass="text-lg" />
-				</div>
-			</div>
-		);
-	}
-
-	return (
-		<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-			<ImageCard image={images[0]} titleClass="text-2xl" />
-			<div className="grid grid-rows-2 gap-6">
-				<ImageCard image={images[1]} titleClass="text-xl" />
-				<div className="grid grid-cols-2 gap-6">
-					<ImageCard image={images[2]} titleClass="text-lg" />
-					<ImageCard image={images[3]} titleClass="text-lg" />
-				</div>
-			</div>
-		</div>
 	);
 }
 
