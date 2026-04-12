@@ -3,7 +3,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
-import { useDataContext } from '../context/DataContext';
+import { useContext } from '../hooks/use-context';
 
 export function DataHeader(): ReactElement {
 	const { t } = useTranslation();
