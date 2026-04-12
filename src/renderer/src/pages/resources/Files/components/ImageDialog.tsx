@@ -13,7 +13,7 @@ import { Separator } from '@/components/ui/Separator';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_PREFIX_IMAGE } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
-import { useFilesContext } from '../hooks/use-context';
+import { useContext } from '../hooks/use-context';
 
 function useBlobUrl(path: string, mimeType: string) {
 	const [blobUrl, setBlobUrl] = useState<string | null>(null);
@@ -108,7 +108,7 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
 
 export function ImageDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
-		useFilesContext();
+		useContext();
 
 	const handleDelete = useCallback(async () => {
 		if (!activeFile) return;
