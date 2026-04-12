@@ -56,9 +56,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		} catch {
 			/* upload failed */
 		} finally {
-			if (mountedRef.current) {
-				dispatch({ type: 'SET_UPLOADING', payload: false });
-			}
+			dispatch({ type: 'SET_UPLOADING', payload: false });
 		}
 	}, []);
 
