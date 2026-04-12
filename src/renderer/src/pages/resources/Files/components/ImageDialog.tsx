@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_PREFIX_IMAGE } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
-import { useDelete } from '../hooks/use-file-delete';
+import { useDelete } from '../hooks/use-delete';
 import { DetailRow } from './DetailRow';
 import { PreviewLoading, PreviewError } from './PreviewStates';
 
