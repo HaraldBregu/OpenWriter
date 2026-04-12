@@ -33,7 +33,7 @@ interface UseFilesFilterParams {
 	sortDirection: SortDirection;
 }
 
-export function useFilesFilter({
+export function useFilter({
 	entries,
 	searchQuery,
 	typeFilter,
