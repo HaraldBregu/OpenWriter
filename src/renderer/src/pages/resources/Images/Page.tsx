@@ -27,6 +27,7 @@ function PageContent(): ReactElement {
 	const section = RESOURCE_SECTIONS.images;
 	const {
 		isLoading,
+		uploading,
 		searchQuery,
 		setSearchQuery,
 		editing,
