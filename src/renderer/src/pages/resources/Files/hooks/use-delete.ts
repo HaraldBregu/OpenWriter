@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import type { FileEntry } from '../context/types';
+import { useContext } from './use-context';
 
 interface UseDeleteParams {
 	activeFile: FileEntry | null;
@@ -7,13 +8,16 @@ interface UseDeleteParams {
 }
 
 export function useDelete({ activeFile, onDeleted }: UseDeleteParams) {
+	const { entries, setEntries } = useContext();
+
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
 			await window.workspace.deleteResourcesFileEntry(activeFile.id);
+			setEntries(entries.filter((entry) => entry.id !== activeFile.id));
 			onDeleted();
 		} catch {
 			/* delete failed */
 		}
-	}, [activeFile, onDeleted]);
+	}, [activeFile, entries, setEntries, onDeleted]);
 }
