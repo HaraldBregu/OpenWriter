@@ -480,21 +480,6 @@ const workspace: WorkspaceApi = {
 	): (() => void) => {
 		return typedOn(WorkspaceChannels.resourcesFilesWatcherError, callback);
 	},
-	onResourcesImagesChanged: (
-		callback: (event: {
-			type: 'added' | 'changed' | 'removed';
-			fileId: string;
-			filePath: string;
-			timestamp: number;
-		}) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.resourcesImagesChanged, callback);
-	},
-	onResourcesImagesWatcherError: (
-		callback: (error: { error: string; timestamp: number }) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.resourcesImagesWatcherError, callback);
-	},
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
