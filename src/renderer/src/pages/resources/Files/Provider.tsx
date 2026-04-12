@@ -156,5 +156,5 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		toggleEditMode: () => dispatch({ type: 'TOGGLE_EDIT_MODE' }),
 	};
 
-	return <FilesContext.Provider value={value}>{children}</FilesContext.Provider>;
+	return <Context.Provider value={value}>{children}</Context.Provider>;
 }
