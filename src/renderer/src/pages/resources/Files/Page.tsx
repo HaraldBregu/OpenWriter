@@ -95,6 +95,7 @@ function PageContent(): ReactElement {
 	} = useContext();
 
 	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
+		if (editMode) return;
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			handleOpenFileDetails(file);
