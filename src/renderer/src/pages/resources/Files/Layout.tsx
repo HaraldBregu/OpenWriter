@@ -1,5 +1,6 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
-import { FilesProvider, useFilesContext } from './context/FilesContext';
+import { FilesProvider } from './Provider';
+import { useFilesContext } from './context/FilesContext';
 
 function Bootstrap(): null {
 	const { setEntries, setIsLoading } = useFilesContext();
