@@ -127,10 +127,10 @@ function PageContent(): ReactElement {
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
 					</div>
 				) : (
-					<div className="mx-auto w-full px-4 py-8 sm:py-10 lg:px-8 xl:px-16">
-						<div className="flex flex-col gap-6">
-							{bentoGroups.map((group, index) => (
-								<BentoGroup key={index} images={group} />
+					<div className="w-full p-4 sm:p-6">
+						<div className="grid grid-cols-4 gap-4">
+							{galleryImages.map((image, index) => (
+								<ImageCard key={index} image={image} />
 							))}
 						</div>
 					</div>
