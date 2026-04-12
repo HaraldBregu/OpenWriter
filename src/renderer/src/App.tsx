@@ -337,14 +337,6 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="/resources/images"
-														element={
-															<RouteWrapper>
-																<ImagesPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
 														path="/resources/data"
 														element={
 															<RouteWrapper>
