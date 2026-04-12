@@ -71,6 +71,11 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		[],
 	);
 
+	const removeEntry = useCallback(
+		(id: string) => dispatch({ type: 'REMOVE_ENTRY', payload: id }),
+		[],
+	);
+
 	const setIsLoading = useCallback(
 		(loading: boolean) => dispatch({ type: 'SET_IS_LOADING', payload: loading }),
 		[],
