@@ -1,4 +1,3 @@
-import type { Dispatch, SetStateAction } from 'react';
 import type {
 	FileEntry,
 	ResourcesFileTypeFilter as FileTypeFilter,
@@ -14,8 +13,8 @@ export interface FilesContextValue {
 	filteredEntries: FileEntry[];
 	isLoading: boolean;
 	uploading: boolean;
-	setEntries: Dispatch<SetStateAction<FileEntry[]>>;
-	setIsLoading: Dispatch<SetStateAction<boolean>>;
+	setEntries: (entries: FileEntry[]) => void;
+	setIsLoading: (loading: boolean) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 	viewMode: ViewMode;
