@@ -16,8 +16,8 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	const mountedRef = useRef(true);
 	const [state, dispatch] = useReducer(filesReducer, initialFilesState);
 
-	const { sortKey, sortDirection, handleSort } = useFilesSort();
-	const filteredEntries = useFilesFilter({
+	const { sortKey, sortDirection, handleSort } = useSort();
+	const filteredEntries = useFilter({
 		entries: state.entries,
 		searchQuery: state.searchQuery,
 		typeFilter: state.typeFilter,
