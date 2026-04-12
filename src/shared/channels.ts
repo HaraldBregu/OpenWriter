@@ -393,13 +393,6 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.insertResourcesFiles]: { args: [extensions?: string[]]; result: FileEntry[] };
 	[WorkspaceChannels.deleteResourcesFileEntry]: { args: [id: string]; result: void };
 
-	// ---- Images: resources/images/ (IpcResult-wrapped) ----
-	[WorkspaceChannels.getResourcesImages]: { args: []; result: ImageEntry[] };
-	[WorkspaceChannels.insertResourcesImages]: {
-		args: [extensions?: string[]];
-		result: ImageEntry[];
-	};
-	[WorkspaceChannels.deleteResourcesImageEntry]: { args: [id: string]; result: void };
 }
 
 /**
