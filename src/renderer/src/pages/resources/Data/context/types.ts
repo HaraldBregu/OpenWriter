@@ -1,7 +1,7 @@
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { IndexingInfo, ResourceInfo } from '../../../../../../shared/types';
 import type { SortDirection, SortKey } from '../types';
 
-export type { ResourceInfo, SortDirection, SortKey };
+export type { IndexingInfo, ResourceInfo, SortDirection, SortKey };
 
 export interface DataContextValue {
 	resources: ResourceInfo[];
@@ -34,10 +34,5 @@ export interface DataContextValue {
 	setConfirmOpen: (open: boolean) => void;
 	removing: boolean;
 	indexing: boolean;
-	indexingInfo: {
-		lastIndexedAt: number;
-		indexedCount: number;
-		totalChunks: number;
-		failedCount: number;
-	} | null;
+	indexingInfo: IndexingInfo | null;
 }
