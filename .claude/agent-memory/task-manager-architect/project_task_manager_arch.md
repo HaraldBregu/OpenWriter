@@ -17,21 +17,26 @@ The TaskManager is a priority-queue-based concurrent task execution system bridg
 
 **Handlers (src/main/task/handlers/):**
 - `agent-task-handler.ts` — bridges TaskManager to AI Agents subsystem, one instance per agent definition
-- `rag-task-handler.ts` — RAG indexing adapter
-- `vision-task-handler.ts` — image generation adapter
+- `rag-task-handler.ts` — RAG indexing adapter; receives server-stamped windowId, Embedder resolves its own config
+- `ocr-task-handler.ts` — receives windowId, resolves API key via ServiceResolver server-side in constructor
+- `nb-task-handler.ts` — knowledge base builder; self-contained, receives apiKey directly in input (NbTaskInput)
 
-**IPC layer:** `src/main/ipc/task-manager-ipc.ts` — Electron IPC bridge exposing submit/cancel/list/updatePriority/getResult/queueStatus
+**IPC layer:** `src/main/ipc/task-manager-ipc.ts` — Electron IPC bridge exposing submit/cancel/list/updatePriority/getResult/queueStatus. Stamps `windowId` and `workspacePath` into both metadata and input objects server-side.
 
 **Renderer side:**
 - `src/renderer/src/services/task-store.ts` — module-level tracked task state store
 - `src/renderer/src/services/task-event-bus.ts` — per-task snapshot subscription system
-- `src/renderer/src/hooks/use-task.ts` — task lifecycle hook using taskEventBus
-- `src/renderer/src/hooks/use-task-submit.ts` — task lifecycle hook using task-store
-- `src/renderer/src/hooks/use-task-listener.ts` — listens for externally-started tasks by type
+- `src/renderer/src/hooks/use-task.ts` — task lifecycle hook using taskEventBus (NO progress percent)
+- `src/renderer/src/hooks/use-task-submit.ts` — task lifecycle hook using task-store (HAS progress percent/message)
+- `src/renderer/src/hooks/use-task-listener.ts` — listens for externally-started tasks by type (no submit, no progress)
 - `src/renderer/src/hooks/use-debug-tasks.ts` — debug panel hook
 
-**Bootstrap:** `src/main/bootstrap.ts` — registers agent handlers dynamically from AgentRegistry, plus VisionTaskHandler and RagIndexingTaskHandler. maxConcurrency = 10.
+**Bootstrap:** `src/main/bootstrap.ts` — registers agent handlers dynamically from AgentRegistry, plus RagIndexingTaskHandler and OcrTaskHandler. maxConcurrency = 10.
 
-**Why:** The two renderer hooks (useTask vs useTaskSubmit) exist because useTask avoids Redux re-render cascades by using taskEventBus directly, while useTaskSubmit uses the centralized task-store.
+**Data page:** `src/renderer/src/pages/resources/data/Provider.tsx` uses `useTaskListener('index-resources')` for RAG indexing. Submits via raw `window.task.submit()`.
 
-**How to apply:** When adding new task types, create a handler implementing TaskHandler, register it in bootstrap.ts.
+**Service access:** `window.app.getServices()` returns `(Service & { id: string })[]` on renderer side. Server-side: `ServiceResolver.resolve()` in `src/main/shared/service-resolver.ts`.
+
+**Why two renderer hooks:** useTask avoids Redux re-render cascades by using taskEventBus directly, while useTaskSubmit uses the centralized task-store with full progress tracking.
+
+**How to apply:** When adding new task types, create a handler implementing TaskHandler, register in bootstrap.ts, choose renderer hook based on whether you need progress percent.
