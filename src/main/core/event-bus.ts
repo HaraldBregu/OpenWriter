@@ -40,13 +40,6 @@ export interface AppEvents {
 		timestamp: number;
 	};
 	'files:watcher-error': { error: string; timestamp: number };
-	'images:changed': {
-		type: 'added' | 'changed' | 'removed';
-		fileId: string;
-		filePath: string;
-		timestamp: number;
-	};
-	'images:watcher-error': { error: string; timestamp: number };
 	'theme:changed': { theme: ThemeMode };
 	// Task lifecycle events — emitted by TaskExecutor for main-process observers (e.g. TaskReactionBus)
 	'task:submitted': {
