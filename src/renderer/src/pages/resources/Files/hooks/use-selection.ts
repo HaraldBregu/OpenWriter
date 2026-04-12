@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
 import type { FileEntry } from '../../../../../../shared/types';
 
-interface UseFilesSelectionParams {
+interface UseSelectionParams {
 	filteredEntries: FileEntry[];
 }
 
@@ -17,7 +17,7 @@ interface UseFilesSelectionReturn {
 
 export function useSelection({
 	filteredEntries,
-}: UseFilesSelectionParams): UseFilesSelectionReturn {
+}: UseSelectionParams): UseFilesSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));
