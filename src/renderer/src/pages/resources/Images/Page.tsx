@@ -20,15 +20,21 @@ import {
 import { cn } from '@/lib/utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 
-interface GalleryImage {
-	src: string;
-	alt: string;
-}
+type ColumnCount = 2 | 3 | 4 | 5;
 
-interface GallerySection {
-	type?: string;
-	images: GalleryImage[];
-}
+const COLUMN_OPTIONS: { value: ColumnCount; icon: typeof Columns2; label: string }[] = [
+	{ value: 2, icon: Columns2, label: '2 columns' },
+	{ value: 3, icon: Columns3, label: '3 columns' },
+	{ value: 4, icon: Columns4, label: '4 columns' },
+	{ value: 5, icon: Grid3x3, label: '5 columns' },
+];
+
+const COLUMN_CLASS: Record<ColumnCount, string> = {
+	2: 'grid-cols-2',
+	3: 'grid-cols-3',
+	4: 'grid-cols-4',
+	5: 'grid-cols-5',
+};
 import { useImagesContext } from './context/ImagesContext';
 import Layout from './Layout';
 
