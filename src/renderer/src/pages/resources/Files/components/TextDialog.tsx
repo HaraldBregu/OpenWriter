@@ -17,7 +17,7 @@ import {
 	MIME_TYPE_PDF,
 } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
-import { useFilesContext } from '../context/FilesContext';
+import { useFilesContext } from '../hooks/use-files-context';
 
 function PreviewLoading() {
 	return (
