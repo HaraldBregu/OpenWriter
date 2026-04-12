@@ -23,6 +23,8 @@ export function filesReducer(state: FilesReducerState, action: FilesAction): Fil
 			return { ...state, activeFile: null, fileDetailsOpen: false };
 		case 'TOGGLE_EDIT_MODE':
 			return { ...state, editMode: !state.editMode };
+		case 'ADD_ENTRIES':
+			return { ...state, entries: [...state.entries, ...action.payload] };
 		case 'REMOVE_ENTRY':
 			return { ...state, entries: state.entries.filter((e) => e.id !== action.payload) };
 		case 'DELETE_SUCCESS':
