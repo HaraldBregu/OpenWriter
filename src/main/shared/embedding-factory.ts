@@ -1,4 +1,4 @@
- outside the @da/**
+/**
  * EmbeddingFactory — creates an OpenAIEmbeddings instance configured
  * for the resolved provider.
  *
