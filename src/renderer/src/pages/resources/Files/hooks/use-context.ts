@@ -1,11 +1,11 @@
-import { useContext } from 'react';
-import { Context } from '../context/Context';
+import { useContext as useReactContext } from 'react';
+import { Context } from '../Context';
 import type { FilesContextValue } from '../context/types';
 
-export function useFilesContext(): FilesContextValue {
-	const context = useContext(Context);
+export function useContext(): FilesContextValue {
+	const context = useReactContext(Context);
 	if (!context) {
-		throw new Error('useFilesContext must be used within a FilesProvider');
+		throw new Error('useContext must be used within a FilesProvider');
 	}
 	return context;
 }

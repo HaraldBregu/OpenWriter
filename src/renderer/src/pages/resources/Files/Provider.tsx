@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useReducer, useRef, type ReactElement, type ReactNode } from 'react';
-import { Context } from './context/Context';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
@@ -7,6 +6,7 @@ import { useFilesSort } from './hooks/use-sort';
 import { useFilesFilter } from './hooks/use-filter';
 import { useFilesSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
+import { Context } from './Context';
 
 interface FilesProviderProps {
 	readonly children: ReactNode;
