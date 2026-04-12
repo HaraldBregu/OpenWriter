@@ -6,7 +6,7 @@ import { useContext } from '../hooks/use-context';
 
 export function DataIndexingBar(): ReactElement | null {
 	const { t } = useTranslation();
-	const { indexing, indexingInfo, handleOpenDataFolder } = useDataContext();
+	const { indexing, indexingInfo, handleOpenDataFolder } = useContext();
 
 	if (indexing) {
 		return (
