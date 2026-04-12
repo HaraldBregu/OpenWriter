@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
-import { Calendar, File, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import type { ReactElement } from 'react';
+import { Calendar, File, FolderOpen, HardDrive, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	Dialog,
@@ -18,25 +18,9 @@ import {
 } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
-
-function PreviewLoading() {
-	return (
-		<div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-			<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-			Loading preview...
-		</div>
-	);
-}
-
-function PreviewError({ message }: { message: string }) {
-	return (
-		<div className="flex h-full items-center justify-center">
-			<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-				{message}
-			</div>
-		</div>
-	);
-}
+import { useFileDelete } from '../hooks/use-file-delete';
+import { DetailRow } from './DetailRow';
+import { PreviewLoading, PreviewError } from './PreviewStates';
 
 function JsonPreview({ content }: { content: string }) {
 	const formatted = useMemo(() => {
@@ -51,18 +35,6 @@ function JsonPreview({ content }: { content: string }) {
 		<pre className="whitespace-pre-wrap break-words rounded-md bg-muted/30 p-4 font-mono text-sm text-foreground">
 			{formatted}
 		</pre>
-	);
-}
-
-function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
-	return (
-		<div className="flex items-start gap-3">
-			<span className="mt-0.5 text-muted-foreground">{icon}</span>
-			<div className="min-w-0 flex-1">
-				<p className="text-xs text-muted-foreground">{label}</p>
-				<p className="truncate text-sm">{value}</p>
-			</div>
-		</div>
 	);
 }
 
@@ -109,15 +81,10 @@ export function TextDialog(): ReactElement | null {
 		};
 	}, [activeFile, shouldReadContent]);
 
-	const handleDeleteSingle = useCallback(async () => {
-		if (!activeFile) return;
-		try {
-			await window.workspace.deleteResourcesFileEntry(activeFile.id);
-			handleFileDetailsOpenChange(false);
-		} catch (err) {
-			console.error('Failed to delete file:', err);
-		}
-	}, [activeFile, handleFileDetailsOpenChange]);
+	const handleDeleteSingle = useFileDelete({
+		activeFile,
+		onDeleted: () => handleFileDetailsOpenChange(false),
+	});
 
 	if (
 		!activeFile ||
