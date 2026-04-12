@@ -27,6 +27,10 @@ export function filesReducer(state: FilesReducerState, action: FilesAction): Fil
 			return { ...state, entries: [...state.entries, ...action.payload] };
 		case 'REMOVE_ENTRY':
 			return { ...state, entries: state.entries.filter((e) => e.id !== action.payload) };
+		case 'REMOVE_ENTRIES': {
+			const ids = new Set(action.payload);
+			return { ...state, entries: state.entries.filter((e) => !ids.has(e.id)) };
+		}
 		case 'DELETE_SUCCESS':
 			return { ...state, confirmOpen: false };
 		case 'RESET_ENTRIES':
