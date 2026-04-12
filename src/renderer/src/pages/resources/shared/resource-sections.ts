@@ -16,7 +16,7 @@ export interface ResourceSectionConfig {
 	readonly supportsIndexing: boolean;
 }
 
-export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['files', 'content', 'images', 'data'];
+export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['files', 'content', 'data'];
 
 export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig> = {
 	files: {
