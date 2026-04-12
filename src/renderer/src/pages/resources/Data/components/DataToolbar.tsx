@@ -16,7 +16,7 @@ import { useContext } from '../hooks/use-context';
 export function DataToolbar(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.data;
-	const { searchQuery, setSearchQuery, typeFilter, setTypeFilter, mimeTypes } = useDataContext();
+	const { searchQuery, setSearchQuery, typeFilter, setTypeFilter, mimeTypes } = useContext();
 
 	return (
 		<div className="flex items-center gap-3">
