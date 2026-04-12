@@ -312,14 +312,6 @@ function LayoutInner({ children }: LayoutProps) {
 															className="h-9 px-3"
 															isActive={location.pathname === `/content/${w.id}`}
 														>
-															{w.emoji && (
-																<span
-																	aria-hidden="true"
-																	className="shrink-0 text-base leading-none"
-																>
-																	{w.emoji}
-																</span>
-															)}
 															<span className="flex-1 truncate">
 																{w.title || t('sidebar.untitledWriting')}
 															</span>
