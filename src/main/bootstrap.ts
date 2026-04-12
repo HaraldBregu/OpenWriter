@@ -138,6 +138,7 @@ export function bootstrapServices(): BootstrapResult {
 	taskHandlerRegistry.register(
 		new OcrTaskHandler(windowContextManager, serviceResolver, modelResolver, logger)
 	);
+	taskHandlerRegistry.register(new NbTaskHandler());
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
