@@ -20,7 +20,7 @@ import {
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
-import { useFilesContext } from '../hooks/use-context';
+import { useContext } from '../hooks/use-context';
 
 const PROVIDER_COLORS: Record<string, string> = {
 	openai: 'bg-green-600',
@@ -95,7 +95,7 @@ function getFileNameWithoutExtension(name: string): string {
 }
 
 export function PdfDialog(): ReactElement | null {
-	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useFilesContext();
+	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useContext();
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 
 	useEffect(() => {
