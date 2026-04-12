@@ -25,7 +25,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		sortDirection,
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
-		useFilesSelection({ filteredEntries });
+		useSelection({ filteredEntries });
 
 	const refreshFiles = useCallback(async () => {
 		if (!mountedRef.current) return;
