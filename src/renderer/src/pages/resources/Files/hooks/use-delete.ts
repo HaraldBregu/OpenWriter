@@ -8,16 +8,16 @@ interface UseDeleteParams {
 }
 
 export function useDelete({ activeFile, onDeleted }: UseDeleteParams) {
-	const { entries, setEntries } = useContext();
+	const { removeEntry } = useContext();
 
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
 			await window.workspace.deleteResourcesFileEntry(activeFile.id);
-			setEntries(entries.filter((entry) => entry.id !== activeFile.id));
+			removeEntry(activeFile.id);
 			onDeleted();
 		} catch {
 			/* delete failed */
 		}
-	}, [activeFile, entries, setEntries, onDeleted]);
+	}, [activeFile, removeEntry, onDeleted]);
 }
