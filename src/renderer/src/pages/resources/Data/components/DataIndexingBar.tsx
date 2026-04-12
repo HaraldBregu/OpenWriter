@@ -2,7 +2,7 @@ import { FolderOpen, Loader2 } from 'lucide-react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/Button';
-import { useDataContext } from '../context/DataContext';
+import { useContext } from '../hooks/use-context';
 
 export function DataIndexingBar(): ReactElement | null {
 	const { t } = useTranslation();
