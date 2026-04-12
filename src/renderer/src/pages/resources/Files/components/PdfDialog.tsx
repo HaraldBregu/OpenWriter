@@ -75,24 +75,6 @@ function SectionHeader({
 	);
 }
 
-const BYTES_PER_KB = 1024;
-const BYTES_PER_MB = 1024 * 1024;
-
-function formatFileSize(bytes: number): string {
-	if (bytes < BYTES_PER_KB) return `${bytes} B`;
-	if (bytes < BYTES_PER_MB) return `${(bytes / BYTES_PER_KB).toFixed(1)} KB`;
-	return `${(bytes / BYTES_PER_MB).toFixed(1)} MB`;
-}
-
-function getFileExtension(name: string): string {
-	const dotIndex = name.lastIndexOf('.');
-	return dotIndex >= 0 ? name.slice(dotIndex + 1).toUpperCase() : '';
-}
-
-function getFileNameWithoutExtension(name: string): string {
-	const dotIndex = name.lastIndexOf('.');
-	return dotIndex >= 0 ? name.slice(0, dotIndex) : name;
-}
 
 export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useContext();
