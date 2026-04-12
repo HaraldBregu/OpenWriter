@@ -27,15 +27,7 @@ export const SEARCH_ACTIONS: SearchActionDefinition[] = [
 		icon: RESOURCE_SECTIONS.content.icon,
 		meta: 'Route',
 	},
-	{
-		id: 'resources-images',
-		title: 'Open Images',
-		description: 'Browse imported images in the resources section.',
-		href: RESOURCE_SECTIONS.images.route,
-		icon: RESOURCE_SECTIONS.images.icon,
-		meta: 'Route',
-	},
-	{
+{
 		id: 'resources-files',
 		title: 'Open Files',
 		description: 'Browse imported files and binary assets.',

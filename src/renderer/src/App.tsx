@@ -56,9 +56,9 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
 const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
-const ContentPage = lazy(() => import('./pages/resources/Content/Page'));
-const FilesPage = lazy(() => import('./pages/resources/Files/Page'));
-const DataPage = lazy(() => import('./pages/resources/Data/Page'));
+const ContentPage = lazy(() => import('./pages/resources/content/Page'));
+const FilesPage = lazy(() => import('./pages/resources/files/Page'));
+const DataPage = lazy(() => import('./pages/resources/data/Page'));
 const SearchPage = lazy(() => import('./pages/search/Page'));
 
 // Lazy-loaded settings pages
