@@ -173,6 +173,7 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		isLoading: state.isLoading,
 		uploading: state.uploading,
 		setEntries,
+		removeEntry,
 		setIsLoading,
 		searchQuery: state.searchQuery,
 		setSearchQuery,
