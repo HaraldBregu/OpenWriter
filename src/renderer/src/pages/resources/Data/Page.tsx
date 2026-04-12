@@ -24,6 +24,8 @@ function PageContent(): ReactElement {
 		handleDelete,
 		handleOpenResourcesFolder,
 		handleUpload,
+		kbDialogOpen,
+		setKbDialogOpen,
 	} = useContext();
 
 	return (
