@@ -68,11 +68,13 @@ function PageContent(): ReactElement {
 			<DataIndexingBar />
 			<PageBody>
 				<div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
-					<KnowledgeBaseCard onCreateClick={handleUpload} disabled={uploading} />
-					<KnowledgeBaseCard onCreateClick={handleUpload} disabled={uploading} />
-					<KnowledgeBaseCard onCreateClick={handleUpload} disabled={uploading} />
+					<KnowledgeBaseCard
+						onCreateClick={() => setKbDialogOpen(true)}
+						disabled={uploading}
+					/>
 				</div>
 			</PageBody>
+			<KnowledgeBaseDialog open={kbDialogOpen} onOpenChange={setKbDialogOpen} />
 			<DeleteConfirmDialog />
 		</PageContainer>
 	);
