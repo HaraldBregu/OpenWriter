@@ -18,8 +18,17 @@ import {
 	InputGroupText,
 } from '@/components/ui/InputGroup';
 import { cn } from '@/lib/utils';
-import type { GallerySection } from '@/components/app/Gallery';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
+
+interface GalleryImage {
+	src: string;
+	alt: string;
+}
+
+interface GallerySection {
+	type?: string;
+	images: GalleryImage[];
+}
 import { useImagesContext } from './context/ImagesContext';
 import Layout from './Layout';
 
