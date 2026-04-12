@@ -1,16 +1,6 @@
-import { useMemo, useState, type ReactElement } from 'react';
+import { useMemo, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Columns2,
-	Columns3,
-	Columns4,
-	FolderOpen,
-	Grid3x3,
-	Pencil,
-	Search,
-	Upload,
-	X,
-} from 'lucide-react';
+import { FolderOpen, Pencil, Search, Upload, X } from 'lucide-react';
 import {
 	PageBody,
 	PageContainer,
@@ -28,31 +18,91 @@ import {
 	InputGroupInput,
 	InputGroupText,
 } from '@/components/ui/InputGroup';
-import { cn } from '@/lib/utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useImagesContext } from './context/ImagesContext';
 import Layout from './Layout';
 
-type ColumnCount = 2 | 3 | 4 | 5;
-
-const COLUMN_OPTIONS: { value: ColumnCount; icon: typeof Columns2; label: string }[] = [
-	{ value: 2, icon: Columns2, label: '2 columns' },
-	{ value: 3, icon: Columns3, label: '3 columns' },
-	{ value: 4, icon: Columns4, label: '4 columns' },
-	{ value: 5, icon: Grid3x3, label: '5 columns' },
-];
-
-const COLUMN_CLASS: Record<ColumnCount, string> = {
-	2: 'grid-cols-2',
-	3: 'grid-cols-3',
-	4: 'grid-cols-4',
-	5: 'grid-cols-5',
-};
+interface GalleryItem {
+	src: string;
+	alt: string;
+	name: string;
+}
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
 	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
 	return `local-resource://localhost${urlPath}`;
+}
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+	const chunks: T[][] = [];
+	for (let i = 0; i < array.length; i += size) {
+		chunks.push(array.slice(i, i + size));
+	}
+	return chunks;
+}
+
+function ImageCard({
+	image,
+	titleClass,
+}: {
+	readonly image: GalleryItem;
+	readonly titleClass?: string;
+}): ReactElement {
+	return (
+		<Card className="group relative overflow-hidden rounded-2xl border-none p-0 after:absolute after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:from-60% after:to-gray-950">
+			<img
+				src={image.src}
+				alt={image.alt}
+				className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+			/>
+			<div className="absolute bottom-0 z-10 flex flex-col gap-1 ps-6 pb-6">
+				<h3 className={`truncate font-semibold text-white ${titleClass ?? 'text-sm'}`}>
+					{image.name}
+				</h3>
+			</div>
+		</Card>
+	);
+}
+
+function BentoGroup({ images }: { readonly images: GalleryItem[] }): ReactElement {
+	if (images.length === 1) {
+		return <ImageCard image={images[0]} titleClass="text-2xl" />;
+	}
+
+	if (images.length === 2) {
+		return (
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<ImageCard image={images[0]} titleClass="text-2xl" />
+				<ImageCard image={images[1]} titleClass="text-xl" />
+			</div>
+		);
+	}
+
+	if (images.length === 3) {
+		return (
+			<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<ImageCard image={images[0]} titleClass="text-2xl" />
+				<div className="grid grid-rows-2 gap-6">
+					<ImageCard image={images[1]} titleClass="text-xl" />
+					<ImageCard image={images[2]} titleClass="text-lg" />
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+			<ImageCard image={images[0]} titleClass="text-2xl" />
+			<div className="grid grid-rows-2 gap-6">
+				<ImageCard image={images[1]} titleClass="text-xl" />
+				<div className="grid grid-cols-2 gap-6">
+					<ImageCard image={images[2]} titleClass="text-lg" />
+					<ImageCard image={images[3]} titleClass="text-lg" />
+				</div>
+			</div>
+		</div>
+	);
 }
 
 function PageContent(): ReactElement {
@@ -70,8 +120,6 @@ function PageContent(): ReactElement {
 		handleUpload,
 	} = useImagesContext();
 
-	const [columns, setColumns] = useState<ColumnCount>(3);
-
 	const galleryImages = useMemo(
 		() =>
 			filteredImages.map((image) => ({
@@ -81,6 +129,8 @@ function PageContent(): ReactElement {
 			})),
 		[filteredImages]
 	);
+
+	const bentoGroups = useMemo(() => chunkArray(galleryImages, 4), [galleryImages]);
 
 	return (
 		<PageContainer>
@@ -128,20 +178,6 @@ function PageContent(): ReactElement {
 						/>
 					</InputGroup>
 				</ButtonGroup>
-				<ButtonGroup className="shrink-0">
-					{COLUMN_OPTIONS.map(({ value, icon: Icon, label }) => (
-						<Button
-							key={value}
-							variant={columns === value ? 'outline-selected' : 'outline'}
-							size="icon"
-							onClick={() => setColumns(value)}
-							aria-label={label}
-							aria-pressed={columns === value}
-						>
-							<Icon className="h-4 w-4" />
-						</Button>
-					))}
-				</ButtonGroup>
 			</PageSubHeader>
 			<PageBody>
 				{isLoading ? (
@@ -149,24 +185,10 @@ function PageContent(): ReactElement {
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
 					</div>
 				) : (
-					<div className="w-full p-4 sm:p-6 lg:p-8">
-						<div className={cn('grid gap-6', COLUMN_CLASS[columns])}>
-							{galleryImages.map((image, index) => (
-								<Card
-									key={index}
-									className="group relative overflow-hidden rounded-2xl border-none p-0 after:absolute after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:from-60% after:to-gray-950"
-								>
-									<img
-										src={image.src}
-										alt={image.alt}
-										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-									/>
-									<div className="absolute bottom-0 z-10 flex flex-col gap-1 ps-4 pb-4">
-										<h3 className="truncate text-sm font-semibold text-white">
-											{image.name}
-										</h3>
-									</div>
-								</Card>
+					<div className="mx-auto w-full px-4 py-8 sm:py-10 lg:px-8 xl:px-16">
+						<div className="flex flex-col gap-6">
+							{bentoGroups.map((group, index) => (
+								<BentoGroup key={index} images={group} />
 							))}
 						</div>
 					</div>
