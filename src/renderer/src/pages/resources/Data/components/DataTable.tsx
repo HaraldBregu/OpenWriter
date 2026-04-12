@@ -12,7 +12,7 @@ import {
 import type { ResourceInfo } from '../../../../../../shared/types';
 import type { SortKey } from '../types';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
-import { useDataContext } from '../context/DataContext';
+import { useContext } from '../hooks/use-context';
 import { SortIcon } from './SortIcon';
 
 const SORT_COLUMNS: { key: SortKey; labelKey: string; headClassName?: string }[] = [
