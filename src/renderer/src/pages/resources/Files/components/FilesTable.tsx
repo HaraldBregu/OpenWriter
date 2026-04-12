@@ -16,7 +16,7 @@ import {
 	MIME_TYPE_PDF,
 } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
-import { useFilesContext } from '../hooks/use-context';
+import { useContext } from '../hooks/use-context';
 import { SortIcon } from './SortIcon';
 
 function getMimeTypeLabel(mimeType: string): string {
@@ -63,7 +63,7 @@ export function FilesTable(): ReactElement {
 		handleToggleAll,
 		handleToggleRow,
 		handleOpenFileDetails,
-	} = useFilesContext();
+	} = useContext();
 
 	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
 		if (event.key === 'Enter' || event.key === ' ') {
