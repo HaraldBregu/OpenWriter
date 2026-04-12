@@ -1,9 +1,9 @@
 import type { ReactElement, ReactNode } from 'react';
 import { FilesContext } from './context/FilesContext';
 import type { FilesContextValue } from './context/types';
-import { useFilesState } from './context/state';
-import { useFilesActions } from './context/actions';
-import { useFilesEffects } from './context/effects';
+import { useFilesState } from './hooks/use-files-state';
+import { useFilesActions } from './hooks/use-files-actions';
+import { useFilesEffects } from './hooks/use-files-effects';
 
 interface FilesProviderProps {
 	readonly children: ReactNode;
