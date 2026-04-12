@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useReducer, useRef, type ReactElement, type ReactNode } from 'react';
-import { FilesContext } from './context/FilesContext';
+import { Context } from './context/Context';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
