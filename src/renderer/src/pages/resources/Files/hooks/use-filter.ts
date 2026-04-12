@@ -25,7 +25,7 @@ function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
 	}
 }
 
-interface UseFilesFilterParams {
+interface UseFilterParams {
 	entries: FileEntry[];
 	searchQuery: string;
 	typeFilter: FileTypeFilter;
@@ -39,7 +39,7 @@ export function useFilter({
 	typeFilter,
 	sortKey,
 	sortDirection,
-}: UseFilesFilterParams): FileEntry[] {
+}: UseFilterParams): FileEntry[] {
 	return useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
 		const result = entries.filter((f) => {
