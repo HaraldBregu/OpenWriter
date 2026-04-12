@@ -116,6 +116,20 @@ function PageContent(): ReactElement {
 						/>
 					</InputGroup>
 				</ButtonGroup>
+				<ButtonGroup className="shrink-0">
+					{COLUMN_OPTIONS.map(({ value, icon: Icon, label }) => (
+						<Button
+							key={value}
+							variant={columns === value ? 'outline-selected' : 'outline'}
+							size="icon"
+							onClick={() => setColumns(value)}
+							aria-label={label}
+							aria-pressed={columns === value}
+						>
+							<Icon className="h-4 w-4" />
+						</Button>
+					))}
+				</ButtonGroup>
 			</PageSubHeader>
 			<PageBody>
 				{isLoading ? (
