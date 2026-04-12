@@ -269,11 +269,11 @@ function PageContent(): ReactElement {
 								filteredEntries.map((file) => (
 									<TableRow
 										key={file.id}
-										className="cursor-pointer"
+										className={editMode ? undefined : 'cursor-pointer'}
 										data-state={selected.has(file.id) ? 'selected' : undefined}
-										onClick={() => handleOpenFileDetails(file)}
-										onKeyDown={(event) => handleRowKeyDown(event, file)}
-										tabIndex={0}
+										onClick={editMode ? undefined : () => handleOpenFileDetails(file)}
+										onKeyDown={editMode ? undefined : (event) => handleRowKeyDown(event, file)}
+										tabIndex={editMode ? undefined : 0}
 									>
 										{editMode && (
 											<TableCell className="w-10 px-6">
