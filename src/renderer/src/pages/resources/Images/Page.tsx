@@ -137,27 +137,16 @@ function PageContent(): ReactElement {
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
 					</div>
 				) : (
-					<section className="py-8 sm:py-16 lg:py-24">
-						<div className="mx-auto px-4 sm:px-6 lg:px-8">
-							<div className="grid gap-6 md:grid-cols-2">
-								{gallerySections.map((gallerySection, sectionIndex) => (
-									<div
-										key={sectionIndex}
-										className={cn({
-											'grid grid-cols-2 gap-6': gallerySection.type === 'grid',
-										})}
-									>
-										{gallerySection.images.map((image, imageIndex) => (
-											<img
-												key={imageIndex}
-												src={image.src}
-												alt={image.alt}
-												className="rounded-lg object-cover"
-											/>
-										))}
-									</div>
-								))}
-							</div>
+					<section className="p-4 sm:p-6 lg:p-8">
+						<div className={cn('grid gap-4', COLUMN_CLASS[columns])}>
+							{galleryImages.map((image, index) => (
+								<img
+									key={index}
+									src={image.src}
+									alt={image.alt}
+									className="aspect-square w-full rounded-lg object-cover"
+								/>
+							))}
 						</div>
 					</section>
 				)}
