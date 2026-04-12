@@ -17,7 +17,8 @@ import {
 	InputGroupInput,
 	InputGroupText,
 } from '@/components/ui/InputGroup';
-import { Gallery, type GallerySection } from '@/components/app/Gallery';
+import { cn } from '@/lib/utils';
+import type { GallerySection } from '@/components/app/Gallery';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useImagesContext } from './context/ImagesContext';
 import Layout from './Layout';
