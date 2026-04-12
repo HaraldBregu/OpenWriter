@@ -118,17 +118,18 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 	}, [selected]);
 
 	const handleConfirmDelete = useCallback(async () => {
+		const ids = [...selected];
 		try {
 			await Promise.all(
-				[...selected].map((id) => window.workspace.deleteResourcesFileEntry(id)),
+				ids.map((id) => window.workspace.deleteResourcesFileEntry(id)),
 			);
+			dispatch({ type: 'REMOVE_ENTRIES', payload: ids });
 			setSelected(new Set());
 			dispatch({ type: 'DELETE_SUCCESS' });
-			await refreshFiles();
 		} catch {
 			/* delete failed */
 		}
-	}, [refreshFiles, selected, setSelected]);
+	}, [selected, setSelected]);
 
 	useEffect(() => {
 		const unsubscribeFiles = window.workspace.onResourcesFilesChanged(() => {
