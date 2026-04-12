@@ -10,13 +10,13 @@ function nextSortDirection(current: SortDirection): SortDirection {
 	return 'none';
 }
 
-interface UseFilesSortReturn {
+interface UseSortReturn {
 	sortKey: SortKey;
 	sortDirection: SortDirection;
 	handleSort: (key: SortKey) => void;
 }
 
-export function useSort(): UseFilesSortReturn {
+export function useSort(): UseSortReturn {
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDirection, setSortDirection] = useState<SortDirection>('none');
 
