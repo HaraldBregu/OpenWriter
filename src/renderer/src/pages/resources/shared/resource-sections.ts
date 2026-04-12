@@ -1,7 +1,7 @@
 import { Database, File, FileText, type LucideIcon } from 'lucide-react';
 import { RESOURCES_FILES_EXTENSIONS, type ResourceInfo } from '../../../../../shared/types';
 
-export type ResourceSectionId = 'files' | 'content' | 'images' | 'data';
+export type ResourceSectionId = 'files' | 'content' | 'data';
 
 export interface ResourceSectionConfig {
 	readonly id: ResourceSectionId;
