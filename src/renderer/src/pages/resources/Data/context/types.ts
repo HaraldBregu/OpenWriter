@@ -35,4 +35,6 @@ export interface DataContextValue {
 	removing: boolean;
 	indexing: boolean;
 	indexingInfo: IndexingInfo | null;
+	kbDialogOpen: boolean;
+	setKbDialogOpen: (open: boolean) => void;
 }
