@@ -59,18 +59,16 @@ function PageContent(): ReactElement {
 		handleUpload,
 	} = useImagesContext();
 
-	const gallerySections = useMemo<GallerySection[]>(() => {
-		if (filteredImages.length === 0) return [];
-		return [
-			{
-				type: 'grid',
-				images: filteredImages.map((image) => ({
-					src: toLocalResourceUrl(image.path),
-					alt: image.name,
-				})),
-			},
-		];
-	}, [filteredImages]);
+	const [columns, setColumns] = useState<ColumnCount>(3);
+
+	const galleryImages = useMemo(
+		() =>
+			filteredImages.map((image) => ({
+				src: toLocalResourceUrl(image.path),
+				alt: image.name,
+			})),
+		[filteredImages]
+	);
 
 	return (
 		<PageContainer>
