@@ -14,7 +14,7 @@ import { useContext } from '../hooks/use-context';
 
 export function DeleteConfirmDialog(): ReactElement {
 	const { t } = useTranslation();
-	const { selected, confirmOpen, setConfirmOpen, handleConfirmDelete } = useDataContext();
+	const { selected, confirmOpen, setConfirmOpen, handleConfirmDelete } = useContext();
 
 	return (
 		<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
