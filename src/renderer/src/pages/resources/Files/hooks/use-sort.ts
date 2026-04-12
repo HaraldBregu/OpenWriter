@@ -16,7 +16,7 @@ interface UseFilesSortReturn {
 	handleSort: (key: SortKey) => void;
 }
 
-export function useFilesSort(): UseFilesSortReturn {
+export function useSort(): UseFilesSortReturn {
 	const [sortKey, setSortKey] = useState<SortKey>('name');
 	const [sortDirection, setSortDirection] = useState<SortDirection>('none');
 
