@@ -60,10 +60,6 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 const DOCUMENT_MIME_TYPES = new Set(['application/json', 'application/xml']);
 
 export function getResourceSection(resource: ResourceInfo): ResourceSectionId {
-	if (resource.mimeType.startsWith('image/')) {
-		return 'images';
-	}
-
 	if (resource.mimeType.startsWith('text/') || DOCUMENT_MIME_TYPES.has(resource.mimeType)) {
 		return 'content';
 	}
