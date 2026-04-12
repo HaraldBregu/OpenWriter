@@ -5,25 +5,7 @@ import type {
 	ResourcesFilesSortDirection as SortDirection,
 	ResourcesFilesSortKey as SortKey,
 } from '../../../../../../shared/types';
-import { MIME_TYPE_JSON, MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
-
-const MIME_TYPE_MARKDOWN = 'text/markdown';
-const MIME_TYPE_TEXT = 'text/plain';
-
-function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
-	switch (filter) {
-		case 'json':
-			return mimeType === MIME_TYPE_JSON;
-		case 'markdown':
-			return mimeType === MIME_TYPE_MARKDOWN;
-		case 'text':
-			return mimeType === MIME_TYPE_TEXT;
-		case 'pdf':
-			return mimeType === MIME_TYPE_PDF;
-		default:
-			return true;
-	}
-}
+import { matchesTypeFilter } from '../shared/file-utils';
 
 interface UseFilterParams {
 	entries: FileEntry[];
