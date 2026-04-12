@@ -34,6 +34,7 @@ import { TaskReactionBus } from './task/task-reaction-bus';
 import { RagIndexingTaskHandler } from './task/handlers/rag-task-handler';
 import { AgentTaskHandler } from './task/handlers/agent-task-handler';
 import { OcrTaskHandler } from './task/handlers/ocr-task-handler';
+import { NbTaskHandler } from './task/handlers/nb-task-handler';
 import { ServiceResolver } from './shared/service-resolver';
 import { ModelResolver } from './shared/model-resolver';
 
