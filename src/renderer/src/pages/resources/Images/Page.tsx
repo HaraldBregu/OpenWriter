@@ -1,6 +1,16 @@
 import { useMemo, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Columns2, Columns3, Columns4, FolderOpen, Grid3x3, Pencil, Search, Upload, X } from 'lucide-react';
+import {
+	Columns2,
+	Columns3,
+	Columns4,
+	FolderOpen,
+	Grid3x3,
+	Pencil,
+	Search,
+	Upload,
+	X,
+} from 'lucide-react';
 import {
 	PageBody,
 	PageContainer,
@@ -11,6 +21,7 @@ import {
 } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
+import { Card } from '@/components/ui/Card';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -19,6 +30,8 @@ import {
 } from '@/components/ui/InputGroup';
 import { cn } from '@/lib/utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
+import { useImagesContext } from './context/ImagesContext';
+import Layout from './Layout';
 
 type ColumnCount = 2 | 3 | 4 | 5;
 
@@ -35,8 +48,6 @@ const COLUMN_CLASS: Record<ColumnCount, string> = {
 	4: 'grid-cols-4',
 	5: 'grid-cols-5',
 };
-import { useImagesContext } from './context/ImagesContext';
-import Layout from './Layout';
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
@@ -66,6 +77,7 @@ function PageContent(): ReactElement {
 			filteredImages.map((image) => ({
 				src: toLocalResourceUrl(image.path),
 				alt: image.name,
+				name: image.name,
 			})),
 		[filteredImages]
 	);
@@ -137,18 +149,27 @@ function PageContent(): ReactElement {
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
 					</div>
 				) : (
-					<section className="p-4 sm:p-6 lg:p-8">
-						<div className={cn('grid gap-4', COLUMN_CLASS[columns])}>
+					<div className="w-full p-4 sm:p-6 lg:p-8">
+						<div className={cn('grid gap-6', COLUMN_CLASS[columns])}>
 							{galleryImages.map((image, index) => (
-								<img
+								<Card
 									key={index}
-									src={image.src}
-									alt={image.alt}
-									className="aspect-square w-full rounded-lg object-cover"
-								/>
+									className="group relative overflow-hidden rounded-2xl border-none p-0 after:absolute after:h-full after:w-full after:bg-linear-to-b after:from-transparent after:from-60% after:to-gray-950"
+								>
+									<img
+										src={image.src}
+										alt={image.alt}
+										className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+									/>
+									<div className="absolute bottom-0 z-10 flex flex-col gap-1 ps-4 pb-4">
+										<h3 className="truncate text-sm font-semibold text-white">
+											{image.name}
+										</h3>
+									</div>
+								</Card>
 							))}
 						</div>
-					</section>
+					</div>
 				)}
 			</PageBody>
 		</PageContainer>
