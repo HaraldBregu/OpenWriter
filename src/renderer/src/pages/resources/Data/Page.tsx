@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button';
 import Layout from './Layout';
 import { useContext } from './hooks/use-context';
 import { KnowledgeBaseCard } from './components/KnowledgeBaseCard';
+import { KnowledgeBaseDialog } from './components/KnowledgeBaseDialog';
 import { DataIndexingBar } from './components/DataIndexingBar';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 
