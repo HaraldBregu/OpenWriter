@@ -62,7 +62,7 @@ export function DataTable(): ReactElement {
 		handleSort,
 		handleToggleAll,
 		handleToggleRow,
-	} = useDataContext();
+	} = useContext();
 
 	return (
 		<div className="flex-1 min-h-0 overflow-auto rounded-md border">
