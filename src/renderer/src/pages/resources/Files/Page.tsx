@@ -52,7 +52,7 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import type { FileEntry, ResourcesFilesSortKey as SortKey } from '../../../../shared/types';
+import type { FileEntry, ResourcesFilesSortKey as SortKey } from '../../../../../shared/types';
 import { RESOURCES_FILE_TYPE_FILTERS, ResourcesFileTypeFilter } from 'src/shared';
 import { formatBytes, formatDate } from '../shared/resource-utils';
 import { formatShortDate, getMimeTypeLabel } from './shared/file-utils';
