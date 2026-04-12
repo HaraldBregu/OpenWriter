@@ -14,7 +14,7 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_PREFIX_IMAGE } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
-import { useFileDelete } from '../hooks/use-file-delete';
+import { useDelete } from '../hooks/use-file-delete';
 import { DetailRow } from './DetailRow';
 import { PreviewLoading, PreviewError } from './PreviewStates';
 
@@ -82,7 +82,7 @@ export function ImageDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
 		useContext();
 
-	const handleDelete = useFileDelete({
+	const handleDelete = useDelete({
 		activeFile,
 		onDeleted: () => handleFileDetailsOpenChange(false),
 	});
