@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
-import { Calendar, File, FolderOpen, HardDrive, Loader2, Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import type { ReactElement } from 'react';
+import { Calendar, File, FolderOpen, HardDrive, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	Dialog,
@@ -14,6 +14,9 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_PREFIX_IMAGE } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
+import { useFileDelete } from '../hooks/use-file-delete';
+import { DetailRow } from './DetailRow';
+import { PreviewLoading, PreviewError } from './PreviewStates';
 
 function useBlobUrl(path: string, mimeType: string) {
 	const [blobUrl, setBlobUrl] = useState<string | null>(null);
@@ -62,25 +65,6 @@ function useBlobUrl(path: string, mimeType: string) {
 	return { blobUrl, error, loading };
 }
 
-function PreviewLoading() {
-	return (
-		<div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-			<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-			Loading preview...
-		</div>
-	);
-}
-
-function PreviewError({ message }: { message: string }) {
-	return (
-		<div className="flex h-full items-center justify-center">
-			<div className="rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
-				{message}
-			</div>
-		</div>
-	);
-}
-
 function ImagePreview({ path, mimeType }: { path: string; mimeType: string }) {
 	const { blobUrl, error, loading } = useBlobUrl(path, mimeType);
 
@@ -94,31 +78,14 @@ function ImagePreview({ path, mimeType }: { path: string; mimeType: string }) {
 	);
 }
 
-function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; value: ReactNode }) {
-	return (
-		<div className="flex items-start gap-3">
-			<span className="mt-0.5 text-muted-foreground">{icon}</span>
-			<div className="min-w-0 flex-1">
-				<p className="text-xs text-muted-foreground">{label}</p>
-				<p className="truncate text-sm">{value}</p>
-			</div>
-		</div>
-	);
-}
-
 export function ImageDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
 		useContext();
 
-	const handleDelete = useCallback(async () => {
-		if (!activeFile) return;
-		try {
-			await window.workspace.deleteResourcesFileEntry(activeFile.id);
-			handleFileDetailsOpenChange(false);
-		} catch (err) {
-			console.error('Failed to delete file:', err);
-		}
-	}, [activeFile, handleFileDetailsOpenChange]);
+	const handleDelete = useFileDelete({
+		activeFile,
+		onDeleted: () => handleFileDetailsOpenChange(false),
+	});
 
 	if (!activeFile || !activeFile.mimeType.startsWith(MIME_PREFIX_IMAGE)) {
 		return null;
