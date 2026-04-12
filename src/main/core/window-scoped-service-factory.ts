@@ -9,8 +9,6 @@ import {
 	ContentsService,
 	FilesWatcherService,
 	FilesService,
-	ImagesService,
-	ImagesWatcherService,
 	OutputFilesService,
 	ProjectWorkspaceService,
 } from '../workspace';
