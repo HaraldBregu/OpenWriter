@@ -1,6 +1,6 @@
-import { useMemo, type ReactElement } from 'react';
+import { useMemo, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Pencil, Search, Upload, X } from 'lucide-react';
+import { Columns2, Columns3, Columns4, FolderOpen, Grid3x3, Pencil, Search, Upload, X } from 'lucide-react';
 import {
 	PageBody,
 	PageContainer,
