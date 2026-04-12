@@ -234,7 +234,7 @@ function PageContent(): ReactElement {
 								{editMode && (
 									<TableHead className="w-12 px-6 text-muted-foreground">
 										<Checkbox
-											checked={someChecked ? undefined : allChecked}
+											checked={allChecked}
 											indeterminate={someChecked}
 											onCheckedChange={handleToggleAll}
 											aria-label="Select all"
