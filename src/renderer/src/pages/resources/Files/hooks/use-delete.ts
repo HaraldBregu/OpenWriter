@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
 import type { FileEntry } from '../context/types';
 
-interface UseFileDeleteParams {
+interface UseDeleteParams {
 	activeFile: FileEntry | null;
 	onDeleted: () => void;
 }
 
-export function useFileDelete({ activeFile, onDeleted }: UseFileDeleteParams) {
+export function useFileDelete({ activeFile, onDeleted }: UseDeleteParams) {
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
