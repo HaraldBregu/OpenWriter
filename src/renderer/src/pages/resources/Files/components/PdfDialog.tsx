@@ -20,7 +20,7 @@ import {
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
-import { useFilesContext } from '../context/FilesContext';
+import { useFilesContext } from '../hooks/use-files-context';
 
 const PROVIDER_COLORS: Record<string, string> = {
 	openai: 'bg-green-600',
