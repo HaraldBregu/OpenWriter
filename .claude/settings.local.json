@@ -126,7 +126,11 @@
       "Bash(echo \"---exit:$?---\")",
       "Bash(echo \"exit=$?\")",
       "Bash(echo \"exit-web=$?\")",
-      "Bash(echo \"exit-node=$?\")"
+      "Bash(echo \"exit-node=$?\")",
+      "Bash(mv use-files-context.ts use-context.ts)",
+      "Bash(mv use-files-filter.ts use-filter.ts)",
+      "Bash(mv use-files-selection.ts use-selection.ts)",
+      "Bash(mv use-files-sort.ts use-sort.ts)"
     ],
     "deny": [
       "Bash(git push --force:*)",

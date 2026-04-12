@@ -3,9 +3,9 @@ import { Context } from './context/Context';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
-import { useFilesSort } from './hooks/use-files-sort';
-import { useFilesFilter } from './hooks/use-files-filter';
-import { useFilesSelection } from './hooks/use-files-selection';
+import { useFilesSort } from './hooks/use-sort';
+import { useFilesFilter } from './hooks/use-filter';
+import { useFilesSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 
 interface FilesProviderProps {
