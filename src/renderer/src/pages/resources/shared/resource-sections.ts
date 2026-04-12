@@ -43,18 +43,6 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 		uploadExtensions: ['.txt', '.md', '.html', '.csv', '.json'],
 		supportsIndexing: true,
 	},
-	images: {
-		id: 'images',
-		route: '/resources/images',
-		titleKey: 'appLayout.images',
-		emptyKey: 'resources.images.empty',
-		loadingKey: 'resources.images.loading',
-		uploadKey: 'resources.images.upload',
-		searchPlaceholderKey: 'resources.images.searchPlaceholder',
-		icon: ImageIcon,
-		uploadExtensions: ['.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.bmp', '.ico'],
-		supportsIndexing: false,
-	},
 	data: {
 		id: 'data',
 		route: '/resources/data',
