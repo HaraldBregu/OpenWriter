@@ -18,7 +18,7 @@ import {
 } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
-import { useFileDelete } from '../hooks/use-file-delete';
+import { useDelete } from '../hooks/use-file-delete';
 import { DetailRow } from './DetailRow';
 import { PreviewLoading, PreviewError } from './PreviewStates';
 
@@ -81,7 +81,7 @@ export function TextDialog(): ReactElement | null {
 		};
 	}, [activeFile, shouldReadContent]);
 
-	const handleDeleteSingle = useFileDelete({
+	const handleDeleteSingle = useDelete({
 		activeFile,
 		onDeleted: () => handleFileDetailsOpenChange(false),
 	});
