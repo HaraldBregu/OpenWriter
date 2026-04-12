@@ -3,7 +3,7 @@ import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
-import { useFilesContext } from './hooks/use-files-context';
+import { useFilesContext } from './hooks/use-context';
 import {
 	ChevronDownIcon,
 	Filter,
