@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/Select';
 import { RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { ALL_TYPES_VALUE } from '../types';
-import { useDataContext } from '../context/DataContext';
+import { useContext } from '../hooks/use-context';
 
 export function DataToolbar(): ReactElement {
 	const { t } = useTranslation();
