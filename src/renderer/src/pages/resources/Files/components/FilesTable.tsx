@@ -1,5 +1,4 @@
-import { File, FileImage, FileText } from 'lucide-react';
-import type { KeyboardEvent, ReactElement, ReactNode } from 'react';
+import type { KeyboardEvent, ReactElement } from 'react';
 import { Checkbox } from '@/components/ui/Checkbox';
 import {
 	Table,
@@ -10,38 +9,11 @@ import {
 	TableRow,
 } from '@/components/ui/Table';
 import type { FileEntry, ResourcesFilesSortKey as SortKey } from '../../../../../../shared/types';
-import {
-	MIME_PREFIX_IMAGE,
-	MIME_TYPE_JSON,
-	MIME_TYPE_PDF,
-} from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
 import { useContext } from '../hooks/use-context';
+import { formatShortDate, getMimeTypeLabel } from '../shared/file-utils';
+import { getFileIcon } from './FileIcon';
 import { SortIcon } from './SortIcon';
-
-function getMimeTypeLabel(mimeType: string): string {
-	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) return 'Image';
-	if (mimeType === MIME_TYPE_PDF) return 'PDF';
-	if (mimeType === MIME_TYPE_JSON) return 'JSON';
-	return 'File';
-}
-
-function getFileIcon(mimeType: string): ReactNode {
-	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) {
-		return <FileImage className="h-5 w-5 text-muted-foreground" />;
-	}
-	if (mimeType === MIME_TYPE_PDF || mimeType === MIME_TYPE_JSON) {
-		return <FileText className="h-5 w-5 text-muted-foreground" />;
-	}
-	return <File className="h-5 w-5 text-muted-foreground" />;
-}
-
-function formatShortDate(timestamp: number): string {
-	return new Date(timestamp).toLocaleDateString(undefined, {
-		month: 'short',
-		day: 'numeric',
-	});
-}
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'name', label: 'Name', className: 'w-auto' },
