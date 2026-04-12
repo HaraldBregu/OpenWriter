@@ -9,7 +9,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/AlertDialog';
-import { useFilesContext } from '../context/FilesContext';
+import { useFilesContext } from '../hooks/use-files-context';
 
 export function DeleteConfirmDialog(): ReactElement {
 	const { selected, confirmOpen, setConfirmOpen, handleConfirmDelete } = useFilesContext();
