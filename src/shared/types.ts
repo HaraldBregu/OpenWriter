@@ -365,46 +365,6 @@ export interface FolderEntry {
 	modifiedAt: number;
 }
 
-// ---- Images (workspace/resources/images/) ---------------------------------
-
-/** Allowed image extensions for the resources/images/ folder. */
-export const RESOURCES_IMAGES_EXTENSIONS = [
-	'.png',
-	'.jpg',
-	'.jpeg',
-	'.gif',
-	'.svg',
-	'.webp',
-	'.bmp',
-	'.ico',
-] as const;
-
-export interface ImageEntry {
-	/** Unique identifier — the image's basename within resources/images/ */
-	id: string;
-	/** Display name (basename) */
-	name: string;
-	/** Absolute path on disk */
-	path: string;
-	/** Path relative to the workspace resources/images/ folder */
-	relativePath: string;
-	/** Size in bytes */
-	size: number;
-	/** Detected MIME type */
-	mimeType: string;
-	/** Timestamp (ms) when the image was first imported / detected */
-	createdAt: number;
-	/** Timestamp (ms) of the last modification on disk */
-	modifiedAt: number;
-}
-
-export interface ImageEntryChangeEvent {
-	type: 'added' | 'changed' | 'removed';
-	fileId: string;
-	filePath: string;
-	timestamp: number;
-}
-
 export interface ContentEntryChangeEvent {
 	type: 'added' | 'changed' | 'removed';
 	fileId: string;
