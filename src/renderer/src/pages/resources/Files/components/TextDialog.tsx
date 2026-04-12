@@ -17,7 +17,7 @@ import {
 	MIME_TYPE_PDF,
 } from '../../shared/resource-preview-utils';
 import { formatBytes, formatDate } from '../../shared/resource-utils';
-import { useFilesContext } from '../hooks/use-context';
+import { useContext } from '../hooks/use-context';
 
 function PreviewLoading() {
 	return (
@@ -68,7 +68,7 @@ function DetailRow({ icon, label, value }: { icon: ReactNode; label: string; val
 
 export function TextDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange, handleOpenFolder } =
-		useFilesContext();
+		useContext();
 
 	const [content, setContent] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
