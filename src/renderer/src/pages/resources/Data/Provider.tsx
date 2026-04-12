@@ -173,6 +173,8 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 		removing,
 		indexing,
 		indexingInfo,
+		kbDialogOpen,
+		setKbDialogOpen,
 	};
 
 	return <Context.Provider value={value}>{children}</Context.Provider>;
