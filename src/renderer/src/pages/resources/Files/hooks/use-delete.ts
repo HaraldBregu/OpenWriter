@@ -6,7 +6,7 @@ interface UseDeleteParams {
 	onDeleted: () => void;
 }
 
-export function useFileDelete({ activeFile, onDeleted }: UseDeleteParams) {
+export function useDelete({ activeFile, onDeleted }: UseDeleteParams) {
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
