@@ -46,7 +46,7 @@ function PageContent(): ReactElement {
 							<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
 								<FolderOpen />
 							</Button>
-							<Button size="lg" onClick={handleUpload}>
+							<Button size="lg" onClick={handleUpload} disabled={uploading}>
 								<Upload />
 								{t(section.uploadKey)}
 							</Button>
