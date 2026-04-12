@@ -15,7 +15,7 @@ interface UseFilesSelectionReturn {
 	handleToggleRow: (id: string) => void;
 }
 
-export function useFilesSelection({
+export function useSelection({
 	filteredEntries,
 }: UseFilesSelectionParams): UseFilesSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
