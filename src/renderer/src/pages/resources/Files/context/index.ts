@@ -1,4 +1,4 @@
-export { useFilesContext } from './FilesContext';
+export { useFilesContext } from '../hooks/use-files-context';
 export { filesReducer } from './reducer';
 export { initialFilesState } from './state';
 export type { FilesContextValue } from './types';
