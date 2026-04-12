@@ -66,6 +66,49 @@ export function FilesProvider({ children }: FilesProviderProps): ReactElement {
 		void window.workspace.openFilesFolder();
 	}, []);
 
+	const setEntries = useCallback(
+		(entries: FilesContextValue['entries']) => dispatch({ type: 'SET_ENTRIES', payload: entries }),
+		[],
+	);
+
+	const setIsLoading = useCallback(
+		(loading: boolean) => dispatch({ type: 'SET_IS_LOADING', payload: loading }),
+		[],
+	);
+
+	const setSearchQuery = useCallback(
+		(query: string) => dispatch({ type: 'SET_SEARCH_QUERY', payload: query }),
+		[],
+	);
+
+	const setViewMode = useCallback(
+		(mode: FilesContextValue['viewMode']) => dispatch({ type: 'SET_VIEW_MODE', payload: mode }),
+		[],
+	);
+
+	const setTypeFilter = useCallback(
+		(filter: FilesContextValue['typeFilter']) =>
+			dispatch({ type: 'SET_TYPE_FILTER', payload: filter }),
+		[],
+	);
+
+	const setConfirmOpen = useCallback(
+		(open: boolean) => dispatch({ type: 'SET_CONFIRM_OPEN', payload: open }),
+		[],
+	);
+
+	const handleOpenFileDetails = useCallback(
+		(file: FilesContextValue['activeFile'] & object) =>
+			dispatch({ type: 'OPEN_FILE_DETAILS', payload: file }),
+		[],
+	);
+
+	const handleFileDetailsOpenChange = useCallback((open: boolean) => {
+		if (!open) dispatch({ type: 'CLOSE_FILE_DETAILS' });
+	}, []);
+
+	const toggleEditMode = useCallback(() => dispatch({ type: 'TOGGLE_EDIT_MODE' }), []);
+
 	const handleDelete = useCallback(() => {
 		if (selected.size === 0) return;
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
