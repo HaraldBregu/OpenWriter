@@ -6,6 +6,7 @@ import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
 import { ThemeMode } from 'src/shared';
 
+
 export function ThemeModeSelector(): React.ReactElement {
 	const themeMode = useThemeMode();
 	const { setTheme } = useAppActions();
