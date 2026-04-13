@@ -493,11 +493,7 @@ export interface AppActionsContextValue {
 	setAppTheme: (theme: AppTheme) => void;
 	setCustomTheme: (id: string | null) => void;
 	setLanguage: (language: AppLanguage) => void;
-	setUser: (user: User | null) => void;
-	updateUIPreferences: (preferences: Partial<UIPreferences>) => void;
 	toggleModal: (modal: keyof ModalState, open?: boolean) => void;
-	setOnlineStatus: (isOnline: boolean) => void;
-	updateSyncTime: (timestamp: number) => void;
 	resetState: () => void;
 }
 
