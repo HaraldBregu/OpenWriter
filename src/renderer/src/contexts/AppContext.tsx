@@ -225,8 +225,6 @@ export function useAppState(): AppState {
 /** Backward-compatible actions bag. */
 export interface AppActionsContextValue {
 	setTheme: (theme: ThemeMode) => void;
-	setAppTheme: (theme: AppTheme) => void;
-	setCustomTheme: (id: string | null) => void;
 	setLanguage: (language: AppLanguage) => void;
 	resetState: () => void;
 }
