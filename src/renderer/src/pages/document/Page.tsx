@@ -145,8 +145,8 @@ function PageContent(): ReactElement {
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
-					const { title: t, emoji: e } = stateRef.current;
-					window.workspace.updateDocumentConfig(id, { title: t, emoji: e });
+					const { title: currentTitle, emoji: currentEmoji } = stateRef.current;
+					window.workspace.updateDocumentConfig(id, { title: currentTitle, emoji: currentEmoji });
 				},
 				METADATA_SAVE_DEBOUNCE_MS,
 				{ leading: false, trailing: true }
