@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, Plus, Search, Trash2 } from 'lucide-react';
+import { Clock3, Plus, Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
