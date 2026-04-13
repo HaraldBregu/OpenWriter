@@ -1,4 +1,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Search, X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import HeaderContent from './HeaderContent';
