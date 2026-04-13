@@ -142,11 +142,11 @@ const PanelHeader: React.FC = () => {
 									/>
 								</div>
 							</div>
-							<ul className="max-h-[26rem] overflow-y-auto py-0.5">
+							<div className="max-h-[26rem] overflow-y-auto py-0.5">
 								{filteredSessions.length === 0 && (
-									<li className="px-1.5 py-2 text-xs text-muted-foreground">
+									<div className="px-1.5 py-2 text-xs text-muted-foreground">
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
-									</li>
+									</div>
 								)}
 								{filteredSessions.map((item) => (
 									<Item
