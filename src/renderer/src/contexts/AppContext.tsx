@@ -218,9 +218,8 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
  */
 export function useAppState(): AppState {
 	const { theme } = useTheme();
-	const { appTheme } = useAppThemeContext();
 	const { language } = useLanguageContext();
-	return useMemo(() => ({ theme, appTheme, language }), [theme, appTheme, language]);
+	return useMemo(() => ({ theme, language }), [theme, language]);
 }
 
 /** Backward-compatible actions bag. */
