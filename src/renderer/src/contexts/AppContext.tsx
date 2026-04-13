@@ -424,11 +424,7 @@ export function useAppState(): AppState {
 	const { theme } = useTheme();
 	const { appTheme } = useAppThemeContext();
 	const { language } = useLanguageContext();
-	const { modals } = useModalContext();
-	return useMemo(
-		() => ({ theme, appTheme, language, modals }),
-		[theme, appTheme, language, modals]
-	);
+	return useMemo(() => ({ theme, appTheme, language }), [theme, appTheme, language]);
 }
 
 /** Backward-compatible actions bag. */
