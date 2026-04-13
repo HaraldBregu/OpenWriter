@@ -21,7 +21,7 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
 
 	return (
-		<div className="flex min-h-[3.1rem] items-center justify-between gap-3 px-4 py-4">
+		<CardHeader className="flex min-h-[3.1rem] flex-row items-center justify-between gap-3 space-y-0 px-4 py-4">
 			<div className="flex min-w-0 items-center gap-2.5">
 				<div
 					className={cn(
