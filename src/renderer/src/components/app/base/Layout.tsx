@@ -488,8 +488,8 @@ function Container({ children }: LayoutProps) {
 													<ChevronRight className="h-4 w-4 text-muted-foreground" />
 												)}
 											</ComboboxItem>
-											{index === 2 && <ComboboxSeparator className="my-2" />}
-											{index === 6 && <ComboboxSeparator className="my-2" />}
+											{index === 3 && <ComboboxSeparator className="my-2" />}
+											{index === 7 && <ComboboxSeparator className="my-2" />}
 										</React.Fragment>
 									))}
 								</ComboboxList>
