@@ -19,8 +19,6 @@ export {
 	useAppActions,
 	useAppSelector,
 	useThemeMode,
-	useAppTheme,
-	useCustomThemeId,
 	useLanguageMode,
 	AppStateContext,
 	AppActionsContext,
@@ -28,7 +26,6 @@ export {
 
 export type {
 	ThemeMode,
-	AppTheme,
 	AppLanguage,
 	SidebarState,
 	AppState,
