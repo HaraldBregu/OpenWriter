@@ -103,8 +103,7 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 						<Info aria-hidden="true" />
 					</Button>
 				</div>
-			</div>
-		</>
+		</div>
 	);
 };
 
