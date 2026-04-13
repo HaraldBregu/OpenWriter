@@ -18,7 +18,7 @@ import { useEditorInstance } from '../../Provider';
 import { Card } from '@/components/ui/Card';
 import { PanelHeader } from './PanelHeader';
 import { PanelFooter } from './PanelFooter';
-import { PanelBody } from './PanelBody';
+import { PanelBody, Message } from './PanelBody';
 
 const Chat: React.FC = () => {
 	const { t } = useTranslation();
