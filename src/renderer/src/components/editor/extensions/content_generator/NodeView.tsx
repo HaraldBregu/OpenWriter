@@ -217,6 +217,38 @@ export function ContentGeneratorNodeView({
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, [resizeTextarea]);
 
+	const handleDragOver = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'image') return;
+			e.preventDefault();
+			setIsDragOver(true);
+		},
+		[agentId]
+	);
+
+	const handleDragLeave = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'image') return;
+			e.preventDefault();
+			setIsDragOver(false);
+		},
+		[agentId]
+	);
+
+	const handleDrop = useCallback(
+		(e: React.DragEvent<HTMLDivElement>) => {
+			if (agentId !== 'image') return;
+			e.preventDefault();
+			setIsDragOver(false);
+			for (const file of Array.from(e.dataTransfer.files)) {
+				if (file.type.startsWith('image/')) {
+					addFile(file);
+				}
+			}
+		},
+		[addFile, agentId]
+	);
+
 	const { t } = useTranslation();
 	const isImage = agentId === 'image';
 	const activeModel = isImage ? selectedImageModel : selectedTextModel;
