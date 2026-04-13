@@ -72,7 +72,7 @@ export function PromptFooter({
 								size="icon"
 								className={cn(
 									'h-10 w-10 shrink-0 rounded-[1.15rem] border border-border/75 bg-background/78 shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_12px_hsl(var(--foreground)/0.04)] hover:border-foreground/15 hover:bg-background dark:border-white/12 dark:bg-white/[0.04] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.28)] dark:hover:border-white/16 dark:hover:bg-white/[0.05]',
-									currentAgent.value === 'image' ? 'text-primary' : 'text-foreground'
+									isImage ? 'text-primary' : 'text-foreground'
 								)}
 								title={currentAgentLabel}
 								aria-label={t('assistantNode.switchAgent', 'Switch agent')}
@@ -81,7 +81,7 @@ export function PromptFooter({
 									e.stopPropagation();
 								}}
 							>
-								{getAgentIcon(currentAgent.value)}
+								{getAgentIcon(agentId)}
 							</Button>
 						}
 					/>
@@ -91,40 +91,50 @@ export function PromptFooter({
 						sideOffset={8}
 						className="w-60 gap-4"
 					>
-						{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
-							const label = t(option.labelKey, option.labelFallback);
-							const description = t(option.descriptionKey, option.descriptionFallback);
-							const isSelected = option.value === currentAgent.value;
-
-							return (
-								<DropdownMenuItem
-									key={option.value}
-									onSelect={() => onAgentChange(option.value)}
-									className={cn(
-										'rounded-xl px-2.5 py-2.5',
-										isSelected && 'bg-accent text-accent-foreground'
-									)}
-								>
-									<span className="flex min-w-0 items-center gap-3">
-										<span
-											className={cn(
-												'flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border',
-												option.value === 'image'
-													? 'border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12'
-													: 'border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]'
-											)}
-										>
-											{getAgentIcon(option.value)}
-										</span>
-										<span className="flex min-w-0 flex-col gap-0.5">
-											<span className="truncate text-sm font-medium">{label}</span>
-											<span className="text-xs text-muted-foreground">{description}</span>
-										</span>
+						<DropdownMenuItem
+							onSelect={() => onAgentChange('writer')}
+							className={cn(
+								'rounded-xl px-2.5 py-2.5',
+								!isImage && 'bg-accent text-accent-foreground'
+							)}
+						>
+							<span className="flex min-w-0 items-center gap-3">
+								<span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]">
+									<PenLine className="h-4 w-4" />
+								</span>
+								<span className="flex min-w-0 flex-col gap-0.5">
+									<span className="truncate text-sm font-medium">
+										{t('assistantAgent.writer', 'Text')}
 									</span>
-									{isSelected && <Check className="ml-auto h-4 w-4" />}
-								</DropdownMenuItem>
-							);
-						})}
+									<span className="text-xs text-muted-foreground">
+										{t('assistantAgent.writerDescription', 'Generate, rewrite, or continue text')}
+									</span>
+								</span>
+							</span>
+							{!isImage && <Check className="ml-auto h-4 w-4" />}
+						</DropdownMenuItem>
+						<DropdownMenuItem
+							onSelect={() => onAgentChange('image')}
+							className={cn(
+								'rounded-xl px-2.5 py-2.5',
+								isImage && 'bg-accent text-accent-foreground'
+							)}
+						>
+							<span className="flex min-w-0 items-center gap-3">
+								<span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12">
+									<ImageIcon className="h-4 w-4" />
+								</span>
+								<span className="flex min-w-0 flex-col gap-0.5">
+									<span className="truncate text-sm font-medium">
+										{t('assistantAgent.image', 'Image')}
+									</span>
+									<span className="text-xs text-muted-foreground">
+										{t('assistantAgent.imageDescription', 'Create images from a prompt')}
+									</span>
+								</span>
+							</span>
+							{isImage && <Check className="ml-auto h-4 w-4" />}
+						</DropdownMenuItem>
 					</DropdownMenuContent>
 				</DropdownMenu>
 				<DropdownMenu modal={false}>
