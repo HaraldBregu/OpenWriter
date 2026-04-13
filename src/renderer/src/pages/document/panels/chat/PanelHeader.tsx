@@ -159,20 +159,43 @@ const PanelHeader: React.FC = () => {
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
 									</div>
 								)}
-								{filteredSessions.map((item) => (
+								{filteredSessions.map((session) => (
 									<Item
-										key={item.id}
-										title={item.title}
-										ageLabel={item.ageLabel}
-										selected={item.id === selectedId}
-										deleting={deletingSessionId === item.id}
-										onLoad={() => {
-											void handleLoadSession(item.id);
-										}}
-										onDelete={() => {
-											void handleDeleteSession(item.id);
-										}}
-									/>
+										key={session.id}
+										size="xs"
+										variant={session.id === selectedId ? 'muted' : 'default'}
+										render={
+											<button
+												type="button"
+												onClick={() => {
+													void handleLoadSession(session.id);
+												}}
+											/>
+										}
+									>
+										<ItemMedia variant="icon">
+											<MessageSquare />
+										</ItemMedia>
+										<ItemContent>
+											<ItemTitle>{session.title}</ItemTitle>
+											<ItemDescription>{session.ageLabel}</ItemDescription>
+										</ItemContent>
+										<ItemActions>
+											<Button
+												type="button"
+												variant="ghost"
+												size="icon-xs"
+												disabled={deletingSessionId === session.id}
+												aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
+												onClick={(e) => {
+													e.stopPropagation();
+													void handleDeleteSession(session.id);
+												}}
+											>
+												<Trash2 />
+											</Button>
+										</ItemActions>
+									</Item>
 								))}
 							</div>
 						</PopoverContent>
