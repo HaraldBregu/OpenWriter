@@ -506,36 +506,18 @@ export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
 	const { setAppTheme, setCustomTheme } = useAppThemeContext();
 	const { setLanguage } = useLanguageContext();
-	const { setUser } = useUser();
-	const { updateUIPreferences } = useUIPreferencesContext();
 	const { toggleModal } = useModalContext();
-	const { setOnlineStatus, updateSyncTime } = useNetworkContext();
 
-	// resetState re-navigates all contexts back to their defaults. Because
-	// each sub-provider owns its own useState, we drive them through their
-	// stable setters with the default values.
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
 		setAppTheme(readPersistedAppTheme());
 		setCustomTheme(null);
 		setLanguage(readPersistedLanguage());
-		setUser(null);
-		updateUIPreferences(defaultUIPreferences);
 		toggleModal('settingsOpen', false);
 		toggleModal('commandPaletteOpen', false);
 		toggleModal('searchOpen', false);
 		toggleModal('shareDialogOpen', false);
-		setOnlineStatus(navigator.onLine);
-	}, [
-		setTheme,
-		setAppTheme,
-		setCustomTheme,
-		setLanguage,
-		setUser,
-		updateUIPreferences,
-		toggleModal,
-		setOnlineStatus,
-	]);
+	}, [setTheme, setAppTheme, setCustomTheme, setLanguage, toggleModal]);
 
 	return useMemo(
 		() => ({
@@ -543,25 +525,10 @@ export function useAppActions(): AppActionsContextValue {
 			setAppTheme,
 			setCustomTheme,
 			setLanguage,
-			setUser,
-			updateUIPreferences,
 			toggleModal,
-			setOnlineStatus,
-			updateSyncTime,
 			resetState,
 		}),
-		[
-			setTheme,
-			setAppTheme,
-			setCustomTheme,
-			setLanguage,
-			setUser,
-			updateUIPreferences,
-			toggleModal,
-			setOnlineStatus,
-			updateSyncTime,
-			resetState,
-		]
+		[setTheme, setAppTheme, setCustomTheme, setLanguage, toggleModal, resetState]
 	);
 }
 
