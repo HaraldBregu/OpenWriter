@@ -55,11 +55,12 @@ export function useContentGeneratorActions({
 
 	const handleAgentChange = useCallback(
 		(value: ContentGeneratorAgentId) => {
+			dispatch({ type: 'SET_AGENT', payload: value });
 			if ((node.attrs.agentId as ContentGeneratorAgentId) !== value) {
 				updateAttributes({ agentId: value });
 			}
 		},
-		[node.attrs.agentId, updateAttributes]
+		[dispatch, node.attrs.agentId, updateAttributes]
 	);
 
 	const handleImageModelChange = useCallback(
