@@ -43,10 +43,15 @@ const buttonVariants = cva(
 				['header-icon-md']: 'size-8',
 				['header-icon-lg']: 'size-9',
 			},
+			rounded: {
+				true: 'rounded-full',
+				false: '',
+			},
 		},
 		defaultVariants: {
 			variant: 'default',
 			size: 'default',
+			rounded: false,
 		},
 	}
 );
