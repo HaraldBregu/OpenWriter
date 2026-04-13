@@ -161,9 +161,9 @@ const PanelHeader: React.FC = () => {
 									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
-							<ItemGroup className="my-4">
+							<ItemGroup className="my-4 gap-4">
 								{filteredSessions.length === 0 && (
-									<Item size="xs">
+									<Item variant="outline" role="listitem">
 										<ItemContent>
 											<ItemDescription>
 												{t('agenticPanel.historyEmpty', 'No previous chats yet')}
@@ -188,7 +188,7 @@ const PanelHeader: React.FC = () => {
 											<Button
 												type="button"
 												variant="ghost"
-												size="icon-xs"
+												size="icon"
 												disabled={deletingSessionId === session.id}
 												aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
 												onClick={(e) => {
@@ -209,11 +209,10 @@ const PanelHeader: React.FC = () => {
 						variant="ghost"
 						size="icon"
 						disabled={!hasHistory}
-						className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground"
 						aria-label={t('agenticPanel.newChat', 'Start new chat')}
 						onClick={handleNewChat}
 					>
-						<Plus className="h-4 w-4" />
+						<Plus />
 					</Button>
 				</div>
 			</div>

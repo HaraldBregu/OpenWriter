@@ -25,6 +25,8 @@ const buttonVariants = cva(
 				['prompt-submit']: 'bg-primary text-primary-foreground hover:bg-primary/90',
 				['header-icon']:
 					'text-muted-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground',
+				rounded:
+					'rounded-full bg-primary text-primary-foreground hover:bg-primary/90',
 			},
 			size: {
 				default:
