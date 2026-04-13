@@ -445,18 +445,13 @@ export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
 	const { setAppTheme, setCustomTheme } = useAppThemeContext();
 	const { setLanguage } = useLanguageContext();
-	const { toggleModal } = useModalContext();
 
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
 		setAppTheme(readPersistedAppTheme());
 		setCustomTheme(null);
 		setLanguage(readPersistedLanguage());
-		toggleModal('settingsOpen', false);
-		toggleModal('commandPaletteOpen', false);
-		toggleModal('searchOpen', false);
-		toggleModal('shareDialogOpen', false);
-	}, [setTheme, setAppTheme, setCustomTheme, setLanguage, toggleModal]);
+	}, [setTheme, setAppTheme, setCustomTheme, setLanguage]);
 
 	return useMemo(
 		() => ({
@@ -464,10 +459,9 @@ export function useAppActions(): AppActionsContextValue {
 			setAppTheme,
 			setCustomTheme,
 			setLanguage,
-			toggleModal,
 			resetState,
 		}),
-		[setTheme, setAppTheme, setCustomTheme, setLanguage, toggleModal, resetState]
+		[setTheme, setAppTheme, setCustomTheme, setLanguage, resetState]
 	);
 }
 
