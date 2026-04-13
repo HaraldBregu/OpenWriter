@@ -148,46 +148,21 @@ const PanelHeader: React.FC = () => {
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
 									</li>
 								)}
-								{filteredSessions.map((item) => {
-									const isSelected = item.id === selectedId;
-									const isDeleting = deletingSessionId === item.id;
-									return (
-										<li
-											key={item.id}
-											className={`flex items-center gap-2 rounded-lg border-b border-border/50 px-1.5 py-1.5 last:border-b-0 dark:border-border/70 ${
-												isSelected
-													? 'bg-accent/90 dark:bg-accent'
-													: 'hover:bg-muted/65 dark:hover:bg-accent/75'
-											}`}
-										>
-											<button
-												type="button"
-												onClick={() => {
-													void handleLoadSession(item.id);
-												}}
-												className="min-w-0 flex-1 truncate text-left text-sm text-foreground hover:text-foreground/85"
-											>
-												{item.title}
-											</button>
-											<div className="flex shrink-0 items-center gap-1 pl-1.5">
-												<span className="text-xs text-muted-foreground">{item.ageLabel}</span>
-												<Button
-													type="button"
-													variant="ghost"
-													size="icon-xs"
-													className="text-muted-foreground shadow-none hover:bg-destructive/12 hover:text-destructive dark:text-muted-foreground/90 dark:hover:bg-destructive/20"
-													aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
-													disabled={isDeleting}
-													onClick={() => {
-														void handleDeleteSession(item.id);
-													}}
-												>
-													<Trash2 className="h-3.5 w-3.5" />
-												</Button>
-											</div>
-										</li>
-									);
-								})}
+								{filteredSessions.map((item) => (
+									<Item
+										key={item.id}
+										title={item.title}
+										ageLabel={item.ageLabel}
+										selected={item.id === selectedId}
+										deleting={deletingSessionId === item.id}
+										onLoad={() => {
+											void handleLoadSession(item.id);
+										}}
+										onDelete={() => {
+											void handleDeleteSession(item.id);
+										}}
+									/>
+								))}
 							</ul>
 						</PopoverContent>
 					</Popover>
