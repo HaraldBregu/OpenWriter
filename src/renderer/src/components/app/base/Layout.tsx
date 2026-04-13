@@ -141,6 +141,11 @@ function Container({ children }: LayoutProps) {
 			icon: Settings,
 		},
 		{
+			value: 'system',
+			label: t('settings.tabs.system', 'System'),
+			icon: Monitor,
+		},
+		{
 			value: 'language',
 			label: t('menu.language', 'Language'),
 			icon: Globe,
