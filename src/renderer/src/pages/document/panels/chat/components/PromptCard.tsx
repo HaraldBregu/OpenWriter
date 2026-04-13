@@ -35,8 +35,8 @@ interface PromptCardProps {
 	readonly dropStatusId: string;
 	readonly currentAgentLabel: string;
 
-	readonly wrapperRef: React.RefObject<HTMLDivElement>;
-	readonly textareaRef: React.RefObject<HTMLTextAreaElement>;
+	readonly wrapperRef: React.RefObject<HTMLDivElement | null>;
+	readonly textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 
 	readonly onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 	readonly onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
