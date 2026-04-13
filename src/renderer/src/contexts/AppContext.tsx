@@ -433,7 +433,6 @@ export interface AppActionsContextValue {
 	setAppTheme: (theme: AppTheme) => void;
 	setCustomTheme: (id: string | null) => void;
 	setLanguage: (language: AppLanguage) => void;
-	toggleModal: (modal: keyof ModalState, open?: boolean) => void;
 	resetState: () => void;
 }
 
