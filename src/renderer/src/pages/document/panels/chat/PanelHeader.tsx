@@ -10,6 +10,7 @@ import { useChatState, useChatDispatch } from './hooks';
 import type { ChatSessionFile } from './shared';
 import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
 import { CardHeader } from '@/components/ui/Card';
+import { Item } from './components/Item';
 
 const PanelHeader: React.FC = () => {
 	const { t } = useTranslation();
