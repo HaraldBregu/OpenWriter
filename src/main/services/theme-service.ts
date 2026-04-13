@@ -6,17 +6,41 @@ import type { Theme, CustomThemeInfo, ThemeData } from '../../shared/types';
 
 const THEME_FILE_NAME = 'theme.json';
 
-const THEME_DATA_KEYS: readonly (keyof Omit<ThemeData, 'nav' | 'page' | 'sidebar' | 'panel'>)[] = [
+const THEME_DATA_KEYS: readonly (keyof ThemeData)[] = [
 	'background',
 	'foreground',
-] as const;
-
-const NAV_KEYS: readonly (keyof ThemeData['nav'])[] = [
-	'background',
-	'foreground',
-	'title',
-	'sidebarIcon',
-	'historyIcon',
+	'card',
+	'card-foreground',
+	'popover',
+	'popover-foreground',
+	'primary',
+	'primary-foreground',
+	'secondary',
+	'secondary-foreground',
+	'muted',
+	'muted-foreground',
+	'accent',
+	'accent-foreground',
+	'destructive',
+	'destructive-foreground',
+	'border',
+	'input',
+	'ring',
+	'radius',
+	'success',
+	'success-foreground',
+	'warning',
+	'warning-foreground',
+	'info',
+	'info-foreground',
+	'sidebar-background',
+	'sidebar-foreground',
+	'sidebar-primary',
+	'sidebar-primary-foreground',
+	'sidebar-accent',
+	'sidebar-accent-foreground',
+	'sidebar-border',
+	'sidebar-ring',
 ] as const;
 
 const THEME_REQUIRED_FIELDS = ['name', 'description', 'author', 'version', 'license'] as const;
