@@ -1,4 +1,4 @@
-import React, { createContext, useReducer, useMemo, useContext, useState, useCallback, type Dispatch, type ReactNode } from 'react';
+import React, { createContext, useReducer, useMemo, useContext as useReactContext, useState, useCallback, type Dispatch, type ReactNode } from 'react';
 import { documentReducer } from './context/reducer';
 import { INITIAL_DOCUMENT_STATE, type DocumentState } from './context/state';
 import type { DocumentAction } from './context/actions';
@@ -6,7 +6,7 @@ import type { Editor } from '@tiptap/core';
 
 export type ActiveSidebar = 'config' | 'agentic' | 'editor' | null;
 
-interface DocumentContextValue {
+interface ContextValue {
 	state: DocumentState;
 	dispatch: Dispatch<DocumentAction>;
 	editor: Editor | null;
@@ -17,35 +17,35 @@ interface DocumentContextValue {
 	toggleSidebar: (sidebar: Exclude<ActiveSidebar, null>) => void;
 }
 
-const DocumentContext = createContext<DocumentContextValue | null>(null);
+const Context = createContext<ContextValue | null>(null);
 
-export function useDocumentContext(): DocumentContextValue {
-	const ctx = useContext(DocumentContext);
+export function useContext(): ContextValue {
+	const ctx = useReactContext(Context);
 	if (!ctx) {
-		throw new Error('useDocumentContext must be used within a DocumentProvider');
+		throw new Error('useContext must be used within a Provider');
 	}
 	return ctx;
 }
 
-export function useEditorInstance(): Pick<DocumentContextValue, 'editor' | 'setEditor'> {
-	const { editor, setEditor } = useDocumentContext();
+export function useEditorInstance(): Pick<ContextValue, 'editor' | 'setEditor'> {
+	const { editor, setEditor } = useContext();
 	return { editor, setEditor };
 }
 
-export function useSidebarVisibility(): Pick<DocumentContextValue, 'activeSidebar' | 'animate' | 'setActiveSidebar' | 'toggleSidebar'> {
-	const { activeSidebar, animate, setActiveSidebar, toggleSidebar } = useDocumentContext();
+export function useSidebarVisibility(): Pick<ContextValue, 'activeSidebar' | 'animate' | 'setActiveSidebar' | 'toggleSidebar'> {
+	const { activeSidebar, animate, setActiveSidebar, toggleSidebar } = useContext();
 	return { activeSidebar, animate, setActiveSidebar, toggleSidebar };
 }
 
-interface DocumentProviderProps {
+interface ProviderProps {
 	readonly children: ReactNode;
 	readonly documentId: string | undefined;
 }
 
-export function DocumentProvider({
+export function Provider({
 	children,
 	documentId,
-}: DocumentProviderProps): React.JSX.Element {
+}: ProviderProps): React.JSX.Element {
 	const [state, dispatch] = useReducer(documentReducer, {
 		...INITIAL_DOCUMENT_STATE,
 		documentId,
@@ -67,7 +67,7 @@ export function DocumentProvider({
 		});
 	}, []);
 
-	const value = useMemo<DocumentContextValue>(() => ({
+	const value = useMemo<ContextValue>(() => ({
 		state,
 		dispatch,
 		editor,
@@ -79,8 +79,8 @@ export function DocumentProvider({
 	}), [state, dispatch, editor, setEditor, activeSidebar, animate, setActiveSidebar, toggleSidebar]);
 
 	return (
-		<DocumentContext.Provider value={value}>
+		<Context.Provider value={value}>
 			{children}
-		</DocumentContext.Provider>
+		</Context.Provider>
 	);
 }
