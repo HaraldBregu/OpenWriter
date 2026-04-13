@@ -161,7 +161,7 @@ const PanelHeader: React.FC = () => {
 									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
-							<div className="my-4">
+							<ItemGroup className="my-4">
 								{filteredSessions.length === 0 && (
 									<Item size="xs">
 										<ItemContent>
