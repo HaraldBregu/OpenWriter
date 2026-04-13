@@ -269,7 +269,7 @@ export function ContentGeneratorNodeView({
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<div
+			<Card
 				className={wrapperClassName}
 				onDragOver={agentId === 'image' ? handleDragOver : undefined}
 				onDragLeave={agentId === 'image' ? handleDragLeave : undefined}
