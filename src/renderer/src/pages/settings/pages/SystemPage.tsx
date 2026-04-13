@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Select,
@@ -11,15 +11,8 @@ import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import { Moon, Monitor, Sun } from 'lucide-react';
 import { SectionHeader, SettingRow } from '../components';
-import {
-	useThemeMode,
-	useAppTheme,
-	useCustomThemeId,
-	useLanguageMode,
-	useAppActions,
-} from '../../../contexts';
+import { useThemeMode, useLanguageMode, useAppActions } from '../../../contexts';
 import type { ThemeMode, AppLanguage } from '../../../contexts';
-import type { CustomThemeInfo } from '../../../../../shared/types';
 
 // ---------------------------------------------------------------------------
 // Language options
