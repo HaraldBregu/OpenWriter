@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
+import { Textarea } from '@/components/ui/Textarea';
 import type { ContentGeneratorOptions, ContentGeneratorStorage } from './input-extension';
-import { ContentGeneratorContent } from './ContentGeneratorContent';
+import { ImageAttachmentBar, PromptFooter, PromptHeader } from './components';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
@@ -37,7 +39,6 @@ export function ContentGeneratorNodeView({
 	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-	const [isDragOver, setIsDragOver] = useState(false);
 	const options = extension.options as ContentGeneratorOptions;
 	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
 		.contentGenerator;
@@ -215,66 +216,10 @@ export function ContentGeneratorNodeView({
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, [resizeTextarea]);
 
-	const handleDragOver = useCallback(
-		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
-			e.preventDefault();
-			setIsDragOver(true);
-		},
-		[agentId]
-	);
-
-	const handleDragLeave = useCallback(
-		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
-			e.preventDefault();
-			setIsDragOver(false);
-		},
-		[agentId]
-	);
-
-	const handleDrop = useCallback(
-		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
-			e.preventDefault();
-			setIsDragOver(false);
-			for (const file of Array.from(e.dataTransfer.files)) {
-				if (file.type.startsWith('image/')) {
-					addFile(file);
-				}
-			}
-		},
-		[addFile, agentId]
-	);
-
-	const wrapperClassName = cn(
-		'group/assistant relative my-3 flex flex-col overflow-hidden rounded-[1.55rem] border-[0.5px] text-card-foreground backdrop-blur-xl',
-		'bg-[linear-gradient(180deg,hsl(var(--card))_0%,hsl(var(--card)/0.96)_100%)]',
-		'shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_10px_28px_hsl(var(--foreground)/0.06)]',
-		'transition-[border-color,box-shadow,background-color,transform] duration-200 ease-out',
-		'dark:bg-[linear-gradient(180deg,hsl(var(--card)/0.98)_0%,hsl(var(--card)/0.92)_100%)]',
-		'dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_12px_30px_hsl(var(--background)/0.5)]',
-		loading
-			? 'border-primary/45 shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.12),0_12px_30px_hsl(var(--primary)/0.12)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)]'
-			: 'border-border/85 hover:-translate-y-[1px] hover:border-foreground/14 hover:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_12px_30px_hsl(var(--foreground)/0.07)] dark:border-white/12 dark:hover:border-white/18 dark:hover:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_14px_34px_hsl(var(--background)/0.56)]',
-		agentId === 'image' && isDragOver
-			? 'border-primary/55 bg-[linear-gradient(180deg,hsl(var(--primary)/0.08)_0%,hsl(var(--card)/0.96)_32%,hsl(var(--card))_100%)] shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.16),0_14px_34px_hsl(var(--primary)/0.14)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.14)_0%,hsl(var(--card)/0.94)_34%,hsl(var(--card)/0.92)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.18),0_16px_38px_hsl(var(--primary)/0.16)]'
-			: '',
-		!enable && !loading
-			? 'border-border/70 bg-[linear-gradient(180deg,hsl(var(--muted)/0.72)_0%,hsl(var(--muted)/0.6)_100%)] shadow-[0_1px_0_hsl(var(--background)/0.9)_inset,0_6px_16px_hsl(var(--foreground)/0.04)] dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.34)_0%,hsl(var(--muted)/0.24)_100%)] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.06)_inset,0_10px_24px_hsl(var(--background)/0.4)]'
-			: '',
-		'focus-within:border-primary/45 focus-within:shadow-[0_1px_0_hsl(var(--background)/0.94)_inset,0_0_0_0.5px_hsl(var(--primary)/0.12),0_14px_36px_hsl(var(--primary)/0.12)]',
-		'dark:focus-within:border-primary/45 dark:focus-within:shadow-[0_1px_0_hsl(var(--foreground)/0.08)_inset,0_0_0_0.5px_hsl(var(--primary)/0.15),0_16px_40px_hsl(var(--primary)/0.14)]'
-	);
-
+	
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<Card
-				className={wrapperClassName}
-				onDragOver={agentId === 'image' ? handleDragOver : undefined}
-				onDragLeave={agentId === 'image' ? handleDragLeave : undefined}
-				onDrop={agentId === 'image' ? handleDrop : undefined}
-			>
+			<Card>
 				<ContentGeneratorContent
 					prompt={prompt}
 					agentId={agentId}
