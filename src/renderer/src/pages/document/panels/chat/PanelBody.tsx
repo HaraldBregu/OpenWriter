@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bot, LoaderCircle } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { ChatMessageStatus, DocumentChatMessage, DocumentChatMessageRole } from './shared';
+import { useChatState } from './hooks';
+import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
 
 interface PanelBodyProps {
-	readonly chatMessages: readonly DocumentChatMessage[];
-	readonly latestSystemMessageId: string | undefined;
-	readonly bottomRef: React.RefObject<HTMLDivElement | null>;
 	readonly className?: string;
 }
 
-const PanelBody: React.FC<PanelBodyProps> = ({
-	chatMessages,
-	latestSystemMessageId,
-	bottomRef,
-	className = '',
-}) => {
+const PanelBody: React.FC<PanelBodyProps> = ({ className = '' }) => {
 	const { t } = useTranslation();
+	const { messages: chatMessages } = useChatState();
+	const bottomRef = useRef<HTMLDivElement>(null);
+
+	const latestSystemMessageId = [...chatMessages]
+		.reverse()
+		.find((entry) => entry.role === 'system')?.id;
+
+	useEffect(() => {
+		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+	}, [chatMessages]);
 
 	if (chatMessages.length === 0) {
 		return (
