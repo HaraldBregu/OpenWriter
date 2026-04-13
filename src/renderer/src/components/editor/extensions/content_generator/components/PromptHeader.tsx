@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImageIcon, PenLine } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { CardHeader } from '@/components/ui/Card';
 import type { ContentGeneratorAgentId } from '../agents';
 
 interface PromptHeaderProps {

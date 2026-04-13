@@ -40,30 +40,28 @@ export function PromptFooter({
 	const handleModelChange = isImage ? onImageModelChange : onTextModelChange;
 
 	return (
-		<CardFooter className="border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.2)_0%,hsl(var(--background)/0.18)_100%)] px-4 py-3.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.14)_100%)]">
-			<div className="flex items-center gap-2">
-				<AgentDropdown agentId={agentId} disabled={loading} onAgentChange={onAgentChange} />
-				<ModelDropdown
-					models={modelOptions}
-					selectedModel={selectedModel}
-					disabled={loading}
-					onModelChange={handleModelChange}
-				/>
-				<div className="ml-auto shrink-0">
-					<Button
-						variant="prompt-submit"
-						size="prompt-submit-md"
-						className="h-10 w-10 shrink-0 rounded-full shadow-[0_10px_22px_hsl(var(--primary)/0.18)] dark:shadow-[0_12px_24px_hsl(var(--primary)/0.2)]"
-						disabled={isSubmitDisabled}
-						onMouseDown={(e) => e.preventDefault()}
-						onClick={() => {
-							if (!loading) submitRef.current?.();
-						}}
-						aria-label={t('agenticPanel.send', 'Send message')}
-					>
-						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-					</Button>
-				</div>
+		<CardFooter>
+			<AgentDropdown agentId={agentId} disabled={loading} onAgentChange={onAgentChange} />
+			<ModelDropdown
+				models={modelOptions}
+				selectedModel={selectedModel}
+				disabled={loading}
+				onModelChange={handleModelChange}
+			/>
+			<div className="ml-auto shrink-0">
+				<Button
+					variant="prompt-submit"
+					size="prompt-submit-md"
+					className="h-10 w-10 shrink-0 rounded-full shadow-[0_10px_22px_hsl(var(--primary)/0.18)] dark:shadow-[0_12px_24px_hsl(var(--primary)/0.2)]"
+					disabled={isSubmitDisabled}
+					onMouseDown={(e) => e.preventDefault()}
+					onClick={() => {
+						if (!loading) submitRef.current?.();
+					}}
+					aria-label={t('agenticPanel.send', 'Send message')}
+				>
+					{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+				</Button>
 			</div>
 		</CardFooter>
 	);
