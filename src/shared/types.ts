@@ -25,12 +25,18 @@ export interface ThemeData {
 	};
 	page?: {
 		readonly background: string;
+		readonly foreground: string;
+		readonly title: string;
 		header?: {
 			readonly background: string;
+			readonly foreground: string;
+			readonly title: string;
 		};
 	};
 	sidebar?: {
 		readonly background: string;
+		readonly foreground: string;
+		readonly title: string;
 	};
 }
 

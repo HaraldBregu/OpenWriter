@@ -494,16 +494,6 @@ export function useLanguageMode(): AppLanguage {
 	return useLanguageContext().language;
 }
 
-export function useModalStates(): ModalState {
-	return useModalContext().modals;
-}
-
-export function useModal(modal: keyof ModalState): [boolean, (open?: boolean) => void] {
-	const { modals, toggleModal } = useModalContext();
-	const toggle = useCallback((open?: boolean) => toggleModal(modal, open), [modal, toggleModal]);
-	return [modals[modal], toggle];
-}
-
 // ---------------------------------------------------------------------------
 // Legacy context exports (some tests import these directly)
 // ---------------------------------------------------------------------------
