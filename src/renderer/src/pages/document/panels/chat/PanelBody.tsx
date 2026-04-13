@@ -10,7 +10,6 @@ import { EmptyStateCard } from './components/EmptyStateCard';
 interface PanelBodyProps {}
 
 const PanelBody: React.FC<PanelBodyProps> = () => {
-	const { t } = useTranslation();
 	const { messages: chatMessages } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
 
