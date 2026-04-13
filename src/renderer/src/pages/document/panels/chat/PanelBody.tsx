@@ -5,13 +5,22 @@ import remarkGfm from 'remark-gfm';
 import { useChatState } from './hooks';
 import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
 import { CardContent } from '@/components/ui/Card';
-import { EmptyStateCard } from './components/EmptyStateCard';
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from '@/components/ui/Empty';
+import { Bot } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface PanelBodyProps {}
 
 const PanelBody: React.FC<PanelBodyProps> = () => {
 	const { messages: chatMessages } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
+	const { t } = useTranslation();
 
 	const latestSystemMessageId = [...chatMessages]
 		.reverse()
@@ -22,7 +31,22 @@ const PanelBody: React.FC<PanelBodyProps> = () => {
 	}, [chatMessages]);
 
 	if (chatMessages.length === 0) {
-		return <EmptyStateCard />;
+		return (
+			<Empty>
+				<EmptyHeader>
+					<EmptyMedia variant="icon">
+						<Bot />
+					</EmptyMedia>
+					<EmptyTitle>Chat AI Assistant</EmptyTitle>
+					<EmptyDescription>
+						{t(
+							'agenticPanel.emptyDescription',
+							'Use it for writing, editing, research, conversation, and image ideas.'
+						)}
+					</EmptyDescription>
+				</EmptyHeader>
+			</Empty>
+		);
 	}
 
 	return (
