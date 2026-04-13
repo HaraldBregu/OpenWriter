@@ -226,7 +226,6 @@ function PageContent(): ReactElement {
 						value={title}
 						onChange={(e) => handleTitleChange(e.target.value)}
 						placeholder={t('writing.titlePlaceholder')}
-						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 text-xl! font-bold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
 				</PageHeaderTitle>
 				<PageHeaderItems>

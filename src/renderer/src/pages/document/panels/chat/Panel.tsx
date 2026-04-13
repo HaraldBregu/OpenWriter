@@ -9,13 +9,16 @@ import {
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../../../services/task-event-bus';
-import { Header, Input, Message } from './components';
 import { useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch, useChatPersistence } from './hooks';
 import { ChatProvider } from './Provider';
 import { buildTaskPrompt, getSelectedEditorText, mapTaskStatusToChatStatus } from './shared';
 import type { AssistantTaskData } from './shared';
 import { useEditorInstance } from '../../Provider';
+import { Card } from '@/components/ui/Card';
+import { PanelHeader } from './PanelHeader';
+import { PanelFooter } from './PanelFooter';
+import { PanelBody } from './PanelBody';
 
 const Chat: React.FC = () => {
 	const { t } = useTranslation();
@@ -290,16 +293,9 @@ const Chat: React.FC = () => {
 		.find((entry) => entry.role === 'system')?.id;
 
 	return (
-		<div className="flex h-full w-full flex-col overflow-hidden border-l border-border bg-background dark:border-border/90 dark:bg-background">
-			<Header />
-
-			<div
-				className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
-				role="log"
-				aria-label={t('agenticPanel.messagesRegion', 'Chat messages')}
-				aria-live="polite"
-				aria-busy={isRunning}
-			>
+		<Card className="flex h-full w-full flex-col border-0">
+			<PanelHeader />
+			<PanelBody className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
 				{chatMessages.length === 0 ? (
 					<div className="flex h-full flex-col items-center justify-center px-6 text-center">
 						<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/85 bg-card/82 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
@@ -368,9 +364,8 @@ const Chat: React.FC = () => {
 						<div ref={bottomRef} />
 					</div>
 				)}
-			</div>
-
-			<Input
+			</PanelBody>
+			<PanelFooter
 				onSend={handleSend}
 				disabled={isRunning}
 				selectionLabel={selectionLabel}
@@ -381,7 +376,7 @@ const Chat: React.FC = () => {
 					'Ask the assistant for help with writing, research, editing, or image prompts'
 				)}
 			/>
-		</div>
+		</Card>
 	);
 };
 

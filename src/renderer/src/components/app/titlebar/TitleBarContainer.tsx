@@ -19,7 +19,6 @@ export const TitleBarContainer = memo(function AppTitleBarContainer({
 			style={
 				{
 					WebkitAppRegion: 'drag',
-					backgroundColor: 'var(--nav-background, hsl(var(--card) / 0.95))',
 				} as React.CSSProperties
 			}
 		>

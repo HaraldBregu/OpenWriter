@@ -14,10 +14,11 @@ import {
 	CONTENT_GENERATOR_AGENT_OPTIONS,
 	type ContentGeneratorAgentId,
 } from '@/components/editor/extensions/content_generator/agents';
-import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../../shared/models';
-import { getProvider } from '../../../../../../../shared/providers';
-import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../../shared/types';
-import type { ModelInfo } from '../../../../../../../shared/types';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { getProvider } from '../../../../../../shared/providers';
+import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
+import type { ModelInfo } from '../../../../../../shared/types';
+import { CardFooter } from '@/components/ui/Card';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
@@ -39,7 +40,7 @@ interface InputProps {
 	readonly placeholder?: string;
 }
 
-const Input: React.FC<InputProps> = ({
+const PanelFooter: React.FC<InputProps> = ({
 	onSend,
 	disabled = false,
 	selectionLabel,
@@ -206,7 +207,7 @@ const Input: React.FC<InputProps> = ({
 	const currentAgentLabel = t(currentAgent.labelKey, currentAgent.labelFallback);
 
 	return (
-		<div className="shrink-0 px-3 pb-3 pt-1">
+		<CardFooter className="shrink-0 px-3 pb-3 pt-1">
 			{/* Hidden live region — announces image attachment changes to screen readers */}
 			<div
 				id={dropStatusId}
@@ -486,9 +487,9 @@ const Input: React.FC<InputProps> = ({
 					</Button>
 				</div>
 			</div>
-		</div>
+		</CardFooter>
 	);
 };
 
-export { Input };
+export { PanelFooter };
 export type { InputProps };

@@ -2,7 +2,16 @@ import React from 'react';
 import { LoaderCircle } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import type { ChatMessageStatus, DocumentChatMessageRole } from '../shared';
+import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
+
+interface PanelBodyProps {
+	readonly children: React.ReactNode;
+	readonly className?: string;
+}
+
+const PanelBody: React.FC<PanelBodyProps> = ({ children, className = '' }) => {
+	return <div className={className}>{children}</div>;
+};
 
 interface MessageProps {
 	readonly id: string;
@@ -13,15 +22,16 @@ interface MessageProps {
 	readonly status?: ChatMessageStatus;
 	readonly renderMarkdown?: boolean;
 	readonly showStatusLoader?: boolean;
+	readonly className?: string;
 }
 
 const Message: React.FC<MessageProps> = ({
 	content,
 	role,
-	timestamp: _timestamp,
 	status,
 	renderMarkdown = false,
 	showStatusLoader = false,
+	className = '',
 }) => {
 	const isUser = role === 'user';
 	const isSystem = role === 'system';
@@ -29,7 +39,9 @@ const Message: React.FC<MessageProps> = ({
 
 	if (isUser) {
 		return (
-			<div className="rounded-xl border border-border/80 bg-accent/72 px-3.5 py-2 shadow-none sm:px-4 sm:py-2.5 dark:border-border/90 dark:bg-accent/90">
+			<div
+				className={`rounded-xl border border-border/80 bg-accent/72 px-3.5 py-2 shadow-none sm:px-4 sm:py-2.5 dark:border-border/90 dark:bg-accent/90 ${className}`}
+			>
 				<div className="whitespace-pre-wrap text-[13px] font-medium leading-relaxed text-foreground/90 dark:text-foreground/95">
 					{content}
 				</div>
@@ -39,7 +51,7 @@ const Message: React.FC<MessageProps> = ({
 
 	if (isSystem) {
 		return (
-			<div className="flex gap-2.5">
+			<div className={`flex gap-2.5 ${className}`}>
 				<div className="min-w-0 flex-1">
 					<div className="inline-flex items-center gap-1.5 px-0.5 text-xs text-foreground/65 dark:text-muted-foreground/95">
 						{shouldShowStatusLoader && (
@@ -57,7 +69,7 @@ const Message: React.FC<MessageProps> = ({
 	}
 
 	return (
-		<div className="flex gap-2.5">
+		<div className={`flex gap-2.5 ${className}`}>
 			<div className="min-w-0 flex-1">
 				<div className="rounded-2xl px-0 py-2.5 shadow-none sm:py-3">
 					{renderMarkdown ? (
@@ -75,5 +87,5 @@ const Message: React.FC<MessageProps> = ({
 	);
 };
 
-export { Message };
-export type { MessageProps };
+export { PanelBody, Message };
+export type { PanelBodyProps, MessageProps };

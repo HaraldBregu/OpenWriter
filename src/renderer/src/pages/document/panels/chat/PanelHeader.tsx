@@ -5,12 +5,13 @@ import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
-import { useDocumentDispatch, useDocumentState } from '../../../hooks';
-import { useChatState, useChatDispatch } from '../hooks';
-import type { ChatSessionFile } from '../shared';
-import { syncChatSessionsFromDisk } from '../../../services/chat-session-storage';
+import { useDocumentDispatch, useDocumentState } from '../../hooks';
+import { useChatState, useChatDispatch } from './hooks';
+import type { ChatSessionFile } from './shared';
+import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
+import { CardHeader } from '@/components/ui/Card';
 
-const Header: React.FC = () => {
+const PanelHeader: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
 	const docDispatch = useDocumentDispatch();
@@ -103,7 +104,7 @@ const Header: React.FC = () => {
 	};
 
 	return (
-		<div className="shrink-0 border-b border-border/80 bg-card/92 px-4 py-2 backdrop-blur-sm dark:border-border/90 dark:bg-card/95">
+		<CardHeader className='shrink-0 px-4 py-2'>
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
@@ -202,8 +203,8 @@ const Header: React.FC = () => {
 					</Button>
 				</div>
 			</div>
-		</div>
+		</CardHeader>
 	);
 };
 
-export { Header };
+export { PanelHeader };

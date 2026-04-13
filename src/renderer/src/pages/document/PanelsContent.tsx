@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import InfoPanel from './panels/info/InfoPanel';
-import Chat from './panels/chat';
+import Chat from './panels/chat/Panel';
 import { useSidebarVisibility } from './Provider';
 
 interface PanelsContentProps {
