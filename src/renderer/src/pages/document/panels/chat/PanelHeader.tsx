@@ -122,7 +122,7 @@ const PanelHeader: React.FC = () => {
 	};
 
 	return (
-		<CardHeader className="shrink-0 px-4 py-2">
+		<CardHeader className="shrink-0 border-b py-2">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
@@ -160,7 +160,7 @@ const PanelHeader: React.FC = () => {
 									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
-							<div className=" my-4">
+							<div className="my-4">
 								{filteredSessions.length === 0 && (
 									<Item size="xs">
 										<ItemContent>
