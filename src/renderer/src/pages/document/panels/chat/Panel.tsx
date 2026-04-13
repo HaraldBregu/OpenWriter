@@ -25,7 +25,6 @@ const Chat: React.FC = () => {
 	const { documentId, selection } = useDocumentState();
 	const { editor } = useEditorInstance();
 	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
-	const bottomRef = useRef<HTMLDivElement>(null);
 	const messagesRef = useRef(chatMessages);
 	const lastRecordedTaskStateRef = useRef<string | null>(null);
 	const isRunning = activeMessageId !== null || activeTaskId !== null;
