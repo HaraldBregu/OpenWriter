@@ -129,8 +129,8 @@ function Container({ children }: LayoutProps) {
 			? t('appLayout.workspaceLabel', 'Workspace')
 			: displayWorkspaceName;
 	const isLandingPage = location.pathname === '/';
-	const footerUserName = currentUser?.name?.trim() || 'User';
-	const footerUserEmail = currentUser?.email?.trim() || 'user@example.com';
+	const footerUserName = 'User';
+	const footerUserEmail = 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
 
 	const accountMenuItems = [
