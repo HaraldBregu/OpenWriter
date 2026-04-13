@@ -72,6 +72,7 @@ function formatShortDate(timestamp: number): string {
 function PageContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
+	const [imageDialogOpen, setImageDialogOpen] = useState(false);
 	const {
 		folders,
 		filteredFolders,
