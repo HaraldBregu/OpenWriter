@@ -129,7 +129,6 @@ const PanelHeader: React.FC = () => {
 						<PopoverContent
 							align="end"
 							sideOffset={8}
-							className="w-80 rounded-xl border border-border/80 bg-card p-1.5 shadow-none ring-1 ring-black/8 backdrop-blur-sm dark:border-border dark:bg-card/95 dark:ring-1 dark:ring-[hsl(var(--border)/0.7)]"
 						>
 							<div className="border-b border-border/60 px-1.5 pb-1.5 dark:border-border/80">
 								<div className="relative rounded-lg bg-muted/75 px-2 dark:bg-accent/85">
