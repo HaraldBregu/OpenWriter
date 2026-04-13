@@ -216,31 +216,65 @@ export function ContentGeneratorNodeView({
 		return () => textarea.removeEventListener('keydown', handleKeyDown);
 	}, [resizeTextarea]);
 
-	
+	const { t } = useTranslation();
+	const isImage = agentId === 'image';
+	const activeModel = isImage ? selectedImageModel : selectedTextModel;
+	const inputLabel = isImage
+		? t('assistantNode.imageTitle', 'Generate image')
+		: t('assistantNode.writerTitle', 'Generate text');
+	const isSubmitDisabled =
+		!enable || loading || (!prompt.trim() && (!isImage || files.length === 0));
+
 	return (
 		<NodeViewWrapper contentEditable={false}>
 			<Card>
-				<ContentGeneratorContent
-					prompt={prompt}
+				<PromptHeader agentId={agentId} modelName={activeModel.name} />
+				{isImage && (
+					<ImageAttachmentBar
+						files={files}
+						previewUrls={previewUrls}
+						isDragOver={isDragOver}
+						disabled={!enable || loading}
+						fileInputRef={fileInputRef}
+						onOpenFilePicker={handleOpenFilePicker}
+						onRemoveFile={removeFile}
+						onFileInputChange={handleFileInputChange}
+					/>
+				)}
+				<Textarea
+					ref={textareaRef}
+					value={prompt}
+					onChange={(e) => {
+						handlePromptChange(e.target.value);
+						resizeTextarea();
+					}}
+					disabled={!enable}
+					aria-label={inputLabel}
+					className={cn(
+						'min-h-[108px] w-full resize-none border-none bg-transparent px-4 pt-2 pb-3 text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+						'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
+						'disabled:cursor-not-allowed disabled:opacity-60'
+					)}
+					placeholder={
+						isImage
+							? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
+							: t(
+									'assistantNode.placeholder',
+									'Ask the assistant to continue, rewrite, or generate from here.'
+								)
+					}
+					rows={1}
+				/>
+				<PromptFooter
 					agentId={agentId}
-					files={files}
-					previewUrls={previewUrls}
-					isDragOver={isDragOver}
-					loading={loading}
-					enable={enable}
 					selectedImageModel={selectedImageModel}
 					selectedTextModel={selectedTextModel}
-					textareaRef={textareaRef}
-					fileInputRef={fileInputRef}
+					loading={loading}
+					isSubmitDisabled={isSubmitDisabled}
 					submitRef={submitRef}
-					onPromptChange={handlePromptChange}
 					onAgentChange={handleAgentChange}
 					onImageModelChange={handleImageModelChange}
 					onTextModelChange={handleTextModelChange}
-					onRemoveFile={removeFile}
-					onFileInputChange={handleFileInputChange}
-					onOpenFilePicker={handleOpenFilePicker}
-					onResize={resizeTextarea}
 				/>
 			</Card>
 		</NodeViewWrapper>
