@@ -2,7 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
 import { Label } from '@/components/ui/Label';
-import { useLanguageMode, useAppActions } from '../../../contexts';
+import { useLanguageMode } from '@/hooks/use-language-mode';
+import { useAppActions } from '@/hooks/use-app-actions';
 import type { AppLanguage } from '../../../contexts';
 
 export function LanguageSelector(): React.ReactElement {
