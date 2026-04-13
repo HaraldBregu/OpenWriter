@@ -62,9 +62,10 @@ export function PromptFooter({
 
 	return (
 		<CardFooter>
-			<DropdownMenu modal={false}>
-				<DropdownMenuTrigger
-					disabled={loading}
+			<div className="flex items-center gap-3">
+				<DropdownMenu modal={false}>
+					<DropdownMenuTrigger
+						disabled={loading}
 					render={
 						<Button
 							type="button"
@@ -174,6 +175,8 @@ export function PromptFooter({
 					))}
 				</DropdownMenuContent>
 			</DropdownMenu>
+
+			
 			<div className="ml-auto shrink-0">
 				<Button
 					variant="prompt-submit"
