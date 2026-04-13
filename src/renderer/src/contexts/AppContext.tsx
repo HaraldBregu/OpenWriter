@@ -80,6 +80,10 @@ function applyThemeData(data: ThemeData): void {
 			for (const [tbKey, tbValue] of Object.entries(value as Record<string, string>)) {
 				root.style.setProperty(tokenKeyToCssVar(tbKey, 'title-bar'), tbValue);
 			}
+		} else if (key === 'page' && typeof value === 'object' && value !== null) {
+			for (const [pgKey, pgValue] of Object.entries(value as Record<string, string>)) {
+				root.style.setProperty(tokenKeyToCssVar(pgKey, 'page'), pgValue);
+			}
 		} else {
 			root.style.setProperty(tokenKeyToCssVar(key), value as string);
 		}
