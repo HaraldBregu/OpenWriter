@@ -214,7 +214,7 @@ function Container({ children }: LayoutProps) {
 			/>
 
 			<SidebarPageContainer>
-				<Sidebar collapsible="icon" className="border-r top-12 h-[calc(100svh-3rem)]">
+				<Sidebar collapsible="icon" className="top-12 h-[calc(100svh-3rem)]">
 					{/* Header */}
 					<SidebarHeader className="bg-transparent border-b">
 						<SidebarMenu>

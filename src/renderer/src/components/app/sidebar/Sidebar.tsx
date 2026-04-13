@@ -1,4 +1,4 @@
-import { memo, type ReactNode, type ReactElement } from 'react';
+import React, { memo, type ReactNode, type ReactElement } from 'react';
 import { SidebarInset } from '@/components/ui/Sidebar';
 
 interface SidebarProps {
@@ -8,7 +8,18 @@ interface SidebarProps {
 export const SidebarPageContainer = memo(function Sidebar({
 	children,
 }: SidebarProps): ReactElement {
-	return <div className="flex flex-1 min-h-0 w-full">{children}</div>;
+	return (
+		<div
+			className="flex flex-1 min-h-0 w-full"
+			style={
+				{
+					backgroundColor: 'var(--sidebar-background, hsl(var(--sidebar-background)))',
+				} as React.CSSProperties
+			}
+		>
+			{children}
+		</div>
+	);
 });
 
 interface SidebarInsetLayoutProps {
@@ -20,7 +31,16 @@ export const SidebarPageInset = memo(function SidebarInsetLayout({
 }: SidebarInsetLayoutProps): ReactElement {
 	return (
 		<SidebarInset className="flex flex-col flex-1 min-h-0 min-w-0">
-			<main className="flex-1 overflow-y-auto overflow-x-hidden bg-background">{children}</main>
+			<main
+				className="flex-1 overflow-y-auto overflow-x-hidden"
+				style={
+					{
+						backgroundColor: 'var(--page-background, hsl(var(--background)))',
+					} as React.CSSProperties
+				}
+			>
+				{children}
+			</main>
 		</SidebarInset>
 	);
 });
