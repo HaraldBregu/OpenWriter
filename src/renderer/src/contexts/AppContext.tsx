@@ -140,15 +140,6 @@ function applyThemeClass(theme: ThemeMode): void {
 	}
 }
 
-const defaultUIPreferences: UIPreferences = {
-	sidebarState: 'expanded',
-	compactMode: false,
-	editorFontSize: 14,
-	editorLineHeight: 1.6,
-	showLineNumbers: true,
-	enableSpellCheck: true,
-};
-
 const defaultModalState: ModalState = {
 	settingsOpen: false,
 	commandPaletteOpen: false,
