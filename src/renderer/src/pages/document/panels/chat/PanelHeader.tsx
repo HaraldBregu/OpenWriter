@@ -27,6 +27,7 @@ import {
 	ItemTitle,
 	ItemDescription,
 	ItemActions,
+	ItemGroup,
 } from '@/components/ui/Item';
 
 const PanelHeader: React.FC = () => {
