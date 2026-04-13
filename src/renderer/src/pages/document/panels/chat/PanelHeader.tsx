@@ -3,22 +3,32 @@ import { useTranslation } from 'react-i18next';
 import { Clock3, MessageSquare, Plus, Search, Trash2 } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
-import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
-import { Popover, PopoverContent, PopoverHeader, PopoverDescription, PopoverTrigger } from '@/components/ui/Popover';
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput,
+	InputGroupText,
+} from '@/components/ui/InputGroup';
+import {
+	Popover,
+	PopoverContent,
+	PopoverHeader,
+	PopoverDescription,
+	PopoverTrigger,
+} from '@/components/ui/Popover';
 import { useDocumentDispatch, useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch } from './hooks';
 import type { ChatSessionFile } from './shared';
 import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
 import { CardHeader } from '@/components/ui/Card';
 import {
-  Item,
-  ItemMedia,
-  ItemContent,
-  ItemTitle,
-  ItemDescription,
-  ItemActions,
-} from "@/components/ui/Item"
-
+	Item,
+	ItemMedia,
+	ItemContent,
+	ItemTitle,
+	ItemDescription,
+	ItemActions,
+} from '@/components/ui/Item';
 
 const PanelHeader: React.FC = () => {
 	const { t } = useTranslation();
@@ -113,7 +123,7 @@ const PanelHeader: React.FC = () => {
 	};
 
 	return (
-		<CardHeader className='shrink-0 px-4 py-2'>
+		<CardHeader className="shrink-0 px-4 py-2">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
@@ -134,9 +144,7 @@ const PanelHeader: React.FC = () => {
 								</Button>
 							}
 						/>
-						<PopoverContent
-							align="end"
-						>
+						<PopoverContent align="end">
 							<PopoverHeader>
 								<PopoverDescription>
 									<InputGroup>
@@ -155,27 +163,23 @@ const PanelHeader: React.FC = () => {
 							</PopoverHeader>
 							<div className="max-h-[26rem] overflow-y-auto my-4">
 								{filteredSessions.length === 0 && (
-									<div className="px-1.5 py-2 text-xs text-muted-foreground">
-										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
-									</div>
+									<Item size="xs">
+										<ItemContent>
+											<ItemDescription>
+												{t('agenticPanel.historyEmpty', 'No previous chats yet')}
+											</ItemDescription>
+										</ItemContent>
+									</Item>
 								)}
 								{filteredSessions.map((session) => (
 									<Item
 										key={session.id}
 										size="xs"
 										variant={session.id === selectedId ? 'muted' : 'default'}
-										render={
-											<button
-												type="button"
-												onClick={() => {
-													void handleLoadSession(session.id);
-												}}
-											/>
-										}
+										onClick={() => {
+											void handleLoadSession(session.id);
+										}}
 									>
-										<ItemMedia variant="icon">
-											<MessageSquare />
-										</ItemMedia>
 										<ItemContent>
 											<ItemTitle>{session.title}</ItemTitle>
 											<ItemDescription>{session.ageLabel}</ItemDescription>
