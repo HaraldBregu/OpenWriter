@@ -1,8 +1,8 @@
 export { EditorContainer } from './base/Editor';
 
-export { AppSidebarContainer } from './sidebar/AppSidebarContainer';
-export { AppSidebarLayout } from './sidebar/AppSidebarLayout';
-export { AppSidebarInsetLayout } from './sidebar/AppSidebarInsetLayout';
+export { SidebarContainer } from './sidebar/SidebarContainer';
+export { SidebarLayout } from './sidebar/SidebarLayout';
+export { SidebarInsetLayout } from './sidebar/SidebarInsetLayout';
 
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
