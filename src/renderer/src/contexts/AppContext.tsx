@@ -201,11 +201,7 @@ interface AppProviderProps {
 export function AppProvider({ children, initialState }: AppProviderProps) {
 	return (
 		<ThemeProvider initialTheme={initialState?.theme}>
-			<AppThemeProvider initialAppTheme={initialState?.appTheme}>
-				<LanguageProvider initialLanguage={initialState?.language}>
-					{children}
-				</LanguageProvider>
-			</AppThemeProvider>
+			<LanguageProvider initialLanguage={initialState?.language}>{children}</LanguageProvider>
 		</ThemeProvider>
 	);
 }
