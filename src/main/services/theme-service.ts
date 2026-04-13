@@ -175,17 +175,6 @@ export class ThemeService {
 				throw new Error(`Theme "${variant}" data missing required key: "${key}"`);
 			}
 		}
-
-		if (typeof obj['nav'] !== 'object' || obj['nav'] === null) {
-			throw new Error(`Theme "${variant}" data missing required "nav" object`);
-		}
-
-		const nav = obj['nav'] as Record<string, unknown>;
-		for (const key of NAV_KEYS) {
-			if (typeof nav[key] !== 'string') {
-				throw new Error(`Theme "${variant}" nav missing required key: "${key}"`);
-			}
-		}
 	}
 
 	deleteTheme(id: string): void {
