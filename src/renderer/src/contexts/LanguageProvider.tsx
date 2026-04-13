@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useMemo, useState, useEffect } from 'react';
 import i18n from '../i18n';
 import type { AppLanguage } from './AppContext';
 
@@ -14,12 +14,12 @@ export function readPersistedLanguage(): AppLanguage {
 	return 'en';
 }
 
-interface LanguageContextValue {
+export interface LanguageContextValue {
 	language: AppLanguage;
 	setLanguage: (language: AppLanguage) => void;
 }
 
-const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
+export const LanguageContext = createContext<LanguageContextValue | undefined>(undefined);
 
 export function LanguageProvider({
 	children,
@@ -58,10 +58,4 @@ export function LanguageProvider({
 	);
 
 	return <LanguageContext.Provider value={value}>{children}</LanguageContext.Provider>;
-}
-
-export function useLanguageContext(): LanguageContextValue {
-	const ctx = useContext(LanguageContext);
-	if (ctx === undefined) throw new Error('useLanguageContext must be used within an AppProvider');
-	return ctx;
 }
