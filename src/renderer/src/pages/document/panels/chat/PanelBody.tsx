@@ -8,7 +8,7 @@ import type { ChatMessageStatus, DocumentChatMessage, DocumentChatMessageRole } 
 interface PanelBodyProps {
 	readonly chatMessages: readonly DocumentChatMessage[];
 	readonly latestSystemMessageId: string | undefined;
-	readonly bottomRef: React.RefObject<HTMLDivElement>;
+	readonly bottomRef: React.RefObject<HTMLDivElement | null>;
 	readonly className?: string;
 }
 
