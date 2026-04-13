@@ -20,22 +20,6 @@ export type AppTheme =
 	| 'sandstone';
 export type SidebarState = 'expanded' | 'collapsed';
 
-export interface User {
-	id: string;
-	name: string;
-	email: string;
-	avatar?: string;
-}
-
-export interface UIPreferences {
-	sidebarState: SidebarState;
-	compactMode: boolean;
-	editorFontSize: number;
-	editorLineHeight: number;
-	showLineNumbers: boolean;
-	enableSpellCheck: boolean;
-}
-
 export interface ModalState {
 	settingsOpen: boolean;
 	commandPaletteOpen: boolean;
