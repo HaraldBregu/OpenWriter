@@ -37,13 +37,9 @@ import {
 	SidebarProvider,
 	SidebarHeader,
 	useSidebar,
-} from '@/components/ui/Sidebar';
-import {
 	Sidebar,
-	SidebarLayout,
-	SidebarInsetLayout,
-	AppIconOpenWriter,
-} from '..';
+} from '@/components/ui/Sidebar';
+import { AppIconOpenWriter } from '..';
 import {
 	Settings,
 	ChevronRight,
@@ -65,16 +61,13 @@ import {
 	Moon,
 } from 'lucide-react';
 import { useAppActions, useCurrentUser, useThemeMode } from '../../../contexts';
+import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 
 interface LayoutProps {
 	readonly children: React.ReactNode;
 }
 
-// ---------------------------------------------------------------------------
-// LayoutInner — rendered inside SidebarProvider so it can call useSidebar
-// ---------------------------------------------------------------------------
-
-function LayoutInner({ children }: LayoutProps) {
+function Container({ children }: LayoutProps) {
 	const { t } = useTranslation();
 	const { toggleSidebar, open } = useSidebar();
 	const location = useLocation();
@@ -220,10 +213,10 @@ function LayoutInner({ children }: LayoutProps) {
 				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
 			/>
 
-			<Sidebar>
-				<SidebarLayout>
+			<SidebarPageContainer>
+				<Sidebar collapsible="icon" className="border-r top-12 h-[calc(100svh-3rem)]">
 					{/* Header */}
-					<SidebarHeader>
+					<SidebarHeader className="bg-transparent border-b">
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton
@@ -530,27 +523,21 @@ function LayoutInner({ children }: LayoutProps) {
 							</ComboboxContent>
 						</Combobox>
 					</SidebarFooter>
-				</SidebarLayout>
+				</Sidebar>
 
-				<SidebarInsetLayout>{children}</SidebarInsetLayout>
-			</Sidebar>
+				<SidebarPageInset>{children}</SidebarPageInset>
+			</SidebarPageContainer>
 		</>
 	);
 }
 
-// ---------------------------------------------------------------------------
-// Layout
-// ---------------------------------------------------------------------------
-
 export function Layout({ children }: LayoutProps) {
 	return (
-		<div className="flex flex-col h-screen min-w-[800px] overflow-x-hidden">
-			<SidebarProvider
-				className="flex-col flex-1 min-h-0"
-				style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
-			>
-				<LayoutInner>{children}</LayoutInner>
-			</SidebarProvider>
-		</div>
+		<SidebarProvider
+			className="flex-col flex-1 min-h-0 flex h-screen min-w-200 overflow-x-hidden"
+			style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
+		>
+			<Container>{children}</Container>
+		</SidebarProvider>
 	);
 }
