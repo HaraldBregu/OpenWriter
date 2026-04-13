@@ -65,6 +65,6 @@ export function PromptFooter({
 					</Button>
 				</div>
 			</div>
-		</div>
+		</CardFooter>
 	);
 }
