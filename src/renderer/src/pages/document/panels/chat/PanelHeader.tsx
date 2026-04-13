@@ -4,7 +4,7 @@ import { Clock3, Plus, Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
+import { Popover, PopoverContent, PopoverHeader, PopoverDescription, PopoverTrigger } from '@/components/ui/Popover';
 import { useDocumentDispatch, useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch } from './hooks';
 import type { ChatSessionFile } from './shared';
