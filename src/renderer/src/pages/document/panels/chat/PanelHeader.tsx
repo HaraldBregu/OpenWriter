@@ -131,13 +131,19 @@ const PanelHeader: React.FC = () => {
 							sideOffset={8}
 						>
 							<PopoverHeader>
-								<PopoverDescription className="relative rounded-lg bg-muted/75 px-2 dark:bg-accent/85">
-									<Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground/90" />
-									<Input
-										value={search}
-										onChange={(event) => setSearch(event.target.value)}
-										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-									/>
+								<PopoverDescription>
+									<InputGroup>
+										<InputGroupAddon>
+											<InputGroupText>
+												<Search />
+											</InputGroupText>
+										</InputGroupAddon>
+										<InputGroupInput
+											value={search}
+											onChange={(event) => setSearch(event.target.value)}
+											placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
+										/>
+									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
 							<div className="max-h-[26rem] overflow-y-auto py-0.5">
