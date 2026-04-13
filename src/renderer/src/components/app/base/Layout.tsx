@@ -532,7 +532,7 @@ function LayoutInner({ children }: LayoutProps) {
 					</SidebarFooter>
 				</SidebarLayout>
 
-				<AppSidebarInsetLayout>{children}</AppSidebarInsetLayout>
+				<SidebarInsetLayout>{children}</SidebarInsetLayout>
 			</SidebarContainer>
 		</>
 	);
