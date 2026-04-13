@@ -54,9 +54,9 @@ function PopoverTitle({ className, ...props }: React.ComponentProps<'p'>) {
 	);
 }
 
-function PopoverDescription({ className, ...props }: React.ComponentProps<'p'>) {
+function PopoverDescription({ className, ...props }: React.ComponentProps<'div'>) {
 	return (
-		<p
+		<div
 			className={cn('text-sm text-muted-foreground', className)}
 			{...props}
 		/>

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock3, MessageSquare, Plus, Search, Trash2 } from 'lucide-react';
+import { Clock3, Plus, Search, Trash2 } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
 import {
@@ -23,7 +23,6 @@ import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
 import { CardHeader } from '@/components/ui/Card';
 import {
 	Item,
-	ItemMedia,
 	ItemContent,
 	ItemTitle,
 	ItemDescription,
@@ -161,7 +160,7 @@ const PanelHeader: React.FC = () => {
 									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
-							<div className="max-h-[26rem] overflow-y-auto my-4">
+							<div className=" my-4">
 								{filteredSessions.length === 0 && (
 									<Item size="xs">
 										<ItemContent>
