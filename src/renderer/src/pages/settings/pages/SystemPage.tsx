@@ -70,7 +70,7 @@ const SystemPage: React.FC = () => {
 		loadCustomThemes();
 	}, [loadCustomThemes]);
 
-	const handleThemeStyleChange = useCallback((next: string | null): void => {
+	const handleThemeStyleChange = useCallback(async (next: string | null): Promise<void> => {
 		if (next === null) return;
 		setActiveThemeId(next);
 		try {
@@ -78,6 +78,14 @@ const SystemPage: React.FC = () => {
 		} catch {
 			/* empty */
 		}
+		if (next === DEFAULT_THEME_ID) {
+			clearThemeTokens();
+			return;
+		}
+		const manifest = await window.app.getCustomThemeTokens(next);
+		if (!manifest) return;
+		const variant = resolveEffectiveVariant();
+		applyThemeTokens(manifest[variant]);
 	}, []);
 
 	const handleThemeChange = (next: ThemeMode): void => {
