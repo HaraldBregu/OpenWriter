@@ -45,16 +45,6 @@ function readPersistedLanguage(): AppLanguage {
 	return 'en';
 }
 
-function readPersistedAppTheme(): AppTheme {
-	try {
-		const stored = localStorage.getItem(APP_THEME_STORAGE_KEY);
-		if (stored && isAppTheme(stored)) return stored;
-	} catch {
-		// localStorage may be unavailable in some contexts
-	}
-	return 'default';
-}
-
 function applyThemeClass(theme: ThemeMode): void {
 	const root = document.documentElement;
 	if (theme === 'dark') {
