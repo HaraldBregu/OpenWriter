@@ -3,6 +3,7 @@ import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/Card';
 import type { ContentGeneratorOptions, ContentGeneratorStorage } from './input-extension';
 import { ContentGeneratorContent } from './ContentGeneratorContent';
 import type { ContentGeneratorAgentId } from './agents';
@@ -274,8 +275,6 @@ export function ContentGeneratorNodeView({
 				onDragLeave={agentId === 'image' ? handleDragLeave : undefined}
 				onDrop={agentId === 'image' ? handleDrop : undefined}
 			>
-				<div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-primary/14 via-primary/4 to-transparent dark:from-primary/18 dark:via-primary/6" />
-				<div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-primary/55 to-transparent dark:via-primary/65" />
 				<ContentGeneratorContent
 					prompt={prompt}
 					agentId={agentId}

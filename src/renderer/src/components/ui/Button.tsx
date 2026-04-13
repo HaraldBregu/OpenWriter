@@ -25,6 +25,8 @@ const buttonVariants = cva(
 				['prompt-submit']: 'bg-primary text-primary-foreground hover:bg-primary/90',
 				['header-icon']:
 					'text-muted-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground',
+				rounded:
+					'rounded-full bg-primary text-primary-foreground hover:bg-primary/90',
 			},
 			size: {
 				default:
@@ -43,15 +45,10 @@ const buttonVariants = cva(
 				['header-icon-md']: 'size-8',
 				['header-icon-lg']: 'size-9',
 			},
-			rounded: {
-				true: 'rounded-full',
-				false: '',
-			},
 		},
 		defaultVariants: {
 			variant: 'default',
 			size: 'default',
-			rounded: false,
 		},
 	}
 );
@@ -60,13 +57,12 @@ function Button({
 	className,
 	variant = 'default',
 	size = 'default',
-	rounded = false,
 	...props
 }: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
 	return (
 		<ButtonPrimitive
 			data-slot="button"
-			className={cn(buttonVariants({ variant, size, rounded, className }))}
+			className={cn(buttonVariants({ variant, size, className }))}
 			{...props}
 		/>
 	);
