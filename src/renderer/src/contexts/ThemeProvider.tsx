@@ -1,6 +1,13 @@
 import React, { createContext, useCallback, useMemo, useState, useEffect } from 'react';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../../../shared/theme';
 import type { ThemeMode } from '../../../shared/types';
+import {
+	applyThemeTokens,
+	clearThemeTokens,
+	readPersistedThemeStyle,
+	resolveEffectiveVariant,
+	DEFAULT_THEME_ID,
+} from '../lib/theme-tokens';
 
 const THEME_STORAGE_KEY = 'app-theme-mode';
 const DARK_CLASS = 'dark';

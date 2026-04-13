@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
 import { Label } from '@/components/ui/Label';
-import type { ThemeMode } from '../../../contexts';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 
 export function ThemeModeSelector(): React.ReactElement {
