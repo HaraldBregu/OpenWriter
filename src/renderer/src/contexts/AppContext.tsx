@@ -32,11 +32,7 @@ export interface AppState {
 	theme: ThemeMode;
 	appTheme: AppTheme;
 	language: AppLanguage;
-	user: User | null;
-	uiPreferences: UIPreferences;
 	modals: ModalState;
-	isOnline: boolean;
-	lastSyncedAt: number | null;
 }
 
 // ---------------------------------------------------------------------------
