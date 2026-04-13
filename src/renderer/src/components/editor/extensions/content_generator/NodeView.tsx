@@ -260,7 +260,11 @@ export function ContentGeneratorNodeView({
 
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<Card>
+			<Card
+				onDragOver={isImage ? handleDragOver : undefined}
+				onDragLeave={isImage ? handleDragLeave : undefined}
+				onDrop={isImage ? handleDrop : undefined}
+			>
 				<PromptHeader agentId={agentId} modelName={activeModel.name} />
 				{isImage && (
 					<ImageAttachmentBar
