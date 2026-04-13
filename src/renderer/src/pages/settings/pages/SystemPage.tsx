@@ -29,52 +29,17 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
 ] as const;
 
 // ---------------------------------------------------------------------------
-// Default theme value
-// ---------------------------------------------------------------------------
-
-const DEFAULT_THEME_VALUE = 'default';
-const DEFAULT_THEME_LABEL_KEY = 'settings.appTheme.default';
-
-// ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
 
 const SystemPage: React.FC = () => {
 	const { t } = useTranslation();
 	const themeMode = useThemeMode();
-	const appTheme = useAppTheme();
-	const customThemeId = useCustomThemeId();
 	const language = useLanguageMode();
-	const { setTheme, setAppTheme, setCustomTheme, setLanguage } = useAppActions();
-	const [customThemes, setCustomThemes] = useState<CustomThemeInfo[]>([]);
-
-	const loadCustomThemes = useCallback(async () => {
-		try {
-			const list = await window.app.getCustomThemes();
-			setCustomThemes(list);
-		} catch {
-			setCustomThemes([]);
-		}
-	}, []);
-
-	useEffect(() => {
-		loadCustomThemes();
-	}, [loadCustomThemes]);
-
-	const selectedThemeValue = customThemeId ?? appTheme;
+	const { setTheme, setLanguage } = useAppActions();
 
 	const handleThemeChange = (next: ThemeMode): void => {
 		setTheme(next);
-	};
-
-	const handleAppThemeChange = (next: string | null): void => {
-		if (next === null) return;
-		if (next === DEFAULT_THEME_VALUE) {
-			setCustomTheme(null);
-			setAppTheme('default');
-		} else {
-			setCustomTheme(next);
-		}
 	};
 
 	const handleLanguageChange = (next: string | null): void => {
