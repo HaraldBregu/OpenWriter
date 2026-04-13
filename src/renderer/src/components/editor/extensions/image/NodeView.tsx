@@ -1,187 +1,64 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { Sparkles, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
+import { Card, CardContent } from '@/components/ui/Card';
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
+import { Provider } from './Provider';
+import { useImage } from './hooks/use-image';
 import { ImageEditor } from './components/ImageEditor';
 import { DeleteConfirmDialog, ImagePreviewDialog } from './components';
 
-interface ImageAttrs {
-	src: string | null;
-	alt: string | null;
-	title: string | null;
-}
-
-const ABSOLUTE_URL_RE = /^(https?:\/\/|data:|local-resource:\/\/)/;
-
-function resolveImageSrc(src: string | null, documentBasePath: string | null): string | null {
-	if (!src) return null;
-	if (ABSOLUTE_URL_RE.test(src)) return src;
-	if (!documentBasePath) return src;
-	const normalized = documentBasePath.replace(/\\/g, '/');
-	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
-	return `local-resource://localhost${urlPath}/${src}`;
-}
-
-interface ActionButtonProps {
-	icon: React.ReactNode;
-	label: string;
-	onClick: () => void;
-	destructive?: boolean;
-}
-
-function ActionButton({ icon, label, onClick, destructive }: ActionButtonProps): React.JSX.Element {
-	return (
-		<Tooltip>
-			<TooltipTrigger
-				render={
-					<Button
-						variant="ghost"
-						size="icon-xs"
-						aria-label={label}
-						onClick={onClick}
-						className={cn(
-							'h-5 w-5 [&_svg]:h-3 [&_svg]:w-3',
-							destructive
-								? 'text-muted-foreground hover:text-destructive'
-								: 'text-muted-foreground hover:text-foreground'
-						)}
-					>
-						{icon}
-					</Button>
-				}
-			/>
-			<TooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
-				{label}
-			</TooltipContent>
-		</Tooltip>
-	);
-}
-
-export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JSX.Element {
+function ImageInner(): React.JSX.Element {
 	const { t } = useTranslation();
-	const { src, alt, title } = node.attrs as ImageAttrs;
-	const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-	const documentBasePath = (storage.image?.documentBasePath as string) ?? null;
-	const resolvedSrc = useMemo(
-		() => resolveImageSrc(src, documentBasePath),
-		[src, documentBasePath]
-	);
-
-	const [loadError, setLoadError] = useState(false);
-	const [hovered, setHovered] = useState(false);
-	const [focused, setFocused] = useState(false);
-	const [editing, setEditing] = useState(false);
-	const [editInitialMode, setEditInitialMode] = useState<'ai' | undefined>(undefined);
-	const [previewing, setPreviewing] = useState(false);
-	const prevSrcRef = useRef(resolvedSrc);
-	const figureRef = useRef<HTMLDivElement>(null);
-
-	useEffect(() => {
-		if (prevSrcRef.current !== resolvedSrc) {
-			prevSrcRef.current = resolvedSrc;
-			setLoadError(false);
-		}
-	}, [resolvedSrc]);
-
-	const handleError = useCallback(() => {
-		setLoadError(true);
-	}, []);
-
-	const handleLoad = useCallback(() => {
-		setLoadError(false);
-	}, []);
-
-	const handleDelete = useCallback(() => {
-		const pos = getPos();
-		if (typeof pos !== 'number') return;
-		editor
-			.chain()
-			.focus()
-			.deleteRange({ from: pos, to: pos + node.nodeSize })
-			.run();
-	}, [editor, getPos, node.nodeSize]);
-
-	const handleAskAI = useCallback(() => {
-		setEditInitialMode('ai');
-		setEditing(true);
-	}, []);
-
-	const handleEdit = useCallback(() => {
-		setEditInitialMode(undefined);
-		setEditing(true);
-	}, []);
-
-	const handleImageClick = useCallback((): void => {
-		setPreviewing(true);
-	}, []);
-
-	const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>): void => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			setPreviewing(true);
-		}
-	}, []);
-
-	const handleEditorSave = useCallback(
-		async (dataUri: string) => {
-			const pos = getPos();
-			if (typeof pos !== 'number') return;
-
-			const imgStorage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-			const saveHandler = imgStorage.image?.onImageEditSave as
-				| ((dataUri: string) => Promise<string>)
-				| null;
-
-			const finalSrc = saveHandler ? await saveHandler(dataUri) : dataUri;
-
-			if (editor.isDestroyed) return;
-
-			editor.view.dispatch(
-				editor.view.state.tr.setNodeMarkup(pos, undefined, {
-					...node.attrs,
-					src: finalSrc,
-				})
-			);
-			setEditing(false);
-		},
-		[editor, getPos, node.attrs]
-	);
-
-	const handleEditorCancel = useCallback(() => {
-		setEditing(false);
-	}, []);
-
-	const showToolbar = (hovered || focused) && !loadError && resolvedSrc;
+	const {
+		state,
+		resolvedSrc,
+		alt,
+		title,
+		showToolbar,
+		handleError,
+		handleLoad,
+		handleDelete,
+		handleAskAI,
+		handleEdit,
+		handleImageClick,
+		handleKeyDown,
+		handleEditorSave,
+		handleEditorCancel,
+		setHovered,
+		setFocused,
+		setPreviewing,
+	} = useImage();
 
 	return (
-		<NodeViewWrapper contentEditable={false} className="my-4">
-			{editing && resolvedSrc ? (
+		<>
+			{state.editing && resolvedSrc ? (
 				<ImageEditor
 					src={resolvedSrc}
 					alt={alt}
-					initialMode={editInitialMode}
+					initialMode={state.editInitialMode}
 					onSave={handleEditorSave}
 					onCancel={handleEditorCancel}
 				/>
 			) : (
-				<div
-					ref={figureRef}
+				<Card
+					size="sm"
 					className="inline-block max-w-full"
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
 					onFocus={() => setFocused(true)}
 					onBlur={() => setFocused(false)}
 					onKeyDown={handleKeyDown}
-					tabIndex={loadError || !resolvedSrc ? -1 : 0}
+					tabIndex={state.loadError || !resolvedSrc ? -1 : 0}
 					role="img"
 					aria-label={alt ?? t('imageNode.imageLabel')}
 				>
-					<figure className="relative inline-block max-w-full rounded-md">
-						{/* Floating toolbar overlay */}
+					<CardContent className="relative">
 						<TooltipProvider delay={300}>
 							<div
 								className={cn(
@@ -192,7 +69,8 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 									'pointer-events-none opacity-0',
 									'transition-all duration-200 ease-out',
 									'-translate-y-1 scale-95',
-									showToolbar && 'pointer-events-auto opacity-100 translate-y-0 scale-100'
+									showToolbar &&
+										'pointer-events-auto opacity-100 translate-y-0 scale-100'
 								)}
 								role="toolbar"
 								aria-label={t('imageNode.imageToolbar')}
@@ -210,40 +88,58 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 
 								<div className="h-4 w-px bg-border/50" />
 
-								<ActionButton icon={<Pencil />} label={t('imageNode.edit')} onClick={handleEdit} />
+								<Tooltip>
+									<TooltipTrigger
+										render={
+											<Button
+												variant="ghost"
+												size="icon-xs"
+												aria-label={t('imageNode.edit')}
+												onClick={handleEdit}
+												className="h-5 w-5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3"
+											>
+												<Pencil />
+											</Button>
+										}
+									/>
+									<TooltipContent
+										side="top"
+										sideOffset={4}
+										className="px-2 py-1 text-xs"
+									>
+										{t('imageNode.edit')}
+									</TooltipContent>
+								</Tooltip>
 
 								<DeleteConfirmDialog
 									onConfirm={handleDelete}
 									trigger={
-										<button
-											className={cn(
-												'relative h-5 w-5 rounded p-0',
-												'flex items-center justify-center cursor-pointer transition-colors',
-												'text-muted-foreground hover:text-destructive'
-											)}
+										<Button
+											variant="ghost"
+											size="icon-xs"
 											aria-label={t('imageNode.delete')}
-											title={t('imageNode.delete')}
+											className="h-5 w-5 text-muted-foreground hover:text-destructive [&_svg]:h-3 [&_svg]:w-3"
 										>
-											<Trash2 className="h-3 w-3" />
-										</button>
+											<Trash2 />
+										</Button>
 									}
 								/>
 							</div>
 						</TooltipProvider>
 
-						{loadError || !resolvedSrc ? (
-							<div
-								className={cn(
-									'flex h-32 w-64 flex-col items-center justify-center gap-2',
-									'rounded-md border border-dashed border-border bg-muted/50',
-									'text-muted-foreground'
-								)}
+						{state.loadError || !resolvedSrc ? (
+							<Empty
+								className="h-32 w-64"
 								role="img"
 								aria-label={alt ?? t('imageNode.notFound')}
 							>
-								<ImageOff className="h-6 w-6 opacity-40" aria-hidden="true" />
-								<span className="text-xs">{alt ?? t('imageNode.notFound')}</span>
-							</div>
+								<EmptyHeader>
+									<EmptyMedia variant="icon">
+										<ImageOff />
+									</EmptyMedia>
+									<EmptyTitle>{alt ?? t('imageNode.notFound')}</EmptyTitle>
+								</EmptyHeader>
+							</Empty>
 						) : (
 							<img
 								src={resolvedSrc}
@@ -256,16 +152,26 @@ export function ImageNodeView({ node, editor, getPos }: NodeViewProps): React.JS
 								className="block max-w-full cursor-pointer rounded-md"
 							/>
 						)}
-					</figure>
-				</div>
+					</CardContent>
+				</Card>
 			)}
 
 			<ImagePreviewDialog
-				open={previewing}
+				open={state.previewing}
 				onOpenChange={setPreviewing}
 				src={resolvedSrc}
 				alt={alt}
 			/>
+		</>
+	);
+}
+
+export function ImageNodeView(props: NodeViewProps): React.JSX.Element {
+	return (
+		<NodeViewWrapper contentEditable={false} className="my-4">
+			<Provider nodeViewProps={props}>
+				<ImageInner />
+			</Provider>
 		</NodeViewWrapper>
 	);
 }
