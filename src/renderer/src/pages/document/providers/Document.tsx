@@ -4,50 +4,38 @@ import { INITIAL_DOCUMENT_STATE, type DocumentState } from '../context/state';
 import type { DocumentAction } from '../context/actions';
 import type { Editor } from '@tiptap/core';
 
-// --- Document state/dispatch contexts ---
-
-export const DocumentStateContext = createContext<DocumentState | null>(null);
-export const DocumentDispatchContext = createContext<Dispatch<DocumentAction> | null>(null);
-
-// --- Editor instance context ---
-
-interface EditorInstanceContextValue {
-	editor: Editor | null;
-	setEditor: (editor: Editor | null) => void;
-}
-
-const EditorInstanceContext = createContext<EditorInstanceContextValue | null>(null);
-
-export function useEditorInstance(): EditorInstanceContextValue {
-	const ctx = useContext(EditorInstanceContext);
-	if (!ctx) {
-		throw new Error('useEditorInstance must be used within a DocumentProvider');
-	}
-	return ctx;
-}
-
-// --- Sidebar visibility context ---
-
 export type ActiveSidebar = 'config' | 'agentic' | 'editor' | null;
 
-interface SidebarVisibilityContextValue {
+interface DocumentContextValue {
+	state: DocumentState;
+	dispatch: Dispatch<DocumentAction>;
+	editor: Editor | null;
+	setEditor: (editor: Editor | null) => void;
 	activeSidebar: ActiveSidebar;
 	animate: boolean;
 	setActiveSidebar: (sidebar: ActiveSidebar) => void;
 	toggleSidebar: (sidebar: Exclude<ActiveSidebar, null>) => void;
 }
 
-const SidebarVisibilityContext = createContext<SidebarVisibilityContextValue | null>(null);
+const DocumentContext = createContext<DocumentContextValue | null>(null);
 
-export function useSidebarVisibility(): SidebarVisibilityContextValue {
-	const ctx = useContext(SidebarVisibilityContext);
+export function useDocumentContext(): DocumentContextValue {
+	const ctx = useContext(DocumentContext);
 	if (!ctx) {
-		throw new Error('useSidebarVisibility must be used within a DocumentProvider');
+		throw new Error('useDocumentContext must be used within a DocumentProvider');
 	}
 	return ctx;
 }
 
-// --- Combined provider ---
+export function useEditorInstance(): Pick<DocumentContextValue, 'editor' | 'setEditor'> {
+	const { editor, setEditor } = useDocumentContext();
+	return { editor, setEditor };
+}
+
+export function useSidebarVisibility(): Pick<DocumentContextValue, 'activeSidebar' | 'animate' | 'setActiveSidebar' | 'toggleSidebar'> {
+	const { activeSidebar, animate, setActiveSidebar, toggleSidebar } = useDocumentContext();
+	return { activeSidebar, animate, setActiveSidebar, toggleSidebar };
+}
 
 interface DocumentProviderProps {
 	readonly children: ReactNode;
@@ -58,20 +46,16 @@ export function DocumentProvider({
 	children,
 	documentId,
 }: DocumentProviderProps): React.JSX.Element {
-	// Document state
 	const [state, dispatch] = useReducer(documentReducer, {
 		...INITIAL_DOCUMENT_STATE,
 		documentId,
 	});
-	const stableState = useMemo(() => state, [state]);
 
-	// Editor instance
 	const [editor, setEditorState] = useState<Editor | null>(null);
 	const setEditor = useCallback((ed: Editor | null) => {
 		setEditorState(ed);
 	}, []);
 
-	// Sidebar visibility
 	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('agentic');
 	const [animate, setAnimate] = useState(true);
 
@@ -83,17 +67,20 @@ export function DocumentProvider({
 		});
 	}, []);
 
+	const value = useMemo<DocumentContextValue>(() => ({
+		state,
+		dispatch,
+		editor,
+		setEditor,
+		activeSidebar,
+		animate,
+		setActiveSidebar,
+		toggleSidebar,
+	}), [state, dispatch, editor, setEditor, activeSidebar, animate, setActiveSidebar, toggleSidebar]);
+
 	return (
-		<DocumentStateContext.Provider value={stableState}>
-			<DocumentDispatchContext.Provider value={dispatch}>
-				<EditorInstanceContext.Provider value={{ editor, setEditor }}>
-					<SidebarVisibilityContext.Provider
-						value={{ activeSidebar, animate, setActiveSidebar, toggleSidebar }}
-					>
-						{children}
-					</SidebarVisibilityContext.Provider>
-				</EditorInstanceContext.Provider>
-			</DocumentDispatchContext.Provider>
-		</DocumentStateContext.Provider>
+		<DocumentContext.Provider value={value}>
+			{children}
+		</DocumentContext.Provider>
 	);
 }
