@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload, AlertCircle, X, CheckCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { SectionHeader, SettingRow } from '../components';
-import { useAppActions } from '../../../contexts';
 import type { CustomThemeInfo } from '../../../../../shared/types';
 
 type ImportStatus = 'idle' | 'success' | 'error';
