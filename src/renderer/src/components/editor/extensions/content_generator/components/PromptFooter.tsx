@@ -55,10 +55,9 @@ export function PromptFooter({
 	const selectedModel = isImage ? selectedImageModel : selectedTextModel;
 	const handleModelChange = isImage ? onImageModelChange : onTextModelChange;
 
-	const currentAgent =
-		CONTENT_GENERATOR_AGENT_OPTIONS.find((option) => option.value === agentId) ??
-		CONTENT_GENERATOR_AGENT_OPTIONS[0];
-	const currentAgentLabel = t(currentAgent.labelKey, currentAgent.labelFallback);
+	const currentAgentLabel = isImage
+		? t('assistantAgent.image', 'Image')
+		: t('assistantAgent.writer', 'Text');
 
 	return (
 		<CardFooter>
