@@ -130,8 +130,8 @@ const PanelHeader: React.FC = () => {
 							align="end"
 							sideOffset={8}
 						>
-							<div className="border-b border-border/60 px-1.5 pb-1.5 dark:border-border/80">
-								<div className="relative rounded-lg bg-muted/75 px-2 dark:bg-accent/85">
+							<PopoverHeader>
+								<PopoverDescription className="relative rounded-lg bg-muted/75 px-2 dark:bg-accent/85">
 									<Search className="pointer-events-none absolute left-2 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground dark:text-muted-foreground/90" />
 									<Input
 										value={search}
@@ -139,8 +139,8 @@ const PanelHeader: React.FC = () => {
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
 										className="h-8 border-0 bg-transparent pl-6 pr-1 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-foreground dark:placeholder:text-muted-foreground/75"
 									/>
-								</div>
-							</div>
+								</PopoverDescription>
+							</PopoverHeader>
 							<div className="max-h-[26rem] overflow-y-auto py-0.5">
 								{filteredSessions.length === 0 && (
 									<div className="px-1.5 py-2 text-xs text-muted-foreground">
