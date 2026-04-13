@@ -4,8 +4,6 @@
  * This context system complements Redux by handling UI state that doesn't
  * need to be in the global Redux store. Use this for:
  * - Theme preferences
- * - UI preferences (sidebar state, modal states, etc.)
- * - User session data
  * - Transient UI state
  *
  * Use Redux for:
@@ -24,8 +22,6 @@ export {
 	useAppTheme,
 	useCustomThemeId,
 	useLanguageMode,
-	useModalStates,
-	useModal,
 	AppStateContext,
 	AppActionsContext,
 } from './AppContext';
@@ -35,7 +31,6 @@ export type {
 	AppTheme,
 	AppLanguage,
 	SidebarState,
-	ModalState,
 	AppState,
 	AppContextValue,
 	AppActionsContextValue,
