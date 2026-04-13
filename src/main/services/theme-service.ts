@@ -6,12 +6,12 @@ import type { Theme, CustomThemeInfo, ThemeData } from '../../shared/types';
 
 const THEME_FILE_NAME = 'theme.json';
 
-const THEME_DATA_KEYS: readonly (keyof Omit<ThemeData, 'titleBar'>)[] = [
+const THEME_DATA_KEYS: readonly (keyof Omit<ThemeData, 'nav' | 'page' | 'sidebar' | 'panel'>)[] = [
 	'background',
 	'foreground',
 ] as const;
 
-const TITLE_BAR_KEYS: readonly (keyof ThemeData['titleBar'])[] = [
+const NAV_KEYS: readonly (keyof ThemeData['nav'])[] = [
 	'background',
 	'foreground',
 	'title',
