@@ -236,25 +236,16 @@ export interface AppActionsContextValue {
  */
 export function useAppActions(): AppActionsContextValue {
 	const { setTheme } = useTheme();
-	const { setAppTheme, setCustomTheme } = useAppThemeContext();
 	const { setLanguage } = useLanguageContext();
 
 	const resetState = useCallback(() => {
 		setTheme(readPersistedTheme());
-		setAppTheme(readPersistedAppTheme());
-		setCustomTheme(null);
 		setLanguage(readPersistedLanguage());
-	}, [setTheme, setAppTheme, setCustomTheme, setLanguage]);
+	}, [setTheme, setLanguage]);
 
 	return useMemo(
-		() => ({
-			setTheme,
-			setAppTheme,
-			setCustomTheme,
-			setLanguage,
-			resetState,
-		}),
-		[setTheme, setAppTheme, setCustomTheme, setLanguage, resetState]
+		() => ({ setTheme, setLanguage, resetState }),
+		[setTheme, setLanguage, resetState]
 	);
 }
 
