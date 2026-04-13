@@ -34,6 +34,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		undefined,
 		(): ContentGeneratorState => ({
 			prompt: (node.attrs.prompt as string) ?? '',
+			agentId: initialAgentId,
 			files: [],
 			previewUrls: [],
 			isDragOver: false,
