@@ -49,10 +49,6 @@ const Chat: React.FC = () => {
 	messagesRef.current = chatMessages;
 
 	useEffect(() => {
-		bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-	}, [chatMessages]);
-
-	useEffect(() => {
 		if (!documentId || !activeTaskId || !activeMessageId) return;
 
 		lastRecordedTaskStateRef.current = null;
