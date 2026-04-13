@@ -9,7 +9,7 @@ const EmptyStateCard: React.FC = () => {
 	return (
 		<div className="flex min-h-0 flex-1 overflow-y-auto px-4 py-4">
 			<div className="flex h-full w-full flex-col items-center justify-center px-6 text-center">
-				<Card className="max-w-xs rounded-[1.75rem]">
+				<Card className="flex min-h-0  max-w-xs rounded-[1.75rem] border-dashed shadow-none">
 					<CardContent className="flex flex-col items-center gap-3 px-6 py-8">
 						<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/82 dark:bg-accent/95">
 							<Bot
