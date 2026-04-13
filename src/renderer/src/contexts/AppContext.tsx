@@ -9,21 +9,11 @@ import type { ThemeData, ThemeMode } from '../../../shared/types';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
-export type AppTheme =
-	| 'default'
-	| 'aurora'
-	| 'ember'
-	| 'ocean'
-	| 'forest'
-	| 'lavender'
-	| 'midnight'
-	| 'sandstone';
 export type SidebarState = 'expanded' | 'collapsed';
 
 // Kept for backward-compatibility with the test file and any external consumers.
 export interface AppState {
 	theme: ThemeMode;
-	appTheme: AppTheme;
 	language: AppLanguage;
 }
 
