@@ -4,7 +4,7 @@ import type { ContentGeneratorState } from './state';
 import type { ContentGeneratorAgentId } from '../agents';
 import type { ModelInfo } from '../../../../../../../shared/types';
 
-export interface ContentGeneratorContextValue {
+export interface ContextValue {
 	state: ContentGeneratorState;
 	loading: boolean;
 	enable: boolean;
@@ -31,4 +31,4 @@ export interface ContentGeneratorContextValue {
 	resizeTextarea: () => void;
 }
 
-export const ContentGeneratorContext = createContext<ContentGeneratorContextValue | null>(null);
+export const Context = createContext<ContextValue | null>(null);

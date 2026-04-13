@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ArrowUp, LoaderCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { CardFooter } from '@/components/ui/Card';
 
 import { AgentDropdown } from './AgentDropdown';
 import { ModelDropdown } from './ModelDropdown';

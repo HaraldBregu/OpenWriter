@@ -5,7 +5,7 @@ import type { NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
-import { ContentGeneratorProvider } from './Provider';
+import { Provider } from './Provider';
 import { useContentGenerator } from './hooks/use-content-generator';
 import { ImageAttachmentBar, PromptFooter, PromptHeader } from './components';
 
@@ -100,9 +100,9 @@ function ContentGeneratorInner(): React.JSX.Element {
 export function ContentGeneratorNodeView(props: NodeViewProps): React.JSX.Element {
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<ContentGeneratorProvider nodeViewProps={props}>
+			<Provider nodeViewProps={props}>
 				<ContentGeneratorInner />
-			</ContentGeneratorProvider>
+			</Provider>
 		</NodeViewWrapper>
 	);
 }

@@ -1,7 +1,7 @@
 import React, { useReducer, useRef, useMemo } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ContentGeneratorContext } from './context/content-generator-context';
-import type { ContentGeneratorContextValue } from './context/content-generator-context';
+import { Context } from './context/context';
+import type { ContextValue } from './context/context';
 import { contentGeneratorReducer } from './context/reducer';
 import type { ContentGeneratorState } from './context/state';
 import { useContentGeneratorActions } from './hooks/use-content-generator-actions';
@@ -11,15 +11,12 @@ import type { ContentGeneratorAgentId } from './agents';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 
-interface ContentGeneratorProviderProps {
+interface ProviderProps {
 	nodeViewProps: NodeViewProps;
 	children: React.ReactNode;
 }
 
-export function ContentGeneratorProvider({
-	nodeViewProps,
-	children,
-}: ContentGeneratorProviderProps): React.JSX.Element {
+export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.Element {
 	const { editor, node, getPos, extension, updateAttributes } = nodeViewProps;
 
 	const loading = node.attrs.loading as boolean;
@@ -72,7 +69,7 @@ export function ContentGeneratorProvider({
 	const isSubmitDisabled =
 		!enable || loading || (!state.prompt.trim() && (!isImage || state.files.length === 0));
 
-	const value = useMemo<ContentGeneratorContextValue>(
+	const value = useMemo<ContextValue>(
 		() => ({
 			state,
 			loading,
@@ -101,9 +98,5 @@ export function ContentGeneratorProvider({
 		]
 	);
 
-	return (
-		<ContentGeneratorContext.Provider value={value}>
-			{children}
-		</ContentGeneratorContext.Provider>
-	);
+	return <Context.Provider value={value}>{children}</Context.Provider>;
 }
