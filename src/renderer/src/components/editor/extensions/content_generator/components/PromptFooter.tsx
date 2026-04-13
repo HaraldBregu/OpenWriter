@@ -175,8 +175,7 @@ export function PromptFooter({
 					))}
 				</DropdownMenuContent>
 			</DropdownMenu>
-
-			
+			</div>
 			<div className="ml-auto shrink-0">
 				<Button
 					variant="prompt-submit"
