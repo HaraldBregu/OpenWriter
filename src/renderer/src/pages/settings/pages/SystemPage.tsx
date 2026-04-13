@@ -11,9 +11,11 @@ import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import { Moon, Monitor, Sun } from 'lucide-react';
 import { SectionHeader, SettingRow } from '../components';
-import { useThemeMode, useLanguageMode, useAppActions } from '../../../contexts';
 import type { ThemeMode, AppLanguage } from '../../../contexts';
 import type { CustomThemeInfo } from '../../../../../shared/types';
+import { useAppActions } from '@/hooks/use-app-actions';
+import { useLanguageMode } from '@/hooks/use-language-mode';
+import { useThemeMode } from '@/hooks/use-theme-mode';
 
 // ---------------------------------------------------------------------------
 // Language options
