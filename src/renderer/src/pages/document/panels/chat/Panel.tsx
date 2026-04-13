@@ -294,12 +294,7 @@ const Chat: React.FC = () => {
 	return (
 		<Card className="flex h-full w-full flex-col border-0">
 			<PanelHeader />
-			<PanelBody
-					className="flex-1 min-h-0 overflow-y-auto px-4 py-4"
-					chatMessages={chatMessages}
-					latestSystemMessageId={latestSystemMessageId}
-					bottomRef={bottomRef}
-				/>
+			<PanelBody className="flex-1 min-h-0 overflow-y-auto px-4 py-4" />
 			<PanelFooter
 				onSend={handleSend}
 				disabled={isRunning}
