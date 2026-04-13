@@ -100,40 +100,31 @@ export function ImageAttachmentBar({
 						</Button>
 					</div>
 				) : (
-					<div
-						className={`mt-3 overflow-hidden rounded-[1.5rem] border border-dashed transition-[border-color,background-color,box-shadow] ${
+					<Empty
+						className={`mt-3 overflow-hidden rounded-3xl border transition-[border-color,background-color,box-shadow] ${
 							isDragOver
 								? 'border-primary/50 bg-[linear-gradient(180deg,hsl(var(--primary)/0.12)_0%,hsl(var(--background)/0.7)_100%)] shadow-[0_0_0_0.5px_hsl(var(--primary)/0.16),0_12px_24px_hsl(var(--primary)/0.12)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.18)_0%,hsl(var(--background)/0.16)_100%)]'
 								: 'border-border/75 bg-[linear-gradient(180deg,hsl(var(--background)/0.72)_0%,hsl(var(--muted)/0.42)_100%)] dark:border-white/12 dark:bg-[linear-gradient(180deg,hsl(var(--background)/0.18)_0%,hsl(var(--muted)/0.18)_100%)]'
 						}`}
+						role={disabled ? undefined : 'button'}
+						tabIndex={disabled ? -1 : 0}
+						onMouseDown={(e: React.MouseEvent) => e.preventDefault()}
+						onClick={disabled ? undefined : onOpenFilePicker}
+						onKeyDown={handlePlaceholderKeyDown}
+						aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
 					>
-						<div
-							role={disabled ? undefined : 'button'}
-							tabIndex={disabled ? -1 : 0}
-							onMouseDown={(e) => e.preventDefault()}
-							onClick={disabled ? undefined : onOpenFilePicker}
-							onKeyDown={handlePlaceholderKeyDown}
-							aria-label={t('assistantNode.browseReferenceImages', 'Browse reference images')}
-							className="relative flex min-h-[7rem] items-center justify-center px-4 py-4 text-center outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0"
-						>
-							<div className="flex max-w-[16rem] flex-col items-center gap-2">
-								<div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-border/70 bg-background/85 text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.95)_inset,0_6px_14px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/[0.05] dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_16px_hsl(var(--background)/0.34)]">
-									<ImagePlus className="h-4 w-4" />
-								</div>
-								<div className="space-y-0.5">
-									<span className="text-xs font-semibold text-foreground">
-										{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
-									</span>
-									<span className="text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
-										{t(
-											'assistantNode.dropImagesDescription',
-											'Optional references for style or mood.'
-										)}
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
+						<EmptyHeader className="min-h-28 justify-center px-4 py-4 outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0">
+							<EmptyMedia variant="icon" className="size-9 rounded-2xl border border-border/70 bg-background/85 text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.95)_inset,0_6px_14px_hsl(var(--foreground)/0.05)] dark:border-white/12 dark:bg-white/5 dark:text-muted-foreground/95 dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_8px_16px_hsl(var(--background)/0.34)]">
+								<ImagePlus className="h-4 w-4" />
+							</EmptyMedia>
+							<EmptyTitle className="text-xs font-semibold">
+								{t('assistantNode.dropImagesTitle', 'Drop images or browse')}
+							</EmptyTitle>
+							<EmptyDescription className="text-[11px] leading-4 dark:text-muted-foreground/95">
+								{t('assistantNode.dropImagesDescription', 'Optional references for style or mood.')}
+							</EmptyDescription>
+						</EmptyHeader>
+					</Empty>
 				)}
 			</div>
 		</>
