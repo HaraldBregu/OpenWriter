@@ -3,13 +3,23 @@ import { useTranslation } from 'react-i18next';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/Card';
+import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { Provider } from './Provider';
 import { useContentGenerator } from './hooks/use-content-generator';
-import { ImageAttachmentBar, PromptFooter } from './components';
+import { ImageAttachmentBar } from './components';
 import { CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuCheckboxItem,
+} from '@/components/ui/DropdownMenu';
+import { ImageIcon, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
+import { getProvider } from 'src/shared';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { Button } from '@/components/ui/Button';
 
 function ContentGeneratorInner(): React.JSX.Element {
 	const { t } = useTranslation();
@@ -48,6 +58,14 @@ function ContentGeneratorInner(): React.JSX.Element {
 		? t('assistantNode.imageHeaderSubtitle', 'Prompt or references')
 		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
 
+	const modelOptions = isImage ? IMAGE_MODELS : TEXT_MODELS;
+	const selectedModel = isImage ? state.selectedImageModel : state.selectedTextModel;
+	const handleModelChange = isImage ? handleImageModelChange : handleTextModelChange;
+
+	const currentAgentLabel = isImage
+		? t('assistantAgent.image', 'Image')
+		: t('assistantAgent.writer', 'Text');
+
 	return (
 		<Card
 			size="sm"
@@ -83,7 +101,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 					disabled={!enable}
 					aria-label={inputLabel}
 					className={cn(
-						'min-h-[108px] w-full resize-none border-none bg-transparent px-4 pt-2 pb-3 text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+						'p-0 py-4 rounded-none min-h-27 w-full resize-none border-none bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 						'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
 						'disabled:cursor-not-allowed disabled:opacity-60'
 					)}
@@ -98,18 +116,95 @@ function ContentGeneratorInner(): React.JSX.Element {
 					rows={1}
 				/>
 			</CardContent>
-
-			<PromptFooter
-				agentId={agentId}
-				selectedImageModel={state.selectedImageModel}
-				selectedTextModel={state.selectedTextModel}
-				loading={loading}
-				isSubmitDisabled={isSubmitDisabled}
-				submitRef={submitRef}
-				onAgentChange={handleAgentChange}
-				onImageModelChange={handleImageModelChange}
-				onTextModelChange={handleTextModelChange}
-			/>
+			<CardFooter>
+				<div className="flex items-center gap-3">
+					<DropdownMenu modal={false}>
+						<DropdownMenuTrigger
+							disabled={loading}
+							render={
+								<Button
+									variant="outline"
+									size="icon"
+									title={currentAgentLabel}
+									aria-label={t('assistantNode.switchAgent', 'Switch agent')}
+									onMouseDown={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+								>
+									{agentId === 'image' && <ImageIcon />}
+									{agentId === 'writer' && <PenLine />}
+								</Button>
+							}
+						/>
+						<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-30">
+							<DropdownMenuCheckboxItem
+								checked={!isImage}
+								onCheckedChange={() => handleAgentChange('writer')}
+							>
+								<PenLine />
+								{t('assistantAgent.writer', 'Text')}
+							</DropdownMenuCheckboxItem>
+							<DropdownMenuCheckboxItem
+								checked={isImage}
+								onCheckedChange={() => handleAgentChange('image')}
+							>
+								<ImageIcon />
+								{t('assistantAgent.image', 'Image')}
+							</DropdownMenuCheckboxItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+					<DropdownMenu modal={false}>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									variant="outline"
+									size="md"
+									disabled={loading}
+									onMouseDown={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+									}}
+								>
+									<span className="truncate text-xs font-medium text-foreground">
+										{selectedModel.name}
+									</span>
+									<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
+								</Button>
+							}
+						/>
+						<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-50 max-h-100">
+							{modelOptions.map((model) => (
+								<DropdownMenuCheckboxItem
+									key={model.modelId}
+									checked={selectedModel.modelId === model.modelId}
+									onCheckedChange={() => handleModelChange(model)}
+								>
+									<div className="flex min-w-0 flex-col gap-0.5">
+										<span className="truncate text-sm font-medium">{model.name}</span>
+										<span className="text-xs text-muted-foreground">
+											{getProvider(model.providerId)?.name ?? model.providerId}
+										</span>
+									</div>
+								</DropdownMenuCheckboxItem>
+							))}
+						</DropdownMenuContent>
+					</DropdownMenu>
+				</div>
+				<Button
+					variant="prompt-submit"
+					size="icon"
+					className="ml-auto shrink-0"
+					disabled={isSubmitDisabled}
+					onMouseDown={(e) => e.preventDefault()}
+					onClick={() => {
+						if (!loading) submitRef.current?.();
+					}}
+					aria-label={t('agenticPanel.send', 'Send message')}
+				>
+					{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+				</Button>
+			</CardFooter>
 		</Card>
 	);
 }

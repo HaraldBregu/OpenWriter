@@ -48,7 +48,7 @@ export function ImageAttachmentBar({
 				tabIndex={-1}
 				multiple
 			/>
-			<div className="border-b border-border/65 bg-muted/[0.24] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
+			<div className="">
 				{previewUrls.length > 0 ? (
 					<div className="mt-3 flex items-stretch gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 						{previewUrls.map((url, index) => (
@@ -101,7 +101,7 @@ export function ImageAttachmentBar({
 					</div>
 				) : (
 					<Empty
-						className={`mt-3 overflow-hidden rounded-3xl border transition-[border-color,background-color,box-shadow] ${
+						className={`overflow-hidden rounded-3xl border transition-[border-color,background-color,box-shadow] ${
 							isDragOver
 								? 'border-primary/50 bg-[linear-gradient(180deg,hsl(var(--primary)/0.12)_0%,hsl(var(--background)/0.7)_100%)] shadow-[0_0_0_0.5px_hsl(var(--primary)/0.16),0_12px_24px_hsl(var(--primary)/0.12)] dark:bg-[linear-gradient(180deg,hsl(var(--primary)/0.18)_0%,hsl(var(--background)/0.16)_100%)]'
 								: 'border-border/75 bg-[linear-gradient(180deg,hsl(var(--background)/0.72)_0%,hsl(var(--muted)/0.42)_100%)] dark:border-white/12 dark:bg-[linear-gradient(180deg,hsl(var(--background)/0.18)_0%,hsl(var(--muted)/0.18)_100%)]'
