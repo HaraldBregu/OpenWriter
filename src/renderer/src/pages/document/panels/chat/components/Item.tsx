@@ -44,7 +44,7 @@ const Item: React.FC<ItemProps> = ({ title, ageLabel, selected, deleting, onLoad
 					<Trash2 className="h-3.5 w-3.5" />
 				</Button>
 			</div>
-		</li>
+		</div>
 	);
 };
 
