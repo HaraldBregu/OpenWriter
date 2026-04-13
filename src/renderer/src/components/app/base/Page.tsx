@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from 'react';
+import React, { memo, type ReactNode } from 'react';
 
 interface PageContainerProps {
 	readonly children: ReactNode;
