@@ -282,14 +282,11 @@ const Chat: React.FC = () => {
 		},
 		[dispatch, documentId, editor, isRunning, selection, sessionId, t]
 	);
-	const latestSystemMessageId = [...chatMessages]
-		.reverse()
-		.find((entry) => entry.role === 'system')?.id;
 
 	return (
 		<Card className="flex h-full w-full flex-col border-0">
 			<PanelHeader />
-			<PanelBody className="flex-1 min-h-0 overflow-y-auto px-4 py-4" />
+			<PanelBody />
 			<PanelFooter
 				onSend={handleSend}
 				disabled={isRunning}
