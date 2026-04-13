@@ -39,7 +39,7 @@ PopoverContent.displayName = 'PopoverContent';
 function PopoverHeader({ className, ...props }: React.ComponentProps<'div'>) {
 	return (
 		<div
-			className={cn('flex flex-col gap-1 border-b border-border/60 px-1.5 pb-1.5 dark:border-border/80', className)}
+			className={cn('flex flex-col gap-1', className)}
 			{...props}
 		/>
 	);
