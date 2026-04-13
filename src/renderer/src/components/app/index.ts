@@ -1,6 +1,6 @@
 export { EditorContainer } from './base/Editor';
 
-export { SidebarContainer } from './sidebar/SidebarContainer';
+export { Sidebar } from './sidebar/Sidebar';
 export { SidebarLayout } from './sidebar/SidebarLayout';
 export { SidebarInsetLayout } from './sidebar/SidebarInsetLayout';
 
