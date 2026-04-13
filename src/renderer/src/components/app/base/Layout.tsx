@@ -192,6 +192,9 @@ function Container({ children }: LayoutProps) {
 				case 'settings':
 					navigate('/settings');
 					break;
+				case 'system':
+					navigate('/settings/system');
+					break;
 				case 'language':
 					navigate('/settings/general');
 					break;
