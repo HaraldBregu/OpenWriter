@@ -1,11 +1,12 @@
 import React, { useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot, LoaderCircle } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useChatState } from './hooks';
 import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
 import { CardContent } from '@/components/ui/Card';
+import { EmptyStateCard } from './components/EmptyStateCard';
 
 interface PanelBodyProps {}
 
