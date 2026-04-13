@@ -40,7 +40,7 @@ interface PageHeaderTitleProps {
 export const PageHeaderTitle = memo(function PageHeaderTitle({
 	children,
 }: PageHeaderTitleProps): React.ReactElement {
-	return <h1 className="text-xl font-bold">{children}</h1>;
+	return <h1 className="text-xl font-bold flex items-center gap-3 flex-1 min-w-0">{children}</h1>;
 });
 
 interface PageHeaderItemsProps {

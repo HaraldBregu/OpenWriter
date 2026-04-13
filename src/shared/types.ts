@@ -25,6 +25,9 @@ export interface ThemeData {
 	};
 	page?: {
 		readonly background: string;
+		header?: {
+			readonly background: string;
+		};
 	};
 	sidebar?: {
 		readonly background: string;

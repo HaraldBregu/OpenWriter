@@ -1,6 +1,6 @@
 import type { ReactElement, ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
-import { Provider } from './providers';
+import { Provider } from './Provider';
 
 interface LayoutProps {
 	readonly children: ReactNode;

@@ -10,16 +10,16 @@ import { EmojiPicker } from '@/components/ui/EmojiPicker';
 import EditorContent, { type EditorContentElement } from './EditorContent';
 import PanelsContent from './PanelsContent';
 import HistoryMenu from './components/HistoryMenu';
-import { useSidebarVisibility } from './providers';
 import { useDocumentDispatch, useDocumentHistory, useDocumentState } from './hooks';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
-import { PageContainer } from '@/components/app';
+import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
+import { useSidebarVisibility } from './Provider';
 
-const METADATA_SAVE_DEBOUNCE_MS = 1500;
+const METADATA_SAVE_DEBOUNCE_MS = 500;
 
 function PageContent(): ReactElement {
 	const { documentId: id } = useDocumentState();
@@ -218,19 +218,18 @@ function PageContent(): ReactElement {
 
 	return (
 		<PageContainer>
-			{/* Header */}
-			<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
-				<div className="flex items-center gap-3 flex-1 min-w-0">
+			<PageHeader>
+				<PageHeaderTitle>
 					<EmojiPicker value={emoji} onSelect={handleEmojiChange} />
 					<Input
 						type="text"
 						value={title}
 						onChange={(e) => handleTitleChange(e.target.value)}
 						placeholder={t('writing.titlePlaceholder')}
-						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 !text-lg font-medium shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 text-xl! font-bold shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
 					/>
-				</div>
-				<div className="flex items-center gap-0 ml-3 shrink-0">
+				</PageHeaderTitle>
+				<PageHeaderItems>
 					<Button
 						type="button"
 						variant="header-icon"
@@ -281,8 +280,8 @@ function PageContent(): ReactElement {
 					>
 						<Info aria-hidden="true" />
 					</Button>
-				</div>
-			</div>
+				</PageHeaderItems>
+			</PageHeader>
 
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">

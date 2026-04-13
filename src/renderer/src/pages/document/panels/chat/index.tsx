@@ -11,11 +11,11 @@ import {
 } from '../../../../services/task-event-bus';
 import { Header, Input, Message } from './components';
 import { useDocumentState } from '../../hooks';
-import { useEditorInstance } from '../../providers';
 import { useChatState, useChatDispatch, useChatPersistence } from './hooks';
 import { ChatProvider } from './Provider';
 import { buildTaskPrompt, getSelectedEditorText, mapTaskStatusToChatStatus } from './shared';
 import type { AssistantTaskData } from './shared';
+import { useEditorInstance } from '../../Provider';
 
 const Chat: React.FC = () => {
 	const { t } = useTranslation();

@@ -9,11 +9,11 @@ import React, {
 import { debounce } from 'lodash';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
 import type { Editor } from '@tiptap/core';
-import { useEditorInstance } from './providers';
 import { useDocumentDispatch, useAssistantTask } from './hooks';
 import { EditorArea } from './components/EditorArea';
 import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
+import { useEditorInstance } from './Provider';
 
 const SAVE_DEBOUNCE_MS = 1500;
 
