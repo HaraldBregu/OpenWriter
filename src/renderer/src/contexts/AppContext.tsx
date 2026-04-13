@@ -389,47 +389,6 @@ export function useAppThemeContext(): AppThemeContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 4. ModalContext
-// ---------------------------------------------------------------------------
-
-interface ModalContextValue {
-	modals: ModalState;
-	toggleModal: (modal: keyof ModalState, open?: boolean) => void;
-}
-
-const ModalContext = createContext<ModalContextValue | undefined>(undefined);
-
-function ModalProvider({
-	children,
-	initialModals,
-}: {
-	children: React.ReactNode;
-	initialModals?: Partial<ModalState>;
-}) {
-	const [modals, setModals] = useState<ModalState>({
-		...defaultModalState,
-		...(initialModals ?? {}),
-	});
-
-	const toggleModal = useCallback((modal: keyof ModalState, open?: boolean) => {
-		setModals((prev) => ({
-			...prev,
-			[modal]: open !== undefined ? open : !prev[modal],
-		}));
-	}, []);
-
-	const value = useMemo<ModalContextValue>(() => ({ modals, toggleModal }), [modals, toggleModal]);
-
-	return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;
-}
-
-export function useModalContext(): ModalContextValue {
-	const ctx = useContext(ModalContext);
-	if (ctx === undefined) throw new Error('useModalContext must be used within an AppProvider');
-	return ctx;
-}
-
-// ---------------------------------------------------------------------------
 // AppProvider — composition root for all focused providers
 // ---------------------------------------------------------------------------
 
