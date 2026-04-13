@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { ImagePlus, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '@/components/ui/Empty';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
@@ -48,36 +49,6 @@ export function ImageAttachmentBar({
 				multiple
 			/>
 			<div className="border-b border-border/65 bg-muted/[0.24] px-4 py-3 dark:border-white/10 dark:bg-white/[0.03]">
-				<div className="flex flex-wrap items-start justify-between gap-3">
-					<div className="min-w-0 max-w-[24rem]">
-						<div className="flex flex-wrap items-center gap-2">
-							<span className="text-xs font-semibold text-foreground">
-								{t('assistantNode.referenceImages', 'Reference images')}
-							</span>
-							{files.length > 0 ? (
-								<span className="rounded-full border border-border/70 bg-background/80 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground dark:border-white/12 dark:bg-white/[0.04] dark:text-muted-foreground/95">
-									{t('assistantNode.imageCount', '{{count}} ready', { count: files.length })}
-								</span>
-							) : null}
-						</div>
-						<span className="mt-1 text-[11px] leading-4 text-muted-foreground dark:text-muted-foreground/95">
-							{files.length > 0
-								? t('assistantNode.referenceImagesHelp', 'Add more references if needed.')
-								: t('assistantNode.referenceImagesEmpty', 'Optional references for style or mood.')}
-						</span>
-					</div>
-					<Button
-						variant="ghost"
-						size="sm"
-						className="h-9 shrink-0 rounded-full border border-dashed border-border/80 bg-background/76 px-3 text-xs font-semibold text-muted-foreground shadow-[0_1px_0_hsl(var(--background)/0.92)_inset,0_4px_10px_hsl(var(--foreground)/0.04)] hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:shadow-[0_1px_0_hsl(var(--foreground)/0.05)_inset,0_6px_14px_hsl(var(--background)/0.26)] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-						disabled={disabled}
-						onMouseDown={(e) => e.preventDefault()}
-						onClick={onOpenFilePicker}
-					>
-						<ImagePlus className="h-4 w-4" />
-						<span>{t('assistantNode.addImage', 'Add image')}</span>
-					</Button>
-				</div>
 				{previewUrls.length > 0 ? (
 					<div className="mt-3 flex items-stretch gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 						{previewUrls.map((url, index) => (
