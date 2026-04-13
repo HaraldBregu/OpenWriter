@@ -39,7 +39,7 @@ import {
 	useSidebar,
 } from '@/components/ui/Sidebar';
 import {
-	SidebarContainer,
+	Sidebar,
 	SidebarLayout,
 	SidebarInsetLayout,
 	AppIconOpenWriter,
@@ -220,7 +220,7 @@ function LayoutInner({ children }: LayoutProps) {
 				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
 			/>
 
-			<SidebarContainer>
+			<Sidebar>
 				<SidebarLayout>
 					{/* Header */}
 					<SidebarHeader>
@@ -533,7 +533,7 @@ function LayoutInner({ children }: LayoutProps) {
 				</SidebarLayout>
 
 				<SidebarInsetLayout>{children}</SidebarInsetLayout>
-			</SidebarContainer>
+			</Sidebar>
 		</>
 	);
 }
