@@ -61,6 +61,8 @@ import {
 	Moon,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
+import { useThemeMode } from '@/hooks/use-theme-mode';
+import { useAppActions } from '@/hooks/use-app-actions';
 
 interface LayoutProps {
 	readonly children: React.ReactNode;

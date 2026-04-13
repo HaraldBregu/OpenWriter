@@ -14,6 +14,21 @@ export const LIGHT_THEME: ThemeData = {
 		sidebarIcon: '#616161',
 		historyIcon: '#616161',
 	},
+	page: {
+		background: '#ffffff',
+		foreground: '#141414',
+		title: '#171717',
+		header: {
+			background: '#f7f7f7',
+			foreground: '#242424',
+			title: '#171717',
+		},
+	},
+	sidebar: {
+		background: '#f2f2f2',
+		foreground: '#242424',
+		title: '#171717',
+	},
 };
 
 export const DARK_THEME: ThemeData = {
