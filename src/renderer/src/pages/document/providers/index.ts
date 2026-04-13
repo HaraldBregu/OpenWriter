@@ -3,5 +3,5 @@ export {
 	useDocumentContext,
 	useEditorInstance,
 	useSidebarVisibility,
-} from './Document';
-export type { ActiveSidebar } from './Document';
+} from '../Provider';
+export type { ActiveSidebar } from '../Provider';
