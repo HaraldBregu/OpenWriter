@@ -266,14 +266,6 @@ export function useThemeMode(): ThemeMode {
 	return useTheme().theme;
 }
 
-export function useAppTheme(): AppTheme {
-	return useAppThemeContext().appTheme;
-}
-
-export function useCustomThemeId(): string | null {
-	return useAppThemeContext().customThemeId;
-}
-
 export function useLanguageMode(): AppLanguage {
 	return useLanguageContext().language;
 }
