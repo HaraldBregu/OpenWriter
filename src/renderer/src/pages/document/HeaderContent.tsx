@@ -14,8 +14,6 @@ interface HeaderContentProps {
 	readonly emoji: string;
 	readonly onTitleChange: (value: string) => void;
 	readonly onEmojiChange: (emoji: string) => void;
-	readonly onSearch: (query: string) => void;
-	readonly onClearSearch: () => void;
 	readonly historyEntries: HistoryEntry[];
 	readonly currentHistoryEntryId: string | null;
 	readonly canUndo: boolean;

@@ -217,7 +217,7 @@ function PageContent(): ReactElement {
 	}, []);
 
 	return (
-		<div className="h-full flex flex-col">
+		<PageContainer>
 			<HeaderContent
 				title={title}
 				emoji={emoji}
@@ -258,7 +258,7 @@ function PageContent(): ReactElement {
 					<PanelsContent documentId={id} />
 				</ResizablePanel>
 			</ResizablePanelGroup>
-		</div>
+		</PageContainer>
 	);
 }
 
