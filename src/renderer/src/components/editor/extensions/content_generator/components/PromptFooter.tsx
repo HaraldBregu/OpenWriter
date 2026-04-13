@@ -40,7 +40,7 @@ export function PromptFooter({
 	const handleModelChange = isImage ? onImageModelChange : onTextModelChange;
 
 	return (
-		<div className="border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.2)_0%,hsl(var(--background)/0.18)_100%)] px-4 py-3.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.14)_100%)]">
+		<CardFooter className="border-t border-border/65 bg-[linear-gradient(180deg,hsl(var(--muted)/0.2)_0%,hsl(var(--background)/0.18)_100%)] px-4 py-3.5 dark:border-white/10 dark:bg-[linear-gradient(180deg,hsl(var(--muted)/0.12)_0%,hsl(var(--background)/0.14)_100%)]">
 			<div className="flex items-center gap-2">
 				<AgentDropdown agentId={agentId} disabled={loading} onAgentChange={onAgentChange} />
 				<ModelDropdown
