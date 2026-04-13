@@ -445,60 +445,6 @@ export function useModalContext(): ModalContextValue {
 }
 
 // ---------------------------------------------------------------------------
-// 7. NetworkContext
-// ---------------------------------------------------------------------------
-
-interface NetworkContextValue {
-	isOnline: boolean;
-	lastSyncedAt: number | null;
-	setOnlineStatus: (online: boolean) => void;
-	updateSyncTime: (timestamp: number) => void;
-}
-
-const NetworkContext = createContext<NetworkContextValue | undefined>(undefined);
-
-function NetworkProvider({
-	children,
-	initialOnline,
-	initialSyncedAt,
-}: {
-	children: React.ReactNode;
-	initialOnline?: boolean;
-	initialSyncedAt?: number | null;
-}) {
-	const [isOnline, setIsOnline] = useState<boolean>(initialOnline ?? navigator.onLine);
-	const [lastSyncedAt, setLastSyncedAt] = useState<number | null>(initialSyncedAt ?? null);
-
-	const setOnlineStatus = useCallback((online: boolean) => setIsOnline(online), []);
-	const updateSyncTime = useCallback((ts: number) => setLastSyncedAt(ts), []);
-
-	// Listen for browser online/offline events.
-	useEffect(() => {
-		const handleOnline = () => setIsOnline(true);
-		const handleOffline = () => setIsOnline(false);
-		window.addEventListener('online', handleOnline);
-		window.addEventListener('offline', handleOffline);
-		return () => {
-			window.removeEventListener('online', handleOnline);
-			window.removeEventListener('offline', handleOffline);
-		};
-	}, []);
-
-	const value = useMemo<NetworkContextValue>(
-		() => ({ isOnline, lastSyncedAt, setOnlineStatus, updateSyncTime }),
-		[isOnline, lastSyncedAt, setOnlineStatus, updateSyncTime]
-	);
-
-	return <NetworkContext.Provider value={value}>{children}</NetworkContext.Provider>;
-}
-
-export function useNetworkContext(): NetworkContextValue {
-	const ctx = useContext(NetworkContext);
-	if (ctx === undefined) throw new Error('useNetworkContext must be used within an AppProvider');
-	return ctx;
-}
-
-// ---------------------------------------------------------------------------
 // AppProvider — composition root for all focused providers
 // ---------------------------------------------------------------------------
 
