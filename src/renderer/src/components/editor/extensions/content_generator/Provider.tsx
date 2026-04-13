@@ -65,7 +65,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		onDelete: actions.deleteNode,
 	});
 
-	const isImage = agentId === 'image';
+	const isImage = state.agentId === 'image';
 	const activeModel = isImage ? state.selectedImageModel : state.selectedTextModel;
 	const isSubmitDisabled =
 		!enable || loading || (!state.prompt.trim() && (!isImage || state.files.length === 0));
