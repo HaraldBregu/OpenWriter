@@ -229,6 +229,7 @@ const PanelFooter: React.FC<InputProps> = ({
 				tabIndex={-1}
 				multiple
 			/>
+			
 			<div
 				ref={wrapperRef}
 				onBlur={handleWrapperBlur}

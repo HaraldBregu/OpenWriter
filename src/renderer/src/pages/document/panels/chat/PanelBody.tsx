@@ -6,11 +6,9 @@ import remarkGfm from 'remark-gfm';
 import { useChatState } from './hooks';
 import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
 
-interface PanelBodyProps {
-	readonly className?: string;
-}
+interface PanelBodyProps {}
 
-const PanelBody: React.FC<PanelBodyProps> = ({ className = '' }) => {
+const PanelBody: React.FC<PanelBodyProps> = () => {
 	const { t } = useTranslation();
 	const { messages: chatMessages } = useChatState();
 	const bottomRef = useRef<HTMLDivElement>(null);
@@ -25,7 +23,7 @@ const PanelBody: React.FC<PanelBodyProps> = ({ className = '' }) => {
 
 	if (chatMessages.length === 0) {
 		return (
-			<div className={className}>
+			<div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
 				<div className="flex h-full flex-col items-center justify-center px-6 text-center">
 					<div className="flex max-w-xs flex-col items-center gap-3 rounded-[1.75rem] border border-dashed border-border/85 bg-card/82 px-6 py-8 shadow-none dark:border-border/90 dark:bg-card/75">
 						<div className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/82 dark:bg-accent/95">
@@ -52,14 +50,12 @@ const PanelBody: React.FC<PanelBodyProps> = ({ className = '' }) => {
 	}
 
 	return (
-		<div className={className}>
+		<div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
 			<div className="flex flex-col">
 				{chatMessages.map((message, index) => {
 					const previousMessage = index > 0 ? chatMessages[index - 1] : null;
 					const isGroupedWithPrevious =
-						previousMessage !== null &&
-						previousMessage.role !== 'user' &&
-						message.role !== 'user';
+						previousMessage !== null && previousMessage.role !== 'user' && message.role !== 'user';
 					const isSystemGroupedWithPrevious =
 						previousMessage !== null &&
 						previousMessage.role === 'system' &&
