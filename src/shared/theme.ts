@@ -7,7 +7,7 @@ export const DEFAULT_THEME_MODE: ThemeMode = 'system';
 export const LIGHT_THEME: ThemeData = {
 	background: '#f7f7f7',
 	foreground: '#141414',
-	titleBar: {
+	nav: {
 		background: '#f2f2f2',
 		foreground: '#242424',
 		title: '#171717',
@@ -29,12 +29,30 @@ export const LIGHT_THEME: ThemeData = {
 		foreground: '#242424',
 		title: '#171717',
 	},
+	panel: {
+		background: '#f7f7f7',
+		foreground: '#141414',
+		header: {
+			background: '#f2f2f2',
+			foreground: '#242424',
+			title: '#171717',
+		},
+		body: {
+			background: '#ffffff',
+			foreground: '#141414',
+		},
+		footer: {
+			background: '#f2f2f2',
+			foreground: '#242424',
+			title: '#171717',
+		},
+	},
 };
 
 export const DARK_THEME: ThemeData = {
 	background: '#141518',
 	foreground: '#d9d1c7',
-	titleBar: {
+	nav: {
 		background: '#151618',
 		foreground: '#d4ccc2',
 		title: '#d9d1c7',
@@ -55,6 +73,24 @@ export const DARK_THEME: ThemeData = {
 		background: '#151618',
 		foreground: '#d4ccc2',
 		title: '#d9d1c7',
+	},
+	panel: {
+		background: '#141518',
+		foreground: '#d9d1c7',
+		header: {
+			background: '#151618',
+			foreground: '#d4ccc2',
+			title: '#d9d1c7',
+		},
+		body: {
+			background: '#1a1b1e',
+			foreground: '#d9d1c7',
+		},
+		footer: {
+			background: '#151618',
+			foreground: '#d4ccc2',
+			title: '#d9d1c7',
+		},
 	},
 };
 
