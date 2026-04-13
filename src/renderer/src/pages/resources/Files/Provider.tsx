@@ -12,7 +12,7 @@ interface FilesProviderProps {
 	readonly children: ReactNode;
 }
 
-export function FilesProvider({ children }: FilesProviderProps): ReactElement {
+export function Provider({ children }: FilesProviderProps): ReactElement {
 	const mountedRef = useRef(true);
 	const [state, dispatch] = useReducer(filesReducer, initialFilesState);
 

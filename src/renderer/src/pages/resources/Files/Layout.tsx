@@ -1,5 +1,5 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
-import { FilesProvider } from './Provider';
+import { Provider } from './Provider';
 import { useContext } from './hooks/use-context';
 
 function Bootstrap(): null {
@@ -40,9 +40,9 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps): ReactElement {
 	return (
-		<FilesProvider>
+		<Provider>
 			<Bootstrap />
 			{children}
-		</FilesProvider>
+		</Provider>
 	);
 }
