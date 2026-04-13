@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } from 'react';
+import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import HeaderContent from './HeaderContent';
