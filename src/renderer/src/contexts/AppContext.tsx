@@ -1,10 +1,17 @@
-import { createContext, useCallback, useMemo } from 'react';
+import { createContext } from 'react';
 import type { ThemeMode } from '../../../shared/types';
-import { ThemeProvider, useTheme, readPersistedTheme } from './ThemeProvider';
-import { LanguageProvider, useLanguageContext, readPersistedLanguage } from './LanguageProvider';
+import { ThemeProvider } from './ThemeProvider';
+import { LanguageProvider } from './LanguageProvider';
 
-export { useTheme } from './ThemeProvider';
-export { useLanguageContext } from './LanguageProvider';
+export {
+	useTheme,
+	useLanguageContext,
+	useAppState,
+	useAppActions,
+	useAppSelector,
+	useThemeMode,
+	useLanguageMode,
+} from './hooks';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
@@ -13,6 +20,12 @@ export type SidebarState = 'expanded' | 'collapsed';
 export interface AppState {
 	theme: ThemeMode;
 	language: AppLanguage;
+}
+
+export interface AppActionsContextValue {
+	setTheme: (theme: ThemeMode) => void;
+	setLanguage: (language: AppLanguage) => void;
+	resetState: () => void;
 }
 
 interface AppProviderProps {
@@ -26,46 +39,6 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 			<LanguageProvider initialLanguage={initialState?.language}>{children}</LanguageProvider>
 		</ThemeProvider>
 	);
-}
-
-export function useAppState(): AppState {
-	const { theme } = useTheme();
-	const { language } = useLanguageContext();
-	return useMemo(() => ({ theme, language }), [theme, language]);
-}
-
-export interface AppActionsContextValue {
-	setTheme: (theme: ThemeMode) => void;
-	setLanguage: (language: AppLanguage) => void;
-	resetState: () => void;
-}
-
-export function useAppActions(): AppActionsContextValue {
-	const { setTheme } = useTheme();
-	const { setLanguage } = useLanguageContext();
-
-	const resetState = useCallback(() => {
-		setTheme(readPersistedTheme());
-		setLanguage(readPersistedLanguage());
-	}, [setTheme, setLanguage]);
-
-	return useMemo(
-		() => ({ setTheme, setLanguage, resetState }),
-		[setTheme, setLanguage, resetState]
-	);
-}
-
-export function useAppSelector<T>(selector: (state: AppState) => T): T {
-	const state = useAppState();
-	return useMemo(() => selector(state), [state, selector]);
-}
-
-export function useThemeMode(): ThemeMode {
-	return useTheme().theme;
-}
-
-export function useLanguageMode(): AppLanguage {
-	return useLanguageContext().language;
 }
 
 export const AppStateContext = createContext<AppState | undefined>(undefined);
