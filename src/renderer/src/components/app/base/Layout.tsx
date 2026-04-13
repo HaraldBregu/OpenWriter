@@ -221,7 +221,7 @@ function LayoutInner({ children }: LayoutProps) {
 			/>
 
 			<SidebarContainer>
-				<AppSidebarLayout>
+				<SidebarLayout>
 					{/* Header */}
 					<SidebarHeader>
 						<SidebarMenu>
@@ -530,7 +530,7 @@ function LayoutInner({ children }: LayoutProps) {
 							</ComboboxContent>
 						</Combobox>
 					</SidebarFooter>
-				</AppSidebarLayout>
+				</SidebarLayout>
 
 				<AppSidebarInsetLayout>{children}</AppSidebarInsetLayout>
 			</SidebarContainer>
