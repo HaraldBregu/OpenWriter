@@ -28,8 +28,7 @@ const ThemesPage: React.FC = () => {
 	const [themes, setThemes] = useState<CustomThemeInfo[]>([]);
 	const [feedback, setFeedback] = useState<ImportFeedback>(FEEDBACK_IDLE);
 	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
-	const customThemeId = useCustomThemeId();
-	const { setCustomTheme } = useAppActions();
+	const { resetState } = useAppActions();
 
 	const loadThemes = useCallback(async () => {
 		try {
