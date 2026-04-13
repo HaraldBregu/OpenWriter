@@ -201,7 +201,7 @@ const PanelHeader: React.FC = () => {
 										</ItemActions>
 									</Item>
 								))}
-							</div>
+							</ItemGroup>
 						</PopoverContent>
 					</Popover>
 					<Button
