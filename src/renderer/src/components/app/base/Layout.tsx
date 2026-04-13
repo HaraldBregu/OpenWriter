@@ -220,7 +220,7 @@ function LayoutInner({ children }: LayoutProps) {
 				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
 			/>
 
-			<AppSidebarContainer>
+			<SidebarContainer>
 				<AppSidebarLayout>
 					{/* Header */}
 					<SidebarHeader>
@@ -533,7 +533,7 @@ function LayoutInner({ children }: LayoutProps) {
 				</AppSidebarLayout>
 
 				<AppSidebarInsetLayout>{children}</AppSidebarInsetLayout>
-			</AppSidebarContainer>
+			</SidebarContainer>
 		</>
 	);
 }
