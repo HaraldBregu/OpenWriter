@@ -23,6 +23,9 @@ export interface ThemeData {
 		readonly sidebarIcon: string;
 		readonly historyIcon: string;
 	};
+	page?: {
+		readonly background: string;
+	};
 }
 
 /**
