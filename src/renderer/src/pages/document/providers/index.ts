@@ -1,6 +1,6 @@
 export {
-	DocumentProvider,
-	useDocumentContext,
+	Provider,
+	useContext,
 	useEditorInstance,
 	useSidebarVisibility,
 } from '../Provider';
