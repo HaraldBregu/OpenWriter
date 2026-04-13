@@ -13,9 +13,9 @@ const THEME_CSS_VARS: ReadonlyArray<{ variable: string; resolve: (d: ThemeData) 
 	{ variable: '--page-header-background', resolve: (d) => d.page.header.background },
 	{ variable: '--page-header-foreground', resolve: (d) => d.page.header.foreground },
 	{ variable: '--page-header-title', resolve: (d) => d.page.header.title },
-	{ variable: '--sidebar-custom-background', resolve: (d) => d.sidebar.background },
-	{ variable: '--sidebar-custom-foreground', resolve: (d) => d.sidebar.foreground },
-	{ variable: '--sidebar-custom-title', resolve: (d) => d.sidebar.title },
+	{ variable: '--sidebar-background', resolve: (d) => d.sidebar.background },
+	{ variable: '--sidebar-foreground', resolve: (d) => d.sidebar.foreground },
+	{ variable: '--sidebar-title', resolve: (d) => d.sidebar.title },
 ];
 
 export function applyThemeTokens(data: ThemeData): void {

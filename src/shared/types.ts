@@ -16,7 +16,7 @@ export type ThemeMode = ThemeVariant | 'system';
 export interface ThemeData {
 	readonly background: string;
 	readonly foreground: string;
-	titleBar: {
+	nav: {
 		readonly background: string;
 		readonly foreground: string;
 		readonly title: string;
@@ -37,6 +37,24 @@ export interface ThemeData {
 		readonly background: string;
 		readonly foreground: string;
 		readonly title: string;
+	};
+	panel: {
+		readonly background: string;
+		readonly foreground: string;
+		header: {
+			readonly background: string;
+			readonly foreground: string;
+			readonly title: string;
+		};
+		body: {
+			readonly background: string;
+			readonly foreground: string;
+		};
+		footer: {
+			readonly background: string;
+			readonly foreground: string;
+			readonly title: string;
+		};
 	};
 }
 
