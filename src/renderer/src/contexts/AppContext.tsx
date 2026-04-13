@@ -571,14 +571,6 @@ export function useModal(modal: keyof ModalState): [boolean, (open?: boolean) =>
 	return [modals[modal], toggle];
 }
 
-export function useOnlineStatus(): boolean {
-	return useNetworkContext().isOnline;
-}
-
-export function useLastSyncTime(): number | null {
-	return useNetworkContext().lastSyncedAt;
-}
-
 // ---------------------------------------------------------------------------
 // Legacy context exports (some tests import these directly)
 // ---------------------------------------------------------------------------
