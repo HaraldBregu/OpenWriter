@@ -418,7 +418,7 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 
 /**
  * Returns the full AppState snapshot. Prefer the focused hooks below
- * (`useThemeMode`, `useCurrentUser`, etc.) to avoid unnecessary re-renders.
+ * (`useThemeMode`, `useLanguageMode`, etc.) to avoid unnecessary re-renders.
  */
 export function useAppState(): AppState {
 	const { theme } = useTheme();

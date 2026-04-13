@@ -23,17 +23,17 @@ export interface ThemeData {
 		readonly sidebarIcon: string;
 		readonly historyIcon: string;
 	};
-	page?: {
+	page: {
 		readonly background: string;
 		readonly foreground: string;
 		readonly title: string;
-		header?: {
+		header: {
 			readonly background: string;
 			readonly foreground: string;
 			readonly title: string;
 		};
 	};
-	sidebar?: {
+	sidebar: {
 		readonly background: string;
 		readonly foreground: string;
 		readonly title: string;
