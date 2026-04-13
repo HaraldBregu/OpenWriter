@@ -20,19 +20,11 @@ export type AppTheme =
 	| 'sandstone';
 export type SidebarState = 'expanded' | 'collapsed';
 
-export interface ModalState {
-	settingsOpen: boolean;
-	commandPaletteOpen: boolean;
-	searchOpen: boolean;
-	shareDialogOpen: boolean;
-}
-
 // Kept for backward-compatibility with the test file and any external consumers.
 export interface AppState {
 	theme: ThemeMode;
 	appTheme: AppTheme;
 	language: AppLanguage;
-	modals: ModalState;
 }
 
 // ---------------------------------------------------------------------------
