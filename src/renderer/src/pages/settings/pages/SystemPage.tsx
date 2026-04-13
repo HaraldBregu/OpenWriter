@@ -29,6 +29,9 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
 	{ value: 'it', labelKey: 'settings.language.it' },
 ] as const;
 
+const DEFAULT_THEME_ID = 'default';
+const THEME_STYLE_STORAGE_KEY = 'app-theme-style';
+
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
@@ -38,6 +41,38 @@ const SystemPage: React.FC = () => {
 	const themeMode = useThemeMode();
 	const language = useLanguageMode();
 	const { setTheme, setLanguage } = useAppActions();
+
+	const [customThemes, setCustomThemes] = useState<CustomThemeInfo[]>([]);
+	const [activeThemeId, setActiveThemeId] = useState<string>(() => {
+		try {
+			return localStorage.getItem(THEME_STYLE_STORAGE_KEY) ?? DEFAULT_THEME_ID;
+		} catch {
+			return DEFAULT_THEME_ID;
+		}
+	});
+
+	const loadCustomThemes = useCallback(async () => {
+		try {
+			const list = await window.app.getCustomThemes();
+			setCustomThemes(list);
+		} catch {
+			setCustomThemes([]);
+		}
+	}, []);
+
+	useEffect(() => {
+		loadCustomThemes();
+	}, [loadCustomThemes]);
+
+	const handleThemeStyleChange = useCallback((next: string | null): void => {
+		if (next === null) return;
+		setActiveThemeId(next);
+		try {
+			localStorage.setItem(THEME_STYLE_STORAGE_KEY, next);
+		} catch {
+			/* empty */
+		}
+	}, []);
 
 	const handleThemeChange = (next: ThemeMode): void => {
 		setTheme(next);
