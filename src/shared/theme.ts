@@ -41,6 +41,21 @@ export const DARK_THEME: ThemeData = {
 		sidebarIcon: '#a69e93',
 		historyIcon: '#a69e93',
 	},
+	page: {
+		background: '#1a1b1e',
+		foreground: '#d9d1c7',
+		title: '#e2dbd2',
+		header: {
+			background: '#141518',
+			foreground: '#d4ccc2',
+			title: '#d9d1c7',
+		},
+	},
+	sidebar: {
+		background: '#151618',
+		foreground: '#d4ccc2',
+		title: '#d9d1c7',
+	},
 };
 
 export const THEMES: Record<ThemeVariant, ThemeData> = {
