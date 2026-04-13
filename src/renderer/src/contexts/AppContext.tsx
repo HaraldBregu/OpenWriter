@@ -132,13 +132,6 @@ function applyThemeClass(theme: ThemeMode): void {
 	}
 }
 
-const defaultModalState: ModalState = {
-	settingsOpen: false,
-	commandPaletteOpen: false,
-	searchOpen: false,
-	shareDialogOpen: false,
-};
-
 // Apply theme class eagerly at module load time so the first paint uses the
 // correct CSS variables and avoids a flash of the wrong theme.
 applyThemeClass(readPersistedTheme());
