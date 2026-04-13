@@ -16,6 +16,13 @@ import type { CustomThemeInfo } from '../../../../../shared/types';
 import { useAppActions } from '@/hooks/use-app-actions';
 import { useLanguageMode } from '@/hooks/use-language-mode';
 import { useThemeMode } from '@/hooks/use-theme-mode';
+import {
+	applyThemeTokens,
+	clearThemeTokens,
+	resolveEffectiveVariant,
+	THEME_STYLE_STORAGE_KEY,
+	DEFAULT_THEME_ID,
+} from '../../../lib/theme-tokens';
 
 // ---------------------------------------------------------------------------
 // Language options
