@@ -4,7 +4,7 @@ const THEME_STYLE_STORAGE_KEY = 'app-theme-style';
 const DEFAULT_THEME_ID = 'default';
 
 const THEME_CSS_VARS: ReadonlyArray<{ variable: string; resolve: (d: ThemeData) => string }> = [
-	{ variable: '--title-bar-background', resolve: (d) => d.titleBar.background },
+	{ variable: '--title-bar-background', resolve: (d) => d..background },
 	{ variable: '--title-bar-foreground', resolve: (d) => d.titleBar.foreground },
 	{ variable: '--title-bar-title', resolve: (d) => d.titleBar.title },
 	{ variable: '--page-background', resolve: (d) => d.page.background },

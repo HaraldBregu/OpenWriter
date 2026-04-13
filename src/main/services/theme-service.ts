@@ -152,14 +152,14 @@ export class ThemeService {
 			}
 		}
 
-		if (typeof obj['titleBar'] !== 'object' || obj['titleBar'] === null) {
-			throw new Error(`Theme "${variant}" data missing required "titleBar" object`);
+		if (typeof obj['nav'] !== 'object' || obj['nav'] === null) {
+			throw new Error(`Theme "${variant}" data missing required "nav" object`);
 		}
 
-		const titleBar = obj['titleBar'] as Record<string, unknown>;
-		for (const key of TITLE_BAR_KEYS) {
-			if (typeof titleBar[key] !== 'string') {
-				throw new Error(`Theme "${variant}" titleBar missing required key: "${key}"`);
+		const nav = obj['nav'] as Record<string, unknown>;
+		for (const key of NAV_KEYS) {
+			if (typeof nav[key] !== 'string') {
+				throw new Error(`Theme "${variant}" nav missing required key: "${key}"`);
 			}
 		}
 	}
