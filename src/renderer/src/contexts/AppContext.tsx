@@ -22,64 +22,8 @@ export interface AppState {
 // ---------------------------------------------------------------------------
 
 const THEME_STORAGE_KEY = 'app-theme-mode';
-const APP_THEME_STORAGE_KEY = 'app-theme';
 const LANGUAGE_STORAGE_KEY = 'app-language';
-const CUSTOM_THEME_STORAGE_KEY = 'app-custom-theme-id';
 const DARK_CLASS = 'dark';
-
-/** Convert camelCase token key to kebab-case CSS variable name. */
-function tokenKeyToCssVar(key: string, prefix = ''): string {
-	const base = key.replace(/[A-Z]/g, (ch) => '-' + ch.toLowerCase());
-	return prefix ? `--${prefix}-${base}` : `--${base}`;
-}
-
-/** Apply a set of ThemeData as CSS custom properties on the document root. */
-function applyThemeData(data: ThemeData): void {
-	const root = document.documentElement;
-	for (const [key, value] of Object.entries(data)) {
-		if (key === 'titleBar' && typeof value === 'object' && value !== null) {
-			for (const [tbKey, tbValue] of Object.entries(value as Record<string, string>)) {
-				root.style.setProperty(tokenKeyToCssVar(tbKey, 'title-bar'), tbValue);
-			}
-		} else if (key === 'page' && typeof value === 'object' && value !== null) {
-			for (const [pgKey, pgValue] of Object.entries(value as Record<string, unknown>)) {
-				if (typeof pgValue === 'object' && pgValue !== null) {
-					for (const [nestedKey, nestedValue] of Object.entries(pgValue as Record<string, string>)) {
-						root.style.setProperty(tokenKeyToCssVar(nestedKey, `page-${pgKey}`), nestedValue);
-					}
-				} else {
-					root.style.setProperty(tokenKeyToCssVar(pgKey, 'page'), pgValue as string);
-				}
-			}
-		} else if (key === 'sidebar' && typeof value === 'object' && value !== null) {
-			for (const [sbKey, sbValue] of Object.entries(value as Record<string, string>)) {
-				root.style.setProperty(tokenKeyToCssVar(sbKey, 'sidebar'), sbValue);
-			}
-		} else {
-			root.style.setProperty(tokenKeyToCssVar(key), value as string);
-		}
-	}
-}
-
-/** Remove all inline CSS custom properties previously set by applyThemeData. */
-function clearThemeData(): void {
-	document.documentElement.removeAttribute('style');
-}
-
-const VALID_APP_THEMES: readonly AppTheme[] = [
-	'default',
-	'aurora',
-	'ember',
-	'ocean',
-	'forest',
-	'lavender',
-	'midnight',
-	'sandstone',
-] as const;
-
-function isAppTheme(value: string): value is AppTheme {
-	return VALID_APP_THEMES.includes(value as AppTheme);
-}
 
 function readPersistedTheme(): ThemeMode {
 	try {
