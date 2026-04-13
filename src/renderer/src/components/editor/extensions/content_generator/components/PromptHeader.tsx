@@ -50,6 +50,6 @@ export function PromptHeader({ agentId, modelName }: PromptHeaderProps): React.J
 			>
 				{modelName}
 			</div>
-		</div>
+		</CardHeader>
 	);
 }
