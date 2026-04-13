@@ -123,7 +123,7 @@ const PanelHeader: React.FC = () => {
 	};
 
 	return (
-		<CardHeader className="shrink-0 border-b py-0!">
+		<CardHeader className="shrink-0 border-b">
 			<div className="flex items-center justify-between">
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}

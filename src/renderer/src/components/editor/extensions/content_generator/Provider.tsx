@@ -54,7 +54,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		options,
 		updateAttributes,
 		prompt: state.prompt,
-		agentId,
+		agentId: state.agentId,
 		files: state.files,
 		fileInputRef,
 	});
