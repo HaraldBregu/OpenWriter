@@ -297,7 +297,7 @@ export function ContentGeneratorNodeView({
 					onOpenFilePicker={handleOpenFilePicker}
 					onResize={resizeTextarea}
 				/>
-			</div>
+			</Card>
 		</NodeViewWrapper>
 	);
 }
