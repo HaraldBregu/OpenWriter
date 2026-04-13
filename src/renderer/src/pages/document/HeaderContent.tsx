@@ -41,68 +41,68 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 
 	return (
 		<div className="flex items-center justify-between px-6 py-3 border-b border-border shrink-0">
-				<div className="flex items-center gap-3 flex-1 min-w-0">
-					<EmojiPicker value={emoji} onSelect={onEmojiChange} />
-					<Input
-						type="text"
-						value={title}
-						onChange={(e) => onTitleChange(e.target.value)}
-						placeholder={t('writing.titlePlaceholder')}
-						className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 !text-lg font-medium shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
-					/>
-				</div>
-				<div className="flex items-center gap-0 ml-3 shrink-0">
-					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
-						title="Undo"
-						aria-label="Undo"
-						onClick={onUndo}
-						disabled={!canUndo}
-					>
-						<Undo2 aria-hidden="true" />
-					</Button>
-					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
-						title="Redo"
-						aria-label="Redo"
-						onClick={onRedo}
-						disabled={!canRedo}
-					>
-						<Redo2 aria-hidden="true" />
-					</Button>
-					<HistoryMenu
-						entries={historyEntries}
-						currentEntryId={currentHistoryEntryId}
-						onRestoreEntry={onRestoreHistoryEntry}
-					/>
-					<Separator orientation="vertical" className="mx-2 h-5" />
-					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
-						title={t('titleBar.toggleAgenticSidebar')}
-						aria-label={t('titleBar.toggleAgenticSidebar')}
-						aria-expanded={activeSidebar === 'agentic'}
-						onClick={() => toggleSidebar('agentic')}
-					>
-						<Bot aria-hidden="true" />
-					</Button>
-					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
-						title={t('titleBar.toggleSidebar')}
-						aria-label={t('titleBar.toggleSidebar')}
-						aria-expanded={activeSidebar === 'config'}
-						onClick={() => toggleSidebar('config')}
-					>
-						<Info aria-hidden="true" />
-					</Button>
-				</div>
+			<div className="flex items-center gap-3 flex-1 min-w-0">
+				<EmojiPicker value={emoji} onSelect={onEmojiChange} />
+				<Input
+					type="text"
+					value={title}
+					onChange={(e) => onTitleChange(e.target.value)}
+					placeholder={t('writing.titlePlaceholder')}
+					className="h-auto w-full min-w-0 border-0 bg-transparent px-0 py-0 !text-lg font-medium shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+				/>
+			</div>
+			<div className="flex items-center gap-0 ml-3 shrink-0">
+				<Button
+					type="button"
+					variant="header-icon"
+					size="header-icon-md"
+					title="Undo"
+					aria-label="Undo"
+					onClick={onUndo}
+					disabled={!canUndo}
+				>
+					<Undo2 aria-hidden="true" />
+				</Button>
+				<Button
+					type="button"
+					variant="header-icon"
+					size="header-icon-md"
+					title="Redo"
+					aria-label="Redo"
+					onClick={onRedo}
+					disabled={!canRedo}
+				>
+					<Redo2 aria-hidden="true" />
+				</Button>
+				<HistoryMenu
+					entries={historyEntries}
+					currentEntryId={currentHistoryEntryId}
+					onRestoreEntry={onRestoreHistoryEntry}
+				/>
+				<Separator orientation="vertical" className="mx-2 h-5" />
+				<Button
+					type="button"
+					variant="header-icon"
+					size="header-icon-md"
+					title={t('titleBar.toggleAgenticSidebar')}
+					aria-label={t('titleBar.toggleAgenticSidebar')}
+					aria-expanded={activeSidebar === 'agentic'}
+					onClick={() => toggleSidebar('agentic')}
+				>
+					<Bot aria-hidden="true" />
+				</Button>
+				<Button
+					type="button"
+					variant="header-icon"
+					size="header-icon-md"
+					title={t('titleBar.toggleSidebar')}
+					aria-label={t('titleBar.toggleSidebar')}
+					aria-expanded={activeSidebar === 'config'}
+					onClick={() => toggleSidebar('config')}
+				>
+					<Info aria-hidden="true" />
+				</Button>
+			</div>
 		</div>
 	);
 };
