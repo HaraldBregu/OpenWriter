@@ -11,6 +11,7 @@ import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
+import { PageContainer } from '@/components/app';
 
 const METADATA_SAVE_DEBOUNCE_MS = 1500;
 

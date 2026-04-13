@@ -28,8 +28,6 @@ const HeaderContent: React.FC<HeaderContentProps> = ({
 	emoji,
 	onTitleChange,
 	onEmojiChange,
-	onSearch,
-	onClearSearch,
 	historyEntries,
 	currentHistoryEntryId,
 	canUndo,
