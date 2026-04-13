@@ -16,46 +16,38 @@ export type ThemeMode = ThemeVariant | 'system';
 export interface ThemeData {
 	readonly background: string;
 	readonly foreground: string;
-	nav: {
-		readonly background: string;
-		readonly foreground: string;
-		readonly title: string;
-		readonly sidebarIcon: string;
-		readonly historyIcon: string;
-	};
-	page: {
-		readonly background: string;
-		readonly foreground: string;
-		readonly title: string;
-		header: {
-			readonly background: string;
-			readonly foreground: string;
-			readonly title: string;
-		};
-	};
-	sidebar: {
-		readonly background: string;
-		readonly foreground: string;
-		readonly title: string;
-	};
-	panel: {
-		readonly background: string;
-		readonly foreground: string;
-		header: {
-			readonly background: string;
-			readonly foreground: string;
-			readonly title: string;
-		};
-		body: {
-			readonly background: string;
-			readonly foreground: string;
-		};
-		footer: {
-			readonly background: string;
-			readonly foreground: string;
-			readonly title: string;
-		};
-	};
+	readonly card: string;
+	readonly 'card-foreground': string;
+	readonly popover: string;
+	readonly 'popover-foreground': string;
+	readonly primary: string;
+	readonly 'primary-foreground': string;
+	readonly secondary: string;
+	readonly 'secondary-foreground': string;
+	readonly muted: string;
+	readonly 'muted-foreground': string;
+	readonly accent: string;
+	readonly 'accent-foreground': string;
+	readonly destructive: string;
+	readonly 'destructive-foreground': string;
+	readonly border: string;
+	readonly input: string;
+	readonly ring: string;
+	readonly radius: string;
+	readonly success: string;
+	readonly 'success-foreground': string;
+	readonly warning: string;
+	readonly 'warning-foreground': string;
+	readonly info: string;
+	readonly 'info-foreground': string;
+	readonly 'sidebar-background': string;
+	readonly 'sidebar-foreground': string;
+	readonly 'sidebar-primary': string;
+	readonly 'sidebar-primary-foreground': string;
+	readonly 'sidebar-accent': string;
+	readonly 'sidebar-accent-foreground': string;
+	readonly 'sidebar-border': string;
+	readonly 'sidebar-ring': string;
 }
 
 /**
