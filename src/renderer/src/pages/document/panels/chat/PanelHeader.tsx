@@ -163,7 +163,7 @@ const PanelHeader: React.FC = () => {
 										}}
 									/>
 								))}
-							</ul>
+							</div>
 						</PopoverContent>
 					</Popover>
 					<Button
