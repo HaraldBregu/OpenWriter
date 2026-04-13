@@ -39,6 +39,7 @@ export function ContentGeneratorNodeView({
 	const [prompt, setPrompt] = useState<string>(() => (node.attrs.prompt as string) ?? '');
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+	const [isDragOver, setIsDragOver] = useState(false);
 	const options = extension.options as ContentGeneratorOptions;
 	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
 		.contentGenerator;
