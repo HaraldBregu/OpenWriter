@@ -16,7 +16,7 @@ const Item: React.FC<ItemProps> = ({ title, ageLabel, selected, deleting, onLoad
 	const { t } = useTranslation();
 
 	return (
-		<li
+		<div
 			className={`flex items-center gap-2 rounded-lg border-b border-border/50 px-1.5 py-1.5 last:border-b-0 dark:border-border/70 ${
 				selected
 					? 'bg-accent/90 dark:bg-accent'
