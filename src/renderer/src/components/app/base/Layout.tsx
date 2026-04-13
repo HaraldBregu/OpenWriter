@@ -78,7 +78,6 @@ function Container({ children }: LayoutProps) {
 	const handleNavigateForward = useCallback(() => navigate(1), [navigate]);
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
-	const currentUser = useCurrentUser();
 	const themeMode = useThemeMode();
 	const { setTheme } = useAppActions();
 
