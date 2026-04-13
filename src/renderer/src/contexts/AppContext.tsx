@@ -459,18 +459,7 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 		<ThemeProvider initialTheme={initialState?.theme}>
 			<AppThemeProvider initialAppTheme={initialState?.appTheme}>
 				<LanguageProvider initialLanguage={initialState?.language}>
-					<UserProvider initialUser={initialState?.user}>
-						<UIPreferencesProvider initialPreferences={initialState?.uiPreferences}>
-							<ModalProvider initialModals={initialState?.modals}>
-								<NetworkProvider
-									initialOnline={initialState?.isOnline}
-									initialSyncedAt={initialState?.lastSyncedAt}
-								>
-									{children}
-								</NetworkProvider>
-							</ModalProvider>
-						</UIPreferencesProvider>
-					</UserProvider>
+					<ModalProvider initialModals={initialState?.modals}>{children}</ModalProvider>
 				</LanguageProvider>
 			</AppThemeProvider>
 		</ThemeProvider>
