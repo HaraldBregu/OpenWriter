@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Clock3, Plus, Search } from 'lucide-react';
 import { v7 as uuidv7 } from 'uuid';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
 import { Popover, PopoverContent, PopoverHeader, PopoverDescription, PopoverTrigger } from '@/components/ui/Popover';
 import { useDocumentDispatch, useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch } from './hooks';
@@ -137,7 +137,6 @@ const PanelHeader: React.FC = () => {
 										value={search}
 										onChange={(event) => setSearch(event.target.value)}
 										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-										className="h-8 border-0 bg-transparent pl-6 pr-1 text-sm shadow-none focus-visible:ring-0 focus-visible:ring-offset-0 dark:text-foreground dark:placeholder:text-muted-foreground/75"
 									/>
 								</PopoverDescription>
 							</PopoverHeader>
