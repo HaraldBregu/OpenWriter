@@ -60,7 +60,6 @@ import {
 	Monitor,
 	Moon,
 } from 'lucide-react';
-import { useAppActions, useThemeMode } from '../../../contexts';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 
 interface LayoutProps {

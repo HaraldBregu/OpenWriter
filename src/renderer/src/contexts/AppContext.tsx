@@ -3,16 +3,6 @@ import type { ThemeMode } from '../../../shared/types';
 import { ThemeProvider } from './ThemeProvider';
 import { LanguageProvider } from './LanguageProvider';
 
-export {
-	useTheme,
-	useLanguageContext,
-	useAppState,
-	useAppActions,
-	useAppSelector,
-	useThemeMode,
-	useLanguageMode,
-} from './hooks';
-
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
 export type SidebarState = 'expanded' | 'collapsed';
