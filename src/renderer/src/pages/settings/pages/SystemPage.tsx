@@ -123,6 +123,27 @@ const SystemPage: React.FC = () => {
 			</SettingRow>
 
 			<SettingRow
+				label={t('settings.appTheme.title')}
+				description={t('settings.appTheme.description')}
+			>
+				<Select value={activeThemeId} onValueChange={handleThemeStyleChange}>
+					<SelectTrigger className="w-32 h-8 text-sm" aria-label={t('settings.appTheme.title')}>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent>
+						<SelectItem value={DEFAULT_THEME_ID}>
+							{t('settings.appTheme.default')}
+						</SelectItem>
+						{customThemes.map((theme) => (
+							<SelectItem key={theme.id} value={theme.id}>
+								{theme.name}
+							</SelectItem>
+						))}
+					</SelectContent>
+				</Select>
+			</SettingRow>
+
+			<SettingRow
 				label={t('settings.language.title')}
 				description={t('settings.language.description')}
 			>
