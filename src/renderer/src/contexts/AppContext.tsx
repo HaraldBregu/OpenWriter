@@ -84,6 +84,10 @@ function applyThemeData(data: ThemeData): void {
 			for (const [pgKey, pgValue] of Object.entries(value as Record<string, string>)) {
 				root.style.setProperty(tokenKeyToCssVar(pgKey, 'page'), pgValue);
 			}
+		} else if (key === 'sidebar' && typeof value === 'object' && value !== null) {
+			for (const [sbKey, sbValue] of Object.entries(value as Record<string, string>)) {
+				root.style.setProperty(tokenKeyToCssVar(sbKey, 'sidebar'), sbValue);
+			}
 		} else {
 			root.style.setProperty(tokenKeyToCssVar(key), value as string);
 		}
