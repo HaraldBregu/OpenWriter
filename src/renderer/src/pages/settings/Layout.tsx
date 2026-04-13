@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../hooks/use-language';
+import { PageContainer } from '@/components/app';
 
 interface NavItemDefinition {
 	readonly path: string;
@@ -28,27 +29,31 @@ export function Layout(): React.JSX.Element {
 	useLanguage();
 
 	return (
-		<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
-			{/* Left column — navigation (1/4 width) */}
-			<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
-				<div className="space-y-0.5 px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
-					{NAV_ITEMS.map((item) => (
-						<NavLink
-							key={item.path}
-							to={item.path}
-							end
-							className={({ isActive }) => `${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`}
-						>
-							{t(item.labelKey)}
-						</NavLink>
-					))}
+		<PageContainer>
+			<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
+				{/* Left column — navigation (1/4 width) */}
+				<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+					<div className="space-y-0.5 px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
+						{NAV_ITEMS.map((item) => (
+							<NavLink
+								key={item.path}
+								to={item.path}
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t(item.labelKey)}
+							</NavLink>
+						))}
+					</div>
+				</div>
+
+				{/* Right column — content (3/4 width) */}
+				<div className="w-full overflow-y-auto">
+					<Outlet />
 				</div>
 			</div>
-
-			{/* Right column — content (3/4 width) */}
-			<div className="w-full overflow-y-auto">
-				<Outlet />
-			</div>
-		</div>
+		</PageContainer>
 	);
 }
