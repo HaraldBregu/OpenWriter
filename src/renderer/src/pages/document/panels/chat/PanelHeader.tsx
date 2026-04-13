@@ -10,7 +10,15 @@ import { useChatState, useChatDispatch } from './hooks';
 import type { ChatSessionFile } from './shared';
 import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
 import { CardHeader } from '@/components/ui/Card';
-import { Item } from './components/Item';
+import {
+  Item,
+  ItemMedia,
+  ItemContent,
+  ItemTitle,
+  ItemDescription,
+  ItemActions,
+} from "@/components/ui/Item"
+
 
 const PanelHeader: React.FC = () => {
 	const { t } = useTranslation();
@@ -128,7 +136,6 @@ const PanelHeader: React.FC = () => {
 						/>
 						<PopoverContent
 							align="end"
-							sideOffset={8}
 						>
 							<PopoverHeader>
 								<PopoverDescription>
@@ -146,7 +153,7 @@ const PanelHeader: React.FC = () => {
 									</InputGroup>
 								</PopoverDescription>
 							</PopoverHeader>
-							<div className="max-h-[26rem] overflow-y-auto py-0.5">
+							<div className="max-h-[26rem] overflow-y-auto my-4">
 								{filteredSessions.length === 0 && (
 									<div className="px-1.5 py-2 text-xs text-muted-foreground">
 										{t('agenticPanel.historyEmpty', 'No previous chats yet')}
