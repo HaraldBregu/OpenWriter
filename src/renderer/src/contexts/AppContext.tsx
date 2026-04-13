@@ -403,7 +403,7 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 		<ThemeProvider initialTheme={initialState?.theme}>
 			<AppThemeProvider initialAppTheme={initialState?.appTheme}>
 				<LanguageProvider initialLanguage={initialState?.language}>
-					<ModalProvider initialModals={initialState?.modals}>{children}</ModalProvider>
+					{children}
 				</LanguageProvider>
 			</AppThemeProvider>
 		</ThemeProvider>
