@@ -39,9 +39,9 @@ import {
 	useSidebar,
 } from '@/components/ui/Sidebar';
 import {
-	AppSidebarContainer,
-	AppSidebarLayout,
-	AppSidebarInsetLayout,
+	SidebarContainer,
+	SidebarLayout,
+	SidebarInsetLayout,
 	AppIconOpenWriter,
 } from '..';
 import {
