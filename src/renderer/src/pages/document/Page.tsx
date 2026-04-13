@@ -32,7 +32,8 @@ function PageContent(): ReactElement {
 	const [content, setContent] = useState('');
 	const [loaded, setLoaded] = useState(false);
 
-	const { activeSidebar } = useSidebarVisibility();
+	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
+	const { t } = useTranslation();
 
 	const editorContentRef = useRef<EditorContentElement>(null);
 	const sidebarPanelRef = usePanelRef();
