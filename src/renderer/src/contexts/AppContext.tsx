@@ -561,14 +561,6 @@ export function useLanguageMode(): AppLanguage {
 	return useLanguageContext().language;
 }
 
-export function useCurrentUser(): User | null {
-	return useUser().user;
-}
-
-export function useUIPreferences(): UIPreferences {
-	return useUIPreferencesContext().uiPreferences;
-}
-
 export function useModalStates(): ModalState {
 	return useModalContext().modals;
 }
