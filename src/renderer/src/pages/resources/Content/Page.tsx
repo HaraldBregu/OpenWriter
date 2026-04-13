@@ -1,13 +1,18 @@
+import { useState } from 'react';
 import type { KeyboardEvent, ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	ChevronDown,
 	FileText,
 	Folder as FolderIcon,
 	FolderOpen,
+	ImageIcon,
+	Music,
 	Pencil,
 	Search,
 	Trash2,
 	Upload,
+	Video,
 	X,
 } from 'lucide-react';
 import {
@@ -21,6 +26,12 @@ import {
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import { Checkbox } from '@/components/ui/Checkbox';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -40,6 +51,7 @@ import { formatDate } from '../shared/resource-utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './context/ContentContext';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
+import { ImageDialog } from './components/ImageDialog';
 import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './types';
 import Layout from './Layout';
