@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useCallback, useMemo, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useMemo, useState, useEffect } from 'react';
 import { DEFAULT_THEME_MODE, isThemeMode } from '../../../shared/theme';
 import type { ThemeMode } from '../../../shared/types';
 
@@ -28,12 +28,12 @@ function applyThemeClass(theme: ThemeMode): void {
 
 applyThemeClass(readPersistedTheme());
 
-interface ThemeContextValue {
+export interface ThemeContextValue {
 	theme: ThemeMode;
 	setTheme: (theme: ThemeMode) => void;
 }
 
-const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 export function ThemeProvider({
 	children,
@@ -75,10 +75,4 @@ export function ThemeProvider({
 	const value = useMemo<ThemeContextValue>(() => ({ theme, setTheme }), [theme, setTheme]);
 
 	return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
-}
-
-export function useTheme(): ThemeContextValue {
-	const ctx = useContext(ThemeContext);
-	if (ctx === undefined) throw new Error('useTheme must be used within an AppProvider');
-	return ctx;
 }
