@@ -188,7 +188,7 @@ const PanelFooter: React.FC<InputProps> = ({
 	const fileNames = useMemo(() => files.map((f) => f.name), [files]);
 
 	return (
-		<CardFooter className="shrink-0 px-3 pb-3 pt-1">
+		<CardFooter>
 			{/* Hidden live region — announces image attachment changes to screen readers */}
 			<div
 				id={dropStatusId}

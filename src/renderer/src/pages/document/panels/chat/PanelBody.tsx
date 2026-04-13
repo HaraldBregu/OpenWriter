@@ -5,6 +5,7 @@ import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useChatState } from './hooks';
 import type { ChatMessageStatus, DocumentChatMessageRole } from './shared';
+import { CardContent } from '@/components/ui/Card';
 
 interface PanelBodyProps {}
 
@@ -50,50 +51,48 @@ const PanelBody: React.FC<PanelBodyProps> = () => {
 	}
 
 	return (
-		<div className="flex-1 min-h-0 overflow-y-auto px-4 py-4">
-			<div className="flex flex-col">
-				{chatMessages.map((message, index) => {
-					const previousMessage = index > 0 ? chatMessages[index - 1] : null;
-					const isGroupedWithPrevious =
-						previousMessage !== null && previousMessage.role !== 'user' && message.role !== 'user';
-					const isSystemGroupedWithPrevious =
-						previousMessage !== null &&
-						previousMessage.role === 'system' &&
-						message.role === 'system';
-					const showStatusLoader =
-						message.role === 'system' &&
-						message.id === latestSystemMessageId &&
-						message.status !== 'completed';
+		<CardContent className="flex-1 min-h-0 overflow-y-auto">
+			{chatMessages.map((message, index) => {
+				const previousMessage = index > 0 ? chatMessages[index - 1] : null;
+				const isGroupedWithPrevious =
+					previousMessage !== null && previousMessage.role !== 'user' && message.role !== 'user';
+				const isSystemGroupedWithPrevious =
+					previousMessage !== null &&
+					previousMessage.role === 'system' &&
+					message.role === 'system';
+				const showStatusLoader =
+					message.role === 'system' &&
+					message.id === latestSystemMessageId &&
+					message.status !== 'completed';
 
-					return (
-						<div
-							key={message.id}
-							className={
-								index === 0
+				return (
+					<div
+						key={message.id}
+						className={
+							index === 0
+								? undefined
+								: isSystemGroupedWithPrevious
 									? undefined
-									: isSystemGroupedWithPrevious
-										? undefined
-										: isGroupedWithPrevious
-											? 'mt-2'
-											: 'mt-4'
-							}
-						>
-							<Message
-								id={message.id}
-								content={message.content}
-								role={message.role}
-								taskId={message.taskId}
-								timestamp={message.timestamp}
-								status={message.status}
-								renderMarkdown={message.role === 'assistant'}
-								showStatusLoader={showStatusLoader}
-							/>
-						</div>
-					);
-				})}
-				<div ref={bottomRef} />
-			</div>
-		</div>
+									: isGroupedWithPrevious
+										? 'mt-2'
+										: 'mt-4'
+						}
+					>
+						<Message
+							id={message.id}
+							content={message.content}
+							role={message.role}
+							taskId={message.taskId}
+							timestamp={message.timestamp}
+							status={message.status}
+							renderMarkdown={message.role === 'assistant'}
+							showStatusLoader={showStatusLoader}
+						/>
+					</div>
+				);
+			})}
+			<div ref={bottomRef} />
+		</CardContent>
 	);
 };
 

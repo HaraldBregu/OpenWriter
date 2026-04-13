@@ -97,7 +97,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 			onDragLeave={onDragLeave}
 			onDrop={onDrop}
 			className={cn(
-				'relative overflow-hidden rounded-[1.4rem] bg-card/95 shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 dark:bg-card/95',
+				'relative overflow-hidden shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 dark:bg-card/95 w-full',
 				isFocused
 					? 'border-primary/45 dark:border-primary/55'
 					: 'border-border/85 hover:border-foreground/15 dark:border-border/90 dark:hover:border-foreground/15',

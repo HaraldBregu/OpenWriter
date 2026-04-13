@@ -284,7 +284,7 @@ const Chat: React.FC = () => {
 	);
 
 	return (
-		<Card className="flex h-full w-full flex-col border-0">
+		<Card className="flex h-full w-full flex-col border-none rounded-none">
 			<PanelHeader />
 			<PanelBody />
 			<PanelFooter
