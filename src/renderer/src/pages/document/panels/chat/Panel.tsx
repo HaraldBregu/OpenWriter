@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bot } from 'lucide-react';
 import { TextSelection } from '@tiptap/pm/state';
 import { v7 as uuidv7 } from 'uuid';
 import { getTaskStatusText } from '../../../../../../shared/types';
