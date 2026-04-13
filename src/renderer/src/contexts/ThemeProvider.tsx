@@ -79,6 +79,23 @@ export function ThemeProvider({
 		});
 	}, []);
 
+	useEffect(() => {
+		const themeStyleId = readPersistedThemeStyle();
+		if (themeStyleId === DEFAULT_THEME_ID) {
+			clearThemeTokens();
+			return;
+		}
+		let cancelled = false;
+		window.app?.getCustomThemeTokens(themeStyleId).then((manifest) => {
+			if (cancelled || !manifest) return;
+			const variant = resolveEffectiveVariant();
+			applyThemeTokens(manifest[variant]);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [theme]);
+
 	const value = useMemo<ThemeContextValue>(() => ({ theme, setTheme }), [theme, setTheme]);
 
 	return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

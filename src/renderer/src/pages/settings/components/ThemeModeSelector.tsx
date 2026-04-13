@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/RadioGroup';
 import { Label } from '@/components/ui/Label';
 import { useThemeMode } from '@/hooks/use-theme-mode';
+import { useAppActions } from '@/hooks/use-app-actions';
 
 export function ThemeModeSelector(): React.ReactElement {
 	const themeMode = useThemeMode();
