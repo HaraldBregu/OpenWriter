@@ -7,7 +7,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { Provider } from './Provider';
 import { useContentGenerator } from './hooks/use-content-generator';
-import { ImageAttachmentBar } from './components';
+import { Attachment } from './components';
 import { CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import {
@@ -81,16 +81,18 @@ function ContentGeneratorInner(): React.JSX.Element {
 				</CardAction>
 			</CardHeader>
 			<CardContent>
-				<ImageAttachmentBar
-					files={state.files}
-					previewUrls={state.previewUrls}
-					isDragOver={state.isDragOver}
-					disabled={!enable || loading}
-					fileInputRef={fileInputRef}
-					onOpenFilePicker={handleOpenFilePicker}
-					onRemoveFile={removeFile}
-					onFileInputChange={handleFileInputChange}
-				/>
+				{isImage && (
+					<Attachment
+						files={state.files}
+						previewUrls={state.previewUrls}
+						isDragOver={state.isDragOver}
+						disabled={!enable || loading}
+						fileInputRef={fileInputRef}
+						onOpenFilePicker={handleOpenFilePicker}
+						onRemoveFile={removeFile}
+						onFileInputChange={handleFileInputChange}
+					/>
+				)}
 				<Textarea
 					ref={textareaRef}
 					value={state.prompt}

@@ -6,7 +6,7 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '@/
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-interface ImageAttachmentBarProps {
+interface AttachmentProps {
 	files: File[];
 	previewUrls: string[];
 	isDragOver: boolean;
@@ -17,7 +17,7 @@ interface ImageAttachmentBarProps {
 	onFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export function ImageAttachmentBar({
+export function Attachment({
 	files,
 	previewUrls,
 	isDragOver,
@@ -26,7 +26,7 @@ export function ImageAttachmentBar({
 	onOpenFilePicker,
 	onRemoveFile,
 	onFileInputChange,
-}: ImageAttachmentBarProps): React.JSX.Element {
+}: AttachmentProps): React.JSX.Element {
 	const { t } = useTranslation();
 	const handlePlaceholderKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
 		if (disabled) return;

@@ -1,1 +1,1 @@
-export { ImageAttachmentBar } from './ImageAttachmentBar';
+export { Attachment } from './Attachment';
