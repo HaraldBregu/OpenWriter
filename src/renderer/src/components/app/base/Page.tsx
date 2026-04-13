@@ -7,7 +7,18 @@ interface PageContainerProps {
 export const PageContainer = memo(function PageContainer({
 	children,
 }: PageContainerProps): React.ReactElement {
-	return <div className="flex h-full flex-col bg-background">{children}</div>;
+	return (
+		<div
+			className="flex h-full flex-col"
+			style={
+				{
+					backgroundColor: 'var(--page-background, hsl(var(--background)))',
+				} as React.CSSProperties
+			}
+		>
+			{children}
+		</div>
+	);
 });
 
 interface PageHeaderProps {
