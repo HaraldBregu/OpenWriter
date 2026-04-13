@@ -38,9 +38,6 @@ const LANGUAGE_OPTIONS: readonly LanguageOption[] = [
 	{ value: 'it', labelKey: 'settings.language.it' },
 ] as const;
 
-const DEFAULT_THEME_ID = 'default';
-const THEME_STYLE_STORAGE_KEY = 'app-theme-style';
-
 // ---------------------------------------------------------------------------
 // Page
 // ---------------------------------------------------------------------------
