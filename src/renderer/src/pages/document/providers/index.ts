@@ -1,7 +1,6 @@
 export {
 	DocumentProvider,
-	DocumentStateContext,
-	DocumentDispatchContext,
+	useDocumentContext,
 	useEditorInstance,
 	useSidebarVisibility,
 } from './Document';
