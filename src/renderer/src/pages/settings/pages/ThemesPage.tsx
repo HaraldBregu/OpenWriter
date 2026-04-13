@@ -59,9 +59,6 @@ const ThemesPage: React.FC = () => {
 		async (id: string) => {
 			setConfirmDeleteId(null);
 			try {
-				if (customThemeId === id) {
-					setCustomTheme(null);
-				}
 				await window.app.deleteTheme(id);
 				await loadThemes();
 			} catch (err) {
@@ -69,7 +66,7 @@ const ThemesPage: React.FC = () => {
 				setFeedback({ status: 'error', message });
 			}
 		},
-		[customThemeId, setCustomTheme, loadThemes, t]
+		[loadThemes, t]
 	);
 
 	const handleOpenFolder = useCallback(async () => {
