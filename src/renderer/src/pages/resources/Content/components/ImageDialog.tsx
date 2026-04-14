@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { ChevronDown, FileText, ImageIcon, Info, Play } from 'lucide-react';
-import { PdfViewer } from '@/components/pdf/PdfViewer';
+import { Pdf } from '@/components/pdf/Pdf';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
 import type { ProviderId } from '../../../../../../shared/types';
@@ -143,7 +143,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 							<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 								<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
 									{imageSrc && previewKind === 'pdf' ? (
-										<PdfViewer src={imageSrc} className="h-full w-full" />
+										<Pdf src={imageSrc} className="h-full w-full" />
 									) : imageSrc && previewKind === 'image' ? (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 											<img
