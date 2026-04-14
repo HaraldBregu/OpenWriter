@@ -122,12 +122,27 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 	},
 };
 
+export interface ExtractorRunPayload {
+	readonly type: ExtractorType;
+	readonly file: File;
+	readonly fileName: string;
+	readonly fileSrc: string;
+	readonly modelId: string;
+	readonly extras: readonly ExtraValue[];
+	readonly outputFileName: string;
+}
+
 interface ExtractorDialogProps {
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
+	readonly onRun?: (payload: ExtractorRunPayload) => void | Promise<void>;
 }
 
-export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): ReactElement {
+export function ExtractorDialog({
+	open,
+	onOpenChange,
+	onRun,
+}: ExtractorDialogProps): ReactElement {
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['descrizione']);
 	const [outputFileName, setOutputFileName] = useState('');
