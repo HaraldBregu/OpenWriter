@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
-import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { ChevronDown, FileText, ImageIcon, Info, Play } from 'lucide-react';
+import { PdfViewer } from '@/components/pdf/PdfViewer';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
 import type { ProviderId } from '../../../../../../shared/types';
