@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import type { FolderEntry } from '../../../../../../shared/types';
-import type { SortDirection, SortKey } from '../types';
+import type { SortDirection, SortKey } from '../shared/types';
 
 interface UseContentFilterParams {
 	folders: FolderEntry[];
