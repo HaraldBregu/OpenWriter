@@ -79,8 +79,8 @@ export class ContentsService {
 	}
 
 	/**
-	 * Load all sub-folders from the workspace resources/content/ directory.
-	 * Files at the root of resources/content/ are ignored — only directories are returned.
+	 * Load all sub-folders and markdown files from the workspace resources/content/ directory.
+	 * Returns directories as kind='folder' and .md files as kind='file'.
 	 */
 	async getFolders(workspacePath: string): Promise<FolderEntry[]> {
 		const contentsDir = this.getContentsDir(workspacePath);
@@ -92,19 +92,24 @@ export class ContentsService {
 		}
 
 		const dirEntries = await fsPromises.readdir(contentsDir, { withFileTypes: true });
-		const folders: FolderEntry[] = [];
+		const entries: FolderEntry[] = [];
 
 		for (const entry of dirEntries) {
-			if (!entry.isDirectory()) continue;
 			if (entry.name.startsWith('.')) continue;
 
-			const folderPath = path.join(contentsDir, entry.name);
+			const entryPath = path.join(contentsDir, entry.name);
+			const isDirectory = entry.isDirectory();
+			const isMarkdown = entry.isFile() && entry.name.endsWith('.md');
+
+			if (!isDirectory && !isMarkdown) continue;
+
 			try {
-				const stats = await fsPromises.stat(folderPath);
-				folders.push({
+				const stats = await fsPromises.stat(entryPath);
+				entries.push({
+					kind: isDirectory ? 'folder' : 'file',
 					id: entry.name,
 					name: entry.name,
-					path: folderPath,
+					path: entryPath,
 					relativePath: entry.name,
 					createdAt: stats.birthtimeMs || stats.ctimeMs,
 					modifiedAt: stats.mtimeMs,
@@ -112,13 +117,13 @@ export class ContentsService {
 			} catch (err) {
 				this.logger?.warn(
 					ContentsService.LOG_SOURCE,
-					`Failed to stat folder ${entry.name}`,
+					`Failed to stat entry ${entry.name}`,
 					err
 				);
 			}
 		}
 
-		return folders;
+		return entries;
 	}
 
 	/**
