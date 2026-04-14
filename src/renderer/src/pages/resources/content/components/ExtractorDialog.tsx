@@ -146,6 +146,7 @@ export function ExtractorDialog({
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['descrizione']);
 	const [outputFileName, setOutputFileName] = useState('');
+	const [file, setFile] = useState<File | null>(null);
 	const [fileSrc, setFileSrc] = useState<string | null>(null);
 	const [fileName, setFileName] = useState<string | null>(null);
 	const [detectedType, setDetectedType] = useState<ExtractorType | null>(null);
