@@ -77,7 +77,6 @@ function Container({ children }: LayoutProps) {
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const [accountMenuOpen, setAccountMenuOpen] = useState(false);
 	const handleNavigateBack = useCallback(() => navigate(-1), [navigate]);
 	const handleNavigateForward = useCallback(() => navigate(1), [navigate]);
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
