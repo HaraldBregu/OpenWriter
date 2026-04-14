@@ -177,14 +177,17 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 												</p>
 												{imageName && (
 													<div className="mt-1 flex items-center gap-2">
-														<Button
-															variant="ghost"
-															size="xs"
-															className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
-															onClick={handleSelectImage}
-														>
-															Cambia immagine
-														</Button>
+														<FileUploadTrigger
+															render={
+																<Button
+																	variant="ghost"
+																	size="xs"
+																	className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
+																>
+																	Cambia immagine
+																</Button>
+															}
+														/>
 													</div>
 												)}
 											</div>
