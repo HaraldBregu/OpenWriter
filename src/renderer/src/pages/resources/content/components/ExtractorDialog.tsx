@@ -198,7 +198,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 								<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
 									<Empty className="border-0 p-0">
 										<EmptyHeader>
-											<EmptyMedia variant="icon" className="size-16 rounded-full">
+											<EmptyMedia variant="icon" className="h-16 w-auto rounded-full px-4">
 												{config.emptyIcon}
 											</EmptyMedia>
 											<EmptyTitle>{config.emptyTitle}</EmptyTitle>
