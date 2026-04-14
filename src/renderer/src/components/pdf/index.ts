@@ -1,2 +1,2 @@
-export { PdfViewer } from './PdfViewer';
-export type { PdfViewerProps, PdfViewerRef } from './PdfViewer';
+export { PDF } from './PDF';
+export type { PDFProps, PDFRef } from './PDF';
