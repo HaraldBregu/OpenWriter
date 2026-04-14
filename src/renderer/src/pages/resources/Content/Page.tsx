@@ -188,7 +188,7 @@ function PageContent(): ReactElement {
 					</InputGroup>
 				</ButtonGroup>
 			</PageSubHeader>
-			<PageBody>
+			<PageBody className="p-8">
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
@@ -211,8 +211,9 @@ function PageContent(): ReactElement {
 				)}
 
 				{!isLoading && folders.length > 0 && (
-					<Table className="table-fixed text-foreground">
-						<TableHeader className="bg-muted sticky top-0 z-10">
+					<div className="overflow-hidden rounded-md border">
+						<Table>
+						<TableHeader>
 							<TableRow>
 								{editing && (
 									<TableHead className="w-12 px-6 text-muted-foreground">
@@ -292,6 +293,7 @@ function PageContent(): ReactElement {
 							)}
 						</TableBody>
 					</Table>
+					</div>
 				)}
 			</PageBody>
 
