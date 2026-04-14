@@ -241,7 +241,6 @@ function PageContent(): ReactElement {
 			</PageBody>
 
 			<DeleteConfirmDialog />
-			<MarkdownDialog open={markdownDialogOpen} onOpenChange={setMarkdownDialogOpen} />
 			<ExtractorDialog open={fileDialogOpen} onOpenChange={setFileDialogOpen} />
 		</PageContainer>
 	);
