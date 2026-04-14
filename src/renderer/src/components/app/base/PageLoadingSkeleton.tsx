@@ -10,8 +10,8 @@ export const PageLoadingSkeleton = React.memo(function PageLoadingSkeleton() {
 					<Skeleton className="h-6 w-48" />
 				</PageHeaderTitle>
 				<PageHeaderItems>
-					<Skeleton className="h-8 w-20 rounded-md" />
-					<Skeleton className="h-8 w-8 rounded-md" />
+					<Skeleton className="h-9 w-20 rounded-md" />
+					<Skeleton className="h-9 w-8 rounded-md" />
 				</PageHeaderItems>
 			</PageHeader>
 			<PageBody className="p-6">
