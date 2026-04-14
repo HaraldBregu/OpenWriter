@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { ReactElement } from 'react';
+import type { DragEvent as ReactDragEvent, ReactElement } from 'react';
 import { ChevronDown, ImageIcon, Info, Play, X } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
