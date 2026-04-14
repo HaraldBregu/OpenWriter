@@ -329,17 +329,23 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 											/>
 										</div>
 									) : (
-										<FileUploadDropzone className="flex h-full w-full flex-col items-center justify-center gap-4 rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
-											<div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
-												<ImageIcon className="h-8 w-8 text-muted-foreground" />
-											</div>
-											<p className="text-sm text-muted-foreground">Nessun file selezionato</p>
-											<p className="text-xs text-muted-foreground/70">
-												Trascina un&apos;immagine o un PDF qui o
-											</p>
-											<FileUploadTrigger
-												render={<Button variant="outline">Seleziona file</Button>}
-											/>
+										<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
+											<Empty className="border-0 p-0">
+												<EmptyHeader>
+													<EmptyMedia variant="icon" className="size-16 rounded-full">
+														<ImageIcon className="size-8 text-muted-foreground" />
+													</EmptyMedia>
+													<EmptyTitle>Nessun file selezionato</EmptyTitle>
+													<EmptyDescription>
+														Trascina un&apos;immagine o un PDF qui o
+													</EmptyDescription>
+												</EmptyHeader>
+												<EmptyContent>
+													<FileUploadTrigger
+														render={<Button variant="outline">Seleziona file</Button>}
+													/>
+												</EmptyContent>
+											</Empty>
 										</FileUploadDropzone>
 									)}
 								</ResizablePanel>
