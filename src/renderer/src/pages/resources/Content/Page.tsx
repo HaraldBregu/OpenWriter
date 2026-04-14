@@ -106,7 +106,7 @@ function PageContent(): ReactElement {
 							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={handleUpload}>
+							<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
 								<Monitor className="h-4 w-4" />
 								Computer
 							</DropdownMenuItem>
