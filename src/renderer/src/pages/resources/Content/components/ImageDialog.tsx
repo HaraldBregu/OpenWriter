@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { DragEvent as ReactDragEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { ChevronDown, ImageIcon, Info, Play, X } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
@@ -16,6 +16,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import {
+	FileUpload,
+	FileUploadDropzone,
+	FileUploadTrigger,
+} from '@/components/ui/FileUpload';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 
