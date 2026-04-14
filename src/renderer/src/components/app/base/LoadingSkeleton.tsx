@@ -78,20 +78,31 @@ export const LoadingSkeleton = React.memo(function LoadingSkeleton() {
 				</aside>
 
 				{/* Main content */}
-				<main className="flex-1 min-w-0 overflow-hidden p-6">
-					<div className="flex flex-col gap-4 max-w-3xl">
-						<Skeleton className="h-8 w-1/2" />
-						<Skeleton className="h-4 w-2/3" />
-						<div className="space-y-2 pt-4">
-							<Skeleton className="h-3 w-full" />
-							<Skeleton className="h-3 w-full" />
-							<Skeleton className="h-3 w-11/12" />
-							<Skeleton className="h-3 w-10/12" />
-							<Skeleton className="h-3 w-full" />
-							<Skeleton className="h-3 w-9/12" />
+				<PageContainer className="flex-1 min-w-0">
+					<PageHeader>
+						<PageHeaderTitle>
+							<Skeleton className="h-6 w-48" />
+						</PageHeaderTitle>
+						<PageHeaderItems>
+							<Skeleton className="h-8 w-20 rounded-md" />
+							<Skeleton className="h-8 w-8 rounded-md" />
+						</PageHeaderItems>
+					</PageHeader>
+					<PageBody className="p-6">
+						<div className="flex flex-col gap-4 max-w-3xl">
+							<Skeleton className="h-8 w-1/2" />
+							<Skeleton className="h-4 w-2/3" />
+							<div className="space-y-2 pt-4">
+								<Skeleton className="h-3 w-full" />
+								<Skeleton className="h-3 w-full" />
+								<Skeleton className="h-3 w-11/12" />
+								<Skeleton className="h-3 w-10/12" />
+								<Skeleton className="h-3 w-full" />
+								<Skeleton className="h-3 w-9/12" />
+							</div>
 						</div>
-					</div>
-				</main>
+					</PageBody>
+				</PageContainer>
 			</div>
 		</div>
 	);
