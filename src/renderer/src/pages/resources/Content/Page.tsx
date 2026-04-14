@@ -137,6 +137,10 @@ function PageContent(): ReactElement {
 										<ImageIcon className="h-4 w-4" />
 										Image
 									</DropdownMenuItem>
+									<DropdownMenuItem onClick={() => setPdfDialogOpen(true)}>
+										<FileText className="h-4 w-4" />
+										PDF
+									</DropdownMenuItem>
 									<DropdownMenuItem>
 										<Video className="h-4 w-4" />
 										Video
