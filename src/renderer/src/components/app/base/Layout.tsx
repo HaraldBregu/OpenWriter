@@ -17,14 +17,7 @@ import { TitleBar } from '../titlebar/TitleBar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxItem,
-	ComboboxList,
-	ComboboxSeparator,
-	ComboboxTrigger,
-} from '@/components/ui/Combobox';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
 import {
 	SidebarContent,
 	SidebarFooter,
@@ -63,6 +56,15 @@ import {
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
+import {
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuLabel,
+	DropdownMenuItem,
+	DropdownMenuShortcut,
+	DropdownMenuSeparator,
+} from '@/components/ui/DropdownMenu';
 
 interface LayoutProps {
 	readonly children: React.ReactNode;
@@ -212,6 +214,8 @@ function Container({ children }: LayoutProps) {
 		[navigate]
 	);
 
+	const { isMobile } = useSidebar();
+
 	return (
 		<>
 			<TitleBar
@@ -223,33 +227,22 @@ function Container({ children }: LayoutProps) {
 
 			<SidebarPageContainer>
 				<Sidebar collapsible="icon" className="top-12 h-[calc(100svh-3rem)]">
-					{/* Header */}
-					<SidebarHeader>
+					<SidebarHeader>					
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton
+									size="lg"
 									onClick={() => navigate('/home')}
-									className={
-										open
-											? 'h-auto min-h-12 px-3 py-2.5'
-											: 'mx-auto flex h-8 w-8 items-center justify-center p-0'
-									}
+									className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 								>
-									{open ? (
-										<AppIconOpenWriter className="h-8 w-8 shrink-0 text-sidebar-foreground" />
-									) : (
-										<AppIconOpenWriter className="h-6 w-6 text-sidebar-foreground" />
-									)}
-									{open && (
-										<div className="grid min-w-0 flex-1 text-left leading-tight">
-											<span className="truncate text-base font-medium tracking-tight text-sidebar-foreground">
-												OpenWriter
-											</span>
-											<span className="truncate text-sm text-sidebar-foreground/60">
-												{sidebarSubtitle}
-											</span>
-										</div>
-									)}
+									<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+										<AppIconOpenWriter className="h-6 w-6" />
+									</div>
+									<div className="grid flex-1 text-left text-sm leading-tight">
+										<span className="truncate font-medium">OpenWriter</span>
+										<span className="truncate text-xs">{sidebarSubtitle}</span>
+									</div>
+									<ChevronsUpDown className="ml-auto" />
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 						</SidebarMenu>
