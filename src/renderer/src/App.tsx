@@ -136,7 +136,7 @@ const App: React.FC = () => {
 				<Provider store={store}>
 					<AppProvider>
 						<TooltipProvider>
-							<LoadingSkeleton />
+							<LayoutLoadingSkeleton />
 						</TooltipProvider>
 					</AppProvider>
 				</Provider>
