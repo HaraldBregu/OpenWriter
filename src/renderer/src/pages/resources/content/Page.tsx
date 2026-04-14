@@ -50,6 +50,21 @@ function PageContent(): ReactElement {
 		handleDelete,
 	} = useContentContext();
 
+	const handleExtractorRun = async ({ file, modelId }: ExtractorRunPayload): Promise<void> => {
+		const filePath = (file as unknown as { path?: string }).path;
+		if (!filePath || !modelId) return;
+		const result = await window.task.submit('ocr', {
+			url: filePath,
+			modelId,
+			inputType: 'url',
+		});
+		if (!result.success) {
+			console.error('[ContentPage] OCR submit failed:', result.error.message);
+			return;
+		}
+		setFileDialogOpen(false);
+	};
+
 	return (
 		<PageContainer>
 			<PageHeader>
