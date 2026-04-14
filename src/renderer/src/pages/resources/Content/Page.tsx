@@ -24,7 +24,6 @@ import {
 } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import { Checkbox } from '@/components/ui/Checkbox';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
