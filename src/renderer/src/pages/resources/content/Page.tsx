@@ -6,14 +6,10 @@ import {
 	FileText,
 	Folder as FolderIcon,
 	FolderOpen,
-	ImageIcon,
-	Monitor,
 	MoreHorizontal,
-	Music,
 	Search,
 	Trash2,
 	Upload,
-	Video,
 } from 'lucide-react';
 import {
 	PageBody,
