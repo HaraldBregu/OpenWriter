@@ -21,7 +21,7 @@ const DEFAULT_DISABLED_CATEGORIES = [
 	'history',
 ];
 
-export interface PdfViewerProps {
+export interface PDFProps {
 	readonly src: string;
 	readonly className?: string;
 	readonly style?: CSSProperties;
