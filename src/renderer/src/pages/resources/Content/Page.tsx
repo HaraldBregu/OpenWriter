@@ -291,7 +291,7 @@ function PageContent(): ReactElement {
 			</PageBody>
 
 			<DeleteConfirmDialog />
-			<ImageDialog open={imageDialogOpen} onOpenChange={setImageDialogOpen} />
+			<ExtractorDialog type="image" open={imageDialogOpen} onOpenChange={setImageDialogOpen} />
 		</PageContainer>
 	);
 }
