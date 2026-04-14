@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { ChevronDown, FileText, ImageIcon, Info, Play } from 'lucide-react';
+import { Image } from '@/components/image/Image';
 import { Pdf } from '@/components/pdf/Pdf';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
