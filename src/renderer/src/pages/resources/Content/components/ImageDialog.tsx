@@ -181,7 +181,14 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 				<DialogHeader className="contents space-y-0 text-left py-0">
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-							<ResizablePanel defaultSize={70} minSize="40%" className="rounded-l-xl">
+							<ResizablePanel
+								defaultSize={70}
+								minSize="40%"
+								className="relative rounded-l-xl"
+								onDragOver={handleDragOver}
+								onDragLeave={handleDragLeave}
+								onDrop={handleDrop}
+							>
 								{imageSrc ? (
 									<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 										<img
@@ -195,10 +202,20 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 										<div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
 											<ImageIcon className="h-8 w-8 text-muted-foreground" />
 										</div>
-										<p className="text-sm text-muted-foreground">Nessuna immagine selezionata</p>
+										<p className="text-sm text-muted-foreground">
+											Nessuna immagine selezionata
+										</p>
+										<p className="text-xs text-muted-foreground/70">
+											Trascina un&apos;immagine qui o
+										</p>
 										<Button variant="outline" onClick={handleSelectImage}>
 											Seleziona immagine
 										</Button>
+									</div>
+								)}
+								{isDragging && (
+									<div className="pointer-events-none absolute inset-0 flex items-center justify-center rounded-l-xl border-2 border-dashed border-primary bg-primary/10">
+										<p className="text-sm font-medium text-primary">Rilascia l&apos;immagine</p>
 									</div>
 								)}
 							</ResizablePanel>
