@@ -128,8 +128,21 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 	const [outputFileName, setOutputFileName] = useState('');
 	const [fileSrc, setFileSrc] = useState<string | null>(null);
 	const [fileName, setFileName] = useState<string | null>(null);
+	const [detectedType, setDetectedType] = useState<ExtractorType | null>(null);
 
-	const config = TYPE_CONFIG[type];
+	const typeConfig = detectedType ? TYPE_CONFIG[detectedType] : null;
+	const config = {
+		title: typeConfig?.title ?? GENERIC_CONFIG.title,
+		description: typeConfig?.description ?? GENERIC_CONFIG.description,
+		submitLabel: typeConfig?.submitLabel ?? GENERIC_CONFIG.submitLabel,
+		icon: typeConfig?.icon ?? GENERIC_CONFIG.icon,
+		placeholder: typeConfig?.placeholder ?? GENERIC_CONFIG.placeholder,
+		changeLabel: typeConfig?.changeLabel ?? GENERIC_CONFIG.changeLabel,
+		emptyTitle: GENERIC_CONFIG.emptyTitle,
+		emptyDescription: GENERIC_CONFIG.emptyDescription,
+		emptyIcon: GENERIC_CONFIG.emptyIcon,
+		selectLabel: GENERIC_CONFIG.selectLabel,
+	};
 	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
 	const selectedProvider = selectedModelEntry
 		? getProvider(selectedModelEntry.providerId)
