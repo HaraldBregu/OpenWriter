@@ -62,6 +62,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuLabel,
 	DropdownMenuItem,
+	DropdownMenuGroup,
 	DropdownMenuShortcut,
 	DropdownMenuSeparator,
 } from '@/components/ui/DropdownMenu';
