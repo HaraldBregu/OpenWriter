@@ -210,178 +210,6 @@ function AnalysisHeader({
 	);
 }
 
-interface ExtractorDialogContentProps {
-	readonly type: ExtractorType;
-	readonly fileSrc: string | null;
-	readonly fileName: string | null;
-	readonly selectedModel: string;
-	readonly onModelChange: (modelId: string) => void;
-	readonly selectedExtras: ExtraValue[];
-	readonly onToggleExtra: (value: ExtraValue) => void;
-	readonly outputFileName: string;
-	readonly onOutputFileNameChange: (name: string) => void;
-	readonly onFileAccept: (file: File) => void;
-	readonly onCancel: () => void;
-	readonly onSubmit: () => void;
-}
-
-function ExtractorDialogContent({
-	type,
-	fileSrc,
-	fileName,
-	selectedModel,
-	onModelChange,
-	selectedExtras,
-	onToggleExtra,
-	outputFileName,
-	onOutputFileNameChange,
-	onFileAccept,
-	onCancel,
-	onSubmit,
-}: ExtractorDialogContentProps): ReactElement {
-	const config = TYPE_CONFIG[type];
-	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
-
-	return (
-		<FileUpload
-			accept={config.accept}
-			onFileAccept={onFileAccept}
-			className="flex min-h-0 w-full flex-1"
-		>
-			<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-				<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
-					<PreviewArea type={type} fileSrc={fileSrc} fileName={fileName} config={config} />
-				</ResizablePanel>
-				<ResizableHandle withHandle />
-				<ResizablePanel defaultSize={30} minSize="30%">
-					<div className="flex h-full flex-col">
-						<AnalysisHeader
-							icon={config.icon}
-							fileName={fileName}
-							placeholder={config.placeholder}
-							changeLabel={config.changeLabel}
-						/>
-						<div className="p-4">
-							<h2 className="text-sm font-semibold">{config.title}</h2>
-						</div>
-						<ScrollArea className="flex-1">
-							<div className="divide-y divide-border">
-								<div className="flex items-center justify-between gap-4 p-4">
-									<div>
-										<p className="text-xs font-medium">Modello</p>
-										<p className="text-[11px] text-muted-foreground">
-											{selectedModelEntry
-												? (getProvider(selectedModelEntry.providerId)?.name ??
-													selectedModelEntry.providerId)
-												: 'AI'}
-										</p>
-									</div>
-									<DropdownMenu>
-										<DropdownMenuTrigger
-											render={<Button variant="outline" />}
-											className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
-										>
-											{selectedModelEntry && (
-												<ProviderIcon providerId={selectedModelEntry.providerId} />
-											)}
-											<span className="truncate">
-												{selectedModelEntry?.name ?? 'Seleziona modello'}
-											</span>
-											<ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
-										</DropdownMenuTrigger>
-										<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
-											<DropdownMenuRadioGroup value={selectedModel} onValueChange={onModelChange}>
-												{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
-													(providerId, idx) => (
-														<div key={providerId}>
-															{idx > 0 && <DropdownMenuSeparator />}
-															{OCR_MODELS.filter((m) => m.providerId === providerId).map(
-																(model) => (
-																	<DropdownMenuRadioItem
-																		key={model.modelId}
-																		value={model.modelId}
-																		className="gap-2"
-																	>
-																		<ProviderIcon providerId={model.providerId} />
-																		{model.name}
-																	</DropdownMenuRadioItem>
-																)
-															)}
-														</div>
-													)
-												)}
-											</DropdownMenuRadioGroup>
-										</DropdownMenuContent>
-									</DropdownMenu>
-								</div>
-
-								<div className="space-y-2 p-4">
-									<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
-									<p className="text-xs text-muted-foreground">All 0s: 1 2 3</p>
-								</div>
-
-								<div className="space-y-2 p-4">
-									<SectionHeader label="Extra" onAdd={() => {}} />
-									<div className="flex flex-wrap gap-1.5">
-										{EXTRA_OPTIONS.map((option) => (
-											<Button
-												key={option.value}
-												variant={
-													selectedExtras.includes(option.value) ? 'outline-selected' : 'outline'
-												}
-												size="xs"
-												onClick={() => onToggleExtra(option.value)}
-											>
-												{option.label}
-											</Button>
-										))}
-									</div>
-								</div>
-
-								<div className="space-y-2 p-4">
-									<SectionHeader label="Punteggio di confidenza" />
-									<Badge variant="outline">Nessuno</Badge>
-								</div>
-
-								<div className="p-4">
-									<p className="text-xs text-muted-foreground">
-										Funzionalità aggiuntive disponibili tramite{' '}
-										<span className="font-medium text-primary">OWR Document AI</span>
-									</p>
-								</div>
-							</div>
-						</ScrollArea>
-						<div className="space-y-1.5 border-t px-4 pt-3 pb-2">
-							<label className="text-xs font-medium text-muted-foreground">
-								Nome file di output
-							</label>
-							<Input
-								value={outputFileName}
-								onChange={(e) => onOutputFileNameChange(e.target.value)}
-								placeholder="Nome file di output"
-								className="h-8 text-xs"
-							/>
-						</div>
-						<div className="flex gap-2 border-t p-4">
-							<Button variant="outline" className="flex-1" onClick={onCancel}>
-								Annulla
-							</Button>
-							<Button
-								className="flex-1 gap-1.5"
-								disabled={!fileSrc || !selectedModel}
-								onClick={onSubmit}
-							>
-								<Play className="h-3.5 w-3.5" />
-								{config.submitLabel}
-							</Button>
-						</div>
-					</div>
-				</ResizablePanel>
-			</ResizablePanelGroup>
-		</FileUpload>
-	);
-}
-
 interface ExtractorDialogProps {
 	readonly type: ExtractorType;
 	readonly open: boolean;
@@ -394,6 +222,9 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 	const [outputFileName, setOutputFileName] = useState('');
 	const [fileSrc, setFileSrc] = useState<string | null>(null);
 	const [fileName, setFileName] = useState<string | null>(null);
+
+	const config = TYPE_CONFIG[type];
+	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
 
 	const toggleExtra = (value: ExtraValue): void => {
 		setSelectedExtras((prev) =>
@@ -423,22 +254,149 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="flex h-[calc(100vh-16rem)] min-w-[calc(100vw-18rem)] flex-col py-0 p-0">
-				<ExtractorDialogContent
-					type={type}
-					fileSrc={fileSrc}
-					fileName={fileName}
-					selectedModel={selectedModel}
-					onModelChange={setSelectedModel}
-					selectedExtras={selectedExtras}
-					onToggleExtra={toggleExtra}
-					outputFileName={outputFileName}
-					onOutputFileNameChange={setOutputFileName}
+				<FileUpload
+					accept={config.accept}
 					onFileAccept={handleFileAccept}
-					onCancel={() => handleClose(false)}
-					onSubmit={() => {
-						// Placeholder for submission
-					}}
-				/>
+					className="flex min-h-0 w-full flex-1"
+				>
+					<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+						<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
+							<PreviewArea type={type} fileSrc={fileSrc} fileName={fileName} config={config} />
+						</ResizablePanel>
+						<ResizableHandle withHandle />
+						<ResizablePanel defaultSize={30} minSize="30%">
+							<div className="flex h-full flex-col">
+								<AnalysisHeader
+									icon={config.icon}
+									fileName={fileName}
+									placeholder={config.placeholder}
+									changeLabel={config.changeLabel}
+								/>
+								<div className="p-4">
+									<h2 className="text-sm font-semibold">{config.title}</h2>
+								</div>
+								<ScrollArea className="flex-1">
+									<div className="divide-y divide-border">
+										<div className="flex items-center justify-between gap-4 p-4">
+											<div>
+												<p className="text-xs font-medium">Modello</p>
+												<p className="text-[11px] text-muted-foreground">
+													{selectedModelEntry
+														? (getProvider(selectedModelEntry.providerId)?.name ??
+															selectedModelEntry.providerId)
+														: 'AI'}
+												</p>
+											</div>
+											<DropdownMenu>
+												<DropdownMenuTrigger
+													render={<Button variant="outline" />}
+													className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
+												>
+													{selectedModelEntry && (
+														<ProviderIcon providerId={selectedModelEntry.providerId} />
+													)}
+													<span className="truncate">
+														{selectedModelEntry?.name ?? 'Seleziona modello'}
+													</span>
+													<ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
+													<DropdownMenuRadioGroup
+														value={selectedModel}
+														onValueChange={setSelectedModel}
+													>
+														{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
+															(providerId, idx) => (
+																<div key={providerId}>
+																	{idx > 0 && <DropdownMenuSeparator />}
+																	{OCR_MODELS.filter((m) => m.providerId === providerId).map(
+																		(model) => (
+																			<DropdownMenuRadioItem
+																				key={model.modelId}
+																				value={model.modelId}
+																				className="gap-2"
+																			>
+																				<ProviderIcon providerId={model.providerId} />
+																				{model.name}
+																			</DropdownMenuRadioItem>
+																		)
+																	)}
+																</div>
+															)
+														)}
+													</DropdownMenuRadioGroup>
+												</DropdownMenuContent>
+											</DropdownMenu>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
+											<p className="text-xs text-muted-foreground">All 0s: 1 2 3</p>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Extra" onAdd={() => {}} />
+											<div className="flex flex-wrap gap-1.5">
+												{EXTRA_OPTIONS.map((option) => (
+													<Button
+														key={option.value}
+														variant={
+															selectedExtras.includes(option.value)
+																? 'outline-selected'
+																: 'outline'
+														}
+														size="xs"
+														onClick={() => toggleExtra(option.value)}
+													>
+														{option.label}
+													</Button>
+												))}
+											</div>
+										</div>
+
+										<div className="space-y-2 p-4">
+											<SectionHeader label="Punteggio di confidenza" />
+											<Badge variant="outline">Nessuno</Badge>
+										</div>
+
+										<div className="p-4">
+											<p className="text-xs text-muted-foreground">
+												Funzionalità aggiuntive disponibili tramite{' '}
+												<span className="font-medium text-primary">OWR Document AI</span>
+											</p>
+										</div>
+									</div>
+								</ScrollArea>
+								<div className="space-y-1.5 border-t px-4 pt-3 pb-2">
+									<label className="text-xs font-medium text-muted-foreground">
+										Nome file di output
+									</label>
+									<Input
+										value={outputFileName}
+										onChange={(e) => setOutputFileName(e.target.value)}
+										placeholder="Nome file di output"
+										className="h-8 text-xs"
+									/>
+								</div>
+								<div className="flex gap-2 border-t p-4">
+									<Button variant="outline" className="flex-1" onClick={() => handleClose(false)}>
+										Annulla
+									</Button>
+									<Button
+										className="flex-1 gap-1.5"
+										disabled={!fileSrc || !selectedModel}
+										onClick={() => {
+											// Placeholder for submission
+										}}
+									>
+										<Play className="h-3.5 w-3.5" />
+										{config.submitLabel}
+									</Button>
+								</div>
+							</div>
+						</ResizablePanel>
+					</ResizablePanelGroup>
+				</FileUpload>
 			</DialogContent>
 		</Dialog>
 	);
