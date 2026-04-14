@@ -319,6 +319,16 @@ function PageContent(): ReactElement {
 								))
 							)}
 						</TableBody>
+						<TableFooter>
+							<TableRow>
+								<TableCell
+									colSpan={editing ? SORT_COLUMNS.length + 2 : SORT_COLUMNS.length + 1}
+									className="px-6 text-muted-foreground"
+								>
+									{filteredFolders.length} folder{filteredFolders.length !== 1 ? 's' : ''}
+								</TableCell>
+							</TableRow>
+						</TableFooter>
 					</Table>
 				)}
 			</PageBody>
