@@ -169,6 +169,8 @@ export interface AppApi {
 	setTrayEnabled: (enabled: boolean) => Promise<void>;
 	/** Check whether the menu bar tray icon is currently enabled. */
 	getTrayEnabled: () => Promise<boolean>;
+	/** Resolve the absolute filesystem path for a File from a native drag/drop or <input type="file">. */
+	getPathForFile: (file: File) => string;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
