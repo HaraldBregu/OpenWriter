@@ -179,25 +179,38 @@ export function ExtractorDialog({
 		);
 	};
 
-	const handleFileAccept = (file: File): void => {
-		const url = URL.createObjectURL(file);
+	const handleFileAccept = (next: File): void => {
+		const url = URL.createObjectURL(next);
 		if (fileSrc) URL.revokeObjectURL(fileSrc);
+		setFile(next);
 		setFileSrc(url);
-		setFileName(file.name);
-		setDetectedType(detectType(file));
-		if (!outputFileName) {
-			setOutputFileName(file.name.replace(/\.[^.]+$/, ''));
-		}
+		setFileName(next.name);
+		setDetectedType(detectType(next));
+		setOutputFileName(next.name.replace(/\.[^.]+$/, ''));
 	};
 
 	const handleClose = (nextOpen: boolean): void => {
 		if (!nextOpen && fileSrc) {
 			URL.revokeObjectURL(fileSrc);
+			setFile(null);
 			setFileSrc(null);
 			setFileName(null);
 			setDetectedType(null);
 		}
 		onOpenChange(nextOpen);
+	};
+
+	const handleRun = (): void => {
+		if (!file || !fileSrc || !fileName || !detectedType || !selectedModel) return;
+		void onRun?.({
+			type: detectedType,
+			file,
+			fileName,
+			fileSrc,
+			modelId: selectedModel,
+			extras: selectedExtras,
+			outputFileName: outputFileName || fileName.replace(/\.[^.]+$/, ''),
+		});
 	};
 
 	return (
