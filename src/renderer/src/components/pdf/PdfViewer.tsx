@@ -21,7 +21,7 @@ const DEFAULT_DISABLED_CATEGORIES = [
 	'history',
 ];
 
-export interface PDFProps {
+export interface PdfViewerProps {
 	readonly src: string;
 	readonly className?: string;
 	readonly style?: CSSProperties;
@@ -32,7 +32,7 @@ export interface PDFProps {
 	readonly onReady?: EmbedPdfViewerProps['onReady'];
 }
 
-export const PDF = forwardRef<PDFViewerRef, PDFProps>(function PDF(
+export const PdfViewer = forwardRef<PDFViewerRef, PdfViewerProps>(function PdfViewer(
 	{
 		src,
 		className,
@@ -62,4 +62,4 @@ export const PDF = forwardRef<PDFViewerRef, PDFProps>(function PDF(
 	);
 });
 
-export type { PDFViewerRef as PDFRef } from '@embedpdf/react-pdf-viewer';
+export type { PDFViewerRef as PdfViewerRef } from '@embedpdf/react-pdf-viewer';
