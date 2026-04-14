@@ -5,7 +5,7 @@ import { store } from './store';
 import { AppProvider } from './contexts';
 import { Layout } from './components/app/base/Layout';
 import { ErrorBoundary } from './components/app/base/ErrorBoundary';
-import { LoadingSkeleton } from './components/app/base/LoadingSkeleton';
+import { PageLoadingSkeleton } from './components/app/base/PageLoadingSkeleton';
 import { LayoutLoadingSkeleton } from './components/app/base/LayoutLoadingSkeleton';
 import type { AppStartupInfo } from '../../shared/types';
 import WelcomePage from './pages/welcome/WelcomePage';
