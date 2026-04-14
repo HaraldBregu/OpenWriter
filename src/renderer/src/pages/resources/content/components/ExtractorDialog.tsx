@@ -163,6 +163,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 		if (fileSrc) URL.revokeObjectURL(fileSrc);
 		setFileSrc(url);
 		setFileName(file.name);
+		setDetectedType(detectType(file));
 		if (!outputFileName) {
 			setOutputFileName(file.name.replace(/\.[^.]+$/, ''));
 		}
@@ -173,6 +174,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 			URL.revokeObjectURL(fileSrc);
 			setFileSrc(null);
 			setFileName(null);
+			setDetectedType(null);
 		}
 		onOpenChange(nextOpen);
 	};
