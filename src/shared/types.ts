@@ -376,7 +376,9 @@ export interface FileEntryChangeEvent {
 }
 
 export interface FolderEntry {
-	/** Unique identifier — the folder's basename within resources/content/ */
+	/** Discriminator: 'folder' for directories, 'file' for markdown files */
+	kind: 'folder' | 'file';
+	/** Unique identifier — the entry's basename within resources/content/ */
 	id: string;
 	/** Display name (basename) */
 	name: string;
@@ -384,7 +386,7 @@ export interface FolderEntry {
 	path: string;
 	/** Path relative to the workspace resources/content/ folder */
 	relativePath: string;
-	/** Timestamp (ms) when the folder was first created on disk */
+	/** Timestamp (ms) when the entry was first created on disk */
 	createdAt: number;
 	/** Timestamp (ms) of the last modification on disk */
 	modifiedAt: number;
