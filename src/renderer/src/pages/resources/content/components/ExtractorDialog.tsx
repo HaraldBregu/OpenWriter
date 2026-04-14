@@ -206,16 +206,19 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 							<CardHeader className="gap-3 border-b p-4">
 								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
 
-								<div className="flex items-start gap-3">
-									<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+								<Item className="gap-3 border-0 p-0">
+									<ItemMedia
+										variant="icon"
+										className="h-10 w-10 rounded-lg bg-muted"
+									>
 										{config.icon}
-									</div>
-									<div className="min-w-0 flex-1">
-										<p className="truncate text-sm font-semibold">
+									</ItemMedia>
+									<ItemContent>
+										<ItemTitle className="truncate text-sm font-semibold">
 											{fileName ?? config.placeholder}
-										</p>
-									</div>
-								</div>
+										</ItemTitle>
+									</ItemContent>
+								</Item>
 							</CardHeader>
 							<CardContent className="flex min-h-0 flex-1 flex-col p-0">
 								<ScrollArea className="flex-1">
