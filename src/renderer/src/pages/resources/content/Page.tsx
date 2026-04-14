@@ -51,7 +51,7 @@ import { useContentContext } from './context/ContentContext';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ExtractorDialog } from './components/ExtractorDialog';
 import { SortIcon } from './components/SortIcon';
-import type { SortKey } from './types';
+import type { SortKey } from './shared/types';
 import Layout from './Layout';
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
