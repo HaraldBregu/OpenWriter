@@ -51,7 +51,7 @@ import { formatDate } from '../shared/resource-utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './context/ContentContext';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
-import { ImageDialog } from './components/ImageDialog';
+import { ExtractorDialog } from './components/ExtractorDialog';
 import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './types';
 import Layout from './Layout';
