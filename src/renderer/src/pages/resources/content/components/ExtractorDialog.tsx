@@ -397,17 +397,6 @@ export function ExtractorDialog({
 								</ScrollArea>
 							</CardContent>
 							<CardFooter className="flex-col items-stretch gap-3 rounded-none bg-transparent p-4">
-								<div className="space-y-1.5">
-									<label className="text-xs font-medium text-muted-foreground">
-										Nome file di output
-									</label>
-									<Input
-										value={outputFileName}
-										onChange={(e) => setOutputFileName(e.target.value)}
-										placeholder="Nome file di output"
-										className="h-8 text-xs"
-									/>
-								</div>
 								<div className="flex gap-2">
 									<Button variant="outline" className="flex-1" onClick={() => handleClose(false)}>
 										Annulla
@@ -415,9 +404,7 @@ export function ExtractorDialog({
 									<Button
 										className="flex-1 gap-1.5"
 										disabled={!fileSrc || !selectedModel}
-										onClick={() => {
-											// Placeholder for submission
-										}}
+										onClick={handleRun}
 									>
 										<Play className="h-3.5 w-3.5" />
 										{config.submitLabel}
