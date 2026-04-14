@@ -93,6 +93,7 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 		placeholder: 'PDF',
 		changeLabel: 'Cambia PDF',
 		title: 'Impostazioni OCR',
+		description: 'Configura il modello OCR per estrarre testo, tabelle e struttura dal PDF.',
 		submitLabel: 'Esegui OCR',
 		emptyTitle: 'Nessun PDF selezionato',
 		emptyDescription: 'Trascina un PDF qui o',
