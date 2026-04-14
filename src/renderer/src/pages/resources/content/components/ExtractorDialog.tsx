@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import {
 	Card,
 	CardContent,
+	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
@@ -63,6 +64,7 @@ interface TypeConfig {
 	readonly placeholder: string;
 	readonly changeLabel: string;
 	readonly title: string;
+	readonly description: string;
 	readonly submitLabel: string;
 	readonly emptyTitle: string;
 	readonly emptyDescription: string;
@@ -205,12 +207,9 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 						<Card className="flex h-full flex-col gap-0 rounded-none border-0 py-0 ring-0">
 							<CardHeader className="gap-3 border-b p-4">
 								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
-
+								<CardDescription>Description</CardDescription>
 								<Item className="gap-3 border-0 p-0">
-									<ItemMedia
-										variant="icon"
-										className="h-10 w-10 rounded-lg bg-muted"
-									>
+									<ItemMedia variant="icon" className="h-10 w-10 rounded-lg bg-muted">
 										{config.icon}
 									</ItemMedia>
 									<ItemContent>
@@ -258,8 +257,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 														{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
 															(providerId, idx) => {
 																const bg = PROVIDER_COLORS[providerId] ?? 'bg-zinc-500';
-																const providerName =
-																	getProvider(providerId)?.name ?? providerId;
+																const providerName = getProvider(providerId)?.name ?? providerId;
 																return (
 																	<div key={providerId}>
 																		{idx > 0 && <DropdownMenuSeparator />}
@@ -315,9 +313,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 													<Button
 														key={option.value}
 														variant={
-															selectedExtras.includes(option.value)
-																? 'outline-selected'
-																: 'outline'
+															selectedExtras.includes(option.value) ? 'outline-selected' : 'outline'
 														}
 														size="xs"
 														onClick={() => toggleExtra(option.value)}
