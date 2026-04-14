@@ -86,8 +86,7 @@ function PageContent(): ReactElement {
 	const handleExtractorRun = async (payload: ExtractorRunPayload): Promise<void> => {
 		console.log('[ContentPage] Extractor run triggered with file:', payload);
 
-		const { file, modelId } = payload;
-		const filePath = (file as unknown as { path?: string }).path;
+		const { filePath, modelId } = payload;
 		if (!filePath || !modelId) return;
 		const result = await window.task.submit('ocr', {
 			url: filePath,
