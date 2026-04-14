@@ -5,9 +5,9 @@ import { ContentContext } from './context/ContentContext';
 import type { ContentContextValue } from './context/ContentContext';
 import { initialState } from './context/state';
 import { contentReducer } from './context/reducer';
-import { useContentSort } from './hooks/use-content-sort';
-import { useContentFilter } from './hooks/use-content-filter';
-import { useContentSelection } from './hooks/use-content-selection';
+import { useSort } from './hooks/use-sort';
+import { useFilter } from './hooks/use-filter';
+import { useSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 
 interface ContentProviderProps {
