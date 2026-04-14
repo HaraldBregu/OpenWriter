@@ -93,6 +93,7 @@ export const WorkspaceChannels = {
 	// Shell
 	openDataFolder: 'workspace:open-data-folder',
 	openResourcesFolder: 'workspace:open-resources-folder',
+	openResourcesContentsFolder: 'workspace:open-resources-contents-folder',
 	openFilesFolder: 'workspace:open-files-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
 	openDocumentImagesFolder: 'workspace:open-document-images-folder',
