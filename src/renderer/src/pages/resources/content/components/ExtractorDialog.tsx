@@ -224,9 +224,7 @@ export function ExtractorDialog({
 						>
 							<FileUploadDropzone
 								className={
-									fileSrc
-										? 'relative h-full w-full rounded-none border-0 bg-transparent p-0 hover:bg-muted/20'
-										: 'flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40'
+									'relative h-full w-full rounded-none border-0 bg-transparent p-0 hover:bg-muted/20'
 								}
 							>
 								{!fileSrc && (

@@ -1,51 +1,18 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	ChevronDown,
-	FileText,
-	Folder as FolderIcon,
-	FolderOpen,
-	MoreHorizontal,
-	Search,
-	Trash2,
-	Upload,
-} from 'lucide-react';
-import {
-	PageBody,
-	PageContainer,
-	PageHeader,
-	PageHeaderItems,
-	PageHeaderTitle,
-	PageSubHeader,
-} from '@/components/app/base/Page';
+import { ChevronDown, FileText, Folder as FolderIcon, FolderOpen, MoreHorizontal, Search, Trash2, Upload } from 'lucide-react';
+import { PageBody, PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle, PageSubHeader } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from '@/components/ui/InputGroup';
-import {
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableHeader,
-	TableRow,
-} from '@/components/ui/Table';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/DropdownMenu';
+import { InputGroup, InputGroupAddon, InputGroupInput, InputGroupText } from '@/components/ui/InputGroup';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/Table';
 import { formatDate } from '../shared/resource-utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './Provider';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
-import { ExtractorDialog } from './components/ExtractorDialog';
+import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
 import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './shared/types';
 import Layout from './Layout';
@@ -92,10 +59,7 @@ function PageContent(): ReactElement {
 						<FolderOpen />
 					</Button>
 					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={<Button size="lg" />}
-							className="gap-1.5"
-						>
+						<DropdownMenuTrigger render={<Button size="lg" />} className="gap-1.5">
 							<Upload />
 							Upload
 							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
@@ -121,11 +85,7 @@ function PageContent(): ReactElement {
 								<Search />
 							</InputGroupText>
 						</InputGroupAddon>
-						<InputGroupInput
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							placeholder={t(section.searchPlaceholderKey)}
-						/>
+						<InputGroupInput value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder={t(section.searchPlaceholderKey)} />
 					</InputGroup>
 				</ButtonGroup>
 			</PageSubHeader>
@@ -157,11 +117,7 @@ function PageContent(): ReactElement {
 							<TableRow>
 								{SORT_COLUMNS.map(({ key, label, className }) => (
 									<TableHead key={key} className={`px-6 text-muted-foreground ${className}`}>
-										<button
-											type="button"
-											className="inline-flex items-center transition-colors hover:text-foreground"
-											onClick={() => handleSort(key)}
-										>
+										<button type="button" className="inline-flex items-center transition-colors hover:text-foreground" onClick={() => handleSort(key)}>
 											{label}
 											<SortIcon active={sortKey === key} direction={sortDirection} />
 										</button>
@@ -173,10 +129,7 @@ function PageContent(): ReactElement {
 						<TableBody>
 							{filteredFolders.length === 0 ? (
 								<TableRow>
-									<TableCell
-										colSpan={SORT_COLUMNS.length + 1}
-										className="px-6 py-8 text-center text-sm text-muted-foreground"
-									>
+									<TableCell colSpan={SORT_COLUMNS.length + 1} className="px-6 py-8 text-center text-sm text-muted-foreground">
 										No folders match your search.
 									</TableCell>
 								</TableRow>
@@ -188,29 +141,17 @@ function PageContent(): ReactElement {
 												<FolderIcon className="h-5 w-5 text-muted-foreground" />
 												<div className="min-w-0">
 													<p className="truncate font-medium text-sm">{folder.name}</p>
-													<p
-														className="truncate text-xs text-muted-foreground"
-														title={formatDate(folder.createdAt)}
-													>
+													<p className="truncate text-xs text-muted-foreground" title={formatDate(folder.createdAt)}>
 														{folder.path}
 													</p>
 												</div>
 											</div>
 										</TableCell>
-										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
-											{formatShortDate(folder.createdAt)}
-										</TableCell>
-										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
-											{formatShortDate(folder.modifiedAt)}
-										</TableCell>
-										<TableCell
-											className="w-16 px-6 text-right"
-											onClick={(event) => event.stopPropagation()}
-										>
+										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">{formatShortDate(folder.createdAt)}</TableCell>
+										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">{formatShortDate(folder.modifiedAt)}</TableCell>
+										<TableCell className="w-16 px-6 text-right" onClick={(event) => event.stopPropagation()}>
 											<DropdownMenu>
-												<DropdownMenuTrigger
-													render={<Button variant="ghost" size="icon" />}
-												>
+												<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
 													<MoreHorizontal className="h-4 w-4" />
 												</DropdownMenuTrigger>
 												<DropdownMenuContent align="end">
@@ -235,13 +176,12 @@ function PageContent(): ReactElement {
 								))
 							)}
 						</TableBody>
-
 					</Table>
 				)}
 			</PageBody>
 
 			<DeleteConfirmDialog />
-			<ExtractorDialog open={fileDialogOpen} onOpenChange={setFileDialogOpen} />
+			<ExtractorDialog open={fileDialogOpen} onOpenChange={setFileDialogOpen} onRun={() => {}} />
 		</PageContainer>
 	);
 }
