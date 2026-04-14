@@ -32,7 +32,6 @@ import {
 } from '@/components/ui/Empty';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { Image } from '@/components/image/Image';
-import { Input } from '@/components/ui/Input';
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/Item';
 import { Pdf } from '@/components/pdf/Pdf';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
