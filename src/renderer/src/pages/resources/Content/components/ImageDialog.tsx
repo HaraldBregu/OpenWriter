@@ -143,14 +143,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 							<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 								<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
 									{imageSrc && previewKind === 'pdf' ? (
-										<PDFViewer
-											className="h-full w-full"
-											config={{
-												src: imageSrc,
-												disabledCategories: PDF_VIEWER_DISABLED_CATEGORIES,
-												theme: { preference: 'system' },
-											}}
-										/>
+										<PdfViewer src={imageSrc} className="h-full w-full" />
 									) : imageSrc && previewKind === 'image' ? (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 											<img
