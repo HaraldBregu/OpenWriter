@@ -258,8 +258,8 @@ function PageContent(): ReactElement {
 			</PageBody>
 
 			<DeleteConfirmDialog />
-			<ExtractorDialog type="image" open={imageDialogOpen} onOpenChange={setImageDialogOpen} />
-			<ExtractorDialog type="pdf" open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
+			<ExtractorDialog open={imageDialogOpen} onOpenChange={setImageDialogOpen} />
+			<ExtractorDialog open={pdfDialogOpen} onOpenChange={setPdfDialogOpen} />
 		</PageContainer>
 	);
 }
