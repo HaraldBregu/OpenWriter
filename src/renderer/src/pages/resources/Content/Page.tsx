@@ -43,6 +43,7 @@ import {
 	Table,
 	TableBody,
 	TableCell,
+	TableFoot,
 	TableHead,
 	TableHeader,
 	TableRow,
