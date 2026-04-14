@@ -248,16 +248,7 @@ function PageContent(): ReactElement {
 								))
 							)}
 						</TableBody>
-						<TableFooter>
-							<TableRow>
-								<TableCell
-									colSpan={SORT_COLUMNS.length + 1}
-									className="px-6 text-muted-foreground"
-								>
-									{filteredFolders.length} folder{filteredFolders.length !== 1 ? 's' : ''}
-								</TableCell>
-							</TableRow>
-						</TableFooter>
+
 					</Table>
 				)}
 			</PageBody>
