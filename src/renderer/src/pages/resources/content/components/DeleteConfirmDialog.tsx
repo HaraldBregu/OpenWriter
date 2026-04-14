@@ -10,7 +10,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/AlertDialog';
-import { useContentContext } from '../context/ContentContext';
+import { useContentContext } from '../Provider';
 
 export function DeleteConfirmDialog(): ReactElement {
 	const { t } = useTranslation();
