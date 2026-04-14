@@ -103,25 +103,13 @@ function PageContent(): ReactElement {
 							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
-								<Monitor className="h-4 w-4" />
-								Computer
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setImageDialogOpen(true)}>
-								<ImageIcon className="h-4 w-4" />
-								Image
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setPdfDialogOpen(true)}>
+							<DropdownMenuItem onClick={() => setMarkdownDialogOpen(true)}>
 								<FileText className="h-4 w-4" />
-								PDF
+								Markdown
 							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Video className="h-4 w-4" />
-								Video
-							</DropdownMenuItem>
-							<DropdownMenuItem>
-								<Music className="h-4 w-4" />
-								Audio
+							<DropdownMenuItem onClick={() => setFileDialogOpen(true)}>
+								<Upload className="h-4 w-4" />
+								File
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
