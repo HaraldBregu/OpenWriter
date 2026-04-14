@@ -44,7 +44,6 @@ import {
 	CircleHelp,
 	CircleArrowUp,
 	Download,
-	Gift,
 	Info,
 	LogOut,
 	Plus,
@@ -168,19 +167,9 @@ function Container({ children }: LayoutProps) {
 			icon: Download,
 		},
 		{
-			value: 'gift',
-			label: t('menu.giftClaude', 'Gift Claude'),
-			icon: Gift,
-		},
-		{
 			value: 'learnMore',
 			label: t('menu.learnMore', 'Learn more'),
 			icon: Info,
-		},
-		{
-			value: 'logOut',
-			label: t('menu.logOut', 'Log out'),
-			icon: LogOut,
 		},
 	] as const;
 
@@ -216,7 +205,7 @@ function Container({ children }: LayoutProps) {
 
 			<SidebarPageContainer>
 				<Sidebar collapsible="icon" className="top-12 h-[calc(100svh-3rem)]">
-					<SidebarHeader>					
+					<SidebarHeader>
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<SidebarMenuButton
@@ -346,7 +335,7 @@ function Container({ children }: LayoutProps) {
 						</Collapsible>
 
 						{/* Debug */}
-						<Collapsible defaultOpen className="py-0 mt-auto">
+						<Collapsible defaultOpen className="py-0">
 							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
@@ -394,6 +383,43 @@ function Container({ children }: LayoutProps) {
 								</CollapsibleContent>
 							</SidebarGroup>
 						</Collapsible>
+
+						<SidebarGroup className="py-0 mt-auto">
+							<SidebarGroupContent>
+								<SidebarMenu>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/debug/tasks" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/debug/tasks'}
+										>
+											<ListTodo className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('debug.tasks')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/debug/redux" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/debug/redux'}
+										>
+											<Database className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/debug/logs" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/debug/logs'}
+										>
+											<ScrollText className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
@@ -409,7 +435,9 @@ function Container({ children }: LayoutProps) {
 											>
 												<Avatar className="h-8 w-8 rounded-lg">
 													<AvatarImage src="" alt={footerUserName} />
-													<AvatarFallback className="rounded-lg">{footerUserInitial}</AvatarFallback>
+													<AvatarFallback className="rounded-lg">
+														{footerUserInitial}
+													</AvatarFallback>
 												</Avatar>
 												<div className="grid flex-1 text-left text-sm leading-tight">
 													<span className="truncate font-medium">{footerUserName}</span>
@@ -430,7 +458,9 @@ function Container({ children }: LayoutProps) {
 												<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
 													<Avatar className="h-8 w-8 rounded-lg">
 														<AvatarImage src="" alt={footerUserName} />
-														<AvatarFallback className="rounded-lg">{footerUserInitial}</AvatarFallback>
+														<AvatarFallback className="rounded-lg">
+															{footerUserInitial}
+														</AvatarFallback>
 													</Avatar>
 													<div className="grid flex-1 text-left text-sm leading-tight">
 														<span className="truncate font-medium">{footerUserName}</span>
@@ -449,7 +479,9 @@ function Container({ children }: LayoutProps) {
 													<Icon />
 													<span className="flex-1">{label}</span>
 													{value === 'settings' && <DropdownMenuShortcut>⇧⌘,</DropdownMenuShortcut>}
-													{value === 'language' && <ChevronRight className="size-4 text-muted-foreground" />}
+													{value === 'language' && (
+														<ChevronRight className="size-4 text-muted-foreground" />
+													)}
 												</DropdownMenuItem>
 											))}
 										</DropdownMenuGroup>
@@ -466,9 +498,7 @@ function Container({ children }: LayoutProps) {
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem
-											onClick={() => handleAccountMenuValueChange('logOut')}
-										>
+										<DropdownMenuItem onClick={() => handleAccountMenuValueChange('logOut')}>
 											<LogOut />
 											{t('menu.logOut', 'Log out')}
 										</DropdownMenuItem>

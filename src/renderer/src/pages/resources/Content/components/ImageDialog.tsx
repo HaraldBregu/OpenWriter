@@ -48,6 +48,13 @@ const EXTRA_OPTIONS = [
 
 type ExtraValue = (typeof EXTRA_OPTIONS)[number]['value'];
 
+const IMAGE_MIME_PATTERN = /^image\/(png|jpe?g|gif|webp|bmp|svg\+xml)$/;
+const IMAGE_EXT_PATTERN = /\.(png|jpe?g|gif|webp|bmp|svg)$/i;
+
+function isSupportedImage(file: File): boolean {
+	return IMAGE_MIME_PATTERN.test(file.type) || IMAGE_EXT_PATTERN.test(file.name);
+}
+
 function SectionHeader({
 	label,
 	hasInfo = false,
