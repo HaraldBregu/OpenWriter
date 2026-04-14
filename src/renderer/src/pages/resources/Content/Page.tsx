@@ -7,6 +7,7 @@ import {
 	Folder as FolderIcon,
 	FolderOpen,
 	ImageIcon,
+	Monitor,
 	MoreHorizontal,
 	Music,
 	Search,
