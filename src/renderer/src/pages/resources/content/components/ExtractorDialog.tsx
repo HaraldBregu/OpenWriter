@@ -241,7 +241,7 @@ export function ExtractorDialog({
 								</FileUploadDropzone>
 							)}
 							{fileSrc && (
-								<div className="relative h-full w-full">
+								<FileUploadDropzone className="relative h-full w-full rounded-none border-0 bg-transparent p-0 hover:bg-muted/20">
 									{detectedType === 'image' && (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 											<Image
@@ -253,7 +253,7 @@ export function ExtractorDialog({
 										</div>
 									)}
 									{detectedType === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
-								</div>
+								</FileUploadDropzone>
 							)}
 						</FileUpload>
 					</ResizablePanel>
