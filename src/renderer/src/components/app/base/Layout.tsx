@@ -397,121 +397,116 @@ function Container({ children }: LayoutProps) {
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
-						<Combobox<string>
-							open={accountMenuOpen}
-							onOpenChange={setAccountMenuOpen}
-							onValueChange={handleAccountMenuValueChange}
-							defaultValue={null}
-						>
-							<ComboboxTrigger
-								render={
-									<button
-										type="button"
-										className={
-											open
-												? 'flex w-full items-center gap-2 rounded-xl border border-transparent bg-sidebar px-2 py-2 text-left transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-												: 'flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-sidebar p-0 transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground'
-										}
-										aria-label={t('appLayout.accountMenu', 'Open account menu')}
-									>
-										<div
-											className={
-												open
-													? 'flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-sm font-semibold text-foreground'
-													: 'flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-sidebar-accent/70 text-xs font-semibold text-sidebar-foreground ring-1 ring-sidebar-border/70'
-											}
-										>
-											{footerUserInitial}
-										</div>
-										{open && (
-											<>
-												<div className="min-w-0 flex-1">
-													<p className="truncate text-[0.95rem] font-medium text-sidebar-foreground">
-														{footerUserName}
-													</p>
-													<p className="truncate text-[0.85rem] text-muted-foreground">
-														{t('appLayout.plan', 'Pro plan')}
-													</p>
-												</div>
-												<div className="flex items-center gap-1">
-													<div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground">
-														<Download className="h-4 w-4" />
-													</div>
-													<ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
-												</div>
-											</>
-										)}
-									</button>
-								}
-								className="[&>svg:last-child]:hidden"
-							/>
-							<ComboboxContent
-								side="top"
-								align="start"
-								sideOffset={8}
-								className="min-w-64 rounded-2xl p-2"
-							>
-								<div className="mb-2 rounded-xl border border-border px-3 py-2 text-sm text-muted-foreground">
-									{footerUserEmail}
-								</div>
-								<ComboboxList className="p-0">
-									{accountMenuItems.map(({ value, label, icon: Icon }, index) => (
-										<React.Fragment key={value}>
-											<ComboboxItem
-												value={value}
-												className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors data-highlighted:bg-accent data-highlighted:text-accent-foreground"
+						<SidebarMenu>
+							<SidebarMenuItem>
+								<DropdownMenu>
+									<DropdownMenuTrigger
+										render={
+											<SidebarMenuButton
+												size="lg"
+												aria-label={t('appLayout.accountMenu', 'Open account menu')}
+												className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 											>
-												<Icon className="h-4 w-4 shrink-0 text-muted-foreground" />
-												<span className="flex-1 text-left">{label}</span>
-												{value === 'settings' && (
-													<span className="text-xs text-muted-foreground">⇧⌘,</span>
-												)}
-												{value === 'language' && (
-													<ChevronRight className="h-4 w-4 text-muted-foreground" />
-												)}
-											</ComboboxItem>
-											{index === 3 && <ComboboxSeparator className="my-2" />}
-											{index === 7 && <ComboboxSeparator className="my-2" />}
-										</React.Fragment>
-									))}
-								</ComboboxList>
-
-								<div className="my-2 h-px bg-border" />
-
-								<div className="flex items-center justify-between px-3 py-2">
-									<span className="text-sm">{t('settings.theme.title')}</span>
-									<ButtonGroup>
-										<Button
-											variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
-											size="icon-sm"
-											onClick={() => setTheme('light')}
-											aria-label={t('settings.theme.light', 'Light')}
-											aria-pressed={themeMode === 'light'}
+												<Avatar className="h-8 w-8 rounded-lg">
+													<AvatarImage src="" alt={footerUserName} />
+													<AvatarFallback className="rounded-lg">{footerUserInitial}</AvatarFallback>
+												</Avatar>
+												<div className="grid flex-1 text-left text-sm leading-tight">
+													<span className="truncate font-medium">{footerUserName}</span>
+													<span className="truncate text-xs">{footerUserEmail}</span>
+												</div>
+												<ChevronsUpDown className="ml-auto size-4" />
+											</SidebarMenuButton>
+										}
+									/>
+									<DropdownMenuContent
+										className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+										side={isMobile ? 'bottom' : 'right'}
+										align="end"
+										sideOffset={4}
+									>
+										<DropdownMenuLabel className="p-0 font-normal">
+											<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+												<Avatar className="h-8 w-8 rounded-lg">
+													<AvatarImage src="" alt={footerUserName} />
+													<AvatarFallback className="rounded-lg">{footerUserInitial}</AvatarFallback>
+												</Avatar>
+												<div className="grid flex-1 text-left text-sm leading-tight">
+													<span className="truncate font-medium">{footerUserName}</span>
+													<span className="truncate text-xs">{footerUserEmail}</span>
+												</div>
+											</div>
+										</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										<DropdownMenuGroup>
+											{accountMenuItems.slice(0, 4).map(({ value, label, icon: Icon }) => (
+												<DropdownMenuItem
+													key={value}
+													onClick={() => handleAccountMenuValueChange(value)}
+												>
+													<Icon />
+													<span className="flex-1">{label}</span>
+													{value === 'settings' && <DropdownMenuShortcut>⇧⌘,</DropdownMenuShortcut>}
+													{value === 'language' && <ChevronRight className="size-4 text-muted-foreground" />}
+												</DropdownMenuItem>
+											))}
+										</DropdownMenuGroup>
+										<DropdownMenuSeparator />
+										<DropdownMenuGroup>
+											{accountMenuItems.slice(4, 8).map(({ value, label, icon: Icon }) => (
+												<DropdownMenuItem
+													key={value}
+													onClick={() => handleAccountMenuValueChange(value)}
+												>
+													<Icon />
+													<span className="flex-1">{label}</span>
+												</DropdownMenuItem>
+											))}
+										</DropdownMenuGroup>
+										<DropdownMenuSeparator />
+										<DropdownMenuItem
+											onClick={() => handleAccountMenuValueChange('logOut')}
 										>
-											<Sun className="size-3.5" />
-										</Button>
-										<Button
-											variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
-											size="icon-sm"
-											onClick={() => setTheme('system')}
-											aria-label={t('settings.theme.system', 'System')}
-											aria-pressed={themeMode === 'system'}
-										>
-											<Monitor className="size-3.5" />
-										</Button>
-										<Button
-											variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
-											size="icon-sm"
-											onClick={() => setTheme('dark')}
-											aria-label={t('settings.theme.dark', 'Dark')}
-											aria-pressed={themeMode === 'dark'}
-										>
-											<Moon className="size-3.5" />
-										</Button>
-									</ButtonGroup>
-								</div>
-							</ComboboxContent>
-						</Combobox>
+											<LogOut />
+											{t('menu.logOut', 'Log out')}
+										</DropdownMenuItem>
+										<DropdownMenuSeparator />
+										<div className="flex items-center justify-between px-2 py-1.5">
+											<span className="text-sm">{t('settings.theme.title')}</span>
+											<ButtonGroup>
+												<Button
+													variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
+													size="icon-sm"
+													onClick={() => setTheme('light')}
+													aria-label={t('settings.theme.light', 'Light')}
+													aria-pressed={themeMode === 'light'}
+												>
+													<Sun className="size-3.5" />
+												</Button>
+												<Button
+													variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
+													size="icon-sm"
+													onClick={() => setTheme('system')}
+													aria-label={t('settings.theme.system', 'System')}
+													aria-pressed={themeMode === 'system'}
+												>
+													<Monitor className="size-3.5" />
+												</Button>
+												<Button
+													variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
+													size="icon-sm"
+													onClick={() => setTheme('dark')}
+													aria-label={t('settings.theme.dark', 'Dark')}
+													aria-pressed={themeMode === 'dark'}
+												>
+													<Moon className="size-3.5" />
+												</Button>
+											</ButtonGroup>
+										</div>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</SidebarMenuItem>
+						</SidebarMenu>
 					</SidebarFooter>
 				</Sidebar>
 
