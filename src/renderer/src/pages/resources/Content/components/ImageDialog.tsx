@@ -267,8 +267,6 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 	const [imageName, setImageName] = useState<string | null>(null);
 	const [previewKind, setPreviewKind] = useState<PreviewKind | null>(null);
 
-	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
-
 	const handleModelChange = (modelId: string): void => {
 		setSelectedModel(modelId);
 	};
