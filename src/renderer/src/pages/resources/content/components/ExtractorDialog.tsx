@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import type { ReactElement, ReactNode } from 'react';
+import type { ReactElement } from 'react';
 import { ChevronDown, FileText, ImageIcon, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
-import type { ProviderId } from '../../../../../../shared/types';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogContent } from '@/components/ui/Dialog';
@@ -52,6 +51,7 @@ const PROVIDER_COLORS: Record<string, string> = {
 interface TypeConfig {
 	readonly accept: string;
 	readonly icon: ReactElement;
+	readonly emptyIcon: ReactElement;
 	readonly placeholder: string;
 	readonly changeLabel: string;
 	readonly title: string;
@@ -65,6 +65,7 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 	image: {
 		accept: 'image/png,image/jpeg,image/gif,image/webp,image/bmp,image/svg+xml',
 		icon: <ImageIcon className="h-5 w-5 text-muted-foreground" />,
+		emptyIcon: <ImageIcon className="size-8 text-muted-foreground" />,
 		placeholder: 'Immagine',
 		changeLabel: 'Cambia immagine',
 		title: 'Impostazioni analisi',
@@ -76,6 +77,7 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 	pdf: {
 		accept: 'application/pdf',
 		icon: <FileText className="h-5 w-5 text-muted-foreground" />,
+		emptyIcon: <FileText className="size-8 text-muted-foreground" />,
 		placeholder: 'PDF',
 		changeLabel: 'Cambia PDF',
 		title: 'Impostazioni OCR',
@@ -85,130 +87,6 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 		selectLabel: 'Seleziona PDF',
 	},
 };
-
-function ProviderIcon({ providerId }: { providerId: ProviderId }): ReactElement {
-	const bg = PROVIDER_COLORS[providerId] ?? 'bg-zinc-500';
-	const name = getProvider(providerId)?.name ?? providerId;
-	return (
-		<span
-			className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-semibold leading-none text-white ${bg}`}
-		>
-			{name.charAt(0)}
-		</span>
-	);
-}
-
-function SectionHeader({
-	label,
-	hasInfo = false,
-	onAdd,
-}: {
-	label: string;
-	hasInfo?: boolean;
-	onAdd?: () => void;
-}): ReactElement {
-	return (
-		<div className="flex items-center justify-between">
-			<div className="flex items-center gap-1">
-				<span className="text-xs font-medium text-muted-foreground">{label}</span>
-				{hasInfo && <Info className="h-3 w-3 text-muted-foreground/50" />}
-			</div>
-			{onAdd && (
-				<Button variant="ghost" size="xs" onClick={onAdd}>
-					Aggiungi
-				</Button>
-			)}
-		</div>
-	);
-}
-
-function PreviewArea({
-	type,
-	fileSrc,
-	fileName,
-	config,
-}: {
-	type: ExtractorType;
-	fileSrc: string | null;
-	fileName: string | null;
-	config: TypeConfig;
-}): ReactElement {
-	if (!fileSrc) {
-		return (
-			<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
-				<Empty className="border-0 p-0">
-					<EmptyHeader>
-						<EmptyMedia variant="icon" className="size-16 rounded-full">
-							{type === 'image' ? (
-								<ImageIcon className="size-8 text-muted-foreground" />
-							) : (
-								<FileText className="size-8 text-muted-foreground" />
-							)}
-						</EmptyMedia>
-						<EmptyTitle>{config.emptyTitle}</EmptyTitle>
-						<EmptyDescription>{config.emptyDescription}</EmptyDescription>
-					</EmptyHeader>
-					<EmptyContent>
-						<FileUploadTrigger render={<Button variant="outline">{config.selectLabel}</Button>} />
-					</EmptyContent>
-				</Empty>
-			</FileUploadDropzone>
-		);
-	}
-	if (type === 'image') {
-		return (
-			<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
-				<Image
-					src={fileSrc}
-					alt={fileName ?? 'Preview'}
-					className="max-h-full max-w-full object-contain"
-					cardClassName="max-h-full max-w-full overflow-hidden"
-				/>
-			</div>
-		);
-	}
-	return <Pdf src={fileSrc} className="h-full w-full" />;
-}
-
-function AnalysisHeader({
-	icon,
-	fileName,
-	placeholder,
-	changeLabel,
-}: {
-	icon: ReactNode;
-	fileName: string | null;
-	placeholder: string;
-	changeLabel: string;
-}): ReactElement {
-	return (
-		<div className="border-b p-4">
-			<div className="flex items-start gap-3">
-				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-					{icon}
-				</div>
-				<div className="min-w-0 flex-1">
-					<p className="truncate text-sm font-semibold">{fileName ?? placeholder}</p>
-					{fileName && (
-						<div className="mt-1 flex items-center gap-2">
-							<FileUploadTrigger
-								render={
-									<Button
-										variant="ghost"
-										size="xs"
-										className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
-									>
-										{changeLabel}
-									</Button>
-								}
-							/>
-						</div>
-					)}
-				</div>
-			</div>
-		</div>
-	);
-}
 
 interface ExtractorDialogProps {
 	readonly type: ExtractorType;
@@ -225,6 +103,13 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 
 	const config = TYPE_CONFIG[type];
 	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
+	const selectedProvider = selectedModelEntry
+		? getProvider(selectedModelEntry.providerId)
+		: undefined;
+	const selectedProviderBg = selectedModelEntry
+		? (PROVIDER_COLORS[selectedModelEntry.providerId] ?? 'bg-zinc-500')
+		: 'bg-zinc-500';
+	const selectedProviderName = selectedProvider?.name ?? selectedModelEntry?.providerId ?? '';
 
 	const toggleExtra = (value: ExtraValue): void => {
 		setSelectedExtras((prev) =>
@@ -261,17 +146,66 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 				>
 					<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 						<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
-							<PreviewArea type={type} fileSrc={fileSrc} fileName={fileName} config={config} />
+							{!fileSrc && (
+								<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
+									<Empty className="border-0 p-0">
+										<EmptyHeader>
+											<EmptyMedia variant="icon" className="size-16 rounded-full">
+												{config.emptyIcon}
+											</EmptyMedia>
+											<EmptyTitle>{config.emptyTitle}</EmptyTitle>
+											<EmptyDescription>{config.emptyDescription}</EmptyDescription>
+										</EmptyHeader>
+										<EmptyContent>
+											<FileUploadTrigger
+												render={<Button variant="outline">{config.selectLabel}</Button>}
+											/>
+										</EmptyContent>
+									</Empty>
+								</FileUploadDropzone>
+							)}
+							{fileSrc && type === 'image' && (
+								<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
+									<Image
+										src={fileSrc}
+										alt={fileName ?? 'Preview'}
+										className="max-h-full max-w-full object-contain"
+										cardClassName="max-h-full max-w-full overflow-hidden"
+									/>
+								</div>
+							)}
+							{fileSrc && type === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
 						</ResizablePanel>
 						<ResizableHandle withHandle />
 						<ResizablePanel defaultSize={30} minSize="30%">
 							<div className="flex h-full flex-col">
-								<AnalysisHeader
-									icon={config.icon}
-									fileName={fileName}
-									placeholder={config.placeholder}
-									changeLabel={config.changeLabel}
-								/>
+								<div className="border-b p-4">
+									<div className="flex items-start gap-3">
+										<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
+											{config.icon}
+										</div>
+										<div className="min-w-0 flex-1">
+											<p className="truncate text-sm font-semibold">
+												{fileName ?? config.placeholder}
+											</p>
+											{fileName && (
+												<div className="mt-1 flex items-center gap-2">
+													<FileUploadTrigger
+														render={
+															<Button
+																variant="ghost"
+																size="xs"
+																className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
+															>
+																{config.changeLabel}
+															</Button>
+														}
+													/>
+												</div>
+											)}
+										</div>
+									</div>
+								</div>
 								<div className="p-4">
 									<h2 className="text-sm font-semibold">{config.title}</h2>
 								</div>
@@ -281,10 +215,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 											<div>
 												<p className="text-xs font-medium">Modello</p>
 												<p className="text-[11px] text-muted-foreground">
-													{selectedModelEntry
-														? (getProvider(selectedModelEntry.providerId)?.name ??
-															selectedModelEntry.providerId)
-														: 'AI'}
+													{selectedModelEntry ? selectedProviderName : 'AI'}
 												</p>
 											</div>
 											<DropdownMenu>
@@ -293,7 +224,11 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 													className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
 												>
 													{selectedModelEntry && (
-														<ProviderIcon providerId={selectedModelEntry.providerId} />
+														<span
+															className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-semibold leading-none text-white ${selectedProviderBg}`}
+														>
+															{selectedProviderName.charAt(0)}
+														</span>
 													)}
 													<span className="truncate">
 														{selectedModelEntry?.name ?? 'Seleziona modello'}
@@ -306,23 +241,32 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 														onValueChange={setSelectedModel}
 													>
 														{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
-															(providerId, idx) => (
-																<div key={providerId}>
-																	{idx > 0 && <DropdownMenuSeparator />}
-																	{OCR_MODELS.filter((m) => m.providerId === providerId).map(
-																		(model) => (
-																			<DropdownMenuRadioItem
-																				key={model.modelId}
-																				value={model.modelId}
-																				className="gap-2"
-																			>
-																				<ProviderIcon providerId={model.providerId} />
-																				{model.name}
-																			</DropdownMenuRadioItem>
-																		)
-																	)}
-																</div>
-															)
+															(providerId, idx) => {
+																const bg = PROVIDER_COLORS[providerId] ?? 'bg-zinc-500';
+																const providerName =
+																	getProvider(providerId)?.name ?? providerId;
+																return (
+																	<div key={providerId}>
+																		{idx > 0 && <DropdownMenuSeparator />}
+																		{OCR_MODELS.filter((m) => m.providerId === providerId).map(
+																			(model) => (
+																				<DropdownMenuRadioItem
+																					key={model.modelId}
+																					value={model.modelId}
+																					className="gap-2"
+																				>
+																					<span
+																						className={`inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-[10px] font-semibold leading-none text-white ${bg}`}
+																					>
+																						{providerName.charAt(0)}
+																					</span>
+																					{model.name}
+																				</DropdownMenuRadioItem>
+																			)
+																		)}
+																	</div>
+																);
+															}
 														)}
 													</DropdownMenuRadioGroup>
 												</DropdownMenuContent>
@@ -330,12 +274,27 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										</div>
 
 										<div className="space-y-2 p-4">
-											<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
+											<div className="flex items-center justify-between">
+												<div className="flex items-center gap-1">
+													<span className="text-xs font-medium text-muted-foreground">
+														Formato della risposta
+													</span>
+													<Info className="h-3 w-3 text-muted-foreground/50" />
+												</div>
+												<Button variant="ghost" size="xs" onClick={() => {}}>
+													Aggiungi
+												</Button>
+											</div>
 											<p className="text-xs text-muted-foreground">All 0s: 1 2 3</p>
 										</div>
 
 										<div className="space-y-2 p-4">
-											<SectionHeader label="Extra" onAdd={() => {}} />
+											<div className="flex items-center justify-between">
+												<span className="text-xs font-medium text-muted-foreground">Extra</span>
+												<Button variant="ghost" size="xs" onClick={() => {}}>
+													Aggiungi
+												</Button>
+											</div>
 											<div className="flex flex-wrap gap-1.5">
 												{EXTRA_OPTIONS.map((option) => (
 													<Button
@@ -355,7 +314,9 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										</div>
 
 										<div className="space-y-2 p-4">
-											<SectionHeader label="Punteggio di confidenza" />
+											<span className="text-xs font-medium text-muted-foreground">
+												Punteggio di confidenza
+											</span>
 											<Badge variant="outline">Nessuno</Badge>
 										</div>
 
