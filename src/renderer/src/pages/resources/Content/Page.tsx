@@ -73,6 +73,7 @@ function PageContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
 	const [imageDialogOpen, setImageDialogOpen] = useState(false);
+	const [pdfDialogOpen, setPdfDialogOpen] = useState(false);
 	const {
 		folders,
 		filteredFolders,
