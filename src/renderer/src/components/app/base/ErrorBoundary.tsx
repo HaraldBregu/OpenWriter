@@ -110,6 +110,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 						</div>
 					</EmptyContent>
 				</Empty>
+				</div>
 			);
 		}
 
