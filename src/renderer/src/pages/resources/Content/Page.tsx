@@ -7,6 +7,7 @@ import {
 	Folder as FolderIcon,
 	FolderOpen,
 	ImageIcon,
+	MoreHorizontal,
 	Music,
 	Pencil,
 	Search,
@@ -188,7 +189,7 @@ function PageContent(): ReactElement {
 					</InputGroup>
 				</ButtonGroup>
 			</PageSubHeader>
-			<PageBody className="p-8">
+			<PageBody>
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
@@ -211,9 +212,8 @@ function PageContent(): ReactElement {
 				)}
 
 				{!isLoading && folders.length > 0 && (
-					<div className="overflow-hidden rounded-md border">
-						<Table>
-						<TableHeader>
+					<Table className="table-fixed text-foreground">
+						<TableHeader className="bg-muted sticky top-0 z-10">
 							<TableRow>
 								{editing && (
 									<TableHead className="w-12 px-6 text-muted-foreground">
@@ -293,7 +293,6 @@ function PageContent(): ReactElement {
 							)}
 						</TableBody>
 					</Table>
-					</div>
 				)}
 			</PageBody>
 
