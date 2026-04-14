@@ -195,11 +195,15 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 										<div className="border-b p-4">
 											<div className="flex items-start gap-3">
 												<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-													<ImageIcon className="h-5 w-5 text-muted-foreground" />
+													{previewKind === 'pdf' ? (
+														<FileText className="h-5 w-5 text-muted-foreground" />
+													) : (
+														<ImageIcon className="h-5 w-5 text-muted-foreground" />
+													)}
 												</div>
 												<div className="min-w-0 flex-1">
 													<p className="truncate text-sm font-semibold">
-														{imageName ?? 'Immagine'}
+														{imageName ?? 'File'}
 													</p>
 													{imageName && (
 														<div className="mt-1 flex items-center gap-2">
@@ -210,7 +214,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 																		size="xs"
 																		className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
 																	>
-																		Cambia immagine
+																		Cambia file
 																	</Button>
 																}
 															/>
