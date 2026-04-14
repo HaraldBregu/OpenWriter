@@ -202,10 +202,12 @@ export function ExtractorDialog({
 
 	const handleRun = (): void => {
 		if (!file || !fileSrc || !fileName || !detectedType || !selectedModel) return;
+		const filePath = (file as unknown as { path?: string }).path ?? null;
 		void onRun?.({
 			type: detectedType,
 			file,
 			fileName,
+			filePath,
 			fileSrc,
 			modelId: selectedModel,
 			extras: selectedExtras,
