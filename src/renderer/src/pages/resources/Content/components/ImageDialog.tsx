@@ -127,6 +127,45 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		}
 	};
 
+	const loadImageFromFile = (file: File): void => {
+		const url = URL.createObjectURL(file);
+		if (imageSrc) URL.revokeObjectURL(imageSrc);
+		setImageSrc(url);
+		setImageName(file.name);
+		if (!outputFileName) {
+			setOutputFileName(file.name.replace(/\.[^.]+$/, ''));
+		}
+	};
+
+	const hasImageInDrag = (e: React.DragEvent): boolean => {
+		const items = e.dataTransfer?.items;
+		if (!items || items.length === 0) return false;
+		return Array.from(items).some(
+			(i) => i.kind === 'file' && (i.type === '' || IMAGE_MIME_PATTERN.test(i.type))
+		);
+	};
+
+	const handleDragOver = (e: React.DragEvent): void => {
+		if (!hasImageInDrag(e)) return;
+		e.preventDefault();
+		e.dataTransfer.dropEffect = 'copy';
+		if (!isDragging) setIsDragging(true);
+	};
+
+	const handleDragLeave = (e: React.DragEvent): void => {
+		if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+		setIsDragging(false);
+	};
+
+	const handleDrop = (e: React.DragEvent): void => {
+		e.preventDefault();
+		setIsDragging(false);
+		const files = e.dataTransfer?.files;
+		if (!files || files.length === 0) return;
+		const image = Array.from(files).find(isSupportedImage);
+		if (image) loadImageFromFile(image);
+	};
+
 	const handleClose = (nextOpen: boolean) => {
 		if (!nextOpen && imageSrc) {
 			URL.revokeObjectURL(imageSrc);
