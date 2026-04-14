@@ -222,8 +222,14 @@ export function ExtractorDialog({
 							onFileAccept={handleFileAccept}
 							className="h-full w-full"
 						>
-							{!fileSrc && (
-								<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
+							<FileUploadDropzone
+								className={
+									fileSrc
+										? 'relative h-full w-full rounded-none border-0 bg-transparent p-0 hover:bg-muted/20'
+										: 'flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40'
+								}
+							>
+								{!fileSrc && (
 									<Empty className="border-0 p-0">
 										<EmptyHeader>
 											<EmptyMedia variant="icon" className="h-16 w-auto rounded-full px-4">
@@ -238,23 +244,21 @@ export function ExtractorDialog({
 											/>
 										</EmptyContent>
 									</Empty>
-								</FileUploadDropzone>
-							)}
-							{fileSrc && (
-								<FileUploadDropzone className="relative h-full w-full rounded-none border-0 bg-transparent p-0 hover:bg-muted/20">
-									{detectedType === 'image' && (
-										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
-											<Image
-												src={fileSrc}
-												alt={fileName ?? 'Preview'}
-												className="max-h-full max-w-full object-contain"
-												cardClassName="max-h-full max-w-full overflow-hidden"
-											/>
-										</div>
-									)}
-									{detectedType === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
-								</FileUploadDropzone>
-							)}
+								)}
+								{fileSrc && detectedType === 'image' && (
+									<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
+										<Image
+											src={fileSrc}
+											alt={fileName ?? 'Preview'}
+											className="max-h-full max-w-full object-contain"
+											cardClassName="max-h-full max-w-full overflow-hidden"
+										/>
+									</div>
+								)}
+								{fileSrc && detectedType === 'pdf' && (
+									<Pdf src={fileSrc} className="h-full w-full" />
+								)}
+							</FileUploadDropzone>
 						</FileUpload>
 					</ResizablePanel>
 					<ResizableHandle withHandle />
