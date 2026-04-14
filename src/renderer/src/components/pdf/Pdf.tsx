@@ -32,7 +32,7 @@ export interface PdfProps {
 	readonly onReady?: EmbedPdfViewerProps['onReady'];
 }
 
-export const PdfViewer = forwardRef<PDFViewerRef, PdfViewerProps>(function PdfViewer(
+export const Pdf = forwardRef<PDFViewerRef, PdfProps>(function Pdf(
 	{
 		src,
 		className,
