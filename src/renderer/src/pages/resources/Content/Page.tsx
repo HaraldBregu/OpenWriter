@@ -161,7 +161,7 @@ function PageContent(): ReactElement {
 						<div className="space-y-1">
 							<p className="font-medium text-sm">{t(section.emptyKey)}</p>
 						</div>
-						<Button onClick={handleUpload} disabled={uploading} size="sm">
+						<Button onClick={() => handleUpload()} disabled={uploading} size="sm">
 							<Upload />
 							{t(section.uploadKey)}
 						</Button>
