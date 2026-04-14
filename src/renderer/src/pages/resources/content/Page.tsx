@@ -46,6 +46,7 @@ import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './Provider';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ExtractorDialog } from './components/ExtractorDialog';
+import { MarkdownDialog } from './components/MarkdownDialog';
 import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './shared/types';
 import Layout from './Layout';
