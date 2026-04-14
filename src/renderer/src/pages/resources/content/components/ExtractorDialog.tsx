@@ -40,6 +40,37 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 
 export type ExtractorType = 'image' | 'pdf';
 
+const ACCEPT_ALL = 'image/*,application/pdf';
+
+interface GenericConfig {
+	readonly title: string;
+	readonly description: string;
+	readonly submitLabel: string;
+	readonly emptyTitle: string;
+	readonly emptyDescription: string;
+	readonly selectLabel: string;
+	readonly placeholder: string;
+	readonly changeLabel: string;
+	readonly icon: ReactElement;
+	readonly emptyIcon: ReactElement;
+}
+
+const GENERIC_CONFIG: GenericConfig = {
+	title: 'Impostazioni estrazione',
+	description: "Carica un'immagine o un PDF per configurare l'estrazione.",
+	submitLabel: 'Esegui',
+	emptyTitle: 'Nessun file selezionato',
+	emptyDescription: 'Trascina immagine o PDF qui o',
+	selectLabel: 'Seleziona file',
+	placeholder: 'File',
+	changeLabel: 'Cambia file',
+	icon: <FileText className="h-5 w-5 text-muted-foreground" />,
+	emptyIcon: <FileText className="size-8 text-muted-foreground" />,
+};
+
+const detectType = (file: File): ExtractorType =>
+	file.type === 'application/pdf' ? 'pdf' : 'image';
+
 const EXTRA_OPTIONS = [
 	{ value: 'descrizione', label: 'Descrizione' },
 	{ value: 'didascalia', label: 'Didascalia' },
