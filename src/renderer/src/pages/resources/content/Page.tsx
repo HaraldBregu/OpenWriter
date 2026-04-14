@@ -196,7 +196,7 @@ function PageContent(): ReactElement {
 			</PageBody>
 
 			<DeleteConfirmDialog />
-			<ExtractorDialog open={fileDialogOpen} onOpenChange={setFileDialogOpen} onRun={() => {}} />
+			<ExtractorDialog open={fileDialogOpen} onOpenChange={setFileDialogOpen} onRun={handleExtractorRun} />
 		</PageContainer>
 	);
 }
