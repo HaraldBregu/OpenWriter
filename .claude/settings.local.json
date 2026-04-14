@@ -133,7 +133,8 @@
       "Bash(mv use-files-sort.ts use-sort.ts)",
       "Bash(mv Content content)",
       "Bash(mv Files files)",
-      "Bash(mv Data data)"
+      "Bash(mv Data data)",
+      "Bash(pnpm exec:*)"
     ],
     "deny": [
       "Bash(git push --force:*)",

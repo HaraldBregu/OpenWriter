@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
-import { ChevronDown, ImageIcon, Info, Play, X } from 'lucide-react';
+import { ChevronDown, ImageIcon, Info, Play } from 'lucide-react';
 import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
 import type { ProviderId } from '../../../../../../shared/types';
