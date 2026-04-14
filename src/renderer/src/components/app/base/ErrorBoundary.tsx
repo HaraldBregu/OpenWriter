@@ -77,7 +77,8 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
 		if (level === 'route') {
 			return (
-				<Empty className="flex-1">
+				<div className="flex h-full w-full flex-1 items-center justify-center">
+					<Empty>
 					<EmptyHeader>
 						<EmptyMedia>
 							<AlertCircle className="h-10 w-10 text-destructive" />
