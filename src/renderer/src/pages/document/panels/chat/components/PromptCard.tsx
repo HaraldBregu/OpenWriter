@@ -104,7 +104,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				isDragOver && 'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 			)}
 		>
-			<CardHeader className="space-y-0 p-0 px-3.5 pt-3">
+			<CardHeader className="space-y-0 p-0 px-3.5 pt-1">
 				<div className="flex items-center gap-2">
 					<Button
 						type="button"
@@ -210,7 +210,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				/>
 			</CardContent>
 
-			<CardFooter className="gap-2 border-t border-border/70 bg-muted/45 px-3.5 py-2.5 dark:border-border/80 dark:bg-muted/20">
+			<CardFooter className="gap-2 p-2 bg-transparent">
 				<AgentDropdown
 					agentId={agentId}
 					isImage={isImage}

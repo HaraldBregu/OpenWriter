@@ -228,7 +228,7 @@ function Container({ children }: LayoutProps) {
 
 					{/* Nav */}
 					<SidebarContent className="gap-4 py-2">
-						{/* New Writing + Quick Actions */}
+						{/* New Document + Quick Actions */}
 						<SidebarGroup className="py-0">
 							<SidebarGroupContent>
 								<SidebarMenu>
@@ -276,7 +276,7 @@ function Container({ children }: LayoutProps) {
 									</SidebarGroupLabel>
 									<CollapsibleContent>
 										<SidebarGroupContent>
-											<SidebarMenu>
+											<SidebarMenu className='gap-1'>
 												{documents.map((w) => (
 													<SidebarMenuItem key={w.id}>
 														<SidebarMenuButton
