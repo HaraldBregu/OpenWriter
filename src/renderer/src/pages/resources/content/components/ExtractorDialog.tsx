@@ -5,6 +5,13 @@ import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
 import { Dialog, DialogContent } from '@/components/ui/Dialog';
 import {
 	DropdownMenu,
