@@ -101,7 +101,7 @@ function PageContent(): ReactElement {
 							className="gap-1.5"
 						>
 							<Upload />
-							Upload content from
+							Upload
 							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
