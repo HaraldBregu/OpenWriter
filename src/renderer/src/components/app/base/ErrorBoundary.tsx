@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import i18next from 'i18next';
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '@/components/ui/Empty';
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
