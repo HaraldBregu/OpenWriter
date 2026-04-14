@@ -1,5 +1,6 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
-import { ContentProvider, useContentContext } from './context/ContentContext';
+import { ContentProvider } from './Provider';
+import { useContentContext } from './context/ContentContext';
 
 function Bootstrap(): null {
 	const { setFolders, setIsLoading } = useContentContext();
