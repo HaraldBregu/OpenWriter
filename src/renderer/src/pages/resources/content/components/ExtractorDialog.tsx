@@ -32,6 +32,7 @@ import {
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { Image } from '@/components/image/Image';
 import { Input } from '@/components/ui/Input';
+import { Item, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/Item';
 import { Pdf } from '@/components/pdf/Pdf';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
@@ -203,6 +204,8 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 					<ResizablePanel defaultSize={30} minSize="30%">
 						<Card className="flex h-full flex-col gap-0 rounded-none border-0 py-0 ring-0">
 							<CardHeader className="gap-3 border-b p-4">
+								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
+
 								<div className="flex items-start gap-3">
 									<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
 										{config.icon}
@@ -213,7 +216,6 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										</p>
 									</div>
 								</div>
-								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
 							</CardHeader>
 							<CardContent className="flex min-h-0 flex-1 flex-col p-0">
 								<ScrollArea className="flex-1">
