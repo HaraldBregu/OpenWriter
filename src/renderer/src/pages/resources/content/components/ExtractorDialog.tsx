@@ -185,7 +185,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 				<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 					<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
 						<FileUpload
-							accept={config.accept}
+							accept={ACCEPT_ALL}
 							onFileAccept={handleFileAccept}
 							className="h-full w-full"
 						>
