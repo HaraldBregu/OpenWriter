@@ -66,7 +66,6 @@ function formatShortDate(timestamp: number): string {
 function PageContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
-	const [markdownDialogOpen, setMarkdownDialogOpen] = useState(false);
 	const [fileDialogOpen, setFileDialogOpen] = useState(false);
 	const {
 		folders,
