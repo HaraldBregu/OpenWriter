@@ -339,164 +339,21 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 								</ResizablePanel>
 								<ResizableHandle withHandle />
 								<ResizablePanel defaultSize={30} minSize="30%">
-									<div className="flex h-full flex-col">
-										<div className="border-b p-4">
-											<div className="flex items-start gap-3">
-												<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-													{previewKind === 'pdf' ? (
-														<FileText className="h-5 w-5 text-muted-foreground" />
-													) : (
-														<ImageIcon className="h-5 w-5 text-muted-foreground" />
-													)}
-												</div>
-												<div className="min-w-0 flex-1">
-													<p className="truncate text-sm font-semibold">
-														{imageName ?? 'File'}
-													</p>
-													{imageName && (
-														<div className="mt-1 flex items-center gap-2">
-															<FileUploadTrigger
-																render={
-																	<Button
-																		variant="ghost"
-																		size="xs"
-																		className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
-																	>
-																		Cambia file
-																	</Button>
-																}
-															/>
-														</div>
-													)}
-												</div>
-											</div>
-										</div>
-										<div className="p-4">
-											<h2 className="text-sm font-semibold">Impostazioni analisi</h2>
-										</div>
-										<ScrollArea className="flex-1">
-											<div className="divide-y divide-border">
-												<div className="flex items-center justify-between gap-4 p-4">
-													<div>
-														<p className="text-xs font-medium">Modello</p>
-														<p className="text-[11px] text-muted-foreground">
-															{selectedModelEntry
-																? (getProvider(selectedModelEntry.providerId)?.name ??
-																	selectedModelEntry.providerId)
-																: 'AI'}
-														</p>
-													</div>
-													<DropdownMenu>
-														<DropdownMenuTrigger
-															render={<Button variant="outline" />}
-															className="h-8 min-w-40 shrink-0 gap-2 text-xs font-normal"
-														>
-															{selectedModelEntry && (
-																<ProviderIcon providerId={selectedModelEntry.providerId} />
-															)}
-															<span className="truncate">
-																{selectedModelEntry?.name ?? 'Seleziona modello'}
-															</span>
-															<ChevronDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
-														</DropdownMenuTrigger>
-														<DropdownMenuContent align="start" className="max-h-72 overflow-y-auto">
-															<DropdownMenuRadioGroup
-																value={selectedModel}
-																onValueChange={handleModelChange}
-															>
-																{Array.from(new Set(OCR_MODELS.map((m) => m.providerId))).map(
-																	(providerId, idx) => (
-																		<div key={providerId}>
-																			{idx > 0 && <DropdownMenuSeparator />}
-																			{OCR_MODELS.filter((m) => m.providerId === providerId).map(
-																				(model) => (
-																					<DropdownMenuRadioItem
-																						key={model.modelId}
-																						value={model.modelId}
-																						className="gap-2"
-																					>
-																						<ProviderIcon providerId={model.providerId} />
-																						{model.name}
-																					</DropdownMenuRadioItem>
-																				)
-																			)}
-																		</div>
-																	)
-																)}
-															</DropdownMenuRadioGroup>
-														</DropdownMenuContent>
-													</DropdownMenu>
-												</div>
-
-												<div className="space-y-2 p-4">
-													<SectionHeader label="Formato della risposta" hasInfo onAdd={() => {}} />
-													<p className="text-xs text-muted-foreground">All 0s: 1 2 3</p>
-												</div>
-
-												<div className="space-y-2 p-4">
-													<SectionHeader label="Extra" onAdd={() => {}} />
-													<div className="flex flex-wrap gap-1.5">
-														{EXTRA_OPTIONS.map((option) => (
-															<Button
-																key={option.value}
-																variant={
-																	selectedExtras.includes(option.value)
-																		? 'outline-selected'
-																		: 'outline'
-																}
-																size="xs"
-																onClick={() => toggleExtra(option.value)}
-															>
-																{option.label}
-															</Button>
-														))}
-													</div>
-												</div>
-
-												<div className="space-y-2 p-4">
-													<SectionHeader label="Punteggio di confidenza" />
-													<Badge variant="outline">Nessuno</Badge>
-												</div>
-
-												<div className="p-4">
-													<p className="text-xs text-muted-foreground">
-														Funzionalità aggiuntive disponibili tramite{' '}
-														<span className="font-medium text-primary">OWR Document AI</span>
-													</p>
-												</div>
-											</div>
-										</ScrollArea>
-										<div className="space-y-1.5 border-t px-4 pt-3 pb-2">
-											<label className="text-xs font-medium text-muted-foreground">
-												Nome file di output
-											</label>
-											<Input
-												value={outputFileName}
-												onChange={(e) => setOutputFileName(e.target.value)}
-												placeholder="Nome file di output"
-												className="h-8 text-xs"
-											/>
-										</div>
-										<div className="flex gap-2 border-t p-4">
-											<Button
-												variant="outline"
-												className="flex-1"
-												onClick={() => handleClose(false)}
-											>
-												Annulla
-											</Button>
-											<Button
-												className="flex-1 gap-1.5"
-												disabled={!imageSrc || !selectedModel}
-												onClick={() => {
-													// Placeholder for image analysis submission
-												}}
-											>
-												<Play className="h-3.5 w-3.5" />
-												Analizza
-											</Button>
-										</div>
-									</div>
+									<AnalysisPanel
+										imageName={imageName}
+										previewKind={previewKind}
+										hasFile={imageSrc !== null}
+										selectedModel={selectedModel}
+										onModelChange={handleModelChange}
+										selectedExtras={selectedExtras}
+										onToggleExtra={toggleExtra}
+										outputFileName={outputFileName}
+										onOutputFileNameChange={setOutputFileName}
+										onCancel={() => handleClose(false)}
+										onSubmit={() => {
+											// Placeholder for image analysis submission
+										}}
+									/>
 								</ResizablePanel>
 							</ResizablePanelGroup>
 						</FileUpload>
