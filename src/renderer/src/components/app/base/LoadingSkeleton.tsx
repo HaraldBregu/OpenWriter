@@ -1,5 +1,6 @@
 import React from 'react';
 import { Skeleton } from '@/components/ui/Skeleton';
+import { PageContainer, PageHeader, PageHeaderTitle, PageHeaderItems, PageBody } from './Page';
 
 const SIDEBAR_NAV_ITEMS = 2;
 const SIDEBAR_GROUP_ITEMS = 4;
