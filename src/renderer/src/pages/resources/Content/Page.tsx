@@ -213,7 +213,7 @@ function PageContent(): ReactElement {
 
 				{!isLoading && folders.length > 0 && (
 					<Table className="table-fixed text-foreground">
-						<TableHeader className="bg-muted sticky top-0 z-10">
+						<TableHeader className="bg-background sticky top-0 z-10">
 							<TableRow>
 								{editing && (
 									<TableHead className="w-12 px-6 text-muted-foreground">
@@ -244,7 +244,7 @@ function PageContent(): ReactElement {
 							{filteredFolders.length === 0 ? (
 								<TableRow>
 									<TableCell
-										colSpan={editing ? SORT_COLUMNS.length + 1 : SORT_COLUMNS.length}
+										colSpan={editing ? SORT_COLUMNS.length + 2 : SORT_COLUMNS.length + 1}
 										className="px-6 py-8 text-center text-sm text-muted-foreground"
 									>
 										No folders match your search.
@@ -288,6 +288,31 @@ function PageContent(): ReactElement {
 										</TableCell>
 										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
 											{formatShortDate(folder.modifiedAt)}
+										</TableCell>
+										<TableCell
+											className="w-16 px-6 text-right"
+											onClick={(event) => event.stopPropagation()}
+										>
+											<DropdownMenu>
+												<DropdownMenuTrigger
+													render={<Button variant="ghost" size="icon" />}
+												>
+													<MoreHorizontal className="h-4 w-4" />
+												</DropdownMenuTrigger>
+												<DropdownMenuContent align="end">
+													<DropdownMenuItem onClick={handleOpenResourcesFolder}>
+														<FolderOpen className="h-4 w-4" />
+														Open in Finder
+													</DropdownMenuItem>
+													<DropdownMenuItem
+														className="text-destructive focus:text-destructive"
+														onClick={() => handleToggleRow(folder.id)}
+													>
+														<Trash2 className="h-4 w-4" />
+														Delete
+													</DropdownMenuItem>
+												</DropdownMenuContent>
+											</DropdownMenu>
 										</TableCell>
 									</TableRow>
 								))
