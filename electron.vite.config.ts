@@ -41,6 +41,7 @@ export default defineConfig({
 				'@store': resolve(__dirname, './src/renderer/src/store'),
 				'@components': resolve(__dirname, './src/renderer/src/components'),
 				'@icons': resolve(__dirname, './src/renderer/src/components/icons'),
+				'@shared': resolve(__dirname, './src/shared'),
 				'@resources': resolve(__dirname, 'resources'),
 			},
 		},

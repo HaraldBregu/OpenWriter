@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { OCR_MODELS } from '../../../../../../shared/models';
-import { Dialog, DialogContent, DialogDescription, DialogHeader } from '@/components/ui/Dialog';
+import { Dialog, DialogContent } from '@/components/ui/Dialog';
 import {
 	ExtractorDialogContent,
 	type ExtractorType,
@@ -51,26 +51,22 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col py-0 p-0">
-				<DialogHeader className="contents space-y-0 text-left py-0">
-					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
-						<ExtractorDialogContent
-							type={type}
-							fileSrc={fileSrc}
-							fileName={fileName}
-							selectedModel={selectedModel}
-							onModelChange={setSelectedModel}
-							selectedExtras={selectedExtras}
-							onToggleExtra={toggleExtra}
-							outputFileName={outputFileName}
-							onOutputFileNameChange={setOutputFileName}
-							onFileAccept={handleFileAccept}
-							onCancel={() => handleClose(false)}
-							onSubmit={() => {
-								// Placeholder for submission
-							}}
-						/>
-					</DialogDescription>
-				</DialogHeader>
+				<ExtractorDialogContent
+					type={type}
+					fileSrc={fileSrc}
+					fileName={fileName}
+					selectedModel={selectedModel}
+					onModelChange={setSelectedModel}
+					selectedExtras={selectedExtras}
+					onToggleExtra={toggleExtra}
+					outputFileName={outputFileName}
+					onOutputFileNameChange={setOutputFileName}
+					onFileAccept={handleFileAccept}
+					onCancel={() => handleClose(false)}
+					onSubmit={() => {
+						// Placeholder for submission
+					}}
+				/>
 			</DialogContent>
 		</Dialog>
 	);
