@@ -53,21 +53,6 @@ type ExtraValue = (typeof EXTRA_OPTIONS)[number]['value'];
 const FILE_ACCEPT =
 	'image/png,image/jpeg,image/gif,image/webp,image/bmp,image/svg+xml,application/pdf';
 
-const PDF_VIEWER_DISABLED_CATEGORIES = [
-	'annotation',
-	'annotation-highlight',
-	'annotation-markup',
-	'print',
-	'redaction',
-	'zoom',
-	'document-print',
-	'export',
-	'document-export',
-	'tools',
-	'selection',
-	'history',
-];
-
 type PreviewKind = 'image' | 'pdf';
 
 function detectPreviewKind(file: File): PreviewKind {
