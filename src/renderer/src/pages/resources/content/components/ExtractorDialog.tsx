@@ -125,6 +125,7 @@ export interface ExtractorRunPayload {
 	readonly type: ExtractorType;
 	readonly file: File;
 	readonly fileName: string;
+	readonly filePath: string | null;
 	readonly fileSrc: string;
 	readonly modelId: string;
 	readonly extras: readonly ExtraValue[];
