@@ -18,15 +18,15 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	const section = RESOURCE_SECTIONS.content;
 	const [state, dispatch] = useReducer(contentReducer, initialState);
 
-	const { sortKey, sortDirection, handleSort } = useContentSort();
-	const filteredFolders = useContentFilter({
+	const { sortKey, sortDirection, handleSort } = useSort();
+	const filteredFolders = useFilter({
 		folders: state.folders,
 		searchQuery: state.searchQuery,
 		sortKey,
 		sortDirection,
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
-		useContentSelection({ filteredFolders });
+		useSelection({ filteredFolders });
 
 	const setFolders = useCallback((folders: FolderEntry[]) => {
 		dispatch({ type: 'SET_FOLDERS', payload: folders });
