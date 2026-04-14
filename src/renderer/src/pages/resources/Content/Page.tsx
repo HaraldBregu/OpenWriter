@@ -201,7 +201,7 @@ function PageContent(): ReactElement {
 							{filteredFolders.length === 0 ? (
 								<TableRow>
 									<TableCell
-										colSpan={editing ? SORT_COLUMNS.length + 2 : SORT_COLUMNS.length + 1}
+										colSpan={SORT_COLUMNS.length + 1}
 										className="px-6 py-8 text-center text-sm text-muted-foreground"
 									>
 										No folders match your search.
@@ -209,23 +209,7 @@ function PageContent(): ReactElement {
 								</TableRow>
 							) : (
 								filteredFolders.map((folder) => (
-									<TableRow
-										key={folder.id}
-										className="cursor-pointer"
-										data-state={selected.has(folder.id) ? 'selected' : undefined}
-										onKeyDown={(event) => handleRowKeyDown(event, folder)}
-										tabIndex={0}
-									>
-										{editing && (
-											<TableCell className="w-10 px-6">
-												<Checkbox
-													checked={selected.has(folder.id)}
-													onClick={(event) => event.stopPropagation()}
-													onCheckedChange={() => handleToggleRow(folder.id)}
-													aria-label={`Select ${folder.name}`}
-												/>
-											</TableCell>
-										)}
+									<TableRow key={folder.id} className="cursor-pointer">
 										<TableCell className="px-6">
 											<div className="flex items-center gap-3">
 												<FolderIcon className="h-5 w-5 text-muted-foreground" />
@@ -263,7 +247,10 @@ function PageContent(): ReactElement {
 													</DropdownMenuItem>
 													<DropdownMenuItem
 														className="text-destructive focus:text-destructive"
-														onClick={() => handleToggleRow(folder.id)}
+														onClick={() => {
+															handleToggleRow(folder.id);
+															handleDelete();
+														}}
 													>
 														<Trash2 className="h-4 w-4" />
 														Delete
