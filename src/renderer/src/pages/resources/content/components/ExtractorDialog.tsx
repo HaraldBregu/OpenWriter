@@ -208,10 +208,12 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 					<ResizableHandle withHandle />
 					<ResizablePanel defaultSize={30} minSize="30%">
 						<Card className="flex h-full flex-col gap-0 rounded-none border-0 py-0 ring-0">
-							<CardHeader className="gap-3 border-b p-4">
+							<CardHeader className="gap-1 border-b p-4">
 								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
-								<CardDescription>Description</CardDescription>
-								<Item className="gap-3 border-0 p-0">
+								<CardDescription className="text-xs">{config.description}</CardDescription>
+							</CardHeader>
+							<CardContent className="flex min-h-0 flex-1 flex-col p-0">
+								<Item className="gap-3 border-b p-4">
 									<ItemMedia variant="icon" className="h-10 w-10 rounded-lg bg-muted">
 										{config.icon}
 									</ItemMedia>
@@ -224,8 +226,6 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										</ItemDescription>
 									</ItemContent>
 								</Item>
-							</CardHeader>
-							<CardContent className="flex min-h-0 flex-1 flex-col p-0">
 								<ScrollArea className="flex-1">
 									<div className="divide-y divide-border">
 										<div className="flex items-center justify-between gap-4 p-4">
