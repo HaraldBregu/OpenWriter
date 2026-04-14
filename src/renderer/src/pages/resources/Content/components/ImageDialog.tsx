@@ -129,6 +129,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		if (imageSrc) URL.revokeObjectURL(imageSrc);
 		setImageSrc(url);
 		setImageName(file.name);
+		setPreviewKind(detectPreviewKind(file));
 		if (!outputFileName) {
 			setOutputFileName(file.name.replace(/\.[^.]+$/, ''));
 		}
@@ -139,6 +140,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 			URL.revokeObjectURL(imageSrc);
 			setImageSrc(null);
 			setImageName(null);
+			setPreviewKind(null);
 		}
 		onOpenChange(nextOpen);
 	};
