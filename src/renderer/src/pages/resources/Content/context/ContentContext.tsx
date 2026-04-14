@@ -83,10 +83,10 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		}
 	}, []);
 
-	const handleUpload = useCallback(async () => {
+	const handleUpload = useCallback(async (extensions?: string[]) => {
 		setUploading(true);
 		try {
-			const imported = await window.workspace.insertContents(section.uploadExtensions);
+			const imported = await window.workspace.insertContents(extensions ?? section.uploadExtensions);
 			if (imported.length > 0) {
 				await refreshFolders();
 			}
