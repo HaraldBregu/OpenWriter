@@ -151,13 +151,22 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 				<DialogHeader className="contents space-y-0 text-left py-0">
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<FileUpload
-							accept={IMAGE_ACCEPT}
+							accept={FILE_ACCEPT}
 							onFileAccept={handleFileAccept}
 							className="flex min-h-0 w-full flex-1"
 						>
 							<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 								<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
-									{imageSrc ? (
+									{imageSrc && previewKind === 'pdf' ? (
+										<PDFViewer
+											className="h-full w-full"
+											config={{
+												src: imageSrc,
+												disabledCategories: PDF_VIEWER_DISABLED_CATEGORIES,
+												theme: { preference: 'system' },
+											}}
+										/>
+									) : imageSrc && previewKind === 'image' ? (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 											<img
 												src={imageSrc}
@@ -170,12 +179,12 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 											<div className="flex h-16 w-16 items-center justify-center rounded-full bg-muted">
 												<ImageIcon className="h-8 w-8 text-muted-foreground" />
 											</div>
-											<p className="text-sm text-muted-foreground">Nessuna immagine selezionata</p>
+											<p className="text-sm text-muted-foreground">Nessun file selezionato</p>
 											<p className="text-xs text-muted-foreground/70">
-												Trascina un&apos;immagine qui o
+												Trascina un&apos;immagine o un PDF qui o
 											</p>
 											<FileUploadTrigger
-												render={<Button variant="outline">Seleziona immagine</Button>}
+												render={<Button variant="outline">Seleziona file</Button>}
 											/>
 										</FileUploadDropzone>
 									)}
