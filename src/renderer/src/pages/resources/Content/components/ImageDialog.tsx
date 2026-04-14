@@ -323,10 +323,11 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 										<Pdf src={imageSrc} className="h-full w-full" />
 									) : imageSrc && previewKind === 'image' ? (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
-											<img
+											<Image
 												src={imageSrc}
 												alt={imageName ?? 'Preview'}
-												className="max-h-full max-w-full rounded object-contain"
+												className="max-h-full max-w-full object-contain"
+												cardClassName="max-h-full max-w-full overflow-hidden"
 											/>
 										</div>
 									) : (
