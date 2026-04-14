@@ -217,6 +217,9 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										<ItemTitle className="truncate text-sm font-semibold">
 											{fileName ?? config.placeholder}
 										</ItemTitle>
+										<ItemDescription className="text-[11px]">
+											{fileName ? config.changeLabel : config.emptyDescription}
+										</ItemDescription>
 									</ItemContent>
 								</Item>
 							</CardHeader>
