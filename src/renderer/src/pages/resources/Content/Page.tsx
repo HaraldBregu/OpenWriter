@@ -93,63 +93,40 @@ function PageContent(): ReactElement {
 			<PageHeader>
 				<PageHeaderTitle>{t(section.titleKey)}</PageHeaderTitle>
 				<PageHeaderItems>
-					{editing && selected.size > 0 && (
-						<Button variant="destructive" size="lg" disabled={removing} onClick={handleDelete}>
-							<Trash2 />
-							{t('resources.removeWithCount', { count: selected.size })}
-						</Button>
-					)}
-					{!editing && (
-						<>
-							<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
-								<FolderOpen />
-							</Button>
-							<DropdownMenu>
-								<DropdownMenuTrigger
-									render={<Button variant="outline" size="lg" />}
-									className="gap-1.5"
-								>
-									<Upload />
-									Upload content from
-									<ChevronDown className="h-3.5 w-3.5 opacity-50" />
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
-									<DropdownMenuItem onClick={() => setImageDialogOpen(true)}>
-										<ImageIcon className="h-4 w-4" />
-										Image
-									</DropdownMenuItem>
-									<DropdownMenuItem onClick={() => setPdfDialogOpen(true)}>
-										<FileText className="h-4 w-4" />
-										PDF
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<Video className="h-4 w-4" />
-										Video
-									</DropdownMenuItem>
-									<DropdownMenuItem>
-										<Music className="h-4 w-4" />
-										Audio
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-							<Button size="lg" onClick={handleUpload} disabled={uploading}>
-								<Upload />
-								{t(section.uploadKey)}
-							</Button>
-						</>
-					)}
-					<Button variant="outline" size="lg" onClick={handleToggleEdit}>
-						{editing ? (
-							<>
-								<X />
-								Done
-							</>
-						) : (
-							<>
-								<Pencil />
-								Edit
-							</>
-						)}
+					<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
+						<FolderOpen />
+					</Button>
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={<Button variant="outline" size="lg" />}
+							className="gap-1.5"
+						>
+							<Upload />
+							Upload content from
+							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end">
+							<DropdownMenuItem onClick={() => setImageDialogOpen(true)}>
+								<ImageIcon className="h-4 w-4" />
+								Image
+							</DropdownMenuItem>
+							<DropdownMenuItem onClick={() => setPdfDialogOpen(true)}>
+								<FileText className="h-4 w-4" />
+								PDF
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Video className="h-4 w-4" />
+								Video
+							</DropdownMenuItem>
+							<DropdownMenuItem>
+								<Music className="h-4 w-4" />
+								Audio
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
+					<Button size="lg" onClick={handleUpload} disabled={uploading}>
+						<Upload />
+						{t(section.uploadKey)}
 					</Button>
 				</PageHeaderItems>
 			</PageHeader>
