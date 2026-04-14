@@ -185,11 +185,7 @@ function Container({ children }: LayoutProps) {
 	] as const;
 
 	const handleAccountMenuValueChange = useCallback(
-		(value: string | null) => {
-			if (!value) return;
-
-			setAccountMenuOpen(false);
-
+		(value: string) => {
 			switch (value) {
 				case 'settings':
 					navigate('/settings');
@@ -199,13 +195,6 @@ function Container({ children }: LayoutProps) {
 					break;
 				case 'language':
 					navigate('/settings/general');
-					break;
-				case 'upgrade':
-				case 'extensions':
-				case 'gift':
-				case 'learnMore':
-				case 'help':
-				case 'logOut':
 					break;
 				default:
 					break;
