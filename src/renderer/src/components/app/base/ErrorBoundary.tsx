@@ -49,37 +49,43 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
 		if (level === 'root') {
 			return (
-				<div className="flex h-screen items-center justify-center bg-background p-6">
-					<div className="max-w-md text-center space-y-4">
-						<AlertCircle className="h-12 w-12 text-destructive mx-auto" />
-						<h1 className="text-lg font-semibold text-foreground">
-							{t('errorBoundary.rootTitle')}
-						</h1>
-						<p className="text-sm text-muted-foreground">{t('errorBoundary.rootMessage')}</p>
-						<p className="text-xs text-muted-foreground/60 font-mono break-all">
-							{this.state.error?.message}
-						</p>
-						<button
-							type="button"
-							onClick={() => window.location.reload()}
-							className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-						>
-							{t('errorBoundary.restartApp')}
-						</button>
-					</div>
+				<div className="flex h-screen bg-background">
+					<Empty>
+						<EmptyHeader>
+							<EmptyMedia>
+								<AlertCircle className="h-12 w-12 text-destructive" />
+							</EmptyMedia>
+							<EmptyTitle>{t('errorBoundary.rootTitle')}</EmptyTitle>
+							<EmptyDescription>{t('errorBoundary.rootMessage')}</EmptyDescription>
+						</EmptyHeader>
+						<EmptyContent>
+							<p className="text-xs text-muted-foreground/60 font-mono break-all">
+								{this.state.error?.message}
+							</p>
+							<button
+								type="button"
+								onClick={() => window.location.reload()}
+								className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+							>
+								{t('errorBoundary.restartApp')}
+							</button>
+						</EmptyContent>
+					</Empty>
 				</div>
 			);
 		}
 
 		if (level === 'route') {
 			return (
-				<div className="flex flex-1 items-center justify-center p-6">
-					<div className="max-w-md text-center space-y-4">
-						<AlertCircle className="h-10 w-10 text-destructive mx-auto" />
-						<h2 className="text-base font-semibold text-foreground">
-							{t('errorBoundary.routeTitle')}
-						</h2>
-						<p className="text-sm text-muted-foreground">{t('errorBoundary.routeMessage')}</p>
+				<Empty className="flex-1">
+					<EmptyHeader>
+						<EmptyMedia>
+							<AlertCircle className="h-10 w-10 text-destructive" />
+						</EmptyMedia>
+						<EmptyTitle>{t('errorBoundary.routeTitle')}</EmptyTitle>
+						<EmptyDescription>{t('errorBoundary.routeMessage')}</EmptyDescription>
+					</EmptyHeader>
+					<EmptyContent>
 						<p className="text-xs text-muted-foreground/60 font-mono break-all">
 							{this.state.error?.message}
 						</p>
@@ -101,29 +107,33 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 								{t('errorBoundary.goHome')}
 							</button>
 						</div>
-					</div>
-				</div>
+					</EmptyContent>
+				</Empty>
 			);
 		}
 
 		// feature level
 		return (
-			<div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 space-y-2">
-				<div className="flex items-center gap-2 text-sm text-destructive">
-					<AlertCircle className="h-4 w-4 shrink-0" />
-					<span className="font-medium">{t('errorBoundary.featureTitle')}</span>
-				</div>
-				<p className="text-xs text-muted-foreground font-mono break-all">
-					{this.state.error?.message}
-				</p>
-				<button
-					type="button"
-					onClick={this.handleReset}
-					className="text-xs text-primary hover:text-primary/80 transition-colors"
-				>
-					{t('errorBoundary.tryAgain')}
-				</button>
-			</div>
+			<Empty className="rounded-lg border border-destructive/30 bg-destructive/10 p-4">
+				<EmptyHeader>
+					<EmptyMedia>
+						<AlertCircle className="h-4 w-4 text-destructive" />
+					</EmptyMedia>
+					<EmptyTitle className="text-destructive">{t('errorBoundary.featureTitle')}</EmptyTitle>
+				</EmptyHeader>
+				<EmptyContent>
+					<p className="text-xs text-muted-foreground font-mono break-all">
+						{this.state.error?.message}
+					</p>
+					<button
+						type="button"
+						onClick={this.handleReset}
+						className="text-xs text-primary hover:text-primary/80 transition-colors"
+					>
+						{t('errorBoundary.tryAgain')}
+					</button>
+				</EmptyContent>
+			</Empty>
 		);
 	}
 }
