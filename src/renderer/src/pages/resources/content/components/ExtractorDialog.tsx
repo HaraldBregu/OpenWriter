@@ -65,7 +65,12 @@ const GENERIC_CONFIG: GenericConfig = {
 	placeholder: 'File',
 	changeLabel: 'Cambia file',
 	icon: <FileText className="h-5 w-5 text-muted-foreground" />,
-	emptyIcon: <FileText className="size-8 text-muted-foreground" />,
+	emptyIcon: (
+		<div className="flex items-center gap-2">
+			<ImageIcon className="size-8 text-muted-foreground" />
+			<FileText className="size-8 text-muted-foreground" />
+		</div>
+	),
 };
 
 const detectType = (file: File): ExtractorType =>
