@@ -62,4 +62,4 @@ export const PDF = forwardRef<PDFViewerRef, PDFProps>(function PDF(
 	);
 });
 
-export type { PDFViewerRef as PdfViewerRef } from '@embedpdf/react-pdf-viewer';
+export type { PDFViewerRef as PDFRef } from '@embedpdf/react-pdf-viewer';
