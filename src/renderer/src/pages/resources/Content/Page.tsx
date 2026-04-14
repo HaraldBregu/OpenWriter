@@ -77,33 +77,16 @@ function PageContent(): ReactElement {
 		filteredFolders,
 		isLoading,
 		uploading,
-		removing,
-		editing,
-		selected,
-		allChecked,
-		someChecked,
 		sortKey,
 		sortDirection,
 		handleSort,
-		handleToggleAll,
 		handleToggleRow,
 		searchQuery,
 		setSearchQuery,
 		handleUpload,
 		handleOpenResourcesFolder,
 		handleDelete,
-		handleToggleEdit,
 	} = useContentContext();
-
-	const handleRowKeyDown = (
-		event: KeyboardEvent<HTMLTableRowElement>,
-		folder: FolderEntry
-	): void => {
-		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			handleToggleRow(folder.id);
-		}
-	};
 
 	return (
 		<PageContainer>
