@@ -321,6 +321,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 								</div>
 							</ResizablePanel>
 						</ResizablePanelGroup>
+						</FileUpload>
 					</DialogDescription>
 				</DialogHeader>
 			</DialogContent>
