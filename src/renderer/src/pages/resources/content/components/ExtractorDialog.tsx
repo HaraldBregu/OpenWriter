@@ -335,7 +335,9 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										</div>
 									</div>
 								</ScrollArea>
-								<div className="space-y-1.5 border-t px-4 pt-3 pb-2">
+							</CardContent>
+							<CardFooter className="flex-col items-stretch gap-3 rounded-none border-t bg-transparent p-4">
+								<div className="space-y-1.5">
 									<label className="text-xs font-medium text-muted-foreground">
 										Nome file di output
 									</label>
@@ -346,7 +348,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										className="h-8 text-xs"
 									/>
 								</div>
-								<div className="flex gap-2 border-t p-4">
+								<div className="flex gap-2">
 									<Button variant="outline" className="flex-1" onClick={() => handleClose(false)}>
 										Annulla
 									</Button>
@@ -361,7 +363,8 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 										{config.submitLabel}
 									</Button>
 								</div>
-							</div>
+							</CardFooter>
+						</Card>
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</DialogContent>
