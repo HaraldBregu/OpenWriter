@@ -17,6 +17,14 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import {
+	Empty,
+	EmptyContent,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from '@/components/ui/Empty';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
