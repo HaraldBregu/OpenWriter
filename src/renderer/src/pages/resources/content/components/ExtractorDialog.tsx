@@ -79,6 +79,8 @@ const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 		placeholder: 'Immagine',
 		changeLabel: 'Cambia immagine',
 		title: 'Impostazioni analisi',
+		description:
+			"Configura il modello AI per estrarre descrizione, didascalia e metadati dall'immagine.",
 		submitLabel: 'Analizza',
 		emptyTitle: 'Nessuna immagine selezionata',
 		emptyDescription: "Trascina un'immagine qui o",
