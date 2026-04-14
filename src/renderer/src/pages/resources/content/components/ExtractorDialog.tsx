@@ -73,7 +73,7 @@ interface TypeConfig {
 
 const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 	image: {
-		accept: 'image/png,image/jpeg,image/gif,image/webp,image/bmp,image/svg+xml',
+		accept: 'image/*',
 		icon: <ImageIcon className="h-5 w-5 text-muted-foreground" />,
 		emptyIcon: <ImageIcon className="size-8 text-muted-foreground" />,
 		placeholder: 'Immagine',
@@ -207,13 +207,13 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 					</ResizablePanel>
 					<ResizableHandle withHandle />
 					<ResizablePanel defaultSize={30} minSize="30%">
-						<Card className="flex h-full flex-col gap-0 rounded-none border-0 py-0 ring-0">
-							<CardHeader className="gap-1 border-b p-4">
+						<Card className="flex h-full flex-col gap-0 rounded-none border-0 ring-0">
+							<CardHeader className="gap-1 border-b">
 								<CardTitle className="text-sm font-semibold">{config.title}</CardTitle>
 								<CardDescription className="text-xs">{config.description}</CardDescription>
 							</CardHeader>
 							<CardContent className="flex min-h-0 flex-1 flex-col p-0">
-								<Item className="gap-3 border-b p-4">
+								<Item>
 									<ItemMedia variant="icon" className="h-10 w-10 rounded-lg bg-muted">
 										{config.icon}
 									</ItemMedia>
@@ -343,7 +343,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 									</div>
 								</ScrollArea>
 							</CardContent>
-							<CardFooter className="flex-col items-stretch gap-3 rounded-none border-t bg-transparent p-4">
+							<CardFooter className="flex-col items-stretch gap-3 rounded-none bg-transparent p-4">
 								<div className="space-y-1.5">
 									<label className="text-xs font-medium text-muted-foreground">
 										Nome file di output
