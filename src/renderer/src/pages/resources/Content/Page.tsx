@@ -9,12 +9,10 @@ import {
 	ImageIcon,
 	MoreHorizontal,
 	Music,
-	Pencil,
 	Search,
 	Trash2,
 	Upload,
 	Video,
-	X,
 } from 'lucide-react';
 import {
 	PageBody,
