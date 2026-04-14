@@ -98,7 +98,7 @@ function PageContent(): ReactElement {
 					</Button>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							render={<Button variant="outline" size="lg" />}
+							render={<Button size="lg" />}
 							className="gap-1.5"
 						>
 							<Upload />
@@ -124,10 +124,6 @@ function PageContent(): ReactElement {
 							</DropdownMenuItem>
 						</DropdownMenuContent>
 					</DropdownMenu>
-					<Button size="lg" onClick={handleUpload} disabled={uploading}>
-						<Upload />
-						{t(section.uploadKey)}
-					</Button>
 				</PageHeaderItems>
 			</PageHeader>
 			<PageSubHeader>
