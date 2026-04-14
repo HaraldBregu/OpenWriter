@@ -89,56 +89,40 @@ const PROVIDER_COLORS: Record<string, string> = {
 };
 
 interface TypeConfig {
-	readonly accept: string;
 	readonly icon: ReactElement;
-	readonly emptyIcon: ReactElement;
 	readonly placeholder: string;
 	readonly changeLabel: string;
 	readonly title: string;
 	readonly description: string;
 	readonly submitLabel: string;
-	readonly emptyTitle: string;
-	readonly emptyDescription: string;
-	readonly selectLabel: string;
 }
 
 const TYPE_CONFIG: Record<ExtractorType, TypeConfig> = {
 	image: {
-		accept: 'image/*',
 		icon: <ImageIcon className="h-5 w-5 text-muted-foreground" />,
-		emptyIcon: <ImageIcon className="size-8 text-muted-foreground" />,
 		placeholder: 'Immagine',
 		changeLabel: 'Cambia immagine',
 		title: 'Impostazioni analisi',
 		description:
 			"Configura il modello AI per estrarre descrizione, didascalia e metadati dall'immagine.",
 		submitLabel: 'Analizza',
-		emptyTitle: 'Nessuna immagine selezionata',
-		emptyDescription: "Trascina un'immagine qui o",
-		selectLabel: 'Seleziona immagine',
 	},
 	pdf: {
-		accept: 'application/pdf',
 		icon: <FileText className="h-5 w-5 text-muted-foreground" />,
-		emptyIcon: <FileText className="size-8 text-muted-foreground" />,
 		placeholder: 'PDF',
 		changeLabel: 'Cambia PDF',
 		title: 'Impostazioni OCR',
 		description: 'Configura il modello OCR per estrarre testo, tabelle e struttura dal PDF.',
 		submitLabel: 'Esegui OCR',
-		emptyTitle: 'Nessun PDF selezionato',
-		emptyDescription: 'Trascina un PDF qui o',
-		selectLabel: 'Seleziona PDF',
 	},
 };
 
 interface ExtractorDialogProps {
-	readonly type: ExtractorType;
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
 }
 
-export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogProps): ReactElement {
+export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): ReactElement {
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['descrizione']);
 	const [outputFileName, setOutputFileName] = useState('');
