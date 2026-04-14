@@ -137,7 +137,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		}
 	};
 
-	const hasImageInDrag = (e: React.DragEvent): boolean => {
+	const hasImageInDrag = (e: ReactDragEvent): boolean => {
 		const items = e.dataTransfer?.items;
 		if (!items || items.length === 0) return false;
 		return Array.from(items).some(
@@ -145,19 +145,19 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		);
 	};
 
-	const handleDragOver = (e: React.DragEvent): void => {
+	const handleDragOver = (e: ReactDragEvent): void => {
 		if (!hasImageInDrag(e)) return;
 		e.preventDefault();
 		e.dataTransfer.dropEffect = 'copy';
 		if (!isDragging) setIsDragging(true);
 	};
 
-	const handleDragLeave = (e: React.DragEvent): void => {
+	const handleDragLeave = (e: ReactDragEvent): void => {
 		if (e.currentTarget.contains(e.relatedTarget as Node)) return;
 		setIsDragging(false);
 	};
 
-	const handleDrop = (e: React.DragEvent): void => {
+	const handleDrop = (e: ReactDragEvent): void => {
 		e.preventDefault();
 		setIsDragging(false);
 		const files = e.dataTransfer?.files;
