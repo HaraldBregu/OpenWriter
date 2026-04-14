@@ -139,13 +139,13 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
 			<DialogContent className="flex h-[calc(100vh-16rem)] min-w-[calc(100vw-18rem)] flex-col py-0 p-0">
-				<FileUpload
-					accept={config.accept}
-					onFileAccept={handleFileAccept}
-					className="flex min-h-0 w-full flex-1"
-				>
-					<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
-						<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
+				<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
+					<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
+						<FileUpload
+							accept={config.accept}
+							onFileAccept={handleFileAccept}
+							className="h-full w-full"
+						>
 							{!fileSrc && (
 								<FileUploadDropzone className="flex h-full w-full items-center justify-center rounded-none border-0 bg-muted/30 p-8 hover:bg-muted/40">
 									<Empty className="border-0 p-0">
@@ -164,21 +164,37 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 									</Empty>
 								</FileUploadDropzone>
 							)}
-							{fileSrc && type === 'image' && (
-								<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
-									<Image
-										src={fileSrc}
-										alt={fileName ?? 'Preview'}
-										className="max-h-full max-w-full object-contain"
-										cardClassName="max-h-full max-w-full overflow-hidden"
+							{fileSrc && (
+								<div className="relative h-full w-full">
+									{type === 'image' && (
+										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
+											<Image
+												src={fileSrc}
+												alt={fileName ?? 'Preview'}
+												className="max-h-full max-w-full object-contain"
+												cardClassName="max-h-full max-w-full overflow-hidden"
+											/>
+										</div>
+									)}
+									{type === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
+									<FileUploadTrigger
+										render={
+											<Button
+												variant="outline"
+												size="xs"
+												className="absolute right-3 top-3 z-10 shadow-sm"
+											>
+												{config.changeLabel}
+											</Button>
+										}
 									/>
 								</div>
 							)}
-							{fileSrc && type === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
-						</ResizablePanel>
-						<ResizableHandle withHandle />
-						<ResizablePanel defaultSize={30} minSize="30%">
-							<div className="flex h-full flex-col">
+						</FileUpload>
+					</ResizablePanel>
+					<ResizableHandle withHandle />
+					<ResizablePanel defaultSize={30} minSize="30%">
+						<div className="flex h-full flex-col">
 								<div className="border-b p-4">
 									<div className="flex items-start gap-3">
 										<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
@@ -188,21 +204,6 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 											<p className="truncate text-sm font-semibold">
 												{fileName ?? config.placeholder}
 											</p>
-											{fileName && (
-												<div className="mt-1 flex items-center gap-2">
-													<FileUploadTrigger
-														render={
-															<Button
-																variant="ghost"
-																size="xs"
-																className="h-auto p-0 text-[11px] text-muted-foreground hover:text-foreground"
-															>
-																{config.changeLabel}
-															</Button>
-														}
-													/>
-												</div>
-											)}
 										</div>
 									</div>
 								</div>
