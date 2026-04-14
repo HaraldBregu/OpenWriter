@@ -209,7 +209,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 							)}
 							{fileSrc && (
 								<div className="relative h-full w-full">
-									{type === 'image' && (
+									{detectedType === 'image' && (
 										<div className="flex h-full w-full items-center justify-center bg-muted/30 p-8">
 											<Image
 												src={fileSrc}
@@ -219,7 +219,7 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 											/>
 										</div>
 									)}
-									{type === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
+									{detectedType === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
 									<FileUploadTrigger
 										render={
 											<Button
