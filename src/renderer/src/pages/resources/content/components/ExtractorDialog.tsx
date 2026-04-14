@@ -138,7 +138,7 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className="flex h-[calc(100vh-16rem)] min-w-[calc(100vw-18rem)] flex-col py-0 p-0">
+			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col py-0 p-0">
 				<ResizablePanelGroup orientation="horizontal" className="h-full w-full">
 					<ResizablePanel defaultSize={70} minSize="40%" className="relative rounded-l-xl">
 						<FileUpload
@@ -356,9 +356,8 @@ export function ExtractorDialog({ type, open, onOpenChange }: ExtractorDialogPro
 									</Button>
 								</div>
 							</div>
-						</ResizablePanel>
-					</ResizablePanelGroup>
-				</FileUpload>
+					</ResizablePanel>
+				</ResizablePanelGroup>
 			</DialogContent>
 		</Dialog>
 	);
