@@ -25,7 +25,7 @@ interface ContentContextValue {
 	someChecked: boolean;
 	handleToggleAll: () => void;
 	handleToggleRow: (id: string) => void;
-	handleUpload: () => void;
+	handleUpload: (extensions?: string[]) => void;
 	handleToggleEdit: () => void;
 	handleOpenResourcesFolder: () => void;
 	handleDelete: () => void;
