@@ -59,9 +59,9 @@ const GENERIC_CONFIG: GenericConfig = {
 	title: 'Impostazioni estrazione',
 	description: "Carica un'immagine o un PDF per configurare l'estrazione.",
 	submitLabel: 'Esegui',
-	emptyTitle: 'Nessun file selezionato',
-	emptyDescription: 'Trascina immagine o PDF qui o',
-	selectLabel: 'Seleziona file',
+	emptyTitle: 'Carica un file',
+	emptyDescription: 'Trascina qui un\'immagine (PNG, JPG, WEBP…) o un PDF, oppure',
+	selectLabel: 'Scegli file',
 	placeholder: 'File',
 	changeLabel: 'Cambia file',
 	icon: <FileText className="h-5 w-5 text-muted-foreground" />,
@@ -220,17 +220,6 @@ export function ExtractorDialog({ open, onOpenChange }: ExtractorDialogProps): R
 										</div>
 									)}
 									{detectedType === 'pdf' && <Pdf src={fileSrc} className="h-full w-full" />}
-									<FileUploadTrigger
-										render={
-											<Button
-												variant="outline"
-												size="xs"
-												className="absolute right-3 top-3 z-10 shadow-sm"
-											>
-												{config.changeLabel}
-											</Button>
-										}
-									/>
 								</div>
 							)}
 						</FileUpload>

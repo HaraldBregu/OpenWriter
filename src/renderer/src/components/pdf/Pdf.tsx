@@ -1,7 +1,7 @@
 import { forwardRef } from 'react';
 import type { CSSProperties } from 'react';
 import {
-	PDFViewer as EmbedPdfViewer,
+	PDFViewer,
 	type PDFViewerProps as EmbedPdfViewerProps,
 	type PDFViewerRef,
 } from '@embedpdf/react-pdf-viewer';
@@ -46,7 +46,7 @@ export const Pdf = forwardRef<PDFViewerRef, PdfProps>(function Pdf(
 	ref,
 ) {
 	return (
-		<EmbedPdfViewer
+		<PDFViewer
 			ref={ref}
 			className={className}
 			style={style}
