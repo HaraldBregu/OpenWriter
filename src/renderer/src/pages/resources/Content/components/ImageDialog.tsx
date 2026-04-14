@@ -108,30 +108,7 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		);
 	};
 
-	const handleSelectImage = async () => {
-		try {
-			const result = await window.workspace.selectFile(['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg']);
-			if (!result) return;
-
-			const base64 = await window.workspace.readFileBinary(result.path);
-			const blob = new Blob(
-				[Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))],
-				{ type: `image/${result.name.split('.').pop()?.toLowerCase() ?? 'png'}` }
-			);
-			const url = URL.createObjectURL(blob);
-
-			if (imageSrc) URL.revokeObjectURL(imageSrc);
-			setImageSrc(url);
-			setImageName(result.name);
-			if (!outputFileName) {
-				setOutputFileName(result.name.replace(/\.[^.]+$/, ''));
-			}
-		} catch {
-			// picker cancelled
-		}
-	};
-
-	const loadImageFromFile = (file: File): void => {
+	const handleFileAccept = (file: File): void => {
 		const url = URL.createObjectURL(file);
 		if (imageSrc) URL.revokeObjectURL(imageSrc);
 		setImageSrc(url);
@@ -139,35 +116,6 @@ export function ImageDialog({ open, onOpenChange }: ImageDialogProps): ReactElem
 		if (!outputFileName) {
 			setOutputFileName(file.name.replace(/\.[^.]+$/, ''));
 		}
-	};
-
-	const hasImageInDrag = (e: ReactDragEvent): boolean => {
-		const items = e.dataTransfer?.items;
-		if (!items || items.length === 0) return false;
-		return Array.from(items).some(
-			(i) => i.kind === 'file' && (i.type === '' || IMAGE_MIME_PATTERN.test(i.type))
-		);
-	};
-
-	const handleDragOver = (e: ReactDragEvent): void => {
-		if (!hasImageInDrag(e)) return;
-		e.preventDefault();
-		e.dataTransfer.dropEffect = 'copy';
-		if (!isDragging) setIsDragging(true);
-	};
-
-	const handleDragLeave = (e: ReactDragEvent): void => {
-		if (e.currentTarget.contains(e.relatedTarget as Node)) return;
-		setIsDragging(false);
-	};
-
-	const handleDrop = (e: ReactDragEvent): void => {
-		e.preventDefault();
-		setIsDragging(false);
-		const files = e.dataTransfer?.files;
-		if (!files || files.length === 0) return;
-		const image = Array.from(files).find(isSupportedImage);
-		if (image) loadImageFromFile(image);
 	};
 
 	const handleClose = (nextOpen: boolean) => {
