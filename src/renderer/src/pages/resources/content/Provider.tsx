@@ -1,14 +1,51 @@
-import { useCallback, useReducer } from 'react';
+import { createContext, useCallback, useContext, useReducer } from 'react';
 import type { ReactElement, ReactNode } from 'react';
 import type { FolderEntry } from '../../../../../shared/types';
-import { ContentContext } from './context/ContentContext';
-import type { ContentContextValue } from './context/ContentContext';
+import type { SortDirection, SortKey } from './shared/types';
 import { initialState } from './context/state';
 import { contentReducer } from './context/reducer';
 import { useSort } from './hooks/use-sort';
 import { useFilter } from './hooks/use-filter';
 import { useSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
+
+export interface ContentContextValue {
+	folders: FolderEntry[];
+	setFolders: (folders: FolderEntry[]) => void;
+	filteredFolders: FolderEntry[];
+	isLoading: boolean;
+	setIsLoading: (loading: boolean) => void;
+	uploading: boolean;
+	editing: boolean;
+	searchQuery: string;
+	setSearchQuery: (query: string) => void;
+	sortKey: SortKey;
+	sortDirection: SortDirection;
+	handleSort: (key: SortKey) => void;
+	selected: Set<string>;
+	allChecked: boolean;
+	someChecked: boolean;
+	handleToggleAll: () => void;
+	handleToggleRow: (id: string) => void;
+	handleUpload: (extensions?: string[]) => void;
+	handleToggleEdit: () => void;
+	handleOpenResourcesFolder: () => void;
+	handleDelete: () => void;
+	handleConfirmDelete: () => Promise<void>;
+	confirmOpen: boolean;
+	setConfirmOpen: (open: boolean) => void;
+	removing: boolean;
+}
+
+const ContentContext = createContext<ContentContextValue | null>(null);
+
+export function useContentContext(): ContentContextValue {
+	const context = useContext(ContentContext);
+	if (!context) {
+		throw new Error('useContentContext must be used within a ContentProvider');
+	}
+	return context;
+}
 
 interface ContentProviderProps {
 	readonly children: ReactNode;
