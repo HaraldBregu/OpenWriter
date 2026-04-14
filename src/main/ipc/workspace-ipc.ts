@@ -151,6 +151,18 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			WorkspaceChannels.openResourcesContentsFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const contentsService = ctx.getService<ContentsService>('contentsService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) return;
+				await shell.openPath(contentsService.getContentsDir(currentPath));
+			}, WorkspaceChannels.openResourcesContentsFolder)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.openFilesFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const ctx = getWindowContext(event, container);
