@@ -101,7 +101,7 @@ function PageContent(): ReactElement {
 							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => setMarkdownDialogOpen(true)}>
+							<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
 								<FileText className="h-4 w-4" />
 								Markdown
 							</DropdownMenuItem>
