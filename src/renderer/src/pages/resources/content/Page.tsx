@@ -47,7 +47,7 @@ import {
 } from '@/components/ui/Table';
 import { formatDate } from '../shared/resource-utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
-import { useContentContext } from './context/ContentContext';
+import { useContentContext } from './Provider';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ExtractorDialog } from './components/ExtractorDialog';
 import { SortIcon } from './components/SortIcon';
