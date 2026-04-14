@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { KeyboardEvent, ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ChevronDown,
@@ -43,7 +43,6 @@ import {
 	Table,
 	TableBody,
 	TableCell,
-	TableFooter,
 	TableHead,
 	TableHeader,
 	TableRow,
@@ -319,16 +318,6 @@ function PageContent(): ReactElement {
 								))
 							)}
 						</TableBody>
-						<TableFooter>
-							<TableRow>
-								<TableCell
-									colSpan={editing ? SORT_COLUMNS.length + 2 : SORT_COLUMNS.length + 1}
-									className="px-6 text-muted-foreground"
-								>
-									{filteredFolders.length} folder{filteredFolders.length !== 1 ? 's' : ''}
-								</TableCell>
-							</TableRow>
-						</TableFooter>
 					</Table>
 				)}
 			</PageBody>

@@ -18,7 +18,7 @@ export function DeleteConfirmDialog(): ReactElement {
 
 	return (
 		<AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-			<AlertDialogContent>
+			<AlertDialogContent size="sm">
 				<AlertDialogHeader>
 					<AlertDialogTitle>{t('resources.removeItems')}</AlertDialogTitle>
 					<AlertDialogDescription>
@@ -27,10 +27,7 @@ export function DeleteConfirmDialog(): ReactElement {
 				</AlertDialogHeader>
 				<AlertDialogFooter>
 					<AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
-					<AlertDialogAction
-						className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-						onClick={handleConfirmDelete}
-					>
+					<AlertDialogAction variant="destructive" onClick={handleConfirmDelete}>
 						{t('resources.remove')}
 					</AlertDialogAction>
 				</AlertDialogFooter>
