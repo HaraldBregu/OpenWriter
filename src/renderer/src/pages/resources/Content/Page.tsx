@@ -45,7 +45,6 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import type { FolderEntry } from '../../../../../shared/types';
 import { formatDate } from '../shared/resource-utils';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './context/ContentContext';
@@ -173,16 +172,6 @@ function PageContent(): ReactElement {
 					<Table className="table-fixed text-foreground">
 						<TableHeader className="bg-background sticky top-0 z-10">
 							<TableRow>
-								{editing && (
-									<TableHead className="w-12 px-6 text-muted-foreground">
-										<Checkbox
-											checked={someChecked ? undefined : allChecked}
-											indeterminate={someChecked}
-											onCheckedChange={handleToggleAll}
-											aria-label="Select all"
-										/>
-									</TableHead>
-								)}
 								{SORT_COLUMNS.map(({ key, label, className }) => (
 									<TableHead key={key} className={`px-6 text-muted-foreground ${className}`}>
 										<button
