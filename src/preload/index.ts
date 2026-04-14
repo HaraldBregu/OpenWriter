@@ -83,6 +83,7 @@ const app: AppApi = {
 	openSystemScreenRecording: () => typedInvokeUnwrap(AppChannels.openSystemScreenRecording),
 	setTrayEnabled: (enabled: boolean) => typedInvokeUnwrap(AppChannels.setTrayEnabled, enabled),
 	getTrayEnabled: () => typedInvokeUnwrap(AppChannels.getTrayEnabled),
+	getPathForFile: (file: File): string => webUtils.getPathForFile(file),
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
