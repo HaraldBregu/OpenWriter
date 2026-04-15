@@ -11,7 +11,7 @@ import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/comp
 import { Provider } from './Provider';
 import { useImage } from './hooks/use-image';
 import { ImageEditor } from './components/ImageEditor';
-import { DeleteConfirmDialog, ImagePreviewDialog } from './components';
+import { ImagePreviewDialog } from './components';
 
 function ImageInner(): React.JSX.Element {
 	const { t } = useTranslation();
@@ -69,8 +69,7 @@ function ImageInner(): React.JSX.Element {
 									'pointer-events-none opacity-0',
 									'transition-all duration-200 ease-out',
 									'-translate-y-1 scale-95',
-									showToolbar &&
-										'pointer-events-auto opacity-100 translate-y-0 scale-100'
+									showToolbar && 'pointer-events-auto opacity-100 translate-y-0 scale-100'
 								)}
 								role="toolbar"
 								aria-label={t('imageNode.imageToolbar')}
@@ -102,37 +101,25 @@ function ImageInner(): React.JSX.Element {
 											</Button>
 										}
 									/>
-									<TooltipContent
-										side="top"
-										sideOffset={4}
-										className="px-2 py-1 text-xs"
-									>
+									<TooltipContent side="top" sideOffset={4} className="px-2 py-1 text-xs">
 										{t('imageNode.edit')}
 									</TooltipContent>
 								</Tooltip>
 
-								<DeleteConfirmDialog
-									onConfirm={handleDelete}
-									trigger={
-										<Button
-											variant="ghost"
-											size="icon-xs"
-											aria-label={t('imageNode.delete')}
-											className="h-5 w-5 text-muted-foreground hover:text-destructive [&_svg]:h-3 [&_svg]:w-3"
-										>
-											<Trash2 />
-										</Button>
-									}
-								/>
+								<Button
+									variant="ghost"
+									size="icon-xs"
+									onClick={handleDelete}
+									aria-label={t('imageNode.delete')}
+									className="h-5 w-5 text-muted-foreground hover:text-destructive [&_svg]:h-3 [&_svg]:w-3"
+								>
+									<Trash2 />
+								</Button>
 							</div>
 						</TooltipProvider>
 
 						{state.loadError || !resolvedSrc ? (
-							<Empty
-								className="h-32 w-64"
-								role="img"
-								aria-label={alt ?? t('imageNode.notFound')}
-							>
+							<Empty className="h-32 w-64" role="img" aria-label={alt ?? t('imageNode.notFound')}>
 								<EmptyHeader>
 									<EmptyMedia variant="icon">
 										<ImageOff />
