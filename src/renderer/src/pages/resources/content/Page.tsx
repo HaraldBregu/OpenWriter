@@ -237,23 +237,41 @@ function PageContent(): ReactElement {
 									<TableRow
 										key={folder.id}
 										className="cursor-pointer"
-										onClick={() => {
-											if (folder.kind === 'file' && folder.name.toLowerCase().endsWith('.md')) {
-												setPreviewFolder(folder);
-											}
-										}}
+										onDoubleClick={() => startEditing(folder)}
 									>
 										<TableCell className="px-6">
 											<div className="flex items-center gap-3">
 												<FolderIcon className="h-5 w-5 text-muted-foreground" />
-												<div className="min-w-0">
-													<p className="truncate font-medium text-sm">{folder.name}</p>
-													<p
-														className="truncate text-xs text-muted-foreground"
-														title={formatDate(folder.createdAt)}
-													>
-														{folder.path}
-													</p>
+												<div className="min-w-0 flex-1">
+													{editingId === folder.id ? (
+														<Input
+															autoFocus
+															value={editingName}
+															onChange={(e) => setEditingName(e.target.value)}
+															onClick={(e) => e.stopPropagation()}
+															onBlur={() => void commitRename(folder)}
+															onKeyDown={(e) => {
+																if (e.key === 'Enter') {
+																	e.preventDefault();
+																	void commitRename(folder);
+																} else if (e.key === 'Escape') {
+																	e.preventDefault();
+																	cancelEditing();
+																}
+															}}
+															className="h-8 text-sm"
+														/>
+													) : (
+														<>
+															<p className="truncate font-medium text-sm">{folder.name}</p>
+															<p
+																className="truncate text-xs text-muted-foreground"
+																title={formatDate(folder.createdAt)}
+															>
+																{folder.path}
+															</p>
+														</>
+													)}
 												</div>
 											</div>
 										</TableCell>
