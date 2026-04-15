@@ -46,8 +46,10 @@ import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { useContentContext } from './Provider';
 import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
+import { MarkdownPreviewDialog } from './components/MarkdownPreviewDialog';
 import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './shared/types';
+import type { FolderEntry } from '../../../../../shared/types';
 import Layout from './Layout';
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
