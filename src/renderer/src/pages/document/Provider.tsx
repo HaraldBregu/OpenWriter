@@ -40,6 +40,15 @@ export function useSidebarVisibility(): Pick<ContextValue, 'activeSidebar' | 'an
 	return { activeSidebar, animate, setActiveSidebar, toggleSidebar };
 }
 
+export function useInsertContentDialog(): Pick<
+	ContextValue,
+	'insertContentDialogOpen' | 'openInsertContentDialog' | 'closeInsertContentDialog'
+> {
+	const { insertContentDialogOpen, openInsertContentDialog, closeInsertContentDialog } =
+		useContext();
+	return { insertContentDialogOpen, openInsertContentDialog, closeInsertContentDialog };
+}
+
 interface ProviderProps {
 	readonly children: ReactNode;
 	readonly documentId: string | undefined;

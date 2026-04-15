@@ -20,7 +20,7 @@ import { useDocumentDispatch, useDocumentState } from '../../hooks';
 import { useChatState, useChatDispatch } from './hooks';
 import type { ChatSessionFile } from './shared';
 import { syncChatSessionsFromDisk } from '../../services/chat-session-storage';
-import { CardHeader } from '@/components/ui/Card';
+import { CardAction, CardHeader, CardTitle } from '@/components/ui/Card';
 import {
 	Item,
 	ItemContent,
@@ -128,6 +128,7 @@ const PanelHeader: React.FC = () => {
 				<h2 className="truncate pr-4 text-sm font-medium tracking-tight text-foreground">
 					{t('agenticPanel.headerTitle', 'Chat history')}
 				</h2>
+				
 				<div className="flex items-center gap-2">
 					<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<PopoverTrigger
