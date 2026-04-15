@@ -344,10 +344,7 @@ function PageContent(): ReactElement {
 															</DropdownMenuItem>
 															<DropdownMenuItem
 																className="text-destructive focus:text-destructive"
-																onClick={() => {
-																	handleToggleRow(folder.id);
-																	handleDelete();
-																}}
+																onClick={() => handleDeleteOne(folder.id)}
 															>
 																<Trash2 className="h-4 w-4" />
 																Delete
