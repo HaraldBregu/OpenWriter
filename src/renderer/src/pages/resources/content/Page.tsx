@@ -318,7 +318,8 @@ function PageContent(): ReactElement {
 														Delete
 													</DropdownMenuItem>
 												</DropdownMenuContent>
-											</DropdownMenu>
+												</DropdownMenu>
+											</div>
 										</TableCell>
 									</TableRow>
 								))
