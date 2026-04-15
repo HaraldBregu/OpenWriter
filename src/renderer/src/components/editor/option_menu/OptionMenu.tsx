@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Heading, Type, List, ListOrdered, Minus, Sparkles, ImagePlus } from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
@@ -20,17 +19,6 @@ interface OptionMenuProps {
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 9;
 const FIRST_AI_INDEX = 8;
-
-function iconClass(tone: 'default' | 'ai', isSelected: boolean): string {
-	if (tone === 'ai') {
-		return isSelected
-			? 'bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))] shadow-sm'
-			: 'bg-[hsl(var(--info)/0.16)] text-[hsl(var(--info))] dark:bg-[hsl(var(--info)/0.22)] dark:text-[hsl(var(--info))]';
-	}
-	return isSelected
-		? 'bg-background/80 text-foreground shadow-sm dark:bg-background/70 dark:text-foreground'
-		: 'text-foreground/72 dark:text-foreground/82';
-}
 
 export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
@@ -246,21 +234,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		};
 	}, [editor, onKeyEvent]);
 
-	const renderIcon = (
-		Icon: React.ElementType,
-		isSelected: boolean,
-		tone: 'default' | 'ai'
-	): React.JSX.Element => (
-		<span
-			className={cn(
-				'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-				iconClass(tone, isSelected)
-			)}
-		>
-			<Icon className="h-4 w-4 shrink-0" />
-		</span>
-	);
-
 	const itemProps = (
 		index: number,
 		onRun: () => void
@@ -285,40 +258,40 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button {...itemProps(0, () => runHeading(1))}>
-				{renderIcon(Heading, selectedIndex === 0, 'default')}
+				<Heading />
 				<span className="truncate">Heading 1</span>
 			</Button>
 			<Button {...itemProps(1, () => runHeading(2))}>
-				{renderIcon(Heading, selectedIndex === 1, 'default')}
+				<Heading />
 				<span className="truncate">Heading 2</span>
 			</Button>
 			<Button {...itemProps(2, () => runHeading(3))}>
-				{renderIcon(Heading, selectedIndex === 2, 'default')}
+				<Heading />
 				<span className="truncate">Heading 3</span>
 			</Button>
 			<Button {...itemProps(3, runParagraph)}>
-				{renderIcon(Type, selectedIndex === 3, 'default')}
+				<Type />
 				<span className="truncate">Text</span>
 			</Button>
 			<Button {...itemProps(4, runBulletList)}>
-				{renderIcon(List, selectedIndex === 4, 'default')}
+				<List />
 				<span className="truncate">Bullet List</span>
 			</Button>
 			<Button {...itemProps(5, runOrderedList)}>
-				{renderIcon(ListOrdered, selectedIndex === 5, 'default')}
+				<ListOrdered />
 				<span className="truncate">Ordered List</span>
 			</Button>
 			<Button {...itemProps(6, runHorizontalRule)}>
-				{renderIcon(Minus, selectedIndex === 6, 'default')}
+				<Minus />
 				<span className="truncate">Horizontal Rule</span>
 			</Button>
 			<Button {...itemProps(7, runImage)}>
-				{renderIcon(ImagePlus, selectedIndex === 7, 'default')}
+				<ImagePlus />
 				<span className="truncate">Image</span>
 			</Button>
 			<hr className="my-1 border-border/80 dark:border-border" />
 			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
-				{renderIcon(Sparkles, selectedIndex === FIRST_AI_INDEX, 'ai')}
+				<Sparkles />
 				<span className="truncate">Continue with assistant</span>
 			</Button>
 		</Card>
