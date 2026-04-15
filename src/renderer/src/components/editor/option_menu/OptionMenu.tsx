@@ -74,10 +74,8 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 					const markdownAfterCursor =
 						serializer?.serialize(subDocAfter) ?? ed.state.doc.textBetween(from, docSize, '\n');
 					isLockedRef.current = true;
-					setLoadingAssistant(true);
 					const closeMenu = (): void => {
 						isLockedRef.current = false;
-						setLoadingAssistant(false);
 						menuControlsRef.current.forceHide();
 					};
 					onContinueWithAssistantRef.current?.(
