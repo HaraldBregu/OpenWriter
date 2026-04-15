@@ -24,7 +24,7 @@ export function useAssistantTask(
 	documentId: string | undefined,
 	editorRef: RefObject<TextEditorElement | null>
 ): AssistantTaskHandlers {
-	const writerTask = useTextGeneratorSubmit(documentId);
+	const textTask = useTextGeneratorSubmit(documentId);
 	const imageTask = useImageGeneratorSubmit(documentId);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
@@ -86,7 +86,7 @@ export function useAssistantTask(
 			editorRef.current?.setAssistantEnable(false);
 
 			try {
-				const taskId = await writerTask.submit({ prompt });
+				const taskId = await textTask.submit({ prompt });
 
 				if (!taskId) {
 					editorRef.current?.setAssistantLoading(false);
@@ -101,7 +101,7 @@ export function useAssistantTask(
 				editorRef.current?.setAssistantEnable(true);
 			}
 		},
-		[assistantIsRunning, documentId, editorRef, writerTask]
+		[assistantIsRunning, documentId, editorRef, textTask]
 	);
 
 	const handleGenerateImageSubmit = useCallback(
