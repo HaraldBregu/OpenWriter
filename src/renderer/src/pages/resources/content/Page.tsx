@@ -91,9 +91,16 @@ function PageContent(): ReactElement {
 		refreshFolders,
 	} = useContentContext();
 
+	const splitName = (folder: FolderEntry): { base: string; ext: string } => {
+		if (folder.kind !== 'file') return { base: folder.name, ext: '' };
+		const dot = folder.name.lastIndexOf('.');
+		if (dot <= 0) return { base: folder.name, ext: '' };
+		return { base: folder.name.slice(0, dot), ext: folder.name.slice(dot) };
+	};
+
 	const startEditing = (folder: FolderEntry): void => {
 		setEditingId(folder.id);
-		setEditingName(folder.name);
+		setEditingName(splitName(folder).base);
 	};
 
 	const cancelEditing = (): void => {
@@ -102,15 +109,17 @@ function PageContent(): ReactElement {
 	};
 
 	const commitRename = async (folder: FolderEntry): Promise<void> => {
-		const next = editingName.trim();
-		if (!next || next === folder.name) {
+		const { base, ext } = splitName(folder);
+		const nextBase = editingName.trim();
+		if (!nextBase || nextBase === base) {
 			cancelEditing();
 			return;
 		}
+		const nextName = `${nextBase}${ext}`;
 		const lastSep = Math.max(folder.path.lastIndexOf('/'), folder.path.lastIndexOf('\\'));
 		const dir = folder.path.slice(0, lastSep);
 		const sep = folder.path.charAt(lastSep);
-		const newPath = `${dir}${sep}${next}`;
+		const newPath = `${dir}${sep}${nextName}`;
 		try {
 			await window.workspace.rename({ oldPath: folder.path, newPath });
 			await refreshFolders();
