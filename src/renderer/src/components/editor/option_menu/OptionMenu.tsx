@@ -42,19 +42,16 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		setSelectedIndex(0);
 	}, [query]);
 
-	const deleteSlash = useCallback(
-		(ed: Editor): { slashPos: number; queryLength: number } | null => {
-			const slashPos = slashPosRef.current;
-			if (slashPos === null) return null;
-			const queryLength = queryRef.current.length;
-			return { slashPos, queryLength };
-		},
-		[]
-	);
+	const deleteSlash = useCallback((): { slashPos: number; queryLength: number } | null => {
+		const slashPos = slashPosRef.current;
+		if (slashPos === null) return null;
+		const queryLength = queryRef.current.length;
+		return { slashPos, queryLength };
+	}, []);
 
 	const runHeading = useCallback(
 		(level: 1 | 2 | 3) => {
-			const ctx = deleteSlash(editor);
+			const ctx = deleteSlash();
 			if (!ctx) return;
 			editor
 				.chain()
