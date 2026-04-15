@@ -58,7 +58,7 @@ const definition: AgentDefinition = {
 			{ role: 'user', content: prompt },
 		];
 
-		logger?.info(LOG_SOURCE, 'Starting writer execution', {
+		logger?.info(LOG_SOURCE, 'Starting text execution', {
 			promptLength: prompt.length,
 			historyLength: history.length,
 			model: provider.modelName,
