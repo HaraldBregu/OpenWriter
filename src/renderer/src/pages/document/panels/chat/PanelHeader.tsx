@@ -124,7 +124,7 @@ const PanelHeader: React.FC = () => {
 
 	return (
 		<CardHeader className="shrink-0 items-center border-b p-0!">
-			<CardTitle>
+			<CardTitle className="row-span-2 self-center">
 				{t('agenticPanel.headerTitle', 'Chat history')}
 			</CardTitle>
 			<CardAction className="flex items-center gap-2 self-center!">
