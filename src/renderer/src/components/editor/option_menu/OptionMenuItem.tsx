@@ -1,6 +1,7 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
 import type { MenuItem } from './menu-items';
 import { getIconClass, getItemClass } from './styles';
 
@@ -23,9 +24,10 @@ export function OptionMenuItem({
 	const tone = item.tone ?? 'default';
 
 	return (
-		<button
+		<Button
+			variant="ghost"
 			className={cn(
-				'flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm transition-colors',
+				'h-auto w-full justify-start gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-normal',
 				getItemClass(isSelected)
 			)}
 			onMouseEnter={onMouseEnter}
@@ -48,6 +50,6 @@ export function OptionMenuItem({
 				)}
 			</span>
 			<span className="truncate">{item.label}</span>
-		</button>
+		</Button>
 	);
 }
