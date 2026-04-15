@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import type { Editor } from '@tiptap/core';
 import { Heading, Type, List, ListOrdered, Minus, Sparkles, ImagePlus } from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
