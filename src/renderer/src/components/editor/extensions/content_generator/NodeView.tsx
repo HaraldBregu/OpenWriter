@@ -117,7 +117,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 									}}
 								>
 									{agentId === 'image' && <ImageIcon />}
-									{agentId === 'writer' && <PenLine />}
+									{agentId === 'text' && <PenLine />}
 								</Button>
 							}
 						/>
