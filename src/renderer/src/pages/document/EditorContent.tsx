@@ -178,27 +178,30 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 		);
 
 		return (
-			<EditorArea
-				loaded={loaded}
-				disabled={assistantIsRunning}
-				editorRef={editorRef}
-				content={content}
-				externalValueVersion={contentVersion}
-				documentId={documentId}
-				defaultTextModel={defaultTextModel}
-				defaultImageModel={defaultImageModel}
-				onTextModelChange={handleTextModelChange}
-				onImageModelChange={handleImageModelChange}
-				onEditorReady={handleEditorReady}
-				onSelectionChange={handleSelectionChange}
-				onChange={handleContentChange}
-				onContinueWithAssistant={handleContinueWithAssistant}
-				onGenerateTextSubmit={handleGenerateTextSubmit}
-				onGenerateImageSubmit={handleGenerateImageSubmit}
-				onInsertContent={onInsertContent}
-				onUndo={onUndo}
-				onRedo={onRedo}
-			/>
+			<EditorContainer>
+				{loaded && (
+					<TextEditor
+						disabled={assistantIsRunning}
+						ref={editorRef}
+						value={content}
+						onSelectionChange={handleSelectionChange}
+						externalValueVersion={contentVersion}
+						onChange={handleContentChange}
+						onContinueWithAssistant={handleContinueWithAssistant}
+						onGenerateTextSubmit={handleGenerateTextSubmit}
+						onGenerateImageSubmit={handleGenerateImageSubmit}
+						onInsertContent={onInsertContent}
+						documentId={documentId}
+						defaultTextModel={defaultTextModel}
+						defaultImageModel={defaultImageModel}
+						onTextModelChange={handleTextModelChange}
+						onImageModelChange={handleImageModelChange}
+						onEditorReady={handleEditorReady}
+						onUndo={onUndo}
+						onRedo={onRedo}
+					/>
+				)}
+			</EditorContainer>
 		);
 	}
 );
