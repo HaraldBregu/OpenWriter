@@ -127,7 +127,7 @@ const PanelHeader: React.FC = () => {
 			<CardTitle>
 				{t('agenticPanel.headerTitle', 'Chat history')}
 			</CardTitle>
-			<CardAction className="flex items-center gap-2">
+			<CardAction className="flex items-center gap-2 self-center!">
 				<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<PopoverTrigger
 							render={
