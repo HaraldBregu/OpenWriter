@@ -3,10 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { Bot, Undo2, Redo2, Info } from 'lucide-react';
+import type { Editor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
-import EditorContent, { type EditorContentElement } from './EditorContent';
+import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import { EditorContainer } from '@/components/app/base/Editor';
 import PanelsContent from './PanelsContent';
 import HistoryMenu from './components/HistoryMenu';
 import {
@@ -15,6 +17,8 @@ import {
 	useDocumentState,
 	useInsertContentDialog,
 	useSidebarVisibility,
+	useEditorInstance,
+	useAssistantTask,
 } from './hooks';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
@@ -22,25 +26,32 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
 import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
+import type { ModelInfo } from '../../../../shared/types';
+import { findModelById } from '../../../../shared/models';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
+const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 
 function PageContent(): ReactElement {
 	const { documentId: id } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
+	const { setEditor } = useEditorInstance();
 
 	const [title, setTitle] = useState('');
 	const [emoji, setEmoji] = useState('');
 	const [content, setContent] = useState('');
+	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
+	const [defaultTextModel, setDefaultTextModel] = useState<ModelInfo | undefined>(undefined);
+	const [defaultImageModel, setDefaultImageModel] = useState<ModelInfo | undefined>(undefined);
 
 	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
-	const editorContentRef = useRef<EditorContentElement>(null);
+	const editorRef = useRef<TextEditorElement>(null);
 	const sidebarPanelRef = usePanelRef();
 
 	useEffect(() => {
@@ -54,8 +65,12 @@ function PageContent(): ReactElement {
 	const stateRef = useRef({ title, emoji });
 	stateRef.current = { title, emoji };
 
-	const loadedRef = useRef(false);
+	const contentRef = useRef(content);
+	contentRef.current = content;
+
+	const loadedRef = useRef(loaded);
 	loadedRef.current = loaded;
+
 	const documentDeletedRef = useRef(false);
 
 	useEffect(() => {
@@ -67,16 +82,29 @@ function PageContent(): ReactElement {
 		setTitle('');
 		setEmoji('');
 		setContent('');
+		setDefaultTextModel(undefined);
+		setDefaultImageModel(undefined);
 		dispatch({ type: 'METADATA_UPDATED', metadata: null });
 
 		async function load() {
 			try {
-				const config = await window.workspace.getDocumentConfig(id!);
+				const [loadedContent, config] = await Promise.all([
+					window.workspace.getDocumentContent(id!),
+					window.workspace.getDocumentConfig(id!),
+				]);
 
 				if (cancelled) return;
 
 				setTitle(config.title || '');
 				setEmoji(config.emoji || '');
+				setContent(loadedContent);
+				dispatch({ type: 'CONTENT_CHANGED', value: loadedContent });
+
+				const textModel = findModelById(config.textModel);
+				if (textModel) setDefaultTextModel(textModel);
+				const imageModel = findModelById(config.imageModel);
+				if (imageModel) setDefaultImageModel(imageModel);
+
 				setLoaded(true);
 			} catch {
 				if (!cancelled) {
@@ -93,7 +121,6 @@ function PageContent(): ReactElement {
 		};
 	}, [id, dispatch, navigate]);
 
-	// Load images
 	const loadImages = useCallback(async () => {
 		if (!id) {
 			dispatch({ type: 'IMAGES_UPDATED', images: [] });
@@ -111,7 +138,6 @@ function PageContent(): ReactElement {
 		loadImages();
 	}, [loadImages]);
 
-	// File-watcher: sync metadata + images
 	useEffect(() => {
 		if (!id) return;
 
@@ -132,7 +158,6 @@ function PageContent(): ReactElement {
 		return unsubscribe;
 	}, [id, loadImages, navigate]);
 
-	// Image-watcher: refresh images on add/change/remove events
 	useEffect(() => {
 		if (!id) return;
 
@@ -144,7 +169,6 @@ function PageContent(): ReactElement {
 		return unsubscribe;
 	}, [id, loadImages]);
 
-	// Debounced metadata save (title, emoji only — content is saved by EditorContent)
 	const debouncedMetadataSave = useMemo(
 		() =>
 			debounce(
@@ -159,23 +183,75 @@ function PageContent(): ReactElement {
 		[id]
 	);
 
+	const debouncedContentSave = useMemo(
+		() =>
+			debounce(
+				() => {
+					if (!id || !loadedRef.current || documentDeletedRef.current) return;
+					window.workspace.updateDocumentContent(id, contentRef.current);
+				},
+				CONTENT_SAVE_DEBOUNCE_MS,
+				{ leading: false, trailing: true }
+			),
+		[id]
+	);
+
 	useEffect(() => {
 		return () => {
 			if (!documentDeletedRef.current) {
 				debouncedMetadataSave.flush();
+				debouncedContentSave.flush();
 			}
 			debouncedMetadataSave.cancel();
+			debouncedContentSave.cancel();
 		};
-	}, [debouncedMetadataSave]);
+	}, [debouncedMetadataSave, debouncedContentSave]);
+
+	const updateDocumentConfig = useCallback(
+		async (update: { textModel?: string; imageModel?: string }) => {
+			if (!id) return;
+			try {
+				await window.workspace.updateDocumentConfig(id, update);
+			} catch {
+				// silently ignore write errors
+			}
+		},
+		[id]
+	);
+
+	const handleTextModelChange = useCallback(
+		(model: ModelInfo) => {
+			setDefaultTextModel(model);
+			updateDocumentConfig({ textModel: model.modelId });
+		},
+		[updateDocumentConfig]
+	);
+
+	const handleImageModelChange = useCallback(
+		(model: ModelInfo) => {
+			setDefaultImageModel(model);
+			updateDocumentConfig({ imageModel: model.modelId });
+		},
+		[updateDocumentConfig]
+	);
+
+	const {
+		assistantIsRunning,
+		handleGenerateTextSubmit,
+		handleGenerateImageSubmit,
+		handleContinueWithAssistant,
+	} = useAssistantTask(id, editorRef);
 
 	const handleHistoryRestore = useCallback(
 		(restoredContent: string, restoredTitle: string) => {
-			editorContentRef.current?.setContent(restoredContent);
 			setContent(restoredContent);
+			setContentVersion((v) => v + 1);
+			dispatch({ type: 'CONTENT_CHANGED', value: restoredContent });
+			debouncedContentSave();
 			setTitle(restoredTitle);
 			debouncedMetadataSave();
 		},
-		[debouncedMetadataSave]
+		[dispatch, debouncedContentSave, debouncedMetadataSave]
 	);
 
 	const {
@@ -209,9 +285,28 @@ function PageContent(): ReactElement {
 		);
 	}, [id, title, emoji, loaded, appDispatch]);
 
-	const handleContentChange = useCallback((newContent: string) => {
-		setContent(newContent);
-	}, []);
+	const handleContentChange = useCallback(
+		(newContent: string) => {
+			setContent(newContent);
+			dispatch({ type: 'CONTENT_CHANGED', value: newContent });
+			debouncedContentSave();
+		},
+		[dispatch, debouncedContentSave]
+	);
+
+	const handleSelectionChange = useCallback(
+		(selection: { from: number; to: number } | null) => {
+			dispatch({ type: 'EDITOR_SELECTION_CHANGED', selection });
+		},
+		[dispatch]
+	);
+
+	const handleEditorReady = useCallback(
+		(editor: Editor | null) => {
+			setEditor(editor);
+		},
+		[setEditor]
+	);
 
 	const handleInsertContent = useCallback(() => {
 		openInsertContentDialog();
@@ -286,15 +381,31 @@ function PageContent(): ReactElement {
 			{/* Editor + Right Sidebar */}
 			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 				<ResizablePanel defaultSize="70%" minSize="40%">
-					<EditorContent
-						key={id}
-						ref={editorContentRef}
-						documentId={id}
-						onContentChange={handleContentChange}
-						onInsertContent={handleInsertContent}
-						onUndo={handleUndo}
-						onRedo={handleRedo}
-					/>
+					<EditorContainer>
+						{loaded && (
+							<TextEditor
+								key={id}
+								disabled={assistantIsRunning}
+								ref={editorRef}
+								value={content}
+								externalValueVersion={contentVersion}
+								onChange={handleContentChange}
+								onSelectionChange={handleSelectionChange}
+								onContinueWithAssistant={handleContinueWithAssistant}
+								onGenerateTextSubmit={handleGenerateTextSubmit}
+								onGenerateImageSubmit={handleGenerateImageSubmit}
+								onInsertContent={handleInsertContent}
+								documentId={id}
+								defaultTextModel={defaultTextModel}
+								defaultImageModel={defaultImageModel}
+								onTextModelChange={handleTextModelChange}
+								onImageModelChange={handleImageModelChange}
+								onEditorReady={handleEditorReady}
+								onUndo={handleUndo}
+								onRedo={handleRedo}
+							/>
+						)}
+					</EditorContainer>
 				</ResizablePanel>
 				{activeSidebar && <ResizableHandle />}
 				<ResizablePanel
