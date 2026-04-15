@@ -166,28 +166,33 @@ export class ContentsService {
 	}
 
 	/**
-	 * Delete a file from the workspace resources/content/ directory.
+	 * Delete a file or folder from the workspace resources/content/ directory.
 	 *
 	 * @param workspacePath - Workspace root path
-	 * @param fileId - The file ID (basename) to delete
+	 * @param entryId - The entry ID (basename) to delete
 	 * @param markWritten - Optional callback to mark files as written (prevents watcher loops)
 	 */
 	async deleteContent(
 		workspacePath: string,
-		fileId: string,
+		entryId: string,
 		markWritten?: (filePath: string) => void
 	): Promise<void> {
 		const contentsDir = this.getContentsDir(workspacePath);
-		const filePath = path.join(contentsDir, fileId);
+		const entryPath = path.join(contentsDir, entryId);
 
-		const realFilePath = await fsPromises.realpath(filePath);
+		const realEntryPath = await fsPromises.realpath(entryPath);
 		const realContentsDir = await fsPromises.realpath(contentsDir);
 
-		if (!realFilePath.startsWith(realContentsDir)) {
-			throw new Error('Cannot delete files outside the contents directory');
+		if (!realEntryPath.startsWith(realContentsDir)) {
+			throw new Error('Cannot delete entries outside the contents directory');
 		}
 
-		markWritten?.(filePath);
-		await this.fileManager.deleteFile(filePath);
+		const stats = await fsPromises.stat(realEntryPath);
+		markWritten?.(entryPath);
+		if (stats.isDirectory()) {
+			await fsPromises.rm(realEntryPath, { recursive: true, force: true });
+		} else {
+			await this.fileManager.deleteFile(realEntryPath);
+		}
 	}
 }
