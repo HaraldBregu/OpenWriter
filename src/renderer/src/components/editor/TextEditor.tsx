@@ -114,6 +114,7 @@ const TextEditor = React.memo(
 				onContinueWithAssistant,
 				onGenerateTextSubmit,
 				onGenerateImageSubmit,
+				onInsertContent,
 				documentId,
 				defaultTextModel,
 				defaultImageModel,
