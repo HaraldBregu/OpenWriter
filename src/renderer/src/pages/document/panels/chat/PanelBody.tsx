@@ -50,7 +50,7 @@ const PanelBody: React.FC<PanelBodyProps> = () => {
 	}
 
 	return (
-		<CardContent className="flex-1 min-h-0 overflow-y-auto mt-6">
+		<CardContent className="flex-1 min-h-0 overflow-y-auto py-4!">
 			{chatMessages.map((message, index) => {
 				const previousMessage = index > 0 ? chatMessages[index - 1] : null;
 				const isGroupedWithPrevious =

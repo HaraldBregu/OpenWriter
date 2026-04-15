@@ -632,10 +632,6 @@ export class WorkspaceIpc implements IpcModule {
 			WorkspaceChannels.updateDocumentContent,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string, content: string) => {
 				await this.mgr(event, container).updateDocumentContent(documentId, content);
-				eventBus.broadcast(WorkspaceChannels.documentContentChanged, {
-					documentId,
-					content,
-				});
 			}, WorkspaceChannels.updateDocumentContent)
 		);
 
