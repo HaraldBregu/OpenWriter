@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Sparkles, ImagePlus } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type { Editor } from '@tiptap/core';
+import { Heading, Type, List, ListOrdered, Minus, Sparkles, ImagePlus } from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
-import { MENU_ITEMS, type MenuItem } from './menu-items';
 import { menuContainerClass, getIconClass } from './styles';
 
 interface OptionMenuProps {
@@ -19,6 +19,8 @@ interface OptionMenuProps {
 }
 
 const pluginKey = new PluginKey('optionMenu');
+const ITEM_COUNT = 9;
+const FIRST_AI_INDEX = 8;
 
 export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
@@ -37,105 +39,175 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
 	onContinueWithAssistantRef.current = onContinueWithAssistant;
 
-	const allItems = useMemo<MenuItem[]>(
-		() => [
-			...MENU_ITEMS,
-			{
-				label: 'Image',
-				icon: ImagePlus,
-				command: (ed, slashPos, queryLength) => {
-					ed.chain()
-						.focus()
-						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-						.insertImagePlaceholder()
-						.run();
-				},
-			},
-			{
-				label: 'Continue with assistant',
-				icon: Sparkles,
-				section: 'ai' as const,
-				tone: 'ai',
-				command: (ed, slashPos, queryLength) => {
-					ed.chain()
-						.focus()
-						.deleteRange({ from: slashPos, to: slashPos + 1 + queryLength })
-						.setMeta('preventEditorUpdate', true)
-						.run();
-					const { from } = ed.state.selection;
-					const storage = ed.storage as unknown as Record<string, Record<string, unknown>>;
-					const serializer = storage.markdown?.serializer as
-						| { serialize: (node: unknown) => string }
-						| undefined;
-					const docSize = ed.state.doc.content.size;
-					const subDocBefore = ed.state.doc.cut(0, from);
-					const subDocAfter = ed.state.doc.cut(from, docSize);
-					const markdownBeforeCursor =
-						serializer?.serialize(subDocBefore) ?? ed.state.doc.textBetween(0, from, '\n');
-					const markdownAfterCursor =
-						serializer?.serialize(subDocAfter) ?? ed.state.doc.textBetween(from, docSize, '\n');
-					isLockedRef.current = true;
-					const closeMenu = (): void => {
-						isLockedRef.current = false;
-						menuControlsRef.current.forceHide();
-					};
-					onContinueWithAssistantRef.current?.(
-						markdownBeforeCursor,
-						markdownAfterCursor,
-						from,
-						closeMenu
-					);
-				},
-			},
-		],
-		[]
-	);
-
-	const allItemsRef = useRef(allItems);
-	allItemsRef.current = allItems;
-
 	useEffect(() => {
 		setSelectedIndex(0);
 	}, [query]);
 
-	const executeCommand = useCallback(
-		(item: MenuItem) => {
+	const deleteSlash = useCallback(
+		(ed: Editor): { slashPos: number; queryLength: number } | null => {
 			const slashPos = slashPosRef.current;
-			if (slashPos === null) return;
-			item.command(editor, slashPos, queryRef.current.length);
+			if (slashPos === null) return null;
+			const queryLength = queryRef.current.length;
+			return { slashPos, queryLength };
 		},
-		[editor]
+		[]
+	);
+
+	const runHeading = useCallback(
+		(level: 1 | 2 | 3) => {
+			const ctx = deleteSlash(editor);
+			if (!ctx) return;
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+				.setHeading({ level })
+				.run();
+		},
+		[editor, deleteSlash]
+	);
+
+	const runParagraph = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.setParagraph()
+			.run();
+	}, [editor, deleteSlash]);
+
+	const runBulletList = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.toggleBulletList()
+			.run();
+	}, [editor, deleteSlash]);
+
+	const runOrderedList = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.toggleOrderedList()
+			.run();
+	}, [editor, deleteSlash]);
+
+	const runHorizontalRule = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.setHorizontalRule()
+			.run();
+	}, [editor, deleteSlash]);
+
+	const runImage = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.insertImagePlaceholder()
+			.run();
+	}, [editor, deleteSlash]);
+
+	const runContinueWithAssistant = useCallback(() => {
+		const ctx = deleteSlash(editor);
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.setMeta('preventEditorUpdate', true)
+			.run();
+		const { from } = editor.state.selection;
+		const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+		const serializer = storage.markdown?.serializer as
+			| { serialize: (node: unknown) => string }
+			| undefined;
+		const docSize = editor.state.doc.content.size;
+		const subDocBefore = editor.state.doc.cut(0, from);
+		const subDocAfter = editor.state.doc.cut(from, docSize);
+		const markdownBeforeCursor =
+			serializer?.serialize(subDocBefore) ?? editor.state.doc.textBetween(0, from, '\n');
+		const markdownAfterCursor =
+			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
+		isLockedRef.current = true;
+		const closeMenu = (): void => {
+			isLockedRef.current = false;
+			menuControlsRef.current.forceHide();
+		};
+		onContinueWithAssistantRef.current?.(markdownBeforeCursor, markdownAfterCursor, from, closeMenu);
+	}, [editor, deleteSlash]);
+
+	const runByIndex = useCallback(
+		(idx: number) => {
+			switch (idx) {
+				case 0:
+					return runHeading(1);
+				case 1:
+					return runHeading(2);
+				case 2:
+					return runHeading(3);
+				case 3:
+					return runParagraph();
+				case 4:
+					return runBulletList();
+				case 5:
+					return runOrderedList();
+				case 6:
+					return runHorizontalRule();
+				case 7:
+					return runImage();
+				case 8:
+					return runContinueWithAssistant();
+			}
+		},
+		[
+			runHeading,
+			runParagraph,
+			runBulletList,
+			runOrderedList,
+			runHorizontalRule,
+			runImage,
+			runContinueWithAssistant,
+		]
 	);
 
 	const onKeyEvent = useCallback(
 		(event: KeyboardEvent): boolean => {
-			const items = allItemsRef.current;
-			const count = Math.max(items.length, 1);
-
 			if (event.key === 'ArrowDown') {
 				event.preventDefault();
-				setSelectedIndex((prev) => (prev + 1) % count);
+				setSelectedIndex((prev) => (prev + 1) % ITEM_COUNT);
 				return true;
 			}
 
 			if (event.key === 'ArrowUp') {
 				event.preventDefault();
-				setSelectedIndex((prev) => (prev - 1 + count) % count);
+				setSelectedIndex((prev) => (prev - 1 + ITEM_COUNT) % ITEM_COUNT);
 				return true;
 			}
 
 			if (event.key === 'Enter') {
 				event.preventDefault();
-				const idx = selectedIndexRef.current;
-				if (items[idx]) {
-					executeCommand(items[idx]);
-				}
+				runByIndex(selectedIndexRef.current);
 				return true;
 			}
 
 			return false;
 		},
-		[executeCommand]
+		[runByIndex]
 	);
 
 	useEffect(() => {
@@ -168,12 +240,29 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		};
 	}, [editor, onKeyEvent]);
 
-	const hasRegularItems = allItems.some((item) => item.section !== 'ai');
-	const hasAiItems = allItems.some((item) => item.section === 'ai');
-	const showSeparator = hasRegularItems && hasAiItems;
-	const firstAiIndex = showSeparator
-		? allItems.findIndex((i) => i.section === 'ai')
-		: -1;
+	const renderIcon = (Icon: React.ElementType, isSelected: boolean, tone: 'default' | 'ai'): React.JSX.Element => (
+		<span
+			className={cn(
+				'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
+				getIconClass(tone, isSelected)
+			)}
+		>
+			<Icon className="h-4 w-4 shrink-0" />
+		</span>
+	);
+
+	const itemProps = (index: number, onRun: () => void): {
+		variant: 'secondary' | 'ghost';
+		onMouseEnter: () => void;
+		onMouseDown: (e: React.MouseEvent) => void;
+	} => ({
+		variant: index === selectedIndex ? 'secondary' : 'ghost',
+		onMouseEnter: () => setSelectedIndex(index),
+		onMouseDown: (e) => {
+			e.preventDefault();
+			onRun();
+		},
+	});
 
 	return (
 		<div
@@ -181,37 +270,43 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			className={menuContainerClass}
 			style={{ visibility: 'hidden', position: 'absolute', minWidth: '220px' }}
 		>
-			{allItems.length > 0 ? (
-				allItems.map((item, index) => {
-					const isSelected = index === selectedIndex;
-					const isFirstAiItem = index === firstAiIndex;
-					const tone = item.tone ?? 'default';
-
-					return (
-						<React.Fragment key={item.label}>
-							{isFirstAiItem && <hr className="my-1 border-border/80 dark:border-border" />}
-							<Button
-								variant={isSelected ? 'secondary' : 'ghost'}
-								onMouseEnter={() => setSelectedIndex(index)}
-								onMouseDown={(e) => {
-									e.preventDefault();
-									executeCommand(item);
-								}}
-							>
-								<span
-									className={cn(
-										'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-										getIconClass(tone, isSelected)
-									)}
-								></span>
-								<span className="truncate">{item.label}</span>
-							</Button>
-						</React.Fragment>
-					);
-				})
-			) : (
-				<div className="px-2 py-1.5 text-sm text-muted-foreground">No results</div>
-			)}
+			<Button {...itemProps(0, () => runHeading(1))}>
+				{renderIcon(Heading, selectedIndex === 0, 'default')}
+				<span className="truncate">Heading 1</span>
+			</Button>
+			<Button {...itemProps(1, () => runHeading(2))}>
+				{renderIcon(Heading, selectedIndex === 1, 'default')}
+				<span className="truncate">Heading 2</span>
+			</Button>
+			<Button {...itemProps(2, () => runHeading(3))}>
+				{renderIcon(Heading, selectedIndex === 2, 'default')}
+				<span className="truncate">Heading 3</span>
+			</Button>
+			<Button {...itemProps(3, runParagraph)}>
+				{renderIcon(Type, selectedIndex === 3, 'default')}
+				<span className="truncate">Text</span>
+			</Button>
+			<Button {...itemProps(4, runBulletList)}>
+				{renderIcon(List, selectedIndex === 4, 'default')}
+				<span className="truncate">Bullet List</span>
+			</Button>
+			<Button {...itemProps(5, runOrderedList)}>
+				{renderIcon(ListOrdered, selectedIndex === 5, 'default')}
+				<span className="truncate">Ordered List</span>
+			</Button>
+			<Button {...itemProps(6, runHorizontalRule)}>
+				{renderIcon(Minus, selectedIndex === 6, 'default')}
+				<span className="truncate">Horizontal Rule</span>
+			</Button>
+			<Button {...itemProps(7, runImage)}>
+				{renderIcon(ImagePlus, selectedIndex === 7, 'default')}
+				<span className="truncate">Image</span>
+			</Button>
+			<hr className="my-1 border-border/80 dark:border-border" />
+			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
+				{renderIcon(Sparkles, selectedIndex === FIRST_AI_INDEX, 'ai')}
+				<span className="truncate">Continue with assistant</span>
+			</Button>
 		</div>
 	);
 }
