@@ -199,7 +199,15 @@ function PageContent(): ReactElement {
 								</TableRow>
 							) : (
 								filteredFolders.map((folder) => (
-									<TableRow key={folder.id} className="cursor-pointer">
+									<TableRow
+										key={folder.id}
+										className="cursor-pointer"
+										onClick={() => {
+											if (folder.kind === 'file' && folder.name.toLowerCase().endsWith('.md')) {
+												setPreviewFolder(folder);
+											}
+										}}
+									>
 										<TableCell className="px-6">
 											<div className="flex items-center gap-3">
 												<FolderIcon className="h-5 w-5 text-muted-foreground" />
