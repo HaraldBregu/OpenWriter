@@ -16,7 +16,7 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
 import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
-import { useSidebarVisibility } from './Provider';
+import { useInsertContentDialog, useSidebarVisibility } from './Provider';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 
