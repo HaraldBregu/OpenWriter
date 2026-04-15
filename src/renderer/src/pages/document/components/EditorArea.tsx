@@ -65,6 +65,7 @@ export function EditorArea({
 					onContinueWithAssistant={onContinueWithAssistant}
 					onGenerateTextSubmit={onGenerateTextSubmit}
 					onGenerateImageSubmit={onGenerateImageSubmit}
+					onInsertContent={onInsertContent}
 					documentId={documentId}
 					defaultTextModel={defaultTextModel}
 					defaultImageModel={defaultImageModel}
