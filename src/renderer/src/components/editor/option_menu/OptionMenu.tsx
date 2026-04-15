@@ -23,13 +23,17 @@ interface OptionMenuProps {
 		closeMenu: () => void
 	) => void;
 	onInsertImage?: () => void;
+	onInsertContent?: () => void;
 }
 
 const pluginKey = new PluginKey('optionMenu');
-const ITEM_COUNT = 9;
-const FIRST_AI_INDEX = 8;
+const ITEM_COUNT = 10;
+const FIRST_AI_INDEX = 9;
 
-export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
+export function OptionMenu({
+	onContinueWithAssistant,
+	onInsertContent,
+}: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
