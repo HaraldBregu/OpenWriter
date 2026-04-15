@@ -670,6 +670,7 @@ const TextEditor = React.memo(
 									<OptionMenu
 										onContinueWithAssistant={onContinueWithAssistant}
 										onInsertImage={handleInsertImage}
+										onInsertContent={onInsertContent}
 									/>
 								</EditorProvider>
 							)}
