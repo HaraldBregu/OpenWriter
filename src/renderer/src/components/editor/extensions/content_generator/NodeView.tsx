@@ -46,7 +46,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 
 	const inputLabel = isImage
 		? t('assistantNode.imageTitle', 'Generate image')
-		: t('assistantNode.writerTitle', 'Generate text');
+		: t('assistantNode.textTitle', 'Generate text');
 
 	const modelOptions = isImage ? IMAGE_MODELS : TEXT_MODELS;
 	const selectedModel = isImage ? state.selectedImageModel : state.selectedTextModel;
