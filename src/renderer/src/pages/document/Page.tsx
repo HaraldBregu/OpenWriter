@@ -422,7 +422,10 @@ function PageContent(): ReactElement {
 						collapsible
 						collapsedSize="0%"
 					>
-						<PanelsContent documentId={id} />
+						<div className="h-full">
+							{activeSidebar === 'config' && <InfoPanel onOpenFolder={handleOpenFolder} />}
+							{activeSidebar === 'agentic' && <Chat />}
+						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</PageBody>
