@@ -92,7 +92,16 @@ function PageContent(): ReactElement {
 		handleToggleAll,
 		handleToggleRow,
 		handleOpenFileDetails,
+		confirmOpen,
+		setConfirmOpen,
+		handleConfirmDelete,
 	} = useContext();
+
+	const fileCount = selected.size;
+	const fileDescription =
+		fileCount === 1
+			? 'This will permanently delete 1 file. This action cannot be undone.'
+			: `This will permanently delete ${fileCount} files. This action cannot be undone.`;
 
 	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
 		if (editMode) return;
