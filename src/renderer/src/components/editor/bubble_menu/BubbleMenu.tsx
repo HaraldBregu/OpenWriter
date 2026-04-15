@@ -8,6 +8,8 @@ import {
 	Heading2,
 	Heading3,
 	Type,
+	List,
+	ListOrdered,
 } from 'lucide-react';
 import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
