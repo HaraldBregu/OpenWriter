@@ -7,7 +7,6 @@ import { getIconClass } from './styles';
 interface OptionMenuItemProps {
 	item: MenuItem;
 	isSelected: boolean;
-	showSpinner: boolean;
 	onMouseEnter: () => void;
 	onSelect: () => void;
 }
@@ -15,11 +14,9 @@ interface OptionMenuItemProps {
 export function OptionMenuItem({
 	item,
 	isSelected,
-	showSpinner,
 	onMouseEnter,
 	onSelect,
 }: OptionMenuItemProps): React.JSX.Element {
-	const Icon = item.icon;
 	const tone = item.tone ?? 'default';
 
 	return (
@@ -28,9 +25,8 @@ export function OptionMenuItem({
 			onMouseEnter={onMouseEnter}
 			onMouseDown={(e) => {
 				e.preventDefault();
-				if (!showSpinner) onSelect();
+				onSelect();
 			}}
-			disabled={showSpinner}
 		>
 			<span
 				className={cn(
@@ -38,7 +34,6 @@ export function OptionMenuItem({
 					getIconClass(tone, isSelected)
 				)}
 			>
-				<Icon className="h-4 w-4 shrink-0" />
 			</span>
 			<span className="truncate">{item.label}</span>
 		</Button>
