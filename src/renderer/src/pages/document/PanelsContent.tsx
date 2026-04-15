@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import InfoPanel from './panels/info/InfoPanel';
 import Chat from './panels/chat/Panel';
-import { useSidebarVisibility } from './Provider';
+import { useSidebarVisibility } from './hooks';
 
 interface PanelsContentProps {
 	readonly documentId: string | undefined;
