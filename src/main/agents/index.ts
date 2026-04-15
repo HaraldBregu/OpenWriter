@@ -18,7 +18,7 @@ export type { ExecutorInput, AgentStreamEvent, AgentRequest, AgentHistoryMessage
 export { AssistantAgent } from './assistant/definition';
 export { ImageGeneratorAgent } from './image/definition';
 export { PainterAgent } from './painter/definition';
-export { WriterAgent } from './writer/definition';
+export { TextAgent } from './text/definition';
 
 // Agent-side RAG
 export {
