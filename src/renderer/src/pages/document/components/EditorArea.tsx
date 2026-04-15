@@ -26,6 +26,7 @@ interface EditorAreaProps {
 	) => void;
 	readonly onGenerateTextSubmit: (prompt: string) => Promise<void>;
 	readonly onGenerateImageSubmit: (prompt: string, files: File[]) => Promise<void>;
+	readonly onInsertContent: () => void;
 	readonly onUndo: () => void;
 	readonly onRedo: () => void;
 }
