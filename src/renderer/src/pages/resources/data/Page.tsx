@@ -17,6 +17,7 @@ import { KnowledgeBaseDialog } from './components/KnowledgeBaseDialog';
 import { DataIndexingBar } from './components/DataIndexingBar';
 
 function PageContent(): ReactElement {
+	const { t } = useTranslation();
 	const {
 		selected,
 		uploading,
@@ -27,6 +28,9 @@ function PageContent(): ReactElement {
 		handleUpload,
 		kbDialogOpen,
 		setKbDialogOpen,
+		confirmOpen,
+		setConfirmOpen,
+		handleConfirmDelete,
 	} = useContext();
 
 	return (
