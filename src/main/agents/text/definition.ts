@@ -112,4 +112,4 @@ const definition: AgentDefinition = {
 	},
 };
 
-export { definition as WriterAgent };
+export { definition as TextAgent };
