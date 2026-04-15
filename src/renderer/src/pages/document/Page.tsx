@@ -9,14 +9,19 @@ import { Separator } from '@/components/ui/Separator';
 import EditorContent, { type EditorContentElement } from './EditorContent';
 import PanelsContent from './PanelsContent';
 import HistoryMenu from './components/HistoryMenu';
-import { useDocumentDispatch, useDocumentHistory, useDocumentState } from './hooks';
+import {
+	useDocumentDispatch,
+	useDocumentHistory,
+	useDocumentState,
+	useInsertContentDialog,
+	useSidebarVisibility,
+} from './hooks';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
 import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
-import { useInsertContentDialog, useSidebarVisibility } from './Provider';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 
