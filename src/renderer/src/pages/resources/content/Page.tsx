@@ -88,6 +88,7 @@ function PageContent(): ReactElement {
 		handleUpload,
 		handleOpenResourcesFolder,
 		handleDelete,
+		handleDeleteOne,
 		refreshFolders,
 	} = useContentContext();
 
