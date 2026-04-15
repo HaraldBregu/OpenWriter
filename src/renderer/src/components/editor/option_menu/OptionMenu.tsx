@@ -236,7 +236,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			controls: menuControlsRef.current,
 		});
 
-		editor.registerPlugin(plugin);
+		editor.registerPlugin(plugin, (newPlugin, plugins) => [newPlugin, ...plugins]);
 		return () => {
 			editor.unregisterPlugin(pluginKey);
 		};
