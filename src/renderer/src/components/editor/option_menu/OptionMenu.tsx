@@ -4,6 +4,7 @@ import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Separator } from '@/components/ui/Separator';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
 
 interface OptionMenuProps {
@@ -254,7 +255,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		<Card
 			ref={menuRef}
 			size="sm"
-			className="z-50 min-w-[220px] gap-0 p-1.5"
+			className="z-50 gap-0 p-1.5"
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button {...itemProps(0, () => runHeading(1))}>
