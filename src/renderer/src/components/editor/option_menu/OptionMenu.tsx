@@ -91,12 +91,8 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		[]
 	);
 
-	const filteredItems = allItems.filter((item) =>
-		item.label.toLowerCase().includes(query.toLowerCase())
-	);
-
-	const filteredItemsRef = useRef(filteredItems);
-	filteredItemsRef.current = filteredItems;
+	const allItemsRef = useRef(allItems);
+	allItemsRef.current = allItems;
 
 	useEffect(() => {
 		setSelectedIndex(0);
