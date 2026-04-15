@@ -207,6 +207,10 @@ function PageContent(): ReactElement {
 		setContent(newContent);
 	}, []);
 
+	const handleInsertContent = useCallback(() => {
+		editorContentRef.current?.insertContent('Inserted content');
+	}, []);
+
 	return (
 		<PageContainer>
 			<PageHeader>
