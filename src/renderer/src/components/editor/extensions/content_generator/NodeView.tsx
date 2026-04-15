@@ -124,10 +124,10 @@ function ContentGeneratorInner(): React.JSX.Element {
 						<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-30">
 							<DropdownMenuCheckboxItem
 								checked={!isImage}
-								onCheckedChange={() => handleAgentChange('writer')}
+								onCheckedChange={() => handleAgentChange('text')}
 							>
 								<PenLine />
-								{t('assistantAgent.writer', 'Text')}
+								{t('assistantAgent.text', 'Text')}
 							</DropdownMenuCheckboxItem>
 							<DropdownMenuCheckboxItem
 								checked={isImage}
