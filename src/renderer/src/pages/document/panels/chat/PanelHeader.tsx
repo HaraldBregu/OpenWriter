@@ -123,7 +123,7 @@ const PanelHeader: React.FC = () => {
 	};
 
 	return (
-		<CardHeader className="shrink-0 border-b">
+		<CardHeader className="shrink-0 border-b p-0!">
 			<CardTitle>
 				{t('agenticPanel.headerTitle', 'Chat history')}
 			</CardTitle>
