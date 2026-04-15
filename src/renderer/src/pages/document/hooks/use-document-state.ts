@@ -1,6 +1,6 @@
 import type { DocumentState } from '../context/state';
-import { useContext } from '../Provider';
+import { useDocumentContext } from './use-document-context';
 
 export function useDocumentState(): DocumentState {
-	return useContext().state;
+	return useDocumentContext().state;
 }
