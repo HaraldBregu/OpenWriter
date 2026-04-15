@@ -11,9 +11,9 @@ export interface ContentGeneratorAgentOption {
 export const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOption[] = [
 	{
 		value: 'text',
-		labelKey: 'assistantAgent.writer',
+		labelKey: 'assistantAgent.text',
 		labelFallback: 'Text',
-		descriptionKey: 'assistantAgent.writerDescription',
+		descriptionKey: 'assistantAgent.textDescription',
 		descriptionFallback: 'Generate, rewrite, or continue text',
 	},
 	{
