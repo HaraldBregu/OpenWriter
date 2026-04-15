@@ -28,6 +28,7 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { Input } from '@/components/ui/Input';
 import {
 	InputGroup,
 	InputGroupAddon,
