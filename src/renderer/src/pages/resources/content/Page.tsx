@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	ChevronDown,
+	Eye,
 	FileText,
 	Folder as FolderIcon,
 	FolderOpen,
