@@ -69,6 +69,7 @@ function PageContent(): ReactElement {
 	const { t } = useTranslation();
 	const section = RESOURCE_SECTIONS.content;
 	const [fileDialogOpen, setFileDialogOpen] = useState(false);
+	const [previewFolder, setPreviewFolder] = useState<FolderEntry | null>(null);
 	const {
 		folders,
 		filteredFolders,
