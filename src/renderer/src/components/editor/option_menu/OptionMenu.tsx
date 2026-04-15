@@ -1,5 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Heading, Type, List, ListOrdered, Minus, Sparkles, ImagePlus } from 'lucide-react';
+import {
+	Heading,
+	Type,
+	List,
+	ListOrdered,
+	Minus,
+	Sparkles,
+	ImagePlus,
+	FileText,
+} from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
