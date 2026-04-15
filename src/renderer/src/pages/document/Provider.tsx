@@ -15,6 +15,9 @@ interface ContextValue {
 	animate: boolean;
 	setActiveSidebar: (sidebar: ActiveSidebar) => void;
 	toggleSidebar: (sidebar: Exclude<ActiveSidebar, null>) => void;
+	insertContentDialogOpen: boolean;
+	openInsertContentDialog: () => void;
+	closeInsertContentDialog: () => void;
 }
 
 const Context = createContext<ContextValue | null>(null);
