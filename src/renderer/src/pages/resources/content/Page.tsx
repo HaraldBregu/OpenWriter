@@ -340,7 +340,14 @@ function PageContent(): ReactElement {
 				)}
 			</PageBody>
 
-			<DeleteConfirmDialog />
+			<DeleteConfirmDialog
+				open={confirmOpen}
+				onOpenChange={setConfirmOpen}
+				title={t('resources.removeItems')}
+				description={t('resources.removeConfirm', { count: selected.size })}
+				onConfirm={handleConfirmDelete}
+				confirmLabel={t('resources.remove')}
+			/>
 			<ExtractorDialog
 				open={fileDialogOpen}
 				onOpenChange={setFileDialogOpen}
