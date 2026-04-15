@@ -123,11 +123,11 @@ const PanelHeader: React.FC = () => {
 	};
 
 	return (
-		<CardHeader className="shrink-0 items-center border-b p-0!">
+		<CardHeader className="shrink-0 items-center border-b px-4! py-2!">
 			<CardTitle className="row-span-2 self-center">
-				{t('agenticPanel.headerTitle', 'Chat history')}
+				{t('agenticPanel.headerTitle', 'Chat')}
 			</CardTitle>
-			<CardAction className="flex items-center gap-2 self-center!">
+			<CardAction className="flex items-center gap-1! self-center!">
 				<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
 						<PopoverTrigger
 							render={
