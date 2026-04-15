@@ -2,7 +2,7 @@ import OpenAI from 'openai';
 import type { AgentDefinition } from '../core/definition';
 import type { AgentStreamEvent, AgentHistoryMessage } from '../core/types';
 
-const LOG_SOURCE = 'WriterAgent';
+const LOG_SOURCE = 'TextAgent';
 
 const SYSTEM_PROMPT = `You are a professional writing assistant embedded in a document editor.
 
