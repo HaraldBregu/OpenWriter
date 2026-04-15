@@ -39,7 +39,7 @@ const PanelFooter: React.FC<InputProps> = ({
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
 	const [isFocused, setIsFocused] = useState(false);
-	const [agentId, setAgentId] = useState<ContentGeneratorAgentId>('writer');
+	const [agentId, setAgentId] = useState<ContentGeneratorAgentId>('text');
 	const [selectedImageModel, setSelectedImageModel] = useState<ModelInfo>(IMAGE_MODELS[0]);
 	const [selectedTextModel, setSelectedTextModel] = useState<ModelInfo>(
 		() => TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0]
