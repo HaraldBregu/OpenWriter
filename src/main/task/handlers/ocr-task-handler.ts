@@ -219,11 +219,8 @@ export class OcrTaskHandler implements TaskHandler<OcrTaskInput, OcrTaskOutput> 
 		await contentsService.ensureContentsDir(workspacePath);
 		const contentsDir = contentsService.getContentsDir(workspacePath);
 
-		const folderName = path.basename(sourcePath, path.extname(sourcePath));
-		const targetDir = path.join(contentsDir, folderName);
-		await fs.mkdir(targetDir, { recursive: true });
-
-		const destPath = path.join(targetDir, `${randomUUID()}.md`);
+		const baseName = path.basename(sourcePath, path.extname(sourcePath));
+		const destPath = path.join(contentsDir, `${baseName}.md`);
 		await fs.writeFile(destPath, text, 'utf-8');
 
 		return destPath;
