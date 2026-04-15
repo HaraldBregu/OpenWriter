@@ -72,6 +72,7 @@ export interface TextEditorProps {
 	) => void;
 	onGenerateTextSubmit?: (prompt: string) => void;
 	onGenerateImageSubmit?: (prompt: string, files: File[]) => void;
+	onInsertContent?: () => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Default text model loaded from document config. */
