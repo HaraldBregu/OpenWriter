@@ -34,8 +34,8 @@ function toOpenAIMessages(
 }
 
 const definition: AgentDefinition = {
-	id: 'writer',
-	name: 'Agent Writer',
+	id: 'text',
+	name: 'Agent Text',
 	category: 'writing',
 
 	async *execute(input) {
