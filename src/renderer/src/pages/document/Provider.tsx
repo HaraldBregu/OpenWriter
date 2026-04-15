@@ -79,6 +79,10 @@ export function Provider({
 		});
 	}, []);
 
+	const [insertContentDialogOpen, setInsertContentDialogOpen] = useState(false);
+	const openInsertContentDialog = useCallback(() => setInsertContentDialogOpen(true), []);
+	const closeInsertContentDialog = useCallback(() => setInsertContentDialogOpen(false), []);
+
 	const value = useMemo<ContextValue>(() => ({
 		state,
 		dispatch,
@@ -88,7 +92,22 @@ export function Provider({
 		animate,
 		setActiveSidebar,
 		toggleSidebar,
-	}), [state, dispatch, editor, setEditor, activeSidebar, animate, setActiveSidebar, toggleSidebar]);
+		insertContentDialogOpen,
+		openInsertContentDialog,
+		closeInsertContentDialog,
+	}), [
+		state,
+		dispatch,
+		editor,
+		setEditor,
+		activeSidebar,
+		animate,
+		setActiveSidebar,
+		toggleSidebar,
+		insertContentDialogOpen,
+		openInsertContentDialog,
+		closeInsertContentDialog,
+	]);
 
 	return (
 		<Context.Provider value={value}>
