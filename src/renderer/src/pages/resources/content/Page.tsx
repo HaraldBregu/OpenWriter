@@ -299,57 +299,34 @@ function PageContent(): ReactElement {
 											onDoubleClick={(event) => event.stopPropagation()}
 										>
 											<div className="inline-flex items-center gap-1">
-												{folder.kind === 'file' && (
-													<>
-														{folder.name.toLowerCase().endsWith('.md') && (
-															<Button
-																variant="ghost"
-																size="icon"
-																onClick={() => setPreviewFolder(folder)}
-																aria-label="Preview"
-															>
-																<Eye className="h-4 w-4" />
-															</Button>
-														)}
+												{folder.kind === 'file' &&
+													folder.name.toLowerCase().endsWith('.md') && (
 														<Button
 															variant="ghost"
 															size="icon"
-															onClick={handleOpenResourcesFolder}
-															aria-label="Open in Finder"
+															onClick={() => setPreviewFolder(folder)}
+															aria-label="Preview"
 														>
-															<FolderOpen className="h-4 w-4" />
+															<Eye className="h-4 w-4" />
 														</Button>
-														<Button
-															variant="ghost"
-															size="icon"
-															className="text-destructive hover:text-destructive"
-															onClick={() => handleDeleteOne(folder.id)}
-															aria-label="Delete"
-														>
-															<Trash2 className="h-4 w-4" />
-														</Button>
-													</>
-												)}
-												{folder.kind === 'folder' && (
-													<DropdownMenu>
-														<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-															<MoreHorizontal className="h-4 w-4" />
-														</DropdownMenuTrigger>
-														<DropdownMenuContent align="end" className="min-w-48">
-															<DropdownMenuItem onClick={handleOpenResourcesFolder}>
-																<FolderOpen className="h-4 w-4" />
-																Open in Finder
-															</DropdownMenuItem>
-															<DropdownMenuItem
-																className="text-destructive focus:text-destructive"
-																onClick={() => handleDeleteOne(folder.id)}
-															>
-																<Trash2 className="h-4 w-4" />
-																Delete
-															</DropdownMenuItem>
-														</DropdownMenuContent>
-													</DropdownMenu>
-												)}
+													)}
+												<Button
+													variant="ghost"
+													size="icon"
+													onClick={handleOpenResourcesFolder}
+													aria-label="Open in Finder"
+												>
+													<FolderOpen className="h-4 w-4" />
+												</Button>
+												<Button
+													variant="ghost"
+													size="icon"
+													className="text-destructive hover:text-destructive"
+													onClick={() => handleDeleteOne(folder.id)}
+													aria-label="Delete"
+												>
+													<Trash2 className="h-4 w-4" />
+												</Button>
 											</div>
 										</TableCell>
 									</TableRow>
