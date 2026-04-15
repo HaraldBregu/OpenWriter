@@ -203,18 +203,17 @@ const PanelHeader: React.FC = () => {
 							</ItemGroup>
 						</PopoverContent>
 					</Popover>
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon"
-						disabled={!hasHistory}
-						aria-label={t('agenticPanel.newChat', 'Start new chat')}
-						onClick={handleNewChat}
-					>
-						<Plus />
-					</Button>
-				</div>
-			</div>
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon"
+					disabled={!hasHistory}
+					aria-label={t('agenticPanel.newChat', 'Start new chat')}
+					onClick={handleNewChat}
+				>
+					<Plus />
+				</Button>
+			</CardAction>
 		</CardHeader>
 	);
 };
