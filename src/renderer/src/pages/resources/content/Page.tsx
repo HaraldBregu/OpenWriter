@@ -87,6 +87,10 @@ function PageContent(): ReactElement {
 		handleOpenResourcesFolder,
 		handleDeleteOne,
 		refreshFolders,
+		selected,
+		confirmOpen,
+		setConfirmOpen,
+		handleConfirmDelete,
 	} = useContentContext();
 
 	const splitName = (folder: FolderEntry): { base: string; ext: string } => {
