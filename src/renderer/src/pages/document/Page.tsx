@@ -28,6 +28,7 @@ import Layout from './Layout';
 import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
 import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
+import { PageBody } from '@/components/app/base/Page';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
@@ -377,48 +378,48 @@ function PageContent(): ReactElement {
 					</Button>
 				</PageHeaderItems>
 			</PageHeader>
-
-			{/* Editor + Right Sidebar */}
-			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize="70%" minSize="40%">
-					<EditorContainer>
-						{loaded && (
-							<TextEditor
-								key={id}
-								disabled={assistantIsRunning}
-								ref={editorRef}
-								value={content}
-								externalValueVersion={contentVersion}
-								onChange={handleContentChange}
-								onSelectionChange={handleSelectionChange}
-								onContinueWithAssistant={handleContinueWithAssistant}
-								onGenerateTextSubmit={handleGenerateTextSubmit}
-								onGenerateImageSubmit={handleGenerateImageSubmit}
-								onInsertContent={handleInsertContent}
-								documentId={id}
-								defaultTextModel={defaultTextModel}
-								defaultImageModel={defaultImageModel}
-								onTextModelChange={handleTextModelChange}
-								onImageModelChange={handleImageModelChange}
-								onEditorReady={handleEditorReady}
-								onUndo={handleUndo}
-								onRedo={handleRedo}
-							/>
-						)}
-					</EditorContainer>
-				</ResizablePanel>
-				{activeSidebar && <ResizableHandle />}
-				<ResizablePanel
-					panelRef={sidebarPanelRef}
-					defaultSize="30%"
-					minSize="30%"
-					maxSize="50%"
-					collapsible
-					collapsedSize="0%"
-				>
-					<PanelsContent documentId={id} />
-				</ResizablePanel>
-			</ResizablePanelGroup>
+			<PageBody>
+				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
+					<ResizablePanel defaultSize="70%" minSize="40%">
+						<EditorContainer>
+							{loaded && (
+								<TextEditor
+									key={id}
+									disabled={assistantIsRunning}
+									ref={editorRef}
+									value={content}
+									externalValueVersion={contentVersion}
+									onChange={handleContentChange}
+									onSelectionChange={handleSelectionChange}
+									onContinueWithAssistant={handleContinueWithAssistant}
+									onGenerateTextSubmit={handleGenerateTextSubmit}
+									onGenerateImageSubmit={handleGenerateImageSubmit}
+									onInsertContent={handleInsertContent}
+									documentId={id}
+									defaultTextModel={defaultTextModel}
+									defaultImageModel={defaultImageModel}
+									onTextModelChange={handleTextModelChange}
+									onImageModelChange={handleImageModelChange}
+									onEditorReady={handleEditorReady}
+									onUndo={handleUndo}
+									onRedo={handleRedo}
+								/>
+							)}
+						</EditorContainer>
+					</ResizablePanel>
+					{activeSidebar && <ResizableHandle />}
+					<ResizablePanel
+						panelRef={sidebarPanelRef}
+						defaultSize="30%"
+						minSize="30%"
+						maxSize="50%"
+						collapsible
+						collapsedSize="0%"
+					>
+						<PanelsContent documentId={id} />
+					</ResizablePanel>
+				</ResizablePanelGroup>
+			</PageBody>
 		</PageContainer>
 	);
 }

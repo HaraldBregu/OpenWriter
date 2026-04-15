@@ -2796,10 +2796,10 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extensions/-/extensions-3.20.2.tgz#ce37ffc2d9ec757fb981debd941d7bbb90911385"
   integrity sha512-gzntns6z/kTgwrX89ydc3rNqDsv8D8sAkyl8HE9X+2D9wtdCgNljevIR6MBNcxG7bVm2+XnId1P9YciCZLuefg==
 
-"@tiptap/markdown@3.20.2":
-  version "3.20.2"
-  resolved "https://registry.yarnpkg.com/@tiptap/markdown/-/markdown-3.20.2.tgz#b93b6db9f07a95b0f38a3362119a95116b72f849"
-  integrity sha512-xbL0DxFXGQ9yxmMJSHgdX6GuOCl72AI1DXmDBaLS2CBaKSSwwosk04g5Obs1bqt4WESGyWq0MITKixzRDz3Cgg==
+"@tiptap/markdown@3.22.3":
+  version "3.22.3"
+  resolved "https://registry.yarnpkg.com/@tiptap/markdown/-/markdown-3.22.3.tgz#dda3dbc67eb58b0512b79e0d208727d5728aab07"
+  integrity sha512-Ajw8AkAae7IET1sxZqNv+dhZQSuLY0AHWocowTny1azyiBtmRRKygkGK0ysVA+k6UxmBD6K+tvnbpjQ0/ACl4A==
   dependencies:
     marked "^17.0.1"
 
