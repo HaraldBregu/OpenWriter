@@ -285,6 +285,7 @@ function PageContent(): ReactElement {
 						ref={editorContentRef}
 						documentId={id}
 						onContentChange={handleContentChange}
+						onInsertContent={handleInsertContent}
 						onUndo={handleUndo}
 						onRedo={handleRedo}
 					/>
