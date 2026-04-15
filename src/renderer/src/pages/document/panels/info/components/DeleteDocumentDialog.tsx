@@ -24,7 +24,7 @@ export function DeleteDocumentDialog(): React.ReactElement {
 			open={confirmDeleteOpen}
 			onOpenChange={(open) => dispatch({ type: 'CONFIRM_DELETE_OPEN_CHANGED', open })}
 		>
-			<AlertDialogContent>
+			<AlertDialogContent size='sm'>
 				<AlertDialogHeader>
 					<AlertDialogTitle>{t('configSidebar.deleteDocumentTitle')}</AlertDialogTitle>
 					<AlertDialogDescription>
@@ -38,7 +38,7 @@ export function DeleteDocumentDialog(): React.ReactElement {
 						onClick={handleDeletePermanently}
 						disabled={isDeleting}
 					>
-						{t('configSidebar.deletePermanently')}
+						{t('common.delete')}
 					</AlertDialogAction>
 				</AlertDialogFooter>
 			</AlertDialogContent>
