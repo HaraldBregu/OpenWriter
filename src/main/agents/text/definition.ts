@@ -101,11 +101,11 @@ const definition: AgentDefinition = {
 			} satisfies AgentStreamEvent;
 		} catch (error: unknown) {
 			const message = error instanceof Error ? error.message : String(error);
-			logger?.error(LOG_SOURCE, `Writer execution failed: ${message}`);
+			logger?.error(LOG_SOURCE, `Text execution failed: ${message}`);
 			yield {
 				type: 'error',
 				error: message,
-				code: 'WRITER_AGENT_ERROR',
+				code: 'TEXT_AGENT_ERROR',
 				runId,
 			} satisfies AgentStreamEvent;
 		}
