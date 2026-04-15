@@ -97,7 +97,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(AssistantAgent);
 	agentRegistry.register(ImageGeneratorAgent);
 	agentRegistry.register(PainterAgent);
-	agentRegistry.register(WriterAgent);
+	agentRegistry.register(TextAgent);
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
