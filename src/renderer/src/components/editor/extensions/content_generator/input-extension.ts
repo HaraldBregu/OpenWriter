@@ -76,10 +76,10 @@ export const ContentGeneratorExtension = Node.create<
 				renderHTML: () => ({}),
 			},
 			agentId: {
-				default: 'writer' as ContentGeneratorAgentId,
+				default: 'text' as ContentGeneratorAgentId,
 				parseHTML: (element) => {
 					const value = element.getAttribute('data-agent-id');
-					return value === 'image' ? 'image' : 'writer';
+					return value === 'image' ? 'image' : 'text';
 				},
 				renderHTML: (attributes) => ({
 					'data-agent-id': attributes.agentId as ContentGeneratorAgentId,
