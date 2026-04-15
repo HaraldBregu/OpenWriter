@@ -33,13 +33,13 @@ export function useTextGeneratorSubmit(
 				prompt: params.prompt,
 			};
 			const metadata = {
-				agentId: 'writer' as const,
+				agentId: 'text' as const,
 				documentId,
 				chatId: resolvedSessionId,
 				referenceImages: [],
 			};
 
-			const ipcResult = await window.task.submit('agent-writer', taskInput, metadata);
+			const ipcResult = await window.task.submit('agent-text', taskInput, metadata);
 			if (!ipcResult.success) return null;
 
 			const resolvedTaskId = ipcResult.data.taskId;
