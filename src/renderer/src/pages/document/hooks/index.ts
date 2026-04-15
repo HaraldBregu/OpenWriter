@@ -1,3 +1,7 @@
+export { useDocumentContext } from './use-document-context';
+export { useEditorInstance } from './use-editor-instance';
+export { useSidebarVisibility } from './use-sidebar-visibility';
+export { useInsertContentDialog } from './use-insert-content-dialog';
 export { useDocumentState } from './use-document-state';
 export { useDocumentDispatch } from './use-document-dispatch';
 export { useDocumentUI } from './use-document-ui';
