@@ -268,6 +268,13 @@ function PageContent(): ReactElement {
 				onOpenChange={setFileDialogOpen}
 				onRun={handleExtractorRun}
 			/>
+			<MarkdownPreviewDialog
+				folder={previewFolder}
+				open={previewFolder !== null}
+				onOpenChange={(open) => {
+					if (!open) setPreviewFolder(null);
+				}}
+			/>
 		</PageContainer>
 	);
 }
