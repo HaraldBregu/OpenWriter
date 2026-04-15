@@ -290,7 +290,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				<ImagePlus />
 				<span className="truncate">Image</span>
 			</Button>
-			<hr className="my-1 border-border/80 dark:border-border" />
+			<Separator className="my-1" />
 			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
 				<Sparkles />
 				<span className="truncate">Continue with assistant</span>
