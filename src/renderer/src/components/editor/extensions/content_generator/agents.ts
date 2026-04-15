@@ -1,4 +1,4 @@
-export type ContentGeneratorAgentId = 'writer' | 'image';
+export type ContentGeneratorAgentId = 'text' | 'image';
 
 export interface ContentGeneratorAgentOption {
 	value: ContentGeneratorAgentId;
@@ -10,7 +10,7 @@ export interface ContentGeneratorAgentOption {
 
 export const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOption[] = [
 	{
-		value: 'writer',
+		value: 'text',
 		labelKey: 'assistantAgent.writer',
 		labelFallback: 'Text',
 		descriptionKey: 'assistantAgent.writerDescription',
