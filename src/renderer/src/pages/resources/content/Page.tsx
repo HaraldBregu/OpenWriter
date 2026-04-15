@@ -295,43 +295,68 @@ function PageContent(): ReactElement {
 											{formatShortDate(folder.modifiedAt)}
 										</TableCell>
 										<TableCell
-											className="w-16 px-6 text-right"
+											className="px-6 text-right whitespace-nowrap"
 											onClick={(event) => event.stopPropagation()}
 											onDoubleClick={(event) => event.stopPropagation()}
 										>
 											<div className="inline-flex items-center gap-1">
-												{folder.kind === 'file' &&
-													folder.name.toLowerCase().endsWith('.md') && (
+												{folder.kind === 'file' && (
+													<>
+														{folder.name.toLowerCase().endsWith('.md') && (
+															<Button
+																variant="ghost"
+																size="icon"
+																onClick={() => setPreviewFolder(folder)}
+																aria-label="Preview"
+															>
+																<Eye className="h-4 w-4" />
+															</Button>
+														)}
 														<Button
 															variant="ghost"
 															size="icon"
-															onClick={() => setPreviewFolder(folder)}
-															aria-label="Preview"
+															onClick={handleOpenResourcesFolder}
+															aria-label="Open in Finder"
 														>
-															<Eye className="h-4 w-4" />
+															<FolderOpen className="h-4 w-4" />
 														</Button>
-													)}
-												<DropdownMenu>
-													<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-														<MoreHorizontal className="h-4 w-4" />
-													</DropdownMenuTrigger>
-												<DropdownMenuContent align="end">
-													<DropdownMenuItem onClick={handleOpenResourcesFolder}>
-														<FolderOpen className="h-4 w-4" />
-														Open in Finder
-													</DropdownMenuItem>
-													<DropdownMenuItem
-														className="text-destructive focus:text-destructive"
-														onClick={() => {
-															handleToggleRow(folder.id);
-															handleDelete();
-														}}
-													>
-														<Trash2 className="h-4 w-4" />
-														Delete
-													</DropdownMenuItem>
-												</DropdownMenuContent>
-												</DropdownMenu>
+														<Button
+															variant="ghost"
+															size="icon"
+															className="text-destructive hover:text-destructive"
+															onClick={() => {
+																handleToggleRow(folder.id);
+																handleDelete();
+															}}
+															aria-label="Delete"
+														>
+															<Trash2 className="h-4 w-4" />
+														</Button>
+													</>
+												)}
+												{folder.kind === 'folder' && (
+													<DropdownMenu>
+														<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+															<MoreHorizontal className="h-4 w-4" />
+														</DropdownMenuTrigger>
+														<DropdownMenuContent align="end">
+															<DropdownMenuItem onClick={handleOpenResourcesFolder}>
+																<FolderOpen className="h-4 w-4" />
+																Open in Finder
+															</DropdownMenuItem>
+															<DropdownMenuItem
+																className="text-destructive focus:text-destructive"
+																onClick={() => {
+																	handleToggleRow(folder.id);
+																	handleDelete();
+																}}
+															>
+																<Trash2 className="h-4 w-4" />
+																Delete
+															</DropdownMenuItem>
+														</DropdownMenuContent>
+													</DropdownMenu>
+												)}
 											</div>
 										</TableCell>
 									</TableRow>
