@@ -189,16 +189,27 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				filteredItems.map((item, index) => {
 					const isSelected = index === selectedIndex;
 					const isFirstAiItem = index === firstAiIndex;
+					const tone = item.tone ?? 'default';
 
 					return (
 						<React.Fragment key={item.label}>
 							{isFirstAiItem && <hr className="my-1 border-border/80 dark:border-border" />}
-							<OptionMenuItem
-								item={item}
-								isSelected={isSelected}
+							<Button
+								variant={isSelected ? 'secondary' : 'ghost'}
 								onMouseEnter={() => setSelectedIndex(index)}
-								onSelect={() => executeCommand(item)}
-							/>
+								onMouseDown={(e) => {
+									e.preventDefault();
+									executeCommand(item);
+								}}
+							>
+								<span
+									className={cn(
+										'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
+										getIconClass(tone, isSelected)
+									)}
+								></span>
+								<span className="truncate">{item.label}</span>
+							</Button>
 						</React.Fragment>
 					);
 				})
