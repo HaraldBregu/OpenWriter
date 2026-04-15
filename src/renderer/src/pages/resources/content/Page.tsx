@@ -228,7 +228,7 @@ function PageContent(): ReactElement {
 										</button>
 									</TableHead>
 								))}
-								<TableHead className="w-16 px-6 text-muted-foreground" />
+								<TableHead className="w-40 px-6 text-muted-foreground" />
 							</TableRow>
 						</TableHeader>
 						<TableBody>
