@@ -152,7 +152,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			onShow: () => {},
 			onHide: () => {
 				isLockedRef.current = false;
-				setLoadingAssistant(false);
 				setQuery('');
 				setSelectedIndex(0);
 				slashPosRef.current = null;
