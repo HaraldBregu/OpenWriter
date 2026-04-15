@@ -8,7 +8,6 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { randomUUID } from 'node:crypto';
 import type { TaskHandler, ProgressReporter } from '../task-handler';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace';
