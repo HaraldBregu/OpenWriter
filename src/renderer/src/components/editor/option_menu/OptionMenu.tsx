@@ -2,10 +2,11 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Sparkles, ImagePlus } from 'lucide-react';
 import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
 import { MENU_ITEMS, type MenuItem } from './menu-items';
-import { menuContainerClass } from './styles';
-import { OptionMenuItem } from './OptionMenuItem';
+import { menuContainerClass, getIconClass } from './styles';
 
 interface OptionMenuProps {
 	onContinueWithAssistant?: (
