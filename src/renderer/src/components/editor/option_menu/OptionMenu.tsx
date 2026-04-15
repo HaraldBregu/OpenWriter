@@ -109,7 +109,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 
 	const onKeyEvent = useCallback(
 		(event: KeyboardEvent): boolean => {
-			const items = filteredItemsRef.current;
+			const items = allItemsRef.current;
 			const count = Math.max(items.length, 1);
 
 			if (event.key === 'ArrowDown') {
