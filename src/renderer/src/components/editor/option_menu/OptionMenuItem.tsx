@@ -1,5 +1,4 @@
 import React from 'react';
-import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import type { MenuItem } from './menu-items';
@@ -39,11 +38,7 @@ export function OptionMenuItem({
 					getIconClass(tone, isSelected)
 				)}
 			>
-				{showSpinner ? (
-					<Loader2 className="h-4 w-4 shrink-0 animate-spin" />
-				) : (
-					<Icon className="h-4 w-4 shrink-0" />
-				)}
+				<Icon className="h-4 w-4 shrink-0" />
 			</span>
 			<span className="truncate">{item.label}</span>
 		</Button>
