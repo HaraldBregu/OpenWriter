@@ -329,6 +329,10 @@ export function OptionMenu({
 				<ImagePlus />
 				<span className="truncate">Image</span>
 			</Button>
+			<Button {...itemProps(8, runInsertContent)}>
+				<FileText />
+				<span className="truncate">Insert content</span>
+			</Button>
 			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
 				<Sparkles />
 				<span className="truncate">Continue with assistant</span>
