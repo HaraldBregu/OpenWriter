@@ -129,80 +129,79 @@ const PanelHeader: React.FC = () => {
 			</CardTitle>
 			<CardAction className="flex items-center gap-1! self-center!">
 				<Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
-						<PopoverTrigger
-							render={
-								<Button
-									type="button"
-									variant="ghost"
-									size="icon"
-									disabled={!hasHistory}
-									className="h-7 w-7 rounded-full text-muted-foreground shadow-none hover:bg-accent hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent dark:hover:text-foreground"
-									aria-label={t('agenticPanel.openHistory', 'Open chat history')}
+					<PopoverTrigger
+						render={
+							<Button
+								type="button"
+								variant="ghost"
+								size="icon"
+								disabled={!hasHistory}
+								aria-label={t('agenticPanel.openHistory', 'Open chat history')}
+							>
+								<Clock3 />
+							</Button>
+						}
+					/>
+					<PopoverContent align="end">
+						<PopoverHeader>
+							<PopoverDescription>
+								<InputGroup>
+									<InputGroupAddon>
+										<InputGroupText>
+											<Search />
+										</InputGroupText>
+									</InputGroupAddon>
+									<InputGroupInput
+										value={search}
+										onChange={(event) => setSearch(event.target.value)}
+										placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
+									/>
+								</InputGroup>
+							</PopoverDescription>
+						</PopoverHeader>
+						<ItemGroup className="my-4 gap-4">
+							{filteredSessions.length === 0 && (
+								<Item variant="outline" role="listitem">
+									<ItemContent>
+										<ItemDescription>
+											{t('agenticPanel.historyEmpty', 'No previous chats yet')}
+										</ItemDescription>
+									</ItemContent>
+								</Item>
+							)}
+							{filteredSessions.map((session) => (
+								<Item
+									key={session.id}
+									size="xs"
+									variant={session.id === selectedId ? 'muted' : 'default'}
+									onClick={() => {
+										void handleLoadSession(session.id);
+									}}
 								>
-									<Clock3 className="h-4 w-4" />
-								</Button>
-							}
-						/>
-						<PopoverContent align="end">
-							<PopoverHeader>
-								<PopoverDescription>
-									<InputGroup>
-										<InputGroupAddon>
-											<InputGroupText>
-												<Search />
-											</InputGroupText>
-										</InputGroupAddon>
-										<InputGroupInput
-											value={search}
-											onChange={(event) => setSearch(event.target.value)}
-											placeholder={t('agenticPanel.searchSessions', 'Search sessions...')}
-										/>
-									</InputGroup>
-								</PopoverDescription>
-							</PopoverHeader>
-							<ItemGroup className="my-4 gap-4">
-								{filteredSessions.length === 0 && (
-									<Item variant="outline" role="listitem">
-										<ItemContent>
-											<ItemDescription>
-												{t('agenticPanel.historyEmpty', 'No previous chats yet')}
-											</ItemDescription>
-										</ItemContent>
-									</Item>
-								)}
-								{filteredSessions.map((session) => (
-									<Item
-										key={session.id}
-										size="xs"
-										variant={session.id === selectedId ? 'muted' : 'default'}
-										onClick={() => {
-											void handleLoadSession(session.id);
-										}}
-									>
-										<ItemContent>
-											<ItemTitle>{session.title}</ItemTitle>
-											<ItemDescription>{session.ageLabel}</ItemDescription>
-										</ItemContent>
-										<ItemActions>
-											<Button
-												type="button"
-												variant="ghost"
-												size="icon"
-												disabled={deletingSessionId === session.id}
-												aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
-												onClick={(e) => {
-													e.stopPropagation();
-													void handleDeleteSession(session.id);
-												}}
-											>
-												<Trash2 />
-											</Button>
-										</ItemActions>
-									</Item>
-								))}
-							</ItemGroup>
-						</PopoverContent>
-					</Popover>
+									<ItemContent>
+										<ItemTitle>{session.title}</ItemTitle>
+										<ItemDescription>{session.ageLabel}</ItemDescription>
+									</ItemContent>
+									<ItemActions>
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											disabled={deletingSessionId === session.id}
+											aria-label={t('agenticPanel.deleteSession', 'Delete chat')}
+											onClick={(e) => {
+												e.stopPropagation();
+												void handleDeleteSession(session.id);
+											}}
+										>
+											<Trash2 />
+										</Button>
+									</ItemActions>
+								</Item>
+							))}
+						</ItemGroup>
+					</PopoverContent>
+				</Popover>
 				<Button
 					type="button"
 					variant="ghost"

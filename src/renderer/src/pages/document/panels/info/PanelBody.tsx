@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import { CardContent } from '@/components/ui/Card';
 import { useDocumentState } from '../../hooks';
 import { ActionsSection } from './components/ActionsSection';
 import { DocumentMetaSection } from './components/DocumentMetaSection';
@@ -12,7 +13,7 @@ export function PanelBody(): React.ReactElement {
 	const { documentConfig } = useInfoState();
 
 	return (
-		<div className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 pt-2 pb-6 space-y-2">
+		<CardContent className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-2 pb-6 space-y-2">
 			<DocumentMetaSection />
 			<ImagesSection />
 			{documentId && documentConfig && (
@@ -23,6 +24,6 @@ export function PanelBody(): React.ReactElement {
 				/>
 			)}
 			<ActionsSection />
-		</div>
+		</CardContent>
 	);
 }
