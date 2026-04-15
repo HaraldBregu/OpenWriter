@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/Dialog';
 import { cn } from '@/lib/utils';
 import { useEditorInstance, useInsertContentDialog } from '../Provider';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
 
 export function InsertContentDialog(): ReactElement {
 	const { insertContentDialogOpen, closeInsertContentDialog } = useInsertContentDialog();
