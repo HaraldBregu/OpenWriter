@@ -21,17 +21,19 @@ export interface EditorContentElement {
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 	setContent: (content: string) => void;
+	insertContent: (markdown: string) => void;
 }
 
 interface EditorContentProps {
 	readonly documentId: string | undefined;
 	readonly onContentChange: (content: string) => void;
+	readonly onInsertContent: () => void;
 	readonly onUndo: () => void;
 	readonly onRedo: () => void;
 }
 
 const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>(
-	({ documentId, onContentChange, onUndo, onRedo }, ref) => {
+	({ documentId, onContentChange, onInsertContent, onUndo, onRedo }, ref) => {
 		const dispatch = useDocumentDispatch();
 		const { setEditor } = useEditorInstance();
 		const editorRef = useRef<TextEditorElement>(null);
