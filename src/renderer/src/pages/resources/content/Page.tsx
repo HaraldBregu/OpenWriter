@@ -284,11 +284,24 @@ function PageContent(): ReactElement {
 										<TableCell
 											className="w-16 px-6 text-right"
 											onClick={(event) => event.stopPropagation()}
+											onDoubleClick={(event) => event.stopPropagation()}
 										>
-											<DropdownMenu>
-												<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
-													<MoreHorizontal className="h-4 w-4" />
-												</DropdownMenuTrigger>
+											<div className="inline-flex items-center gap-1">
+												{folder.kind === 'file' &&
+													folder.name.toLowerCase().endsWith('.md') && (
+														<Button
+															variant="ghost"
+															size="icon"
+															onClick={() => setPreviewFolder(folder)}
+															aria-label="Preview"
+														>
+															<Eye className="h-4 w-4" />
+														</Button>
+													)}
+												<DropdownMenu>
+													<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
+														<MoreHorizontal className="h-4 w-4" />
+													</DropdownMenuTrigger>
 												<DropdownMenuContent align="end">
 													<DropdownMenuItem onClick={handleOpenResourcesFolder}>
 														<FolderOpen className="h-4 w-4" />
