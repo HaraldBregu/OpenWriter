@@ -314,6 +314,11 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
+	const handleOpenFolder = useCallback(() => {
+		if (!id) return;
+		window.workspace.openDocumentFolder(id);
+	}, [id]);
+
 	return (
 		<PageContainer>
 			<PageHeader>
