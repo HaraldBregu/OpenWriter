@@ -48,6 +48,7 @@ export function EditorArea({
 	onContinueWithAssistant,
 	onGenerateTextSubmit,
 	onGenerateImageSubmit,
+	onInsertContent,
 	onUndo,
 	onRedo,
 }: EditorAreaProps): ReactElement {
