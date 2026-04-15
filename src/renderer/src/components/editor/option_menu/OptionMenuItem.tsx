@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import type { MenuItem } from './menu-items';
-import { getIconClass, getItemClass } from './styles';
+import { getIconClass } from './styles';
 
 interface OptionMenuItemProps {
 	item: MenuItem;
@@ -25,11 +25,7 @@ export function OptionMenuItem({
 
 	return (
 		<Button
-			variant="ghost"
-			className={cn(
-				'h-auto w-full justify-start gap-2.5 rounded-lg px-2.5 py-2 text-left text-sm font-normal',
-				getItemClass(isSelected)
-			)}
+			variant={isSelected ? 'secondary' : 'ghost'}
 			onMouseEnter={onMouseEnter}
 			onMouseDown={(e) => {
 				e.preventDefault();
