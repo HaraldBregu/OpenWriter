@@ -54,7 +54,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 
 	const currentAgentLabel = isImage
 		? t('assistantAgent.image', 'Image')
-		: t('assistantAgent.writer', 'Text');
+		: t('assistantAgent.text', 'Text');
 
 	return (
 		<Card
