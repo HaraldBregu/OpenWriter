@@ -8,12 +8,11 @@ import {
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../../../services/task-event-bus';
-import { useDocumentState } from '../../hooks';
+import { useDocumentState, useEditorInstance } from '../../hooks';
 import { useChatState, useChatDispatch, useChatPersistence } from './hooks';
 import { ChatProvider } from './Provider';
 import { buildTaskPrompt, getSelectedEditorText, mapTaskStatusToChatStatus } from './shared';
 import type { AssistantTaskData } from './shared';
-import { useEditorInstance } from '../../Provider';
 import { Card } from '@/components/ui/Card';
 import { PanelHeader } from './PanelHeader';
 import { PanelFooter } from './PanelFooter';
