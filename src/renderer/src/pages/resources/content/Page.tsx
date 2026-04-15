@@ -72,6 +72,8 @@ function PageContent(): ReactElement {
 	const section = RESOURCE_SECTIONS.content;
 	const [fileDialogOpen, setFileDialogOpen] = useState(false);
 	const [previewFolder, setPreviewFolder] = useState<FolderEntry | null>(null);
+	const [editingId, setEditingId] = useState<string | null>(null);
+	const [editingName, setEditingName] = useState('');
 	const {
 		folders,
 		filteredFolders,
@@ -86,7 +88,38 @@ function PageContent(): ReactElement {
 		handleUpload,
 		handleOpenResourcesFolder,
 		handleDelete,
+		refreshFolders,
 	} = useContentContext();
+
+	const startEditing = (folder: FolderEntry): void => {
+		setEditingId(folder.id);
+		setEditingName(folder.name);
+	};
+
+	const cancelEditing = (): void => {
+		setEditingId(null);
+		setEditingName('');
+	};
+
+	const commitRename = async (folder: FolderEntry): Promise<void> => {
+		const next = editingName.trim();
+		if (!next || next === folder.name) {
+			cancelEditing();
+			return;
+		}
+		const lastSep = Math.max(folder.path.lastIndexOf('/'), folder.path.lastIndexOf('\\'));
+		const dir = folder.path.slice(0, lastSep);
+		const sep = folder.path.charAt(lastSep);
+		const newPath = `${dir}${sep}${next}`;
+		try {
+			await window.workspace.rename({ oldPath: folder.path, newPath });
+			await refreshFolders();
+		} catch (err) {
+			console.error('[ContentPage] Rename failed:', err);
+		} finally {
+			cancelEditing();
+		}
+	};
 
 	const handleExtractorRun = async (payload: ExtractorRunPayload): Promise<void> => {
 		console.log('[ContentPage] Extractor run triggered with file:', payload);
