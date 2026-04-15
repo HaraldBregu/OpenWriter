@@ -143,7 +143,12 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			isLockedRef.current = false;
 			menuControlsRef.current.forceHide();
 		};
-		onContinueWithAssistantRef.current?.(markdownBeforeCursor, markdownAfterCursor, from, closeMenu);
+		onContinueWithAssistantRef.current?.(
+			markdownBeforeCursor,
+			markdownAfterCursor,
+			from,
+			closeMenu
+		);
 	}, [editor, deleteSlash]);
 
 	const runByIndex = useCallback(
@@ -240,10 +245,12 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		onRun: () => void
 	): {
 		variant: 'secondary' | 'ghost';
+		className: string;
 		onMouseEnter: () => void;
 		onMouseDown: (e: React.MouseEvent) => void;
 	} => ({
 		variant: index === selectedIndex ? 'secondary' : 'ghost',
+		className: 'w-full justify-start',
 		onMouseEnter: () => setSelectedIndex(index),
 		onMouseDown: (e) => {
 			e.preventDefault();
@@ -255,7 +262,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		<Card
 			ref={menuRef}
 			size="sm"
-			className="z-50 gap-0 p-1.5"
+			className="z-50 gap-1! p-1! m-0! text-left"
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button {...itemProps(0, () => runHeading(1))}>
