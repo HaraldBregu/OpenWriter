@@ -63,7 +63,7 @@ export function MarkdownPreviewDialog({
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col">
+			<DialogContent className="flex h-[70vh] w-[min(42rem,calc(100vw-4rem))] max-w-none flex-col">
 				<DialogHeader className="contents space-y-0 text-left">
 					<DialogTitle className="truncate">{folder.name}</DialogTitle>
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
