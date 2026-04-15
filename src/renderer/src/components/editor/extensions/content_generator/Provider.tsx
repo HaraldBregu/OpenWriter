@@ -21,7 +21,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 
 	const loading = node.attrs.loading as boolean;
 	const enable = node.attrs.enable as boolean;
-	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'writer';
+	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'text';
 	const options = extension.options as ContentGeneratorOptions;
 	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
 		.contentGenerator;
