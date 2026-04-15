@@ -197,6 +197,8 @@ export function OptionMenu({
 				case 7:
 					return runImage();
 				case 8:
+					return runInsertContent();
+				case 9:
 					return runContinueWithAssistant();
 			}
 		},
@@ -207,6 +209,7 @@ export function OptionMenu({
 			runOrderedList,
 			runHorizontalRule,
 			runImage,
+			runInsertContent,
 			runContinueWithAssistant,
 		]
 	);
