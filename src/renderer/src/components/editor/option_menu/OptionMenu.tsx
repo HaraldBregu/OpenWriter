@@ -132,6 +132,17 @@ export function OptionMenu({
 			.run();
 	}, [editor, deleteSlash]);
 
+	const runInsertContent = useCallback(() => {
+		const ctx = deleteSlash();
+		if (!ctx) return;
+		editor
+			.chain()
+			.focus()
+			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+			.run();
+		onInsertContentRef.current?.();
+	}, [editor, deleteSlash]);
+
 	const runContinueWithAssistant = useCallback(() => {
 		const ctx = deleteSlash();
 		if (!ctx) return;
