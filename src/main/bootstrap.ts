@@ -25,7 +25,7 @@ import {
 	AssistantAgent,
 	ImageGeneratorAgent,
 	PainterAgent,
-	WriterAgent,
+	TextAgent,
 } from './agents';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
