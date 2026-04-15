@@ -209,8 +209,8 @@ function PageContent(): ReactElement {
 	}, []);
 
 	const handleInsertContent = useCallback(() => {
-		editorContentRef.current?.insertContent('Inserted content');
-	}, []);
+		openInsertContentDialog();
+	}, [openInsertContentDialog]);
 
 	return (
 		<PageContainer>
