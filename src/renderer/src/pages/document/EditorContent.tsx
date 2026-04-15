@@ -166,7 +166,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				debouncedSave();
 			},
 			insertContent: (markdown: string) => {
-				editorRef.current?.insertMarkdown(markdown);
+				editorRef.current?.insertMarkdownText(markdown);
 			},
 		}));
 
