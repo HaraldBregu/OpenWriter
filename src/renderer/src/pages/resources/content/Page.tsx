@@ -339,7 +339,7 @@ function PageContent(): ReactElement {
 														<DropdownMenuTrigger render={<Button variant="ghost" size="icon" />}>
 															<MoreHorizontal className="h-4 w-4" />
 														</DropdownMenuTrigger>
-														<DropdownMenuContent align="end">
+														<DropdownMenuContent align="end" className="min-w-48">
 															<DropdownMenuItem onClick={handleOpenResourcesFolder}>
 																<FolderOpen className="h-4 w-4" />
 																Open in Finder
