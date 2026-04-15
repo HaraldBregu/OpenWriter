@@ -3,7 +3,7 @@
  *
  * Receives a document URL (or file path) with a model identifier and input type,
  * delegates text extraction to the Mistral OCR client, and saves the extracted
- * markdown to resources/content/<source-basename>/<uuid>.md in the workspace.
+ * markdown to resources/content/<source-basename>.md in the workspace.
  */
 
 import fs from 'node:fs/promises';
