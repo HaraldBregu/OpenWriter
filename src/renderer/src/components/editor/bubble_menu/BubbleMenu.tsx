@@ -149,6 +149,27 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 			>
 				<Heading3 className="h-3.5 w-3.5" />
 			</Button>
+
+			<div className={separatorClass} />
+
+			<Button
+				variant="ghost"
+				size="icon"
+				aria-label="Bullet list"
+				className={getMenuButtonClass({ isActive: editor.isActive('bulletList') })}
+				onClick={() => editor.chain().focus().toggleBulletList().run()}
+			>
+				<List className="h-3.5 w-3.5" />
+			</Button>
+			<Button
+				variant="ghost"
+				size="icon"
+				aria-label="Ordered list"
+				className={getMenuButtonClass({ isActive: editor.isActive('orderedList') })}
+				onClick={() => editor.chain().focus().toggleOrderedList().run()}
+			>
+				<ListOrdered className="h-3.5 w-3.5" />
+			</Button>
 		</div>
 	);
 });
