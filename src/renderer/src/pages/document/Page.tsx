@@ -9,7 +9,8 @@ import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
 import { EditorContainer } from '@/components/app/base/Editor';
-import PanelsContent from './PanelsContent';
+import InfoPanel from './panels/info/InfoPanel';
+import Chat from './panels/chat/Panel';
 import HistoryMenu from './components/HistoryMenu';
 import {
 	useDocumentDispatch,
