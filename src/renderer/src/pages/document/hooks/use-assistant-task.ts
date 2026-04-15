@@ -29,7 +29,7 @@ export function useAssistantTask(
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const [assistantActiveAgentId, setAssistantActiveAgentId] =
-		useState<ContentGeneratorAgentId>('writer');
+		useState<ContentGeneratorAgentId>('text');
 	const assistantIsRunning = assistantActiveTaskId !== null;
 	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
@@ -94,7 +94,7 @@ export function useAssistantTask(
 					return;
 				}
 
-				setAssistantActiveAgentId('writer');
+				setAssistantActiveAgentId('text');
 				setAssistantActiveTaskId(taskId);
 			} catch {
 				editorRef.current?.setAssistantLoading(false);
