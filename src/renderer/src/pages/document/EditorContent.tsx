@@ -212,6 +212,7 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				onContinueWithAssistant={handleContinueWithAssistant}
 				onGenerateTextSubmit={handleGenerateTextSubmit}
 				onGenerateImageSubmit={handleGenerateImageSubmit}
+				onInsertContent={onInsertContent}
 				onUndo={onUndo}
 				onRedo={onRedo}
 			/>
