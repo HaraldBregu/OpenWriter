@@ -383,43 +383,7 @@ function Container({ children }: LayoutProps) {
 								</CollapsibleContent>
 							</SidebarGroup>
 						</Collapsible>
-
-						<SidebarGroup className="py-0 mt-auto">
-							<SidebarGroupContent>
-								<SidebarMenu>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/debug/tasks" />}
-											className="h-9 px-3"
-											isActive={location.pathname === '/debug/tasks'}
-										>
-											<ListTodo className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('debug.tasks')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/debug/redux" />}
-											className="h-9 px-3"
-											isActive={location.pathname === '/debug/redux'}
-										>
-											<Database className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/debug/logs" />}
-											className="h-9 px-3"
-											isActive={location.pathname === '/debug/logs'}
-										>
-											<ScrollText className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
+						
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">

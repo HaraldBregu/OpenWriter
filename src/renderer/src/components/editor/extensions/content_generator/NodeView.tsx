@@ -8,8 +8,6 @@ import { Textarea } from '@/components/ui/Textarea';
 import { Provider } from './Provider';
 import { useContentGenerator } from './hooks/use-content-generator';
 import { Attachment } from './components';
-import { CardAction, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Badge } from '@/components/ui/Badge';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -29,7 +27,6 @@ function ContentGeneratorInner(): React.JSX.Element {
 		enable,
 		agentId,
 		isImage,
-		activeModel,
 		isSubmitDisabled,
 		textareaRef,
 		fileInputRef,
@@ -51,13 +48,6 @@ function ContentGeneratorInner(): React.JSX.Element {
 		? t('assistantNode.imageTitle', 'Generate image')
 		: t('assistantNode.writerTitle', 'Generate text');
 
-	const modeLabel = isImage
-		? t('assistantAgent.image', 'Image')
-		: t('assistantAgent.writer', 'Text');
-	const modeDescription = isImage
-		? t('assistantNode.imageHeaderSubtitle', 'Prompt or references')
-		: t('assistantNode.textHeaderSubtitle', 'Draft, rewrite, continue');
-
 	const modelOptions = isImage ? IMAGE_MODELS : TEXT_MODELS;
 	const selectedModel = isImage ? state.selectedImageModel : state.selectedTextModel;
 	const handleModelChange = isImage ? handleImageModelChange : handleTextModelChange;
@@ -68,18 +58,10 @@ function ContentGeneratorInner(): React.JSX.Element {
 
 	return (
 		<Card
-			size="sm"
 			onDragOver={isImage ? handleDragOver : undefined}
 			onDragLeave={isImage ? handleDragLeave : undefined}
 			onDrop={isImage ? handleDrop : undefined}
 		>
-			<CardHeader>
-				<CardTitle>{modeLabel}</CardTitle>
-				<CardDescription>{modeDescription}</CardDescription>
-				<CardAction>
-					<Badge variant="outline">{activeModel.name}</Badge>
-				</CardAction>
-			</CardHeader>
 			<CardContent>
 				{isImage && (
 					<Attachment
@@ -103,7 +85,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 					disabled={!enable}
 					aria-label={inputLabel}
 					className={cn(
-						'p-0 py-4 rounded-none min-h-27 w-full resize-none border-none bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+						'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 						'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
 						'disabled:cursor-not-allowed disabled:opacity-60'
 					)}
@@ -118,7 +100,7 @@ function ContentGeneratorInner(): React.JSX.Element {
 					rows={1}
 				/>
 			</CardContent>
-			<CardFooter>
+			<CardFooter className="bg-transparent border-none">
 				<div className="flex items-center gap-3">
 					<DropdownMenu modal={false}>
 						<DropdownMenuTrigger

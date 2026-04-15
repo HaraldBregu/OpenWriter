@@ -37,12 +37,6 @@ const definition: AgentDefinition = {
 	id: 'writer',
 	name: 'Agent Writer',
 	category: 'writing',
-	defaultModel: {
-		providerId: 'openai',
-		modelId: 'gpt-4o',
-		temperature: 0.6,
-		maxTokens: 4096,
-	},
 
 	async *execute(input) {
 		const { runId, provider, prompt, temperature, maxTokens, history, signal, logger } = input;

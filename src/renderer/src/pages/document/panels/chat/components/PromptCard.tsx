@@ -104,7 +104,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				isDragOver && 'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 			)}
 		>
-			<CardHeader className="space-y-0 p-0 px-3.5 pt-1">
+			<CardHeader className="space-y-0 p-0 px-3.5">
 				<div className="flex items-center gap-2">
 					<Button
 						type="button"
@@ -206,11 +206,11 @@ const PromptCard: React.FC<PromptCardProps> = ({
 						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none border-none bg-transparent px-4 pb-3 pt-4 text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
+					className="w-full resize-none border-none bg-transparent dark:bg-transparent text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
 				/>
 			</CardContent>
 
-			<CardFooter className="gap-2 p-2 bg-transparent">
+			<CardFooter className="gap-2 p-2 bg-transparent border-none">
 				<AgentDropdown
 					agentId={agentId}
 					isImage={isImage}
