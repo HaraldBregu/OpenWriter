@@ -7,10 +7,10 @@ import React, {
 	useMemo,
 } from 'react';
 import { debounce } from 'lodash';
-import type { TextEditorElement } from '@/components/editor/TextEditor';
+import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import { EditorContainer } from '@/components/app/base/Editor';
 import type { Editor } from '@tiptap/core';
 import { useDocumentDispatch, useAssistantTask, useEditorInstance } from './hooks';
-import { EditorArea } from './components/EditorArea';
 import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
 
