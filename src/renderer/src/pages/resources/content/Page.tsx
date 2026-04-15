@@ -325,10 +325,7 @@ function PageContent(): ReactElement {
 															variant="ghost"
 															size="icon"
 															className="text-destructive hover:text-destructive"
-															onClick={() => {
-																handleToggleRow(folder.id);
-																handleDelete();
-															}}
+															onClick={() => handleDeleteOne(folder.id)}
 															aria-label="Delete"
 														>
 															<Trash2 className="h-4 w-4" />
