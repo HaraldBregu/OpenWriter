@@ -88,7 +88,7 @@ const definition: AgentDefinition = {
 				}
 			}
 
-			logger?.info(LOG_SOURCE, 'Writer execution completed', {
+			logger?.info(LOG_SOURCE, 'Text execution completed', {
 				contentLength: content.length,
 				tokenCount,
 			});
