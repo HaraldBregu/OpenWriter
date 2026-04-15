@@ -168,11 +168,11 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		};
 	}, [editor, onKeyEvent]);
 
-	const hasRegularItems = filteredItems.some((item) => item.section !== 'ai');
-	const hasAiItems = filteredItems.some((item) => item.section === 'ai');
+	const hasRegularItems = allItems.some((item) => item.section !== 'ai');
+	const hasAiItems = allItems.some((item) => item.section === 'ai');
 	const showSeparator = hasRegularItems && hasAiItems;
 	const firstAiIndex = showSeparator
-		? filteredItems.findIndex((i) => i.section === 'ai')
+		? allItems.findIndex((i) => i.section === 'ai')
 		: -1;
 
 	return (
@@ -181,8 +181,8 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 			className={menuContainerClass}
 			style={{ visibility: 'hidden', position: 'absolute', minWidth: '220px' }}
 		>
-			{filteredItems.length > 0 ? (
-				filteredItems.map((item, index) => {
+			{allItems.length > 0 ? (
+				allItems.map((item, index) => {
 					const isSelected = index === selectedIndex;
 					const isFirstAiItem = index === firstAiIndex;
 					const tone = item.tone ?? 'default';
