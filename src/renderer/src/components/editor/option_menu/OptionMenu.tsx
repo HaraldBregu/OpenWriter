@@ -4,7 +4,6 @@ import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Separator } from '@/components/ui/Separator';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
 
 interface OptionMenuProps {
@@ -210,6 +209,9 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		[runByIndex]
 	);
 
+	const onKeyEventRef = useRef(onKeyEvent);
+	onKeyEventRef.current = onKeyEvent;
+
 	useEffect(() => {
 		const el = menuRef.current;
 		if (!el || editor.isDestroyed) return;
@@ -229,7 +231,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				setQuery(q);
 				slashPosRef.current = slashPos;
 			},
-			onKeyEvent,
+			onKeyEvent: (event) => onKeyEventRef.current(event),
 			getIsLocked: () => isLockedRef.current,
 			controls: menuControlsRef.current,
 		});
@@ -238,7 +240,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		return () => {
 			editor.unregisterPlugin(pluginKey);
 		};
-	}, [editor, onKeyEvent]);
+	}, [editor]);
 
 	const itemProps = (
 		index: number,
@@ -297,7 +299,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				<ImagePlus />
 				<span className="truncate">Image</span>
 			</Button>
-			<Separator className="my-1" />
 			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
 				<Sparkles />
 				<span className="truncate">Continue with assistant</span>
