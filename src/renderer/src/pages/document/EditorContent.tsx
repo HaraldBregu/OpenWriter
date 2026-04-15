@@ -105,22 +105,6 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 			};
 		}, [debouncedSave]);
 
-		useEffect(() => {
-			if (!documentId) return;
-
-			const unsubscribe = window.workspace.onDocumentContentChanges(
-				documentId,
-				(updatedContent) => {
-					setContentState(updatedContent);
-					setContentVersion((v) => v + 1);
-					dispatch({ type: 'CONTENT_CHANGED', value: updatedContent });
-					onContentChange(updatedContent);
-				}
-			);
-
-			return unsubscribe;
-		}, [documentId, dispatch, onContentChange]);
-
 		const updateDocumentConfig = useCallback(
 			async (update: { textModel?: string; imageModel?: string }) => {
 				if (!documentId) return;
