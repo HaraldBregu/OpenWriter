@@ -165,6 +165,9 @@ const EditorContent = React.forwardRef<EditorContentElement, EditorContentProps>
 				dispatch({ type: 'CONTENT_CHANGED', value: newContent });
 				debouncedSave();
 			},
+			insertContent: (markdown: string) => {
+				editorRef.current?.insertMarkdown(markdown);
+			},
 		}));
 
 		const handleEditorReady = useCallback(
