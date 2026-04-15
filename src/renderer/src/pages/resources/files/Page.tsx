@@ -335,7 +335,13 @@ function PageContent(): ReactElement {
 			<ImageDialog />
 			<PdfDialog />
 			<TextDialog />
-			<DeleteConfirmDialog />
+			<DeleteConfirmDialog
+				open={confirmOpen}
+				onOpenChange={setConfirmOpen}
+				title="Delete files"
+				description={fileDescription}
+				onConfirm={handleConfirmDelete}
+			/>
 		</PageContainer>
 	);
 }
