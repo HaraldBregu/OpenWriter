@@ -32,6 +32,7 @@ function PageContent(): ReactElement {
 	const [loaded, setLoaded] = useState(false);
 
 	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
+	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
 	const editorContentRef = useRef<EditorContentElement>(null);
