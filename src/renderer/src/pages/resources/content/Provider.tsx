@@ -130,6 +130,14 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
 	}, [selected]);
 
+	const handleDeleteOne = useCallback(
+		(id: string) => {
+			setSelected(new Set([id]));
+			dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
+		},
+		[setSelected],
+	);
+
 	const handleConfirmDelete = useCallback(async () => {
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: false });
 		const ids = [...selected];
