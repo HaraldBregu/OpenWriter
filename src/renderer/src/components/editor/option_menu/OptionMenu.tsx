@@ -50,6 +50,9 @@ export function OptionMenu({
 	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
 	onContinueWithAssistantRef.current = onContinueWithAssistant;
 
+	const onInsertContentRef = useRef(onInsertContent);
+	onInsertContentRef.current = onInsertContent;
+
 	useEffect(() => {
 		setSelectedIndex(0);
 	}, [query]);
