@@ -7,7 +7,6 @@ import {
 	FileText,
 	Folder as FolderIcon,
 	FolderOpen,
-	MoreHorizontal,
 	Search,
 	Trash2,
 	Upload,
