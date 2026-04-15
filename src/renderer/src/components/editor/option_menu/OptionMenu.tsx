@@ -4,8 +4,8 @@ import { useEditorContext } from '../EditorContext';
 import { PluginKey } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
-import { menuContainerClass, getIconClass } from './styles';
 
 interface OptionMenuProps {
 	onContinueWithAssistant?: (
@@ -20,6 +20,17 @@ interface OptionMenuProps {
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 9;
 const FIRST_AI_INDEX = 8;
+
+function iconClass(tone: 'default' | 'ai', isSelected: boolean): string {
+	if (tone === 'ai') {
+		return isSelected
+			? 'bg-[hsl(var(--info))] text-[hsl(var(--info-foreground))] shadow-sm'
+			: 'bg-[hsl(var(--info)/0.16)] text-[hsl(var(--info))] dark:bg-[hsl(var(--info)/0.22)] dark:text-[hsl(var(--info))]';
+	}
+	return isSelected
+		? 'bg-background/80 text-foreground shadow-sm dark:bg-background/70 dark:text-foreground'
+		: 'text-foreground/72 dark:text-foreground/82';
+}
 
 export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.JSX.Element {
 	const { editor } = useEditorContext();
@@ -45,8 +56,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	const deleteSlash = useCallback((): { slashPos: number; queryLength: number } | null => {
 		const slashPos = slashPosRef.current;
 		if (slashPos === null) return null;
-		const queryLength = queryRef.current.length;
-		return { slashPos, queryLength };
+		return { slashPos, queryLength: queryRef.current.length };
 	}, []);
 
 	const runHeading = useCallback(
@@ -64,7 +74,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	);
 
 	const runParagraph = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -75,7 +85,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	}, [editor, deleteSlash]);
 
 	const runBulletList = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -86,7 +96,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	}, [editor, deleteSlash]);
 
 	const runOrderedList = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -97,7 +107,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	}, [editor, deleteSlash]);
 
 	const runHorizontalRule = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -108,7 +118,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	}, [editor, deleteSlash]);
 
 	const runImage = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -119,7 +129,7 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	}, [editor, deleteSlash]);
 
 	const runContinueWithAssistant = useCallback(() => {
-		const ctx = deleteSlash(editor);
+		const ctx = deleteSlash();
 		if (!ctx) return;
 		editor
 			.chain()
@@ -236,18 +246,25 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 		};
 	}, [editor, onKeyEvent]);
 
-	const renderIcon = (Icon: React.ElementType, isSelected: boolean, tone: 'default' | 'ai'): React.JSX.Element => (
+	const renderIcon = (
+		Icon: React.ElementType,
+		isSelected: boolean,
+		tone: 'default' | 'ai'
+	): React.JSX.Element => (
 		<span
 			className={cn(
 				'flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-				getIconClass(tone, isSelected)
+				iconClass(tone, isSelected)
 			)}
 		>
 			<Icon className="h-4 w-4 shrink-0" />
 		</span>
 	);
 
-	const itemProps = (index: number, onRun: () => void): {
+	const itemProps = (
+		index: number,
+		onRun: () => void
+	): {
 		variant: 'secondary' | 'ghost';
 		onMouseEnter: () => void;
 		onMouseDown: (e: React.MouseEvent) => void;
@@ -261,10 +278,11 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 	});
 
 	return (
-		<div
+		<Card
 			ref={menuRef}
-			className={menuContainerClass}
-			style={{ visibility: 'hidden', position: 'absolute', minWidth: '220px' }}
+			size="sm"
+			className="z-50 min-w-[220px] gap-0 p-1.5"
+			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button {...itemProps(0, () => runHeading(1))}>
 				{renderIcon(Heading, selectedIndex === 0, 'default')}
@@ -303,6 +321,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				{renderIcon(Sparkles, selectedIndex === FIRST_AI_INDEX, 'ai')}
 				<span className="truncate">Continue with assistant</span>
 			</Button>
-		</div>
+		</Card>
 	);
 }
