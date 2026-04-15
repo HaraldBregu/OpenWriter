@@ -188,7 +188,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 				filteredItems.map((item, index) => {
 					const isSelected = index === selectedIndex;
 					const isFirstAiItem = index === firstAiIndex;
-					const showSpinner = item.label === 'Continue with assistant' && loadingAssistant;
 
 					return (
 						<React.Fragment key={item.label}>
@@ -196,7 +195,6 @@ export function OptionMenu({ onContinueWithAssistant }: OptionMenuProps): React.
 							<OptionMenuItem
 								item={item}
 								isSelected={isSelected}
-								showSpinner={showSpinner}
 								onMouseEnter={() => setSelectedIndex(index)}
 								onSelect={() => executeCommand(item)}
 							/>
