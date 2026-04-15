@@ -82,12 +82,10 @@ function PageContent(): ReactElement {
 		sortKey,
 		sortDirection,
 		handleSort,
-		handleToggleRow,
 		searchQuery,
 		setSearchQuery,
 		handleUpload,
 		handleOpenResourcesFolder,
-		handleDelete,
 		handleDeleteOne,
 		refreshFolders,
 	} = useContentContext();
