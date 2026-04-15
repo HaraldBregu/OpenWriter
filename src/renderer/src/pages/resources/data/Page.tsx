@@ -1,4 +1,5 @@
 import type { ReactElement } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FolderOpen, Pencil, Trash2, Upload, X } from 'lucide-react';
 import {
 	PageBody,
@@ -8,12 +9,12 @@ import {
 	PageHeaderTitle,
 } from '@/components/app/base/Page';
 import { Button } from '@/components/ui/Button';
+import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import Layout from './Layout';
 import { useContext } from './hooks/use-context';
 import { KnowledgeBaseCard } from './components/KnowledgeBaseCard';
 import { KnowledgeBaseDialog } from './components/KnowledgeBaseDialog';
 import { DataIndexingBar } from './components/DataIndexingBar';
-import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
 
 function PageContent(): ReactElement {
 	const {
