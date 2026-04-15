@@ -2,7 +2,7 @@ import type { KeyboardEvent, ReactElement } from 'react';
 import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
-import { DeleteConfirmDialog } from './components/DeleteConfirmDialog';
+import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import { useContext } from './hooks/use-context';
 import {
 	ChevronDownIcon,
