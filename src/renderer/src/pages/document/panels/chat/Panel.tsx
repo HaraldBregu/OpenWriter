@@ -218,10 +218,10 @@ const Chat: React.FC = () => {
 			dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: assistantMessageId });
 			dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
 
-			const taskType = 'agent-writer';
+			const taskType = 'agent-text';
 			const taskInput: AssistantTaskData = { prompt: taskPrompt };
 			const metadata = {
-				agentId: 'writer',
+				agentId: 'text',
 				...(documentId ? { documentId } : {}),
 				...(resolvedSessionId ? { chatId: resolvedSessionId } : {}),
 			};
