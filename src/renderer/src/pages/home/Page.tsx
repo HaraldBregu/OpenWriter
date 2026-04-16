@@ -18,6 +18,7 @@ export default function Page(): ReactElement {
 	const greeting = useGreeting();
 
 	return (
+		<Layout>
 		<PageContainer>
 			<PageBody>
 				<div className="mx-auto max-w-3xl space-y-10 px-8 py-12">
