@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
-import { useContentGenerator } from './hooks/use-content-generator';
+import { useContentGenerator } from '../../hooks/use-content-generator';
 import { CardNodeViewHeader } from './CardNodeViewHeader';
 import {
 	DropdownMenu,
