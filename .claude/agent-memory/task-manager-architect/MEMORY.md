@@ -1,1 +1,0 @@
-- [TaskManager Architecture](project_task_manager_arch.md) — Core architecture, file locations, handler registration, and renderer integration patterns
