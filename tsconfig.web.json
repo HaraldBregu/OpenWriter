@@ -2,10 +2,7 @@
 	"extends": "./node_modules/@electron-toolkit/tsconfig/tsconfig.web.json",
 	"include": [
 		"src/renderer/src/**/*",
-		"src/renderer/src/**/*.tsx",
 		"src/preload/*.d.ts",
-		"src/renderer/i18n.ts",
-		"src/env.d.ts",
 		"src/shared/**/*"
 	],
 	"compilerOptions": {
