@@ -35,7 +35,6 @@ export function CardNodeView(): React.JSX.Element {
 		handleImageModelChange,
 		handleTextModelChange,
 		handleFilesChange,
-		handleOpenFilePicker,
 		resizeTextarea,
 	} = useContentGenerator();
 
