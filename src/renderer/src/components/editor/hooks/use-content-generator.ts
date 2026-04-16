@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { Context } from '../components/content_generator/context/context';
-import type { ContextValue } from '../components/content_generator/context/context';
+import { ContentGeneratorContext } from '../context/content-generator-context';
+import type { ContentGeneratorContextValue } from '../context/content-generator-context';
 
-export function useContentGenerator(): ContextValue {
-	const context = useContext(Context);
+export function useContentGenerator(): ContentGeneratorContextValue {
+	const context = useContext(ContentGeneratorContext);
 	if (!context) {
 		throw new Error('useContentGenerator must be used within ContentGeneratorProvider');
 	}
