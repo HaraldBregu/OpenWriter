@@ -7,7 +7,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { Document } from '@langchain/core/documents';
+import type { DocumentChunk } from '../shared/ai-types';
 import type { WindowContextManager } from '../core/window-context';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from '../workspace/workspace-service';
