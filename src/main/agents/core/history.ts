@@ -1,11 +1,9 @@
-import type { BaseMessage } from '@langchain/core/messages';
-import { AIMessage, HumanMessage } from '@langchain/core/messages';
+import type { ChatMessage } from '../../shared/ai-types';
 import type { AgentHistoryMessage } from './types';
 
-export function toLangChainHistoryMessages(
-	history: AgentHistoryMessage[] | undefined
-): BaseMessage[] {
-	return (history ?? []).map((message) =>
-		message.role === 'user' ? new HumanMessage(message.content) : new AIMessage(message.content)
-	);
+export function toHistoryMessages(history: AgentHistoryMessage[] | undefined): ChatMessage[] {
+	return (history ?? []).map((message) => ({
+		role: message.role,
+		content: message.content,
+	}));
 }
