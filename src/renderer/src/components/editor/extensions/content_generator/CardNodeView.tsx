@@ -55,11 +55,18 @@ export function CardNodeView(): React.JSX.Element {
 
 	const isDisabled = !enable || loading;
 
-	const card = (
+	return (
+		<FileUpload
+			accept={ACCEPTED_IMAGE_TYPES}
+			multiple
+			disabled={isDisabled}
+			value={state.files}
+			onValueChange={handleFilesChange}
+		>
 		<Card
-			onDragOver={isImage ? handleDragOver : undefined}
-			onDragLeave={isImage ? handleDragLeave : undefined}
-			onDrop={isImage ? handleDrop : undefined}
+			onDragOver={handleDragOver}
+			onDragLeave={handleDragLeave}
+			onDrop={handleDrop}
 		>
 			<CardNodeViewHeader files={state.files} />
 			<CardContent>
