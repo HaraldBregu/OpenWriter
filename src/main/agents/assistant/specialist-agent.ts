@@ -1,55 +1,49 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { SystemMessage, type BaseMessage } from '@langchain/core/messages';
-import { extractTokenFromChunk } from '../../shared/ai-utils';
+import type { ChatModel, ChatMessage } from '../../shared/ai-types';
 
 /**
  * A tool-less specialist agent that wraps a chat model with a fixed system
  * prompt. All specialists in the assistant graph are stateless LLM nodes —
- * no tool loop is needed, so we invoke the model directly rather than wrapping
- * it in a ReAct agent.
+ * no tool loop is needed, so we invoke the model directly.
  */
 export interface AssistantSpecialistAgent {
-	readonly model: BaseChatModel;
+	readonly model: ChatModel;
 	readonly systemPrompt: string;
 }
 
 export function createAssistantSpecialistAgent(
-	model: BaseChatModel,
+	model: ChatModel,
 	systemPrompt: string
 ): AssistantSpecialistAgent {
 	return { model, systemPrompt };
 }
 
-function buildMessages(agent: AssistantSpecialistAgent, messages: BaseMessage[]): BaseMessage[] {
-	return [new SystemMessage(agent.systemPrompt), ...messages];
+function buildMessages(agent: AssistantSpecialistAgent, messages: ChatMessage[]): ChatMessage[] {
+	return [{ role: 'system', content: agent.systemPrompt }, ...messages];
 }
 
 /**
  * Invoke the specialist and return the full response text.
- * Uses `model.invoke()` for a single-shot LLM call with no streaming.
+ * Uses `model.invoke()` for a single-shot call with no streaming.
  */
 export async function invokeAssistantSpecialist(
 	agent: AssistantSpecialistAgent,
-	messages: BaseMessage[]
+	messages: ChatMessage[]
 ): Promise<string> {
 	const result = await agent.model.invoke(buildMessages(agent, messages));
-	return extractTokenFromChunk(result.content).trim();
+	return result.trim();
 }
 
 /**
  * Invoke the specialist with streaming and return the accumulated response.
- * Uses `model.stream()` to consume incremental `AIMessageChunk` tokens and
- * concatenate them into the final string.
+ * Uses `model.stream()` to consume incremental tokens and concatenate them.
  */
 export async function streamAssistantSpecialist(
 	agent: AssistantSpecialistAgent,
-	messages: BaseMessage[]
+	messages: ChatMessage[]
 ): Promise<string> {
-	const stream = await agent.model.stream(buildMessages(agent, messages));
 	let accumulated = '';
 
-	for await (const chunk of stream) {
-		const token = extractTokenFromChunk(chunk.content);
+	for await (const token of agent.model.stream(buildMessages(agent, messages))) {
 		if (token) {
 			accumulated += token;
 		}
