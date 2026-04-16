@@ -1,1 +1,2 @@
-export { useImageEditor } from './use-image-editor';
+export { useImage } from './use-image';
+export { useImageActions } from './use-image-actions';
