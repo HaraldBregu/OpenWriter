@@ -7,7 +7,7 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { Document } from '@langchain/core/documents';
+import type { DocumentChunk } from '../shared/ai-types';
 
 const STORE_FILE = 'documents.json';
 const STORE_VERSION = 1;
