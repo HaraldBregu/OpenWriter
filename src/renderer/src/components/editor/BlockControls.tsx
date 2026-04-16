@@ -135,7 +135,7 @@ export const BlockControls = React.memo(function BlockControls({
 				{/* Add block below */}
 				<Button
 					variant="ghost"
-					size="editor-block-icons"
+					size="icon"
 					aria-label="Add block below"
 					onClick={handleAdd}
 				>
@@ -145,7 +145,7 @@ export const BlockControls = React.memo(function BlockControls({
 				{/* Drag to reorder */}
 				<Button
 					variant="ghost"
-					size="editor-block-icons"
+					size="icon"
 					aria-label="Drag to reorder"
 					onMouseDown={handleDragStart}
 				>

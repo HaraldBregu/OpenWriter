@@ -541,8 +541,8 @@ export function ImageEditor({
 							)}
 						</div>
 						<Button
-							variant="prompt-submit"
-							size="prompt-submit-md"
+							variant="default"
+							size="icon"
 							className="h-7 w-7 shrink-0 rounded-full shadow-[0_6px_14px_hsl(var(--primary)/0.16)] dark:shadow-[0_8px_16px_hsl(var(--primary)/0.18)]"
 							disabled={!aiPrompt.trim() || isProcessingAI}
 							onMouseDown={(e) => {

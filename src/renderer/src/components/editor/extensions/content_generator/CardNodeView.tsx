@@ -2,6 +2,14 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
+import {
+	FileUpload,
+	FileUploadTrigger,
+	FileUploadList,
+	FileUploadItem,
+	FileUploadItemPreview,
+	FileUploadItemDelete,
+} from '@/components/ui/FileUpload';
 import { useContentGenerator } from './hooks/use-content-generator';
 import {
 	DropdownMenu,
@@ -27,15 +35,12 @@ export function CardNodeView(): React.JSX.Element {
 		isImage,
 		isSubmitDisabled,
 		textareaRef,
-		fileInputRef,
 		submitRef,
 		handlePromptChange,
 		handleAgentChange,
 		handleImageModelChange,
 		handleTextModelChange,
-		removeFile,
-		handleFileInputChange,
-		handleOpenFilePicker,
+		handleFilesChange,
 		handleDragOver,
 		handleDragLeave,
 		handleDrop,
@@ -54,86 +59,72 @@ export function CardNodeView(): React.JSX.Element {
 		? t('assistantAgent.image', 'Image')
 		: t('assistantAgent.text', 'Text');
 
-	return (
+	const isDisabled = !enable || loading;
+
+	const card = (
 		<Card
 			onDragOver={isImage ? handleDragOver : undefined}
 			onDragLeave={isImage ? handleDragLeave : undefined}
 			onDrop={isImage ? handleDrop : undefined}
 		>
 			{isImage && (
-				<>
-					<input
-						ref={fileInputRef}
-						type="file"
-						accept={ACCEPTED_IMAGE_TYPES}
-						className="hidden"
-						onChange={handleFileInputChange}
-						aria-hidden="true"
-						tabIndex={-1}
-						multiple
-					/>
-					<CardHeader className="space-y-0 p-0 px-3.5">
-						<div className="flex items-center gap-2">
-							<Button
-								type="button"
-								variant="ghost"
-								size="icon"
-								className="h-7 w-7 rounded-full border border-border/80 bg-background/75 text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
-								disabled={!enable || loading}
-								onClick={handleOpenFilePicker}
-								title={t('assistantNode.addImage', 'Add image')}
-								aria-label={t('assistantNode.addImage', 'Add image')}
-							>
-								<ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
-							</Button>
-						</div>
+				<CardHeader className="space-y-0 p-0 px-3.5">
+					<div className="flex items-center gap-2">
+						<FileUploadTrigger
+							render={
+								<Button
+									type="button"
+									variant="ghost"
+									size="icon"
+									className="h-7 w-7 rounded-full border border-border/80 bg-background/75 text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
+									title={t('assistantNode.addImage', 'Add image')}
+									aria-label={t('assistantNode.addImage', 'Add image')}
+								/>
+							}
+						>
+							<ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
+						</FileUploadTrigger>
+					</div>
 
-						{state.previewUrls.length > 0 && (
-							<div
-								role="list"
-								aria-label={t('agenticPanel.attachedImages', 'Attached reference images')}
-								className="flex items-center gap-2 overflow-x-auto pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+					<FileUploadList
+						orientation="horizontal"
+						className="flex-row items-center gap-2 overflow-x-auto border-0 p-0 pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+					>
+						{state.files.map((file) => (
+							<FileUploadItem
+								key={`${file.name}-${file.lastModified}-${file.size}`}
+								value={file}
+								className="group/thumb relative shrink-0 gap-0 rounded-none border-0 p-0"
 							>
-								{state.previewUrls.map((url, index) => {
-									const fileName = state.files[index]?.name ?? '';
-									return (
-										<div key={url} role="listitem" className="group/thumb relative shrink-0">
-											<div className="h-14 w-14 overflow-hidden rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]">
-												<img src={url} alt={fileName} className="h-full w-full object-cover" />
-											</div>
-											<button
-												type="button"
-												className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
-												onMouseDown={(e) => e.preventDefault()}
-												onClick={() => removeFile(index)}
-												aria-label={
-													fileName
-														? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
-																name: fileName,
-															})
-														: t('assistantNode.removeImage', 'Remove image')
-												}
-											>
-												<X className="h-2.5 w-2.5" aria-hidden="true" />
-											</button>
-										</div>
-									);
-								})}
+								<FileUploadItemPreview className="h-14 w-14 rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]" />
+								<FileUploadItemDelete
+									render={
+										<button
+											type="button"
+											className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
+											onMouseDown={(e) => e.preventDefault()}
+											aria-label={t('assistantNode.removeImage', 'Remove image')}
+										/>
+									}
+								>
+									<X className="h-2.5 w-2.5" aria-hidden="true" />
+								</FileUploadItemDelete>
+							</FileUploadItem>
+						))}
+						<FileUploadTrigger
+							render={
 								<button
 									type="button"
-									role="listitem"
 									className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-									disabled={!enable || loading}
 									onMouseDown={(e) => e.preventDefault()}
-									onClick={handleOpenFilePicker}
 									aria-label={t('assistantNode.addImage', 'Add image')}
-								>
-									<ImagePlus className="h-4 w-4" aria-hidden="true" />
-								</button>
-							</div>
-						)}
-					</CardHeader>
-				</>
+								/>
+							}
+						>
+							<ImagePlus className="h-4 w-4" aria-hidden="true" />
+						</FileUploadTrigger>
+					</FileUploadList>
+				</CardHeader>
 			)}
 			<CardContent>
 				<Textarea
@@ -237,7 +228,7 @@ export function CardNodeView(): React.JSX.Element {
 					</DropdownMenu>
 				</div>
 				<Button
-					variant='default'
+					variant="default"
 					size="icon"
 					className="ml-auto shrink-0"
 					disabled={isSubmitDisabled}
@@ -252,4 +243,20 @@ export function CardNodeView(): React.JSX.Element {
 			</CardFooter>
 		</Card>
 	);
+
+	if (isImage) {
+		return (
+			<FileUpload
+				accept={ACCEPTED_IMAGE_TYPES}
+				multiple
+				disabled={isDisabled}
+				value={state.files}
+				onValueChange={handleFilesChange}
+			>
+				{card}
+			</FileUpload>
+		);
+	}
+
+	return card;
 }

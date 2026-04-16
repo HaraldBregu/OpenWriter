@@ -86,7 +86,7 @@ export const BlockActions = React.memo(function BlockActions({
 					render={
 						<Button
 							variant="ghost"
-							size="editor-block-icons"
+							size="icon"
 							aria-label={t('blockActions.title')}
 						>
 							<MoreVertical />
