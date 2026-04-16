@@ -866,8 +866,7 @@
 		"loadingPreview": "Loading…"
 	},
 	"blockActions": {
-		"title": "Block options",
-		"copyToClipboard": "Copy to clipboard"
+		"title": "Block actions"
 	},
 	"insertImageDialog": {
 		"title": "Insert Image",
