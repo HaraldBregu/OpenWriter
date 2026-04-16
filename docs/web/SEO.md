@@ -88,7 +88,7 @@ OpenWriter is a free, open-source desktop writing app with built-in AI assistanc
 
 Primary: `AI writing app`, `open source writing tool`, `desktop writing app`, `AI text editor`
 
-Secondary: `free writing software`, `AI writing assistant desktop`, `electron writing app`, `markdown editor AI`, `ProseMirror editor`, `LangChain desktop app`, `workspace writing tool`, `RAG writing assistant`
+Secondary: `free writing software`, `AI writing assistant desktop`, `electron writing app`, `markdown editor AI`, `ProseMirror editor`, `workspace writing tool`, `RAG writing assistant`
 
 Long-tail: `free open source AI writing app for mac`, `desktop writing app with AI assistant`, `offline writing tool with AI`, `open source alternative to notion AI`
 
