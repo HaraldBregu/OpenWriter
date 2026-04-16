@@ -592,66 +592,6 @@ const TextEditor = React.memo(
 			);
 
 			const containerRef = useRef<HTMLDivElement>(null);
-			const [hoveredBlock, setHoveredBlock] = useState<HoveredBlock | null>(null);
-
-			const getBlock = useCallback(
-				(y: number): { dom: HTMLElement; pos: number } | null => {
-					if (!editor) return null;
-					const pm = containerRef.current?.querySelector('.ProseMirror') as HTMLElement | null;
-					if (!pm) return null;
-					for (const child of Array.from(pm.children) as HTMLElement[]) {
-						const r = child.getBoundingClientRect();
-						if (y >= r.top - 4 && y <= r.bottom + 4) {
-							try {
-								const p = editor.view.posAtDOM(child, 0);
-								const pos = editor.state.doc.resolve(p).before(1);
-								const node = editor.state.doc.nodeAt(pos);
-								// Skip transient UI-only nodes (not part of markdown output).
-								if (node && node.type.name === 'contentGenerator') return null;
-								return { dom: child, pos };
-							} catch {
-								return null;
-							}
-						}
-					}
-					return null;
-				},
-				[editor]
-			);
-
-			useEffect(() => {
-				const el = containerRef.current;
-				if (!el) return;
-
-				const onMove = (e: MouseEvent): void => {
-					const block = getBlock(e.clientY);
-					if (block) {
-						const cR = el.getBoundingClientRect();
-						const bR = block.dom.getBoundingClientRect();
-						const lh = parseFloat(getComputedStyle(block.dom).lineHeight) || 30;
-						setHoveredBlock({
-							node: block.dom,
-							pos: block.pos,
-							top: bR.top - cR.top + Math.min(lh, bR.height) / 2 - 12,
-						});
-					} else {
-						setHoveredBlock(null);
-					}
-				};
-
-				const onLeave = (): void => {
-					setTimeout(() => {
-						setHoveredBlock(null);
-					}, 80);
-				};
-
-				el.addEventListener('mousemove', onMove);
-				el.addEventListener('mouseleave', onLeave);
-				return () => {
-					el.removeEventListener('mousemove', onMove);
-					el.removeEventListener('mouseleave', onLeave);
-				};
-			}, [getBlock]);
 
 			return (
 				<div id={id} className={cn('w-full', className)}>
