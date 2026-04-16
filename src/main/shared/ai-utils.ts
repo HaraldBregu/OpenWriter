@@ -19,7 +19,7 @@ export function isReasoningModel(modelName: string): boolean {
 }
 
 /**
- * Extract a plain-text token from a LangChain `AIMessageChunk.content` value.
+ * Extract a plain-text token from a chat completion content value.
  *
  * The content can be a plain string **or** an array of typed content blocks
  * (e.g. `{ text: string }`).
