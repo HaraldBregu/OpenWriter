@@ -1,11 +1,11 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ImageNodeView } from './NodeView';
+import { ImageNodeView } from '../components/image/NodeView';
 import {
 	createImageDropPastePlugin,
 	fileToDataUri,
 	type ImageInsertHandler,
-} from './image-drop-paste-plugin';
+} from '../plugins/image-drop-paste-plugin';
 
 export interface ImageExtensionOptions {
 	/**
