@@ -23,7 +23,7 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { TooltipProvider } from '@/components/ui/Tooltip';
 import { MIN_CROP_SIZE } from '../shared';
-import { useImageCanvas } from '../shared/use-image-canvas';
+import { useImageCanvas } from '../../../hooks/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { ResizeControls } from './ResizeControls';
 import { Textarea } from '@/components/ui/Textarea';
