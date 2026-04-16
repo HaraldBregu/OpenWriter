@@ -244,7 +244,7 @@ export function KnowledgeBaseDialog({
 						<Separator />
 						<div className="flex flex-col gap-2">
 							<Label htmlFor="kb-model">Embedding Model</Label>
-							<Select value={embeddingModel} onValueChange={setEmbeddingModel}>
+							<Select value={embeddingModel} onValueChange={(v) => { if (v !== null) setEmbeddingModel(v); }}>
 								<SelectTrigger id="kb-model" className="w-full">
 									<SelectValue placeholder="Select model" />
 								</SelectTrigger>
