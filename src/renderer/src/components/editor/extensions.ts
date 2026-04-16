@@ -18,9 +18,9 @@ import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
 import { SelectionMarkerExtension } from './extensions/selection-marker-extension';
-import { ContentGeneratorExtension } from './views/content_generator';
-import { ImageExtension, type ImageInsertHandler } from './views/image';
-import { ImagePlaceholderExtension } from './views/image_placeholder';
+import { ContentGeneratorExtension } from './components/content_generator';
+import { ImageExtension, type ImageInsertHandler } from './components/image';
+import { ImagePlaceholderExtension } from './components/image_placeholder';
 import { Markdown } from '@tiptap/markdown';
 import type { ModelInfo } from '../../../../shared/types';
 
