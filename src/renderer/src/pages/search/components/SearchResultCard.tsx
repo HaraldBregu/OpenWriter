@@ -5,8 +5,8 @@ import { SEARCH_RESULT_KIND_LABELS } from '../constants';
 import type { SearchResultItem } from '../types';
 
 interface SearchResultCardProps {
-	item: SearchResultItem;
-	onSelect: (item: SearchResultItem) => void;
+	readonly item: SearchResultItem;
+	readonly onSelect: (item: SearchResultItem) => void;
 }
 
 const SearchResultCard: React.FC<SearchResultCardProps> = ({ item, onSelect }) => {
