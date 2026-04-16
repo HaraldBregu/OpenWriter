@@ -4,7 +4,7 @@ import { ImageContext } from './context/context';
 import type { ImageContextValue } from './context/context';
 import { imageReducer } from './context/reducer';
 import type { ImageState } from './context/state';
-import { useImageActions } from './hooks/use-image-actions';
+import { useImageActions } from '../../hooks/use-image-actions';
 
 interface ImageAttrs {
 	src: string | null;
