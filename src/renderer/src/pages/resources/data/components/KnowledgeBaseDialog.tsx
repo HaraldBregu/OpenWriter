@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { useCallback, useEffect, useMemo, useState, type ReactElement } from 'react';
 import { Check, FileText, Loader2 } from 'lucide-react';
 import {
 	Dialog,
@@ -10,32 +10,50 @@ import {
 } from '@/components/ui/Dialog';
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
+import { Input } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
+import { Textarea } from '@/components/ui/Textarea';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/Select';
 import { ScrollArea } from '@/components/ui/ScrollArea';
+import { Separator } from '@/components/ui/Separator';
 import { useAppSelector } from '@/store';
 import { selectCurrentWorkspacePath } from '@/store/workspace';
 import { useTaskSubmit } from '@/hooks/use-task-submit';
+import { AI_MODELS, DEFAULT_EMBEDDING_MODEL_ID } from '../../../../../../shared/models';
 import type { ResourceInfo } from '../../../../../../shared/types';
 
 interface NbTaskInput {
-	markdownPaths: string[];
-	targetPath: string;
-	apiKey: string;
-	model?: string;
-	baseURL?: string;
-	chunkSize?: number;
-	chunkOverlap?: number;
+	readonly name: string;
+	readonly description: string;
+	readonly markdownPaths: string[];
+	readonly targetPath: string;
+	readonly apiKey: string;
+	readonly model: string;
+	readonly baseURL?: string;
+	readonly chunkSize?: number;
+	readonly chunkOverlap?: number;
 }
 
 interface NbTaskOutput {
-	indexedCount: number;
-	failedPaths: string[];
-	totalChunks: number;
+	readonly indexedCount: number;
+	readonly failedPaths: string[];
+	readonly totalChunks: number;
 }
+
+const EMBEDDING_MODELS = AI_MODELS.filter((m) => m.type === 'embedding');
 
 interface KnowledgeBaseDialogProps {
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
 }
+
+type DialogStep = 'configure' | 'select-files' | 'processing' | 'completed' | 'error';
 
 export function KnowledgeBaseDialog({
 	open,
@@ -43,6 +61,10 @@ export function KnowledgeBaseDialog({
 }: KnowledgeBaseDialogProps): ReactElement {
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
+	const [step, setStep] = useState<DialogStep>('configure');
+	const [name, setName] = useState('');
+	const [description, setDescription] = useState('');
+	const [embeddingModel, setEmbeddingModel] = useState(DEFAULT_EMBEDDING_MODEL_ID);
 	const [files, setFiles] = useState<ResourceInfo[]>([]);
 	const [loading, setLoading] = useState(false);
 	const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -61,33 +83,48 @@ export function KnowledgeBaseDialog({
 		result,
 	} = useTaskSubmit<NbTaskInput, NbTaskOutput>('build-knowledge-base', {} as NbTaskInput);
 
+	const selectedModel = useMemo(
+		() => EMBEDDING_MODELS.find((m) => m.modelId === embeddingModel),
+		[embeddingModel],
+	);
+
 	useEffect(() => {
 		if (!open) return;
-
-		let active = true;
-		setLoading(true);
+		setStep('configure');
+		setName('');
+		setDescription('');
+		setEmbeddingModel(DEFAULT_EMBEDDING_MODEL_ID);
 		setSelected(new Set());
 		setNoApiKey(false);
+	}, [open]);
+
+	useEffect(() => {
+		if (isCompleted) setStep('completed');
+		if (isError) setStep('error');
+	}, [isCompleted, isError]);
+
+	const loadFiles = useCallback(() => {
+		setLoading(true);
+		setSelected(new Set());
 
 		window.workspace
 			.getContents()
 			.then((contents) => {
-				if (!active) return;
 				const mdFiles = contents.filter((f) => f.name.endsWith('.md'));
 				setFiles(mdFiles);
 			})
 			.catch(() => {
-				if (!active) return;
 				setFiles([]);
 			})
 			.finally(() => {
-				if (active) setLoading(false);
+				setLoading(false);
 			});
+	}, []);
 
-		return () => {
-			active = false;
-		};
-	}, [open]);
+	const handleNextToFiles = useCallback(() => {
+		setStep('select-files');
+		loadFiles();
+	}, [loadFiles]);
 
 	const allSelected = files.length > 0 && selected.size === files.length;
 	const someSelected = selected.size > 0 && selected.size < files.length;
@@ -126,12 +163,16 @@ export function KnowledgeBaseDialog({
 			.filter((f) => selected.has(f.id))
 			.map((f) => f.path);
 
+		setStep('processing');
 		await submit({
+			name: name.trim() || 'Untitled Knowledge Base',
+			description: description.trim(),
 			markdownPaths,
 			targetPath: `${workspacePath}/resources/data`,
 			apiKey: service.apiKey,
+			model: embeddingModel,
 		});
-	}, [workspacePath, selected, files, submit]);
+	}, [workspacePath, selected, files, submit, name, description, embeddingModel]);
 
 	const handleClose = useCallback(
 		(nextOpen: boolean) => {
@@ -141,6 +182,7 @@ export function KnowledgeBaseDialog({
 				setFiles([]);
 				setSelected(new Set());
 				setNoApiKey(false);
+				setStep('configure');
 			}
 			onOpenChange(nextOpen);
 		},
@@ -151,31 +193,91 @@ export function KnowledgeBaseDialog({
 		cancel();
 	}, [cancel]);
 
-	const showFileList = !isRunning && !isCompleted && !isError;
+	const handleBack = useCallback(() => {
+		setStep('configure');
+	}, []);
+
+	const canProceed = name.trim().length > 0;
 
 	return (
 		<Dialog open={open} onOpenChange={handleClose}>
-			<DialogContent className="sm:max-w-md">
+			<DialogContent className="sm:max-w-lg">
 				<DialogHeader>
-					<DialogTitle>Build Knowledge Base</DialogTitle>
+					<DialogTitle>
+						{step === 'configure' && 'Create Knowledge Base'}
+						{step === 'select-files' && 'Select Files'}
+						{step === 'processing' && 'Building Knowledge Base'}
+						{step === 'completed' && 'Knowledge Base Created'}
+						{step === 'error' && 'Build Failed'}
+					</DialogTitle>
 					<DialogDescription>
-						Select markdown files to embed into a knowledge base.
+						{step === 'configure' && 'Configure your knowledge base settings.'}
+						{step === 'select-files' && 'Choose markdown files to embed.'}
+						{step === 'processing' && 'Embedding documents into vector store...'}
+						{step === 'completed' && 'Your knowledge base is ready to use.'}
+						{step === 'error' && 'Something went wrong during the build.'}
 					</DialogDescription>
 				</DialogHeader>
 
-				{loading && (
+				{step === 'configure' && (
+					<div className="flex flex-col gap-4">
+						<div className="flex flex-col gap-2">
+							<Label htmlFor="kb-name">Name</Label>
+							<Input
+								id="kb-name"
+								placeholder="My Knowledge Base"
+								value={name}
+								onChange={(e) => setName(e.target.value)}
+								autoFocus
+							/>
+						</div>
+						<div className="flex flex-col gap-2">
+							<Label htmlFor="kb-description">Description</Label>
+							<Textarea
+								id="kb-description"
+								placeholder="What this knowledge base contains..."
+								value={description}
+								onChange={(e) => setDescription(e.target.value)}
+								className="min-h-20 resize-none"
+							/>
+						</div>
+						<Separator />
+						<div className="flex flex-col gap-2">
+							<Label htmlFor="kb-model">Embedding Model</Label>
+							<Select value={embeddingModel} onValueChange={setEmbeddingModel}>
+								<SelectTrigger id="kb-model" className="w-full">
+									<SelectValue placeholder="Select model" />
+								</SelectTrigger>
+								<SelectContent>
+									{EMBEDDING_MODELS.map((model) => (
+										<SelectItem key={model.modelId} value={model.modelId}>
+											{model.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							{selectedModel && (
+								<p className="text-xs text-muted-foreground">
+									Provider: {selectedModel.providerId} &middot; Context: {selectedModel.contextWindow?.toLocaleString() ?? 'N/A'} tokens
+								</p>
+							)}
+						</div>
+					</div>
+				)}
+
+				{step === 'select-files' && loading && (
 					<div className="flex items-center justify-center py-8">
 						<Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
 					</div>
 				)}
 
-				{!loading && showFileList && files.length === 0 && (
+				{step === 'select-files' && !loading && files.length === 0 && (
 					<div className="py-8 text-center text-sm text-muted-foreground">
 						No markdown files found in resources/content.
 					</div>
 				)}
 
-				{!loading && showFileList && files.length > 0 && (
+				{step === 'select-files' && !loading && files.length > 0 && (
 					<>
 						<div className="flex items-center gap-2 border-b pb-2">
 							<Checkbox
@@ -209,7 +311,7 @@ export function KnowledgeBaseDialog({
 					</>
 				)}
 
-				{isRunning && (
+				{step === 'processing' && (
 					<div className="flex flex-col gap-3 py-4">
 						<div className="flex items-center gap-2">
 							<Loader2 className="h-4 w-4 animate-spin text-primary" />
@@ -223,24 +325,28 @@ export function KnowledgeBaseDialog({
 								style={{ width: `${progress.percent}%` }}
 							/>
 						</div>
-						<span className="text-xs text-muted-foreground text-right">
-							{progress.percent}%
-						</span>
+						<div className="flex items-center justify-between text-xs text-muted-foreground">
+							<span>Model: {selectedModel?.name ?? embeddingModel}</span>
+							<span>{progress.percent}%</span>
+						</div>
 					</div>
 				)}
 
-				{isCompleted && result && (
+				{step === 'completed' && result && (
 					<div className="flex flex-col items-center gap-3 py-4">
 						<div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
 							<Check className="h-5 w-5 text-primary" />
 						</div>
 						<div className="text-center text-sm">
-							<p className="font-medium">Knowledge base built</p>
+							<p className="font-medium">{name || 'Knowledge base'} built</p>
 							<p className="text-muted-foreground">
-								{result.indexedCount} documents, {result.totalChunks} chunks
+								{result.indexedCount} documents &middot; {result.totalChunks} chunks
+							</p>
+							<p className="text-xs text-muted-foreground mt-1">
+								Model: {selectedModel?.name ?? embeddingModel}
 							</p>
 							{result.failedPaths.length > 0 && (
-								<p className="text-destructive">
+								<p className="text-destructive mt-1">
 									{result.failedPaths.length} files failed
 								</p>
 							)}
@@ -248,7 +354,7 @@ export function KnowledgeBaseDialog({
 					</div>
 				)}
 
-				{isError && (
+				{step === 'error' && (
 					<div className="py-4 text-center text-sm text-destructive">
 						{error ?? 'An error occurred while building the knowledge base.'}
 					</div>
@@ -261,20 +367,30 @@ export function KnowledgeBaseDialog({
 				)}
 
 				<DialogFooter>
-					{showFileList && !loading && (
-						<Button
-							onClick={handleStart}
-							disabled={selected.size === 0}
-						>
-							Start Embedding ({selected.size})
+					{step === 'configure' && (
+						<Button onClick={handleNextToFiles} disabled={!canProceed}>
+							Next
 						</Button>
 					)}
-					{isRunning && (
+					{step === 'select-files' && !loading && (
+						<div className="flex w-full items-center justify-between">
+							<Button variant="outline" onClick={handleBack}>
+								Back
+							</Button>
+							<Button
+								onClick={handleStart}
+								disabled={selected.size === 0}
+							>
+								Start Embedding ({selected.size})
+							</Button>
+						</div>
+					)}
+					{step === 'processing' && (
 						<Button variant="destructive" onClick={handleCancel}>
 							Cancel
 						</Button>
 					)}
-					{(isCompleted || isError) && (
+					{(step === 'completed' || step === 'error') && (
 						<Button onClick={() => handleClose(false)}>
 							Close
 						</Button>
