@@ -1,11 +1,12 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, Check, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
+import { ArrowUp, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import {
 	DropdownMenu,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
@@ -296,7 +297,7 @@ const AgentDropdown: React.FC<AgentDropdownProps> = ({
 				align="start"
 				side="top"
 				sideOffset={8}
-				className="z-[120] flex min-w-[220px] flex-col gap-1 rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+				className="z-120 max-h-70 min-w-50"
 			>
 				{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
 					const label = t(option.labelKey, option.labelFallback);
@@ -304,38 +305,23 @@ const AgentDropdown: React.FC<AgentDropdownProps> = ({
 					const isSelected = option.value === agentId;
 
 					return (
-						<DropdownMenuItem
+						<DropdownMenuCheckboxItem
 							key={option.value}
-							onSelect={() => onAgentChange(option.value)}
-							aria-current={isSelected ? 'true' : undefined}
-							className={cn(
-								'rounded-xl px-2.5 py-2.5',
-								isSelected && 'bg-accent text-accent-foreground'
-							)}
+							checked={isSelected}
+							onCheckedChange={() => onAgentChange(option.value)}
 						>
-							<span className="flex min-w-0 items-center gap-3">
-								<span
-									aria-hidden="true"
-									className={cn(
-										'flex h-7 w-7 shrink-0 items-center justify-center rounded-xl border',
-										option.value === 'image'
-											? 'border-primary/20 bg-primary/10 text-primary dark:border-primary/25 dark:bg-primary/12'
-											: 'border-border/70 bg-background/82 text-foreground dark:border-white/12 dark:bg-white/[0.04]'
-									)}
-								>
-									{option.value === 'image' ? (
+							<span className="flex min-w-0 items-center gap-3 p-1">
+								{option.value === 'image' ? (
 										<ImageIcon className="h-3.5 w-3.5" />
 									) : (
 										<PenLine className="h-3.5 w-3.5" />
 									)}
-								</span>
 								<span className="flex min-w-0 flex-col gap-0.5">
 									<span className="truncate text-sm font-medium">{label}</span>
 									<span className="text-xs text-muted-foreground">{description}</span>
 								</span>
 							</span>
-							{isSelected && <Check className="ml-auto h-4 w-4" aria-hidden="true" />}
-						</DropdownMenuItem>
+						</DropdownMenuCheckboxItem>
 					);
 				})}
 			</DropdownMenuContent>
@@ -383,17 +369,14 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
 				align="start"
 				side="top"
 				sideOffset={8}
-				className="z-[120] flex max-h-[280px] min-w-[200px] flex-col gap-1 overflow-y-auto rounded-2xl border border-border/75 bg-background/95 p-1.5 shadow-[0_10px_28px_hsl(var(--foreground)/0.1)] backdrop-blur-xl dark:border-white/12 dark:bg-background/88 dark:shadow-[0_14px_34px_hsl(var(--background)/0.58)]"
+				className="z-120 max-h-70 min-w-50"
 			>
 				{modelOptions.map((model) => (
 					<DropdownMenuItem
 						key={model.modelId}
 						onSelect={() => onModelChange(model)}
 						aria-current={selectedModel.modelId === model.modelId ? 'true' : undefined}
-						className={cn(
-							'rounded-xl px-2.5 py-2.5',
-							selectedModel.modelId === model.modelId && 'bg-accent text-accent-foreground'
-						)}
+						className={cn()}
 					>
 						<div className="flex min-w-0 flex-col gap-0.5">
 							<span className="truncate text-sm font-medium">{model.name}</span>

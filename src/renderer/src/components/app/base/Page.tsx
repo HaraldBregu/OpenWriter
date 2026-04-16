@@ -35,7 +35,7 @@ export const PageHeader = memo(function PageHeader({
 }: PageHeaderProps): React.ReactElement {
 	return (
 		<div
-			className={cn('flex shrink-0 items-center justify-between border-b px-6 py-4 gap-3', className)}
+			className={cn('flex shrink-0 items-center justify-between border-b px-6 py-2 gap-4', className)}
 			style={
 				{
 					backgroundColor: 'var(--page-header-background)',
@@ -56,7 +56,7 @@ export const PageHeaderTitle = memo(function PageHeaderTitle({
 	children,
 	className,
 }: PageHeaderTitleProps): React.ReactElement {
-	return <h1 className={cn('text-xl font-bold flex items-center gap-3 flex-1 min-w-0', className)}>{children}</h1>;
+	return <h1 className={cn('text-md font-medium flex items-center gap-3 flex-1 min-w-0', className)}>{children}</h1>;
 });
 
 interface PageHeaderItemsProps {

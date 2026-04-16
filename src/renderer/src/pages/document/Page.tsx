@@ -328,7 +328,7 @@ function PageContent(): ReactElement {
 						value={title}
 						onChange={(e) => handleTitleChange(e.target.value)}
 						placeholder={t('writing.titlePlaceholder')}
-						className="text-xl! border-0 bg-transparent dark:bg-transparent rounded-none p-0 font-semibold tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+						className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
 					/>
 				</PageHeaderTitle>
 				<PageHeaderItems>

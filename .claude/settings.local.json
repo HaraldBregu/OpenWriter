@@ -134,7 +134,8 @@
       "Bash(mv Content content)",
       "Bash(mv Files files)",
       "Bash(mv Data data)",
-      "Bash(pnpm exec:*)"
+      "Bash(pnpm exec:*)",
+      "Bash(kill %1)"
     ],
     "deny": [
       "Bash(git push --force:*)",
