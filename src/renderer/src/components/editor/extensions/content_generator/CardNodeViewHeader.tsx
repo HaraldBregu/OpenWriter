@@ -34,9 +34,10 @@ export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JS
 							<FileUploadItemPreview className="h-14 w-14 rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/4" />
 							<FileUploadItemDelete
 								render={
-									<button
-										type="button"
-										className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
+									<Button
+										variant="ghost"
+										size="icon-xs"
+										className="absolute -right-1.5 -top-1.5 z-10 h-5 w-5 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-none transition-opacity hover:bg-background hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
 										onMouseDown={(e) => e.preventDefault()}
 										aria-label={t('assistantNode.removeImage', 'Remove image')}
 									/>
