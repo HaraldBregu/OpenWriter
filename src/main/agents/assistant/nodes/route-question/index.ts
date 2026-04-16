@@ -1,7 +1,6 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
-import { toLangChainHistoryMessages } from '../../../core/history';
+import { toHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import {
 	createAssistantSpecialistAgent,
@@ -9,7 +8,7 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import { readLabeledValue } from '../../agent-output';
-import type { AssistantRouteDecision, AssistantState } from '../../state';
+import type { AssistantRouteDecision, AssistantGraphState, AssistantGraphUpdate } from '../../state';
 
 const SYSTEM_PROMPT = `You are the route_question node in a retrieval-assisted assistant.
 
@@ -140,15 +139,15 @@ function buildHumanMessage(prompt: string): string {
 	return ['Latest user question:', prompt].join('\n');
 }
 
-export function createRouteQuestionAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export function createRouteQuestionAgent(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
 export async function routeQuestionAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	const prompt = state.prompt.trim();
 
 	if (prompt.length === 0) {
@@ -170,9 +169,9 @@ export async function routeQuestionAgent(
 		promptLength: prompt.length,
 	});
 
-	const messages = [
-		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(prompt)),
+	const messages: ChatMessage[] = [
+		...toHistoryMessages(state.history),
+		{ role: 'user', content: buildHumanMessage(prompt) },
 	];
 	const rawRouting = await invokeAssistantSpecialist(agent, messages);
 	const parsed = parseRoutingOutput(rawRouting, prompt);
