@@ -2,7 +2,7 @@ import { createContext } from 'react';
 import type React from 'react';
 import type { Editor } from '@tiptap/core';
 import type { EditorState, HoveredBlock, ContentGeneratorState } from './state';
-import type { ContentGeneratorAgentId } from '../components/content_generator/agents';
+import type { ContentGeneratorAgentId } from '../components/content-generator-agents';
 import type { ModelInfo } from '../../../../../shared/types';
 
 export interface EditorContextValue {
