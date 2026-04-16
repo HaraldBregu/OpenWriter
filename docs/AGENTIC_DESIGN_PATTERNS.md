@@ -137,7 +137,7 @@ Primary code:
 
 ### 4. Multi-Agent Collaboration
 
-OpenWriter's assistant is already a multi-agent system, even though it runs inside one LangGraph.
+OpenWriter's assistant is already a multi-agent system, even though it runs inside one custom graph runner.
 
 The specialists are:
 
