@@ -4,18 +4,16 @@ import React, {
 	useImperativeHandle,
 	useMemo,
 	useRef,
-	useState,
 } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
-import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './components/BlockControls';
+import { BlockControls, GUTTER_WIDTH } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
 import { BubbleMenu } from './components/bubble_menu';
 import { OptionMenu } from './components/option_menu';
-import { InsertImageDialog } from './components/InsertImageDialog';
 
 import { createExtensions } from './extensions';
 import { type ImageInsertHandler } from './views/image';
