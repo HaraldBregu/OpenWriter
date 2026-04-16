@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
-import { FileUpload, FileUploadDropzone } from '@/components/ui/FileUpload';
+import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { useContentGenerator } from './hooks/use-content-generator';
 import { CardNodeViewHeader } from './CardNodeViewHeader';
 import {
@@ -179,8 +179,7 @@ export function CardNodeView(): React.JSX.Element {
 								size="icon"
 								disabled={isDisabled}
 								onClick={handleOpenFilePicker}
-								onMouseDown={(e) => e.preventDefault()}
-								title={t('assistantNode.addImage', 'Add image')}
+ 								title={t('assistantNode.addImage', 'Add image')}
 								aria-label={t('assistantNode.addImage', 'Add image')}
 							>
 								<Plus />
