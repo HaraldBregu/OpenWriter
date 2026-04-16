@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { Context } from '../context/context';
-import type { ContextValue } from '../context/context';
+import { Context } from '../components/content_generator/context/context';
+import type { ContextValue } from '../components/content_generator/context/context';
 
 export function useContentGenerator(): ContextValue {
 	const context = useContext(Context);
