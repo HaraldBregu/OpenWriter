@@ -98,7 +98,7 @@ export interface GraphStreamOptions {
 // StateGraph builder
 // ---------------------------------------------------------------------------
 
-export class StateGraph<S extends Record<string, unknown>> {
+export class StateGraph<S extends object> {
 	private _nodes = new Map<string, NodeFunction<S>>();
 	private _edges = new Map<string, EdgeConfig<S>>();
 
@@ -126,7 +126,7 @@ export class StateGraph<S extends Record<string, unknown>> {
 // CompiledGraph executor
 // ---------------------------------------------------------------------------
 
-export class CompiledGraph<S extends Record<string, unknown>> {
+export class CompiledGraph<S extends object> {
 	constructor(
 		private readonly nodes: Map<string, NodeFunction<S>>,
 		private readonly edges: Map<string, EdgeConfig<S>>
