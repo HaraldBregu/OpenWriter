@@ -1,36 +1,43 @@
 import React from 'react';
 import { Search, X } from 'lucide-react';
-import { Input } from '@/components/ui/Input';
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupButton,
+	InputGroupInput,
+	InputGroupText,
+} from '@/components/ui/InputGroup';
 
 interface SearchInputProps {
-	value: string;
-	placeholder: string;
-	onChange: (value: string) => void;
-	onClear: () => void;
+	readonly value: string;
+	readonly placeholder: string;
+	readonly onChange: (value: string) => void;
+	readonly onClear: () => void;
 }
 
 const SearchInput: React.FC<SearchInputProps> = ({ value, placeholder, onChange, onClear }) => {
 	return (
-		<div className="relative">
-			<Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-			<Input
+		<InputGroup>
+			<InputGroupAddon>
+				<InputGroupText>
+					<Search />
+				</InputGroupText>
+			</InputGroupAddon>
+			<InputGroupInput
 				autoFocus
 				type="search"
 				value={value}
 				onChange={(event) => onChange(event.target.value)}
 				placeholder={placeholder}
-				className="h-12 rounded-2xl bg-background pl-11 pr-11 text-sm"
 			/>
 			{value.trim().length > 0 && (
-				<button
-					type="button"
-					onClick={onClear}
-					className="absolute right-3 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-				>
-					<X className="h-4 w-4" />
-				</button>
+				<InputGroupAddon align="inline-end">
+					<InputGroupButton size="icon-xs" onClick={onClear} aria-label="Clear search">
+						<X />
+					</InputGroupButton>
+				</InputGroupAddon>
 			)}
-		</div>
+		</InputGroup>
 	);
 };
 

@@ -333,9 +333,8 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 				<PageHeaderItems>
 					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
+						variant="ghost"
+						size="icon"
 						title="Undo"
 						aria-label="Undo"
 						onClick={handleUndo}
@@ -344,9 +343,8 @@ function PageContent(): ReactElement {
 						<Undo2 aria-hidden="true" />
 					</Button>
 					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
+						variant="ghost"
+						size="icon"
 						title="Redo"
 						aria-label="Redo"
 						onClick={handleRedo}
@@ -361,9 +359,8 @@ function PageContent(): ReactElement {
 					/>
 					<Separator orientation="vertical" className="mx-2 h-5" />
 					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
+						variant="ghost"
+						size="icon"
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
 						aria-expanded={activeSidebar === 'agentic'}
@@ -372,9 +369,8 @@ function PageContent(): ReactElement {
 						<Bot aria-hidden="true" />
 					</Button>
 					<Button
-						type="button"
-						variant="header-icon"
-						size="header-icon-md"
+						variant="ghost"
+						size="icon"
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
 						aria-expanded={activeSidebar === 'config'}

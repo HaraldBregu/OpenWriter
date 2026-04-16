@@ -23,8 +23,6 @@ const buttonVariants = cva(
 				['editor-block-actions']:
 					'rounded-md text-muted-foreground/50 hover:bg-muted hover:text-muted-foreground',
 				['prompt-submit']: 'bg-primary text-primary-foreground hover:bg-primary/90',
-				['header-icon']:
-					'text-muted-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground',
 			},
 			size: {
 				default:
@@ -41,8 +39,6 @@ const buttonVariants = cva(
 				'icon-lg': 'size-9',
 				['editor-block-icons']: "size-6 rounded-md [&_svg:not([class*='size-'])]:size-3.5",
 				['prompt-submit-md']: 'size-8',
-				['header-icon-md']: 'size-8',
-				['header-icon-lg']: 'size-9',
 			},
 		},
 		defaultVariants: {
