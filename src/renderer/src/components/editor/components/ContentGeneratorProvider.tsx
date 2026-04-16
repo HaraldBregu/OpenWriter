@@ -1,15 +1,15 @@
 import React, { useReducer, useRef, useMemo } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ContentGeneratorContext } from '../../context/context';
-import type { ContentGeneratorContextValue } from '../../context/context';
-import { contentGeneratorReducer } from '../../context/reducer';
-import type { ContentGeneratorState } from '../../context/state';
-import { useContentGeneratorActions } from '../../hooks/use-content-generator-actions';
-import { useTextareaSetup } from '../../hooks/use-textarea-setup';
-import type { ContentGeneratorOptions, ContentGeneratorStorage } from '../../extensions/content-generator-extension';
-import type { ContentGeneratorAgentId } from './agents';
-import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
-import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { ContentGeneratorContext } from '../context/context';
+import type { ContentGeneratorContextValue } from '../context/context';
+import { contentGeneratorReducer } from '../context/reducer';
+import type { ContentGeneratorState } from '../context/state';
+import { useContentGeneratorActions } from '../hooks/use-content-generator-actions';
+import { useTextareaSetup } from '../hooks/use-textarea-setup';
+import type { ContentGeneratorOptions, ContentGeneratorStorage } from '../extensions/content-generator-extension';
+import type { ContentGeneratorAgentId } from './content-generator-agents';
+import { DEFAULT_TEXT_MODEL_ID } from '../../../../../shared/types';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../shared/models';
 
 interface ProviderProps {
 	nodeViewProps: NodeViewProps;
