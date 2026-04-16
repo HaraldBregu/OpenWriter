@@ -6,9 +6,8 @@ import {
 	FileUploadItemPreview,
 	FileUploadItemDelete,
 } from '@/components/ui/FileUpload';
-import { ImagePlus, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useContentGenerator } from './hooks/use-content-generator';
 
 interface CardNodeViewHeaderProps {
 	readonly files: File[];
@@ -16,7 +15,6 @@ interface CardNodeViewHeaderProps {
 
 export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JSX.Element {
 	const { t } = useTranslation();
-	const { handleOpenFilePicker } = useContentGenerator();
 
 	return (
 		<CardHeader className="space-y-0 p-0 px-3.5">
@@ -48,15 +46,6 @@ export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JS
 						</FileUploadItem>
 					))}
 				</FileUploadList>
-				<button
-					type="button"
-					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-					onMouseDown={(e) => e.preventDefault()}
-					onClick={handleOpenFilePicker}
-					aria-label={t('assistantNode.addImage', 'Add image')}
-				>
-					<ImagePlus className="h-4 w-4" aria-hidden="true" />
-				</button>
 			</div>
 		</CardHeader>
 	);
