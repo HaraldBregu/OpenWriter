@@ -39,5 +39,6 @@ export default function Page(): ReactElement {
 				</div>
 			</PageBody>
 		</PageContainer>
+		</Layout>
 	);
 }
