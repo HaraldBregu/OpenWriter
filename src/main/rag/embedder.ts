@@ -116,7 +116,7 @@ export class Embedder {
 		const pendingChunks: Array<{
 			document: FileMetadata;
 			extractedMetadata: Record<string, unknown>;
-			chunks: Document[];
+			chunks: DocumentChunk[];
 		}> = [];
 
 		for (let index = 0; index < documents.length; index += 1) {
