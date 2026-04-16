@@ -1,5 +1,5 @@
 import { useContext as useReactContext } from 'react';
-import { Context } from '../Context';
+import { Context } from '../context/Context';
 import type { DataContextValue } from '../context/types';
 
 export function useContext(): DataContextValue {
