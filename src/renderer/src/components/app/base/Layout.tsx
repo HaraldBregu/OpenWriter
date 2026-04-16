@@ -46,7 +46,7 @@ import {
 	Download,
 	Info,
 	LogOut,
-	Plus,
+	CirclePlus,
 	ScrollText,
 	Sun,
 	Monitor,
