@@ -1,5 +1,4 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import {
@@ -8,7 +7,7 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import { readLabeledValue } from '../../agent-output';
-import type { AssistantState } from '../../state';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../../state';
 
 const SYSTEM_PROMPT = `You are the rewrite_query node in a retrieval loop.
 
@@ -36,7 +35,7 @@ function normalizeQuery(value: string | undefined): string {
 	return value.trim();
 }
 
-function buildHumanMessage(state: typeof AssistantState.State): string {
+function buildHumanMessage(state: AssistantGraphState): string {
 	return [
 		'User question:',
 		state.prompt,
@@ -57,15 +56,15 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export function createRewriteQueryAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export function createRewriteQueryAgent(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
 export async function rewriteQueryAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	if (state.retrievalStatus === 'unavailable') {
 		logger?.debug('RewriteQueryAgent', 'Skipping query rewrite because retrieval is unavailable');
 		return {
@@ -82,9 +81,8 @@ export async function rewriteQueryAgent(
 		nextRetryCount,
 	});
 
-	const rawRewrite = await invokeAssistantSpecialist(agent, [
-		new HumanMessage(buildHumanMessage(state)),
-	]);
+	const messages: ChatMessage[] = [{ role: 'user', content: buildHumanMessage(state) }];
+	const rawRewrite = await invokeAssistantSpecialist(agent, messages);
 	const rewrittenQuery =
 		normalizeQuery(readLabeledValue(rawRewrite, 'Rewritten query')) || fallbackQuery;
 
