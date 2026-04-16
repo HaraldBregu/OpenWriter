@@ -5,7 +5,7 @@
  * API surface compatible with the existing assistant and painter graphs.
  *
  * The compiled graph's `stream()` method yields `[mode, data]` tuples:
- *   - `['messages', [{ content: token }, { langgraph_node: nodeName }]]`
+ *   - `['messages', [{ content: token }, { graph_node: nodeName }]]`
  *   - `['values', state]`
  *
  * Token interception works through `ChatModel._tokenListener`: the graph
@@ -156,7 +156,7 @@ export class CompiledGraph<S extends Record<string, unknown>> {
 				model._tokenListener = (token: string) => {
 					channel.push([
 						'messages',
-						[{ content: token }, { langgraph_node: nodeName }],
+						[{ content: token }, { graph_node: nodeName }],
 					]);
 				};
 			}
