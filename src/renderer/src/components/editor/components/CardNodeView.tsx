@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { ImageIcon, Plus, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
 import { getProvider } from 'src/shared';
-import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../shared/models';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
