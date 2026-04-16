@@ -20,7 +20,7 @@ const ARGS_FILE = 'args.json';
 const MAX_ELEMENTS = 100_000;
 
 export class VectorStore {
-	private index: HierarchicalNSW | null = null;
+	private index: InstanceType<typeof HierarchicalNSW> | null = null;
 	private docstore = new Map<number, DocumentChunk>();
 	private dimensions = 0;
 	private nextLabel = 0;
