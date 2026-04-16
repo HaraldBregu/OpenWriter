@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Pencil, Trash2, Upload, X } from 'lucide-react';
+import { Database, FolderOpen, Plus } from 'lucide-react';
 import {
 	PageBody,
 	PageContainer,
@@ -21,53 +21,32 @@ function PageContent(): ReactElement {
 	const {
 		selected,
 		uploading,
-		editing,
-		handleToggleEdit,
-		handleDelete,
 		handleOpenResourcesFolder,
-		handleUpload,
 		kbDialogOpen,
 		setKbDialogOpen,
 		confirmOpen,
 		setConfirmOpen,
 		handleConfirmDelete,
+		knowledgeBases,
 	} = useContext();
 
 	return (
 		<PageContainer>
 			<PageHeader>
-				<PageHeaderTitle>Data</PageHeaderTitle>
+				<PageHeaderTitle>
+					<Database className="h-4 w-4" />
+					Knowledge Base
+				</PageHeaderTitle>
 				<PageHeaderItems>
-					{editing && selected.size > 0 && (
-						<Button variant="destructive" size="lg" onClick={handleDelete}>
-							<Trash2 />
-							Delete ({selected.size})
+					<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
+						<FolderOpen />
+					</Button>
+					{knowledgeBases.length > 0 && (
+						<Button size="lg" onClick={() => setKbDialogOpen(true)} disabled={uploading}>
+							<Plus />
+							New
 						</Button>
 					)}
-					{!editing && (
-						<>
-							<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
-								<FolderOpen />
-							</Button>
-							<Button size="lg" onClick={handleUpload} disabled={uploading}>
-								<Upload />
-								Upload
-							</Button>
-						</>
-					)}
-					<Button variant="outline" size="lg" onClick={handleToggleEdit}>
-						{editing ? (
-							<>
-								<X />
-								Done
-							</>
-						) : (
-							<>
-								<Pencil />
-								Edit
-							</>
-						)}
-					</Button>
 				</PageHeaderItems>
 			</PageHeader>
 			<DataIndexingBar />
