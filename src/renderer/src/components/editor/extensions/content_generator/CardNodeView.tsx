@@ -185,7 +185,7 @@ export function CardNodeView(): React.JSX.Element {
 						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
 					</Button>
 				</CardFooter>
-			</Card>
+			</FileUploadDropzone>
 		</FileUpload>
 	);
 }
