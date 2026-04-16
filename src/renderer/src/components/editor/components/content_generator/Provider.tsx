@@ -98,5 +98,5 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		]
 	);
 
-	return <Context.Provider value={value}>{children}</Context.Provider>;
+	return <ContentGeneratorContext.Provider value={value}>{children}</ContentGeneratorContext.Provider>;
 }
