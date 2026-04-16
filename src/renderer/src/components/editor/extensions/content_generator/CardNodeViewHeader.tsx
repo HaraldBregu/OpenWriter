@@ -1,7 +1,6 @@
 import React from 'react';
 import { CardHeader } from '@/components/ui/Card';
 import {
-	FileUploadTrigger,
 	FileUploadList,
 	FileUploadItem,
 	FileUploadItemPreview,
@@ -10,6 +9,7 @@ import {
 import { ImagePlus, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
+import { useContentGenerator } from './hooks/use-content-generator';
 
 interface CardNodeViewHeaderProps {
 	readonly files: File[];
@@ -17,22 +17,21 @@ interface CardNodeViewHeaderProps {
 
 export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JSX.Element {
 	const { t } = useTranslation();
+	const { handleOpenFilePicker } = useContentGenerator();
 
 	return (
 		<CardHeader className="space-y-0 p-0 px-3.5">
 			<div className="flex items-center gap-2">
-				<FileUploadTrigger
-					render={
-						<Button
-							variant="secondary"
-							size="icon"
-							title={t('assistantNode.addImage', 'Add image')}
-							aria-label={t('assistantNode.addImage', 'Add image')}
-						/>
-					}
+				<Button
+					type="button"
+					variant="secondary"
+					size="icon"
+					title={t('assistantNode.addImage', 'Add image')}
+					aria-label={t('assistantNode.addImage', 'Add image')}
+					onClick={handleOpenFilePicker}
 				>
 					<ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
-				</FileUploadTrigger>
+				</Button>
 			</div>
 
 			<FileUploadList
@@ -60,18 +59,15 @@ export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JS
 						</FileUploadItemDelete>
 					</FileUploadItem>
 				))}
-				<FileUploadTrigger
-					render={
-						<button
-							type="button"
-							className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-							onMouseDown={(e) => e.preventDefault()}
-							aria-label={t('assistantNode.addImage', 'Add image')}
-						/>
-					}
+				<button
+					type="button"
+					className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
+					onMouseDown={(e) => e.preventDefault()}
+					onClick={handleOpenFilePicker}
+					aria-label={t('assistantNode.addImage', 'Add image')}
 				>
 					<ImagePlus className="h-4 w-4" aria-hidden="true" />
-				</FileUploadTrigger>
+				</button>
 			</FileUploadList>
 		</CardHeader>
 	);
