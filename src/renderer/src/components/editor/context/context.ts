@@ -1,0 +1,21 @@
+import { createContext } from 'react';
+import type React from 'react';
+import type { Editor } from '@tiptap/core';
+import type { EditorState, HoveredBlock } from './state';
+
+export interface EditorContextValue {
+	state: EditorState;
+	editor: Editor;
+	containerRef: React.RefObject<HTMLDivElement | null>;
+	setHoveredBlock: (block: HoveredBlock | null) => void;
+	setImageDialogOpen: (open: boolean) => void;
+	onContinueWithAssistant?: (
+		before: string,
+		after: string,
+		cursorPos: number,
+		closeMenu: () => void
+	) => void;
+	onInsertContent?: () => void;
+}
+
+export const EditorContext = createContext<EditorContextValue | null>(null);
