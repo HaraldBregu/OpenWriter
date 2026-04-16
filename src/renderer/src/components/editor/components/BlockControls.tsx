@@ -6,22 +6,8 @@ import { useEditorContext } from '../hooks';
 
 export const GUTTER_WIDTH = 58;
 
-export interface HoveredBlock {
-	node: HTMLElement;
-	pos: number;
-	top: number;
-}
-
-interface BlockControlsProps {
-	containerRef: React.RefObject<HTMLDivElement | null>;
-	hoveredBlock: HoveredBlock | null;
-}
-
-export const BlockControls = React.memo(function BlockControls({
-	containerRef,
-	hoveredBlock,
-}: BlockControlsProps): React.JSX.Element {
-	const { editor } = useEditorContext();
+export const BlockControls = React.memo(function BlockControls(): React.JSX.Element {
+	const { editor, containerRef, state: { hoveredBlock } } = useEditorContext();
 	const [dropState, setDropState] = useState({ top: 0, visible: false });
 	const dragRef = useRef(false);
 	const lastTopRef = useRef(0);
