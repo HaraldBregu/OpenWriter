@@ -78,4 +78,4 @@ Open an issue on the [GitHub repository](https://github.com/HaraldBregu/openwrit
 
 ### Can I build custom AI agents?
 
-Yes. The agent system is extensible. You can define new agent definitions with custom LangGraph topologies, state schemas, and execution protocols. See the project documentation for the agent registration guide.
+Yes. The agent system is extensible. You can define new agent definitions with custom graph topologies, state schemas, and execution protocols. See the project documentation for the agent registration guide.
