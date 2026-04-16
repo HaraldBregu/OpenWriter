@@ -54,8 +54,6 @@ export function CardNodeView(): React.JSX.Element {
 		? t('assistantAgent.image', 'Image')
 		: t('assistantAgent.text', 'Text');
 
-	const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
-
 	return (
 		<Card
 			onDragOver={isImage ? handleDragOver : undefined}
