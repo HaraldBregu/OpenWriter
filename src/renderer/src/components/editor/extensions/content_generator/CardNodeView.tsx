@@ -60,7 +60,10 @@ export function CardNodeView(): React.JSX.Element {
 			value={state.files}
 			onValueChange={handleFilesChange}
 		>
-			<Card onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop}>
+			<FileUploadDropzone
+				render={<Card />}
+				className="flex flex-col gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
+			>
 				<CardNodeViewHeader files={state.files} />
 				<CardContent>
 					<Textarea
