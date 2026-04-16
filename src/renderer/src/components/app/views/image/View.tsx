@@ -55,7 +55,6 @@ export function ImageEditorView(): React.JSX.Element {
 		handleCancel,
 		handleAISubmit,
 		handleAIButtonClick,
-		handleCancelAI,
 		handlePromptKeyDown,
 		handleEditorKeyDown,
 		handleAIFileInputChange,
