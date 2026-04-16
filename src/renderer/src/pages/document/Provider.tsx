@@ -23,7 +23,7 @@ export function Provider({
 		setEditorState(ed);
 	}, []);
 
-	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('agentic');
+	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>(null);
 	const [animate, setAnimate] = useState(true);
 
 	const toggleSidebar = useCallback((sidebar: Exclude<ActiveSidebar, null>) => {
