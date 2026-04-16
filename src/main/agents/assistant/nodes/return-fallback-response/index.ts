@@ -1,5 +1,4 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import {
@@ -7,7 +6,7 @@ import {
 	streamAssistantSpecialist,
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
-import type { AssistantState } from '../../state';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../../state';
 
 const SYSTEM_PROMPT = `You are the return_fallback_response node in a retrieval-assisted assistant.
 
@@ -24,7 +23,7 @@ Rules:
 - Keep the response concise and practical.
 - Do not mention internal nodes, routing, grading, or retries.`;
 
-function buildHumanMessage(state: typeof AssistantState.State): string {
+function buildHumanMessage(state: AssistantGraphState): string {
 	return [
 		'Original user question:',
 		state.prompt,
@@ -45,23 +44,22 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export function createReturnFallbackResponseAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export function createReturnFallbackResponseAgent(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
 export async function returnFallbackResponseAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	logger?.debug('ReturnFallbackResponseAgent', 'Generating fallback response', {
 		retryCount: state.retryCount,
 		maxRetries: state.maxRetries,
 	});
 
-	const response = await streamAssistantSpecialist(agent, [
-		new HumanMessage(buildHumanMessage(state)),
-	]);
+	const messages: ChatMessage[] = [{ role: 'user', content: buildHumanMessage(state) }];
+	const response = await streamAssistantSpecialist(agent, messages);
 
 	logger?.info('ReturnFallbackResponseAgent', 'Fallback response generated', {
 		responseLength: response.length,
