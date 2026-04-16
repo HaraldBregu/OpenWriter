@@ -1,4 +1,4 @@
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatMessage } from '../../../shared/ai-types';
 import { PAINTER_STATE_MESSAGES } from '../messages';
 import { parseYesNo, readLabeledValue } from '../agent-output';
 import {
@@ -51,7 +51,8 @@ export async function checkAlignmentAgent(
 	state: PainterGraphState,
 	agent: PainterSpecialistAgent
 ): Promise<Partial<PainterGraphState>> {
-	const raw = await invokePainterSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
+	const messages: ChatMessage[] = [{ role: 'user', content: buildHumanMessage(state) }];
+	const raw = await invokePainterSpecialist(agent, messages);
 	const approved = parseYesNo(readLabeledValue(raw, 'APPROVED'), false);
 	const needsAnotherPass = !approved && state.revisionCount < state.maxRevisions;
 
