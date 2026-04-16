@@ -1,5 +1,5 @@
 import type { ReactElement, ReactNode } from 'react';
-import { DataProvider } from './Provider';
+import { DataProvider } from './context/Provider';
 
 interface LayoutProps {
 	readonly children: ReactNode;
