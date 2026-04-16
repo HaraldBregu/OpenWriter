@@ -126,6 +126,6 @@ export const ContentGeneratorExtension = Node.create<
 	},
 
 	addNodeView() {
-		return ReactNodeViewRenderer(NodeView);
+		return ReactNodeViewRenderer(ContentGeneratorNodeView);
 	},
 });
