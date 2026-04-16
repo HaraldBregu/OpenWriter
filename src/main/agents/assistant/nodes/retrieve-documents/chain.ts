@@ -1,6 +1,5 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
-import { toLangChainHistoryMessages } from '../../../core/history';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
+import { toHistoryMessages } from '../../../core/history';
 import type { AgentHistoryMessage } from '../../../core/types';
 import {
 	createAssistantSpecialistAgent,
@@ -38,7 +37,7 @@ export interface RunRagChainInput {
 	history?: AgentHistoryMessage[];
 }
 
-export function createRagChain(model: BaseChatModel): AssistantSpecialistAgent {
+export function createRagChain(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
@@ -54,17 +53,18 @@ export async function runRagChain(
 		return NO_CONTEXT_FINDING;
 	}
 
-	const messages = [
-		...toLangChainHistoryMessages(input.history),
-		new HumanMessage(
-			buildHumanMessage(
+	const messages: ChatMessage[] = [
+		...toHistoryMessages(input.history),
+		{
+			role: 'user',
+			content: buildHumanMessage(
 				input.prompt,
 				input.normalizedPrompt,
 				input.researchGuidance,
 				input.intentFindings,
 				buildRagContext(documents)
-			)
-		),
+			),
+		},
 	];
 	const ragFindings = await invokeAssistantSpecialist(agent, messages);
 
