@@ -1,5 +1,4 @@
-import type { Document } from '@langchain/core/documents';
-import type { EmbeddingsInterface } from '@langchain/core/embeddings';
+import type { DocumentChunk, EmbeddingModel } from '../../../../shared/ai-types';
 import type {
 	DocumentIndexSnapshot,
 	IndexedDocumentRecord,
@@ -15,7 +14,7 @@ const MIN_CHUNK_OVERLAP = 40;
 
 export interface RagRetrieverOptions {
 	workspaceService: WorkspaceService;
-	embeddings: EmbeddingsInterface;
+	embeddings: EmbeddingModel;
 	topK?: number;
 	maxDistance?: number;
 	contextWindow?: number;
@@ -186,8 +185,8 @@ export class RagRetriever {
 		};
 	}
 
-	private toCandidate(document: Document, score: number): RetrievalCandidate {
-		const metadata = document.metadata as Record<string, unknown>;
+	private toCandidate(document: DocumentChunk, score: number): RetrievalCandidate {
+		const metadata = document.metadata;
 		const chunkIndex = readChunkIndex(metadata);
 		const record = this.findIndexedRecord(metadata);
 		const recordKey = record ? getRecordKey(record) : undefined;
