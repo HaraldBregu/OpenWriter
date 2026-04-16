@@ -10,8 +10,8 @@ import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empt
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
 import { ImageProvider } from '../../context/ImageProvider';
 import { useImage } from '../../hooks/use-image';
-import { ImageEditor } from './components/ImageEditor';
-import { ImagePreviewDialog } from './components';
+import { ImageEditor } from '../ImageEditor';
+import { ImagePreviewDialog } from '../ImagePreviewDialog';
 
 function ImageInner(): React.JSX.Element {
 	const { t } = useTranslation();
