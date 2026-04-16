@@ -1,8 +1,8 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { NodeView } from './NodeView';
-import type { ContentGeneratorAgentId } from './agents';
-import type { ModelInfo } from '../../../../../../shared/types';
+import { NodeView } from '../components/content_generator/NodeView';
+import type { ContentGeneratorAgentId } from '../components/content_generator/agents';
+import type { ModelInfo } from '../../../../shared/types';
 
 export interface ContentGeneratorOptions {
 	defaultTextModel?: ModelInfo;
