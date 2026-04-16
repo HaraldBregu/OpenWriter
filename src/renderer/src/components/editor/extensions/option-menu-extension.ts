@@ -1,6 +1,6 @@
 import { Extension } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
-import { OptionMenuPlugin, type OptionMenuPluginProps } from './option-menu-plugin';
+import { OptionMenuPlugin, type OptionMenuPluginProps } from '../plugins/option-menu-plugin';
 
 export type OptionMenuExtensionOptions = Omit<OptionMenuPluginProps, 'editor' | 'element'> & {
 	element: HTMLElement | null;
