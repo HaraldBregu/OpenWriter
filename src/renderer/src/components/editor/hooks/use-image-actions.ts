@@ -2,7 +2,7 @@ import { useCallback, useMemo } from 'react';
 import type React from 'react';
 import type { Editor } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
-import type { ImageAction } from '../components/image/context/actions';
+import type { ImageAction } from '../context/image-actions';
 
 interface UseImageActionsParams {
 	dispatch: React.Dispatch<ImageAction>;
