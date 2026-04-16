@@ -135,7 +135,7 @@ export const BlockControls = React.memo(function BlockControls({
 					'pointer-events-none opacity-0 transition-opacity duration-150 ease-in',
 					visible && 'pointer-events-auto opacity-100'
 				)}
-				style={{ top: (hoveredBlock?.top ?? 0) - 4 }}
+				style={{ top: lastTopRef.current - 4 }}
 			>
 				{/* Add block below */}
 				<Button
