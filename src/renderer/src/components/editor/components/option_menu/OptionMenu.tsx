@@ -15,26 +15,12 @@ import { Card } from '@/components/ui/Card';
 import { OptionMenuPlugin, type OptionMenuControls } from './option-menu-plugin';
 import { useEditorContext } from '../../hooks';
 
-interface OptionMenuProps {
-	onContinueWithAssistant?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
-	onInsertImage?: () => void;
-	onInsertContent?: () => void;
-}
-
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 10;
 const FIRST_AI_INDEX = 9;
 
-export function OptionMenu({
-	onContinueWithAssistant,
-	onInsertContent,
-}: OptionMenuProps): React.JSX.Element {
-	const { editor } = useEditorContext();
+export function OptionMenu(): React.JSX.Element {
+	const { editor, onContinueWithAssistant, onInsertContent } = useEditorContext();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
