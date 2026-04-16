@@ -1,23 +1,17 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
+import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
-import {
-	FileUpload,
-	FileUploadTrigger,
-	FileUploadList,
-	FileUploadItem,
-	FileUploadItemPreview,
-	FileUploadItemDelete,
-} from '@/components/ui/FileUpload';
+import { FileUpload } from '@/components/ui/FileUpload';
 import { useContentGenerator } from './hooks/use-content-generator';
+import { CardNodeViewHeader } from './CardNodeViewHeader';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuCheckboxItem,
 } from '@/components/ui/DropdownMenu';
-import { ImageIcon, ImagePlus, PenLine, ChevronDown, LoaderCircle, ArrowUp, X } from 'lucide-react';
+import { ImageIcon, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
 import { getProvider } from 'src/shared';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 import { Button } from '@/components/ui/Button';
