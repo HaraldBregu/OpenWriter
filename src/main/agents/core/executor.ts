@@ -277,8 +277,8 @@ async function* executeCustomStateGraphStream(
 				if (!chunk) continue;
 
 				const nodeName =
-					typeof metadata?.['langgraph_node'] === 'string'
-						? metadata['langgraph_node']
+					typeof metadata?.['graph_node'] === 'string'
+						? metadata['graph_node']
 						: undefined;
 				if (
 					allowedNodes !== undefined &&
