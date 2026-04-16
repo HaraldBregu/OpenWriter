@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ContentGeneratorNodeView } from './NodeView';
+import { NodeView } from './NodeView';
 import type { ContentGeneratorAgentId } from './agents';
 import type { ModelInfo } from '../../../../../../shared/types';
 
@@ -126,6 +126,6 @@ export const ContentGeneratorExtension = Node.create<
 	},
 
 	addNodeView() {
-		return ReactNodeViewRenderer(ContentGeneratorNodeView);
+		return ReactNodeViewRenderer(NodeView);
 	},
 });
