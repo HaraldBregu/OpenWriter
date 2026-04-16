@@ -24,6 +24,11 @@ export const BlockControls = React.memo(function BlockControls({
 	const { editor } = useEditorContext();
 	const [dropState, setDropState] = useState({ top: 0, visible: false });
 	const dragRef = useRef(false);
+	const lastTopRef = useRef(0);
+
+	if (hoveredBlock) {
+		lastTopRef.current = hoveredBlock.top;
+	}
 
 	// Resolve the top-level block at a given clientY.
 	const getBlock = useCallback(
