@@ -1,28 +1,27 @@
 /**
- * AgentExecutor — consolidated LangChain streaming generator.
+ * AgentExecutor — consolidated streaming generator.
  *
  * Supports three execution paths:
  *
  * 1. Plain chat completion — when no `buildGraph` is supplied.
- *    Uses `model.stream(messages)` and yields token events.
+ *    Uses OpenAI SDK streaming and yields token events.
  *
- * 2. LangGraph messages protocol — when `buildGraph` is supplied but
+ * 2. Messages-protocol graph — when `buildGraph` is supplied but
  *    `buildGraphInput` / `extractGraphOutput` are absent.
  *    Passes `{ messages: [...] }` as initial state and streams via
- *    `streamMode: 'messages'`, yielding token events per chunk.
+ *    the graph runner, yielding token events per chunk.
  *
- * 3. LangGraph custom-state protocol — when `buildGraph`, `buildGraphInput`,
+ * 3. Custom-state graph — when `buildGraph`, `buildGraphInput`,
  *    AND `extractGraphOutput` are all supplied.
  *    Calls `buildGraphInput(ctx)` to construct domain-specific initial state,
- *    streams via `streamMode: ['messages', 'values']` to forward token events
- *    incrementally, then calls `extractGraphOutput(finalState)` as a fallback
- *    for any post-processed content not captured in the token stream.
+ *    streams via the graph runner to forward token events incrementally,
+ *    then calls `extractGraphOutput(finalState)` as a fallback for any
+ *    post-processed content not captured in the token stream.
  */
 
-import { HumanMessage, AIMessage, SystemMessage } from '@langchain/core/messages';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { CompiledStateGraph } from '@langchain/langgraph';
-import { extractTokenFromChunk, classifyError, toUserMessage } from '../../shared/ai-utils';
+import type { ChatModel, ChatMessage } from '../../shared/ai-types';
+import type { CompiledGraph } from './graph-runner';
+import { classifyError, toUserMessage } from '../../shared/ai-utils';
 import { createChatModel } from '../../shared/chat-model-factory';
 import type { AgentStreamEvent } from './types';
 import type { AgentHistoryMessage } from './types';
@@ -47,13 +46,11 @@ export interface ExecutorInput {
 	 */
 	nodeModels?: NodeModelMap;
 	/**
-	 * LangGraph factory — when supplied the executor runs the graph path.
+	 * Graph factory — when supplied the executor runs the graph path.
 	 * The factory receives the already-configured streaming model.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (
-		models: BaseChatModel | NodeModelMap
-	) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (models: ChatModel | NodeModelMap) => CompiledGraph<any>;
 	/**
 	 * Custom-state graph hooks (must be provided as a pair).
 	 * When present, the executor uses the custom-state protocol instead of
@@ -112,7 +109,7 @@ export async function* executeAIAgentsStream(
 		`run=${runId} provider=${provider.providerId} model=${modelName} temp=${temperature} maxTokens=${maxTokens ?? 'unlimited'} graph=${graphMode}`
 	);
 
-	// --- Build LangChain model (used by plain and messages-protocol paths) ---
+	// --- Build chat model (used by plain and messages-protocol paths) ---
 
 	const model = createChatModel({
 		providerId: provider.providerId,
@@ -153,19 +150,22 @@ export async function* executeAIAgentsStream(
 
 	// --- Messages-protocol graph path ----------------------------------------
 
-	const langchainMessages = [
-		new SystemMessage(systemPrompt),
-		...history.map((m) =>
-			m.role === 'user' ? new HumanMessage(m.content) : new AIMessage(m.content)
+	const messages: ChatMessage[] = [
+		{ role: 'system', content: systemPrompt },
+		...history.map(
+			(m): ChatMessage => ({
+				role: m.role === 'user' ? 'user' : 'assistant',
+				content: m.content,
+			})
 		),
-		new HumanMessage(prompt),
+		{ role: 'user', content: prompt },
 	];
 
 	if (graphMode === 'messages') {
 		yield* executeMessagesGraphStream({
 			runId,
 			model,
-			langchainMessages,
+			messages,
 			buildGraph: buildGraph as NonNullable<typeof buildGraph>,
 			signal,
 			logger,
@@ -179,12 +179,9 @@ export async function* executeAIAgentsStream(
 	let tokenCount = 0;
 
 	try {
-		const stream = await model.stream(langchainMessages, { signal });
-
-		for await (const chunk of stream) {
+		for await (const token of model.stream(messages, signal)) {
 			if (signal?.aborted) break;
 
-			const token = extractTokenFromChunk(chunk.content);
 			if (token) {
 				fullContent += token;
 				tokenCount++;
@@ -215,26 +212,14 @@ export async function* executeAIAgentsStream(
 // ---------------------------------------------------------------------------
 // Custom-state graph sub-generator
 // ---------------------------------------------------------------------------
-//
-// Uses combined streamMode:['messages','values'] which yields both token-level
-// streaming chunks (from LLM calls within nodes) and full state snapshots
-// after each node completes. Token events are forwarded incrementally to the
-// caller; the last state snapshot is used with extractGraphOutput to produce
-// the final content string.
-//
-// This path is for agents with domain-specific state shapes (e.g. WriterState)
-// whose nodes call the LLM internally and return a plain string field rather
-// than appending to a messages channel.
 
 interface CustomStateGraphStreamInput {
 	runId: string;
-	model: BaseChatModel;
+	model: ChatModel;
 	nodeModels?: NodeModelMap;
 	ctx: GraphInputContext;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (
-		models: BaseChatModel | NodeModelMap
-	) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (models: ChatModel | NodeModelMap) => CompiledGraph<any>;
 	buildGraphInput: (ctx: GraphInputContext) => Record<string, unknown>;
 	extractGraphOutput: (state: Record<string, unknown>) => string;
 	extractThinkingLabel?: (state: Record<string, unknown>) => string | undefined;
@@ -260,7 +245,6 @@ async function* executeCustomStateGraphStream(
 		logger,
 	} = input;
 
-	// Build a Set once for O(1) lookups; undefined means "stream all nodes".
 	const allowedNodes = streamableNodes !== undefined ? new Set(streamableNodes) : undefined;
 
 	try {
@@ -272,11 +256,12 @@ async function* executeCustomStateGraphStream(
 		let finalState: Record<string, unknown> = {};
 		let lastThinkingLabel: string | undefined;
 
-		// Combined stream mode: 'messages' for token-level streaming,
-		// 'values' for final state snapshots used by extractGraphOutput.
-		const stream = await graph.stream(initialState, {
-			streamMode: ['messages', 'values'],
-			signal: signal as AbortSignal | undefined,
+		// Collect all ChatModel instances for token interception
+		const allModels: ChatModel[] = nodeModels ? Object.values(nodeModels) : [model];
+
+		const stream = graph.stream(initialState, {
+			signal,
+			chatModels: allModels,
 		});
 
 		for await (const event of stream) {
@@ -285,24 +270,25 @@ async function* executeCustomStateGraphStream(
 			const [mode, data] = event as [string, unknown];
 
 			if (mode === 'messages') {
-				const [chunk, metadata] = data as [unknown, Record<string, unknown>];
+				const [chunk, metadata] = data as [
+					{ content: string },
+					Record<string, unknown>,
+				];
 				if (!chunk) continue;
 
-				// Skip the final complete AIMessage emitted after all streaming deltas
-				if (chunk instanceof AIMessage) continue;
-
-				// When streamableNodes is declared, only forward tokens from listed nodes.
 				const nodeName =
-					typeof metadata?.['langgraph_node'] === 'string' ? metadata['langgraph_node'] : undefined;
-				if (allowedNodes !== undefined && (nodeName === undefined || !allowedNodes.has(nodeName))) {
+					typeof metadata?.['langgraph_node'] === 'string'
+						? metadata['langgraph_node']
+						: undefined;
+				if (
+					allowedNodes !== undefined &&
+					(nodeName === undefined || !allowedNodes.has(nodeName))
+				) {
 					continue;
 				}
 
-				const token = extractTokenFromChunk(
-					typeof chunk === 'object' && chunk !== null && 'content' in chunk
-						? (chunk as { content: unknown }).content
-						: ''
-				);
+				const token =
+					typeof chunk.content === 'string' ? chunk.content : '';
 
 				if (token) {
 					fullContent += token;
@@ -324,13 +310,6 @@ async function* executeCustomStateGraphStream(
 			return;
 		}
 
-		// extractGraphOutput is the authoritative source for the final result
-		// content. Streamed tokens serve real-time UI delivery and may only
-		// represent a subset of the graph's work (e.g. a refinement node
-		// streams tokens but a subsequent generation node produces the actual
-		// output). Fall back to accumulated streamed content only when
-		// extractGraphOutput returns an empty string (e.g. graph error or
-		// incomplete state).
 		const extractedContent = extractGraphOutput(finalState);
 		const content = extractedContent || fullContent;
 
@@ -358,19 +337,13 @@ async function* executeCustomStateGraphStream(
 // ---------------------------------------------------------------------------
 // Messages-protocol graph sub-generator
 // ---------------------------------------------------------------------------
-//
-// Original path: passes { messages: [...] } as initial state and streams
-// individual tokens via streamMode:'messages'. Retained unchanged for graphs
-// whose state includes a messages channel.
 
 interface MessagesGraphStreamInput {
 	runId: string;
-	model: BaseChatModel;
-	langchainMessages: (HumanMessage | AIMessage | SystemMessage)[];
+	model: ChatModel;
+	messages: ChatMessage[];
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph: (
-		models: BaseChatModel | NodeModelMap
-	) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph: (models: ChatModel | NodeModelMap) => CompiledGraph<any>;
 	signal?: AbortSignal;
 	logger?: LoggerService;
 }
@@ -378,7 +351,7 @@ interface MessagesGraphStreamInput {
 async function* executeMessagesGraphStream(
 	input: MessagesGraphStreamInput
 ): AsyncGenerator<AgentStreamEvent> {
-	const { runId, model, langchainMessages, buildGraph, signal, logger } = input;
+	const { runId, model, messages, buildGraph, signal, logger } = input;
 
 	let fullContent = '';
 	let tokenCount = 0;
@@ -386,34 +359,28 @@ async function* executeMessagesGraphStream(
 	try {
 		const graph = buildGraph(model);
 
-		const stream = await graph.stream(
-			{ messages: langchainMessages },
-			{ streamMode: 'messages', signal: signal as AbortSignal | undefined }
+		const stream = graph.stream(
+			{ messages } as Record<string, unknown>,
+			{ signal, chatModels: [model] }
 		);
 
 		for await (const item of stream) {
 			if (signal?.aborted) break;
 
-			// streamMode:"messages" yields [chunk, metadata] tuples
-			const [chunk] = Array.isArray(item) ? item : [item, {}];
+			const [mode, data] = item as [string, unknown];
 
-			if (!chunk) continue;
+			if (mode === 'messages') {
+				const [chunk] = data as [{ content: string }, Record<string, unknown>];
+				if (!chunk) continue;
 
-			// Skip the final complete AIMessage that LangGraph emits after all
-			// streaming AIMessageChunk deltas. Only process incremental chunks.
-			if (chunk instanceof AIMessage) continue;
+				const token =
+					typeof chunk.content === 'string' ? chunk.content : '';
 
-			// Extract text token from the chunk content
-			const token = extractTokenFromChunk(
-				typeof chunk === 'object' && chunk !== null && 'content' in chunk
-					? (chunk as { content: unknown }).content
-					: ''
-			);
-
-			if (token) {
-				fullContent += token;
-				tokenCount++;
-				yield { type: 'token', token, runId };
+				if (token) {
+					fullContent += token;
+					tokenCount++;
+					yield { type: 'token', token, runId };
+				}
 			}
 		}
 
