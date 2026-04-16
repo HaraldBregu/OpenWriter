@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GripVertical, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useEditorContext } from './EditorContext';
+import { useEditorContext } from '../EditorContext';
 
 export const GUTTER_WIDTH = 58;
 
