@@ -5,8 +5,8 @@ import type { SearchResultItem, SearchResultSection } from '../types';
 import { SearchResultCard } from './SearchResultCard';
 
 interface SearchSectionProps {
-	section: SearchResultSection;
-	onSelect: (item: SearchResultItem) => void;
+	readonly section: SearchResultSection;
+	readonly onSelect: (item: SearchResultItem) => void;
 }
 
 const SearchSection: React.FC<SearchSectionProps> = ({ section, onSelect }) => {
