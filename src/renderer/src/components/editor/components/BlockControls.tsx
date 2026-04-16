@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GripVertical, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useEditorContext } from '../EditorContext';
+import { useEditorContext } from '../hooks';
 
 export const GUTTER_WIDTH = 58;
 
@@ -127,7 +127,7 @@ export const BlockControls = React.memo(function BlockControls({
 			<div
 				className={cn(
 					'absolute -left-3 z-50 flex items-center gap-1',
-					'pointer-events-none opacity-0 transition-opacity duration-100',
+					'pointer-events-none opacity-0 transition-opacity duration-150 ease-in',
 					visible && 'pointer-events-auto opacity-100'
 				)}
 				style={{ top: (hoveredBlock?.top ?? 0) - 4 }}

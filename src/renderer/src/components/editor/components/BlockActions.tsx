@@ -1,7 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react';
-import { useEditorContext } from '../EditorContext';
 import { cn } from '@/lib/utils';
 import type { HoveredBlock } from './BlockControls';
 import { Button } from '@/components/ui/Button';
@@ -11,6 +10,7 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
+import { useEditorContext } from '../hooks';
 
 interface BlockActionsProps {
 	containerRef: React.RefObject<HTMLDivElement | null>;

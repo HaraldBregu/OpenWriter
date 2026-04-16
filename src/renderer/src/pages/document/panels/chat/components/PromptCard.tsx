@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import {
 	CONTENT_GENERATOR_AGENT_OPTIONS,
 	type ContentGeneratorAgentId,
-} from '@/components/editor/extensions/content_generator/agents';
+} from '@/components/editor/views/content_generator/agents';
 import { getProvider } from '../../../../../../../shared/providers';
 import type { ModelInfo } from '../../../../../../../shared/types';
 

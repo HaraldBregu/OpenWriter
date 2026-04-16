@@ -14,8 +14,8 @@ import {
 import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
-import { useEditorContext } from '../EditorContext';
 import { cn } from '@/lib/utils';
+import { useEditorContext } from '../../hooks';
 
 const pluginKey = new PluginKey('bubbleMenu');
 

@@ -7,13 +7,13 @@ import {
 	DialogTitle,
 	DialogDescription,
 	DialogFooter,
-} from '../ui/Dialog';
-import { Button } from '../ui/Button';
-import { Input } from '../ui/Input';
-import { Label } from '../ui/Label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/Select';
+} from '../../ui/Dialog';
+import { Button } from '../../ui/Button';
+import { Input } from '../../ui/Input';
+import { Label } from '../../ui/Label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/Select';
 import { ImagePlus, Upload } from 'lucide-react';
-import { fileToDataUri } from './extensions/image';
+import { fileToDataUri } from '../views/image';
 
 type ImageSource = 'url' | 'upload';
 

@@ -13,14 +13,14 @@ import { Transaction } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
 import { BlockControls, GUTTER_WIDTH, type HoveredBlock } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
-import { BubbleMenu } from './bubble_menu';
-import { OptionMenu } from './option_menu';
-import { InsertImageDialog } from './InsertImageDialog';
+import { BubbleMenu } from './components/bubble_menu';
+import { OptionMenu } from './components/option_menu';
+import { InsertImageDialog } from './components/InsertImageDialog';
 
 import { createExtensions } from './extensions';
-import { type ImageInsertHandler } from './extensions/image';
-import type { ContentGeneratorStorage } from './extensions/content_generator';
-import { EditorProvider } from './EditorContext';
+import { type ImageInsertHandler } from './views/image';
+import type { ContentGeneratorStorage } from './views/content_generator';
+import { Provider } from './Provider';
 import type { ModelInfo } from '../../../../shared/types';
 
 export interface ImageInsertOptions {
@@ -669,7 +669,7 @@ const TextEditor = React.memo(
 							style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
 						>
 							{editor && (
-								<EditorProvider editor={editor}>
+								<Provider editor={editor}>
 									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
 									<BubbleMenu />
@@ -678,7 +678,7 @@ const TextEditor = React.memo(
 										onInsertImage={handleInsertImage}
 										onInsertContent={onInsertContent}
 									/>
-								</EditorProvider>
+								</Provider>
 							)}
 							<EditorContent editor={editor} />
 							<InsertImageDialog
