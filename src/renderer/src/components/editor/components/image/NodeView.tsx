@@ -156,9 +156,9 @@ function ImageInner(): React.JSX.Element {
 export function ImageNodeView(props: NodeViewProps): React.JSX.Element {
 	return (
 		<NodeViewWrapper contentEditable={false} className="my-4">
-			<Provider nodeViewProps={props}>
+			<ImageProvider nodeViewProps={props}>
 				<ImageInner />
-			</Provider>
+			</ImageProvider>
 		</NodeViewWrapper>
 	);
 }
