@@ -15,6 +15,8 @@ import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
+const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
+
 export function CardNodeView(): React.JSX.Element {
 	const { t } = useTranslation();
 	const {
