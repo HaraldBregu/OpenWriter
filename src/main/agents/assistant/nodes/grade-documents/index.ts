@@ -1,5 +1,4 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import {
@@ -8,7 +7,7 @@ import {
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
 import { readLabeledValue } from '../../agent-output';
-import type { AssistantState } from '../../state';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../../state';
 
 const SYSTEM_PROMPT = `You are the grade_documents node in a retrieval-assisted assistant.
 
@@ -34,7 +33,7 @@ interface GradeDocumentsResult {
 	readonly gradeFindings: string;
 }
 
-function buildFallback(state: typeof AssistantState.State): GradeDocumentsResult {
+function buildFallback(state: AssistantGraphState): GradeDocumentsResult {
 	const documentsRelevant =
 		state.retrievalStatus === 'found' && state.retrievedContext.trim().length > 0;
 	const gradeFindings = documentsRelevant
@@ -52,7 +51,7 @@ function parseDecision(value: string | undefined, fallback: boolean): boolean {
 	return /^relevant\b/i.test(value);
 }
 
-function parseGradeOutput(raw: string, state: typeof AssistantState.State): GradeDocumentsResult {
+function parseGradeOutput(raw: string, state: AssistantGraphState): GradeDocumentsResult {
 	const fallback = buildFallback(state);
 	return {
 		documentsRelevant: parseDecision(readLabeledValue(raw, 'Decision'), fallback.documentsRelevant),
@@ -60,7 +59,7 @@ function parseGradeOutput(raw: string, state: typeof AssistantState.State): Grad
 	};
 }
 
-function buildHumanMessage(state: typeof AssistantState.State): string {
+function buildHumanMessage(state: AssistantGraphState): string {
 	return [
 		'User question:',
 		state.prompt,
@@ -78,15 +77,15 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export function createGradeDocumentsAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export function createGradeDocumentsAgent(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
 export async function gradeDocumentsAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	if (state.retrievalStatus !== 'found') {
 		const fallback = buildFallback(state);
 		logger?.debug(
@@ -109,9 +108,8 @@ export async function gradeDocumentsAgent(
 		retrievedContextLength: state.retrievedContext.length,
 	});
 
-	const rawGrade = await invokeAssistantSpecialist(agent, [
-		new HumanMessage(buildHumanMessage(state)),
-	]);
+	const messages: ChatMessage[] = [{ role: 'user', content: buildHumanMessage(state) }];
+	const rawGrade = await invokeAssistantSpecialist(agent, messages);
 	const parsed = parseGradeOutput(rawGrade, state);
 
 	logger?.info('GradeDocumentsAgent', 'Document grading completed', {
