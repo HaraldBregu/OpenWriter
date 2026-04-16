@@ -128,7 +128,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 				</Button>
 
 				<Button
-					variant="header-icon"
+					variant="ghost"
 					size="icon-xs"
 					onClick={fetchLogs}
 					disabled={loading}
@@ -138,7 +138,7 @@ export default function DebugLogsPage(): React.JSX.Element {
 				</Button>
 
 				<Button
-					variant="header-icon"
+					variant="ghost"
 					size="icon-xs"
 					onClick={() => window.app.openLogsFolder()}
 					aria-label={t('debug.openLogsFolder', 'Open logs folder')}
