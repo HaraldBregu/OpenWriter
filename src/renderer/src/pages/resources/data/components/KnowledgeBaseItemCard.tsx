@@ -51,11 +51,9 @@ export function KnowledgeBaseItemCard({
 				<CardTitle className="truncate">{knowledgeBase.name}</CardTitle>
 				<CardAction>
 					<DropdownMenu>
-						<DropdownMenuTrigger render={
-							<Button variant="ghost" size="icon-sm" aria-label="Open menu">
-								<MoreVertical />
-							</Button>
-						} />
+						<DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Open menu" />}>
+							<MoreVertical />
+						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuItem variant="destructive" onClick={() => onDelete(knowledgeBase.id)}>
 								<Trash2 />
