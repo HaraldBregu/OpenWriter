@@ -1,24 +1,24 @@
-import { StateGraph, START, END } from '@langchain/langgraph';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { StateGraph, START, END } from '../core/graph-runner';
+import type { ChatModel } from '../../shared/ai-types';
 import type { NodeModelMap } from '../core/definition';
 import type { LoggerService } from '../../services/logger';
 import { assistantNodeDefinitions, ASSISTANT_NODE, type AssistantNodeName } from './nodes';
 import type { RagRetriever } from './nodes/retrieve-documents';
 import type { AssistantSpecialistAgent } from './specialist-agent';
-import { AssistantState, type AssistantGraphState } from './state';
+import type { AssistantGraphState, AssistantGraphUpdate } from './state';
 
 const LOG_SOURCE = 'AssistantGraph';
 
 export const ASSISTANT_SPECIALIST = ASSISTANT_NODE;
 
 export interface AssistantSpecialistModels {
-	[ASSISTANT_NODE.ROUTE_QUESTION]: BaseChatModel;
-	[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER]: BaseChatModel;
-	[ASSISTANT_NODE.RETRIEVE_DOCUMENTS]: BaseChatModel;
-	[ASSISTANT_NODE.GRADE_DOCUMENTS]: BaseChatModel;
-	[ASSISTANT_NODE.REWRITE_QUERY]: BaseChatModel;
-	[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE]: BaseChatModel;
-	[ASSISTANT_NODE.GENERATE_ANSWER]: BaseChatModel;
+	[ASSISTANT_NODE.ROUTE_QUESTION]: ChatModel;
+	[ASSISTANT_NODE.GENERATE_DIRECT_ANSWER]: ChatModel;
+	[ASSISTANT_NODE.RETRIEVE_DOCUMENTS]: ChatModel;
+	[ASSISTANT_NODE.GRADE_DOCUMENTS]: ChatModel;
+	[ASSISTANT_NODE.REWRITE_QUERY]: ChatModel;
+	[ASSISTANT_NODE.RETURN_FALLBACK_RESPONSE]: ChatModel;
+	[ASSISTANT_NODE.GENERATE_ANSWER]: ChatModel;
 }
 
 type AssistantSpecialistResult = Partial<AssistantGraphState>;
@@ -89,7 +89,7 @@ function withNodeLogging(
 }
 
 export function buildGraph(
-	models: BaseChatModel | NodeModelMap,
+	models: ChatModel | NodeModelMap,
 	retriever?: RagRetriever,
 	logger?: LoggerService
 ) {
@@ -124,7 +124,7 @@ export function buildGraph(
 		nodeCount: Object.keys(ASSISTANT_NODE).length,
 	});
 
-	return new StateGraph(AssistantState)
+	return new StateGraph<AssistantGraphState>()
 		.addNode(
 			ASSISTANT_NODE.ROUTE_QUESTION,
 			withNodeLogging(ASSISTANT_NODE.ROUTE_QUESTION, logger, (state) =>
