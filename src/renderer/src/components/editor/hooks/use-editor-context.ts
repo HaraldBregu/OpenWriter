@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { Context, type ContextValue } from '../Provider';
+import { EditorContext, type EditorContextValue } from '../context/context';
 
-export function useEditorContext(): ContextValue {
-	const ctx = useContext(Context);
+export function useEditorContext(): EditorContextValue {
+	const ctx = useContext(EditorContext);
 	if (!ctx) {
 		throw new Error('useEditorContext must be used within an EditorProvider');
 	}
