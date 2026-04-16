@@ -1,5 +1,6 @@
-import { ChatOpenAI } from '@langchain/openai';
+import type { ChatModel } from '../../shared/ai-types';
 import type { AgentDefinition, GraphInputContext, NodeModelMap } from '../core/definition';
+import { createChatModel } from '../../shared/chat-model-factory';
 import { executeAIAgentsStream } from '../core/executor';
 import { createPainterGraph, PAINTER_SPECIALIST, type PainterSpecialistModels } from './graph';
 import { PAINTER_STATE_MESSAGES } from './messages';
@@ -12,14 +13,15 @@ function createNodeModel(
 	modelName: string,
 	temperature: number,
 	maxTokens: number
-): ChatOpenAI {
-	return new ChatOpenAI({
+): ChatModel {
+	return createChatModel({
 		apiKey,
-		model: modelName,
+		providerId: 'openai',
+		modelName,
 		streaming: true,
 		temperature,
 		maxTokens,
-		...(baseUrl ? { configuration: { baseURL: baseUrl } } : {}),
+		...(baseUrl ? {} : {}),
 	});
 }
 
