@@ -1,9 +1,9 @@
 import React, { useReducer, useRef, useMemo } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ContentGeneratorContext } from '../../context/content-generator-context';
-import type { ContentGeneratorContextValue } from '../../context/content-generator-context';
-import { contentGeneratorReducer } from '../../context/content-generator-reducer';
-import type { ContentGeneratorState } from '../../context/content-generator-state';
+import { ContentGeneratorContext } from '../../context/context';
+import type { ContentGeneratorContextValue } from '../../context/context';
+import { contentGeneratorReducer } from '../../context/reducer';
+import type { ContentGeneratorState } from '../../context/state';
 import { useContentGeneratorActions } from '../../hooks/use-content-generator-actions';
 import { useTextareaSetup } from '../../hooks/use-textarea-setup';
 import type { ContentGeneratorOptions, ContentGeneratorStorage } from '../../extensions/content-generator-extension';
