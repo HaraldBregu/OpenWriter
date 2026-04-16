@@ -20,6 +20,8 @@ export function contentGeneratorReducer(
 				files: state.files.filter((_, i) => i !== action.payload),
 				previewUrls: state.previewUrls.filter((_, i) => i !== action.payload),
 			};
+		case 'SET_FILES':
+			return { ...state, files: action.payload };
 		case 'SET_DRAG_OVER':
 			return { ...state, isDragOver: action.payload };
 		case 'SET_IMAGE_MODEL':
