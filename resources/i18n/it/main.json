@@ -866,8 +866,7 @@
 		"loadingPreview": "Caricamento…"
 	},
 	"blockActions": {
-		"title": "Opzioni blocco",
-		"copyToClipboard": "Copia negli appunti"
+		"title": "Azioni blocco"
 	},
 	"insertImageDialog": {
 		"title": "Inserisci Immagine",
