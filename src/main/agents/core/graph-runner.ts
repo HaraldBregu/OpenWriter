@@ -1,5 +1,5 @@
 /**
- * Graph Runner — minimal state-graph executor replacing LangGraph.
+ * Graph Runner — minimal state-graph executor.
  *
  * Provides StateGraph, CompiledGraph, START and END constants with an
  * API surface compatible with the existing assistant and painter graphs.
