@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ImageContext } from '../context/context';
-import type { ImageContextValue } from '../context/context';
+import { ImageContext } from '../components/image/context/context';
+import type { ImageContextValue } from '../components/image/context/context';
 
 export function useImage(): ImageContextValue {
 	const context = useContext(ImageContext);
