@@ -98,6 +98,13 @@ export function useContentGeneratorActions({
 		[dispatch]
 	);
 
+	const handleFilesChange = useCallback(
+		(files: File[]) => {
+			dispatch({ type: 'SET_FILES', payload: files });
+		},
+		[dispatch]
+	);
+
 	const handleFileInputChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const selected = e.target.files;

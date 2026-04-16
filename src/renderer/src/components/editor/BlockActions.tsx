@@ -85,7 +85,7 @@ export const BlockActions = React.memo(function BlockActions({
 				<DropdownMenuTrigger
 					render={
 						<Button
-							variant="editor-block-actions"
+							variant="ghost"
 							size="editor-block-icons"
 							aria-label={t('blockActions.title')}
 						>
