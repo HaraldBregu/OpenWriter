@@ -26,6 +26,7 @@ export const BlockActions = React.memo(function BlockActions({
 	const [menuOpen, setMenuOpen] = useState(false);
 	const lockedTopRef = useRef<number>(0);
 	const lastTopRef = useRef<number>(0);
+	const lockedBlockRef = useRef<HoveredBlock | null>(null);
 
 	if (hoveredBlock) {
 		lastTopRef.current = hoveredBlock.top;
@@ -35,55 +36,67 @@ export const BlockActions = React.memo(function BlockActions({
 		(open: boolean) => {
 			if (open) {
 				lockedTopRef.current = hoveredBlock?.top ?? 0;
+				lockedBlockRef.current = hoveredBlock;
+			} else {
+				lockedBlockRef.current = null;
 			}
 			setMenuOpen(open);
 		},
 		[hoveredBlock]
 	);
 
+	const getActiveBlock = useCallback(
+		(): HoveredBlock | null => lockedBlockRef.current ?? hoveredBlock,
+		[hoveredBlock]
+	);
+
 	const copyBlock = useCallback(() => {
-		if (!hoveredBlock) return;
-		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		const block = getActiveBlock();
+		if (!block) return;
+		const node = editor.state.doc.nodeAt(block.pos);
 		if (!node) return;
 		navigator.clipboard.writeText(node.textContent);
-	}, [editor, hoveredBlock]);
+	}, [editor, getActiveBlock]);
 
 	const cutBlock = useCallback(() => {
-		if (!hoveredBlock) return;
-		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		const block = getActiveBlock();
+		if (!block) return;
+		const node = editor.state.doc.nodeAt(block.pos);
 		if (!node) return;
 		navigator.clipboard.writeText(node.textContent);
 		editor
 			.chain()
 			.focus()
 			.deleteRange({
-				from: hoveredBlock.pos,
-				to: hoveredBlock.pos + node.nodeSize,
+				from: block.pos,
+				to: block.pos + node.nodeSize,
 			})
 			.run();
-	}, [editor, hoveredBlock]);
+	}, [editor, getActiveBlock]);
 
 	const duplicateBlock = useCallback(() => {
-		if (!hoveredBlock) return;
-		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		const block = getActiveBlock();
+		if (!block) return;
+		const node = editor.state.doc.nodeAt(block.pos);
 		if (!node) return;
-		const insertPos = hoveredBlock.pos + node.nodeSize;
+		const insertPos = block.pos + node.nodeSize;
 		editor.chain().focus().insertContentAt(insertPos, node.toJSON()).run();
-	}, [editor, hoveredBlock]);
+	}, [editor, getActiveBlock]);
 
 	const deleteBlock = useCallback(() => {
-		if (!hoveredBlock) return;
-		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		const block = getActiveBlock();
+		if (!block) return;
+		const node = editor.state.doc.nodeAt(block.pos);
 		if (!node) return;
 		editor
 			.chain()
 			.focus()
 			.deleteRange({
-				from: hoveredBlock.pos,
-				to: hoveredBlock.pos + node.nodeSize,
+				from: block.pos,
+				to: block.pos + node.nodeSize,
 			})
 			.run();
-	}, [editor, hoveredBlock]);
+	}, [editor, getActiveBlock]);
 
 	const visible = !!hoveredBlock || menuOpen;
 	const topValue = (menuOpen ? lockedTopRef.current : lastTopRef.current) - 4;
