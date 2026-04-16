@@ -31,7 +31,7 @@ export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JS
 							value={file}
 							className="group/thumb relative shrink-0 gap-0 rounded-none border-0 p-0"
 						>
-							<FileUploadItemPreview className="h-14 w-14 overflow-hidden rounded-xl" />
+							<FileUploadItemPreview className="h-14 w-14 overflow-hidden rounded-xl [&>img]:object-fill" />
 							<FileUploadItemDelete
 								render={
 									<Button
