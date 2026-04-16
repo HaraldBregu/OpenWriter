@@ -67,7 +67,7 @@ export function CardNodeView(): React.JSX.Element {
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
 				<Card className="w-full">
-					<CardNodeViewHeader files={state.files} />
+					{state.files.length > 0 && <CardNodeViewHeader files={state.files} />}
 					<CardContent>
 						<Textarea
 							ref={textareaRef}
