@@ -1,3 +1,3 @@
 export { ImagePlaceholderNodeView } from './NodeView';
-export { ImagePlaceholderExtension } from './input-extension';
-export type { ImagePlaceholderOptions } from './input-extension';
+export { ImagePlaceholderExtension } from '../../extensions/image-placeholder-extension';
+export type { ImagePlaceholderOptions } from '../../extensions/image-placeholder-extension';
