@@ -31,8 +31,8 @@ const EmojiPickerComponent: React.FC<EmojiPickerProps> = ({ onSelect, value, cla
 				render={
 					<Button
 						type="button"
-						variant="header-icon"
-						size="header-icon-lg"
+						variant="ghost"
+						size="icon-lg"
 						aria-label="Select emoji"
 						title="Select emoji"
 						className={cn('shrink-0 text-2xl leading-none', className)}
