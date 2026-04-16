@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Trash2, Clipboard, MoreVertical } from 'lucide-react';
+import { Copy, Trash2, Clipboard, Scissors, MoreVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { HoveredBlock } from './BlockControls';
 import { Button } from '@/components/ui/Button';
@@ -9,6 +9,7 @@ import {
 	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 } from '@/components/ui/DropdownMenu';
 import { useEditorContext } from '../hooks';
 
@@ -23,8 +24,6 @@ export const BlockActions = React.memo(function BlockActions({
 	const { t } = useTranslation();
 	const { editor } = useEditorContext();
 	const [menuOpen, setMenuOpen] = useState(false);
-	// Captures the `top` value at the moment the menu opens so the container
-	// does not jump when hoveredBlock updates while the dropdown is visible.
 	const lockedTopRef = useRef<number>(0);
 	const lastTopRef = useRef<number>(0);
 
@@ -35,13 +34,34 @@ export const BlockActions = React.memo(function BlockActions({
 	const handleOpenChange = useCallback(
 		(open: boolean) => {
 			if (open) {
-				// Lock position to the current hoveredBlock top before the menu renders.
 				lockedTopRef.current = hoveredBlock?.top ?? 0;
 			}
 			setMenuOpen(open);
 		},
 		[hoveredBlock]
 	);
+
+	const copyBlock = useCallback(() => {
+		if (!hoveredBlock) return;
+		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		if (!node) return;
+		navigator.clipboard.writeText(node.textContent);
+	}, [editor, hoveredBlock]);
+
+	const cutBlock = useCallback(() => {
+		if (!hoveredBlock) return;
+		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
+		if (!node) return;
+		navigator.clipboard.writeText(node.textContent);
+		editor
+			.chain()
+			.focus()
+			.deleteRange({
+				from: hoveredBlock.pos,
+				to: hoveredBlock.pos + node.nodeSize,
+			})
+			.run();
+	}, [editor, hoveredBlock]);
 
 	const duplicateBlock = useCallback(() => {
 		if (!hoveredBlock) return;
@@ -65,16 +85,7 @@ export const BlockActions = React.memo(function BlockActions({
 			.run();
 	}, [editor, hoveredBlock]);
 
-	const copyBlockText = useCallback(() => {
-		if (!hoveredBlock) return;
-		const node = editor.state.doc.nodeAt(hoveredBlock.pos);
-		if (!node) return;
-		navigator.clipboard.writeText(node.textContent);
-	}, [editor, hoveredBlock]);
-
 	const visible = !!hoveredBlock || menuOpen;
-	// While the menu is open, use the position that was locked when it opened.
-	// This prevents the container from jumping as hoveredBlock changes on mouse move.
 	const topValue = (menuOpen ? lockedTopRef.current : lastTopRef.current) - 4;
 
 	return (
@@ -98,18 +109,23 @@ export const BlockActions = React.memo(function BlockActions({
 						</Button>
 					}
 				/>
-				<DropdownMenuContent align="end" sideOffset={4}>
-					<DropdownMenuItem onClick={deleteBlock}>
-						<Trash2 className="mr-2 h-4 w-4" />
-						{t('common.delete')}
+				<DropdownMenuContent align="end" sideOffset={4} className="min-w-44">
+					<DropdownMenuItem onClick={copyBlock}>
+						<Clipboard className="mr-2 h-4 w-4" />
+						{t('common.copy')}
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={cutBlock}>
+						<Scissors className="mr-2 h-4 w-4" />
+						{t('common.cut')}
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={duplicateBlock}>
 						<Copy className="mr-2 h-4 w-4" />
 						{t('common.duplicate')}
 					</DropdownMenuItem>
-					<DropdownMenuItem onClick={copyBlockText}>
-						<Clipboard className="mr-2 h-4 w-4" />
-						{t('blockActions.copyToClipboard')}
+					<DropdownMenuSeparator />
+					<DropdownMenuItem variant="destructive" onClick={deleteBlock}>
+						<Trash2 className="mr-2 h-4 w-4" />
+						{t('common.delete')}
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>
