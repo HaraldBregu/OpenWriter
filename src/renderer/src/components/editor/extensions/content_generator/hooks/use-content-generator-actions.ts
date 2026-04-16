@@ -125,25 +125,22 @@ export function useContentGeneratorActions({
 
 	const handleDragOver = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
 			e.preventDefault();
 			dispatch({ type: 'SET_DRAG_OVER', payload: true });
 		},
-		[agentId, dispatch]
+		[dispatch]
 	);
 
 	const handleDragLeave = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
 			e.preventDefault();
 			dispatch({ type: 'SET_DRAG_OVER', payload: false });
 		},
-		[agentId, dispatch]
+		[dispatch]
 	);
 
 	const handleDrop = useCallback(
 		(e: React.DragEvent<HTMLDivElement>) => {
-			if (agentId !== 'image') return;
 			e.preventDefault();
 			dispatch({ type: 'SET_DRAG_OVER', payload: false });
 			for (const file of Array.from(e.dataTransfer.files)) {
@@ -152,7 +149,7 @@ export function useContentGeneratorActions({
 				}
 			}
 		},
-		[addFile, agentId, dispatch]
+		[addFile, dispatch]
 	);
 
 	const deleteNode = useCallback(() => {
