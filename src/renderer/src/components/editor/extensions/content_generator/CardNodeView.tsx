@@ -96,6 +96,18 @@ export function CardNodeView(): React.JSX.Element {
 					</CardContent>
 					<CardFooter className="bg-transparent border-none">
 						<div className="flex items-center gap-3">
+							<Button
+								type="button"
+								variant="outline"
+								size="icon"
+								disabled={isDisabled}
+								onClick={handleOpenFilePicker}
+								onMouseDown={(e) => e.preventDefault()}
+								title={t('assistantNode.addImage', 'Add image')}
+								aria-label={t('assistantNode.addImage', 'Add image')}
+							>
+								<ImagePlus />
+							</Button>
 							<DropdownMenu modal={false}>
 								<DropdownMenuTrigger
 									disabled={loading}
