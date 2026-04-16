@@ -10,7 +10,8 @@
 
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { HierarchicalNSW } from 'hnswlib-node';
+import pkg from 'hnswlib-node';
+const { HierarchicalNSW } = pkg;
 import type { DocumentChunk, EmbeddingModel } from '../shared/ai-types';
 
 const INDEX_FILE = 'hnswlib.index';
