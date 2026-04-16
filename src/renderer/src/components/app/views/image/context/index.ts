@@ -1,5 +1,5 @@
-export type { EditMode, ImageEditorState } from './state';
-export type { ImageEditorAction } from './actions';
-export { imageEditorReducer } from './reducer';
-export { ImageEditorContext } from './context';
-export type { ImageEditorContextValue, ImageEditorRefs } from './context';
+export type { ImageState } from './state';
+export type { ImageAction } from './actions';
+export { imageReducer } from './reducer';
+export { ImageContext } from './context';
+export type { ImageContextValue } from './context';
