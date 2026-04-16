@@ -7,6 +7,7 @@ import {
 	FileUploadItemDelete,
 } from '@/components/ui/FileUpload';
 import { X } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
 interface CardNodeViewHeaderProps {
