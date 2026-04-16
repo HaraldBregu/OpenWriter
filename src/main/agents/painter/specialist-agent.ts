@@ -1,5 +1,4 @@
 import type { ChatModel, ChatMessage } from '../../shared/ai-types';
-import { extractTokenFromChunk } from '../../shared/ai-utils';
 
 export interface PainterSpecialistAgent {
 	readonly model: ChatModel;
