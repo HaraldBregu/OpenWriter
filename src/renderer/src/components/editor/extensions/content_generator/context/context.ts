@@ -21,6 +21,7 @@ export interface ContextValue {
 	handleTextModelChange: (model: ModelInfo) => void;
 	addFile: (file: File) => void;
 	removeFile: (index: number) => void;
+	handleFilesChange: (files: File[]) => void;
 	handleFileInputChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 	handleOpenFilePicker: () => void;
 	handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
