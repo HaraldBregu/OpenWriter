@@ -173,17 +173,19 @@ export function CardNodeView(): React.JSX.Element {
 									))}
 								</DropdownMenuContent>
 							</DropdownMenu>
-							<Button
-								type="button"
-								variant="outline"
-								size="icon"
-								disabled={isDisabled}
-								onClick={handleOpenFilePicker}
- 								title={t('assistantNode.addImage', 'Add image')}
-								aria-label={t('assistantNode.addImage', 'Add image')}
+							<FileUploadTrigger
+								render={
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										title={t('assistantNode.addImage', 'Add image')}
+										aria-label={t('assistantNode.addImage', 'Add image')}
+									/>
+								}
 							>
 								<Plus />
-							</Button>
+							</FileUploadTrigger>
 						</div>
 						<Button
 							variant="default"
