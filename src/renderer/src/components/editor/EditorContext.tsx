@@ -1,7 +1,7 @@
-import React, { createContext, useContext } from 'react';
+import React, { createContext } from 'react';
 import type { Editor } from '@tiptap/core';
 
-interface EditorContextValue {
+export interface EditorContextValue {
 	editor: Editor;
 }
 
@@ -16,10 +16,4 @@ export function EditorProvider({ editor, children }: EditorProviderProps): React
 	return <EditorContext.Provider value={{ editor }}>{children}</EditorContext.Provider>;
 }
 
-export function useEditorContext(): EditorContextValue {
-	const ctx = useContext(EditorContext);
-	if (!ctx) {
-		throw new Error('useEditorContext must be used within an EditorProvider');
-	}
-	return ctx;
-}
+export { useEditorContext } from './hooks/use-editor-context';
