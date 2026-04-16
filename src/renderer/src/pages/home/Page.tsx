@@ -13,12 +13,11 @@ function useGreeting(): string {
 	return t('home.goodEvening');
 }
 
-export default function Page(): ReactElement {
+function PageContent(): ReactElement {
 	const { t } = useTranslation();
 	const greeting = useGreeting();
 
 	return (
-		<Layout>
 		<PageContainer>
 			<PageBody>
 				<div className="mx-auto max-w-3xl space-y-10 px-8 py-12">
@@ -39,6 +38,13 @@ export default function Page(): ReactElement {
 				</div>
 			</PageBody>
 		</PageContainer>
+	);
+}
+
+export default function Page(): ReactElement {
+	return (
+		<Layout>
+			<PageContent />
 		</Layout>
 	);
 }
