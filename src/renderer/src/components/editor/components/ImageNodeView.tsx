@@ -8,10 +8,10 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
-import { ImageProvider } from '../../context/ImageProvider';
-import { useImage } from '../../hooks/use-image';
-import { ImageEditor } from '../ImageEditor';
-import { ImagePreviewDialog } from '../ImagePreviewDialog';
+import { ImageProvider } from '../context/ImageProvider';
+import { useImage } from '../hooks/use-image';
+import { ImageEditor } from './ImageEditor';
+import { ImagePreviewDialog } from './ImagePreviewDialog';
 
 function ImageInner(): React.JSX.Element {
 	const { t } = useTranslation();

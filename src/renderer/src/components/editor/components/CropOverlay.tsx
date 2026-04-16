@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import type { CropRegion } from '../hooks/use-image-canvas';
-import { MIN_CROP_SIZE } from './image/shared';
+import { MIN_CROP_SIZE } from '../shared';
 
 const RULE_OF_THIRDS_DIVISIONS = 3;
 const CORNER_HANDLE_OFFSET = '-6px';
