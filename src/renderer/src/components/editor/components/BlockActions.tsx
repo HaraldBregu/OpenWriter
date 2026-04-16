@@ -75,7 +75,7 @@ export const BlockActions = React.memo(function BlockActions({
 	const visible = !!hoveredBlock || menuOpen;
 	// While the menu is open, use the position that was locked when it opened.
 	// This prevents the container from jumping as hoveredBlock changes on mouse move.
-	const topValue = (menuOpen ? lockedTopRef.current : (hoveredBlock?.top ?? 0)) - 4;
+	const topValue = (menuOpen ? lockedTopRef.current : lastTopRef.current) - 4;
 
 	return (
 		<div
