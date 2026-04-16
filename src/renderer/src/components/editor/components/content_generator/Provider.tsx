@@ -70,7 +70,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 	const isSubmitDisabled =
 		!enable || loading || (!state.prompt.trim() && (!isImage || state.files.length === 0));
 
-	const value = useMemo<ContextValue>(
+	const value = useMemo<ContentGeneratorContextValue>(
 		() => ({
 			state,
 			loading,
