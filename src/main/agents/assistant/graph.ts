@@ -5,7 +5,7 @@ import type { LoggerService } from '../../services/logger';
 import { assistantNodeDefinitions, ASSISTANT_NODE, type AssistantNodeName } from './nodes';
 import type { RagRetriever } from './nodes/retrieve-documents';
 import type { AssistantSpecialistAgent } from './specialist-agent';
-import type { AssistantGraphState, AssistantGraphUpdate } from './state';
+import type { AssistantGraphState } from './state';
 
 const LOG_SOURCE = 'AssistantGraph';
 
