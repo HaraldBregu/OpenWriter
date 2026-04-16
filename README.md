@@ -28,7 +28,7 @@ OpenWriter is a cross-platform desktop application that combines a distraction-f
 - **Frontend:** React, TypeScript, Tailwind CSS
 - **Editor:** Tiptap (ProseMirror)
 - **State Management:** Redux Toolkit
-- **AI:** LangChain / LangGraph with OpenAI models
+- **AI:** OpenAI SDK with OpenAI models
 - **UI Components:** Radix UI primitives with a custom design system
 
 ## Getting Started
