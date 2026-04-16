@@ -5,8 +5,8 @@
  * components with no dependency on any other subsystem.
  */
 
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import type { CompiledStateGraph } from '@langchain/langgraph';
+import type { ChatModel } from '../../shared/ai-types';
+import type { CompiledGraph } from './graph-runner';
 import type { AgentHistoryMessage } from './types';
 import type { AgentStreamEvent } from './types';
 import type { LoggerService } from '../../services/logger';
@@ -38,8 +38,8 @@ export interface NodeModelConfig {
 	maxTokens?: number;
 }
 
-/** Maps node names to resolved LangChain chat model instances. */
-export type NodeModelMap = Record<string, BaseChatModel>;
+/** Maps node names to resolved chat model instances. */
+export type NodeModelMap = Record<string, ChatModel>;
 
 // ---------------------------------------------------------------------------
 // Graph input context
@@ -127,8 +127,8 @@ export interface AgentDefinition {
 	 */
 	nodeModels?: Record<string, NodeModelConfig>;
 	/**
-	 * Optional LangGraph factory. When present, the agent runs as a full
-	 * LangGraph StateGraph instead of a plain chat completion.
+	 * Optional graph factory. When present, the agent runs as a full
+	 * state graph instead of a plain chat completion.
 	 *
 	 * Two execution contracts are supported depending on whether the companion
 	 * hooks `buildGraphInput` and `extractGraphOutput` are also provided:
@@ -142,15 +142,13 @@ export interface AgentDefinition {
 	 *   The executor calls `buildGraphInput(ctx)` to construct the initial state,
 	 *   runs the graph to completion with `streamMode: 'values'`, then calls
 	 *   `extractGraphOutput(finalState)` to pull the content string.
-	 *   Use this for graphs with domain-specific state shapes (e.g. WriterState).
+	 *   Use this for graphs with domain-specific state shapes.
 	 *
-	 * @param models - A single resolved LangChain chat model, or a `NodeModelMap`
+	 * @param models - A single resolved chat model, or a `NodeModelMap`
 	 *                 keyed by node name when the definition declares `nodeModels`.
 	 */
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	buildGraph?: (
-		models: BaseChatModel | NodeModelMap
-	) => CompiledStateGraph<any, any, any, any, any, any>;
+	buildGraph?: (models: ChatModel | NodeModelMap) => CompiledGraph<any>;
 	/**
 	 * Optional hook called by AgentTaskHandler before the graph is built.
 	 * Receives the base `buildGraph` function and resolved runtime context.
@@ -190,17 +188,17 @@ export interface AgentDefinition {
 	/**
 	 * Inclusion list of node names whose streaming tokens should be forwarded
 	 * to the caller. When present, the executor filters `messages` stream
-	 * events by `metadata.langgraph_node` and only yields tokens from listed
-	 * nodes. When absent, all nodes are streamed (backward-compatible default).
+	 * events and only yields tokens from listed nodes. When absent, all nodes
+	 * are streamed (backward-compatible default).
 	 *
 	 * Use this to suppress tokens from routing / classification nodes that
 	 * produce internal output (e.g. JSON) not intended for the user.
 	 */
 	streamableNodes?: string[];
 	/**
-	 * Optional custom executor for agents that do not use LangChain or LangGraph.
-	 * When present, AgentTaskHandler delegates execution to this hook instead of
-	 * the default executor.
+	 * Optional custom executor for agents that do not use the standard graph
+	 * pipeline. When present, AgentTaskHandler delegates execution to this hook
+	 * instead of the default executor.
 	 */
 	execute?: (input: CustomAgentExecutionInput) => AsyncGenerator<AgentStreamEvent>;
 }
