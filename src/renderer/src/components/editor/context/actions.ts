@@ -1,6 +1,6 @@
 import type { HoveredBlock } from './state';
 import type { ModelInfo } from '../../../../../shared/types';
-import type { ContentGeneratorAgentId } from '../components/content_generator/agents';
+import type { ContentGeneratorAgentId } from '../components/content-generator-agents';
 
 export type EditorAction =
 	| { type: 'SET_HOVERED_BLOCK'; payload: HoveredBlock | null }
