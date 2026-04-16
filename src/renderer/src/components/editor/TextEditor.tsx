@@ -14,7 +14,7 @@ import { BlockControls, GUTTER_WIDTH } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
 
 import { createExtensions } from './extensions';
-import { type ImageInsertHandler } from './components/image';
+import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import type { ContentGeneratorStorage } from './components/content_generator';
 import { Provider } from './Provider';
 import type { ModelInfo } from '../../../../shared/types';
