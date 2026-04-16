@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Card, CardContent } from '@/components/ui/Card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
-import { Provider } from './Provider';
+import { ImageProvider } from '../../context/ImageProvider';
 import { useImage } from '../../hooks/use-image';
 import { ImageEditor } from './components/ImageEditor';
 import { ImagePreviewDialog } from './components';
