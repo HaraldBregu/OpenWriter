@@ -1,4 +1,4 @@
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatMessage } from '../../../shared/ai-types';
 import { PAINTER_STATE_MESSAGES } from '../messages';
 import { readLabeledValue } from '../agent-output';
 import {
@@ -62,7 +62,8 @@ export async function createImagePromptAgent(
 	state: PainterGraphState,
 	agent: PainterSpecialistAgent
 ): Promise<Partial<PainterGraphState>> {
-	const raw = await invokePainterSpecialist(agent, [new HumanMessage(buildHumanMessage(state))]);
+	const messages: ChatMessage[] = [{ role: 'user', content: buildHumanMessage(state) }];
+	const raw = await invokePainterSpecialist(agent, messages);
 	const nextPrompt = readLabeledValue(raw, 'PROMPT') || state.visualGoal || state.prompt;
 	const nextAltText = readLabeledValue(raw, 'ALT_TEXT') || state.imageAltText || 'Generated image';
 
