@@ -2,7 +2,7 @@ import React, { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Trash2, Clipboard, Scissors, MoreVertical } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { HoveredBlock } from './BlockControls';
+import type { HoveredBlock } from '../context/state';
 import { Button } from '@/components/ui/Button';
 import {
 	DropdownMenu,
@@ -13,16 +13,9 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { useEditorContext } from '../hooks';
 
-interface BlockActionsProps {
-	containerRef: React.RefObject<HTMLDivElement | null>;
-	hoveredBlock: HoveredBlock | null;
-}
-
-export const BlockActions = React.memo(function BlockActions({
-	hoveredBlock,
-}: BlockActionsProps): React.JSX.Element {
+export const BlockActions = React.memo(function BlockActions(): React.JSX.Element {
 	const { t } = useTranslation();
-	const { editor } = useEditorContext();
+	const { editor, state: { hoveredBlock } } = useEditorContext();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const lockedTopRef = useRef<number>(0);
 	const lastTopRef = useRef<number>(0);
