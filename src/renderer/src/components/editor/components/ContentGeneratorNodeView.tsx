@@ -7,9 +7,9 @@ import { CardNodeView } from './CardNodeView';
 export function ContentGeneratorNodeView(props: NodeViewProps): React.JSX.Element {
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<Provider nodeViewProps={props}>
+			<ContentGeneratorProvider nodeViewProps={props}>
 				<CardNodeView />
-			</Provider>
+			</ContentGeneratorProvider>
 		</NodeViewWrapper>
 	);
 }
