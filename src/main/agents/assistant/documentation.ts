@@ -71,7 +71,7 @@ flowchart TD
 ## Folder Layout
 
 - `graph.ts`
-  Builds the LangGraph topology.
+  Builds the graph topology.
 
 - `definition.ts`
   Declares assistant metadata, node models, graph preparation, and I/O hooks.
