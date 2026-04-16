@@ -156,7 +156,7 @@ export const BlockControls = React.memo(function BlockControls({
 			{/* Drop indicator line */}
 			<div
 				className={cn(
-					'pointer-events-none absolute z-[100] h-[2.5px] rounded-sm bg-primary opacity-0 transition-opacity duration-75',
+					'pointer-events-none absolute z-100 h-[2.5px] rounded-sm bg-primary opacity-0 transition-opacity duration-75',
 					dropState.visible && 'opacity-100'
 				)}
 				style={{ top: dropState.top, left: GUTTER_WIDTH, right: 0 }}

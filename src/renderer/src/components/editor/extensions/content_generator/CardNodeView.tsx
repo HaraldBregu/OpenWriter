@@ -73,10 +73,8 @@ export function CardNodeView(): React.JSX.Element {
 						<FileUploadTrigger
 							render={
 								<Button
-									type="button"
-									variant="ghost"
+									variant="secondary"
 									size="icon"
-									className="h-7 w-7 rounded-full border border-border/80 bg-background/75 text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
 									title={t('assistantNode.addImage', 'Add image')}
 									aria-label={t('assistantNode.addImage', 'Add image')}
 								/>
