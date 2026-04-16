@@ -1,14 +1,13 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
-import { HumanMessage } from '@langchain/core/messages';
+import type { ChatModel, ChatMessage } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
-import { toLangChainHistoryMessages } from '../../../core/history';
+import { toHistoryMessages } from '../../../core/history';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import {
 	createAssistantSpecialistAgent,
 	streamAssistantSpecialist,
 	type AssistantSpecialistAgent,
 } from '../../specialist-agent';
-import type { AssistantState } from '../../state';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../../state';
 
 const SYSTEM_PROMPT = `You are the generate_answer node in a retrieval-assisted assistant.
 
@@ -25,7 +24,7 @@ Rules:
 - Follow the user's requested tone and format.
 - Do not mention internal nodes, routing, grading, or retries.`;
 
-function buildHumanMessage(state: typeof AssistantState.State): string {
+function buildHumanMessage(state: AssistantGraphState): string {
 	return [
 		'Original user question:',
 		state.prompt,
@@ -50,23 +49,23 @@ function buildHumanMessage(state: typeof AssistantState.State): string {
 	].join('\n');
 }
 
-export function createGenerateAnswerAgent(model: BaseChatModel): AssistantSpecialistAgent {
+export function createGenerateAnswerAgent(model: ChatModel): AssistantSpecialistAgent {
 	return createAssistantSpecialistAgent(model, SYSTEM_PROMPT);
 }
 
 export async function generateAnswerAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	logger?.debug('GenerateAnswerAgent', 'Generating retrieval-assisted answer', {
 		retrievedContextLength: state.retrievedContext.length,
 		gradeFindingsLength: state.gradeFindings.length,
 	});
 
-	const messages = [
-		...toLangChainHistoryMessages(state.history),
-		new HumanMessage(buildHumanMessage(state)),
+	const messages: ChatMessage[] = [
+		...toHistoryMessages(state.history),
+		{ role: 'user', content: buildHumanMessage(state) },
 	];
 	const response = await streamAssistantSpecialist(agent, messages);
 
