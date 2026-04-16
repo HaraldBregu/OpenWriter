@@ -21,9 +21,9 @@ import { SelectionMarkerExtension } from './extensions/selection-marker-extensio
 import { ContentGeneratorExtension } from './components/content_generator';
 import { ImageExtension } from './extensions/image-extension';
 import type { ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import { ImagePlaceholderExtension } from './components/image_placeholder';
 import { Markdown } from '@tiptap/markdown';
 import type { ModelInfo } from '../../../../shared/types';
+import { ImagePlaceholderExtension } from './extensions/image-placeholder-extension';
 
 export interface ExtensionHandlers {
 	defaultTextModel?: ModelInfo;
