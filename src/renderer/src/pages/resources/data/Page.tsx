@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import Layout from './Layout';
 import { useContext } from './hooks/use-context';
-import { KnowledgeBaseCard } from './components/KnowledgeBaseCard';
+import { KnowledgeBaseGrid } from './components/KnowledgeBaseGrid';
 import { KnowledgeBaseDialog } from './components/KnowledgeBaseDialog';
 import { DataIndexingBar } from './components/DataIndexingBar';
 
@@ -72,12 +72,7 @@ function PageContent(): ReactElement {
 			</PageHeader>
 			<DataIndexingBar />
 			<PageBody>
-				<div className="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-3">
-					<KnowledgeBaseCard
-						onCreateClick={() => setKbDialogOpen(true)}
-						disabled={uploading}
-					/>
-				</div>
+				<KnowledgeBaseGrid />
 			</PageBody>
 			<KnowledgeBaseDialog open={kbDialogOpen} onOpenChange={setKbDialogOpen} />
 			<DeleteConfirmDialog
