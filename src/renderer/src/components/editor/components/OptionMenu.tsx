@@ -12,8 +12,8 @@ import {
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { OptionMenuPlugin, type OptionMenuControls } from '../../plugins/option-menu-plugin';
-import { useEditorContext } from '../../hooks';
+import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
+import { useEditorContext } from '../hooks';
 
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 10;

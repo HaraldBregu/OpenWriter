@@ -12,14 +12,14 @@ import { Transaction } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
 import { BlockControls, GUTTER_WIDTH } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
-import { BubbleMenu } from './components/bubble_menu';
-import { OptionMenu } from './components/option_menu';
 
 import { createExtensions } from './extensions';
 import { type ImageInsertHandler } from './components/image';
 import type { ContentGeneratorStorage } from './components/content_generator';
 import { Provider } from './Provider';
 import type { ModelInfo } from '../../../../shared/types';
+import { BubbleMenu } from './components/BubbleMenu';
+import { OptionMenu } from './components/OptionMenu';
 
 export interface ImageInsertOptions {
 	src: string;

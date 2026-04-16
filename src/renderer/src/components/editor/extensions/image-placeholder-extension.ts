@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
-import { ImagePlaceholderNodeView } from '../components/image_placeholder/NodeView';
+import { ImagePlaceholderNodeView } from '../components/ImagePlaceholderNodeView';
 import type { ImageInsertHandler } from '../components/image';
 
 export interface ImagePlaceholderOptions {

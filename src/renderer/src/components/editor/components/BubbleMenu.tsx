@@ -11,11 +11,11 @@ import {
 	List,
 	ListOrdered,
 } from 'lucide-react';
-import { BubbleMenuPlugin } from './bubble-menu-plugin';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useEditorContext } from '../../hooks';
+import { useEditorContext } from '../hooks';
+import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 
 const pluginKey = new PluginKey('bubbleMenu');
 
