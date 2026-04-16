@@ -1,9 +1,17 @@
 import type OpenAI from 'openai';
-import type { AgentConfig, AgentResponse, ChatOptions, StreamChunk } from './types';
+import type {
+  AgentConfig,
+  AgentResponse,
+  ChatOptions,
+  ContextRetriever,
+  RetrievedContext,
+  StreamChunk
+} from './types';
 import {
   DEFAULT_MODEL,
   DEFAULT_MAX_COMPLETION_TOKENS,
   DEFAULT_TEMPERATURE,
+  DEFAULT_RAG_TOP_K,
   MAX_TOOL_CALL_ITERATIONS
 } from './constants';
 
@@ -13,6 +21,7 @@ export class AIAgent {
   private readonly systemPrompt: string | undefined;
   private readonly temperature: number;
   private readonly maxCompletionTokens: number;
+  private readonly retriever: ContextRetriever | undefined;
 
   constructor(client: OpenAI, config: AgentConfig = {}) {
     this.client = client;
@@ -20,13 +29,15 @@ export class AIAgent {
     this.systemPrompt = config.systemPrompt;
     this.temperature = config.temperature ?? DEFAULT_TEMPERATURE;
     this.maxCompletionTokens = config.maxCompletionTokens ?? DEFAULT_MAX_COMPLETION_TOKENS;
+    this.retriever = config.retriever;
   }
 
   async chat(
     messages: ReadonlyArray<OpenAI.ChatCompletionMessageParam>,
     options: ChatOptions = {}
   ): Promise<AgentResponse> {
-    const fullMessages = this.buildMessages(messages);
+    const augmented = await this.augmentWithContext(messages, options);
+    const fullMessages = this.buildMessages(augmented);
     const tools = options.tools as OpenAI.ChatCompletionTool[] | undefined;
     const temperature = options.temperature ?? this.temperature;
     const maxTokens = options.maxCompletionTokens ?? this.maxCompletionTokens;
@@ -82,7 +93,8 @@ export class AIAgent {
     messages: ReadonlyArray<OpenAI.ChatCompletionMessageParam>,
     options: Omit<ChatOptions, 'toolHandler'> = {}
   ): AsyncIterable<StreamChunk> {
-    const fullMessages = this.buildMessages(messages);
+    const augmented = await this.augmentWithContext(messages, options);
+    const fullMessages = this.buildMessages(augmented);
     const tools = options.tools as OpenAI.ChatCompletionTool[] | undefined;
     const temperature = options.temperature ?? this.temperature;
     const maxTokens = options.maxCompletionTokens ?? this.maxCompletionTokens;
@@ -105,6 +117,33 @@ export class AIAgent {
         finishReason
       };
     }
+  }
+
+  private async augmentWithContext(
+    messages: ReadonlyArray<OpenAI.ChatCompletionMessageParam>,
+    options: Pick<ChatOptions, 'retriever' | 'ragTopK'>
+  ): Promise<OpenAI.ChatCompletionMessageParam[]> {
+    const retriever = options.retriever ?? this.retriever;
+    if (!retriever) {
+      return [...messages];
+    }
+
+    const query = extractUserQuery(messages);
+    if (!query) {
+      return [...messages];
+    }
+
+    const topK = options.ragTopK ?? DEFAULT_RAG_TOP_K;
+    const contexts = await retriever.retrieve(query, topK);
+    if (contexts.length === 0) {
+      return [...messages];
+    }
+
+    const contextMessage = formatContextMessage(contexts);
+    return [
+      { role: 'system' as const, content: contextMessage },
+      ...messages
+    ];
   }
 
   private buildMessages(
@@ -146,4 +185,31 @@ export class AIAgent {
 
     return results;
   }
+}
+
+function extractUserQuery(
+  messages: ReadonlyArray<OpenAI.ChatCompletionMessageParam>
+): string | null {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    const msg = messages[i];
+    if (msg.role === 'user' && typeof msg.content === 'string' && msg.content.trim().length > 0) {
+      return msg.content.trim();
+    }
+  }
+  return null;
+}
+
+function formatContextMessage(contexts: RetrievedContext[]): string {
+  const sections = contexts.map((ctx) => {
+    const source = ctx.metadata['fileName'] ?? ctx.metadata['source'] ?? 'unknown';
+    return `[Source: ${source}]\n${ctx.content}`;
+  });
+
+  return [
+    'Use the following context from relevant documents to inform your response.',
+    'If the context is not relevant to the question, you may ignore it.',
+    '',
+    ...sections.map((s) => `---\n${s}`),
+    '---'
+  ].join('\n');
 }
