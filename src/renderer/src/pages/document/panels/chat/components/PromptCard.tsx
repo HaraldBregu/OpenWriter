@@ -230,20 +230,13 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				<div className="flex-1" />
 
 				<Button
-					type="button"
-					variant={canSend ? 'default' : 'ghost'}
+					variant="default"
 					size="icon"
 					onClick={onSend}
 					disabled={!canSend}
 					aria-label={t('agenticPanel.send', 'Send message')}
-					className={cn(
-						'h-8 w-8 rounded-full shadow-none transition-colors',
-						canSend
-							? 'bg-foreground text-background hover:bg-foreground/90 dark:bg-foreground dark:text-background dark:hover:bg-foreground/95'
-							: 'text-muted-foreground hover:bg-accent/80 hover:text-foreground dark:text-muted-foreground/90 dark:hover:bg-accent/80 dark:hover:text-foreground'
-					)}
 				>
-					<ArrowUp className="h-3.5 w-3.5" aria-hidden="true" />
+					<ArrowUp aria-hidden="true" />
 				</Button>
 			</CardFooter>
 		</Card>
@@ -312,10 +305,10 @@ const AgentDropdown: React.FC<AgentDropdownProps> = ({
 						>
 							<span className="flex min-w-0 items-center gap-3 p-1">
 								{option.value === 'image' ? (
-										<ImageIcon className="h-3.5 w-3.5" />
-									) : (
-										<PenLine className="h-3.5 w-3.5" />
-									)}
+									<ImageIcon className="h-3.5 w-3.5" />
+								) : (
+									<PenLine className="h-3.5 w-3.5" />
+								)}
 								<span className="flex min-w-0 flex-col gap-0.5">
 									<span className="truncate text-sm font-medium">{label}</span>
 									<span className="text-xs text-muted-foreground">{description}</span>

@@ -4,10 +4,10 @@ import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card'
 import { Textarea } from '@/components/ui/Textarea';
 import { useContentGenerator } from './hooks/use-content-generator';
 import {
-    DropdownMenu,
-    DropdownMenuTrigger,
-    DropdownMenuContent,
-    DropdownMenuCheckboxItem,
+	DropdownMenu,
+	DropdownMenuTrigger,
+	DropdownMenuContent,
+	DropdownMenuCheckboxItem,
 } from '@/components/ui/DropdownMenu';
 import { ImageIcon, ImagePlus, PenLine, ChevronDown, LoaderCircle, ArrowUp, X } from 'lucide-react';
 import { getProvider } from 'src/shared';
@@ -108,7 +108,9 @@ export function CardNodeView(): React.JSX.Element {
 												onClick={() => removeFile(index)}
 												aria-label={
 													fileName
-														? t('assistantNode.removeNamedImage', 'Remove {{name}}', { name: fileName })
+														? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
+																name: fileName,
+															})
 														: t('assistantNode.removeImage', 'Remove image')
 												}
 											>
@@ -235,7 +237,7 @@ export function CardNodeView(): React.JSX.Element {
 					</DropdownMenu>
 				</div>
 				<Button
-					variant="prompt-submit"
+					variant='default'
 					size="icon"
 					className="ml-auto shrink-0"
 					disabled={isSubmitDisabled}
