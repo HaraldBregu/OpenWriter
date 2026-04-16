@@ -1,7 +1,7 @@
-import { END, START, StateGraph } from '@langchain/langgraph';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { END, START, StateGraph } from '../core/graph-runner';
+import type { ChatModel } from '../../shared/ai-types';
 import type { LoggerService } from '../../services/logger';
-import { PainterState, type PainterGraphState } from './state';
+import type { PainterGraphState } from './state';
 import { createInterpretIntentAgent, interpretIntentAgent } from './agents/interpret-intent-agent';
 import {
 	createCreateImagePromptAgent,
@@ -20,9 +20,9 @@ export const PAINTER_SPECIALIST = {
 } as const;
 
 export interface PainterSpecialistModels {
-	[PAINTER_SPECIALIST.INTERPRET_INTENT]: BaseChatModel;
-	[PAINTER_SPECIALIST.CREATE_IMAGE_PROMPT]: BaseChatModel;
-	[PAINTER_SPECIALIST.CHECK_ALIGNMENT]: BaseChatModel;
+	[PAINTER_SPECIALIST.INTERPRET_INTENT]: ChatModel;
+	[PAINTER_SPECIALIST.CREATE_IMAGE_PROMPT]: ChatModel;
+	[PAINTER_SPECIALIST.CHECK_ALIGNMENT]: ChatModel;
 }
 
 type PainterSpecialistName = (typeof PAINTER_SPECIALIST)[keyof typeof PAINTER_SPECIALIST];
@@ -88,7 +88,7 @@ export function createPainterGraph(
 		),
 	};
 
-	return new StateGraph(PainterState)
+	return new StateGraph<PainterGraphState>()
 		.addNode(
 			PAINTER_SPECIALIST.INTERPRET_INTENT,
 			withNodeLogging(PAINTER_SPECIALIST.INTERPRET_INTENT, logger, (state) =>
