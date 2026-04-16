@@ -78,6 +78,7 @@ export function CardNodeView(): React.JSX.Element {
 							disabled={!enable}
 							aria-label={inputLabel}
 							className={cn(
+								'disabled:bg-transparent! disabled:focus:bg-transparent!',
 								'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
 								'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
 								'disabled:cursor-not-allowed disabled:opacity-60'

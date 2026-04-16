@@ -207,7 +207,10 @@ const PromptCard: React.FC<PromptCardProps> = ({
 						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
 					}
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
-					className="w-full resize-none border-none bg-transparent dark:bg-transparent text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80"
+					className={cn(
+						'disabled:bg-transparent! disabled:focus:bg-transparent!',
+						'w-full resize-none border-none bg-transparent dark:bg-transparent text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80'
+					)}
 				/>
 			</CardContent>
 

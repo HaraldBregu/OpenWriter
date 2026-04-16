@@ -11,6 +11,7 @@ const definition: AgentDefinition = {
 		modelId: 'gpt-image-1',
 		temperature: 0,
 	},
+	
 	async *execute(input) {
 		if (input.provider.providerId !== 'openai') {
 			yield {
@@ -62,4 +63,4 @@ const definition: AgentDefinition = {
 	},
 };
 
-export { definition as ImageGeneratorAgent };
+export { definition as ImageAgent };

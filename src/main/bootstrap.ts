@@ -23,8 +23,7 @@ import { FileManager } from './shared/file_manager';
 import {
 	AgentRegistry,
 	AssistantAgent,
-	ImageGeneratorAgent,
-	PainterAgent,
+	ImageAgent,
 	TextAgent,
 } from './agents';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
@@ -95,8 +94,7 @@ export function bootstrapServices(): BootstrapResult {
 	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
 	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
 	agentRegistry.register(AssistantAgent);
-	agentRegistry.register(ImageGeneratorAgent);
-	agentRegistry.register(PainterAgent);
+	agentRegistry.register(ImageAgent);
 	agentRegistry.register(TextAgent);
 
 	// Task system -- handler registry + executor
