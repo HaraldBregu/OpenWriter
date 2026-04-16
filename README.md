@@ -15,7 +15,7 @@ OpenWriter is a cross-platform desktop application that combines a distraction-f
 ## Features
 
 - **Rich Text Editor** — A full-featured editor with support for headings, lists, code blocks, images, highlights, and more.
-- **AI Writing Assistant** — Powered by LangChain and LangGraph, the built-in agent can continue your writing, enhance selected text, and respond to inline prompts.
+- **AI Writing Assistant** — Powered by the OpenAI SDK, the built-in agent can continue your writing, enhance selected text, and respond to inline prompts.
 - **Workspace Management** — Organize your work into workspaces with automatic file watching and document tracking.
 - **Resource Library** — Import and index PDFs, DOCX, and plain text files as reference material for your writing.
 - **Cross-Platform** — Available on macOS, Windows, and Linux.
