@@ -52,7 +52,7 @@ if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === '
 
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
-const HomePage = lazy(() => import('./pages/home/HomePage'));
+const HomePage = lazy(() => import('./pages/home/Page'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
 const DebugTasksPage = lazy(() => import('./pages/debug/DebugTasksPage'));
 const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
