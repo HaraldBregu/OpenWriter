@@ -15,7 +15,7 @@ import { BlockActions } from './components/BlockActions';
 
 import { createExtensions } from './extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import type { ContentGeneratorStorage } from './components/content_generator';
+import type { ContentGeneratorStorage } from './extensions/content-generator-extension';
 import { Provider } from './Provider';
 import type { ModelInfo } from '../../../../shared/types';
 import { BubbleMenu } from './components/BubbleMenu';
