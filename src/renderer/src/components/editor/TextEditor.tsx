@@ -557,11 +557,6 @@ const TextEditor = React.memo(
 				});
 			}, [editor, autoFocus]);
 
-			const [imageDialogOpen, setImageDialogOpen] = useState(false);
-
-			const handleInsertImage = useCallback(() => {
-				setImageDialogOpen(true);
-			}, []);
 
 			const handleImageInsert = useCallback(
 				async (result: { src: string; alt: string; title: string }) => {
