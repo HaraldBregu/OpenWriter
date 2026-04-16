@@ -66,7 +66,7 @@ Yes. OpenWriter is fully open source. Every line of code is available on GitHub 
 
 ### What is the tech stack?
 
-Electron + React + TypeScript for the desktop app, Tiptap/ProseMirror for the editor, Redux Toolkit for state management, LangChain/LangGraph for AI orchestration, and TailwindCSS for styling. See the [Tech Stack](./TECH_STACK.md) page for the full breakdown.
+Electron + React + TypeScript for the desktop app, Tiptap/ProseMirror for the editor, Redux Toolkit for state management, OpenAI SDK for AI orchestration, and TailwindCSS for styling. See the [Tech Stack](./TECH_STACK.md) page for the full breakdown.
 
 ### Can I contribute?
 
