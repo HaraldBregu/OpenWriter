@@ -183,7 +183,7 @@ export function CardNodeView(): React.JSX.Element {
 								title={t('assistantNode.addImage', 'Add image')}
 								aria-label={t('assistantNode.addImage', 'Add image')}
 							>
-								<ImagePlus />
+								<Plus />
 							</Button>
 						</div>
 						<Button
