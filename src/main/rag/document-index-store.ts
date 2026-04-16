@@ -43,7 +43,7 @@ export class DocumentIndexStore {
 			fileName: string;
 			source: string;
 			extractedMetadata: Record<string, unknown>;
-			chunks: Document[];
+			chunks: DocumentChunk[];
 		}>
 	): Promise<void> {
 		await fs.mkdir(storePath, { recursive: true });
