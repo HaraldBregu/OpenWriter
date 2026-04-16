@@ -16,8 +16,8 @@ import { BubbleMenu } from './components/bubble_menu';
 import { OptionMenu } from './components/option_menu';
 
 import { createExtensions } from './extensions';
-import { type ImageInsertHandler } from './views/image';
-import type { ContentGeneratorStorage } from './views/content_generator';
+import { type ImageInsertHandler } from './components/image';
+import type { ContentGeneratorStorage } from './components/content_generator';
 import { Provider } from './Provider';
 import type { ModelInfo } from '../../../../shared/types';
 
