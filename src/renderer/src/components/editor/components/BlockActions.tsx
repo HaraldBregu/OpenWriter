@@ -26,6 +26,11 @@ export const BlockActions = React.memo(function BlockActions({
 	// Captures the `top` value at the moment the menu opens so the container
 	// does not jump when hoveredBlock updates while the dropdown is visible.
 	const lockedTopRef = useRef<number>(0);
+	const lastTopRef = useRef<number>(0);
+
+	if (hoveredBlock) {
+		lastTopRef.current = hoveredBlock.top;
+	}
 
 	const handleOpenChange = useCallback(
 		(open: boolean) => {
