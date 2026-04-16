@@ -1,8 +1,8 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { ChatModel } from '../../../../shared/ai-types';
 import type { LoggerService } from '../../../../services/logger';
 import { ASSISTANT_STATE_MESSAGES } from '../../messages';
 import type { AssistantSpecialistAgent } from '../../specialist-agent';
-import type { AssistantState } from '../../state';
+import type { AssistantGraphState, AssistantGraphUpdate } from '../../state';
 import { createRagChain, NO_CONTEXT_FINDING, runRagChain } from './chain';
 import type { RagRetriever } from './retriever';
 
@@ -14,16 +14,16 @@ export { RagRetriever, type RagRetrieverOptions, type RetrievedDocument } from '
 
 type RetrieveDocumentsAgent = ReturnType<typeof createRagChain>;
 
-export function createRetrieveDocumentsAgent(model: BaseChatModel): RetrieveDocumentsAgent {
+export function createRetrieveDocumentsAgent(model: ChatModel): RetrieveDocumentsAgent {
 	return createRagChain(model);
 }
 
 export async function retrieveDocumentsAgent(
-	state: typeof AssistantState.State,
+	state: AssistantGraphState,
 	agent: AssistantSpecialistAgent,
 	retriever: RagRetriever | undefined,
 	logger?: LoggerService
-): Promise<Partial<typeof AssistantState.State>> {
+): Promise<AssistantGraphUpdate> {
 	const query = (state.retrievalQuery || state.normalizedPrompt || state.prompt).trim();
 
 	if (query.length === 0) {
