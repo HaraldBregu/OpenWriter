@@ -1,5 +1,5 @@
 import type { ModelInfo } from '../../../../../shared/types';
-import type { ContentGeneratorAgentId } from '../components/content_generator/agents';
+import type { ContentGeneratorAgentId } from '../components/content-generator-agents';
 
 export interface HoveredBlock {
 	node: HTMLElement;
