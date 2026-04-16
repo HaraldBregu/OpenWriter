@@ -501,9 +501,12 @@ const TextEditor = React.memo(
 				if (streamingContent !== undefined) {
 					const current = editor.getMarkdown();
 					if (current !== streamingContent) {
-						editor.commands.setContent(streamingContent || '', {
-							emitUpdate: false,
-							contentType: 'markdown',
+						queueMicrotask(() => {
+							if (editor.isDestroyed) return;
+							editor.commands.setContent(streamingContent || '', {
+								emitUpdate: false,
+								contentType: 'markdown',
+							});
 						});
 					}
 					return;
@@ -516,9 +519,12 @@ const TextEditor = React.memo(
 				const current = editor.getMarkdown();
 				const incoming = value || '';
 				if (current !== incoming) {
-					editor.commands.setContent(incoming, {
-						emitUpdate: false,
-						contentType: 'markdown',
+					queueMicrotask(() => {
+						if (editor.isDestroyed) return;
+						editor.commands.setContent(incoming, {
+							emitUpdate: false,
+							contentType: 'markdown',
+						});
 					});
 				}
 			}, [value, streamingContent, editor, externalValueVersion]);

@@ -18,7 +18,7 @@ export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JS
 	const { t } = useTranslation();
 
 	return (
-		<CardHeader className="space-y-0 p-0 px-3.5">
+		<CardHeader className="space-y-0 py-0 px-3.5">
 			<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 				<FileUploadList
 					forceMount
