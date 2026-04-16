@@ -1,4 +1,4 @@
-import { ImagePreviewDialog as BaseImagePreviewDialog } from '@/components/editor/views/image/components/ImagePreviewDialog';
+import { ImagePreviewDialog as BaseImagePreviewDialog } from '@/components/editor/components/image/components/ImagePreviewDialog';
 import { useInfoDispatch } from '../hooks/use-info-dispatch';
 import { useInfoState } from '../hooks/use-info-state';
 
