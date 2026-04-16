@@ -1,4 +1,4 @@
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import type { ChatModel } from '../../../shared/ai-types';
 import type { LoggerService } from '../../../services/logger';
 import type { AssistantSpecialistAgent } from '../specialist-agent';
 import type { AssistantGraphState, AssistantGraphUpdate } from '../state';
@@ -38,7 +38,7 @@ export interface AssistantNodeRuntimeContext {
 }
 
 export interface AssistantNodeDefinition {
-	create: (model: BaseChatModel) => AssistantSpecialistAgent;
+	create: (model: ChatModel) => AssistantSpecialistAgent;
 	run: (
 		state: AssistantGraphState,
 		agent: AssistantSpecialistAgent,
