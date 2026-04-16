@@ -61,130 +61,133 @@ export function CardNodeView(): React.JSX.Element {
 			onValueChange={handleFilesChange}
 		>
 			<FileUploadDropzone
-				render={<Card />}
-				className="flex flex-col gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
+				// Prevents the dropzone from triggering on click
+				onClick={(event) => event.preventDefault()}
+				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<CardNodeViewHeader files={state.files} />
-				<CardContent>
-					<Textarea
-						ref={textareaRef}
-						value={state.prompt}
-						onChange={(e) => {
-							handlePromptChange(e.target.value);
-							resizeTextarea();
-						}}
-						disabled={!enable}
-						aria-label={inputLabel}
-						className={cn(
-							'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
-							'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
-							'disabled:cursor-not-allowed disabled:opacity-60'
-						)}
-						placeholder={
-							isImage
-								? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
-								: t(
-										'assistantNode.placeholder',
-										'Ask the assistant to continue, rewrite, or generate from here.'
-									)
-						}
-						rows={1}
-					/>
-				</CardContent>
-				<CardFooter className="bg-transparent border-none">
-					<div className="flex items-center gap-3">
-						<DropdownMenu modal={false}>
-							<DropdownMenuTrigger
-								disabled={loading}
-								render={
-									<Button
-										variant="outline"
-										size="icon"
-										title={currentAgentLabel}
-										aria-label={t('assistantNode.switchAgent', 'Switch agent')}
-										onMouseDown={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-										}}
-									>
-										{agentId === 'image' && <ImageIcon />}
-										{agentId === 'text' && <PenLine />}
-									</Button>
-								}
-							/>
-							<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-30">
-								<DropdownMenuCheckboxItem
-									checked={!isImage}
-									onCheckedChange={() => handleAgentChange('text')}
-								>
-									<PenLine />
-									{t('assistantAgent.text', 'Text')}
-								</DropdownMenuCheckboxItem>
-								<DropdownMenuCheckboxItem
-									checked={isImage}
-									onCheckedChange={() => handleAgentChange('image')}
-								>
-									<ImageIcon />
-									{t('assistantAgent.image', 'Image')}
-								</DropdownMenuCheckboxItem>
-							</DropdownMenuContent>
-						</DropdownMenu>
-						<DropdownMenu modal={false}>
-							<DropdownMenuTrigger
-								render={
-									<Button
-										variant="outline"
-										size="md"
-										disabled={loading}
-										onMouseDown={(e) => {
-											e.preventDefault();
-											e.stopPropagation();
-										}}
-									>
-										<span className="truncate text-xs font-medium text-foreground">
-											{selectedModel.name}
-										</span>
-										<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
-									</Button>
-								}
-							/>
-							<DropdownMenuContent
-								align="start"
-								side="top"
-								sideOffset={8}
-								className="w-50 max-h-100"
-							>
-								{modelOptions.map((model) => (
+				<Card className="w-full">
+					<CardNodeViewHeader files={state.files} />
+					<CardContent>
+						<Textarea
+							ref={textareaRef}
+							value={state.prompt}
+							onChange={(e) => {
+								handlePromptChange(e.target.value);
+								resizeTextarea();
+							}}
+							disabled={!enable}
+							aria-label={inputLabel}
+							className={cn(
+								'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+								'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
+								'disabled:cursor-not-allowed disabled:opacity-60'
+							)}
+							placeholder={
+								isImage
+									? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
+									: t(
+											'assistantNode.placeholder',
+											'Ask the assistant to continue, rewrite, or generate from here.'
+										)
+							}
+							rows={1}
+						/>
+					</CardContent>
+					<CardFooter className="bg-transparent border-none">
+						<div className="flex items-center gap-3">
+							<DropdownMenu modal={false}>
+								<DropdownMenuTrigger
+									disabled={loading}
+									render={
+										<Button
+											variant="outline"
+											size="icon"
+											title={currentAgentLabel}
+											aria-label={t('assistantNode.switchAgent', 'Switch agent')}
+											onMouseDown={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+										>
+											{agentId === 'image' && <ImageIcon />}
+											{agentId === 'text' && <PenLine />}
+										</Button>
+									}
+								/>
+								<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-30">
 									<DropdownMenuCheckboxItem
-										key={model.modelId}
-										checked={selectedModel.modelId === model.modelId}
-										onCheckedChange={() => handleModelChange(model)}
+										checked={!isImage}
+										onCheckedChange={() => handleAgentChange('text')}
 									>
-										<div className="flex min-w-0 flex-col gap-0.5">
-											<span className="truncate text-sm font-medium">{model.name}</span>
-											<span className="text-xs text-muted-foreground">
-												{getProvider(model.providerId)?.name ?? model.providerId}
-											</span>
-										</div>
+										<PenLine />
+										{t('assistantAgent.text', 'Text')}
 									</DropdownMenuCheckboxItem>
-								))}
-							</DropdownMenuContent>
-						</DropdownMenu>
-					</div>
-					<Button
-						variant="default"
-						size="icon"
-						className="ml-auto shrink-0"
-						disabled={isSubmitDisabled}
-						onMouseDown={(e) => e.preventDefault()}
-						onClick={() => {
-							if (!loading) submitRef.current?.();
-						}}
-						aria-label={t('agenticPanel.send', 'Send message')}
-					>
-						{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-					</Button>
-				</CardFooter>
+									<DropdownMenuCheckboxItem
+										checked={isImage}
+										onCheckedChange={() => handleAgentChange('image')}
+									>
+										<ImageIcon />
+										{t('assistantAgent.image', 'Image')}
+									</DropdownMenuCheckboxItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+							<DropdownMenu modal={false}>
+								<DropdownMenuTrigger
+									render={
+										<Button
+											variant="outline"
+											size="md"
+											disabled={loading}
+											onMouseDown={(e) => {
+												e.preventDefault();
+												e.stopPropagation();
+											}}
+										>
+											<span className="truncate text-xs font-medium text-foreground">
+												{selectedModel.name}
+											</span>
+											<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
+										</Button>
+									}
+								/>
+								<DropdownMenuContent
+									align="start"
+									side="top"
+									sideOffset={8}
+									className="w-50 max-h-100"
+								>
+									{modelOptions.map((model) => (
+										<DropdownMenuCheckboxItem
+											key={model.modelId}
+											checked={selectedModel.modelId === model.modelId}
+											onCheckedChange={() => handleModelChange(model)}
+										>
+											<div className="flex min-w-0 flex-col gap-0.5">
+												<span className="truncate text-sm font-medium">{model.name}</span>
+												<span className="text-xs text-muted-foreground">
+													{getProvider(model.providerId)?.name ?? model.providerId}
+												</span>
+											</div>
+										</DropdownMenuCheckboxItem>
+									))}
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</div>
+						<Button
+							variant="default"
+							size="icon"
+							className="ml-auto shrink-0"
+							disabled={isSubmitDisabled}
+							onMouseDown={(e) => e.preventDefault()}
+							onClick={() => {
+								if (!loading) submitRef.current?.();
+							}}
+							aria-label={t('agenticPanel.send', 'Send message')}
+						>
+							{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+						</Button>
+					</CardFooter>
+				</Card>
 			</FileUploadDropzone>
 		</FileUpload>
 	);
