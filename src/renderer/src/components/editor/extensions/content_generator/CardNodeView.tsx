@@ -173,6 +173,18 @@ export function CardNodeView(): React.JSX.Element {
 									))}
 								</DropdownMenuContent>
 							</DropdownMenu>
+							<Button
+								type="button"
+								variant="outline"
+								size="icon"
+								disabled={isDisabled}
+								onClick={handleOpenFilePicker}
+								onMouseDown={(e) => e.preventDefault()}
+								title={t('assistantNode.addImage', 'Add image')}
+								aria-label={t('assistantNode.addImage', 'Add image')}
+							>
+								<ImagePlus />
+							</Button>
 						</div>
 						<Button
 							variant="default"
