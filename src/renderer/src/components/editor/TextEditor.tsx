@@ -602,23 +602,20 @@ const TextEditor = React.memo(
 							style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
 						>
 							{editor && (
-								<Provider editor={editor}>
-									<BlockControls containerRef={containerRef} hoveredBlock={hoveredBlock} />
-									<BlockActions containerRef={containerRef} hoveredBlock={hoveredBlock} />
+								<Provider
+									editor={editor}
+									containerRef={containerRef}
+									onContinueWithAssistant={onContinueWithAssistant}
+									onInsertContent={onInsertContent}
+									onImageInsert={handleImageInsert}
+								>
+									<BlockControls />
+									<BlockActions />
 									<BubbleMenu />
-									<OptionMenu
-										onContinueWithAssistant={onContinueWithAssistant}
-										onInsertImage={handleInsertImage}
-										onInsertContent={onInsertContent}
-									/>
+									<OptionMenu />
 								</Provider>
 							)}
 							<EditorContent editor={editor} />
-							<InsertImageDialog
-								open={imageDialogOpen}
-								onOpenChange={setImageDialogOpen}
-								onInsert={handleImageInsert}
-							/>
 						</div>
 					</div>
 				</div>
