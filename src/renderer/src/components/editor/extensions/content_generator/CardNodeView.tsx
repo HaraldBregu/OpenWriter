@@ -185,21 +185,6 @@ export function CardNodeView(): React.JSX.Element {
 				</Button>
 			</CardFooter>
 		</Card>
+		</FileUpload>
 	);
-
-	if (isImage) {
-		return (
-			<FileUpload
-				accept={ACCEPTED_IMAGE_TYPES}
-				multiple
-				disabled={isDisabled}
-				value={state.files}
-				onValueChange={handleFilesChange}
-			>
-				{card}
-			</FileUpload>
-		);
-	}
-
-	return card;
 }
