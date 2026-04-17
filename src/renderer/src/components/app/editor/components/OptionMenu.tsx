@@ -124,40 +124,6 @@ export function OptionMenu(): React.JSX.Element {
 		onInsertContentRef.current?.();
 	}, [editor, deleteSlash]);
 
-	const runContinueWithAssistant = useCallback(() => {
-		const ctx = deleteSlash();
-		if (!ctx) return;
-		editor
-			.chain()
-			.focus()
-			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
-			.setMeta('preventEditorUpdate', true)
-			.run();
-		const { from } = editor.state.selection;
-		const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-		const serializer = storage.markdown?.serializer as
-			| { serialize: (node: unknown) => string }
-			| undefined;
-		const docSize = editor.state.doc.content.size;
-		const subDocBefore = editor.state.doc.cut(0, from);
-		const subDocAfter = editor.state.doc.cut(from, docSize);
-		const markdownBeforeCursor =
-			serializer?.serialize(subDocBefore) ?? editor.state.doc.textBetween(0, from, '\n');
-		const markdownAfterCursor =
-			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
-		isLockedRef.current = true;
-		const closeMenu = (): void => {
-			isLockedRef.current = false;
-			menuControlsRef.current.forceHide();
-		};
-		onContinueWithAssistantRef.current?.(
-			markdownBeforeCursor,
-			markdownAfterCursor,
-			from,
-			closeMenu
-		);
-	}, [editor, deleteSlash]);
-
 	const runByIndex = useCallback(
 		(idx: number) => {
 			switch (idx) {
@@ -179,8 +145,6 @@ export function OptionMenu(): React.JSX.Element {
 					return runImage();
 				case 8:
 					return runInsertContent();
-				case 9:
-					return runContinueWithAssistant();
 			}
 		},
 		[
@@ -191,7 +155,6 @@ export function OptionMenu(): React.JSX.Element {
 			runHorizontalRule,
 			runImage,
 			runInsertContent,
-			runContinueWithAssistant,
 		]
 	);
 
