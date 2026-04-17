@@ -412,7 +412,6 @@ export type OutputType = 'documents';
 
 export interface OutputFileMetadata {
 	title: string;
-	emoji?: string;
 	type: string;
 	category: string;
 	tags: string[];
