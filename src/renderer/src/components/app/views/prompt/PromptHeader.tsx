@@ -11,35 +11,20 @@ import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { usePrompt } from './hooks';
-import { Badge } from '@/components/ui/Badge';
 
 export function PromptHeader(): React.JSX.Element | null {
 	const { t } = useTranslation();
-	const { state, setSelection } = usePrompt();
-	const { files, selection } = state;
+	const { state } = usePrompt();
+	const { files } = state;
 
-	if (files.length === 0 && !selection) return null;
+	if (files.length === 0) return null;
 
 	return (
 		<CardHeader className="space-y-0 py-0!">
 			<ItemGroup>
-				<Item size="xs" className="p-0" title={selection}>
-					<Badge
-						variant="outline"
-						render={
-							<a
-								href="#link"
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => setSelection('')}
-							>
-								Selected {selection} <X data-icon="inline-end" />
-							</a>
-						}
-					/>
-				</Item>
 				<Item size="xs" className="p-0">
 					{files.length > 0 && (
-						<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5">
+						<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5 pr-1.5">
 							<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
 								{files.map((file) => (
 									<FileUploadItem

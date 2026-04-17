@@ -13,7 +13,7 @@ declare module '@tiptap/core' {
 	}
 }
 
-export const ContentGeneratorExtension = Node.create<
+export const PromptExtension = Node.create<
 	PromptOptions,
 	ContentGeneratorStorage
 >({
