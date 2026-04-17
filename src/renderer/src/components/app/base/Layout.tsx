@@ -275,8 +275,8 @@ function Container({ children }: LayoutProps) {
 											<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 										}
 									>
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-data-[panel-open]:rotate-90" />
 										{t('sidebar.writings')}
-										<ChevronRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 ml-auto mr-1 group-data-[panel-open]:rotate-90" />
 									</SidebarGroupLabel>
 									<CollapsibleContent>
 										<SidebarGroupContent>
