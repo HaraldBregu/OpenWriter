@@ -95,7 +95,6 @@ function PageContent(): ReactElement {
 				if (cancelled) return;
 
 				setTitle(config.title || '');
-				setEmoji(config.emoji || '');
 				setContent(loadedContent);
 				dispatch({ type: 'CONTENT_CHANGED', value: loadedContent });
 
