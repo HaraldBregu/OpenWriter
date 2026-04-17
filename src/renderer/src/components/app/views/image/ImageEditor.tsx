@@ -24,7 +24,7 @@ import { Button } from '@/components/ui/Button';
 import { TooltipProvider } from '@/components/ui/Tooltip';
 import { useImageCanvas } from '../../../editor/hooks/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
-import { ResizeControls } from '../../../editor/components/ResizeControls';
+import { ResizeControls } from './ResizeControls';
 import { Textarea } from '@/components/ui/Textarea';
 import {
 	DropdownMenu,
