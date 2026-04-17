@@ -51,10 +51,6 @@ export function useAssistantTask(
 			}
 
 			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
-				if (pendingCloseMenuRef.current) {
-					pendingCloseMenuRef.current();
-					pendingCloseMenuRef.current = null;
-				}
 				editorRef.current?.removeAssistant();
 				setAssistantActiveTaskId(null);
 			}
