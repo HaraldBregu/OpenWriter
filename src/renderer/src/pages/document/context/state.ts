@@ -31,7 +31,7 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	selection: null,
 	loaded: false,
 	isTrashing: false,
-	sidebarOpen: false,
+	sidebarOpen: true,
 	agenticSidebarOpen: false,
 	chatSessions: [],
 	chat: INITIAL_CHAT_STATE,
