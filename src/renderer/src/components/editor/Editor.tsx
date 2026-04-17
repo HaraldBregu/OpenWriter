@@ -106,7 +106,7 @@ function Content(): React.JSX.Element {
 	);
 }
 
-const TextEditor = React.memo(
+const Editor = React.memo(
 	React.forwardRef<EditorElement, EditorProps>(
 		(
 			{
