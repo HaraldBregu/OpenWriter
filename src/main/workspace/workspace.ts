@@ -200,7 +200,6 @@ export class Workspace implements Disposable {
 
 		return {
 			title: stored.title ?? '',
-			emoji: stored.emoji,
 			type: stored.type ?? '',
 			createdAt: stored.createdAt ?? '',
 			updatedAt: stored.updatedAt ?? '',
