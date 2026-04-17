@@ -593,7 +593,6 @@ const Editor = React.memo(
 					className={className}
 					ref={rootRef}
 					editor={editor}
-					onContinueWithAssistant={onContinueWithAssistant}
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
