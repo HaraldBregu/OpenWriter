@@ -137,7 +137,8 @@
       "Bash(pnpm exec:*)",
       "Bash(kill %1)",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(echo \"exit: $?\")"
+      "Bash(echo \"exit: $?\")",
+      "Bash(awk *)"
     ],
     "deny": [
       "Bash(git push --force:*)",

@@ -382,31 +382,29 @@ function PageContent(): ReactElement {
 			<PageBody>
 				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 					<ResizablePanel defaultSize="70%" minSize="40%">
-						<EditorContainer>
-							{loaded && (
-								<Editor
-									key={id}
-									disabled={assistantIsRunning}
-									ref={editorRef}
-									value={content}
-									externalValueVersion={contentVersion}
-									onChange={handleContentChange}
-									onSelectionChange={handleSelectionChange}
-									onContinueWithAssistant={handleContinueWithAssistant}
-									onGenerateTextSubmit={handleGenerateTextSubmit}
-									onGenerateImageSubmit={handleGenerateImageSubmit}
-									onInsertContent={handleInsertContent}
-									documentId={id}
-									defaultTextModel={defaultTextModel}
-									defaultImageModel={defaultImageModel}
-									onTextModelChange={handleTextModelChange}
-									onImageModelChange={handleImageModelChange}
-									onEditorReady={handleEditorReady}
-									onUndo={handleUndo}
-									onRedo={handleRedo}
-								/>
-							)}
-						</EditorContainer>
+						{loaded && (
+							<Editor
+								key={id}
+								disabled={assistantIsRunning}
+								ref={editorRef}
+								value={content}
+								externalValueVersion={contentVersion}
+								onChange={handleContentChange}
+								onSelectionChange={handleSelectionChange}
+								onContinueWithAssistant={handleContinueWithAssistant}
+								onGenerateTextSubmit={handleGenerateTextSubmit}
+								onGenerateImageSubmit={handleGenerateImageSubmit}
+								onInsertContent={handleInsertContent}
+								documentId={id}
+								defaultTextModel={defaultTextModel}
+								defaultImageModel={defaultImageModel}
+								onTextModelChange={handleTextModelChange}
+								onImageModelChange={handleImageModelChange}
+								onEditorReady={handleEditorReady}
+								onUndo={handleUndo}
+								onRedo={handleRedo}
+							/>
+						)}
 					</ResizablePanel>
 					{activeSidebar && <ResizableHandle />}
 					<ResizablePanel
