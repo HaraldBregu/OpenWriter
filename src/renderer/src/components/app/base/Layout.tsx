@@ -325,44 +325,33 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarSeparator />
+						<SidebarSeparator className="h-0.5"/>
 
 						{/* Resources */}
-						<Collapsible defaultOpen className="py-0">
-							<SidebarGroup className="py-0">
-								<SidebarGroupLabel
-									render={
-										<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
-									}
-								>
-									{t('appLayout.resources', 'Resources')}
-									<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
-								</SidebarGroupLabel>
-								<CollapsibleContent>
-									<SidebarGroupContent>
-										<SidebarMenu>
-											{RESOURCE_SECTION_ORDER.map((sectionId) => {
-												const section = RESOURCE_SECTIONS[sectionId];
-												const Icon = section.icon;
+						<SidebarGroup className="py-0">
+							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
+							<SidebarGroupContent>
+								<SidebarMenu>
+									{RESOURCE_SECTION_ORDER.map((sectionId) => {
+										const section = RESOURCE_SECTIONS[sectionId];
+										const Icon = section.icon;
 
-												return (
-													<SidebarMenuItem key={section.id}>
-														<SidebarMenuButton
-															render={<Link to={section.route} />}
-															className="h-9 px-3"
-															isActive={location.pathname === section.route}
-														>
-															<Icon className="h-5 w-5 shrink-0" />
-															<span className="flex-1 truncate">{t(section.titleKey)}</span>
-														</SidebarMenuButton>
-													</SidebarMenuItem>
-												);
-											})}
-										</SidebarMenu>
-									</SidebarGroupContent>
-								</CollapsibleContent>
-							</SidebarGroup>
-						</Collapsible>
+										return (
+											<SidebarMenuItem key={section.id}>
+												<SidebarMenuButton
+													render={<Link to={section.route} />}
+													className="h-9 px-3"
+													isActive={location.pathname === section.route}
+												>
+													<Icon className="h-5 w-5 shrink-0" />
+													<span className="flex-1 truncate">{t(section.titleKey)}</span>
+												</SidebarMenuButton>
+											</SidebarMenuItem>
+										);
+									})}
+								</SidebarMenu>
+							</SidebarGroupContent>
+						</SidebarGroup>
 
 						{/* Debug */}
 						<Collapsible defaultOpen className="py-0">
