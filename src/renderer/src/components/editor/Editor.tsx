@@ -6,7 +6,7 @@ import React, {
 	useRef,
 } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
-import type { Editor } from '@tiptap/core';
+import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
 import { BlockControls } from './components/BlockControls';
@@ -81,7 +81,7 @@ export interface EditorProps {
 	/** Called when the user selects a different image model in the content generator. */
 	onImageModelChange?: (model: ModelInfo) => void;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
-	onEditorReady?: (editor: Editor | null) => void;
+	onEditorReady?: (editor: TiptapEditor | null) => void;
 	onUndo?: () => void;
 	onRedo?: () => void;
 }
@@ -209,7 +209,7 @@ const Editor = React.memo(
 					extensions,
 					content: '',
 					immediatelyRender: false,
-					onCreate: ({ editor: ed }: { editor: Editor }) => {
+					onCreate: ({ editor: ed }: { editor: TiptapEditor }) => {
 						const initial = initialValueRef.current;
 						if (!initial) return;
 						ed.commands.setContent(initial, {
@@ -217,7 +217,7 @@ const Editor = React.memo(
 							contentType: 'markdown',
 						});
 					},
-					onUpdate: ({ editor: ed, transaction }: { editor: Editor; transaction: Transaction }) => {
+					onUpdate: ({ editor: ed, transaction }: { editor: TiptapEditor; transaction: Transaction }) => {
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {

@@ -34,26 +34,30 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 	) => {
 		const containerRef = useRef<HTMLDivElement>(null);
 		return (
-			<div id={id} className={cn('w-full', className)}>
-				<div className="relative w-full" ref={ref}>
-					<div
-						ref={containerRef}
-						className="relative"
-						style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
-					>
-						{editor ? (
-							<Provider
-								editor={editor}
-								containerRef={containerRef}
-								onContinueWithAssistant={onContinueWithAssistant}
-								onInsertContent={onInsertContent}
-								onImageInsert={onImageInsert}
+			<div id={id} className={cn('h-full min-w-0 flex flex-col', className)}>
+				<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
+					<div className="mx-auto flex w-full max-w-4xl flex-col gap-2 px-10 py-10">
+						<div className="relative w-full" ref={ref}>
+							<div
+								ref={containerRef}
+								className="relative"
+								style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
 							>
-								{children}
-							</Provider>
-						) : (
-							children
-						)}
+								{editor ? (
+									<Provider
+										editor={editor}
+										containerRef={containerRef}
+										onContinueWithAssistant={onContinueWithAssistant}
+										onInsertContent={onInsertContent}
+										onImageInsert={onImageInsert}
+									>
+										{children}
+									</Provider>
+								) : (
+									children
+								)}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
