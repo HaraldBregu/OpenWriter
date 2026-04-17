@@ -11,11 +11,11 @@ import {
 	DropdownMenuItem,
 	DropdownMenuSeparator,
 } from '@/components/ui/DropdownMenu';
-import { useEditorContext } from '../hooks';
+import { useEditor } from '../hooks';
 
 export const BlockActions = React.memo(function BlockActions(): React.JSX.Element {
 	const { t } = useTranslation();
-	const { editor, state: { hoveredBlock } } = useEditorContext();
+	const { editor, state: { hoveredBlock } } = useEditor();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const lockedTopRef = useRef<number>(0);
 	const lastTopRef = useRef<number>(0);
