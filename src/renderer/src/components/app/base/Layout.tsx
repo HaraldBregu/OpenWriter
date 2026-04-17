@@ -292,6 +292,29 @@ function Container({ children }: LayoutProps) {
 																{w.title || t('sidebar.untitledWriting')}
 															</span>
 														</SidebarMenuButton>
+														<DropdownMenu>
+															<DropdownMenuTrigger
+																render={
+																	<SidebarMenuAction
+																		showOnHover
+																		aria-label={t('sidebar.documentActions', 'Document actions')}
+																	>
+																		<MoreHorizontal />
+																	</SidebarMenuAction>
+																}
+															/>
+															<DropdownMenuContent side="right" align="start" className="w-44">
+																<DropdownMenuItem>
+																	<Pencil />
+																	<span>{t('menu.rename', 'Rename')}</span>
+																</DropdownMenuItem>
+																<DropdownMenuSeparator />
+																<DropdownMenuItem variant="destructive">
+																	<Trash2 />
+																	<span>{t('menu.delete', 'Delete')}</span>
+																</DropdownMenuItem>
+															</DropdownMenuContent>
+														</DropdownMenu>
 													</SidebarMenuItem>
 												))}
 											</SidebarMenu>
