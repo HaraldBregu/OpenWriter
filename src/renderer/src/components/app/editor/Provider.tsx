@@ -11,12 +11,6 @@ import { InsertImageDialog } from '../dialogs';
 interface ProviderProps {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
-	onContinueWithAssistant?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
 	onInsertContent?: () => void;
 	onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
@@ -25,7 +19,6 @@ interface ProviderProps {
 export function Provider({
 	editor,
 	containerRef,
-	onContinueWithAssistant,
 	onInsertContent,
 	onImageInsert,
 	children,
