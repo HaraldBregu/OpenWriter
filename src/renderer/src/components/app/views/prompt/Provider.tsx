@@ -1,4 +1,4 @@
-import React, { useReducer, useRef, useMemo } from 'react';
+import React, { useReducer, useRef, useMemo, useCallback, useEffect } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 import { ContentGeneratorContext } from './context/context';
 import type { ContentGeneratorContextValue } from './context/context';
