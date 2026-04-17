@@ -23,6 +23,7 @@ import { ImageExtension } from './image-extension';
 import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
 import type { ModelInfo } from '../../../../../../shared/types';
+import type { PromptSubmitPayload } from '@shared/index';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
 
 export interface ExtensionHandlers {
@@ -30,8 +31,7 @@ export interface ExtensionHandlers {
 	defaultImageModel?: ModelInfo;
 	onTextModelChange?: (model: ModelInfo) => void;
 	onImageModelChange?: (model: ModelInfo) => void;
-	onGenerateTextSubmit: (prompt: string) => void;
-	onGenerateImageSubmit: (prompt: string, files: File[]) => void;
+	onPromptSubmit: (payload: PromptSubmitPayload) => void;
 	onImageInsert: ImageInsertHandler;
 	onUndo: () => void;
 	onRedo: () => void;
