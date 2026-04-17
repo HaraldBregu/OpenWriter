@@ -1,4 +1,4 @@
-export { useEditorContext } from './use-editor-context';
+export { useEditor } from './use-editor';
 export { useBlockHover } from './use-block-hover';
 export { useImageCanvas } from './use-image-canvas';
 export { useContentGenerator } from './use-content-generator';
