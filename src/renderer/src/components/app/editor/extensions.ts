@@ -18,7 +18,7 @@ import Gapcursor from '@tiptap/extension-gapcursor';
 import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './extensions/search-extension';
 import { SelectionMarkerExtension } from './extensions/selection-marker-extension';
-import { ContentGeneratorExtension } from './extensions/content-generator-extension';
+import { PromptExtension } from './extensions/prompt-extension';
 import { ImageExtension } from './extensions/image-extension';
 import type { ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
