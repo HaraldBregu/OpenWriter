@@ -24,7 +24,7 @@ const pluginKey = new PluginKey('bubbleMenu');
 // const menuContainerClass =
 // 	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border dark:bg-popover dark:ring-[hsl(var(--border)/0.7)] dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.46)]';
 
-const separatorClass = 'mx-0.5 h-4 w-px bg-border/80 dark:bg-border';
+const separatorClass = 'mx-0.5 h-4';
 
 function getMenuButtonClass({
 	isActive = false,
