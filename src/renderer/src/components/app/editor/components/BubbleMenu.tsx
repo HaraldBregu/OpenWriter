@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
+import { Card } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';

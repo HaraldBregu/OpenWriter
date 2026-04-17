@@ -14,7 +14,7 @@ interface ProviderProps {
 	children: React.ReactNode;
 }
 
-export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderProps): React.JSX.Element {
+export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.Element {
 	const { editor, node, getPos, extension, updateAttributes } = nodeViewProps;
 
 	const loading = node.attrs.loading as boolean;

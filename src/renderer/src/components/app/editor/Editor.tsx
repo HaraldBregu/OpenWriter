@@ -12,7 +12,7 @@ import { Transaction } from '@tiptap/pm/state';
 import { BlockControls } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
 
-import { createExtensions } from './extensions';
+import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import type { ModelInfo } from '../../../../../shared/types';
 import { BubbleMenu } from './components/BubbleMenu';

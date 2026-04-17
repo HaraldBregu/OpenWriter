@@ -8,7 +8,7 @@ type AgentId = 'text' | 'image';
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		contentGenerator: {
-			insertContentGenerator: () => ReturnType;
+			insertPromptView: () => ReturnType;
 		};
 	}
 }
@@ -85,7 +85,7 @@ export const PromptExtension = Node.create<
 
 	addCommands() {
 		return {
-			insertContentGenerator:
+			insertPromptView:
 				() =>
 				({ commands }) => {
 					return commands.insertContent({ type: this.name });
@@ -104,10 +104,10 @@ export const PromptExtension = Node.create<
 				if ($from.parent.content.size !== 0) return false;
 				if ($from.pos !== $from.start()) return false;
 
-				return ed.commands.insertContentGenerator();
+				return ed.commands.insertPromptView();
 			},
 			'Mod-/': ({ editor: ed }) => {
-				return ed.commands.insertContentGenerator();
+				return ed.commands.insertPromptView();
 			},
 		};
 	},

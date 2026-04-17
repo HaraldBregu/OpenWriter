@@ -5,7 +5,7 @@ import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { usePrompt } from './hooks';
-import { ContentGeneratorProvider } from './Provider';
+import { Provider } from './Provider';
 import { PromptHeader } from './PromptHeader';
 import {
 	DropdownMenu,
@@ -14,14 +14,13 @@ import {
 	DropdownMenuCheckboxItem,
 } from '@/components/ui/DropdownMenu';
 import { ImageIcon, Plus, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
-import { getProvider } from 'src/shared';
-import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
+import { getProvider, IMAGE_MODELS, TEXT_MODELS } from 'src/shared';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-function CardNodeViewInner(): React.JSX.Element {
+function PromptContainer(): React.JSX.Element {
 	const { t } = useTranslation();
 	const {
 		state,
@@ -211,14 +210,14 @@ function CardNodeViewInner(): React.JSX.Element {
 	);
 }
 
-interface CardNodeViewProps {
+interface PromptProps {
 	nodeViewProps: NodeViewProps;
 }
 
-export function Prompt({ nodeViewProps }: CardNodeViewProps): React.JSX.Element {
+export function Prompt({ nodeViewProps }: PromptProps): React.JSX.Element {
 	return (
-		<ContentGeneratorProvider nodeViewProps={nodeViewProps}>
-			<CardNodeViewInner />
-		</ContentGeneratorProvider>
+		<Provider nodeViewProps={nodeViewProps}>
+			<PromptContainer />
+		</Provider>
 	);
 }
