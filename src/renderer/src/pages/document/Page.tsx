@@ -62,8 +62,8 @@ function PageContent(): ReactElement {
 		}
 	}, [activeSidebar, sidebarPanelRef]);
 
-	const stateRef = useRef({ title, emoji });
-	stateRef.current = { title, emoji };
+	const stateRef = useRef({ title });
+	stateRef.current = { title };
 
 	const contentRef = useRef(content);
 	contentRef.current = content;
