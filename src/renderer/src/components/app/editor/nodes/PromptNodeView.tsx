@@ -1,12 +1,12 @@
 import React from 'react';
 import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
-import { CardNodeView } from '../../views/prompt/CardNodeView';
+import { Prompt } from '../../views/prompt/Prompt';
  
 export function PromptNodeView(props: NodeViewProps): React.JSX.Element {
 	return (
 		<NodeViewWrapper contentEditable={false}>
-			<CardNodeView nodeViewProps={props} />
+			<Prompt nodeViewProps={props} />
 		</NodeViewWrapper>
 	);
 }

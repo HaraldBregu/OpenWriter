@@ -10,4 +10,5 @@ export interface ContentGeneratorState {
 	isDragOver: boolean;
 	selectedImageModel: ModelInfo;
 	selectedTextModel: ModelInfo;
+	selection: string;
 }
