@@ -22,12 +22,12 @@ export function PromptHeader(): React.JSX.Element | null {
 		<CardHeader className="space-y-0 py-0 px-3.5">
 			<div className="flex items-center gap-2 pt-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
 				{selection && (
-					<span
+					<CardTitle
 						className="shrink-0 max-w-xs truncate rounded-md border border-border/60 bg-muted/60 px-2 py-1 text-xs text-muted-foreground"
 						title={selection}
 					>
 						{selection}
-					</span>
+					</CardTitle>
 				)}
 				<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
 					{files.map((file) => (
