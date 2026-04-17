@@ -53,7 +53,7 @@ function PageContent(): ReactElement {
 	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
-	const editorRef = useRef<TextEditorElement>(null);
+	const editorRef = useRef<EditorElement>(null);
 	const sidebarPanelRef = usePanelRef();
 
 	useEffect(() => {
