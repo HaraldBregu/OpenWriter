@@ -33,8 +33,7 @@ export const PromptExtension = Node.create<
 			defaultImageModel: undefined,
 			onTextModelChange: undefined,
 			onImageModelChange: undefined,
-			onGenerateTextSubmit: (_prompt: string) => {},
-			onGenerateImageSubmit: (_prompt: string, _files: File[]) => {},
+			onPromptSubmit: () => {},
 		};
 	},
 
