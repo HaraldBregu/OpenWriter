@@ -9,17 +9,26 @@ import {
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
+import { useContentGenerator } from './hooks';
 
-interface CardNodeViewHeaderProps {
-	readonly files: File[];
-}
-
-export function CardNodeViewHeader({ files }: CardNodeViewHeaderProps): React.JSX.Element {
+export function CardNodeViewHeader(): React.JSX.Element | null {
 	const { t } = useTranslation();
+	const { state } = useContentGenerator();
+	const { files, selection } = state;
+
+	if (files.length === 0 && !selection) return null;
 
 	return (
 		<CardHeader className="space-y-0 py-0 px-3.5">
 			<div className="flex items-center gap-2 pt-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+				{selection && (
+					<span
+						className="shrink-0 max-w-xs truncate rounded-md border border-border/60 bg-muted/60 px-2 py-1 text-xs text-muted-foreground"
+						title={selection}
+					>
+						{selection}
+					</span>
+				)}
 				<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
 					{files.map((file) => (
 						<FileUploadItem
