@@ -14,7 +14,7 @@ import {
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useEditorContext } from '../hooks';
+import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 
 const pluginKey = new PluginKey('bubbleMenu');
@@ -48,7 +48,7 @@ function getMenuButtonClass({
 }
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
-	const { editor } = useEditorContext();
+	const { editor } = useEditor();
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
