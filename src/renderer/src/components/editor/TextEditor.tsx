@@ -95,6 +95,17 @@ function readFileAsDataUri(file: File): Promise<string> {
 	});
 }
 
+function TextEditorContent(): React.JSX.Element {
+	return (
+		<>
+			<BlockControls />
+			<BlockActions />
+			<BubbleMenu />
+			<OptionMenu />
+		</>
+	);
+}
+
 const TextEditor = React.memo(
 	React.forwardRef<TextEditorElement, TextEditorProps>(
 		(
