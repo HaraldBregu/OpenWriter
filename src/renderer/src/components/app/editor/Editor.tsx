@@ -177,9 +177,7 @@ const Editor = React.memo(
 						defaultImageModel: defaultImageModelRef.current,
 						onTextModelChange: (model) => onTextModelChangeRef.current?.(model),
 						onImageModelChange: (model) => onImageModelChangeRef.current?.(model),
-						onGenerateTextSubmit: (prompt) => onGenerateTextSubmitRef.current?.(prompt),
-						onGenerateImageSubmit: (prompt, files) =>
-							onGenerateImageSubmitRef.current?.(prompt, files),
+						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload),
 						onImageInsert: (file, insertAtPos) =>
 							handleImageFileInsertRef.current(file, insertAtPos),
 						onUndo: () => onUndoRef.current?.(),
