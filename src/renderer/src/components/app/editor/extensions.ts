@@ -22,7 +22,7 @@ import { ContentGeneratorExtension } from './extensions/content-generator-extens
 import { ImageExtension } from './extensions/image-extension';
 import type { ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
-import type { ModelInfo } from '../../../../shared/types';
+import type { ModelInfo } from '../../../../../shared/types';
 import { ImagePlaceholderExtension } from './extensions/image-placeholder-extension';
 
 export interface ExtensionHandlers {
