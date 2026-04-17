@@ -389,7 +389,7 @@ function PageContent(): ReactElement {
 								onSelectionChange={handleSelectionChange}
 								onContinueWithAssistant={handleContinueWithAssistant}
 								onPromptSubmit={(payload: PromptSubmitPayload) => {
-									if (payload.type === 'image') {
+									if (payload.files.length > 0) {
 										handleGenerateImageSubmit(payload.prompt, payload.files);
 									} else {
 										handleGenerateTextSubmit(payload.prompt);
