@@ -9,7 +9,7 @@ import { DEFAULT_TEXT_MODEL_ID } from 'src/shared/types';
 type ContentGeneratorAgentId = 'text' | 'image';
 import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
 import { ContentGeneratorOptions, ContentGeneratorStorage } from '../../editor/extensions/content-generator-extension';
-import { useContentGeneratorActions, useTextareaSetup } from '../../editor/hooks';
+import { useContentGeneratorActions, useTextareaSetup } from './hooks';
 
 interface ProviderProps {
 	nodeViewProps: NodeViewProps;
