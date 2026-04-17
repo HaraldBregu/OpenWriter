@@ -1,7 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { ContentGeneratorAgentId } from '@/components/editor/components/content-generator-agents';
-import { CONTENT_GENERATOR_AGENT_OPTIONS } from '@/components/editor/components/content-generator-agents';
 import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../shared/types';
 import type { ModelInfo } from '../../../../../../shared/types';
