@@ -51,7 +51,7 @@ export interface EditorElement extends HTMLDivElement {
 	exitList: () => void;
 }
 
-export interface TextEditorProps {
+export interface EditorProps {
 	value: string;
 	onChange: (value: string) => void;
 	onSelectionChange?: (selection: { from: number; to: number } | null) => void;
@@ -107,7 +107,7 @@ function TextEditorContent(): React.JSX.Element {
 }
 
 const TextEditor = React.memo(
-	React.forwardRef<EditorElement, TextEditorProps>(
+	React.forwardRef<EditorElement, EditorProps>(
 		(
 			{
 				value,
