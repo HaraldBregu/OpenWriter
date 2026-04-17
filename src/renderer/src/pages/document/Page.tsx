@@ -304,7 +304,7 @@ function PageContent(): ReactElement {
 	);
 
 	const handleEditorReady = useCallback(
-		(editor: Editor | null) => {
+		(editor: TiptapEditor | null) => {
 			setEditor(editor);
 		},
 		[setEditor]
