@@ -3,8 +3,8 @@ import type { AppState } from './core/app-state';
 import type { WindowFactory } from './core/window-factory';
 import type { WindowContextManager } from './core/window-context';
 
-const DEFAULT_WINDOW_WIDTH = 1600;
-const DEFAULT_WINDOW_HEIGHT = 1000;
+const DEFAULT_WINDOW_WIDTH = 1280;
+const DEFAULT_WINDOW_HEIGHT = 800;
 const WORKSPACE_WINDOW_SCALE = 0.9;
 
 function getBackgroundColor(): string {

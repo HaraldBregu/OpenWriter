@@ -117,7 +117,7 @@ export const BlockControls = React.memo(function BlockControls(): React.JSX.Elem
 			{/* + and drag-handle buttons */}
 			<div
 				className={cn(
-					'absolute -left-3 z-50 flex items-center gap-1',
+					'absolute -left-20 z-50 flex items-center gap-1',
 					'pointer-events-none opacity-0 transition-opacity duration-150 ease-in',
 					visible && 'pointer-events-auto opacity-100'
 				)}

@@ -10,7 +10,7 @@ import type { Editor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
 import { cn } from '@/lib/utils';
-import { BlockControls, GUTTER_WIDTH } from './components/BlockControls';
+import { BlockControls } from './components/BlockControls';
 import { BlockActions } from './components/BlockActions';
 
 import { createExtensions } from './extensions';
@@ -599,7 +599,6 @@ const TextEditor = React.memo(
 						<div
 							ref={containerRef}
 							className="relative"
-							style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
 						>
 							{editor && (
 								<Provider
