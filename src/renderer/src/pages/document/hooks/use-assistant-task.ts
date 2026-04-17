@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { RefObject } from 'react';
-import type { TextEditorElement } from '@/components/editor/TextEditor';
+import type { EditorElement } from '@/components/editor/Editor';
 
 type ContentGeneratorAgentId = 'text' | 'image';
 import { subscribeToTask } from '../../../services/task-event-bus';
