@@ -18,10 +18,14 @@ import {
 	useSidebarVisibility,
 	useEditorInstance,
 	useEditor,
-	useTextGeneratorSubmit,
 	useImageGeneratorSubmit,
 } from './hooks';
-import { subscribeToTask, type TaskSnapshot } from '../../services/task-event-bus';
+import { v7 as uuidv7 } from 'uuid';
+import {
+	initTaskMetadata,
+	subscribeToTask,
+	type TaskSnapshot,
+} from '../../services/task-event-bus';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
