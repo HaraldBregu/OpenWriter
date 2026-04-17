@@ -51,7 +51,6 @@ export function Provider({
 			containerRef,
 			setHoveredBlock,
 			setImageDialogOpen,
-			onContinueWithAssistant,
 			onInsertContent,
 		}),
 		[
@@ -60,7 +59,6 @@ export function Provider({
 			containerRef,
 			setHoveredBlock,
 			setImageDialogOpen,
-			onContinueWithAssistant,
 			onInsertContent,
 		]
 	);
