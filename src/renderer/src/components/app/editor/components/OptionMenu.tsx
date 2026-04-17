@@ -31,9 +31,6 @@ export function OptionMenu(): React.JSX.Element {
 	const selectedIndexRef = useRef(selectedIndex);
 	selectedIndexRef.current = selectedIndex;
 
-	const onContinueWithAssistantRef = useRef(onContinueWithAssistant);
-	onContinueWithAssistantRef.current = onContinueWithAssistant;
-
 	const onInsertContentRef = useRef(onInsertContent);
 	onInsertContentRef.current = onInsertContent;
 
