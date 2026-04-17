@@ -59,7 +59,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		ImagePlaceholderExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
 		SelectionMarkerExtension,
-		ContentGeneratorExtension.configure({
+		PromptExtension.configure({
 			defaultTextModel: handlers.defaultTextModel,
 			defaultImageModel: handlers.defaultImageModel,
 			onTextModelChange: handlers.onTextModelChange,
