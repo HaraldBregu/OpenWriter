@@ -101,6 +101,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 			fileInputRef,
 			submitRef,
 			...actions,
+			setSelection,
 			resizeTextarea,
 		}),
 		[
