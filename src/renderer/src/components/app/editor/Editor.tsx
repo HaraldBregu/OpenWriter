@@ -67,8 +67,7 @@ export interface EditorProps {
 		cursorPos: number,
 		closeMenu: () => void
 	) => void;
-	onGenerateTextSubmit?: (prompt: string) => void;
-	onGenerateImageSubmit?: (prompt: string, files: File[]) => void;
+	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
