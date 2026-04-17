@@ -210,3 +210,15 @@ function CardNodeViewInner(): React.JSX.Element {
 		</FileUpload>
 	);
 }
+
+interface CardNodeViewProps {
+	nodeViewProps: NodeViewProps;
+}
+
+export function CardNodeView({ nodeViewProps }: CardNodeViewProps): React.JSX.Element {
+	return (
+		<ContentGeneratorProvider nodeViewProps={nodeViewProps}>
+			<CardNodeViewInner />
+		</ContentGeneratorProvider>
+	);
+}
