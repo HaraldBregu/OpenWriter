@@ -52,6 +52,8 @@ import {
 	MoreHorizontal,
 	Pencil,
 	Trash2,
+	File,
+	FileText,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { useThemeMode } from '@/hooks/use-theme-mode';
