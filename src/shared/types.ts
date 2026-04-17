@@ -683,7 +683,6 @@ export interface DocumentImageInfo {
  */
 export interface DocumentConfig {
 	title: string;
-	emoji?: string;
 	type: string;
 	createdAt: string;
 	updatedAt: string;
