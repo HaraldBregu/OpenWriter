@@ -325,6 +325,8 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
+						<SidebarSeparator />
+
 						{/* Resources */}
 						<Collapsible defaultOpen className="py-0">
 							<SidebarGroup className="py-0">
