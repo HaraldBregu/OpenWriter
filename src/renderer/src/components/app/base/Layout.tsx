@@ -52,6 +52,9 @@ import {
 	Sun,
 	Monitor,
 	Moon,
+	MoreHorizontal,
+	Pencil,
+	Trash2,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { useThemeMode } from '@/hooks/use-theme-mode';
