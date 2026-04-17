@@ -316,7 +316,7 @@ function PageContent(): ReactElement {
 			editorActions.disable();
 
 			try {
-				const taskId = await textTask.submit({ prompt });
+				const taskId = await submitTextTask(prompt);
 
 				if (!taskId) {
 					editorActions.hideLoading();
@@ -331,7 +331,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 			}
 		},
-		[assistantIsRunning, id, editorActions, textTask]
+		[assistantIsRunning, id, editorActions, submitTextTask]
 	);
 
 	const handleGenerateImageSubmit = useCallback(
