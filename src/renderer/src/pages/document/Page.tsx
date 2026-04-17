@@ -7,7 +7,7 @@ import type { Editor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
-import { TextEditor, type TextEditorElement } from '@/components/editor/TextEditor';
+import { Editor, type EditorElement } from '@/components/editor/Editor';
 import { EditorContainer } from '@/components/app/base/Editor';
 import InfoPanel from './panels/info/Panel';
 import Chat from './panels/chat/Panel';
