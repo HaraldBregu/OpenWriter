@@ -5,7 +5,6 @@ import {
 	List,
 	ListOrdered,
 	Minus,
-	Sparkles,
 	ImagePlus,
 	FileText,
 } from 'lucide-react';
