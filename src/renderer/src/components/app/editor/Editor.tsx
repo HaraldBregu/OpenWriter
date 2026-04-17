@@ -138,11 +138,8 @@ const Editor = React.memo(
 			const onSelectionChangeRef = useRef(onSelectionChange);
 			onSelectionChangeRef.current = onSelectionChange;
 
-			const onGenerateTextSubmitRef = useRef(onGenerateTextSubmit);
-			onGenerateTextSubmitRef.current = onGenerateTextSubmit;
-
-			const onGenerateImageSubmitRef = useRef(onGenerateImageSubmit);
-			onGenerateImageSubmitRef.current = onGenerateImageSubmit;
+			const onPromptSubmitRef = useRef(onPromptSubmit);
+			onPromptSubmitRef.current = onPromptSubmit;
 
 			const documentIdRef = useRef(documentId);
 			documentIdRef.current = documentId;
