@@ -590,23 +590,23 @@ const TextEditor = React.memo(
 				[editor, documentId]
 			);
 
-			const containerRef = useRef<HTMLDivElement>(null);
-
 			return (
-				<Layout id={id} className={className} ref={rootRef} containerRef={containerRef}>
+				<Layout
+					id={id}
+					className={className}
+					ref={rootRef}
+					editor={editor}
+					onContinueWithAssistant={onContinueWithAssistant}
+					onInsertContent={onInsertContent}
+					onImageInsert={handleImageInsert}
+				>
 					{editor && (
-						<Provider
-							editor={editor}
-							containerRef={containerRef}
-							onContinueWithAssistant={onContinueWithAssistant}
-							onInsertContent={onInsertContent}
-							onImageInsert={handleImageInsert}
-						>
+						<>
 							<BlockControls />
 							<BlockActions />
 							<BubbleMenu />
 							<OptionMenu />
-						</Provider>
+						</>
 					)}
 					<EditorContent editor={editor} />
 				</Layout>
