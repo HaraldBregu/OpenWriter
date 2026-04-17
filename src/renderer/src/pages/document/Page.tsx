@@ -278,10 +278,8 @@ function PageContent(): ReactElement {
 
 	useEffect(() => {
 		if (!id || !loaded) return;
-		appDispatch(
-			documentMetadataPatched({ id, title, emoji: emoji || undefined, updatedAt: Date.now() })
-		);
-	}, [id, title, emoji, loaded, appDispatch]);
+		appDispatch(documentMetadataPatched({ id, title, updatedAt: Date.now() }));
+	}, [id, title, loaded, appDispatch]);
 
 	const handleContentChange = useCallback(
 		(newContent: string) => {
