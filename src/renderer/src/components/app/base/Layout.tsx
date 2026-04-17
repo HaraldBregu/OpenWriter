@@ -272,7 +272,7 @@ function Container({ children }: LayoutProps) {
 								<SidebarGroup className="py-0">
 									<SidebarGroupLabel
 										render={
-											<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 										}
 									>
 										{t('sidebar.writings')}
@@ -329,7 +329,7 @@ function Container({ children }: LayoutProps) {
 							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
-										<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 									}
 								>
 									{t('appLayout.resources', 'Resources')}
@@ -366,11 +366,11 @@ function Container({ children }: LayoutProps) {
 							<SidebarGroup className="py-0">
 								<SidebarGroupLabel
 									render={
-										<CollapsibleTrigger className="group cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 									}
 								>
 									{t('appLayout.debug')}
-									<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-200 group-data-[panel-open]:rotate-90" />
+									<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-200 group-data-panel-open:rotate-90" />
 								</SidebarGroupLabel>
 								<CollapsibleContent>
 									<SidebarGroupContent>
