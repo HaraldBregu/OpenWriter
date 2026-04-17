@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { Lock, Unlock } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
-import { MAX_DIMENSION, MIN_DIMENSION } from '../shared';
+
+const MIN_DIMENSION = 1;
+const MAX_DIMENSION = 8000;
 
 interface ResizeControlsProps {
 	currentWidth: number;
