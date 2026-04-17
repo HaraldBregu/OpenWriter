@@ -1,9 +1,11 @@
 import React from 'react';
+import type { NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { useContentGenerator } from '../../../editor/hooks/use-content-generator';
+import { ContentGeneratorProvider } from './Provider';
 import { CardNodeViewHeader } from './CardNodeViewHeader';
 import {
 	DropdownMenu,
