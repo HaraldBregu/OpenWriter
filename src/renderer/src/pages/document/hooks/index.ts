@@ -10,5 +10,5 @@ export { useDocumentPersistence } from './use-document-persistence';
 export { useDocumentHistory, type HistoryEntry } from './use-document-history';
 export { useImageGeneratorSubmit } from './use-image-generator-submit';
 export { useTextGeneratorSubmit } from './use-text-generator-submit';
-export { useAssistantTask } from './use-assistant-task';
-export type { AssistantTaskHandlers } from './use-assistant-task';
+export { useEditor } from './use-editor';
+export type { EditorActions } from './use-editor';
