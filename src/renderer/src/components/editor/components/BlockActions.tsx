@@ -97,7 +97,7 @@ export const BlockActions = React.memo(function BlockActions(): React.JSX.Elemen
 	return (
 		<div
 			className={cn(
-				'absolute right-0 z-50 flex items-center gap-1',
+				'absolute right-5 z-50 flex items-center gap-1',
 				'pointer-events-none opacity-0 transition-opacity duration-150 ease-in',
 				visible && 'pointer-events-auto opacity-100'
 			)}
