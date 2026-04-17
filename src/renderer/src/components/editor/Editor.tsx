@@ -26,7 +26,7 @@ export interface ImageInsertOptions {
 	title?: string;
 }
 
-export interface TextEditorElement extends HTMLDivElement {
+export interface EditorElement extends HTMLDivElement {
 	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
@@ -107,7 +107,7 @@ function TextEditorContent(): React.JSX.Element {
 }
 
 const TextEditor = React.memo(
-	React.forwardRef<TextEditorElement, TextEditorProps>(
+	React.forwardRef<EditorElement, TextEditorProps>(
 		(
 			{
 				value,
@@ -496,7 +496,7 @@ const TextEditor = React.memo(
 							editor.commands.liftListItem('listItem');
 						}
 					},
-				}) as TextEditorElement;
+				}) as EditorElement;
 			}, [editor]);
 
 			useEffect(() => {
