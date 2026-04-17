@@ -28,6 +28,7 @@ import {
 	SidebarMenuAction,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarSeparator,
 	SidebarProvider,
 	SidebarHeader,
 	useSidebar,
