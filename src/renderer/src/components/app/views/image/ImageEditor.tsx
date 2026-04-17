@@ -38,6 +38,7 @@ import { getProvider } from '../../../../../../shared/providers';
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 const AI_PROCESSING_DELAY_MS = 300;
 const TOOLTIP_DELAY_MS = 300;
+const MIN_CROP_SIZE = 4;
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
