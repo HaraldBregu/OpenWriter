@@ -49,6 +49,6 @@ export const ImagePlaceholderExtension = Node.create<ImagePlaceholderOptions>({
 	},
 
 	addNodeView() {
-		return ReactNodeViewRenderer(Placeholder);
+		return ReactNodeViewRenderer(PlaceholderNodeView);
 	},
 });
