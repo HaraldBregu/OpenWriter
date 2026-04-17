@@ -481,9 +481,6 @@ function PageContent(): ReactElement {
 								onChange={handleContentChange}
 								onSelectionChange={handleSelectionChange}
 								onPromptSubmit={(payload: PromptSubmitPayload) => {
-									console.log( payload);
-									return;
-
 									if (payload.files.length > 0) {
 										handleGenerateImageSubmit(payload.prompt, payload.files);
 									} else {
