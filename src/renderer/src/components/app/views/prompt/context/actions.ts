@@ -11,4 +11,5 @@ export type ContentGeneratorAction =
 	| { type: 'SET_FILES'; payload: File[] }
 	| { type: 'SET_DRAG_OVER'; payload: boolean }
 	| { type: 'SET_IMAGE_MODEL'; payload: ModelInfo }
-	| { type: 'SET_TEXT_MODEL'; payload: ModelInfo };
+	| { type: 'SET_TEXT_MODEL'; payload: ModelInfo }
+	| { type: 'SET_SELECTION'; payload: string };
