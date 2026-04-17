@@ -41,7 +41,6 @@ function PageContent(): ReactElement {
 	const { setEditor } = useEditorInstance();
 
 	const [title, setTitle] = useState('');
-	const [emoji, setEmoji] = useState('');
 	const [content, setContent] = useState('');
 	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
