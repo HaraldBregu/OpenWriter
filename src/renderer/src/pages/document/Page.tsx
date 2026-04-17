@@ -385,7 +385,7 @@ function PageContent(): ReactElement {
 					<ResizablePanel defaultSize="70%" minSize="40%">
 						<EditorContainer>
 							{loaded && (
-								<TextEditor
+								<Editor
 									key={id}
 									disabled={assistantIsRunning}
 									ref={editorRef}
