@@ -9,10 +9,6 @@ import { selectProjectName, selectWorkspaceName } from '../../../store/workspace
 import { loadCurrentWorkspace, loadProjectName } from '../../../store/workspace/actions';
 import { selectAllDocuments } from '../../../store/documents/selectors';
 import { documentAdded } from '../../../store/documents/actions';
-import {
-	RESOURCE_SECTION_ORDER,
-	RESOURCE_SECTIONS,
-} from '../../../pages/resources/shared/resource-sections';
 import { TitleBar } from '../titlebar/TitleBar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible';
 import { Button } from '@/components/ui/Button';
@@ -328,7 +324,7 @@ function Container({ children }: LayoutProps) {
 						<SidebarSeparator className="h-0.5"/>
 
 						{/* Resources */}
-						<SidebarGroup className="py-0">
+						<SidebarGroup>
 							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
