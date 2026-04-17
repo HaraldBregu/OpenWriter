@@ -370,7 +370,7 @@ function Container({ children }: LayoutProps) {
 									}
 								>
 									{t('appLayout.debug')}
-									<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover:opacity-100 transition-all duration-200 group-data-panel-open:rotate-90" />
+									<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
 								</SidebarGroupLabel>
 								<CollapsibleContent>
 									<SidebarGroupContent>
