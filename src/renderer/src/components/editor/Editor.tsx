@@ -95,7 +95,7 @@ function readFileAsDataUri(file: File): Promise<string> {
 	});
 }
 
-function TextEditorContent(): React.JSX.Element {
+function Content(): React.JSX.Element {
 	return (
 		<>
 			<BlockControls />
