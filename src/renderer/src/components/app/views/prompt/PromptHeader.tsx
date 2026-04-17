@@ -1,5 +1,6 @@
 import React from 'react';
 import { CardHeader } from '@/components/ui/Card';
+import { ItemGroup } from '@/components/ui/Item';
 import {
 	FileUploadList,
 	FileUploadItem,
