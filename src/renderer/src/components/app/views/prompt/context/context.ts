@@ -1,8 +1,9 @@
 import { createContext } from 'react';
 import type React from 'react';
 import type { ContentGeneratorState } from './state';
-import type { ContentGeneratorAgentId } from '../../../../editor/components/content-generator-agents';
 import type { ModelInfo } from 'src/shared/types';
+
+type ContentGeneratorAgentId = 'text' | 'image';
 
 export interface ContentGeneratorContextValue {
 	state: ContentGeneratorState;
