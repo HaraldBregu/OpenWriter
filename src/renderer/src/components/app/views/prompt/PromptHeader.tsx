@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardHeader } from '@/components/ui/Card';
+import { CardHeader, CardTitle } from '@/components/ui/Card';
 import {
 	FileUploadList,
 	FileUploadItem,
@@ -9,11 +9,11 @@ import {
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
-import { useContentGenerator } from './hooks';
+import { usePrompt } from './hooks';
 
-export function CardNodeViewHeader(): React.JSX.Element | null {
+export function PromptHeader(): React.JSX.Element | null {
 	const { t } = useTranslation();
-	const { state } = useContentGenerator();
+	const { state } = usePrompt();
 	const { files, selection } = state;
 
 	if (files.length === 0 && !selection) return null;

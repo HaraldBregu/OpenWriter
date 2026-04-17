@@ -7,3 +7,4 @@ export * from './channels';
 export * from './file-type-validator';
 export * from './models';
 export * from './providers';
+export * from './prompt';

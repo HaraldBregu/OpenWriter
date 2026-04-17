@@ -1,23 +1,9 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { PromptNodeView } from '../nodes/PromptNodeView';
-import { ModelInfo } from 'src/shared';
+import { ContentGeneratorStorage, PromptOptions } from '@shared/index';
 
-type ContentGeneratorAgentId = 'text' | 'image';
-
-export interface ContentGeneratorOptions {
-	defaultTextModel?: ModelInfo;
-	defaultImageModel?: ModelInfo;
-	onTextModelChange?: (model: ModelInfo) => void;
-	onImageModelChange?: (model: ModelInfo) => void;
-	onGenerateTextSubmit: (prompt: string) => void;
-	onGenerateImageSubmit: (prompt: string, files: File[]) => void;
-}
-
-export interface ContentGeneratorStorage {
-	defaultTextModel: ModelInfo | undefined;
-	defaultImageModel: ModelInfo | undefined;
-}
+type AgentId = 'text' | 'image';
 
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
@@ -28,7 +14,7 @@ declare module '@tiptap/core' {
 }
 
 export const ContentGeneratorExtension = Node.create<
-	ContentGeneratorOptions,
+	PromptOptions,
 	ContentGeneratorStorage
 >({
 	name: 'contentGenerator',
@@ -77,13 +63,13 @@ export const ContentGeneratorExtension = Node.create<
 				renderHTML: () => ({}),
 			},
 			agentId: {
-				default: 'text' as ContentGeneratorAgentId,
+				default: 'text' as AgentId,
 				parseHTML: (element) => {
 					const value = element.getAttribute('data-agent-id');
 					return value === 'image' ? 'image' : 'text';
 				},
 				renderHTML: (attributes) => ({
-					'data-agent-id': attributes.agentId as ContentGeneratorAgentId,
+					'data-agent-id': attributes.agentId as AgentId,
 				}),
 			},
 		};

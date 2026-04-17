@@ -4,9 +4,9 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
-import { useContentGenerator } from './hooks';
+import { usePrompt } from './hooks';
 import { ContentGeneratorProvider } from './Provider';
-import { CardNodeViewHeader } from './CardNodeViewHeader';
+import { PromptHeader } from './PromptHeader';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -38,7 +38,7 @@ function CardNodeViewInner(): React.JSX.Element {
 		handleTextModelChange,
 		handleFilesChange,
 		resizeTextarea,
-	} = useContentGenerator();
+	} = usePrompt();
 
 	const inputLabel = isImage
 		? t('assistantNode.imageTitle', 'Generate image')
@@ -68,7 +68,7 @@ function CardNodeViewInner(): React.JSX.Element {
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
 				<Card className="w-full">
-					<CardNodeViewHeader />
+					<PromptHeader />
 					<CardContent>
 						<Textarea
 							ref={textareaRef}

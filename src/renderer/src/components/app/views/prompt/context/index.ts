@@ -1,5 +1,5 @@
-export type { ContentGeneratorState } from './state';
-export type { ContentGeneratorAction } from './actions';
 export { contentGeneratorReducer } from './reducer';
-export { ContentGeneratorContext } from './context';
-export type { ContentGeneratorContextValue } from './context';
+export { Context } from './context';
+export type { ContextValue } from './context';
+export type { State } from './state';
+export type { Action } from './actions';

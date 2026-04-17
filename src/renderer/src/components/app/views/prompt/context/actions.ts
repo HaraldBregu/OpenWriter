@@ -1,10 +1,10 @@
 import type { ModelInfo } from 'src/shared/types';
 
-type ContentGeneratorAgentId = 'text' | 'image';
+type AgentId = 'text' | 'image';
 
-export type ContentGeneratorAction =
+export type Action =
 	| { type: 'SET_PROMPT'; payload: string }
-	| { type: 'SET_AGENT'; payload: ContentGeneratorAgentId }
+	| { type: 'SET_AGENT'; payload: AgentId }
 	| { type: 'ADD_FILE'; payload: File }
 	| { type: 'ADD_PREVIEW_URL'; payload: string }
 	| { type: 'REMOVE_FILE'; payload: number }

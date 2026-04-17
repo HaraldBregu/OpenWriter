@@ -1,10 +1,10 @@
 import type { ModelInfo } from 'src/shared/types';
 
-type ContentGeneratorAgentId = 'text' | 'image';
+type  AgentId = 'text' | 'image';
 
-export interface ContentGeneratorState {
+export interface State {
 	prompt: string;
-	agentId: ContentGeneratorAgentId;
+	agentId:  AgentId;
 	files: File[];
 	previewUrls: string[];
 	isDragOver: boolean;

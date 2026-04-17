@@ -1,15 +1,15 @@
 import { createContext } from 'react';
 import type React from 'react';
-import type { ContentGeneratorState } from './state';
+import type { State } from './state';
 import type { ModelInfo } from 'src/shared/types';
 
-type ContentGeneratorAgentId = 'text' | 'image';
+type  AgentId = 'text' | 'image';
 
-export interface ContentGeneratorContextValue {
-	state: ContentGeneratorState;
+export interface ContextValue {
+	state: State;
 	loading: boolean;
 	enable: boolean;
-	agentId: ContentGeneratorAgentId;
+	agentId: AgentId;
 	isImage: boolean;
 	activeModel: ModelInfo;
 	isSubmitDisabled: boolean;
@@ -17,7 +17,7 @@ export interface ContentGeneratorContextValue {
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 	submitRef: React.RefObject<(() => void) | null>;
 	handlePromptChange: (value: string) => void;
-	handleAgentChange: (agentId: ContentGeneratorAgentId) => void;
+	handleAgentChange: (agentId: AgentId) => void;
 	handleImageModelChange: (model: ModelInfo) => void;
 	handleTextModelChange: (model: ModelInfo) => void;
 	setSelection: (value: string) => void;
@@ -34,4 +34,4 @@ export interface ContentGeneratorContextValue {
 	resizeTextarea: () => void;
 }
 
-export const ContentGeneratorContext = createContext<ContentGeneratorContextValue | null>(null);
+export const Context = createContext<ContextValue | null>(null);

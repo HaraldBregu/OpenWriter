@@ -1,15 +1,13 @@
 import React, { useReducer, useRef, useMemo, useCallback, useEffect } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
-import { ContentGeneratorContext } from './context/context';
-import type { ContentGeneratorContextValue } from './context/context';
 import { contentGeneratorReducer } from './context/reducer';
-import type { ContentGeneratorState } from './context/state';
 import { DEFAULT_TEXT_MODEL_ID } from 'src/shared/types';
+import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
+import { usePromptActions, useTextareaSetup } from './hooks';
+import { ContentGeneratorStorage, PromptOptions } from '@shared/index';
+import { Context, ContextValue, State } from './context';
 
 type ContentGeneratorAgentId = 'text' | 'image';
-import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
-import { ContentGeneratorOptions, ContentGeneratorStorage } from '../../editor/extensions/content-generator-extension';
-import { useContentGeneratorActions, useTextareaSetup } from './hooks';
 
 interface ProviderProps {
 	nodeViewProps: NodeViewProps;
@@ -22,7 +20,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 	const loading = node.attrs.loading as boolean;
 	const enable = node.attrs.enable as boolean;
 	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'text';
-	const options = extension.options as ContentGeneratorOptions;
+	const options = extension.options as PromptOptions;
 	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
 		.contentGenerator;
 
@@ -32,7 +30,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 	const [state, dispatch] = useReducer(
 		contentGeneratorReducer,
 		undefined,
-		(): ContentGeneratorState => ({
+		(): State => ({
 			prompt: (node.attrs.prompt as string) ?? '',
 			agentId: initialAgentId,
 			files: [],
@@ -64,7 +62,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 		};
 	}, [editor, setSelection]);
 
-	const actions = useContentGeneratorActions({
+	const actions = usePromptActions({
 		dispatch,
 		editor,
 		node,
@@ -88,7 +86,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 	const isSubmitDisabled =
 		!enable || loading || (!state.prompt.trim() && (!isImage || state.files.length === 0));
 
-	const value = useMemo<ContentGeneratorContextValue>(
+	const value = useMemo<ContextValue>(
 		() => ({
 			state,
 			loading,
@@ -118,5 +116,5 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 		]
 	);
 
-	return <ContentGeneratorContext.Provider value={value}>{children}</ContentGeneratorContext.Provider>;
+	return <Context.Provider value={value}>{children}</Context.Provider>;
 }

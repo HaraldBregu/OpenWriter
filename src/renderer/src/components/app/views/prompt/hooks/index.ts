@@ -1,3 +1,3 @@
-export { useContentGenerator } from '../../../editor/hooks/use-content-generator';
-export { useContentGeneratorActions } from '../../../editor/hooks/use-content-generator-actions';
-export { useTextareaSetup } from '../../../editor/hooks/use-textarea-setup';
+export { usePrompt } from './use-prompt';
+export { usePromptActions } from './use-prompt-actions';
+export { useTextareaSetup } from './use-textarea-setup';

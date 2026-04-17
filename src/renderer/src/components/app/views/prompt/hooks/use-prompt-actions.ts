@@ -3,12 +3,11 @@ import type React from 'react';
 import type { Editor } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
-import type { ContentGeneratorOptions } from '../extensions/content-generator-extension';
-import { ModelInfo } from '@shared/index';
+import { ModelInfo, PromptOptions } from '@shared/index';
 import { buildTaskPrompt } from '@/pages/document/shared';
-import { ContentGeneratorAction } from '../../views/prompt/context';
+import { Action } from '../context';
 
-type ContentGeneratorAgentId = 'text' | 'image';
+type AgentId = 'text' | 'image';
 
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
@@ -20,19 +19,19 @@ function readFileAsDataUri(file: File): Promise<string> {
 }
 
 interface UseContentGeneratorActionsParams {
-	dispatch: React.Dispatch<ContentGeneratorAction>;
+	dispatch: React.Dispatch<Action>;
 	editor: Editor;
 	node: ProseMirrorNode;
 	getPos: () => number | undefined;
-	options: ContentGeneratorOptions;
+	options: PromptOptions;
 	updateAttributes: (attrs: Record<string, unknown>) => void;
 	prompt: string;
-	agentId: ContentGeneratorAgentId;
+	agentId: AgentId;
 	files: File[];
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
-export function useContentGeneratorActions({
+export function usePromptActions({
 	dispatch,
 	editor,
 	node,
@@ -55,9 +54,9 @@ export function useContentGeneratorActions({
 	);
 
 	const handleAgentChange = useCallback(
-		(value: ContentGeneratorAgentId) => {
+		(value: AgentId) => {
 			dispatch({ type: 'SET_AGENT', payload: value });
-			if ((node.attrs.agentId as ContentGeneratorAgentId) !== value) {
+			if ((node.attrs.agentId as AgentId) !== value) {
 				updateAttributes({ agentId: value });
 			}
 		},
@@ -87,7 +86,7 @@ export function useContentGeneratorActions({
 				.then((result) => {
 					dispatch({ type: 'ADD_PREVIEW_URL', payload: result });
 				})
-				.catch(() => {});
+				.catch(() => { });
 		},
 		[dispatch]
 	);

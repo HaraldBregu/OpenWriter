@@ -1,10 +1,10 @@
-import type { ContentGeneratorState } from './state';
-import type { ContentGeneratorAction } from './actions';
+import type { State } from './state';
+import type { Action } from './actions';
 
 export function contentGeneratorReducer(
-	state: ContentGeneratorState,
-	action: ContentGeneratorAction
-): ContentGeneratorState {
+	state: State,
+	action: Action
+): State {
 	switch (action.type) {
 		case 'SET_PROMPT':
 			return { ...state, prompt: action.payload };
