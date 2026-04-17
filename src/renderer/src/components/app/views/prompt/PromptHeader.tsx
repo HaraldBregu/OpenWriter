@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardHeader, CardTitle } from '@/components/ui/Card';
+import { CardHeader } from '@/components/ui/Card';
 import {
 	FileUploadList,
 	FileUploadItem,
@@ -20,39 +20,43 @@ export function PromptHeader(): React.JSX.Element | null {
 
 	return (
 		<CardHeader className="space-y-0 py-0 px-3.5">
-			<div className="flex items-center gap-2 pt-1.5 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+			<div className="flex flex-col gap-2 pt-1.5">
 				{selection && (
-					<CardTitle
-						className="shrink-0 max-w-xs truncate rounded-md border border-border/60 bg-muted/60 px-2 py-1 text-xs text-muted-foreground"
+					<span
+						className="max-w-xs truncate rounded-md border border-border/60 bg-muted/60 px-2 py-1 text-xs text-muted-foreground self-start"
 						title={selection}
 					>
 						{selection}
-					</CardTitle>
+					</span>
 				)}
-				<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
-					{files.map((file) => (
-						<FileUploadItem
-							key={`${file.name}-${file.lastModified}-${file.size}`}
-							value={file}
-							className="group/thumb relative shrink-0 gap-0 rounded-none border-0 p-0"
-						>
-							<FileUploadItemPreview className="h-14 w-14" />
-							<FileUploadItemDelete
-								render={
-									<Button
-										variant="ghost"
-										size="icon-xs"
-										className="absolute -right-1.5 -top-1.5 z-10 h-5 w-5 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-none transition-opacity hover:bg-background hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
-										onMouseDown={(e) => e.preventDefault()}
-										aria-label={t('assistantNode.removeImage', 'Remove image')}
-									/>
-								}
-							>
-								<X className="h-2.5 w-2.5" aria-hidden="true" />
-							</FileUploadItemDelete>
-						</FileUploadItem>
-					))}
-				</FileUploadList>
+				{files.length > 0 && (
+					<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+						<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
+							{files.map((file) => (
+								<FileUploadItem
+									key={`${file.name}-${file.lastModified}-${file.size}`}
+									value={file}
+									className="group/thumb relative shrink-0 gap-0 rounded-none border-0 p-0"
+								>
+									<FileUploadItemPreview className="h-14 w-14" />
+									<FileUploadItemDelete
+										render={
+											<Button
+												variant="ghost"
+												size="icon-xs"
+												className="absolute -right-1.5 -top-1.5 z-10 h-5 w-5 rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 shadow-none transition-opacity hover:bg-background hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
+												onMouseDown={(e) => e.preventDefault()}
+												aria-label={t('assistantNode.removeImage', 'Remove image')}
+											/>
+										}
+									>
+										<X className="h-2.5 w-2.5" aria-hidden="true" />
+									</FileUploadItemDelete>
+								</FileUploadItem>
+							))}
+						</FileUploadList>
+					</div>
+				)}
 			</div>
 		</CardHeader>
 	);
