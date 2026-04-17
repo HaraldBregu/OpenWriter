@@ -77,6 +77,11 @@ export function useAssistantTask(
 
 	const handleGenerateTextSubmit = useCallback(
 		async (prompt: string) => {
+			
+
+			console.log(  prompt);
+
+			return;
 			if (!documentId || assistantIsRunning) {
 				editorRef.current?.setAssistantLoading(false);
 				editorRef.current?.setAssistantEnable(true);

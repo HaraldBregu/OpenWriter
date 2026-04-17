@@ -1,8 +1,9 @@
 import { ModelInfo } from "./types";
 
-export type PromptSubmitPayload =
-    | { type: 'text'; prompt: string }
-    | { type: 'image'; prompt: string; files: File[] };
+export interface PromptSubmitPayload {
+    prompt: string;
+    files: File[];
+}
 
 export interface PromptOptions {
     defaultTextModel?: ModelInfo;

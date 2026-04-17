@@ -138,7 +138,9 @@
       "Bash(kill %1)",
       "Bash(echo \"EXIT: $?\")",
       "Bash(echo \"exit: $?\")",
-      "Bash(awk *)"
+      "Bash(awk *)",
+      "Bash(wait bqcs9i09l *)",
+      "Bash(jobs -l)"
     ],
     "deny": [
       "Bash(git push --force:*)",

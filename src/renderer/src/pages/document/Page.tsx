@@ -29,6 +29,7 @@ import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
 import { PageBody } from '@/components/app/base/Page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
+import { PromptSubmitPayload } from '@shared/index';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
@@ -387,7 +388,7 @@ function PageContent(): ReactElement {
 								onChange={handleContentChange}
 								onSelectionChange={handleSelectionChange}
 								onContinueWithAssistant={handleContinueWithAssistant}
-								onPromptSubmit={(payload) => {
+								onPromptSubmit={(payload: PromptSubmitPayload) => {
 									if (payload.type === 'image') {
 										handleGenerateImageSubmit(payload.prompt, payload.files);
 									} else {
