@@ -1,10 +1,9 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { RefObject } from 'react';
 
 type ContentGeneratorAgentId = 'text' | 'image';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
-import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
 import { useTextGeneratorSubmit } from './use-text-generator-submit';
 import { useImageGeneratorSubmit } from './use-image-generator-submit';
 import { EditorElement } from '@/components/app/editor/Editor';
@@ -13,12 +12,6 @@ export interface AssistantTaskHandlers {
 	assistantIsRunning: boolean;
 	handleGenerateTextSubmit: (prompt: string) => Promise<void>;
 	handleGenerateImageSubmit: (prompt: string, files: File[]) => Promise<void>;
-	handleContinueWithAssistant: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
 }
 
 export function useAssistantTask(
@@ -32,7 +25,6 @@ export function useAssistantTask(
 	const [assistantActiveAgentId, setAssistantActiveAgentId] =
 		useState<ContentGeneratorAgentId>('text');
 	const assistantIsRunning = assistantActiveTaskId !== null;
-	const pendingCloseMenuRef = useRef<(() => void) | null>(null);
 
 	useEffect(() => {
 		if (!assistantActiveTaskId) return;
@@ -40,10 +32,6 @@ export function useAssistantTask(
 		const unsub = subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
 				editorRef.current?.setAssistantLoading(true);
-				if (pendingCloseMenuRef.current) {
-					pendingCloseMenuRef.current();
-					pendingCloseMenuRef.current = null;
-				}
 				return;
 			}
 
