@@ -68,7 +68,7 @@ function CardNodeViewInner(): React.JSX.Element {
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
 				<Card className="w-full">
-					{state.files.length > 0 && <CardNodeViewHeader files={state.files} />}
+					<CardNodeViewHeader />
 					<CardContent>
 						<Textarea
 							ref={textareaRef}
