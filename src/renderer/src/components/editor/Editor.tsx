@@ -296,7 +296,7 @@ const Editor = React.memo(
 							editor.commands.setImage({ src: imageSrc, alt: file.name });
 						})
 						.catch((err: unknown) => {
-							console.error('[TextEditor] Failed to process dropped/pasted image:', err);
+							console.error('[Editor] Failed to process dropped/pasted image:', err);
 						});
 				},
 				[editor]
