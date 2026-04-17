@@ -237,11 +237,102 @@ function PageContent(): ReactElement {
 		[updateDocumentConfig]
 	);
 
-	const {
-		assistantIsRunning,
-		handleGenerateTextSubmit,
-		handleGenerateImageSubmit,
-	} = useAssistantTask(id, editorRef);
+	const editorActions = useEditor(editorRef);
+	const textTask = useTextGeneratorSubmit(id);
+	const imageTask = useImageGeneratorSubmit(id);
+
+	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
+	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<'text' | 'image'>('text');
+	const assistantIsRunning = assistantActiveTaskId !== null;
+
+	useEffect(() => {
+		if (!assistantActiveTaskId) return;
+
+		return subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
+			if (snap.status === 'started') {
+				editorActions.showLoading();
+				return;
+			}
+
+			const completed = snap.status === 'completed';
+			const output = snap.result as { content?: string } | undefined;
+			const streamContent = output?.content ?? snap.streamedContent ?? '';
+
+			if (streamContent) {
+				const isImageAgent = assistantActiveAgentId === 'image';
+				if (completed && isImageAgent) {
+					editorActions.insertMarkdownText(streamContent, { preventEditorUpdate: !completed });
+				} else {
+					editorActions.insertText(streamContent, { preventEditorUpdate: !completed });
+				}
+			}
+
+			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
+				editorActions.closePrompt();
+				setAssistantActiveTaskId(null);
+			}
+		});
+	}, [assistantActiveAgentId, assistantActiveTaskId, editorActions]);
+
+	const handleGenerateTextSubmit = useCallback(
+		async (prompt: string) => {
+			if (!id || assistantIsRunning) {
+				editorActions.hideLoading();
+				editorActions.enable();
+				return;
+			}
+
+			editorActions.showLoading();
+			editorActions.disable();
+
+			try {
+				const taskId = await textTask.submit({ prompt });
+
+				if (!taskId) {
+					editorActions.hideLoading();
+					editorActions.enable();
+					return;
+				}
+
+				setAssistantActiveAgentId('text');
+				setAssistantActiveTaskId(taskId);
+			} catch {
+				editorActions.hideLoading();
+				editorActions.enable();
+			}
+		},
+		[assistantIsRunning, id, editorActions, textTask]
+	);
+
+	const handleGenerateImageSubmit = useCallback(
+		async (prompt: string, files: File[]) => {
+			if (!id || assistantIsRunning) {
+				editorActions.hideLoading();
+				editorActions.enable();
+				return;
+			}
+
+			editorActions.showLoading();
+			editorActions.disable();
+
+			try {
+				const taskId = await imageTask.submit({ prompt, files });
+
+				if (!taskId) {
+					editorActions.hideLoading();
+					editorActions.enable();
+					return;
+				}
+
+				setAssistantActiveAgentId('image');
+				setAssistantActiveTaskId(taskId);
+			} catch {
+				editorActions.hideLoading();
+				editorActions.enable();
+			}
+		},
+		[assistantIsRunning, id, editorActions, imageTask]
+	);
 
 	const handleHistoryRestore = useCallback(
 		(restoredContent: string, restoredTitle: string) => {
