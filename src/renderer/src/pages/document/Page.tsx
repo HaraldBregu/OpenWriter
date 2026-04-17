@@ -7,7 +7,6 @@ import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
-import { Editor, type EditorElement } from '@/components/editor/Editor';
 import InfoPanel from './panels/info/Panel';
 import Chat from './panels/chat/Panel';
 import HistoryMenu from './components/HistoryMenu';
@@ -29,6 +28,7 @@ import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/c
 import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
 import { PageBody } from '@/components/app/base/Page';
+import { Editor, EditorElement } from '@/components/app/editor/Editor';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;

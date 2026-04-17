@@ -4,16 +4,12 @@ import { ContentGeneratorContext } from './context/context';
 import type { ContentGeneratorContextValue } from './context/context';
 import { contentGeneratorReducer } from './context/reducer';
 import type { ContentGeneratorState } from './context/state';
-import { useContentGeneratorActions } from '../../../editor/hooks/use-content-generator-actions';
-import { useTextareaSetup } from '../../../editor/hooks/use-textarea-setup';
-import type {
-	ContentGeneratorOptions,
-	ContentGeneratorStorage,
-} from '../../../editor/extensions/content-generator-extension';
 import { DEFAULT_TEXT_MODEL_ID } from 'src/shared/types';
 
 type ContentGeneratorAgentId = 'text' | 'image';
 import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
+import { ContentGeneratorOptions, ContentGeneratorStorage } from '../../editor/extensions/content-generator-extension';
+import { useContentGeneratorActions, useTextareaSetup } from '../../editor/hooks';
 
 interface ProviderProps {
 	nodeViewProps: NodeViewProps;

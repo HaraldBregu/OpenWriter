@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { RefObject } from 'react';
-import type { EditorElement } from '@/components/editor/Editor';
 
 type ContentGeneratorAgentId = 'text' | 'image';
 import { subscribeToTask } from '../../../services/task-event-bus';
@@ -8,6 +7,7 @@ import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
 import { useTextGeneratorSubmit } from './use-text-generator-submit';
 import { useImageGeneratorSubmit } from './use-image-generator-submit';
+import { EditorElement } from '@/components/app/editor/Editor';
 
 export interface AssistantTaskHandlers {
 	assistantIsRunning: boolean;
