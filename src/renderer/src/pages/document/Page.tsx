@@ -238,7 +238,6 @@ function PageContent(): ReactElement {
 		assistantIsRunning,
 		handleGenerateTextSubmit,
 		handleGenerateImageSubmit,
-		handleContinueWithAssistant,
 	} = useAssistantTask(id, editorRef);
 
 	const handleHistoryRestore = useCallback(
