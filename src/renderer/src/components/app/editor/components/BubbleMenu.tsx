@@ -14,14 +14,15 @@ import {
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Separator } from '@/components/ui/Separator';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 
 const pluginKey = new PluginKey('bubbleMenu');
 
-const menuContainerClass =
-	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border dark:bg-popover dark:ring-[hsl(var(--border)/0.7)] dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.46)]';
+// const menuContainerClass =
+// 	'z-50 flex items-center gap-0.5 rounded-xl border border-border/80 bg-popover/95 p-1 text-popover-foreground shadow-[0_18px_40px_hsl(var(--foreground)/0.14)] ring-1 ring-black/5 backdrop-blur-md dark:border-border dark:bg-popover dark:ring-[hsl(var(--border)/0.7)] dark:shadow-[0_18px_44px_hsl(0_0%_0%/0.46)]';
 
 const separatorClass = 'mx-0.5 h-4 w-px bg-border/80 dark:bg-border';
 
@@ -73,7 +74,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 		<Card
 			ref={menuRef}
 			size="sm"
-			className={cn(menuContainerClass, 'flex-row gap-0.5 py-1')}
+			className={cn('flex-row gap-0 p-2! z-50')}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button
