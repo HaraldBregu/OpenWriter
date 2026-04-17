@@ -10,8 +10,9 @@ import type {
 	ContentGeneratorOptions,
 	ContentGeneratorStorage,
 } from '../../../editor/extensions/content-generator-extension';
-import type { ContentGeneratorAgentId } from '../../../editor/components/content-generator-agents';
 import { DEFAULT_TEXT_MODEL_ID } from 'src/shared/types';
+
+type ContentGeneratorAgentId = 'text' | 'image';
 import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
 
 interface ProviderProps {
