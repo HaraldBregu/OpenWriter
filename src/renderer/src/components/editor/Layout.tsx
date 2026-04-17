@@ -1,11 +1,7 @@
-import { forwardRef, useRef } from 'react';
-import { EditorContent } from '@tiptap/react';
+import { forwardRef, useRef, type ReactNode } from 'react';
 import type { Editor } from '@tiptap/core';
 import { cn } from '@/lib/utils';
-import { BlockControls, GUTTER_WIDTH } from './components/BlockControls';
-import { BlockActions } from './components/BlockActions';
-import { BubbleMenu } from './components/BubbleMenu';
-import { OptionMenu } from './components/OptionMenu';
+import { GUTTER_WIDTH } from './components/BlockControls';
 import { Provider } from './Provider';
 
 interface LayoutProps {
@@ -20,11 +16,20 @@ interface LayoutProps {
 	) => void;
 	readonly onInsertContent?: () => void;
 	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
+	readonly children: ReactNode;
 }
 
 const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 	(
-		{ id, className, editor, onContinueWithAssistant, onInsertContent, onImageInsert },
+		{
+			id,
+			className,
+			editor,
+			onContinueWithAssistant,
+			onInsertContent,
+			onImageInsert,
+			children,
+		},
 		ref
 	) => {
 		const containerRef = useRef<HTMLDivElement>(null);
@@ -36,7 +41,7 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 						className="relative"
 						style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
 					>
-						{editor && (
+						{editor ? (
 							<Provider
 								editor={editor}
 								containerRef={containerRef}
@@ -44,13 +49,11 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 								onInsertContent={onInsertContent}
 								onImageInsert={onImageInsert}
 							>
-								<BlockControls />
-								<BlockActions />
-								<BubbleMenu />
-								<OptionMenu />
+								{children}
 							</Provider>
+						) : (
+							children
 						)}
-						<EditorContent editor={editor} />
 					</div>
 				</div>
 			</div>
