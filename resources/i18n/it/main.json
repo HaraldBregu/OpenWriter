@@ -495,7 +495,19 @@
 		"skills": "Abilità",
 		"skillsDescription": "Funzionalità di scrittura potenziate dall'AI",
 		"tip": "Suggerimento",
-		"tipContent": "Usa la barra laterale per navigare tra Post e Scrittura. Premi l'icona del menu nella barra del titolo per mostrare o nascondere la barra laterale."
+		"tipContent": "Usa la barra laterale per navigare tra Post e Scrittura. Premi l'icona del menu nella barra del titolo per mostrare o nascondere la barra laterale.",
+		"tools": "Strumenti",
+		"filesDescription": "Gestisci i file importati",
+		"contentDescription": "Sfoglia la libreria dei contenuti",
+		"dataDescription": "Ispeziona dati strutturati",
+		"searchDescription": "Cerca nel tuo workspace",
+		"settingsDescription": "Configura le preferenze",
+		"models": "Modelli",
+		"modelsDescription": "Configura i modelli AI",
+		"tasksDescription": "Visualizza i task in background",
+		"reduxDescription": "Ispeziona lo stato dell'applicazione",
+		"logs": "Log",
+		"logsDescription": "Sfoglia i log dell'applicazione"
 	},
 	"post": {
 		"titlePlaceholder": "Nuovo post",
