@@ -70,9 +70,10 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 	}, [editor]);
 
 	return (
-		<div
+		<Card
 			ref={menuRef}
-			className={menuContainerClass}
+			size="sm"
+			className={cn(menuContainerClass, 'flex-row gap-0.5 py-1')}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button
