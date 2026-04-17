@@ -37,7 +37,19 @@ function PageContent(): ReactElement {
 
 					<Separator />
 
+					<ResourcesSection />
+
+					<Separator />
+
+					<ToolsSection />
+
+					<Separator />
+
 					<RecentDocuments />
+
+					<Separator />
+
+					<DebugSection />
 
 					<Separator />
 
