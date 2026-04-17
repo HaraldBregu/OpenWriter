@@ -296,8 +296,8 @@ function Container({ children }: LayoutProps) {
 															<DropdownMenuTrigger
 																render={
 																	<SidebarMenuAction
-																		showOnHover
 																		aria-label={t('sidebar.documentActions', 'Document actions')}
+																		className="opacity-0 group-hover/menu-item:opacity-100 aria-expanded:opacity-100"
 																	>
 																		<MoreHorizontal />
 																	</SidebarMenuAction>
