@@ -28,5 +28,7 @@ export function contentGeneratorReducer(
 			return { ...state, selectedImageModel: action.payload };
 		case 'SET_TEXT_MODEL':
 			return { ...state, selectedTextModel: action.payload };
+		case 'SET_SELECTION':
+			return { ...state, selection: action.payload };
 	}
 }
