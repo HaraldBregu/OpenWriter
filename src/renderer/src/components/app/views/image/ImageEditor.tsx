@@ -22,7 +22,6 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { TooltipProvider } from '@/components/ui/Tooltip';
-import { MIN_CROP_SIZE } from '../../../editor/shared';
 import { useImageCanvas } from '../../../editor/hooks/use-image-canvas';
 import { ToolbarButton } from '../../../editor/components/ToolbarButton';
 import { ResizeControls } from '../../../editor/components/ResizeControls';
