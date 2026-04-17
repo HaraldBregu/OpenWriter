@@ -114,7 +114,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				<Strikethrough className="h-3.5 w-3.5" />
 			</Button>
 
-			<div className={separatorClass} />
+			<Separator orientation="vertical" className={separatorClass} />
 
 			<Button
 				variant="ghost"
@@ -153,7 +153,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				<Heading3 className="h-3.5 w-3.5" />
 			</Button>
 
-			<div className={separatorClass} />
+			<Separator orientation="vertical" className={separatorClass} />
 
 			<Button
 				variant="ghost"
