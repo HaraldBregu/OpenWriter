@@ -6,7 +6,7 @@ import { editorReducer } from './context/reducer';
 import type { EditorState } from './context/state';
 import type { HoveredBlock } from './context/state';
 import { useBlockHover } from './hooks/use-block-hover';
-import { InsertImageDialog } from './components/InsertImageDialog';
+import { InsertImageDialog } from '../app/dialogs/InsertImageDialog';
 
 interface ProviderProps {
 	editor: Editor;
