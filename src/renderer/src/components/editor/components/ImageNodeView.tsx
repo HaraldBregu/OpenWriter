@@ -9,7 +9,7 @@ import { Card, CardContent } from '@/components/ui/Card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
 import { ImageProvider, useImage, ImageEditor } from '../../app/views/image';
-import { ImagePreviewDialog } from './ImagePreviewDialog';
+import { ImagePreviewDialog } from '../../app/dialogs/ImagePreviewDialog';
 
 function ImageInner(): React.JSX.Element {
 	const { t } = useTranslation();
