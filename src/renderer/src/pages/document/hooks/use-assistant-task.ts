@@ -124,27 +124,9 @@ export function useAssistantTask(
 		[assistantIsRunning, documentId, editorRef, imageTask]
 	);
 
-	const handleContinueWithAssistant = useCallback(
-		(before: string, after: string, _cursorPos: number, closeMenu: () => void) => {
-			if (assistantIsRunning) {
-				closeMenu();
-				return;
-			}
-			const { before: cleanBefore, after: cleanAfter } = normalizeTaskPromptContext(before, after);
-			pendingCloseMenuRef.current = closeMenu;
-			const prompt = buildTaskPrompt(cleanBefore, cleanAfter, 'CONTINUE HERE WITH 15 WORDS MAX');
-			handleGenerateTextSubmit(prompt).catch(() => {
-				pendingCloseMenuRef.current = null;
-				closeMenu();
-			});
-		},
-		[assistantIsRunning, handleGenerateTextSubmit]
-	);
-
 	return {
 		assistantIsRunning,
 		handleGenerateTextSubmit,
 		handleGenerateImageSubmit,
-		handleContinueWithAssistant,
 	};
 }
