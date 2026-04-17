@@ -594,31 +594,23 @@ const TextEditor = React.memo(
 			const containerRef = useRef<HTMLDivElement>(null);
 
 			return (
-				<div id={id} className={cn('w-full', className)}>
-					<div className="relative w-full" ref={rootRef}>
-						<div
-							ref={containerRef}
-							className="relative"
-							style={{ paddingLeft: GUTTER_WIDTH, paddingRight: GUTTER_WIDTH }}
+				<Layout id={id} className={className} ref={rootRef} containerRef={containerRef}>
+					{editor && (
+						<Provider
+							editor={editor}
+							containerRef={containerRef}
+							onContinueWithAssistant={onContinueWithAssistant}
+							onInsertContent={onInsertContent}
+							onImageInsert={handleImageInsert}
 						>
-							{editor && (
-								<Provider
-									editor={editor}
-									containerRef={containerRef}
-									onContinueWithAssistant={onContinueWithAssistant}
-									onInsertContent={onInsertContent}
-									onImageInsert={handleImageInsert}
-								>
-									<BlockControls />
-									<BlockActions />
-									<BubbleMenu />
-									<OptionMenu />
-								</Provider>
-							)}
-							<EditorContent editor={editor} />
-						</div>
-					</div>
-				</div>
+							<BlockControls />
+							<BlockActions />
+							<BubbleMenu />
+							<OptionMenu />
+						</Provider>
+					)}
+					<EditorContent editor={editor} />
+				</Layout>
 			);
 		}
 	)
