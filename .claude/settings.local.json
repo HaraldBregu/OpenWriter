@@ -136,7 +136,8 @@
       "Bash(mv Data data)",
       "Bash(pnpm exec:*)",
       "Bash(kill %1)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(echo \"exit: $?\")"
     ],
     "deny": [
       "Bash(git push --force:*)",

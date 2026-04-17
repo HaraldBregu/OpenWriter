@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
-import { useContentGenerator } from '../hooks/use-content-generator';
+import { useContentGenerator } from '../../../editor/hooks/use-content-generator';
 import { CardNodeViewHeader } from './CardNodeViewHeader';
 import {
 	DropdownMenu,
@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { ImageIcon, Plus, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
 import { getProvider } from 'src/shared';
-import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../shared/models';
+import { IMAGE_MODELS, TEXT_MODELS } from '../../../../../../shared/models';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
