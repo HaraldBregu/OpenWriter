@@ -387,8 +387,13 @@ function PageContent(): ReactElement {
 								onChange={handleContentChange}
 								onSelectionChange={handleSelectionChange}
 								onContinueWithAssistant={handleContinueWithAssistant}
-								onGenerateTextSubmit={handleGenerateTextSubmit}
-								onGenerateImageSubmit={handleGenerateImageSubmit}
+								onPromptSubmit={(payload) => {
+									if (payload.type === 'image') {
+										handleGenerateImageSubmit(payload.prompt, payload.files);
+									} else {
+										handleGenerateTextSubmit(payload.prompt);
+									}
+								}}
 								onInsertContent={handleInsertContent}
 								documentId={id}
 								defaultTextModel={defaultTextModel}
