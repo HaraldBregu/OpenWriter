@@ -8,6 +8,33 @@ import { PromptCard } from './components/PromptCard';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
+type ContentGeneratorAgentId = 'text' | 'image';
+
+interface ContentGeneratorAgentOption {
+	value: ContentGeneratorAgentId;
+	labelKey: string;
+	labelFallback: string;
+	descriptionKey: string;
+	descriptionFallback: string;
+}
+
+const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOption[] = [
+	{
+		value: 'text',
+		labelKey: 'assistantAgent.text',
+		labelFallback: 'Text',
+		descriptionKey: 'assistantAgent.textDescription',
+		descriptionFallback: 'Generate, rewrite, or continue text',
+	},
+	{
+		value: 'image',
+		labelKey: 'assistantAgent.image',
+		labelFallback: 'Image',
+		descriptionKey: 'assistantAgent.imageDescription',
+		descriptionFallback: 'Create images from a prompt',
+	},
+];
+
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
