@@ -22,28 +22,26 @@ export function PromptHeader(): React.JSX.Element | null {
 	return (
 		<CardHeader className="space-y-0 py-0 px-3.5">
 			<div className="flex flex-col gap-2">
-				{selection && (
-					<ItemGroup className="pt-1.5">
-						<Item
-							size="xs"
-							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
-							title={selection}
+				<ItemGroup className="pt-1.5">
+					<Item
+						size="xs"
+						title={selection}
+					>
+						<span className="min-w-0 truncate">{selection}</span>
+						<Button
+							type="button"
+							variant="ghost"
+							size="icon-sm"
+							onMouseDown={(e) => e.preventDefault()}
+							onClick={() => setSelection('')}
+							aria-label={t('agenticPanel.clearSelection', 'Clear selection: {{label}}', {
+								label: selection,
+							})}
 						>
-							<span className="min-w-0 truncate">{selection}</span>
-							<button
-								type="button"
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => setSelection('')}
-								className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
-								aria-label={t('agenticPanel.clearSelection', 'Clear selection: {{label}}', {
-									label: selection,
-								})}
-							>
-								<X className="h-3 w-3" aria-hidden="true" />
-							</button>
-						</Item>
-					</ItemGroup>
-				)}
+							<X className="h-3 w-3" aria-hidden="true" />
+						</Button>
+					</Item>
+				</ItemGroup>
 				{files.length > 0 && (
 					<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5">
 						<FileUploadList forceMount orientation="horizontal" className="contents border-0 p-0">
