@@ -495,7 +495,19 @@
 		"skills": "Skills",
 		"skillsDescription": "AI-powered writing capabilities",
 		"tip": "Tip",
-		"tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to show or hide the sidebar."
+		"tipContent": "Use the sidebar to navigate between Posts and Writing. Press the menu icon in the title bar to show or hide the sidebar.",
+		"tools": "Tools",
+		"filesDescription": "Manage imported files",
+		"contentDescription": "Browse content library",
+		"dataDescription": "Inspect structured data",
+		"searchDescription": "Find across your workspace",
+		"settingsDescription": "Configure preferences",
+		"models": "Models",
+		"modelsDescription": "Configure AI models",
+		"tasksDescription": "View background tasks",
+		"reduxDescription": "Inspect application state",
+		"logs": "Logs",
+		"logsDescription": "Browse application logs"
 	},
 	"post": {
 		"titlePlaceholder": "New post",
