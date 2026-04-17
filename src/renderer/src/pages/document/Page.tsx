@@ -242,8 +242,34 @@ function PageContent(): ReactElement {
 	);
 
 	const editorActions = useEditor(editorRef);
-	const textTask = useTextGeneratorSubmit(id);
 	const imageTask = useImageGeneratorSubmit(id);
+
+	const textSessionIdRef = useRef<string | null>(null);
+
+	const submitTextTask = useCallback(
+		async (prompt: string): Promise<string | null> => {
+			if (!id) return null;
+			if (typeof window.task?.submit !== 'function') return null;
+
+			const resolvedSessionId = textSessionIdRef.current ?? uuidv7();
+			textSessionIdRef.current = resolvedSessionId;
+
+			const metadata = {
+				agentId: 'text' as const,
+				documentId: id,
+				chatId: resolvedSessionId,
+				referenceImages: [],
+			};
+
+			const ipcResult = await window.task.submit('agent-text', { prompt }, metadata);
+			if (!ipcResult.success) return null;
+
+			const resolvedTaskId = ipcResult.data.taskId;
+			initTaskMetadata(resolvedTaskId, metadata);
+			return resolvedTaskId;
+		},
+		[id]
+	);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<'text' | 'image'>('text');
