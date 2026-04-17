@@ -205,10 +205,10 @@ export function usePromptActions({
 					? 'Create an image inspired by the uploaded reference images.'
 					: trimmedPrompt;
 			const builtPrompt = buildTaskPrompt(before, after, effectivePrompt);
-			options.onPromptSubmit({ type: 'image', prompt: builtPrompt, files });
+			options.onPromptSubmit({ prompt: builtPrompt, files });
 		} else {
 			const builtPrompt = buildTaskPrompt(before, after, trimmedPrompt);
-			options.onPromptSubmit({ type: 'text', prompt: builtPrompt });
+			options.onPromptSubmit({ prompt: builtPrompt, files: [] });
 		}
 	}, [agentId, files, prompt, deleteNode, editor, options, updateAttributes]);
 
