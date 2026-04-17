@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-export function CardNodeView(): React.JSX.Element {
+function CardNodeViewInner(): React.JSX.Element {
 	const { t } = useTranslation();
 	const {
 		state,
