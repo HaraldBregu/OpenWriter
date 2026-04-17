@@ -618,6 +618,6 @@ const Editor = React.memo(
 		}
 	)
 );
-TextEditor.displayName = 'TextEditor';
+Editor.displayName = 'Editor';
 
-export { TextEditor };
+export { Editor };
