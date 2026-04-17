@@ -1,5 +1,4 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { NodeViewWrapper } from '@tiptap/react';
 import type { NodeViewProps } from '@tiptap/react';
 import { ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -12,12 +11,12 @@ function isImageFile(file: File): boolean {
 	return IMAGE_MIME_PATTERN.test(file.type);
 }
 
-export function Placeholder({
-	editor,
-	node,
-	getPos,
-	extension,
-}: NodeViewProps): React.JSX.Element {
+interface PlaceholderProps {
+	nodeViewProps: NodeViewProps;
+}
+
+export function Placeholder({ nodeViewProps }: PlaceholderProps): React.JSX.Element {
+	const { editor, node, getPos, extension } = nodeViewProps;
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isDragOver, setIsDragOver] = useState(false);
 
@@ -99,7 +98,7 @@ export function Placeholder({
 	);
 
 	return (
-		<NodeViewWrapper contentEditable={false} className="my-4">
+		<div className="my-4">
 			<input
 				ref={fileInputRef}
 				type="file"
@@ -126,6 +125,6 @@ export function Placeholder({
 				<ImageIcon className="h-8 w-8 shrink-0 opacity-60" />
 				<span>Drag &amp; drop an image or click to select</span>
 			</div>
-		</NodeViewWrapper>
+		</div>
 	);
 }
