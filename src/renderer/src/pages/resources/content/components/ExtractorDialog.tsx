@@ -31,9 +31,9 @@ import {
 	EmptyTitle,
 } from '@/components/ui/Empty';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
-import { Image } from '@/components/image/Image';
+import { Image } from '@/components/app/image/Image';
 import { Item, ItemContent, ItemDescription, ItemMedia, ItemTitle } from '@/components/ui/Item';
-import { Pdf } from '@/components/pdf/Pdf';
+import { Pdf } from '@/components/app/pdf/Pdf';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/Resizable';
 import { ScrollArea } from '@/components/ui/ScrollArea';
 
