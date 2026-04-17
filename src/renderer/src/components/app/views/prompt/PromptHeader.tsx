@@ -24,7 +24,8 @@ export function PromptHeader(): React.JSX.Element | null {
 			<div className="flex flex-col gap-2">
 				{selection && (
 					<ItemGroup className="pt-1.5">
-						<div
+						<Item
+							size="xs"
 							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
 							title={selection}
 						>
@@ -40,7 +41,7 @@ export function PromptHeader(): React.JSX.Element | null {
 							>
 								<X className="h-3 w-3" aria-hidden="true" />
 							</button>
-						</div>
+						</Item>
 					</ItemGroup>
 				)}
 				{files.length > 0 && (
