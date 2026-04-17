@@ -8,12 +8,6 @@ interface LayoutProps {
 	readonly id?: string;
 	readonly className?: string;
 	readonly editor: Editor | null;
-	readonly onContinueWithAssistant?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
 	readonly onInsertContent?: () => void;
 	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
@@ -25,7 +19,6 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 			id,
 			className,
 			editor,
-			onContinueWithAssistant,
 			onInsertContent,
 			onImageInsert,
 			children,
