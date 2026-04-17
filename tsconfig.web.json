@@ -27,7 +27,8 @@
 			"@store/*": ["src/renderer/src/store/*"],
 			"@components/*": ["src/renderer/src/components/*"],
 			"@icons/*": ["src/renderer/src/components/icons/*"],
-			"@resources/*": ["resources/*"]
+			"@resources/*": ["resources/*"],
+			"@shared/*": ["src/shared/*"]
 		}
 	}
 }

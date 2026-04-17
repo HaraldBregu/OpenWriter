@@ -2,8 +2,8 @@ import React, { useCallback, useRef, useState } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 import { ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import type { ImagePlaceholderOptions } from '../../../editor/extensions/image-placeholder-extension';
-
+import { ImagePlaceholderOptions } from '../../editor/extensions/image-placeholder-extension';
+ 
 const IMAGE_MIME_ACCEPT = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 const IMAGE_MIME_PATTERN = /^image\/(jpeg|jpg|png|gif|webp|svg\+xml|avif)$/;
 

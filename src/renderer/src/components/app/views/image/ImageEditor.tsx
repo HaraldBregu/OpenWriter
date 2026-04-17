@@ -22,7 +22,6 @@ import 'react-image-crop/dist/ReactCrop.css';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
 import { TooltipProvider } from '@/components/ui/Tooltip';
-import { useImageCanvas } from '../../../editor/hooks/use-image-canvas';
 import { ToolbarButton } from './ToolbarButton';
 import { ResizeControls } from './ResizeControls';
 import { Textarea } from '@/components/ui/Textarea';
@@ -32,8 +31,8 @@ import {
 	DropdownMenuContent,
 	DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
-import { IMAGE_MODELS } from '../../../../../../shared/models';
-import { getProvider } from '../../../../../../shared/providers';
+import { useImageCanvas } from './hooks';
+import { getProvider, IMAGE_MODELS } from '@shared/index';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 const AI_PROCESSING_DELAY_MS = 300;
