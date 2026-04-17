@@ -30,15 +30,14 @@ export const documentsSlice = createSlice({
 			}
 		},
 
-		/** Patch only title, emoji, and updatedAt for an existing document. */
+		/** Patch only title and updatedAt for an existing document. */
 		documentMetadataPatched(
 			state,
-			action: PayloadAction<{ id: string; title: string; emoji?: string; updatedAt: number }>
+			action: PayloadAction<{ id: string; title: string; updatedAt: number }>
 		) {
 			const item = state.items.find((d) => d.id === action.payload.id);
 			if (item) {
 				item.title = action.payload.title;
-				item.emoji = action.payload.emoji;
 				item.updatedAt = action.payload.updatedAt;
 			}
 		},
