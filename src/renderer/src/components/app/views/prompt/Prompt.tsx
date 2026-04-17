@@ -66,7 +66,7 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<Card className="w-full">
+				<Card className="w-full my-2">
 					<PromptHeader />
 					<CardContent>
 						<Textarea
@@ -133,6 +133,23 @@ function PromptContainer(): React.JSX.Element {
 									</DropdownMenuCheckboxItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
+							{isImage && (
+								<FileUploadTrigger
+									render={
+										<Button
+											type="button"
+											variant="outline"
+											size="icon"
+											title={t('assistantNode.addImage', 'Add image')}
+											aria-label={t('assistantNode.addImage', 'Add image')}
+										/>
+									}
+								>
+									<Plus />
+								</FileUploadTrigger>
+							)}
+						</div>
+						<div className="ml-auto flex items-center gap-3">
 							<DropdownMenu modal={false}>
 								<DropdownMenuTrigger
 									render={
@@ -153,7 +170,7 @@ function PromptContainer(): React.JSX.Element {
 									}
 								/>
 								<DropdownMenuContent
-									align="start"
+									align="end"
 									side="top"
 									sideOffset={8}
 									className="w-50 max-h-100"
@@ -174,35 +191,20 @@ function PromptContainer(): React.JSX.Element {
 									))}
 								</DropdownMenuContent>
 							</DropdownMenu>
-							{isImage && (
-								<FileUploadTrigger
-									render={
-										<Button
-											type="button"
-											variant="outline"
-											size="icon"
-											title={t('assistantNode.addImage', 'Add image')}
-											aria-label={t('assistantNode.addImage', 'Add image')}
-										/>
-									}
-								>
-									<Plus />
-								</FileUploadTrigger>
-							)}
+							<Button
+								variant="default"
+								size="icon"
+								className="shrink-0"
+								disabled={isSubmitDisabled}
+								onMouseDown={(e) => e.preventDefault()}
+								onClick={() => {
+									if (!loading) submitRef.current?.();
+								}}
+								aria-label={t('agenticPanel.send', 'Send message')}
+							>
+								{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+							</Button>
 						</div>
-						<Button
-							variant="default"
-							size="icon"
-							className="ml-auto shrink-0"
-							disabled={isSubmitDisabled}
-							onMouseDown={(e) => e.preventDefault()}
-							onClick={() => {
-								if (!loading) submitRef.current?.();
-							}}
-							aria-label={t('agenticPanel.send', 'Send message')}
-						>
-							{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-						</Button>
 					</CardFooter>
 				</Card>
 			</FileUploadDropzone>
