@@ -40,7 +40,6 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 									<Provider
 										editor={editor}
 										containerRef={containerRef}
-										onContinueWithAssistant={onContinueWithAssistant}
 										onInsertContent={onInsertContent}
 										onImageInsert={onImageInsert}
 									>
