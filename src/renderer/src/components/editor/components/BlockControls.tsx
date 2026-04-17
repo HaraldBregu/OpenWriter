@@ -2,12 +2,12 @@ import React, { useCallback, useRef, useState } from 'react';
 import { GripVertical, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useEditorContext } from '../hooks';
+import { useEditor } from '../hooks';
 
 export const GUTTER_WIDTH = 58;
 
 export const BlockControls = React.memo(function BlockControls(): React.JSX.Element {
-	const { editor, containerRef, state: { hoveredBlock } } = useEditorContext();
+	const { editor, containerRef, state: { hoveredBlock } } = useEditor();
 	const [dropState, setDropState] = useState({ top: 0, visible: false });
 	const dragRef = useRef(false);
 	const lastTopRef = useRef(0);
