@@ -277,10 +277,6 @@ export function OptionMenu(): React.JSX.Element {
 				<FileText />
 				<span className="truncate">Insert content</span>
 			</Button>
-			<Button {...itemProps(FIRST_AI_INDEX, runContinueWithAssistant)}>
-				<Sparkles />
-				<span className="truncate">Continue with assistant</span>
-			</Button>
 		</Card>
 	);
 }
