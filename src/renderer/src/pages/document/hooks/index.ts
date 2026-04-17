@@ -9,6 +9,5 @@ export { useDocumentActions } from './use-document-actions';
 export { useDocumentPersistence } from './use-document-persistence';
 export { useDocumentHistory, type HistoryEntry } from './use-document-history';
 export { useImageGeneratorSubmit } from './use-image-generator-submit';
-export { useTextGeneratorSubmit } from './use-text-generator-submit';
 export { useEditor } from './use-editor';
 export type { EditorActions } from './use-editor';
