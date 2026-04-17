@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import type { RefObject } from 'react';
-import type { ContentGeneratorAgentId } from '@/components/editor/components/content-generator-agents';
 import type { TextEditorElement } from '@/components/editor/TextEditor';
+
+type ContentGeneratorAgentId = 'text' | 'image';
 import { subscribeToTask } from '../../../services/task-event-bus';
 import type { TaskSnapshot } from '../../../services/task-event-bus';
 import { buildTaskPrompt, normalizeTaskPromptContext } from '../shared';
