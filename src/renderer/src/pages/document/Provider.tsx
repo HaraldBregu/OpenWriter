@@ -23,7 +23,7 @@ export function Provider({
 		setEditorState(ed);
 	}, []);
 
-	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>(null);
+	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('config');
 	const [animate, setAnimate] = useState(true);
 
 	const toggleSidebar = useCallback((sidebar: Exclude<ActiveSidebar, null>) => {
