@@ -23,7 +23,7 @@ export function PromptHeader(): React.JSX.Element | null {
 		<CardHeader className="space-y-0 py-0 px-3.5">
 			<div className="flex flex-col gap-2">
 				{selection && (
-					<div className="flex items-center gap-2 pt-1.5">
+					<ItemGroup className="pt-1.5">
 						<div
 							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
 							title={selection}
@@ -41,7 +41,7 @@ export function PromptHeader(): React.JSX.Element | null {
 								<X className="h-3 w-3" aria-hidden="true" />
 							</button>
 						</div>
-					</div>
+					</ItemGroup>
 				)}
 				{files.length > 0 && (
 					<div className="flex items-center gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden pt-1.5">
