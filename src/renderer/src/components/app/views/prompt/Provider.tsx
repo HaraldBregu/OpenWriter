@@ -43,8 +43,26 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 				storage.defaultTextModel ??
 				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ??
 				TEXT_MODELS[0],
+			selection: '',
 		})
 	);
+
+	const setSelection = useCallback((value: string) => {
+		dispatch({ type: 'SET_SELECTION', payload: value });
+	}, []);
+
+	useEffect(() => {
+		const emit = (): void => {
+			const { from, to } = editor.state.selection;
+			const text = from === to ? '' : editor.state.doc.textBetween(from, to, ' ');
+			setSelection(text);
+		};
+		emit();
+		editor.on('selectionUpdate', emit);
+		return () => {
+			editor.off('selectionUpdate', emit);
+		};
+	}, [editor, setSelection]);
 
 	const actions = useContentGeneratorActions({
 		dispatch,
