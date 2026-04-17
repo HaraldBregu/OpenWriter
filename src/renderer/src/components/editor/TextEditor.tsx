@@ -611,14 +611,7 @@ const TextEditor = React.memo(
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
-					{editor && (
-						<>
-							<BlockControls />
-							<BlockActions />
-							<BubbleMenu />
-							<OptionMenu />
-						</>
-					)}
+					{editor && <TextEditorContent />}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
