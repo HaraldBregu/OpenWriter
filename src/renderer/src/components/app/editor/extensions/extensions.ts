@@ -64,8 +64,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 			defaultImageModel: handlers.defaultImageModel,
 			onTextModelChange: handlers.onTextModelChange,
 			onImageModelChange: handlers.onImageModelChange,
-			onGenerateTextSubmit: handlers.onGenerateTextSubmit,
-			onGenerateImageSubmit: handlers.onGenerateImageSubmit,
+			onPromptSubmit: handlers.onPromptSubmit,
 		}),
 		Markdown,
 		Placeholder.configure({
