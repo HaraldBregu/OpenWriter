@@ -386,7 +386,6 @@ function PageContent(): ReactElement {
 								externalValueVersion={contentVersion}
 								onChange={handleContentChange}
 								onSelectionChange={handleSelectionChange}
-								onContinueWithAssistant={handleContinueWithAssistant}
 								onPromptSubmit={(payload: PromptSubmitPayload) => {
 									if (payload.files.length > 0) {
 										handleGenerateImageSubmit(payload.prompt, payload.files);
