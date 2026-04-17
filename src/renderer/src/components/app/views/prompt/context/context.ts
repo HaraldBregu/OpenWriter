@@ -20,6 +20,7 @@ export interface ContentGeneratorContextValue {
 	handleAgentChange: (agentId: ContentGeneratorAgentId) => void;
 	handleImageModelChange: (model: ModelInfo) => void;
 	handleTextModelChange: (model: ModelInfo) => void;
+	setSelection: (value: string) => void;
 	addFile: (file: File) => void;
 	removeFile: (index: number) => void;
 	handleFilesChange: (files: File[]) => void;
