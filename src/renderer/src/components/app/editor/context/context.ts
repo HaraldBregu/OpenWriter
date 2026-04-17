@@ -9,12 +9,6 @@ export interface EditorContextValue {
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	setHoveredBlock: (block: HoveredBlock | null) => void;
 	setImageDialogOpen: (open: boolean) => void;
-	onContinueWithAssistant?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
 	onInsertContent?: () => void;
 }
 
