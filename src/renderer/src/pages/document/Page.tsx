@@ -80,7 +80,6 @@ function PageContent(): ReactElement {
 		documentDeletedRef.current = false;
 		setLoaded(false);
 		setTitle('');
-		setEmoji('');
 		setContent('');
 		setDefaultTextModel(undefined);
 		setDefaultImageModel(undefined);
