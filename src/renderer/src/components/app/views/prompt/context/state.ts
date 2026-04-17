@@ -1,5 +1,6 @@
 import type { ModelInfo } from 'src/shared/types';
-import type { ContentGeneratorAgentId } from '../../../../editor/components/content-generator-agents';
+
+type ContentGeneratorAgentId = 'text' | 'image';
 
 export interface ContentGeneratorState {
 	prompt: string;
