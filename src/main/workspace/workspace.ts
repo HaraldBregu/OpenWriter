@@ -183,7 +183,6 @@ export class Workspace implements Disposable {
 
 		type StoredJson = {
 			title?: string;
-			emoji?: string;
 			type?: string;
 			createdAt?: string;
 			updatedAt?: string;
