@@ -2,7 +2,14 @@ import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { PageContainer, PageBody } from '@/components/app/base/Page';
 import { Separator } from '@/components/ui/Separator';
-import { QuickActions, RecentDocuments, TipSection } from './components';
+import {
+	QuickActions,
+	RecentDocuments,
+	TipSection,
+	ResourcesSection,
+	ToolsSection,
+	DebugSection,
+} from './components';
 import Layout from './Layout';
 
 function useGreeting(): string {
