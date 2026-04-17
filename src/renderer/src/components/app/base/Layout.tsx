@@ -330,23 +330,36 @@ function Container({ children }: LayoutProps) {
 							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu>
-									{RESOURCE_SECTION_ORDER.map((sectionId) => {
-										const section = RESOURCE_SECTIONS[sectionId];
-										const Icon = section.icon;
-
-										return (
-											<SidebarMenuItem key={section.id}>
-												<SidebarMenuButton
-													render={<Link to={section.route} />}
-													className="h-9 px-3"
-													isActive={location.pathname === section.route}
-												>
-													<Icon className="h-5 w-5 shrink-0" />
-													<span className="flex-1 truncate">{t(section.titleKey)}</span>
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										);
-									})}
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/resources/files" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/resources/files'}
+										>
+											<File className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.files')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/resources/content" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/resources/content'}
+										>
+											<FileText className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.content')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/resources/data" />}
+											className="h-9 px-3"
+											isActive={location.pathname === '/resources/data'}
+										>
+											<Database className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.data')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
