@@ -113,6 +113,7 @@ export function ContentGeneratorProvider({ nodeViewProps, children }: ProviderPr
 			isSubmitDisabled,
 			submitRef,
 			actions,
+			setSelection,
 			resizeTextarea,
 		]
 	);
