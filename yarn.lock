@@ -5443,11 +5443,6 @@ framer-motion@^11.0.0:
     motion-utils "^11.18.1"
     tslib "^2.4.0"
 
-frimousse@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/frimousse/-/frimousse-0.3.0.tgz#bd8c5dab5e90fc4ba13f1c379211e433e7195717"
-  integrity sha512-kO6LMoKY/cLAYEhXXtqLRaLIE6L/DagpFPrUZaLv3LsUa1/8Iza3HhwZcgN8eZ+weXnhv69eoclNUPohcCa/IQ==
-
 fs-extra@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-1.0.0.tgz#cd3ce5f7e7cb6145883fcae3191e9877f8587950"
