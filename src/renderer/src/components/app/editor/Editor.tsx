@@ -61,12 +61,6 @@ export interface EditorProps {
 	disabled?: boolean;
 	id?: string;
 	streamingContent?: string;
-	onContinueWithAssistant?: (
-		before: string,
-		after: string,
-		cursorPos: number,
-		closeMenu: () => void
-	) => void;
 	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
 	/** Document UUID — needed to save image files into the document folder. */
