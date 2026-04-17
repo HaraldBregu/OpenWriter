@@ -17,8 +17,11 @@ import {
 	useInsertContentDialog,
 	useSidebarVisibility,
 	useEditorInstance,
-	useAssistantTask,
+	useEditor,
+	useTextGeneratorSubmit,
+	useImageGeneratorSubmit,
 } from './hooks';
+import { subscribeToTask, type TaskSnapshot } from '../../services/task-event-bus';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/documents/actions';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
