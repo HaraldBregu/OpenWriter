@@ -1,8 +1,11 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
 import { ContentProvider, useContentContext } from './Provider';
+import { useAppSelector } from '@/store';
+import { selectCurrentWorkspacePath } from '@/store/workspace';
 
 function Bootstrap(): null {
 	const { setFolders, setIsLoading } = useContentContext();
+	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	useEffect(() => {
 		let active = true;
@@ -28,7 +31,7 @@ function Bootstrap(): null {
 		return () => {
 			active = false;
 		};
-	}, [setFolders, setIsLoading]);
+	}, [setFolders, setIsLoading, workspacePath]);
 
 	return null;
 }
