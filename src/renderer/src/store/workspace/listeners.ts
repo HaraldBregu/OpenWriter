@@ -8,6 +8,7 @@ import {
 	loadIndexingInfo,
 	loadProjectName,
 	selectWorkspace,
+	openWorkspacePicker,
 } from './actions';
 
 /**
