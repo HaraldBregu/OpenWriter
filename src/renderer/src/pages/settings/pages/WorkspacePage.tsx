@@ -164,14 +164,29 @@ const WorkspacePage: React.FC = () => {
 
 			{/* Workspace path */}
 			<SettingRow label={t('workspacePage.path')} description={t('workspacePage.pathDescription')}>
-				<span
-					className="font-mono text-xs truncate max-w-xs inline-block text-muted-foreground"
-					title={currentWorkspace ?? t('workspacePage.notSet')}
-					aria-live="polite"
-					aria-atomic="true"
-				>
-					{isLoading ? t('workspacePage.loading') : (currentWorkspace ?? t('workspacePage.notSet'))}
-				</span>
+				<div className="flex items-center gap-2">
+					<span
+						className="font-mono text-xs truncate max-w-xs inline-block text-muted-foreground"
+						title={currentWorkspace ?? t('workspacePage.notSet')}
+						aria-live="polite"
+						aria-atomic="true"
+					>
+						{isLoading
+							? t('workspacePage.loading')
+							: (currentWorkspace ?? t('workspacePage.notSet'))}
+					</span>
+					{!isLoading && currentWorkspace && (
+						<button
+							type="button"
+							onClick={() => window.workspace.openWorkspaceFolder()}
+							className="shrink-0 rounded p-1 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors"
+							aria-label={t('common.openFolder')}
+							title={t('common.openFolder')}
+						>
+							<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
+						</button>
+					)}
+				</div>
 			</SettingRow>
 
 			{!isLoading && currentWorkspace && projectInfo && (
