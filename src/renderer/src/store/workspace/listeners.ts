@@ -52,7 +52,11 @@ startAppListening({
  * relevant reducers already reset the documents/resources state in that case.
  */
 startAppListening({
-	matcher: isAnyOf(handleWorkspaceChanged, selectWorkspace.fulfilled),
+	matcher: isAnyOf(
+		handleWorkspaceChanged,
+		selectWorkspace.fulfilled,
+		openWorkspacePicker.fulfilled
+	),
 	effect: async (_action, { dispatch, getState }) => {
 		const currentPath = (getState() as { workspace: { currentPath: string | null } }).workspace
 			.currentPath;
