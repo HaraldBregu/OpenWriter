@@ -37,3 +37,30 @@ startAppListening({
 		}
 	},
 });
+
+/**
+ * Listener: reload workspace-scoped data whenever the active workspace changes.
+ *
+ * Fires on both paths:
+ *   - `handleWorkspaceChanged` — broadcast from the main process via
+ *     `window.workspace.onChange` (external switch, e.g. another window).
+ *   - `selectWorkspace.fulfilled` — programmatic switch from this renderer
+ *     (Layout picker, WelcomePage).
+ *
+ * Skips reloads when the new `currentPath` is null (cleared/deleted); the
+ * relevant reducers already reset the documents/resources state in that case.
+ */
+startAppListening({
+	matcher: isAnyOf(handleWorkspaceChanged, selectWorkspace.fulfilled),
+	effect: async (_action, { dispatch, getState }) => {
+		const currentPath = (getState() as { workspace: { currentPath: string | null } }).workspace
+			.currentPath;
+		if (!currentPath) return;
+		await Promise.all([
+			dispatch(loadDocuments()),
+			dispatch(loadResources()),
+			dispatch(loadIndexingInfo()),
+			dispatch(loadProjectName()),
+		]);
+	},
+});
