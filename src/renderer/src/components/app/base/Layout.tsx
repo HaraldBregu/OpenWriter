@@ -5,8 +5,19 @@ import { useWorkspaceListener } from '../../../hooks/use-workspace-listener';
 import { useWorkspaceValidation } from '../../../hooks/use-workspace-validation';
 import { useCreateWriting } from '../../../hooks/use-create-writing';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { selectProjectName, selectWorkspaceName } from '../../../store/workspace/selectors';
-import { loadCurrentWorkspace, loadProjectName } from '../../../store/workspace/actions';
+import {
+	selectCurrentWorkspacePath,
+	selectProjectName,
+	selectRecentWorkspaces,
+	selectWorkspaceName,
+} from '../../../store/workspace/selectors';
+import {
+	loadCurrentWorkspace,
+	loadProjectName,
+	loadRecentWorkspaces,
+	openWorkspacePicker,
+	selectWorkspace,
+} from '../../../store/workspace/actions';
 import { selectAllDocuments } from '../../../store/documents/selectors';
 import { documentAdded } from '../../../store/documents/actions';
 import { TitleBar } from '../titlebar/TitleBar';
