@@ -61,9 +61,19 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			enable,
 			disable,
 			closePrompt,
+			clearPromptInput,
 			insertText,
 			insertMarkdownText,
 		}),
-		[showLoading, hideLoading, enable, disable, closePrompt, insertText, insertMarkdownText]
+		[
+			showLoading,
+			hideLoading,
+			enable,
+			disable,
+			closePrompt,
+			clearPromptInput,
+			insertText,
+			insertMarkdownText,
+		]
 	);
 }
