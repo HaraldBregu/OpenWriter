@@ -138,12 +138,17 @@ function Container({ children }: LayoutProps) {
 	const footerUserEmail = 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
 
-	const teams = [
+	type Team = {
+		name: string;
+		plan: string;
+		logo: React.ComponentType<{ className?: string }>;
+	};
+	const teams: readonly Team[] = [
 		{ name: 'OpenWriter', plan: 'Personal', logo: AppIconOpenWriter },
 		{ name: 'Acme Inc.', plan: 'Enterprise', logo: Globe },
 		{ name: 'Research Lab', plan: 'Pro', logo: Database },
-	] as const;
-	const [activeTeam, setActiveTeam] = useState<(typeof teams)[number]>(teams[0]);
+	];
+	const [activeTeam, setActiveTeam] = useState<Team>(teams[0]);
 	const ActiveTeamLogo = activeTeam.logo;
 
 	const accountMenuItems = [
