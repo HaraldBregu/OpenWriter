@@ -105,10 +105,31 @@ function Container({ children }: LayoutProps) {
 	// Monitor workspace folder for external deletion and redirect to Welcome
 	useWorkspaceValidation();
 
-	// Load current workspace and project name on mount
+	// Load current workspace, project name, and recent workspaces on mount
 	useEffect(() => {
 		dispatch(loadCurrentWorkspace()).then(() => {
 			dispatch(loadProjectName());
+		});
+		dispatch(loadRecentWorkspaces());
+	}, [dispatch]);
+
+	const workspaceNameFromPathString = (path: string) => {
+		const parts = path.split(/[/\\]/);
+		return parts[parts.length - 1] || path;
+	};
+
+	const handleSelectWorkspace = useCallback(
+		(path: string) => {
+			if (path !== currentWorkspacePath) {
+				dispatch(selectWorkspace(path));
+			}
+		},
+		[dispatch, currentWorkspacePath]
+	);
+
+	const handleAddWorkspace = useCallback(() => {
+		dispatch(openWorkspacePicker()).then(() => {
+			dispatch(loadRecentWorkspaces());
 		});
 	}, [dispatch]);
 
