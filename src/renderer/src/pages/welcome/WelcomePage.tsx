@@ -56,16 +56,14 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 
 	const handleOpenProject = useCallback(async () => {
 		try {
-			const folderPath = await window.workspace.selectFolder();
-
-			if (folderPath) {
-				await window.workspace.setCurrent(folderPath);
+			const selectedPath = await dispatch(openWorkspacePicker()).unwrap();
+			if (selectedPath) {
 				navigate('/home');
 			}
 		} catch (error) {
 			console.error('Failed to open project:', error);
 		}
-	}, [navigate]);
+	}, [dispatch, navigate]);
 
 	const handleOpenRecentProject = useCallback(
 		async (path: string, exists: boolean) => {
@@ -74,13 +72,13 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 			}
 
 			try {
-				await window.workspace.setCurrent(path);
+				await dispatch(selectWorkspace(path)).unwrap();
 				navigate('/home');
 			} catch (error) {
 				console.error('Failed to open recent project:', error);
 			}
 		},
-		[navigate]
+		[dispatch, navigate]
 	);
 
 	const handleRemoveRecentProject = useCallback(
