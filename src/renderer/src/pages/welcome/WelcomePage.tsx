@@ -9,6 +9,8 @@ import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
+import { useAppDispatch } from '@/store';
+import { selectWorkspace, openWorkspacePicker } from '@/store/workspace/actions';
 
 interface RecentProject {
 	path: string;
