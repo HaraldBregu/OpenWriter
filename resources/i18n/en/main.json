@@ -912,7 +912,8 @@
 		"browseReferenceImages": "Browse reference images",
 		"dropImagesTitle": "Drop images or browse",
 		"dropImagesDescription": "Optional references for style or mood.",
-		"imagePlaceholder": "Describe the image you want to create."
+		"imagePlaceholder": "Describe the image you want to create.",
+		"placeholder": "What can i write for you?"
 	},
 	"imageNode": {
 		"notFound": "Image not found",
