@@ -1,8 +1,8 @@
 import { forwardRef, useRef, type ReactNode } from 'react';
 import type { Editor } from '@tiptap/core';
 import { cn } from '@/lib/utils';
-import { GUTTER_WIDTH } from './components/BlockControls';
 import { Provider } from './Provider';
+import { GUTTER_WIDTH } from './shared/common';
 
 interface LayoutProps {
 	readonly id?: string;

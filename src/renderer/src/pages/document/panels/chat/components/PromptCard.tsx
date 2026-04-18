@@ -246,14 +246,13 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					onAgentChange={onAgentChange}
 				/>
 
+				<div className="flex-1" />
 				<ModelDropdown
 					selectedModel={selectedModel}
 					modelOptions={modelOptions}
 					disabled={disabled}
 					onModelChange={onModelChange}
 				/>
-
-				<div className="flex-1" />
 
 				<Button
 					variant="default"

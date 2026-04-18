@@ -1,13 +1,16 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { GripVertical, Plus } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
-
-export const GUTTER_WIDTH = 58;
+import { GUTTER_WIDTH } from '../shared/common';
 
 export const BlockControls = React.memo(function BlockControls(): React.JSX.Element {
-	const { editor, containerRef, state: { hoveredBlock } } = useEditor();
+	const {
+		editor,
+		containerRef,
+		state: { hoveredBlock },
+	} = useEditor();
 	const [dropState, setDropState] = useState({ top: 0, visible: false });
 	const dragRef = useRef(false);
 	const lastTopRef = useRef(0);
@@ -37,16 +40,6 @@ export const BlockControls = React.memo(function BlockControls(): React.JSX.Elem
 		},
 		[editor, containerRef]
 	);
-
-	// Add a paragraph below the hovered block.
-	const handleAdd = useCallback(() => {
-		if (!hoveredBlock) return;
-		const { pos } = hoveredBlock;
-		const nd = editor.state.doc.nodeAt(pos);
-		const ip = pos + (nd ? nd.nodeSize : 0);
-		editor.chain().focus().insertContentAt(ip, { type: 'paragraph' }).run();
-		editor.commands.focus(ip + 1);
-	}, [editor, hoveredBlock]);
 
 	// Drag-to-reorder via ProseMirror transactions.
 	const handleDragStart = useCallback(
@@ -114,25 +107,14 @@ export const BlockControls = React.memo(function BlockControls(): React.JSX.Elem
 
 	return (
 		<>
-			{/* + and drag-handle buttons */}
 			<div
 				className={cn(
-					'absolute -left-3 z-50 flex items-center gap-1',
+					'absolute -left-2 z-50 flex items-center gap-1',
 					'pointer-events-none opacity-0 transition-opacity duration-150 ease-in',
 					visible && 'pointer-events-auto opacity-100'
 				)}
 				style={{ top: lastTopRef.current - 4 }}
 			>
-				{/* Add block below */}
-				<Button
-					variant="ghost"
-					size="icon"
-					aria-label="Add block below"
-					onClick={handleAdd}
-				>
-					<Plus />
-				</Button>
-
 				{/* Drag to reorder */}
 				<Button
 					variant="ghost"
