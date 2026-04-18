@@ -309,11 +309,11 @@ function Container({ children }: LayoutProps) {
 					</SidebarHeader>
 
 					{/* Nav */}
-					<SidebarContent className="gap-4 py-2">
+					<SidebarContent>
 						{/* Home + New Document + Quick Actions */}
-						<SidebarGroup className="py-0">
+						<SidebarGroup>
 							<SidebarGroupContent>
-								<SidebarMenu>
+								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
 										<SidebarMenuButton
 											render={<Link to="/home" />}
