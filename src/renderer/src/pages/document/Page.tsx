@@ -26,7 +26,7 @@ import {
 	type TaskSnapshot,
 } from '../../services/task-event-bus';
 import { useAppDispatch } from '../../store';
-import { documentMetadataPatched } from '../../store/documents/actions';
+import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
