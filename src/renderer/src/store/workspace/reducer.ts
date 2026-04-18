@@ -62,6 +62,13 @@ export const workspaceSlice = createSlice({
 			state.status = 'ready';
 			state.error = null;
 			state.deletionReason = action.payload.reason;
+			state.resources = [];
+			state.resourcesStatus = 'idle';
+			state.resourcesError = null;
+			state.documentItems = [];
+			state.selectedDocumentId = null;
+			state.documentsStatus = 'idle';
+			state.documentsError = null;
 		},
 
 		/**
