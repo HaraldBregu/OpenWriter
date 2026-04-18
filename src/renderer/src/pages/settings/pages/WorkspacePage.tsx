@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FolderOpen } from 'lucide-react';
 import type { ProjectWorkspaceInfo } from '../../../../../shared/types';
 import { Input } from '@/components/ui/Input';
 import { useAppDispatch } from '@/store';
