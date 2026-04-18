@@ -40,6 +40,35 @@ import { PromptSubmitPayload } from '@shared/index';
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 
+interface SavedImage {
+	readonly fileName: string;
+	readonly filePath: string;
+}
+
+function readFileAsDataUri(file: File): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = (): void => resolve(reader.result as string);
+		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
+		reader.readAsDataURL(file);
+	});
+}
+
+async function saveReferenceImages(documentId: string, files: File[]): Promise<SavedImage[]> {
+	const saved: SavedImage[] = [];
+	for (const file of files) {
+		const dataUri = await readFileAsDataUri(file);
+		const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
+		if (!match) continue;
+		const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
+		const base64 = match[2];
+		const fileName = `${crypto.randomUUID()}.${ext}`;
+		const result = await window.workspace.saveDocumentImage({ documentId, fileName, base64 });
+		saved.push(result);
+	}
+	return saved;
+}
+
 function PageContent(): ReactElement {
 	const { documentId: id } = useDocumentState();
 	const dispatch = useDocumentDispatch();
