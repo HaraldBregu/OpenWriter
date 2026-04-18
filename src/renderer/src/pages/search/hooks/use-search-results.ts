@@ -2,8 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen, LibraryBig } from 'lucide-react';
 import { useAppSelector } from '@/store';
 import { getResourceSection, RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
-import { selectAllDocuments } from '@/store/documents';
-import { selectResources } from '@/store/workspace';
+import { selectAllDocuments, selectResources } from '@/store/workspace';
 import { SEARCH_ACTIONS } from '../constants';
 import { buildSearchSections } from '../services/search-items';
 
