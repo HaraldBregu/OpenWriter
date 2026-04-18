@@ -165,9 +165,7 @@ function Container({ children }: LayoutProps) {
 
 	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
 	const sidebarSubtitle =
-		displayWorkspaceName === 'OpenWriter'
-			? t('appLayout.workspaceLabel', 'Workspace')
-			: displayWorkspaceName;
+		workspaceNameFromPath || t('appLayout.workspaceLabel', 'Workspace');
 	const isLandingPage = location.pathname === '/';
 	const footerUserName = 'User';
 	const footerUserEmail = 'user@example.com';
