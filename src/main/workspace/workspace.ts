@@ -88,12 +88,19 @@ export class Workspace implements Disposable {
 		await this.projectWorkspace.getOrCreate();
 	}
 
-	getRecent(): WorkspaceInfo[] {
-		return this.workspace.getRecent().map((w) => ({
-			...w,
-			data: path.join(w.path, DATA_DIR),
-			resources: path.join(w.path, RESOURCES_DIR),
-		}));
+	async getRecent(): Promise<WorkspaceInfo[]> {
+		const entries = this.workspace.getRecent();
+		return Promise.all(
+			entries.map(async (w) => {
+				const info = await this.projectWorkspace.readAt(w.path);
+				return {
+					...w,
+					data: path.join(w.path, DATA_DIR),
+					resources: path.join(w.path, RESOURCES_DIR),
+					name: info?.name ?? null,
+				};
+			})
+		);
 	}
 
 	clear(): void {
