@@ -36,6 +36,10 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 		editorRef.current?.removeAssistant();
 	}, [editorRef]);
 
+	const clearPromptInput = useCallback(() => {
+		editorRef.current?.clearPromptInput();
+	}, [editorRef]);
+
 	const insertText = useCallback<EditorActions['insertText']>(
 		(text, options) => {
 			editorRef.current?.insertText(text, options);
