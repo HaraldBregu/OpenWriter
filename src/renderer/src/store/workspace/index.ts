@@ -1,6 +1,7 @@
 /** Workspace slice public barrel — re-exports state, actions, reducer, and selectors. */
-// State
+// Types
 export type { WorkspaceState } from './state';
+export type { DocumentItem } from './types';
 export { initialState } from './state';
 
 // Async thunks
@@ -15,6 +16,8 @@ export {
 	removeResources,
 	loadIndexingInfo,
 	loadProjectName,
+	loadDocuments,
+	refreshDocument,
 } from './actions';
 
 // Reducer, slice, and synchronous actions
@@ -27,6 +30,14 @@ export {
 	resourceRemoved,
 	importResourcesRequested,
 	importResourcesCompleted,
+	documentsLoaded,
+	documentAdded,
+	documentUpdated,
+	documentMetadataPatched,
+	documentRemoved,
+	documentSelected,
+	documentsLoadingStarted,
+	documentsLoadingFailed,
 } from './reducer';
 export { default } from './reducer';
 
@@ -48,4 +59,10 @@ export {
 	selectResourcesIsLoading,
 	selectImporting,
 	selectIndexingInfo,
+	selectAllDocuments,
+	selectSelectedDocument,
+	selectSelectedDocumentId,
+	selectDocumentsStatus,
+	selectDocumentsError,
+	selectDocumentById,
 } from './selectors';
