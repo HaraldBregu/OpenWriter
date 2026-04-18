@@ -299,6 +299,9 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	// Shell
 	// -------------------------------------------------------------------------
+	openWorkspaceFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openWorkspaceFolder);
+	},
 	openDataFolder: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDataFolder);
 	},
