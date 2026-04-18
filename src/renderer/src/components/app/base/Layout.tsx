@@ -58,6 +58,7 @@ import {
 	Home,
 	Plus,
 	ScrollText,
+	Sparkles,
 	Sun,
 	Monitor,
 	Moon,
