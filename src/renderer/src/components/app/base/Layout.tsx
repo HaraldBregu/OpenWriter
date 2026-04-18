@@ -309,10 +309,20 @@ function Container({ children }: LayoutProps) {
 
 					{/* Nav */}
 					<SidebarContent className="gap-4 py-2">
-						{/* New Document + Quick Actions */}
+						{/* Home + New Document + Quick Actions */}
 						<SidebarGroup className="py-0">
 							<SidebarGroupContent>
 								<SidebarMenu>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/home" />}
+											className="group/btn h-9 px-3"
+											isActive={location.pathname === '/home'}
+										>
+											<Home className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('menu.home', 'Home')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
 											className="group/btn h-9 px-3"
