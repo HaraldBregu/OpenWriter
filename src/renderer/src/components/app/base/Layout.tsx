@@ -138,6 +138,14 @@ function Container({ children }: LayoutProps) {
 	const footerUserEmail = 'user@example.com';
 	const footerUserInitial = footerUserName.charAt(0).toUpperCase();
 
+	const teams = [
+		{ name: 'OpenWriter', plan: 'Personal', logo: AppIconOpenWriter },
+		{ name: 'Acme Inc.', plan: 'Enterprise', logo: Globe },
+		{ name: 'Research Lab', plan: 'Pro', logo: Database },
+	] as const;
+	const [activeTeam, setActiveTeam] = useState<(typeof teams)[number]>(teams[0]);
+	const ActiveTeamLogo = activeTeam.logo;
+
 	const accountMenuItems = [
 		{
 			value: 'settings',
