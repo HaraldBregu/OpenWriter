@@ -275,7 +275,7 @@ function Container({ children }: LayoutProps) {
 												{t('appLayout.workspaces', 'Workspaces')}
 											</DropdownMenuLabel>
 											{recentWorkspaces.map((workspace, index) => {
-												const name = workspaceNameFromPathString(workspace.path);
+												const name = workspace.name || workspaceNameFromPathString(workspace.path);
 												const isActive = workspace.path === currentWorkspacePath;
 												return (
 													<DropdownMenuItem
