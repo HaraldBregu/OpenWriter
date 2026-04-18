@@ -270,9 +270,9 @@ function PageContent(): ReactElement {
 	);
 
 	const editorActions = useEditor(editorRef);
-	const imageTask = useImageGeneratorSubmit(id);
 
 	const textSessionIdRef = useRef<string | null>(null);
+	const imageSessionIdRef = useRef<string | null>(null);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
 	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<'text' | 'image'>('text');
