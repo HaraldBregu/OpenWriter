@@ -307,8 +307,8 @@ function PageContent(): ReactElement {
 		});
 	}, [assistantActiveAgentId, assistantActiveTaskId, editorActions]);
 
-	const handleGenerateTextSubmit = useCallback(
-		async (prompt: string) => {
+	const handlePromptSubmit = useCallback(
+		async (payload: PromptSubmitPayload) => {
 			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
 				editorActions.hideLoading();
 				editorActions.enable();
@@ -319,17 +319,30 @@ function PageContent(): ReactElement {
 			editorActions.disable();
 
 			try {
-				const resolvedSessionId = textSessionIdRef.current ?? uuidv7();
-				textSessionIdRef.current = resolvedSessionId;
+				const isImage = payload.files.length > 0;
+				const agentId = isImage ? 'image' : 'text';
+				const sessionRef = isImage ? imageSessionIdRef : textSessionIdRef;
+				const resolvedSessionId = sessionRef.current ?? uuidv7();
+				sessionRef.current = resolvedSessionId;
+
+				const referenceImages = isImage ? await saveReferenceImages(id, payload.files) : [];
+				const referenceNote =
+					referenceImages.length > 0
+						? `\n\nReference images saved in the document:\n${referenceImages
+								.map((img) => `- images/${img.fileName}`)
+								.join('\n')}`
+						: '';
+				const prompt = referenceNote ? `${payload.prompt}${referenceNote}` : payload.prompt;
 
 				const metadata = {
-					agentId: 'text' as const,
+					agentId,
 					documentId: id,
 					chatId: resolvedSessionId,
-					referenceImages: [],
+					referenceImages,
 				};
 
-				const ipcResult = await window.task.submit('agent-text', { prompt }, metadata);
+				const taskType = isImage ? 'agent-image-generator' : 'agent-text';
+				const ipcResult = await window.task.submit(taskType, { prompt }, metadata);
 				if (!ipcResult.success) {
 					editorActions.hideLoading();
 					editorActions.enable();
@@ -338,7 +351,7 @@ function PageContent(): ReactElement {
 
 				const taskId = ipcResult.data.taskId;
 				initTaskMetadata(taskId, metadata);
-				setAssistantActiveAgentId('text');
+				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(taskId);
 			} catch {
 				editorActions.hideLoading();
@@ -346,36 +359,6 @@ function PageContent(): ReactElement {
 			}
 		},
 		[assistantIsRunning, id, editorActions]
-	);
-
-	const handleGenerateImageSubmit = useCallback(
-		async (prompt: string, files: File[]) => {
-			if (!id || assistantIsRunning) {
-				editorActions.hideLoading();
-				editorActions.enable();
-				return;
-			}
-
-			editorActions.showLoading();
-			editorActions.disable();
-
-			try {
-				const taskId = await imageTask.submit({ prompt, files });
-
-				if (!taskId) {
-					editorActions.hideLoading();
-					editorActions.enable();
-					return;
-				}
-
-				setAssistantActiveAgentId('image');
-				setAssistantActiveTaskId(taskId);
-			} catch {
-				editorActions.hideLoading();
-				editorActions.enable();
-			}
-		},
-		[assistantIsRunning, id, editorActions, imageTask]
 	);
 
 	const handleHistoryRestore = useCallback(
