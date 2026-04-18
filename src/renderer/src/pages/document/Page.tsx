@@ -281,7 +281,7 @@ function PageContent(): ReactElement {
 
 	const handleGenerateTextSubmit = useCallback(
 		async (prompt: string) => {
-			if (!id || assistantIsRunning) {
+			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
 				editorActions.hideLoading();
 				editorActions.enable();
 				return;
@@ -291,14 +291,25 @@ function PageContent(): ReactElement {
 			editorActions.disable();
 
 			try {
-				const taskId = await submitTextTask(prompt);
+				const resolvedSessionId = textSessionIdRef.current ?? uuidv7();
+				textSessionIdRef.current = resolvedSessionId;
 
-				if (!taskId) {
+				const metadata = {
+					agentId: 'text' as const,
+					documentId: id,
+					chatId: resolvedSessionId,
+					referenceImages: [],
+				};
+
+				const ipcResult = await window.task.submit('agent-text', { prompt }, metadata);
+				if (!ipcResult.success) {
 					editorActions.hideLoading();
 					editorActions.enable();
 					return;
 				}
 
+				const taskId = ipcResult.data.taskId;
+				initTaskMetadata(taskId, metadata);
 				setAssistantActiveAgentId('text');
 				setAssistantActiveTaskId(taskId);
 			} catch {
@@ -306,7 +317,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 			}
 		},
-		[assistantIsRunning, id, editorActions, submitTextTask]
+		[assistantIsRunning, id, editorActions]
 	);
 
 	const handleGenerateImageSubmit = useCallback(
