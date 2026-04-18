@@ -1,7 +1,14 @@
 /** Workspace RTK listener effects — side-effect handlers for workspace actions. */
+import { isAnyOf } from '@reduxjs/toolkit';
 import { startAppListening } from '../listener-middleware';
-import { importResourcesRequested, importResourcesCompleted } from './reducer';
-import { loadResources } from './actions';
+import { importResourcesRequested, importResourcesCompleted, handleWorkspaceChanged } from './reducer';
+import {
+	loadResources,
+	loadDocuments,
+	loadIndexingInfo,
+	loadProjectName,
+	selectWorkspace,
+} from './actions';
 
 /**
  * Listener: when `importResourcesRequested` is dispatched, call the IPC
