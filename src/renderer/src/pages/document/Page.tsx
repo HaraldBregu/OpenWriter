@@ -301,7 +301,9 @@ function PageContent(): ReactElement {
 			}
 
 			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
-				editorActions.closePrompt();
+				// editorActions.closePrompt();
+				editorActions.hideLoading();
+				editorActions.enable();
 				setAssistantActiveTaskId(null);
 			}
 		});
