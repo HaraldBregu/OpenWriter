@@ -253,13 +253,11 @@ function Container({ children }: LayoutProps) {
 												className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 											>
 												<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-													<ActiveTeamLogo className="size-4" />
+													<AppIconOpenWriter className="h-6 w-6" />
 												</div>
 												<div className="grid flex-1 text-left text-sm leading-tight">
-													<span className="truncate font-medium">{activeTeam.name}</span>
-													<span className="truncate text-xs">
-														{activeTeam.name === 'OpenWriter' ? sidebarSubtitle : activeTeam.plan}
-													</span>
+													<span className="truncate font-medium">{displayWorkspaceName}</span>
+													<span className="truncate text-xs">{sidebarSubtitle}</span>
 												</div>
 												<ChevronsUpDown className="ml-auto" />
 											</SidebarMenuButton>
@@ -273,32 +271,35 @@ function Container({ children }: LayoutProps) {
 									>
 										<DropdownMenuGroup>
 											<DropdownMenuLabel className="text-xs text-muted-foreground">
-												{t('appLayout.teams', 'Teams')}
+												{t('appLayout.workspaces', 'Workspaces')}
 											</DropdownMenuLabel>
-											{teams.map((team, index) => {
-												const TeamLogo = team.logo;
+											{recentWorkspaces.map((workspace, index) => {
+												const name = workspaceNameFromPathString(workspace.path);
+												const isActive = workspace.path === currentWorkspacePath;
 												return (
 													<DropdownMenuItem
-														key={team.name}
-														onClick={() => setActiveTeam(team)}
+														key={workspace.path}
+														onClick={() => handleSelectWorkspace(workspace.path)}
 														className="gap-2 p-2"
 													>
 														<div className="flex size-6 items-center justify-center rounded-md border">
-															<TeamLogo className="size-3.5 shrink-0" />
+															<AppIconOpenWriter className="size-3.5 shrink-0" />
 														</div>
-														{team.name}
-														<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+														<span className={isActive ? 'font-medium' : ''}>{name}</span>
+														{index < 9 && (
+															<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+														)}
 													</DropdownMenuItem>
 												);
 											})}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem className="gap-2 p-2">
+										<DropdownMenuItem className="gap-2 p-2" onClick={handleAddWorkspace}>
 											<div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
 												<Plus className="size-4" />
 											</div>
 											<div className="font-medium text-muted-foreground">
-												{t('appLayout.addTeam', 'Add team')}
+												{t('appLayout.addWorkspace', 'Add workspace')}
 											</div>
 										</DropdownMenuItem>
 									</DropdownMenuContent>
