@@ -457,6 +457,18 @@ const Editor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
+					clearPromptInput() {
+						if (!editor || editor.isDestroyed) return;
+						const { doc, tr } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'contentGenerator') {
+								tr.setNodeMarkup(pos, undefined, { ...node.attrs, prompt: '' });
+								return false;
+							}
+							return true;
+						});
+						editor.view.dispatch(tr.setMeta('preventEditorUpdate', true));
+					},
 					splitBlock() {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.splitBlock();
