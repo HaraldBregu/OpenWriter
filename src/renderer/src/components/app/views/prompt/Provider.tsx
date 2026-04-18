@@ -49,6 +49,13 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		dispatch({ type: 'SET_SELECTION', payload: value });
 	}, []);
 
+	const nodePrompt = (node.attrs.prompt as string) ?? '';
+	useEffect(() => {
+		if (state.prompt !== nodePrompt) {
+			dispatch({ type: 'SET_PROMPT', payload: nodePrompt });
+		}
+	}, [nodePrompt, state.prompt]);
+
 	useEffect(() => {
 		const emit = (): void => {
 			const { from, to } = editor.state.selection;
