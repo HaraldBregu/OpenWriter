@@ -18,7 +18,6 @@ import {
 	useSidebarVisibility,
 	useEditorInstance,
 	useEditor,
-	useImageGeneratorSubmit,
 } from './hooks';
 import { v7 as uuidv7 } from 'uuid';
 import {
