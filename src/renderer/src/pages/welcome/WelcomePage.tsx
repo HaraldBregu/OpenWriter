@@ -23,6 +23,7 @@ interface WelcomePageProps {}
 const WelcomePage: React.FC<WelcomePageProps> = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
+	const dispatch = useAppDispatch();
 	const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
 	const deletionReason = useWorkspaceDeletionReason();
 	const clearDeletion = useClearDeletionReason();
