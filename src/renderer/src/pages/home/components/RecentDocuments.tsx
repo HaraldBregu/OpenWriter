@@ -5,7 +5,7 @@ import { FolderOpen, Clock3, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '@/components/ui/Empty';
 import { useAppSelector } from '@/store';
-import { selectAllDocuments } from '@/store/documents';
+import { selectAllDocuments } from '@/store/workspace';
 import { formatRelativeTime } from '../shared/format-time';
 
 const MAX_RECENT = 8;
