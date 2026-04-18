@@ -912,7 +912,8 @@
 		"browseReferenceImages": "Sfoglia immagini di riferimento",
 		"dropImagesTitle": "Trascina immagini o sfoglia",
 		"dropImagesDescription": "Riferimenti facoltativi per stile o atmosfera.",
-		"imagePlaceholder": "Descrivi l'immagine che vuoi creare."
+		"imagePlaceholder": "Descrivi l'immagine che vuoi creare.",
+		"placeholder": "Cosa posso scrivere per te?"
 	},
 	"imageNode": {
 		"notFound": "Immagine non trovata",
