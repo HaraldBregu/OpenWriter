@@ -304,6 +304,7 @@ function PageContent(): ReactElement {
 				// editorActions.closePrompt();
 				editorActions.hideLoading();
 				editorActions.enable();
+				editorActions.clearPromptInput();
 				setAssistantActiveTaskId(null);
 			}
 		});

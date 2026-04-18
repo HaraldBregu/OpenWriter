@@ -87,10 +87,7 @@ function PromptContainer(): React.JSX.Element {
 							placeholder={
 								isImage
 									? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
-									: t(
-											'assistantNode.placeholder',
-											'Ask the assistant to continue, rewrite, or generate from here.'
-										)
+									: t('assistantNode.placeholder', 'What can i write for you?')
 							}
 							rows={1}
 						/>
