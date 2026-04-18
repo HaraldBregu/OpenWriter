@@ -223,6 +223,8 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	// Shell
 	// -------------------------------------------------------------------------
+	/** Open the current workspace root folder in the system file explorer. */
+	openWorkspaceFolder: () => Promise<void>;
 	openDataFolder: () => Promise<void>;
 	openResourcesFolder: () => Promise<void>;
 	openResourcesContentsFolder: () => Promise<void>;
