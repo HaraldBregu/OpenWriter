@@ -268,6 +268,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
 
 	// ---- Shell (IpcResult-wrapped) ----
+	[WorkspaceChannels.openWorkspaceFolder]: { args: []; result: void };
 	[WorkspaceChannels.openDataFolder]: { args: []; result: void };
 	[WorkspaceChannels.openResourcesFolder]: { args: []; result: void };
 	[WorkspaceChannels.openResourcesContentsFolder]: { args: []; result: void };
