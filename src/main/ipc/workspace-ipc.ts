@@ -135,6 +135,15 @@ export class WorkspaceIpc implements IpcModule {
 		// -------------------------------------------------------------------------
 
 		ipcMain.handle(
+			WorkspaceChannels.openWorkspaceFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const currentPath = this.mgr(event, container).getCurrent();
+				if (!currentPath) return;
+				await shell.openPath(currentPath);
+			}, WorkspaceChannels.openWorkspaceFolder)
+		);
+
+		ipcMain.handle(
 			WorkspaceChannels.openDataFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const dataDir = this.mgr(event, container).getDataFolderPath();
