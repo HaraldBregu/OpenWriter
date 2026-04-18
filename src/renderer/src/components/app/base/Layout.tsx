@@ -326,6 +326,16 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
+											render={<Link to="/" />}
+											className="group/btn h-9 px-3"
+											isActive={location.pathname === '/'}
+										>
+											<Sparkles className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('menu.welcome', 'Welcome')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
 											className="group/btn h-9 px-3"
 											onClick={createWriting}
 											disabled={creatingWriting}
