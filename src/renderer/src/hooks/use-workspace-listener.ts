@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useAppDispatch } from '@/store';
 import { handleWorkspaceChanged } from '@/store/workspace/reducer';
-import { loadProjectName } from '@/store/workspace/actions';
 import type { WorkspaceChangedEvent } from '../../../shared/types';
 
 /**
@@ -10,6 +9,10 @@ import type { WorkspaceChangedEvent } from '../../../shared/types';
  *
  * Should be called from a top-level component like AppLayout to ensure
  * the listener is active for the entire app session.
+ *
+ * Side-effects (reloading documents, resources, indexing info, project name)
+ * are handled by the workspace listener middleware reacting to the
+ * `handleWorkspaceChanged` / `selectWorkspace.fulfilled` actions.
  */
 export function useWorkspaceListener(): void {
 	const dispatch = useAppDispatch();
@@ -17,9 +20,6 @@ export function useWorkspaceListener(): void {
 	useEffect(() => {
 		const unsubscribe = window.workspace.onChange((event: WorkspaceChangedEvent) => {
 			dispatch(handleWorkspaceChanged(event));
-			if (event.currentPath) {
-				dispatch(loadProjectName());
-			}
 		});
 
 		return () => {
