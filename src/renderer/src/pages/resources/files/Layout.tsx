@@ -1,9 +1,12 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
 import { Provider } from './Provider';
 import { useContext } from './hooks/use-context';
+import { useAppSelector } from '@/store';
+import { selectCurrentWorkspacePath } from '@/store/workspace';
 
 function Bootstrap(): null {
 	const { setEntries, setIsLoading } = useContext();
+	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	useEffect(() => {
 		let active = true;
@@ -29,7 +32,7 @@ function Bootstrap(): null {
 		return () => {
 			active = false;
 		};
-	}, [setEntries, setIsLoading]);
+	}, [setEntries, setIsLoading, workspacePath]);
 
 	return null;
 }
