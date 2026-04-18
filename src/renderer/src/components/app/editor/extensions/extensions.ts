@@ -70,7 +70,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Placeholder.configure({
 			placeholder: ({ node }) => {
 				if (node.type.name === 'paragraph') {
-					return 'Type `␣` for AI or `/` for commands';
+					return 'Type `space` for AI or `/` for commands';
 				}
 				if (node.type.name === 'heading') {
 					return `Heading ${node.attrs.level}`;
