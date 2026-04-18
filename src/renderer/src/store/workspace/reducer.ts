@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { initialState } from './state';
 import type { WorkspaceState } from './state';
+import type { DocumentItem } from './types';
 import {
 	loadCurrentWorkspace,
 	loadRecentWorkspaces,
@@ -91,6 +92,67 @@ export const workspaceSlice = createSlice({
 		importResourcesCompleted: (state) => {
 			state.importing = false;
 		},
+
+		// -------------------------------------------------------------------
+		// Document item reducers (merged from former documents slice)
+		// -------------------------------------------------------------------
+
+		/** Replace the full list of document items (e.g. after loading from disk). */
+		documentsLoaded(state, action: PayloadAction<DocumentItem[]>) {
+			state.documentItems = action.payload;
+			state.documentsStatus = 'ready';
+			state.documentsError = null;
+		},
+
+		/** Add a new document item to the list. */
+		documentAdded(state, action: PayloadAction<DocumentItem>) {
+			state.documentItems.push(action.payload);
+		},
+
+		/** Update an existing document item by id. */
+		documentUpdated(state, action: PayloadAction<DocumentItem>) {
+			const index = state.documentItems.findIndex((d) => d.id === action.payload.id);
+			if (index !== -1) {
+				state.documentItems[index] = action.payload;
+			}
+		},
+
+		/** Patch only title and updatedAt for an existing document. */
+		documentMetadataPatched(
+			state,
+			action: PayloadAction<{ id: string; title: string; updatedAt: number }>
+		) {
+			const item = state.documentItems.find((d) => d.id === action.payload.id);
+			if (item) {
+				item.title = action.payload.title;
+				item.updatedAt = action.payload.updatedAt;
+			}
+		},
+
+		/** Remove a document item by id. */
+		documentRemoved(state, action: PayloadAction<string>) {
+			state.documentItems = state.documentItems.filter((d) => d.id !== action.payload);
+			if (state.selectedDocumentId === action.payload) {
+				state.selectedDocumentId = null;
+			}
+		},
+
+		/** Set the currently selected document item. */
+		documentSelected(state, action: PayloadAction<string | null>) {
+			state.selectedDocumentId = action.payload;
+		},
+
+		/** Set documents loading status and clear any previous error. */
+		documentsLoadingStarted(state) {
+			state.documentsStatus = 'loading';
+			state.documentsError = null;
+		},
+
+		/** Set documents error status with a message. */
+		documentsLoadingFailed(state, action: PayloadAction<string>) {
+			state.documentsStatus = 'error';
+			state.documentsError = action.payload;
+		},
 	},
 	extraReducers: (builder) => {
 		// loadCurrentWorkspace
@@ -163,6 +225,10 @@ export const workspaceSlice = createSlice({
 				state.resources = [];
 				state.resourcesStatus = 'idle';
 				state.resourcesError = null;
+				state.documentItems = [];
+				state.selectedDocumentId = null;
+				state.documentsStatus = 'idle';
+				state.documentsError = null;
 			})
 			.addCase(clearWorkspace.rejected, (state, action) => {
 				state.status = 'error';
@@ -219,6 +285,14 @@ export const {
 	resourceRemoved,
 	importResourcesRequested,
 	importResourcesCompleted,
+	documentsLoaded,
+	documentAdded,
+	documentUpdated,
+	documentMetadataPatched,
+	documentRemoved,
+	documentSelected,
+	documentsLoadingStarted,
+	documentsLoadingFailed,
 } = workspaceSlice.actions;
 
 export default workspaceSlice.reducer;
