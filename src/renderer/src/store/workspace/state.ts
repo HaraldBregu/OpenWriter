@@ -1,11 +1,13 @@
 /** Workspace slice initial state and state type definition. */
 import type { IndexingInfo, ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
+import type { DocumentItem } from './types';
 
 // ---------------------------------------------------------------------------
 // State type
 // ---------------------------------------------------------------------------
 
 export type ResourcesStatus = 'idle' | 'loading' | 'ready' | 'error';
+export type DocumentsStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface WorkspaceState {
 	currentPath: string | null;
@@ -24,6 +26,11 @@ export interface WorkspaceState {
 	importing: boolean;
 	/** Indexing metadata from the last successful indexing run */
 	indexingInfo: IndexingInfo | null;
+	/** Document items produced inside the workspace (outputs of type 'documents'). */
+	documentItems: DocumentItem[];
+	selectedDocumentId: string | null;
+	documentsStatus: DocumentsStatus;
+	documentsError: string | null;
 }
 
 export type { WorkspaceState as WorkspaceStateType };
@@ -44,4 +51,8 @@ export const initialState: WorkspaceState = {
 	resourcesError: null,
 	importing: false,
 	indexingInfo: null,
+	documentItems: [],
+	selectedDocumentId: null,
+	documentsStatus: 'idle',
+	documentsError: null,
 };
