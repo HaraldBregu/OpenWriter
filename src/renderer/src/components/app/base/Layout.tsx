@@ -55,6 +55,7 @@ import {
 	Info,
 	LogOut,
 	CirclePlus,
+	Home,
 	Plus,
 	ScrollText,
 	Sun,
@@ -286,9 +287,7 @@ function Container({ children }: LayoutProps) {
 															<AppIconOpenWriter className="size-3.5 shrink-0" />
 														</div>
 														<span className={isActive ? 'font-medium' : ''}>{name}</span>
-														{index < 9 && (
-															<DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-														)}
+														{index < 9 && <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>}
 													</DropdownMenuItem>
 												);
 											})}
@@ -358,7 +357,7 @@ function Container({ children }: LayoutProps) {
 									</SidebarGroupLabel>
 									<CollapsibleContent>
 										<SidebarGroupContent>
-											<SidebarMenu className='gap-1'>
+											<SidebarMenu className="gap-1">
 												{documents.map((w) => (
 													<SidebarMenuItem key={w.id}>
 														<SidebarMenuButton
@@ -406,7 +405,7 @@ function Container({ children }: LayoutProps) {
 						<SidebarGroup>
 							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 							<SidebarGroupContent>
-								<SidebarMenu className='gap-1'>
+								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
 										<SidebarMenuButton
 											render={<Link to="/resources/files" />}
@@ -479,7 +478,6 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenu>
 							</SidebarGroupContent>
 						</SidebarGroup>
-						
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
