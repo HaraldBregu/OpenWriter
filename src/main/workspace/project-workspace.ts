@@ -81,6 +81,30 @@ export class ProjectWorkspaceService {
 	}
 
 	/**
+	 * Read `project_workspace.openwriter` for an arbitrary workspace path without
+	 * creating the file if it is missing. Intended for listing recent workspaces
+	 * where we want to show the project name but must not mutate the folder.
+	 *
+	 * Returns `null` if the file does not exist, cannot be read, or contains
+	 * invalid JSON — callers should fall back to the folder basename.
+	 */
+	async readAt(workspacePath: string): Promise<ProjectWorkspaceInfo | null> {
+		const filePath = this.resolveFilePath(workspacePath);
+		if (!fs.existsSync(filePath)) return null;
+		try {
+			return await this.readAndMigrate(filePath, workspacePath);
+		} catch (err) {
+			this.logger?.warn(
+				'ProjectWorkspaceService',
+				`Failed to read project_workspace.openwriter at ${filePath}: ${
+					err instanceof Error ? err.message : String(err)
+				}`
+			);
+			return null;
+		}
+	}
+
+	/**
 	 * Update the `name` field of the project.
 	 *
 	 * @param name - New project name. Must be non-empty, max 255 chars.
