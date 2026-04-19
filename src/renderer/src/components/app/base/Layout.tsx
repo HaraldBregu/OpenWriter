@@ -256,8 +256,13 @@ function Container({ children }: LayoutProps) {
 													<AppIconOpenWriter className="h-6 w-6" />
 												</div>
 												<div className="grid flex-1 text-left text-sm leading-tight">
-													<span className="truncate font-medium">{displayWorkspaceName}</span>
-													<span className="truncate text-xs">{sidebarSubtitle}</span>
+													<span className="truncate font-medium">{sidebarTitle}</span>
+													<span
+														className="truncate text-xs text-muted-foreground"
+														title={sidebarSubtitle}
+													>
+														{sidebarSubtitle}
+													</span>
 												</div>
 												<ChevronsUpDown className="ml-auto" />
 											</SidebarMenuButton>
