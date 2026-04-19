@@ -163,9 +163,9 @@ function Container({ children }: LayoutProps) {
 		onCreated: handleDocumentCreated,
 	});
 
-	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
+	const displayWorkspaceName = workspaceNameFromPath || projectName || 'OpenWriter';
 	const sidebarSubtitle =
-		workspaceNameFromPath || t('appLayout.workspaceLabel', 'Workspace');
+		currentWorkspacePath || projectName || t('appLayout.workspaceLabel', 'Workspace');
 	const isLandingPage = location.pathname === '/';
 	const footerUserName = 'User';
 	const footerUserEmail = 'user@example.com';
