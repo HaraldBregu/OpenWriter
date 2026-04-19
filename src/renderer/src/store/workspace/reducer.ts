@@ -229,6 +229,7 @@ export const workspaceSlice = createSlice({
 			.addCase(clearWorkspace.fulfilled, (state) => {
 				state.currentPath = null;
 				state.projectName = null;
+				state.projectDescription = null;
 				state.status = 'ready';
 				state.resources = [];
 				state.resourcesStatus = 'idle';
