@@ -53,6 +53,7 @@ export {
 	selectWorkspaceIsLoading,
 	selectWorkspaceDeletionReason,
 	selectProjectName,
+	selectProjectDescription,
 	selectResources,
 	selectResourcesStatus,
 	selectResourcesError,
