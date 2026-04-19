@@ -7,6 +7,7 @@ import { useCreateWriting } from '../../../hooks/use-create-writing';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import {
 	selectCurrentWorkspacePath,
+	selectProjectDescription,
 	selectProjectName,
 	selectRecentWorkspaces,
 	selectWorkspaceName,
