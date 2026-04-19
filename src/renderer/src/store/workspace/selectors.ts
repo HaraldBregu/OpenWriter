@@ -24,6 +24,11 @@ export const selectWorkspaceName = createSelector(selectCurrentWorkspacePath, (p
 
 export const selectProjectName = createSelector(selectWorkspaceState, (state) => state.projectName);
 
+export const selectProjectDescription = createSelector(
+	selectWorkspaceState,
+	(state) => state.projectDescription
+);
+
 export const selectRecentWorkspaces = createSelector(
 	selectWorkspaceState,
 	(state) => state.recentWorkspaces
