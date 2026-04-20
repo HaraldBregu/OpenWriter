@@ -211,34 +211,6 @@ function PageContent(): ReactElement {
 		};
 	}, [debouncedMetadataSave, debouncedContentSave]);
 
-	const updateDocumentConfig = useCallback(
-		async (update: { textModel?: string; imageModel?: string }) => {
-			if (!id) return;
-			try {
-				await window.workspace.updateDocumentConfig(id, update);
-			} catch {
-				// silently ignore write errors
-			}
-		},
-		[id]
-	);
-
-	const handleTextModelChange = useCallback(
-		(model: ModelInfo) => {
-			setDefaultTextModel(model);
-			updateDocumentConfig({ textModel: model.modelId });
-		},
-		[updateDocumentConfig]
-	);
-
-	const handleImageModelChange = useCallback(
-		(model: ModelInfo) => {
-			setDefaultImageModel(model);
-			updateDocumentConfig({ imageModel: model.modelId });
-		},
-		[updateDocumentConfig]
-	);
-
 	const editorActions = useEditor(editorRef);
 
 	const textSessionIdRef = useRef<string | null>(null);
