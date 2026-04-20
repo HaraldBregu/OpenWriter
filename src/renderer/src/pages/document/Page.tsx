@@ -328,24 +328,17 @@ function PageContent(): ReactElement {
 				const resolvedSessionId = sessionRef.current ?? uuidv7();
 				sessionRef.current = resolvedSessionId;
 
-				const referenceImages = isImage ? await saveReferenceImages(id, payload.files) : [];
-				const referenceNote =
-					referenceImages.length > 0
-						? `\n\nReference images saved in the document:\n${referenceImages
-								.map((img) => `- images/${img.fileName}`)
-								.join('\n')}`
-						: '';
-				const prompt = referenceNote ? `${payload.prompt}${referenceNote}` : payload.prompt;
-
 				const metadata = {
 					agentId,
 					documentId: id,
 					chatId: resolvedSessionId,
-					referenceImages,
 				};
 
-				const taskType = isImage ? 'agent-image-generator' : 'agent-text';
-				const ipcResult = await window.task.submit(taskType, { prompt }, metadata);
+				const ipcResult = await window.task.submit({
+					type: 'demo',
+					input: { prompt: payload.prompt },
+					metadata,
+				});
 				if (!ipcResult.success) {
 					editorActions.hideLoading();
 					editorActions.enable();
