@@ -14,7 +14,6 @@ import { BlockActions } from './components/BlockActions';
 
 import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import type { ModelInfo } from '../../../../../shared/types';
 import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
