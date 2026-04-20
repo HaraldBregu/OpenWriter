@@ -6,18 +6,10 @@ import type { LoggerService } from '../services/logger';
 import type { WindowContextManager } from '../core/window-context';
 import type { TaskExecutor } from '../task/task-executor';
 import type { TaskOptions, ActiveTask } from '../task/task-descriptor';
-import type { TaskInfo, TaskPriority } from '../../shared/types';
+import type { TaskAction, TaskInfo } from '../../shared/types';
 import type { WorkspaceService } from '../workspace/workspace-service';
 import { registerQuery, registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { TaskChannels } from '../../shared/channels';
-
-/** Input payload for task:submit channel. */
-interface TaskSubmitInput {
-	type: string;
-	input: unknown;
-	options?: TaskOptions;
-	metadata?: Record<string, unknown>;
-}
 
 /** Strip non-serializable fields from ActiveTask for IPC transport. */
 function toTaskInfo(t: ActiveTask): TaskInfo {
