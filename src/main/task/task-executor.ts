@@ -375,7 +375,7 @@ export class TaskExecutor implements Disposable {
 					);
 
 					this.send(windowId, 'task:event', {
-						state: 'progress',
+						state: 'running',
 						taskId,
 						data: { percent, message, detail },
 						error: null,
@@ -388,7 +388,7 @@ export class TaskExecutor implements Disposable {
 				stream: (data: string) => {
 					if (!this.activeTasks.has(taskId)) return;
 					this.send(windowId, 'task:event', {
-						state: 'stream',
+						state: 'running',
 						taskId,
 						data: { data },
 						error: null,
