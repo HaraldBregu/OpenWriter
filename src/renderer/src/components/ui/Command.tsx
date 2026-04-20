@@ -29,11 +29,14 @@ function Command({
 	);
 }
 
-interface CommandDialogProps extends React.ComponentProps<typeof Dialog> {
+interface CommandDialogProps {
+	open?: boolean;
+	onOpenChange?: (open: boolean) => void;
 	title?: string;
 	description?: string;
 	className?: string;
 	showCloseButton?: boolean;
+	children?: React.ReactNode;
 }
 
 function CommandDialog({
