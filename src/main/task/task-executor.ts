@@ -242,39 +242,6 @@ export class TaskExecutor implements Disposable {
 	}
 
 	/**
-	 * Update the priority of a queued task.
-	 * The queue is re-sorted immediately.
-	 * Returns true if the task was found and its priority updated.
-	 */
-	updatePriority(taskId: string, newPriority: TaskPriority): boolean {
-		const task = this.activeTasks.get(taskId);
-		if (!task || task.status !== 'queued') return false;
-
-		task.priority = newPriority;
-
-		const queued = this.queue.find((q) => q.taskId === taskId);
-		if (queued) {
-			queued.priority = newPriority;
-		}
-
-		this.sortQueue();
-
-		this.send(task.windowId, 'task:event', {
-			state: 'priority-changed',
-			taskId,
-			data: { priority: newPriority },
-			error: null,
-			metadata: task.metadata,
-		} satisfies TaskEvent);
-
-		// Task log
-
-		// A higher priority task may now be eligible to run sooner
-		this.drainQueue();
-		return true;
-	}
-
-	/**
 	 * Retrieve a completed/errored/cancelled task by its ID.
 	 * Active (queued/running) tasks are also returned.
 	 * Returns undefined if the task is unknown or its TTL has expired.
