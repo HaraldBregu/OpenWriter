@@ -1,4 +1,4 @@
-import { Square, EyeOff } from 'lucide-react';
+import { Square, EyeOff, ListTree } from 'lucide-react';
 import { getTaskStatusText } from '../../../../shared/types';
 import type { TrackedTaskState } from '@/services/task-store';
 import { StatusBadge } from './StatusBadge';
