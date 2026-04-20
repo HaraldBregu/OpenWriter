@@ -518,6 +518,7 @@ function PageContent(): ReactElement {
 								onSelectionChange={handleSelectionChange}
 								onPromptSubmit={handlePromptSubmit}
 								onInsertContent={handleInsertContent}
+								onOpenChat={handleOpenChat}
 								documentId={id}
 								defaultTextModel={defaultTextModel}
 								defaultImageModel={defaultImageModel}
