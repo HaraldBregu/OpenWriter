@@ -85,6 +85,9 @@ const app: AppApi = {
 	setTrayEnabled: (enabled: boolean) => typedInvokeUnwrap(AppChannels.setTrayEnabled, enabled),
 	getTrayEnabled: () => typedInvokeUnwrap(AppChannels.getTrayEnabled),
 	getPathForFile: (file: File): string => webUtils.getPathForFile(file),
+	onShortcut: (callback: (id: ShortcutId) => void): (() => void) => {
+		return typedOn(AppChannels.shortcut, callback);
+	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
