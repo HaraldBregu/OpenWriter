@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import type { TrackedTaskState } from '@/services/task-store';
-import { formatEventTime } from './debug-helpers';
+import { formatEventTime } from './task-helpers';
 
 interface LogPanelProps {
 	task: TrackedTaskState;
