@@ -253,15 +253,9 @@ export interface InvokeChannelMap {
 	[WindowChannels.getPlatform]: { args: []; result: string };
 
 	// ---- Task (IpcResult-wrapped via registerQuery/registerCommand) ----
-	[TaskChannels.submit]: { args: [payload: TaskSubmitPayload]; result: { taskId: string } };
+	[TaskChannels.submit]: { args: [action: TaskAction]; result: { taskId: string } };
 	[TaskChannels.cancel]: { args: [taskId: string]; result: boolean };
 	[TaskChannels.list]: { args: []; result: TaskInfo[] };
-	[TaskChannels.updatePriority]: {
-		args: [taskId: string, priority: TaskPriority];
-		result: boolean;
-	};
-	[TaskChannels.getResult]: { args: [taskId: string]; result: TaskInfo | null };
-	[TaskChannels.queueStatus]: { args: []; result: TaskQueueStatus };
 
 	// ---- Indexing (IpcResult-wrapped) ----
 	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
