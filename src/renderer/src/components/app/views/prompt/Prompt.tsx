@@ -7,7 +7,7 @@ import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/
 import { usePrompt } from './hooks';
 import { Provider } from './Provider';
 import { PromptHeader } from './PromptHeader';
-import { Paperclip, LoaderCircle, ArrowUp } from 'lucide-react';
+import { Paperclip, LoaderCircle, SendHorizontal } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
