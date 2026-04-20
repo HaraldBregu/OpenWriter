@@ -7,7 +7,7 @@ import {
 	DialogTitle,
 	DialogDescription,
 } from '@/components/ui/Dialog';
-import { formatEventTime } from './debug-helpers';
+import { formatEventTime } from './task-helpers';
 
 interface TaskDataDialogProps {
 	task: TrackedTaskState | null;
