@@ -170,11 +170,11 @@ export function usePromptActions({
 				!trimmedPrompt && files.length > 0
 					? 'Create an image inspired by the uploaded reference images.'
 					: trimmedPrompt;
-			options.onPromptSubmit({ prompt: effectivePrompt, files });
+			options.onPromptSubmit({ prompt: effectivePrompt, files, editor });
 		} else {
-			options.onPromptSubmit({ prompt: trimmedPrompt, files: [] });
+			options.onPromptSubmit({ prompt: trimmedPrompt, files: [], editor });
 		}
-	}, [agentId, files, prompt, deleteNode, options, updateAttributes]);
+	}, [agentId, editor, files, prompt, deleteNode, options, updateAttributes]);
 
 	return useMemo(
 		() => ({
