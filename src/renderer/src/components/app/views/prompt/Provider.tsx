@@ -4,7 +4,7 @@ import { contentGeneratorReducer } from './context/reducer';
 import { DEFAULT_TEXT_MODEL_ID } from 'src/shared/types';
 import { IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
 import { usePromptActions, useTextareaSetup } from './hooks';
-import { ContentGeneratorStorage, PromptOptions } from '@shared/index';
+import { PromptOptions } from '@shared/index';
 import { Context, ContextValue, State } from './context';
 
 type ContentGeneratorAgentId = 'text' | 'image';
