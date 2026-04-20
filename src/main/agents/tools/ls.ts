@@ -1,16 +1,13 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import nodePath from "node:path";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import { resolveToCwd } from "./path-utils.js";
 import { DEFAULT_MAX_BYTES, formatSize, type TruncationResult, truncateHead } from "./truncate.js";
 
-const lsSchema = Type.Object({
-	path: Type.Optional(Type.String({ description: "Directory to list (default: cwd)" })),
-	limit: Type.Optional(Type.Number({ description: "Max entries (default: 500)" })),
-});
-
-export type LsToolInput = Static<typeof lsSchema>;
+export interface LsToolInput {
+	path?: string;
+	limit?: number;
+}
 
 const DEFAULT_LIMIT = 500;
 
@@ -19,7 +16,16 @@ export interface LsToolDetails {
 	entryLimitReached?: number;
 }
 
-export function createLsTool(cwd: string): AgentTool<typeof lsSchema, LsToolDetails | undefined> {
+const lsSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		path: { type: "string", description: "Directory to list (default: cwd)" },
+		limit: { type: "number", description: `Max entries (default: ${DEFAULT_LIMIT})` },
+	},
+};
+
+export function createLsTool(cwd: string): AgentTool<LsToolInput, LsToolDetails | undefined> {
 	return {
 		name: "ls",
 		label: "ls",
@@ -54,7 +60,7 @@ export function createLsTool(cwd: string): AgentTool<typeof lsSchema, LsToolDeta
 			}
 
 			if (results.length === 0) {
-				return { content: [{ type: "text", text: "(empty directory)" }], details: undefined as any };
+				return { content: [{ type: "text", text: "(empty directory)" }], details: undefined };
 			}
 
 			const rawOutput = results.join("\n");
@@ -74,7 +80,7 @@ export function createLsTool(cwd: string): AgentTool<typeof lsSchema, LsToolDeta
 
 			return {
 				content: [{ type: "text", text: output }],
-				details: (Object.keys(details).length > 0 ? details : undefined) as any,
+				details: Object.keys(details).length > 0 ? details : undefined,
 			};
 		},
 	};
