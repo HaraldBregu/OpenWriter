@@ -432,6 +432,12 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
+	const handleOpenChat = useCallback(() => {
+		if (activeSidebar !== 'agentic') {
+			toggleSidebar('agentic');
+		}
+	}, [activeSidebar, toggleSidebar]);
+
 	const handleOpenFolder = useCallback(() => {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
