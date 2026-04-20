@@ -114,8 +114,6 @@ const Editor = React.memo(
 				onInsertContent,
 				onOpenChat,
 				documentId,
-				defaultTextModel,
-				defaultImageModel,
 				onTextModelChange,
 				onImageModelChange,
 				onEditorReady,
