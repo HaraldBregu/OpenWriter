@@ -267,13 +267,10 @@ export interface TaskSubmitPayload<TInput = unknown> {
 export type TaskState =
 	| 'queued'
 	| 'started'
-	| 'running'
 	| 'progress'
 	| 'completed'
 	| 'error'
-	| 'cancelled'
-	| 'stream'
-	| 'priority-changed';
+	| 'cancelled';
 
 export interface TaskInfo {
 	taskId: string;
