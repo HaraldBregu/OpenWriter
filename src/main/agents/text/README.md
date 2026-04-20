@@ -17,7 +17,7 @@ text/
 ```ts
 interface TextAgentInput {
   messages: ChatMessage[];   // system/user/assistant turns
-  providerId: string;        // 'openai' | 'anthropic' | 'google' | 'meta' | 'mistral'
+  providerId: string;        // 'openai' | 'anthropic'
   apiKey: string;
   modelName: string;         // e.g. 'gpt-4o-mini'
   temperature?: number;
