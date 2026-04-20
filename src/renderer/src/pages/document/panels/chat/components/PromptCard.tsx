@@ -126,8 +126,9 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				isDragOver && 'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 			)}
 		>
-			<CardHeader className="space-y-0 p-0 px-3.5">
-				{previewUrls.length > 0 && (
+			{(previewUrls.length > 0 || selectionLabel) && (
+				<CardHeader className="space-y-0 p-0 px-3.5">
+					{previewUrls.length > 0 && (
 					<div
 						role="list"
 						aria-label={t('agenticPanel.attachedImages', 'Attached reference images')}
