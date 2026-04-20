@@ -361,20 +361,9 @@ export interface WorkspaceApi {
 
 /** Background task queue */
 export interface TaskApi {
-	submit: (
-		type: string,
-		input: unknown,
-		metadata?: Record<string, unknown>,
-		options?: TaskSubmitPayload['options']
-	) => Promise<IpcResult<{ taskId: string }>>;
+	submit: (action: TaskAction) => Promise<TaskActionReturn>;
 	cancel: (taskId: string) => Promise<IpcResult<boolean>>;
 	list: () => Promise<IpcResult<TaskInfo[]>>;
-	updatePriority: (
-		taskId: string,
-		priority: 'low' | 'normal' | 'high'
-	) => Promise<IpcResult<boolean>>;
-	getResult: (taskId: string) => Promise<IpcResult<TaskInfo | null>>;
-	queueStatus: () => Promise<IpcResult<TaskQueueStatus>>;
 	onEvent: (callback: (event: TaskEvent) => void) => () => void;
 }
 
