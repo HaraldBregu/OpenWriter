@@ -116,6 +116,7 @@ const Editor = React.memo(
 				streamingContent,
 				onPromptSubmit,
 				onInsertContent,
+				onOpenChat,
 				documentId,
 				defaultTextModel,
 				defaultImageModel,
