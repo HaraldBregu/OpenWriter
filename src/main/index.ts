@@ -11,6 +11,7 @@ import path from 'node:path';
 import { Main } from './main';
 import { Tray } from './tray';
 import { Menu } from './menu';
+import { ShortcutManager } from './shortcuts';
 import { WorkspaceProcessManager } from './workspace-process';
 
 // Register custom scheme before app is ready so the renderer can load local files.
