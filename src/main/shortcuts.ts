@@ -1,21 +1,75 @@
-import type { MenuItemConstructorOptions } from 'electron';
+import type { BrowserWindow } from 'electron';
 import { ShortcutId, SHORTCUT_ACCELERATORS } from '../shared/shortcuts';
+import { AppChannels } from '../shared/channels';
+
+interface KeyCombo {
+	key: string;
+	ctrl: boolean;
+	meta: boolean;
+	shift: boolean;
+	alt: boolean;
+}
+
+interface ShortcutBinding {
+	id: ShortcutId;
+	combo: KeyCombo;
+}
+
+function parseAccelerator(accelerator: string, isMac: boolean): KeyCombo {
+	const parts = accelerator.split('+').map((p) => p.trim().toLowerCase());
+	const key = parts[parts.length - 1];
+	const mods = parts.slice(0, -1);
+
+	const hasCmdOrCtrl = mods.includes('cmdorctrl') || mods.includes('commandorcontrol');
+
+	return {
+		key,
+		ctrl: mods.includes('ctrl') || mods.includes('control') || (!isMac && hasCmdOrCtrl),
+		meta: mods.includes('cmd') || mods.includes('command') || mods.includes('meta') || (isMac && hasCmdOrCtrl),
+		shift: mods.includes('shift'),
+		alt: mods.includes('alt') || mods.includes('option'),
+	};
+}
 
 /**
- * Build hidden MenuItem entries that register accelerators for app-level
- * shortcuts. Hidden items still respond to their accelerator when nested
- * inside the application menu.
+ * Registers app-level keyboard shortcuts on each BrowserWindow via
+ * `before-input-event`. When a registered combo is pressed inside a focused
+ * window, the matching ShortcutId is forwarded to the renderer on
+ * `AppChannels.shortcut`.
  *
- * Shortcuts are declared in `src/shared/shortcuts.ts` so the renderer can
- * import the same IDs and display per-platform labels.
+ * Works in both launcher and workspace-isolated-process modes without
+ * depending on the application menu.
  */
-export function buildShortcutMenuItems(
-	onShortcut: (id: ShortcutId) => void
-): MenuItemConstructorOptions[] {
-	return (Object.keys(SHORTCUT_ACCELERATORS) as ShortcutId[]).map((id) => ({
-		label: id,
-		accelerator: SHORTCUT_ACCELERATORS[id],
-		visible: false,
-		click: (): void => onShortcut(id),
-	}));
+export class ShortcutManager {
+	private readonly bindings: ShortcutBinding[];
+
+	constructor() {
+		const isMac = process.platform === 'darwin';
+		this.bindings = (Object.keys(SHORTCUT_ACCELERATORS) as ShortcutId[]).map((id) => ({
+			id,
+			combo: parseAccelerator(SHORTCUT_ACCELERATORS[id], isMac),
+		}));
+	}
+
+	attach(win: BrowserWindow): void {
+		win.webContents.on('before-input-event', (event, input) => {
+			if (input.type !== 'keyDown') return;
+			const match = this.findMatch(input);
+			if (!match) return;
+			event.preventDefault();
+			win.webContents.send(AppChannels.shortcut, match.id);
+		});
+	}
+
+	private findMatch(input: Electron.Input): ShortcutBinding | undefined {
+		const key = input.key.toLowerCase();
+		return this.bindings.find(
+			({ combo }) =>
+				key === combo.key &&
+				input.control === combo.ctrl &&
+				input.meta === combo.meta &&
+				input.shift === combo.shift &&
+				input.alt === combo.alt
+		);
+	}
 }
