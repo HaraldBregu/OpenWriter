@@ -214,6 +214,8 @@ export const AppChannels = {
 	// Tray
 	setTrayEnabled: 'app:set-tray-enabled',
 	getTrayEnabled: 'app:get-tray-enabled',
+	// Global keyboard shortcuts (main → renderer)
+	shortcut: 'app:shortcut',
 } as const;
 
 // ===========================================================================
