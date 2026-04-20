@@ -22,7 +22,6 @@ import { PromptExtension } from './prompt-extension';
 import { ImageExtension } from './image-extension';
 import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
-import type { ModelInfo } from '../../../../../../shared/types';
 import type { PromptSubmitPayload } from '@shared/index';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
 
