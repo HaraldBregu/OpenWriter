@@ -639,7 +639,9 @@ export function Layout({ children }: LayoutProps) {
 			className="flex-col flex-1 min-h-0 flex h-screen min-w-200 overflow-x-hidden"
 			style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
 		>
-			<Container>{children}</Container>
+			<CommandPaletteProvider>
+				<Container>{children}</Container>
+			</CommandPaletteProvider>
 		</SidebarProvider>
 	);
 }
