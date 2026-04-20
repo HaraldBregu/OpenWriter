@@ -337,7 +337,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 			}
 		},
-		[assistantIsRunning, id, editorActions]
+		[assistantIsRunning, id, editorActions, defaultTextModel, defaultImageModel]
 	);
 
 	const handleHistoryRestore = useCallback(
