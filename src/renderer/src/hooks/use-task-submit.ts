@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from 'react';
 import type { TaskSubmitOptions, TaskPriority } from '../../../shared/types';
 import { getTaskStatusText } from '../../../shared/types';
+import type { TaskAction } from '../../../shared/types';
 import {
 	addTask,
 	getTrackedTask,
