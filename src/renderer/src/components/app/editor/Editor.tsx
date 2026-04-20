@@ -18,7 +18,7 @@ import type { ModelInfo } from '../../../../../shared/types';
 import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
-import { ContentGeneratorStorage, PromptSubmitPayload } from '@shared/index';
+import { PromptSubmitPayload } from '@shared/index';
 
 export interface ImageInsertOptions {
 	src: string;
