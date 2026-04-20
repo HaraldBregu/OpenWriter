@@ -219,6 +219,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 			<CardContent className="p-0">
 				<Textarea
 					ref={textareaRef}
+					data-chat-input=""
 					value={value}
 					onChange={onChange}
 					onKeyDown={onKeyDown}
