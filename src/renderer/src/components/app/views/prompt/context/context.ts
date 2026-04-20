@@ -18,8 +18,6 @@ export interface ContextValue {
 	submitRef: React.RefObject<(() => void) | null>;
 	handlePromptChange: (value: string) => void;
 	handleAgentChange: (agentId: AgentId) => void;
-	handleImageModelChange: (model: ModelInfo) => void;
-	handleTextModelChange: (model: ModelInfo) => void;
 	setSelection: (value: string) => void;
 	addFile: (file: File) => void;
 	removeFile: (index: number) => void;
