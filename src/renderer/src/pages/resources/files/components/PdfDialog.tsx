@@ -323,10 +323,13 @@ export function PdfDialog(): ReactElement | null {
 											className="flex-1 gap-1.5"
 											onClick={async () => {
 												if (activeFile?.path && selectedModel) {
-													const result = await window.task.submit('ocr', {
-														url: activeFile.path,
-														modelId: selectedModel,
-														inputType: 'url',
+													const result = await window.task.submit({
+														type: 'ocr',
+														input: {
+															url: activeFile.path,
+															modelId: selectedModel,
+															inputType: 'url',
+														},
 													});
 													if (!result.success) {
 														console.error('[PdfDialog] OCR submit failed:', result.error.message);
