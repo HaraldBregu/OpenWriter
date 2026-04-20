@@ -66,34 +66,32 @@ function PromptContainer(): React.JSX.Element {
 						/>
 					</CardContent>
 					<CardFooter className="bg-transparent border-none">
-						<div className="ml-auto flex items-center gap-3">
-							<FileUploadTrigger
-								render={
-									<Button
-										type="button"
-										variant="outline"
-										size="icon"
-										title={t('assistantNode.addAttachment', 'Add attachment')}
-										aria-label={t('assistantNode.addAttachment', 'Add attachment')}
-									/>
-								}
-							>
-								<Paperclip />
-							</FileUploadTrigger>
-							<Button
-								variant="default"
-								className="shrink-0"
-								disabled={isSubmitDisabled}
-								onMouseDown={(e) => e.preventDefault()}
-								onClick={() => {
-									if (!loading) submitRef.current?.();
-								}}
-								aria-label={t('agenticPanel.submit', 'Submit')}
-							>
-								{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
-								<span>{t('agenticPanel.submit', 'Submit')}</span>
-							</Button>
-						</div>
+						<FileUploadTrigger
+							render={
+								<Button
+									type="button"
+									variant="outline"
+									size="icon"
+									title={t('assistantNode.addAttachment', 'Add attachment')}
+									aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+								/>
+							}
+						>
+							<Paperclip />
+						</FileUploadTrigger>
+						<Button
+							variant="default"
+							className="ml-auto shrink-0"
+							disabled={isSubmitDisabled}
+							onMouseDown={(e) => e.preventDefault()}
+							onClick={() => {
+								if (!loading) submitRef.current?.();
+							}}
+							aria-label={t('agenticPanel.submit', 'Submit')}
+						>
+							{loading ? <LoaderCircle className="animate-spin" /> : <SendHorizontal />}
+							<span>{t('agenticPanel.submit', 'Submit')}</span>
+						</Button>
 					</CardFooter>
 				</Card>
 			</FileUploadDropzone>
