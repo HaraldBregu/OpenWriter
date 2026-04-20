@@ -115,6 +115,7 @@ export type {
 	CustomThemeInfo,
 	Theme,
 };
+export type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------
 // API namespace interfaces
