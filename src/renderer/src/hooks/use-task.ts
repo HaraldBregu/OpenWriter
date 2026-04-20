@@ -148,12 +148,13 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			let resolvedTaskId: string;
 
 			try {
-				const ipcResult = await window.task.submit(
+				const action: TaskAction = {
 					type,
-					inputOverride ?? inputRef.current,
+					input: inputOverride ?? inputRef.current,
 					metadata,
-					mergedOptions
-				);
+					options: mergedOptions,
+				};
+				const ipcResult = await window.task.submit(action);
 
 				if (!ipcResult.success) {
 					runningRef.current = false;
