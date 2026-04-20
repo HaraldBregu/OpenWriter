@@ -64,6 +64,12 @@ function extractFilePathFromArgs(args: string[]): string | null {
 	return null;
 }
 
+const shortcutManager = new ShortcutManager();
+
+app.on('browser-window-created', (_event, win) => {
+	shortcutManager.attach(win);
+});
+
 const mainWindow = new Main(appState, windowFactory, windowContextManager);
 
 const trayManager = new Tray({
