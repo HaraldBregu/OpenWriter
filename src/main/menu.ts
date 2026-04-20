@@ -1,15 +1,12 @@
 import { app, BrowserWindow, Menu as ElectronMenu } from 'electron';
 import { loadTranslations } from './i18n';
 import type { ThemeMode } from '../shared/types';
-import type { ShortcutId } from '../shared/shortcuts';
-import { buildShortcutMenuItems } from './shortcuts';
 
 interface MenuManagerCallbacks {
 	onLanguageChange: (lng: string) => void;
 	onThemeChange: (theme: ThemeMode) => void;
 	onNewWindow: () => void;
 	onNewWorkspace: () => void;
-	onShortcut: (id: ShortcutId) => void;
 }
 
 export class Menu {
