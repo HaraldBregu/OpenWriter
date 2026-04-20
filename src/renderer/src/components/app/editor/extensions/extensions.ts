@@ -56,8 +56,6 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		SearchExtension,
 		SelectionMarkerExtension,
 		PromptExtension.configure({
-			onTextModelChange: handlers.onTextModelChange,
-			onImageModelChange: handlers.onImageModelChange,
 			onPromptSubmit: handlers.onPromptSubmit,
 		}),
 		Markdown,
