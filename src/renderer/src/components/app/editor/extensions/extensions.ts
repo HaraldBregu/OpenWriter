@@ -27,8 +27,6 @@ import type { PromptSubmitPayload } from '@shared/index';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
 
 export interface ExtensionHandlers {
-	defaultTextModel?: ModelInfo;
-	defaultImageModel?: ModelInfo;
 	onTextModelChange?: (model: ModelInfo) => void;
 	onImageModelChange?: (model: ModelInfo) => void;
 	onPromptSubmit: (payload: PromptSubmitPayload) => void;
