@@ -1,3 +1,3 @@
-export { CommandModalProvider } from './CommandModalProvider';
-export { useCommandModal } from './CommandModalContext';
-export type { CommandModalId } from './CommandModalContext';
+export { CommandModalProvider } from './provider/CommandModalProvider';
+export { useCommandModal } from './context/CommandModalContext';
+export type { CommandModalId } from './context/CommandModalContext';

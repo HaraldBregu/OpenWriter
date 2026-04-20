@@ -9,9 +9,9 @@ import {
 	CommandItem,
 	CommandList,
 } from '@/components/ui/Command';
-import { useAppSelector } from '../../../store';
-import { selectAllDocuments } from '../../../store/workspace';
-import type { CommandModalProps } from './command-modal-registry';
+import { useAppSelector } from '../../../../store';
+import { selectAllDocuments } from '../../../../store/workspace';
+import type { CommandModalProps } from '../registry/command-modal-registry';
 
 export function DocumentCommandModal({ open, onOpenChange }: CommandModalProps) {
 	const { t } = useTranslation();

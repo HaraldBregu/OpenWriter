@@ -3,11 +3,11 @@ import {
 	CommandModalContext,
 	type CommandModalContextValue,
 	type CommandModalId,
-} from './CommandModalContext';
+} from '../context/CommandModalContext';
 import {
 	COMMAND_MODAL_DEFINITIONS,
 	SHORTCUT_TO_COMMAND_MODAL,
-} from './command-modal-registry';
+} from '../registry/command-modal-registry';
 
 interface CommandModalProviderProps {
 	children: ReactNode;

@@ -1,7 +1,7 @@
 import type { ComponentType } from 'react';
-import { ShortcutId } from '../../../../../shared/shortcuts';
-import type { CommandModalId } from './CommandModalContext';
-import { DocumentCommandModal } from './DocumentCommandModal';
+import { ShortcutId } from '../../../../../../shared/shortcuts';
+import type { CommandModalId } from '../context/CommandModalContext';
+import { DocumentCommandModal } from '../modals/DocumentCommandModal';
 
 export interface CommandModalProps {
 	open: boolean;
