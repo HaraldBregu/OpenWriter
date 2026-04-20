@@ -88,6 +88,16 @@ export function bootstrapServices(): BootstrapResult {
 	container.register('modelResolver', modelResolver);
 	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
+	// Agent registry -- feature agents (text, image, rag, ocr).
+	// Each agent is a strategy object registered by type; add new agents by
+	// dropping a folder under src/main/agents and registering it here.
+	const agentRegistry = new AgentRegistry();
+	agentRegistry.register(new TextAgent());
+	agentRegistry.register(new ImageAgent());
+	agentRegistry.register(new RagAgent());
+	agentRegistry.register(new OcrAgent());
+	container.register('agentRegistry', agentRegistry);
+
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
