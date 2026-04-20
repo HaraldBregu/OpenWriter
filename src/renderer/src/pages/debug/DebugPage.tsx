@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Bug } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@components/ui/Tabs';
-import { TasksTab } from './TasksTab';
+import { TasksTab } from './task/TasksTab';
 import { ReduxStateTab } from './ReduxStateTab';
 
 type DebugTab = 'tasks' | 'redux';
