@@ -86,23 +86,24 @@ function ensureListening(): void {
 			case 'started':
 				next = { ...prev, status: 'started', ...metadataOverride };
 				break;
-			case 'progress':
-				next = {
-					...prev,
-					status: 'running',
-					streamedContent: '',
-					...metadataOverride,
-				};
-				break;
-			case 'stream': {
-				const streamData = dataField<string>(event.data, 'data') ?? '';
-				next = {
-					...prev,
-					status: 'running',
-					streamedContent: streamData,
-					content: prev.content + streamData,
-					...metadataOverride,
-				};
+			case 'running': {
+				const streamData = dataField<string>(event.data, 'data');
+				if (typeof streamData === 'string' && streamData.length > 0) {
+					next = {
+						...prev,
+						status: 'running',
+						streamedContent: streamData,
+						content: prev.content + streamData,
+						...metadataOverride,
+					};
+				} else {
+					next = {
+						...prev,
+						status: 'running',
+						streamedContent: '',
+						...metadataOverride,
+					};
+				}
 				break;
 			}
 			case 'completed': {
