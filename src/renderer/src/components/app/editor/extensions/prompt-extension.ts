@@ -13,10 +13,7 @@ declare module '@tiptap/core' {
 	}
 }
 
-export const PromptExtension = Node.create<
-	PromptOptions,
-	ContentGeneratorStorage
->({
+export const PromptExtension = Node.create<PromptOptions>({
 	name: 'contentGenerator',
 
 	group: 'block',
@@ -29,18 +26,7 @@ export const PromptExtension = Node.create<
 
 	addOptions() {
 		return {
-			defaultTextModel: undefined,
-			defaultImageModel: undefined,
-			onTextModelChange: undefined,
-			onImageModelChange: undefined,
 			onPromptSubmit: () => {},
-		};
-	},
-
-	addStorage() {
-		return {
-			defaultTextModel: this.options.defaultTextModel,
-			defaultImageModel: this.options.defaultImageModel,
 		};
 	},
 
