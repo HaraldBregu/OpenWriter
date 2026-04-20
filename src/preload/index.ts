@@ -9,6 +9,7 @@ import {
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type { Service, ThemeMode, WorkspaceInfo, DocumentConfig } from '../shared/types';
+import type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
