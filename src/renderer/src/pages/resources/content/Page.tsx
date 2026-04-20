@@ -137,10 +137,13 @@ function PageContent(): ReactElement {
 
 		const { filePath, modelId } = payload;
 		if (!filePath || !modelId) return;
-		const result = await window.task.submit('ocr', {
-			url: filePath,
-			modelId,
-			inputType: 'url',
+		const result = await window.task.submit({
+			type: 'ocr',
+			input: {
+				url: filePath,
+				modelId,
+				inputType: 'url',
+			},
 		});
 		if (!result.success) {
 			console.error('[ContentPage] OCR submit failed:', result.error.message);
