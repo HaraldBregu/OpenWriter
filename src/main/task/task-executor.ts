@@ -325,10 +325,6 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'running';
-		task.metadata = withTaskStatusText(
-			task.metadata,
-			getTaskStatusText(task.metadata) ?? TASK_STATUS_TEXT.RUNNING
-		);
 		task.startedAt = Date.now();
 
 		// Set up timeout if specified
