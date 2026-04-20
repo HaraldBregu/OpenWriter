@@ -97,9 +97,12 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 
 	const handleIndex = useCallback(() => {
 		if (!workspacePath || indexing) return;
-		window.task.submit('index-resources', {
-			workspacePath,
-			resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
+		window.task.submit({
+			type: 'index-resources',
+			input: {
+				workspacePath,
+				resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
+			},
 		});
 	}, [indexing, workspacePath]);
 
