@@ -159,9 +159,9 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				</Popover>
 			</div>
 
-			<Separator orientation="horizontal" className="h-px my-0.5" />
+			<Separator orientation="horizontal" className="my-0.5" />
 
-			<div className="flex flex-row gap-0.5">
+			<div className="flex flex-row items-center gap-0.5">
 				<Button
 					variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
 					size="icon"
