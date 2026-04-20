@@ -355,11 +355,6 @@ export class TaskExecutor implements Disposable {
 					// Don't emit progress if task is already done
 					if (!this.activeTasks.has(taskId)) return;
 
-					task.metadata = withTaskStatusText(
-						task.metadata,
-						message ?? getTaskStatusText(task.metadata) ?? TASK_STATUS_TEXT.RUNNING
-					);
-
 					this.send(windowId, 'task:event', {
 						state: 'running',
 						taskId,
