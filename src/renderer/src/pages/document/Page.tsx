@@ -298,9 +298,30 @@ function PageContent(): ReactElement {
 				const resolvedSessionId = sessionRef.current ?? uuidv7();
 				sessionRef.current = resolvedSessionId;
 
+				const model = isImage ? defaultImageModel : defaultTextModel;
+				if (!model) {
+					editorActions.hideLoading();
+					editorActions.enable();
+					return;
+				}
+
+				const agentInput = isImage
+					? {
+							prompt: payload.prompt,
+							providerId: model.providerId,
+							modelName: model.modelId,
+						}
+					: {
+							messages: [{ role: 'user' as const, content: payload.prompt }],
+							providerId: model.providerId,
+							modelName: model.modelId,
+							streaming: true,
+						};
+
 				const ipcResult = await window.task.submit({
-					type: 'demo',
-					input: { prompt: payload.prompt },
+					type: 'agent',
+					input: { agentType: agentId, input: agentInput },
+					metadata: { sessionId: resolvedSessionId },
 				});
 				if (!ipcResult.success) {
 					editorActions.hideLoading();
