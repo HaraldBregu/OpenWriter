@@ -1,6 +1,5 @@
 export {
 	buildChatTaskPrompt,
-	buildTaskPrompt,
 	getSelectedEditorText,
 	normalizeTaskPromptContext,
 	stripTaskPromptMarkers,
