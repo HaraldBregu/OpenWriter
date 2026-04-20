@@ -95,6 +95,7 @@ export function TasksTab() {
 										onSelect={() => handleSelect(task.taskId)}
 										onCancel={() => cancel(task.taskId)}
 										onHide={() => handleHide(task.taskId)}
+										onViewData={() => setDataDialogId(task.taskId)}
 									/>
 								))}
 							</tbody>
