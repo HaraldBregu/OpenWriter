@@ -69,9 +69,9 @@ export class TaskManagerIpc implements IpcModule {
 					: undefined;
 
 			const metadata =
-				payload.metadata !== undefined || workspacePath !== undefined
+				action.metadata !== undefined || workspacePath !== undefined
 					? {
-							...(payload.metadata ?? {}),
+							...(action.metadata ?? {}),
 							...(workspacePath !== undefined ? { workspacePath } : {}),
 						}
 					: undefined;
@@ -84,15 +84,15 @@ export class TaskManagerIpc implements IpcModule {
 			// can resolve window-scoped services and still retain the workspace
 			// path if the workspace facade is not yet available.
 			const input =
-				typeof payload.input === 'object' && payload.input !== null
+				typeof action.input === 'object' && action.input !== null
 					? {
-							...(payload.input as Record<string, unknown>),
+							...(action.input as Record<string, unknown>),
 							windowId,
 							...(workspacePath !== undefined ? { workspacePath } : {}),
 						}
-					: payload.input;
+					: action.input;
 
-			const taskId = await executor.submit(payload.type, input, options);
+			const taskId = await executor.submit(action.type, input, options);
 			return { taskId };
 		});
 
