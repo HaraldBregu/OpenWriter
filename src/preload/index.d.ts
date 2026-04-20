@@ -173,6 +173,8 @@ export interface AppApi {
 	getTrayEnabled: () => Promise<boolean>;
 	/** Resolve the absolute filesystem path for a File from a native drag/drop or <input type="file">. */
 	getPathForFile: (file: File) => string;
+	/** Subscribe to app-level keyboard shortcut events emitted from the main process. */
+	onShortcut: (callback: (id: ShortcutId) => void) => () => void;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
