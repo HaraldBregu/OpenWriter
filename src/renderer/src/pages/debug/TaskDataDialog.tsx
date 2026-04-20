@@ -34,19 +34,28 @@ export function TaskDataDialog({ task, open, onOpenChange }: TaskDataDialogProps
 							{t('debug.noEventsYet')}
 						</p>
 					) : (
-						[...task.events].reverse().map((ev, i) => (
-							<div key={i} className="rounded border bg-background p-2 text-xs">
-								<div className="flex items-center justify-between mb-1 gap-2">
-									<span className="font-medium shrink-0">{ev.state}</span>
-									<span className="text-muted-foreground shrink-0">
-										{formatEventTime(ev.receivedAt)}
-									</span>
+						[...task.events].reverse().map((ev, i) => {
+							const event = {
+								state: ev.state,
+								taskId: ev.data.taskId,
+								data: ev.data.data,
+								error: ev.data.error,
+								metadata: ev.data.metadata,
+							};
+							return (
+								<div key={i} className="rounded border bg-background p-2 text-xs">
+									<div className="flex items-center justify-between mb-1 gap-2">
+										<span className="font-medium shrink-0">{ev.state}</span>
+										<span className="text-muted-foreground shrink-0">
+											{formatEventTime(ev.receivedAt)}
+										</span>
+									</div>
+									<pre className="text-muted-foreground overflow-x-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed">
+										{JSON.stringify(event, null, 2)}
+									</pre>
 								</div>
-								<pre className="text-muted-foreground overflow-x-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed">
-									{JSON.stringify(ev.data, null, 2)}
-								</pre>
-							</div>
-						))
+							);
+						})
 					)}
 				</div>
 			</DialogContent>
