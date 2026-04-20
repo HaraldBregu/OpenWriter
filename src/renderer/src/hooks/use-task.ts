@@ -247,7 +247,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			result,
 			submit,
 			cancel,
-			updatePriority,
 			reset,
 		]
 	);
