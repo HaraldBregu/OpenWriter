@@ -1,5 +1,5 @@
 import type { TaskState } from '@/services/task-store';
-import { STATUS_CONFIG } from './debug-constants';
+import { STATUS_CONFIG } from './task-constants';
 
 export function StatusBadge({ status }: { status: TaskState }) {
 	const cfg = STATUS_CONFIG[status] ?? {
