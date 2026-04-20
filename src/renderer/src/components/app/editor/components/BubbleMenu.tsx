@@ -194,7 +194,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				>
 					<Heading3 className="h-3.5 w-3.5" />
 				</Button>
-				<Separator orientation="vertical" className="w-px mx-0.5" />
+				<Separator orientation="vertical" className="mx-0.5" />
 				<Button
 					variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
 					size="icon"
