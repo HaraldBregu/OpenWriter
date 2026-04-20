@@ -26,10 +26,6 @@ import { formatFileSize, getFileExtension, getFileNameWithoutExtension } from '.
 const PROVIDER_COLORS: Record<string, string> = {
 	openai: 'bg-green-600',
 	anthropic: 'bg-amber-700',
-	google: 'bg-blue-600',
-	meta: 'bg-blue-500',
-	mistral: 'bg-orange-500',
-	amazon: 'bg-yellow-600',
 };
 
 function ProviderIcon({ providerId }: { providerId: ProviderId }) {
