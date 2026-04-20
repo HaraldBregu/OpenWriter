@@ -434,6 +434,10 @@ function PageContent(): ReactElement {
 
 	const handleOpenChat = useCallback(() => {
 		setActiveSidebar('agentic');
+		requestAnimationFrame(() => {
+			const el = document.querySelector<HTMLTextAreaElement>('[data-chat-input]');
+			el?.focus();
+		});
 	}, [setActiveSidebar]);
 
 	const handleOpenFolder = useCallback(() => {
