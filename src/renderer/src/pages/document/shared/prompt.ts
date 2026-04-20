@@ -67,19 +67,3 @@ export function normalizeTaskPromptContext(
 	};
 }
 
-export function buildTaskPrompt(before: string, after: string, input: string): string {
-	const prompt = input.trim();
-	const sections: string[] = [];
-
-	if (before.length > 0) {
-		sections.push(before);
-	}
-
-	sections.push(`${TASK_PROMPT_MARKER} ${prompt} ${TASK_PROMPT_MARKER}`);
-
-	if (after.length > 0) {
-		sections.push(after);
-	}
-
-	return sections.join('\n\n');
-}
