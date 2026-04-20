@@ -8,3 +8,4 @@ export * from './file-type-validator';
 export * from './models';
 export * from './providers';
 export * from './prompt';
+export * from './shortcuts';
