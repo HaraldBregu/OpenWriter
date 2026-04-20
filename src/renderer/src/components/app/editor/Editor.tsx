@@ -64,6 +64,7 @@ export interface EditorProps {
 	streamingContent?: string;
 	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
+	onOpenChat?: () => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Default text model loaded from document config. */
