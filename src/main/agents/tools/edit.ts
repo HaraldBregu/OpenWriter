@@ -60,14 +60,14 @@ function prepareEditArguments(input: unknown): EditToolInput {
 			/* leave as-is; validation below will surface the issue */
 		}
 	}
-	const legacy = args as EditToolInput & { oldText?: unknown; newText?: unknown };
+	const legacy = args as Record<string, unknown> & { oldText?: unknown; newText?: unknown; edits?: unknown };
 	if (typeof legacy.oldText === "string" && typeof legacy.newText === "string") {
 		const edits = Array.isArray(legacy.edits) ? [...legacy.edits] : [];
 		edits.push({ oldText: legacy.oldText, newText: legacy.newText });
 		const { oldText: _o, newText: _n, ...rest } = legacy;
-		return { ...rest, edits } as EditToolInput;
+		return { ...rest, edits } as unknown as EditToolInput;
 	}
-	return args as EditToolInput;
+	return args as unknown as EditToolInput;
 }
 
 export function createEditTool(cwd: string): AgentTool<EditToolInput, undefined> {
