@@ -53,7 +53,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 		<Card
 			ref={menuRef}
 			size="sm"
-			className={cn('flex-col gap-1! p-2! z-50')}
+			className={cn('flex-col gap-1! p-2! z-10')}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<div className="flex flex-row items-center gap-0.5">
@@ -104,12 +104,11 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 						}
 					/>
 					<PopoverContent
-						side="top"
+						side="bottom"
 						align="end"
-						className="w-56 p-1"
-						style={{ zIndex: 9999 }}
+						className="w-56 p-1 z-150!"
 					>
-						<div className="flex flex-col gap-0.5">
+						<div className="flex flex-col gap-0.5 z-150!">
 							<Button
 								variant="ghost"
 								size="sm"
