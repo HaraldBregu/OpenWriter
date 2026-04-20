@@ -130,75 +130,75 @@ const PromptCard: React.FC<PromptCardProps> = ({
 			{(previewUrls.length > 0 || selectionLabel) && (
 				<CardHeader className="space-y-0 p-0 px-3.5">
 					{previewUrls.length > 0 && (
-					<div
-						role="list"
-						aria-label={t('agenticPanel.attachedImages', 'Attached reference images')}
-						className="flex items-center gap-2 overflow-x-auto pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-					>
-						{previewUrls.map((url, index) => {
-							const fileName = fileNames[index] ?? '';
-							return (
-								<div key={url} role="listitem" className="group/thumb relative shrink-0">
-									<div className="h-14 w-14 overflow-hidden rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]">
-										<img src={url} alt={fileName} className="h-full w-full object-cover" />
+						<div
+							role="list"
+							aria-label={t('agenticPanel.attachedImages', 'Attached reference images')}
+							className="flex items-center gap-2 overflow-x-auto pb-1 pt-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+						>
+							{previewUrls.map((url, index) => {
+								const fileName = fileNames[index] ?? '';
+								return (
+									<div key={url} role="listitem" className="group/thumb relative shrink-0">
+										<div className="h-14 w-14 overflow-hidden rounded-xl border border-border/70 bg-muted/30 dark:border-white/12 dark:bg-white/[0.04]">
+											<img src={url} alt={fileName} className="h-full w-full object-cover" />
+										</div>
+										<button
+											type="button"
+											data-index={index}
+											className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
+											onMouseDown={(e) => e.preventDefault()}
+											onClick={onRemoveImage}
+											aria-label={
+												fileName
+													? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
+															name: fileName,
+														})
+													: t('assistantNode.removeImage', 'Remove image')
+											}
+										>
+											<X className="h-2.5 w-2.5" aria-hidden="true" />
+										</button>
 									</div>
+								);
+							})}
+							<button
+								type="button"
+								role="listitem"
+								className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
+								disabled={disabled}
+								onMouseDown={(e) => e.preventDefault()}
+								onClick={onOpenFilePicker}
+								aria-label={t('assistantNode.addImage', 'Add image')}
+							>
+								<ImagePlus className="h-4 w-4" aria-hidden="true" />
+							</button>
+						</div>
+					)}
+
+					{selectionLabel && (
+						<div className="flex items-center gap-2 pb-1 pt-3">
+							<div
+								className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
+								title={selectionLabel}
+							>
+								<span className="min-w-0 truncate">{selectionLabel}</span>
+								{canClearSelection && (
 									<button
 										type="button"
-										data-index={index}
-										className="absolute -right-1.5 -top-1.5 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-border/70 bg-background text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/thumb:opacity-100 group-focus-within/thumb:opacity-100 dark:border-white/12 dark:bg-background"
 										onMouseDown={(e) => e.preventDefault()}
-										onClick={onRemoveImage}
-										aria-label={
-											fileName
-												? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
-														name: fileName,
-													})
-												: t('assistantNode.removeImage', 'Remove image')
-										}
+										onClick={onClearSelection}
+										className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
+										aria-label={t('agenticPanel.clearSelection', 'Clear selection: {{label}}', {
+											label: selectionLabel,
+										})}
 									>
-										<X className="h-2.5 w-2.5" aria-hidden="true" />
+										<X className="h-3 w-3" aria-hidden="true" />
 									</button>
-								</div>
-							);
-						})}
-						<button
-							type="button"
-							role="listitem"
-							className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-dashed border-border/80 bg-background/60 text-muted-foreground transition-colors hover:border-foreground/18 hover:bg-background hover:text-foreground dark:border-white/14 dark:bg-white/[0.03] dark:hover:border-white/18 dark:hover:bg-white/[0.05]"
-							disabled={disabled}
-							onMouseDown={(e) => e.preventDefault()}
-							onClick={onOpenFilePicker}
-							aria-label={t('assistantNode.addImage', 'Add image')}
-						>
-							<ImagePlus className="h-4 w-4" aria-hidden="true" />
-						</button>
-					</div>
-				)}
-
-				{selectionLabel && (
-					<div className="flex items-center gap-2 pb-1 pt-3">
-						<div
-							className="flex max-w-[11.5rem] items-center gap-1 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
-							title={selectionLabel}
-						>
-							<span className="min-w-0 truncate">{selectionLabel}</span>
-							{canClearSelection && (
-								<button
-									type="button"
-									onMouseDown={(e) => e.preventDefault()}
-									onClick={onClearSelection}
-									className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
-									aria-label={t('agenticPanel.clearSelection', 'Clear selection: {{label}}', {
-										label: selectionLabel,
-									})}
-								>
-									<X className="h-3 w-3" aria-hidden="true" />
-								</button>
-							)}
+								)}
+							</div>
 						</div>
-					</div>
-				)}
-			</CardHeader>
+					)}
+				</CardHeader>
 			)}
 
 			<CardContent className="p-0">
@@ -242,6 +242,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 
 				<Button
 					variant="default"
+					size="sm"
 					onClick={onSend}
 					disabled={!canSend}
 					aria-label={t('agenticPanel.send', 'Send message')}
@@ -353,10 +354,8 @@ const ModelDropdown: React.FC<ModelDropdownProps> = ({
 			<DropdownMenuTrigger
 				render={
 					<Button
-						type="button"
-						variant="ghost"
+						variant="outline"
 						size="sm"
-						className="h-8 min-w-0 gap-1 rounded-full border border-border/80 bg-background/75 px-3 text-xs text-foreground/80 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:text-foreground/90 dark:hover:bg-accent/80"
 						disabled={disabled}
 						aria-label={t('agenticPanel.selectModelCurrent', 'Model: {{model}}', {
 							model: selectedModel.name,
