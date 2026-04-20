@@ -253,7 +253,14 @@ function PageContent(): ReactElement {
 	}, [assistantActiveAgentId, assistantActiveTaskId, editorActions]);
 
 	const handlePromptSubmit = useCallback(
-		async (payload: PromptSubmitPayload, _editor: TiptapEditor) => {
+		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
+			const { from, to } = editor.state.selection;
+			const doc = editor.state.doc;
+			const textBefore = doc.textBetween(0, from, '\n');
+			const textAfter = doc.textBetween(to, doc.content.size, '\n');
+			console.log('[Page] text before cursor:', textBefore);
+			console.log('[Page] text after cursor:', textAfter);
+
 			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
 				editorActions.hideLoading();
 				editorActions.enable();
