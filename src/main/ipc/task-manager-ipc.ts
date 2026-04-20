@@ -3,11 +3,9 @@ import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
-import type { WindowContextManager } from '../core/window-context';
 import type { TaskExecutor } from '../task/task-executor';
 import type { TaskOptions, ActiveTask } from '../task/task-descriptor';
 import type { TaskAction, TaskInfo } from '../../shared/types';
-import type { WorkspaceService } from '../workspace/workspace-service';
 import { registerQuery, registerCommand, registerCommandWithEvent } from './ipc-gateway';
 import { TaskChannels } from '../../shared/channels';
 
