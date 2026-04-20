@@ -3,21 +3,28 @@ import { randomBytes } from "node:crypto";
 import { createWriteStream, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, formatSize, type TruncationResult, truncateTail } from "./truncate.js";
 
-const bashSchema = Type.Object({
-	command: Type.String({ description: "Bash command to execute" }),
-	timeout: Type.Optional(Type.Number({ description: "Timeout in seconds (optional, no default timeout)" })),
-});
-
-export type BashToolInput = Static<typeof bashSchema>;
+export interface BashToolInput {
+	command: string;
+	timeout?: number;
+}
 
 export interface BashToolDetails {
 	truncation?: TruncationResult;
 	fullOutputPath?: string;
 }
+
+const bashSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		command: { type: "string", description: "Bash command to execute" },
+		timeout: { type: "number", description: "Timeout in seconds (optional, no default timeout)" },
+	},
+	required: ["command"],
+};
 
 function getTempFilePath(): string {
 	return join(tmpdir(), `pi-bash-${randomBytes(8).toString("hex")}.log`);
@@ -30,7 +37,7 @@ function getShell(): { shell: string; args: string[] } {
 	return { shell: process.env.SHELL ?? "/bin/bash", args: ["-c"] };
 }
 
-export function createBashTool(cwd: string): AgentTool<typeof bashSchema, BashToolDetails | undefined> {
+export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDetails | undefined> {
 	return {
 		name: "bash",
 		label: "bash",
@@ -74,8 +81,8 @@ export function createBashTool(cwd: string): AgentTool<typeof bashSchema, BashTo
 					chunks.push(data);
 					chunksBytes += data.length;
 					while (chunksBytes > maxChunksBytes && chunks.length > 1) {
-						const removed = chunks.shift()!;
-						chunksBytes -= removed.length;
+						const removed = chunks.shift();
+						if (removed) chunksBytes -= removed.length;
 					}
 					if (onUpdate) {
 						const text = Buffer.concat(chunks).toString("utf-8");
@@ -150,7 +157,7 @@ export function createBashTool(cwd: string): AgentTool<typeof bashSchema, BashTo
 						reject(new Error(outputText));
 						return;
 					}
-					resolve({ content: [{ type: "text", text: outputText }], details: details as any });
+					resolve({ content: [{ type: "text", text: outputText }], details });
 				});
 			});
 		},
