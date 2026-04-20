@@ -21,7 +21,6 @@ import {
 } from './hooks';
 import { v7 as uuidv7 } from 'uuid';
 import {
-	initTaskMetadata,
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../services/task-event-bus';
@@ -299,16 +298,9 @@ function PageContent(): ReactElement {
 				const resolvedSessionId = sessionRef.current ?? uuidv7();
 				sessionRef.current = resolvedSessionId;
 
-				const metadata = {
-					agentId,
-					documentId: id,
-					chatId: resolvedSessionId,
-				};
-
 				const ipcResult = await window.task.submit({
 					type: 'demo',
 					input: { prompt: payload.prompt },
-					//metadata,
 				});
 				if (!ipcResult.success) {
 					editorActions.hideLoading();
@@ -317,7 +309,6 @@ function PageContent(): ReactElement {
 				}
 
 				const taskId = ipcResult.data.taskId;
-				initTaskMetadata(taskId, metadata);
 				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(taskId);
 			} catch {

@@ -4,7 +4,6 @@ import { TextSelection } from '@tiptap/pm/state';
 import { v7 as uuidv7 } from 'uuid';
 import { getTaskStatusText } from '../../../../../../shared/types';
 import {
-	initTaskMetadata,
 	subscribeToTask,
 	type TaskSnapshot,
 } from '../../../../services/task-event-bus';
@@ -261,7 +260,6 @@ const Chat: React.FC = () => {
 				}
 
 				const resolvedTaskId = ipcResult.data.taskId;
-				initTaskMetadata(resolvedTaskId, metadata);
 				dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: resolvedTaskId });
 				dispatch({
 					type: 'CHAT_MESSAGE_UPDATED',

@@ -30,7 +30,6 @@ export interface TaskSnapshot {
 	seedContent: string; // original text before AI enhancement (set by initTaskContent)
 	error?: string;
 	result?: unknown;
-	/** Caller-supplied metadata attached at submit time via initTaskMetadata. */
 	metadata?: Record<string, unknown>;
 }
 
@@ -247,29 +246,11 @@ export function initTaskContent(taskId: string, initialContent: string): void {
 	snapshots.set(taskId, next);
 }
 
-/**
- * Attach caller-supplied metadata to a task's snapshot.
- *
- * Call this immediately after obtaining the taskId from `window.task.submit()`
- * so that every subsequent TaskSnapshot delivered to `subscribeToTask` subscribers
- * includes the metadata. The metadata is carried across all snapshot transitions
- * (started, stream, progress, completed, error, cancelled).
- */
-export function initTaskMetadata(taskId: string, metadata: Record<string, unknown>): void {
-	const prev = snapshots.get(taskId) ?? {
-		status: 'queued',
-		streamedContent: '',
-		content: '',
-		seedContent: '',
-	};
-	const next: TaskSnapshot = { ...prev, metadata };
-	snapshots.set(taskId, next);
-}
+
 
 export const taskEventBus = {
 	subscribeToTask,
 	subscribeToTaskType,
 	getTaskSnapshot,
 	initTaskContent,
-	initTaskMetadata,
 };
