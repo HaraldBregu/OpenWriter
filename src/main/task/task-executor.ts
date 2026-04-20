@@ -99,7 +99,7 @@ export class TaskExecutor implements Disposable {
 			priority,
 			controller,
 			windowId: options?.windowId,
-			metadata: withTaskStatusText(metadata, TASK_STATUS_TEXT.QUEUED),
+			metadata,
 		};
 
 		this.activeTasks.set(taskId, activeTask);
