@@ -110,36 +110,6 @@ export class TaskManagerIpc implements IpcModule {
 			return executor.listTasks().map(toTaskInfo);
 		});
 
-		/**
-		 * Update the priority of a queued task.
-		 * The queue is re-sorted immediately and a priority-changed event is emitted.
-		 * Returns true if the task was found and updated.
-		 */
-		registerCommand(TaskChannels.updatePriority, (taskId: string, priority: TaskPriority) => {
-			// Validate priority value to prevent invalid state from untrusted renderer input
-			if (priority !== 'low' && priority !== 'normal' && priority !== 'high') {
-				throw new Error(`Invalid priority value: ${String(priority)}`);
-			}
-			return executor.updatePriority(taskId, priority);
-		});
-
-		/**
-		 * Retrieve a completed, errored, or cancelled task result by ID.
-		 * Active tasks (queued/running) are also returned.
-		 * Returns null if the task ID is unknown or its TTL has expired.
-		 */
-		registerQuery(TaskChannels.getResult, (taskId: string) => {
-			const task = executor.getTaskResult(taskId);
-			return task ? toTaskInfo(task) : null;
-		});
-
-		/**
-		 * Return a snapshot of queue metrics: queued, running, completed counts.
-		 */
-		registerQuery(TaskChannels.queueStatus, () => {
-			return executor.getQueueStatus();
-		});
-
 		// --- Window close cleanup -------------------------------------------------
 		// When a window closes, cancel all tasks owned by it to prevent orphaned work.
 		eventBus.on('window:closed', (event) => {
