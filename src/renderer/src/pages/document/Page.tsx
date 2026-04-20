@@ -253,7 +253,8 @@ function PageContent(): ReactElement {
 	}, [assistantActiveAgentId, assistantActiveTaskId, editorActions]);
 
 	const handlePromptSubmit = useCallback(
-		async (payload: PromptSubmitPayload) => {
+		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
+			console.log('[Page] Prompt submit editor:', editor);
 			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
 				editorActions.hideLoading();
 				editorActions.enable();
