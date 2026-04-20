@@ -52,7 +52,7 @@ export class TaskManagerIpc implements IpcModule {
 		 * The windowId is stamped server-side from event.sender.id for security.
 		 */
 		registerCommandWithEvent(TaskChannels.submit, async (event, action: TaskAction) => {
-			const options: TaskOptions = { ...payload.options };
+			const options: TaskOptions = { ...action.options };
 			// Security: derive BrowserWindow.id from webContents (not event.sender.id,
 			// which is webContents.id — a different integer that EventBus.sendTo cannot resolve).
 			const senderWindow = BrowserWindow.fromWebContents(event.sender);
