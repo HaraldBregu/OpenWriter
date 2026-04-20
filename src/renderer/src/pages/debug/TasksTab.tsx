@@ -105,6 +105,14 @@ export function TasksTab() {
 			</div>
 
 			{selectedTask && <LogPanel task={selectedTask} onClose={() => setSelectedId(null)} />}
+
+			<TaskDataDialog
+				task={dataDialogTask}
+				open={dataDialogId !== null}
+				onOpenChange={(open) => {
+					if (!open) setDataDialogId(null);
+				}}
+			/>
 		</div>
 	);
 }
