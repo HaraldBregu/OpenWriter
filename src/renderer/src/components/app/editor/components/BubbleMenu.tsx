@@ -53,7 +53,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 		<Card
 			ref={menuRef}
 			size="sm"
-			className={cn('flex-col gap-1! p-2! z-10')}
+			className={cn('flex-col gap-1! p-2! z-50')}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<div className="flex flex-row items-center gap-0.5">
