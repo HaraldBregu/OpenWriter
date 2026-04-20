@@ -73,6 +73,7 @@ function CommandInput({
 		<div
 			data-slot="command-input-wrapper"
 			className="flex h-10 items-center gap-2 border-b px-3"
+			// eslint-disable-next-line react/no-unknown-property
 			cmdk-input-wrapper=""
 		>
 			<SearchIcon className="size-4 shrink-0 opacity-50" />
