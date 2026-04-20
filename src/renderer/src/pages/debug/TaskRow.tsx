@@ -11,9 +11,17 @@ interface TaskRowProps {
 	onSelect: () => void;
 	onCancel: () => void;
 	onHide: () => void;
+	onViewData: () => void;
 }
 
-export function TaskRow({ task, isSelected, onSelect, onCancel, onHide }: TaskRowProps) {
+export function TaskRow({
+	task,
+	isSelected,
+	onSelect,
+	onCancel,
+	onHide,
+	onViewData,
+}: TaskRowProps) {
 	const canCancel =
 		task.status === 'queued' || task.status === 'started' || task.status === 'running';
 
