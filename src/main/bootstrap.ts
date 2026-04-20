@@ -26,6 +26,7 @@ import { TaskReactionRegistry } from './task/task-reaction-registry';
 import { TaskReactionBus } from './task/task-reaction-bus';
 import { ServiceResolver } from './shared/service-resolver';
 import { ModelResolver } from './shared/model-resolver';
+import { AgentRegistry, TextAgent, ImageAgent, RagAgent, OcrAgent } from './agents';
 
 // IPC modules
 import type { IpcModule } from './ipc';

@@ -508,17 +508,8 @@ const workspace: WorkspaceApi = {
 // window.task — Background task queue
 // ---------------------------------------------------------------------------
 const task: TaskApi = {
-	submit: (
-		type: string,
-		input: unknown,
-		metadata?: Record<string, unknown>,
-		options?: {
-			priority?: 'low' | 'normal' | 'high';
-			timeoutMs?: number;
-			windowId?: number;
-		}
-	) => {
-		return typedInvokeRaw(TaskChannels.submit, { type, input, metadata, options });
+	submit: (action) => {
+		return typedInvokeRaw(TaskChannels.submit, action);
 	},
 	cancel: (taskId: string) => {
 		return typedInvokeRaw(TaskChannels.cancel, taskId);
@@ -528,15 +519,6 @@ const task: TaskApi = {
 	},
 	onEvent: (callback) => {
 		return typedOn(TaskChannels.event, callback);
-	},
-	updatePriority: (taskId: string, priority: 'low' | 'normal' | 'high') => {
-		return typedInvokeRaw(TaskChannels.updatePriority, taskId, priority);
-	},
-	getResult: (taskId: string) => {
-		return typedInvokeRaw(TaskChannels.getResult, taskId);
-	},
-	queueStatus: () => {
-		return typedInvokeRaw(TaskChannels.queueStatus);
 	},
 } satisfies TaskApi;
 
