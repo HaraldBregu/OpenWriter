@@ -92,7 +92,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 	selectionLabel,
 	canClearSelection,
 	placeholder,
-	dropStatusId,
 	currentAgentLabel,
 	wrapperRef,
 	textareaRef,
