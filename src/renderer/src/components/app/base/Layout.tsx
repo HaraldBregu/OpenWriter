@@ -69,6 +69,7 @@ import {
 	FileText,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
+import { CommandPaletteProvider } from '../command_palette';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
 import {
