@@ -279,7 +279,15 @@ export function applyTaskEvent(event: TaskEvent): void {
 						...nextTask,
 						status: 'started',
 					};
-				case 'progress': {
+				case 'running': {
+					const streamData = dataField<string>(event.data, 'data');
+					if (typeof streamData === 'string' && streamData.length > 0) {
+						return {
+							...nextTask,
+							status: 'running',
+							streamBuffer: (nextTask.streamBuffer ?? '') + streamData,
+						};
+					}
 					return {
 						...nextTask,
 						status: 'running',
@@ -288,14 +296,6 @@ export function applyTaskEvent(event: TaskEvent): void {
 							message: dataField<string>(event.data, 'message'),
 							detail: dataField<unknown>(event.data, 'detail'),
 						},
-					};
-				}
-				case 'stream': {
-					return {
-						...nextTask,
-						status: 'running',
-						streamBuffer:
-							(nextTask.streamBuffer ?? '') + (dataField<string>(event.data, 'data') ?? ''),
 					};
 				}
 				case 'completed': {
