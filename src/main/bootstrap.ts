@@ -20,25 +20,12 @@ import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { ThemeService } from './services/theme-service';
 import { FileManager } from './shared/file_manager';
-import {
-	AgentRegistry,
-	AssistantAgent,
-	ImageAgent,
-	TextAgent,
-} from './agents';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
 import { TaskReactionRegistry } from './task/task-reaction-registry';
 import { TaskReactionBus } from './task/task-reaction-bus';
-import { RagIndexingTaskHandler } from './task/handlers/rag-task-handler';
-import { AgentTaskHandler } from './task/handlers/agent-task-handler';
-import { OcrTaskHandler } from './task/handlers/ocr-task-handler';
-import { NbTaskHandler } from './task/handlers/nb-task-handler';
 import { ServiceResolver } from './shared/service-resolver';
 import { ModelResolver } from './shared/model-resolver';
-
-// RAG infrastructure
-import { ExtractorRegistry, PlainTextExtractor, Embedder } from './rag';
 
 // IPC modules
 import type { IpcModule } from './ipc';
@@ -91,11 +78,6 @@ export function bootstrapServices(): BootstrapResult {
 	const windowContextManager = new WindowContextManager(container, eventBus);
 	container.register('windowContextManager', windowContextManager);
 
-	// Named agent registry — populated explicitly (mirrors TaskHandlerRegistry pattern)
-	const agentRegistry = container.register('AgentRegistry', new AgentRegistry());
-	agentRegistry.register(AssistantAgent);
-	agentRegistry.register(ImageAgent);
-	agentRegistry.register(TextAgent);
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
@@ -103,18 +85,6 @@ export function bootstrapServices(): BootstrapResult {
 	const modelResolver = new ModelResolver();
 	container.register('serviceResolver', serviceResolver);
 	container.register('modelResolver', modelResolver);
-	for (const def of agentRegistry.list()) {
-		taskHandlerRegistry.register(
-			new AgentTaskHandler(
-				def.id,
-				agentRegistry,
-				serviceResolver,
-				modelResolver,
-				windowContextManager,
-				logger
-			)
-		);
-	}
 	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
@@ -125,18 +95,6 @@ export function bootstrapServices(): BootstrapResult {
 		new TaskReactionBus(taskReactionRegistry, eventBus, logger)
 	);
 	taskReactionBus.initialize();
-
-	// Document extractor registry — Strategy pattern for file-type-specific text extraction
-	const extractorRegistry = container.register('extractorRegistry', new ExtractorRegistry());
-	extractorRegistry.register(new PlainTextExtractor());
-	Embedder.configure(container);
-
-	// Register handlers that depend on WindowContextManager
-	taskHandlerRegistry.register(new RagIndexingTaskHandler());
-	taskHandlerRegistry.register(
-		new OcrTaskHandler(windowContextManager, serviceResolver, modelResolver, logger)
-	);
-	taskHandlerRegistry.register(new NbTaskHandler());
 
 	logger.info('Bootstrap', `Registered ${container.has('store') ? 'all' : 'some'} global services`);
 
