@@ -1,28 +1,36 @@
 import { spawn } from "node:child_process";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import { resolveToCwd } from "./path-utils.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, type TruncationResult, truncateHead } from "./truncate.js";
 
-const findSchema = Type.Object({
-	path: Type.Optional(Type.String({ description: "Directory to search (default: cwd)" })),
-	glob: Type.Optional(Type.String({ description: "Glob filter, e.g. '**/*.ts'" })),
-	type: Type.Optional(Type.Union([Type.Literal("file"), Type.Literal("directory")])),
-	limit: Type.Optional(Type.Number({ description: "Max results" })),
-});
-
-export type FindToolInput = Static<typeof findSchema>;
+export interface FindToolInput {
+	path?: string;
+	glob?: string;
+	type?: "file" | "directory";
+	limit?: number;
+}
 
 export interface FindToolDetails {
 	truncation?: TruncationResult;
 	command: string[];
 }
 
+const findSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		path: { type: "string", description: "Directory to search (default: cwd)" },
+		glob: { type: "string", description: "Glob filter, e.g. '**/*.ts'" },
+		type: { type: "string", enum: ["file", "directory"], description: "Filter by entry kind" },
+		limit: { type: "number", description: "Max results" },
+	},
+};
+
 function resolveFindBinary(): string {
 	return process.env.PI_FIND_BIN || "fd";
 }
 
-export function createFindTool(cwd: string): AgentTool<typeof findSchema, FindToolDetails | undefined> {
+export function createFindTool(cwd: string): AgentTool<FindToolInput, FindToolDetails | undefined> {
 	return {
 		name: "find",
 		label: "find",
@@ -63,7 +71,7 @@ export function createFindTool(cwd: string): AgentTool<typeof findSchema, FindTo
 						details: {
 							command: [bin, ...args],
 							truncation: trunc.truncated ? trunc : undefined,
-						} as any,
+						},
 					});
 				});
 			});
