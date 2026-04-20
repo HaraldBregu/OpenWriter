@@ -57,7 +57,6 @@ interface PromptCardProps {
 	readonly selectionLabel?: string | null;
 	readonly canClearSelection: boolean;
 	readonly placeholder?: string;
-	readonly dropStatusId: string;
 	readonly currentAgentLabel: string;
 
 	readonly wrapperRef: React.RefObject<HTMLDivElement | null>;
