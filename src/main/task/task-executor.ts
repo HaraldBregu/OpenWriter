@@ -422,7 +422,6 @@ export class TaskExecutor implements Disposable {
 			if (err instanceof Error && err.name === 'AbortError') {
 				// Task log
 				task.status = 'cancelled';
-				task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.CANCELLED);
 				task.completedAt = Date.now();
 
 				this.send(windowId, 'task:event', {
