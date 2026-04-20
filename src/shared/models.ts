@@ -18,11 +18,6 @@ import type {
 // Capability presets (reduce boilerplate in catalogue entries)
 // ---------------------------------------------------------------------------
 
-const CHAT: ModelCapabilities = {
-	inference: { reasoning: false, vision: false, streaming: true },
-	generation: { imageGeneration: false, embeddings: false },
-};
-
 const VISION_CHAT: ModelCapabilities = {
 	inference: { reasoning: false, vision: true, streaming: true },
 	generation: { imageGeneration: false, embeddings: false },
