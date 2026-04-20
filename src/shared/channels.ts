@@ -444,6 +444,7 @@ export interface EventChannelMap {
 		data: { documentId: string; content: string };
 	};
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
+	[AppChannels.shortcut]: { data: ShortcutId };
 	// ---- Contents watcher events ----
 	[WorkspaceChannels.contentsChanged]: { data: ContentEntryChangeEvent };
 	[WorkspaceChannels.contentsWatcherError]: { data: WatcherError };
