@@ -174,7 +174,6 @@ export class TaskExecutor implements Disposable {
 		}
 
 		task.status = 'cancelled';
-		task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.CANCELLED);
 		task.completedAt = Date.now();
 
 		this.send(task.windowId, 'task:event', {
