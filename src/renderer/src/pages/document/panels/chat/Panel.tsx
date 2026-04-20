@@ -239,7 +239,11 @@ const Chat: React.FC = () => {
 			}
 
 			try {
-				const ipcResult = await window.task.submit(taskType, taskInput, metadata);
+				const ipcResult = await window.task.submit({
+					type: taskType,
+					input: taskInput,
+					metadata,
+				});
 
 				if (!ipcResult.success) {
 					dispatch({
