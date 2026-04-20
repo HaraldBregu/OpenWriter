@@ -42,8 +42,6 @@ export interface UseTaskSubmitReturn<TInput = unknown, TResult = unknown> {
 	) => Promise<void>;
 	/** Cancel the current task. No-op if not running. */
 	cancel: () => void;
-	/** Change the priority of the queued task. */
-	updatePriority: (priority: TaskPriority) => void;
 	/** Reset hook back to idle state. No-op while a task is active. */
 	reset: () => void;
 	/** True when no task has been submitted yet. */
