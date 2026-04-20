@@ -180,8 +180,6 @@ export function usePromptActions({
 		() => ({
 			handlePromptChange,
 			handleAgentChange,
-			handleImageModelChange,
-			handleTextModelChange,
 			addFile,
 			removeFile,
 			handleFilesChange,
@@ -196,8 +194,6 @@ export function usePromptActions({
 		[
 			handlePromptChange,
 			handleAgentChange,
-			handleImageModelChange,
-			handleTextModelChange,
 			addFile,
 			removeFile,
 			handleFilesChange,
