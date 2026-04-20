@@ -199,16 +199,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 		});
 	}, []);
 
-	const updatePriority = useCallback((priority: TaskPriority): void => {
-		const id = taskIdRef.current;
-		if (!id) return;
-		if (typeof window.task?.updatePriority !== 'function') return;
-
-		window.task.updatePriority(id, priority).catch(() => {
-			// Best-effort.
-		});
-	}, []);
-
 	const reset = useCallback((): void => {
 		// Prevent resetting while a task is still active.
 		if (runningRef.current) return;
