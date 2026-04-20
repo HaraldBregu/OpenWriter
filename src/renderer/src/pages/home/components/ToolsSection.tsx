@@ -1,12 +1,14 @@
 import type { ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, Settings, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { useCommandModal } from '@/components/app/command-modals';
 import { CategoryCard } from './CategoryCard';
 
 export function ToolsSection(): ReactElement {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
+	const { open } = useCommandModal();
 
 	return (
 		<section className="space-y-3">
@@ -19,7 +21,7 @@ export function ToolsSection(): ReactElement {
 					labelKey="common.search"
 					descriptionKey="home.searchDescription"
 					accent="bg-foreground/8 text-foreground"
-					onClick={() => navigate('/search')}
+					onClick={() => open('search')}
 				/>
 				<CategoryCard
 					icon={Sparkles}

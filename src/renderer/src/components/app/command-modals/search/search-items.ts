@@ -1,23 +1,21 @@
 import type { LucideIcon } from 'lucide-react';
-import { SEARCH_RESULTS_PER_SECTION } from '../constants';
+import { APP_SEARCH_RESULTS_PER_SECTION } from './constants';
 import type {
-	SearchActionDefinition,
-	SearchResultSection,
+	AppSearchActionDefinition,
+	AppSearchResultSection,
 	SearchableDocument,
 	SearchableResource,
-} from '../types';
+} from './types';
 
 interface SectionLabel {
 	title: string;
-	description: string;
-	emptyCopy: string;
 }
 
 interface BuildSearchSectionsParams {
 	query: string;
 	documents: SearchableDocument[];
 	resources: SearchableResource[];
-	actions: SearchActionDefinition[];
+	actions: AppSearchActionDefinition[];
 	icons: {
 		document: LucideIcon;
 		resource: LucideIcon;
@@ -84,14 +82,14 @@ function sortByScoreAndDate<T extends { score: number; timestamp: number }>(item
 	});
 }
 
-export function buildSearchSections({
+export function buildAppSearchSections({
 	query,
 	documents,
 	resources,
 	actions,
 	icons,
 	labels,
-}: BuildSearchSectionsParams): SearchResultSection[] {
+}: BuildSearchSectionsParams): AppSearchResultSection[] {
 	const normalizedQuery = normalizeQuery(query);
 	const hasQuery = normalizedQuery.length > 0;
 
@@ -111,7 +109,7 @@ export function buildSearchSections({
 		}))
 		.filter((entry) => !hasQuery || entry.score > 0)
 		.sort((left, right) => right.score - left.score)
-		.slice(0, SEARCH_RESULTS_PER_SECTION)
+		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
 
 	const documentItems = sortByScoreAndDate(
@@ -131,7 +129,7 @@ export function buildSearchSections({
 			}))
 			.filter((entry) => !hasQuery || entry.score > 0)
 	)
-		.slice(0, SEARCH_RESULTS_PER_SECTION)
+		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
 
 	const resourceItems = sortByScoreAndDate(
@@ -151,29 +149,23 @@ export function buildSearchSections({
 			}))
 			.filter((entry) => !hasQuery || entry.score > 0)
 	)
-		.slice(0, SEARCH_RESULTS_PER_SECTION)
+		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
 
-	const sections: SearchResultSection[] = [
+	const sections: AppSearchResultSection[] = [
 		{
 			id: 'actions',
 			title: labels.actions.title,
-			description: labels.actions.description,
-			emptyCopy: labels.actions.emptyCopy,
 			items: actionItems,
 		},
 		{
 			id: 'documents',
 			title: labels.documents.title,
-			description: labels.documents.description,
-			emptyCopy: labels.documents.emptyCopy,
 			items: documentItems,
 		},
 		{
 			id: 'resources',
 			title: labels.resources.title,
-			description: labels.resources.description,
-			emptyCopy: labels.resources.emptyCopy,
 			items: resourceItems,
 		},
 	];

@@ -53,7 +53,7 @@ export class ShortcutManager {
 
 	attach(win: BrowserWindow): void {
 		win.webContents.on('before-input-event', (event, input) => {
-			if (input.type !== 'keyDown') return;
+			if (input.type !== 'keyDown' || input.isAutoRepeat) return;
 			const match = this.findMatch(input);
 			if (!match) return;
 			event.preventDefault();

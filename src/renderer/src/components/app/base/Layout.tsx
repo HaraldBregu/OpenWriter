@@ -69,9 +69,10 @@ import {
 	FileText,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
-import { CommandModalProvider } from '../command-modals';
+import { CommandModalProvider, useCommandModal } from '../command-modals';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
+import { getShortcutLabel, ShortcutId, type Platform } from '../../../../../shared/shortcuts';
 import {
 	DropdownMenu,
 	DropdownMenuTrigger,
@@ -90,6 +91,7 @@ interface LayoutProps {
 function Container({ children }: LayoutProps) {
 	const { t } = useTranslation();
 	const { toggleSidebar, open } = useSidebar();
+	const { activeModal, open: openCommandModal } = useCommandModal();
 	const location = useLocation();
 	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -102,6 +104,13 @@ function Container({ children }: LayoutProps) {
 	const recentWorkspaces = useAppSelector(selectRecentWorkspaces);
 	const themeMode = useThemeMode();
 	const { setTheme } = useAppActions();
+	const shortcutPlatform: Platform =
+		typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac')
+			? 'mac'
+			: typeof navigator !== 'undefined' && navigator.userAgent.includes('Win')
+				? 'win'
+				: 'linux';
+	const searchShortcutLabel = getShortcutLabel(ShortcutId.openAppSearch, shortcutPlatform);
 
 	// Listen for workspace changes from main process and update Redux
 	useWorkspaceListener();
@@ -136,6 +145,10 @@ function Container({ children }: LayoutProps) {
 			dispatch(loadRecentWorkspaces());
 		});
 	}, [dispatch]);
+
+	const handleOpenSearch = useCallback(() => {
+		openCommandModal('search');
+	}, [openCommandModal]);
 
 	// -------------------------------------------------------------------------
 	// Documents list — sourced from Redux (loaded/watched at app startup)
@@ -355,14 +368,14 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/search" />}
 											className="group/btn h-9 px-3"
-											isActive={location.pathname === '/search'}
+											isActive={activeModal === 'search'}
+											onClick={handleOpenSearch}
 										>
 											<Search className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
 											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
-												Ctrl+K
+												{searchShortcutLabel}
 											</span>
 										</SidebarMenuButton>
 									</SidebarMenuItem>

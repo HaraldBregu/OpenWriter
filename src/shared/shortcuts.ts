@@ -11,6 +11,8 @@
 export const ShortcutId = {
 	/** Open the command palette that lists workspace documents. */
 	openDocumentList: 'openDocumentList',
+	/** Open the app-wide search modal. */
+	openAppSearch: 'openAppSearch',
 } as const;
 
 export type ShortcutId = (typeof ShortcutId)[keyof typeof ShortcutId];
@@ -28,6 +30,11 @@ export const SHORTCUT_BINDINGS: Record<ShortcutId, ShortcutBinding> = {
 		win: 'Ctrl+D',
 		linux: 'Ctrl+D',
 	},
+	[ShortcutId.openAppSearch]: {
+		mac: '⌘K',
+		win: 'Ctrl+K',
+		linux: 'Ctrl+K',
+	},
 };
 
 /**
@@ -36,6 +43,7 @@ export const SHORTCUT_BINDINGS: Record<ShortcutId, ShortcutBinding> = {
  */
 export const SHORTCUT_ACCELERATORS: Record<ShortcutId, string> = {
 	[ShortcutId.openDocumentList]: 'CmdOrCtrl+D',
+	[ShortcutId.openAppSearch]: 'CmdOrCtrl+K',
 };
 
 export type Platform = 'mac' | 'win' | 'linux';

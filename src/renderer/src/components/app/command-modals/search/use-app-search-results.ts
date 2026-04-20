@@ -1,17 +1,17 @@
-import { useTranslation } from 'react-i18next';
 import { FolderOpen, LibraryBig } from 'lucide-react';
-import { useAppSelector } from '@/store';
+import { useTranslation } from 'react-i18next';
 import { getResourceSection, RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
+import { useAppSelector } from '@/store';
 import { selectAllDocuments, selectResources } from '@/store/workspace';
-import { SEARCH_ACTIONS } from '../constants';
-import { buildSearchSections } from '../services/search-items';
+import { APP_SEARCH_ACTIONS } from './constants';
+import { buildAppSearchSections } from './search-items';
 
-export function useSearchResults(query: string) {
+export function useAppSearchResults(query: string) {
 	const { t } = useTranslation();
 	const documents = useAppSelector(selectAllDocuments);
 	const resources = useAppSelector(selectResources);
 
-	const sections = buildSearchSections({
+	const sections = buildAppSearchSections({
 		query,
 		documents: documents.map((document) => ({
 			id: document.id,
@@ -35,7 +35,7 @@ export function useSearchResults(query: string) {
 				icon: section.icon,
 			};
 		}),
-		actions: SEARCH_ACTIONS,
+		actions: APP_SEARCH_ACTIONS,
 		icons: {
 			document: FolderOpen,
 			resource: LibraryBig,
@@ -43,27 +43,12 @@ export function useSearchResults(query: string) {
 		labels: {
 			actions: {
 				title: t('search.quickActionsTitle', 'Quick actions'),
-				description: t(
-					'search.quickActionsDescription',
-					'Common routes and entry points you can jump to immediately.'
-				),
-				emptyCopy: t('search.quickActionsEmpty', 'No quick actions are available for this search.'),
 			},
 			documents: {
 				title: t('search.documentsTitle', 'Documents'),
-				description: t(
-					'search.documentsDescription',
-					'Recent writing outputs matched against title and path.'
-				),
-				emptyCopy: t('search.documentsEmpty', 'No documents in this workspace yet.'),
 			},
 			resources: {
 				title: t('search.resourcesTitle', 'Resources'),
-				description: t(
-					'search.resourcesDescription',
-					'Imported files matched against file name, type, and path.'
-				),
-				emptyCopy: t('search.resourcesEmpty', 'No imported resources yet.'),
 			},
 		},
 	});
