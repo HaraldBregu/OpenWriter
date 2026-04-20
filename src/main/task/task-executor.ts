@@ -439,7 +439,6 @@ export class TaskExecutor implements Disposable {
 				// Task error, err)
 
 				task.status = 'error';
-				task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.FAILED);
 				task.completedAt = Date.now();
 				task.error = message;
 
