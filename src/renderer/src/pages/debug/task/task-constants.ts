@@ -29,10 +29,6 @@ export const STATUS_CONFIG: Record<TaskState, { label: string; className: string
 		label: 'Running',
 		className: 'border border-info/20 bg-info/12 text-info',
 	},
-	progress: {
-		label: 'Running',
-		className: 'border border-info/20 bg-info/12 text-info',
-	},
 	completed: {
 		label: 'Completed',
 		className: 'border border-success/20 bg-success/12 text-success',
@@ -44,13 +40,5 @@ export const STATUS_CONFIG: Record<TaskState, { label: string; className: string
 	cancelled: {
 		label: 'Cancelled',
 		className: 'border border-border bg-muted/70 text-muted-foreground',
-	},
-	stream: {
-		label: 'Running',
-		className: 'border border-info/20 bg-info/12 text-info',
-	},
-	'priority-changed': {
-		label: 'Queued',
-		className: 'border border-warning/20 bg-warning/12 text-warning',
 	},
 };
