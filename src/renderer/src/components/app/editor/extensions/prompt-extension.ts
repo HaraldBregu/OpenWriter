@@ -1,7 +1,7 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { PromptNodeView } from '../nodes/PromptNodeView';
-import { ContentGeneratorStorage, PromptOptions } from '@shared/index';
+import { PromptOptions } from '@shared/index';
 
 type AgentId = 'text' | 'image';
 
