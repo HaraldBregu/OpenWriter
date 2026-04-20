@@ -30,22 +30,15 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
  * IPC handlers for the background task system.
  *
  * Channels (invoke/handle):
- *  - task:submit          (command) -- Submit a new task. Returns { taskId }.
- *  - task:cancel          (command) -- Cancel a running/queued task. Returns boolean.
- *  - task:list            (query)   -- List active tasks. Returns TaskInfo[].
- *  - task:update-priority (command) -- Update priority of a queued task. Returns boolean.
- *  - task:get-result      (query)   -- Retrieve completed task info by ID. Returns TaskInfo | null.
- *  - task:queue-status    (query)   -- Return queue metrics. Returns TaskQueueStatus.
+ *  - task:submit  (command) -- Submit a new task. Returns { taskId }.
+ *  - task:cancel  (command) -- Cancel a running/queued task. Returns boolean.
+ *  - task:list    (query)   -- List active tasks. Returns TaskInfo[].
  *
  * Streaming events are pushed from TaskExecutor via EventBus on the
- * `task:event` channel. The renderer subscribes with window.taskManager.onEvent().
+ * `task:event` channel. The renderer subscribes with window.task.onEvent().
  *
  * Security notes:
  *  - windowId is always stamped from event.sender.id in task:submit, never trusted from payload.
- *  - updatePriority operates on any task by ID; window-scoping enforcement is at the service
- *    level (tasks owned by other windows will simply return false if not found).
- *  - getResult is intentionally not window-scoped so developers can retrieve any task result
- *    by ID — guard this at the application layer if cross-window access is undesirable.
  */
 export class TaskManagerIpc implements IpcModule {
 	readonly name = 'task';
