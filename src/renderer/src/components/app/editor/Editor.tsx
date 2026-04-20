@@ -131,12 +131,6 @@ const Editor = React.memo(
 			const onEditorReadyRef = useRef(onEditorReady);
 			onEditorReadyRef.current = onEditorReady;
 
-			const onTextModelChangeRef = useRef(onTextModelChange);
-			onTextModelChangeRef.current = onTextModelChange;
-
-			const onImageModelChangeRef = useRef(onImageModelChange);
-			onImageModelChangeRef.current = onImageModelChange;
-
 			const onUndoRef = useRef(onUndo);
 			onUndoRef.current = onUndo;
 
