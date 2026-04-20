@@ -242,7 +242,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 
 				<Button
 					variant="default"
-					size="sm"
 					onClick={onSend}
 					disabled={!canSend}
 					aria-label={t('agenticPanel.send', 'Send message')}
