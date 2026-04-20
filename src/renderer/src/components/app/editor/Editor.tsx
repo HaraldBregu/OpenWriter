@@ -67,10 +67,6 @@ export interface EditorProps {
 	onOpenChat?: () => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
-	/** Called when the user selects a different text model in the content generator. */
-	onTextModelChange?: (model: ModelInfo) => void;
-	/** Called when the user selects a different image model in the content generator. */
-	onImageModelChange?: (model: ModelInfo) => void;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
 	onEditorReady?: (editor: TiptapEditor | null) => void;
 	onUndo?: () => void;
