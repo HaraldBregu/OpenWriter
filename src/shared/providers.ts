@@ -17,12 +17,6 @@ const findProvider = <TId extends ProviderId>(id: TId): Extract<(typeof PROVIDER
 
 export const OPENAI = findProvider('openai');
 export const ANTHROPIC = findProvider('anthropic');
-export const GOOGLE = findProvider('google');
-export const META = findProvider('meta');
-export const MISTRAL = findProvider('mistral');
-export const XAI = findProvider('xai');
-export const DEEPSEEK = findProvider('deepseek');
-export const QWEN = findProvider('qwen');
 
 // ---------------------------------------------------------------------------
 // Provider catalogue
