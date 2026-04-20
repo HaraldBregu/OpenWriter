@@ -205,7 +205,6 @@ export function useTaskSubmit<TInput = unknown, TResult = unknown>(
 			durationMs,
 			submit,
 			cancel,
-			updatePriority,
 			reset,
 			isIdle: taskId === null,
 			isQueued: status === 'queued',
