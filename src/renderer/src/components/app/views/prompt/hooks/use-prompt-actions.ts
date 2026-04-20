@@ -179,35 +179,16 @@ export function usePromptActions({
 			return;
 		}
 
-		const { from } = editor.state.selection;
-		const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-		const serializer = storage.markdown?.serializer as
-			| { serialize: (node: unknown) => string }
-			| undefined;
-		const docSize = editor.state.doc.content.size;
-		const subDocBefore = editor.state.doc.cut(0, from);
-		const subDocAfter = editor.state.doc.cut(from, docSize);
-		const rawBefore =
-			serializer?.serialize(subDocBefore) ?? editor.state.doc.textBetween(0, from, '\n');
-		const rawAfter =
-			serializer?.serialize(subDocAfter) ?? editor.state.doc.textBetween(from, docSize, '\n');
-		const stripHtml = (text: string): string => text.replace(/<[^>]*>/g, '');
-
 		updateAttributes({ loading: true, enable: false });
-
-		const before = stripHtml(rawBefore);
-		const after = stripHtml(rawAfter);
 
 		if (agentId === 'image') {
 			const effectivePrompt =
 				!trimmedPrompt && files.length > 0
 					? 'Create an image inspired by the uploaded reference images.'
 					: trimmedPrompt;
-			const builtPrompt = buildTaskPrompt(before, after, effectivePrompt);
-			options.onPromptSubmit({ prompt: builtPrompt, files });
+			options.onPromptSubmit({ prompt: effectivePrompt, files });
 		} else {
-			const builtPrompt = buildTaskPrompt(before, after, trimmedPrompt);
-			options.onPromptSubmit({ prompt: builtPrompt, files: [] });
+			options.onPromptSubmit({ prompt: trimmedPrompt, files: [] });
 		}
 	}, [agentId, files, prompt, deleteNode, editor, options, updateAttributes]);
 
