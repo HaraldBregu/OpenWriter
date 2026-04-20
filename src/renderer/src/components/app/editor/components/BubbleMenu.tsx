@@ -90,7 +90,15 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 					<Strikethrough className="h-3.5 w-3.5" />
 				</Button>
 
-				<Separator orientation="vertical" className="mx-0.5 ml-auto" />
+				<Button
+					variant="ghost"
+					size="icon"
+					aria-label="Open chat"
+					className="ml-auto"
+					onClick={() => onOpenChat?.()}
+				>
+					<MessageSquare className="h-3.5 w-3.5" />
+				</Button>
 
 				<Popover>
 					<PopoverTrigger
