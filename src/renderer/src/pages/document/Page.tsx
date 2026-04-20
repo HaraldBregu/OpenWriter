@@ -83,7 +83,7 @@ function PageContent(): ReactElement {
 	const [defaultTextModel, setDefaultTextModel] = useState<ModelInfo | undefined>(undefined);
 	const [defaultImageModel, setDefaultImageModel] = useState<ModelInfo | undefined>(undefined);
 
-	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
+	const { activeSidebar, setActiveSidebar, toggleSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
