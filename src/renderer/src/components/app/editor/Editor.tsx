@@ -110,8 +110,6 @@ const Editor = React.memo(
 				onInsertContent,
 				onOpenChat,
 				documentId,
-				onTextModelChange,
-				onImageModelChange,
 				onEditorReady,
 				onUndo,
 				onRedo,
