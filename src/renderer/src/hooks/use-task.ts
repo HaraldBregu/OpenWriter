@@ -229,7 +229,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			durationMs,
 			submit,
 			cancel,
-			updatePriority,
 			reset,
 			isIdle: taskId === null,
 			isQueued: status === 'queued',
