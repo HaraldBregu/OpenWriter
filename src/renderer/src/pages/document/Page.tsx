@@ -308,7 +308,7 @@ function PageContent(): ReactElement {
 				const ipcResult = await window.task.submit({
 					type: 'demo',
 					input: { prompt: payload.prompt },
-					metadata,
+					//metadata,
 				});
 				if (!ipcResult.success) {
 					editorActions.hideLoading();

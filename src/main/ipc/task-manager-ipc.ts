@@ -59,40 +59,11 @@ export class TaskManagerIpc implements IpcModule {
 			const windowId = senderWindow?.id;
 			options.windowId = windowId;
 
-			const workspacePath =
-				typeof windowId === 'number'
-					? (container
-							.get<WindowContextManager>('windowContextManager')
-							.tryGet(windowId)
-							?.container.get<WorkspaceService>('workspace')
-							.getCurrent() ?? undefined)
-					: undefined;
-
-			const metadata =
-				action.metadata !== undefined || workspacePath !== undefined
-					? {
-							...(action.metadata ?? {}),
-							...(workspacePath !== undefined ? { workspacePath } : {}),
-						}
-					: undefined;
-
-			if (metadata !== undefined) {
-				options.metadata = metadata;
+			if (action.metadata !== undefined) {
+				options.metadata = action.metadata;
 			}
 
-			// Inject server-stamped runtime context into object inputs so handlers
-			// can resolve window-scoped services and still retain the workspace
-			// path if the workspace facade is not yet available.
-			const input =
-				typeof action.input === 'object' && action.input !== null
-					? {
-							...(action.input as Record<string, unknown>),
-							windowId,
-							...(workspacePath !== undefined ? { workspacePath } : {}),
-						}
-					: action.input;
-
-			const taskId = await executor.submit(action.type, input, options);
+			const taskId = await executor.submit(action.type, action.input, options);
 			return { taskId };
 		});
 
