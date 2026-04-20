@@ -168,9 +168,6 @@ export const TaskChannels = {
 	cancel: 'task:cancel',
 	list: 'task:list',
 	event: 'task:event',
-	updatePriority: 'task:update-priority',
-	getResult: 'task:get-result',
-	queueStatus: 'task:queue-status',
 } as const;
 
 export const LogChannels = {
