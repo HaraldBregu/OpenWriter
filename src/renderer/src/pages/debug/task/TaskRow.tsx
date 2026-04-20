@@ -1,9 +1,9 @@
 import { Square, EyeOff, ListTree } from 'lucide-react';
-import { getTaskStatusText } from '../../../../shared/types';
+import { getTaskStatusText } from '../../../../../shared/types';
 import type { TrackedTaskState } from '@/services/task-store';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
-import { formatDuration } from './debug-helpers';
+import { formatDuration } from './task-helpers';
 
 interface TaskRowProps {
 	task: TrackedTaskState;
