@@ -1,18 +1,25 @@
 import { mkdir as fsMkdir, writeFile as fsWriteFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import { withFileMutationQueue } from "./file-mutation-queue.js";
 import { resolveToCwd } from "./path-utils.js";
 
-const writeSchema = Type.Object({
-	path: Type.String({ description: "Path to the file" }),
-	content: Type.String({ description: "Full contents to write" }),
-});
+export interface WriteToolInput {
+	path: string;
+	content: string;
+}
 
-export type WriteToolInput = Static<typeof writeSchema>;
+const writeSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		path: { type: "string", description: "Path to the file" },
+		content: { type: "string", description: "Full contents to write" },
+	},
+	required: ["path", "content"],
+};
 
-export function createWriteTool(cwd: string): AgentTool<typeof writeSchema, undefined> {
+export function createWriteTool(cwd: string): AgentTool<WriteToolInput, undefined> {
 	return {
 		name: "write",
 		label: "write",
