@@ -68,6 +68,14 @@ export function TaskRow({
 					)}
 					<button
 						type="button"
+						title="View data"
+						onClick={onViewData}
+						className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground"
+					>
+						<ListTree className="h-3.5 w-3.5" />
+					</button>
+					<button
+						type="button"
 						title="Hide"
 						onClick={onHide}
 						className="p-1 rounded hover:bg-accent transition-colors text-muted-foreground"
