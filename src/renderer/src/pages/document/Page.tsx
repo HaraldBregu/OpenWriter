@@ -501,8 +501,6 @@ function PageContent(): ReactElement {
 								onInsertContent={handleInsertContent}
 								onOpenChat={handleOpenChat}
 								documentId={id}
-								defaultTextModel={defaultTextModel}
-								defaultImageModel={defaultImageModel}
 								onTextModelChange={handleTextModelChange}
 								onImageModelChange={handleImageModelChange}
 								onEditorReady={handleEditorReady}
