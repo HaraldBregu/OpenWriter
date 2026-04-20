@@ -56,6 +56,7 @@ import type {
 	Theme,
 	Service,
 } from './types';
+import type { ShortcutId } from './shortcuts';
 
 // ===========================================================================
 // Channel Name Constants (grouped by domain)
