@@ -312,6 +312,22 @@ export interface TaskEvent {
 	metadata?: Record<string, unknown>;
 }
 
+/**
+ * Bundled arguments for the task:submit renderer API.
+ * One object carries every submit-time property.
+ */
+export interface TaskAction<TInput = unknown> {
+	type: string;
+	input: TInput;
+	metadata?: Record<string, unknown>;
+	options?: TaskSubmitOptions;
+}
+
+/**
+ * Return type of the task:submit renderer API.
+ */
+export type TaskActionReturn = IpcResult<{ taskId: string }>;
+
 // ---- Indexing -------------------------------------------------------------
 
 export interface IndexingInfo {
