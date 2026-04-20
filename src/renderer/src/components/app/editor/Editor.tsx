@@ -157,8 +157,6 @@ const Editor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						defaultTextModel: defaultTextModelRef.current,
-						defaultImageModel: defaultImageModelRef.current,
 						onTextModelChange: (model) => onTextModelChangeRef.current?.(model),
 						onImageModelChange: (model) => onImageModelChangeRef.current?.(model),
 						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload),
