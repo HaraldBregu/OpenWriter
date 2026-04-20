@@ -54,6 +54,7 @@ export function Provider({
 			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
+			onOpenChat,
 		}),
 		[
 			state,
@@ -62,6 +63,7 @@ export function Provider({
 			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
+			onOpenChat,
 		]
 	);
 
