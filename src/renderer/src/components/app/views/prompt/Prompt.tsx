@@ -7,14 +7,7 @@ import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/
 import { usePrompt } from './hooks';
 import { Provider } from './Provider';
 import { PromptHeader } from './PromptHeader';
-import {
-	DropdownMenu,
-	DropdownMenuTrigger,
-	DropdownMenuContent,
-	DropdownMenuCheckboxItem,
-} from '@/components/ui/DropdownMenu';
-import { ImageIcon, Plus, PenLine, ChevronDown, LoaderCircle, ArrowUp } from 'lucide-react';
-import { getProvider, IMAGE_MODELS, TEXT_MODELS } from 'src/shared';
+import { Paperclip, LoaderCircle, ArrowUp } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
@@ -26,31 +19,15 @@ function PromptContainer(): React.JSX.Element {
 		state,
 		loading,
 		enable,
-		agentId,
-		isImage,
 		isSubmitDisabled,
 		textareaRef,
 		submitRef,
 		handlePromptChange,
-		handleAgentChange,
-		handleImageModelChange,
-		handleTextModelChange,
 		handleFilesChange,
 		resizeTextarea,
 	} = usePrompt();
 
-	const inputLabel = isImage
-		? t('assistantNode.imageTitle', 'Generate image')
-		: t('assistantNode.textTitle', 'Generate text');
-
-	const modelOptions = isImage ? IMAGE_MODELS : TEXT_MODELS;
-	const selectedModel = isImage ? state.selectedImageModel : state.selectedTextModel;
-	const handleModelChange = isImage ? handleImageModelChange : handleTextModelChange;
-
-	const currentAgentLabel = isImage
-		? t('assistantAgent.image', 'Image')
-		: t('assistantAgent.text', 'Text');
-
+	const inputLabel = t('assistantNode.textTitle', 'Generate text');
 	const isDisabled = !enable || loading;
 
 	return (
@@ -84,122 +61,37 @@ function PromptContainer(): React.JSX.Element {
 								'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
 								'disabled:cursor-not-allowed disabled:opacity-60'
 							)}
-							placeholder={
-								isImage
-									? t('assistantNode.imagePlaceholder', 'Describe the image you want to create.')
-									: t('assistantNode.placeholder', 'What can i write for you?')
-							}
+							placeholder={t('assistantNode.placeholder', 'What can i write for you?')}
 							rows={1}
 						/>
 					</CardContent>
 					<CardFooter className="bg-transparent border-none">
-						<div className="flex items-center gap-3">
-							<DropdownMenu modal={false}>
-								<DropdownMenuTrigger
-									disabled={loading}
-									render={
-										<Button
-											variant="outline"
-											size="icon"
-											title={currentAgentLabel}
-											aria-label={t('assistantNode.switchAgent', 'Switch agent')}
-											onMouseDown={(e) => {
-												e.preventDefault();
-												e.stopPropagation();
-											}}
-										>
-											{agentId === 'image' && <ImageIcon />}
-											{agentId === 'text' && <PenLine />}
-										</Button>
-									}
-								/>
-								<DropdownMenuContent align="start" side="top" sideOffset={8} className="w-30">
-									<DropdownMenuCheckboxItem
-										checked={!isImage}
-										onCheckedChange={() => handleAgentChange('text')}
-									>
-										<PenLine />
-										{t('assistantAgent.text', 'Text')}
-									</DropdownMenuCheckboxItem>
-									<DropdownMenuCheckboxItem
-										checked={isImage}
-										onCheckedChange={() => handleAgentChange('image')}
-									>
-										<ImageIcon />
-										{t('assistantAgent.image', 'Image')}
-									</DropdownMenuCheckboxItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-							{isImage && (
-								<FileUploadTrigger
-									render={
-										<Button
-											type="button"
-											variant="outline"
-											size="icon"
-											title={t('assistantNode.addImage', 'Add image')}
-											aria-label={t('assistantNode.addImage', 'Add image')}
-										/>
-									}
-								>
-									<Plus />
-								</FileUploadTrigger>
-							)}
-						</div>
 						<div className="ml-auto flex items-center gap-3">
-							<DropdownMenu modal={false}>
-								<DropdownMenuTrigger
-									render={
-										<Button
-											variant="outline"
-											size="md"
-											disabled={loading}
-											onMouseDown={(e) => {
-												e.preventDefault();
-												e.stopPropagation();
-											}}
-										>
-											<span className="truncate text-xs font-medium text-foreground">
-												{selectedModel.name}
-											</span>
-											<ChevronDown className="h-3 w-3 shrink-0 text-muted-foreground/80" />
-										</Button>
-									}
-								/>
-								<DropdownMenuContent
-									align="end"
-									side="top"
-									sideOffset={8}
-									className="w-50 max-h-100"
-								>
-									{modelOptions.map((model) => (
-										<DropdownMenuCheckboxItem
-											key={model.modelId}
-											checked={selectedModel.modelId === model.modelId}
-											onCheckedChange={() => handleModelChange(model)}
-										>
-											<div className="flex min-w-0 flex-col gap-0.5">
-												<span className="truncate text-sm font-medium">{model.name}</span>
-												<span className="text-xs text-muted-foreground">
-													{getProvider(model.providerId)?.name ?? model.providerId}
-												</span>
-											</div>
-										</DropdownMenuCheckboxItem>
-									))}
-								</DropdownMenuContent>
-							</DropdownMenu>
+							<FileUploadTrigger
+								render={
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										title={t('assistantNode.addAttachment', 'Add attachment')}
+										aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+									/>
+								}
+							>
+								<Paperclip />
+							</FileUploadTrigger>
 							<Button
 								variant="default"
-								size="icon"
 								className="shrink-0"
 								disabled={isSubmitDisabled}
 								onMouseDown={(e) => e.preventDefault()}
 								onClick={() => {
 									if (!loading) submitRef.current?.();
 								}}
-								aria-label={t('agenticPanel.send', 'Send message')}
+								aria-label={t('agenticPanel.submit', 'Submit')}
 							>
 								{loading ? <LoaderCircle className="animate-spin" /> : <ArrowUp />}
+								<span>{t('agenticPanel.submit', 'Submit')}</span>
 							</Button>
 						</div>
 					</CardFooter>
