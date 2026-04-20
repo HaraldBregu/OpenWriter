@@ -1,12 +1,10 @@
 import { constants } from "node:fs";
 import { access as fsAccess, readFile as fsReadFile, writeFile as fsWriteFile } from "node:fs/promises";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import {
 	applyEditsToNormalizedContent,
 	detectLineEnding,
 	type Edit,
-	generateDiffString,
 	normalizeToLF,
 	restoreLineEndings,
 	stripBom,
@@ -14,34 +12,42 @@ import {
 import { withFileMutationQueue } from "./file-mutation-queue.js";
 import { resolveToCwd } from "./path-utils.js";
 
-const replaceEditSchema = Type.Object(
-	{
-		oldText: Type.String({
-			description:
-				"Exact text for one targeted replacement. Must be unique in the original file and must not overlap with other edits.",
-		}),
-		newText: Type.String({ description: "Replacement text for this targeted edit." }),
-	},
-	{ additionalProperties: false },
-);
+export interface EditReplacement {
+	oldText: string;
+	newText: string;
+}
 
-const editSchema = Type.Object(
-	{
-		path: Type.String({ description: "Path to the file to edit (relative or absolute)" }),
-		edits: Type.Array(replaceEditSchema, {
+export interface EditToolInput {
+	path: string;
+	edits: EditReplacement[];
+}
+
+const editSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		path: { type: "string", description: "Path to the file to edit (relative or absolute)" },
+		edits: {
+			type: "array",
 			description:
 				"One or more targeted replacements. Each edit matches the original file, not after prior edits. No overlapping edits.",
-		}),
+			items: {
+				type: "object",
+				additionalProperties: false,
+				properties: {
+					oldText: {
+						type: "string",
+						description:
+							"Exact text for one targeted replacement. Must be unique in the original file and must not overlap with other edits.",
+					},
+					newText: { type: "string", description: "Replacement text for this targeted edit." },
+				},
+				required: ["oldText", "newText"],
+			},
+		},
 	},
-	{ additionalProperties: false },
-);
-
-export type EditToolInput = Static<typeof editSchema>;
-
-export interface EditToolDetails {
-	diff: string;
-	firstChangedLine?: number;
-}
+	required: ["path", "edits"],
+};
 
 function prepareEditArguments(input: unknown): EditToolInput {
 	if (!input || typeof input !== "object") return input as EditToolInput;
@@ -50,7 +56,9 @@ function prepareEditArguments(input: unknown): EditToolInput {
 		try {
 			const parsed = JSON.parse(args.edits);
 			if (Array.isArray(parsed)) args.edits = parsed;
-		} catch {}
+		} catch {
+			/* leave as-is; validation below will surface the issue */
+		}
 	}
 	const legacy = args as EditToolInput & { oldText?: unknown; newText?: unknown };
 	if (typeof legacy.oldText === "string" && typeof legacy.newText === "string") {
@@ -62,7 +70,7 @@ function prepareEditArguments(input: unknown): EditToolInput {
 	return args as EditToolInput;
 }
 
-export function createEditTool(cwd: string): AgentTool<typeof editSchema, EditToolDetails | undefined> {
+export function createEditTool(cwd: string): AgentTool<EditToolInput, undefined> {
 	return {
 		name: "edit",
 		label: "edit",
@@ -90,13 +98,12 @@ export function createEditTool(cwd: string): AgentTool<typeof editSchema, EditTo
 				const { bom, text: content } = stripBom(rawContent);
 				const originalEnding = detectLineEnding(content);
 				const normalized = normalizeToLF(content);
-				const { baseContent, newContent } = applyEditsToNormalizedContent(normalized, edits, path);
+				const { newContent } = applyEditsToNormalizedContent(normalized, edits, path);
 				const final = bom + restoreLineEndings(newContent, originalEnding);
 				await fsWriteFile(abs, final, "utf-8");
-				const diffResult = generateDiffString(baseContent, newContent);
 				return {
 					content: [{ type: "text", text: `Successfully replaced ${edits.length} block(s) in ${path}.` }],
-					details: { diff: diffResult.diff, firstChangedLine: diffResult.firstChangedLine } as any,
+					details: undefined,
 				};
 			});
 		},
