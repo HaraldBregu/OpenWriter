@@ -300,7 +300,7 @@ function PageContent(): ReactElement {
 				const ipcResult = await window.task.submit({
 					type: 'agent',
 					input: { agentType: agentId, input: agentInput },
-					metadata: { sessionId: resolvedSessionId },
+					metadata: { sessionId: resolvedSessionId, documentId: id },
 				});
 
 				if (!ipcResult.success) {
