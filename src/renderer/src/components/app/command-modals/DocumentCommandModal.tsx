@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FileText } from 'lucide-react';
@@ -12,26 +11,19 @@ import {
 } from '@/components/ui/Command';
 import { useAppSelector } from '../../../store';
 import { selectAllDocuments } from '../../../store/workspace';
+import type { CommandModalProps } from './command-modal-registry';
 
-interface DocumentCommandPaletteProps {
-	open: boolean;
-	onOpenChange: (open: boolean) => void;
-}
-
-export function DocumentCommandPalette({ open, onOpenChange }: DocumentCommandPaletteProps) {
+export function DocumentCommandModal({ open, onOpenChange }: CommandModalProps) {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const documentsFromStore = useAppSelector(selectAllDocuments);
 
-	const documents = useMemo(
-		() => [...documentsFromStore].sort((a, b) => b.createdAt - a.createdAt),
-		[documentsFromStore]
-	);
+	const documents = [...documentsFromStore].sort((a, b) => b.createdAt - a.createdAt);
 
-	const handleSelect = (id: string): void => {
+	function handleSelect(id: string): void {
 		onOpenChange(false);
 		navigate(`/content/${id}`);
-	};
+	}
 
 	return (
 		<CommandDialog

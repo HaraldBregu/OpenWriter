@@ -69,7 +69,7 @@ import {
 	FileText,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
-import { CommandPaletteProvider } from '../command_palette';
+import { CommandModalProvider } from '../command-modals';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
 import {
@@ -639,9 +639,9 @@ export function Layout({ children }: LayoutProps) {
 			className="flex-col flex-1 min-h-0 flex h-screen min-w-200 overflow-x-hidden"
 			style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
 		>
-			<CommandPaletteProvider>
+			<CommandModalProvider>
 				<Container>{children}</Container>
-			</CommandPaletteProvider>
+			</CommandModalProvider>
 		</SidebarProvider>
 	);
 }
