@@ -53,164 +53,166 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 		<Card
 			ref={menuRef}
 			size="sm"
-			className={cn('flex-col gap-1! p-2! z-50')}
+			className={cn('flex-row items-center gap-1! p-2! z-50')}
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
-			<div className="flex flex-row gap-0.5">
-				<Popover>
-					<PopoverTrigger
-						openOnHover
-						delay={100}
-						closeDelay={150}
-						render={
-							<Button variant="ghost" size="icon" aria-label="Assistant">
-								<Sparkles className="h-3.5 w-3.5" />
-							</Button>
-						}
-					/>
-					<PopoverContent
-						side="top"
-						align="start"
-						className="w-56 p-1"
+			<Popover>
+				<PopoverTrigger
+					openOnHover
+					delay={100}
+					closeDelay={150}
+					render={
+						<Button variant="ghost" size="icon" aria-label="Assistant">
+							<Sparkles className="h-3.5 w-3.5" />
+						</Button>
+					}
+				/>
+				<PopoverContent
+					side="bottom"
+					align="start"
+					className="w-56 p-1 z-[100]"
+				>
+					<div className="flex flex-col gap-0.5">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => editor.chain().focus().run()}
+						>
+							<Wand2 className="h-3.5 w-3.5" />
+							Improve writing
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => editor.chain().focus().run()}
+						>
+							<SpellCheck className="h-3.5 w-3.5" />
+							Fix grammar
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => editor.chain().focus().run()}
+						>
+							<FileText className="h-3.5 w-3.5" />
+							Summarize
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => editor.chain().focus().run()}
+						>
+							<Languages className="h-3.5 w-3.5" />
+							Translate
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => editor.chain().focus().run()}
+						>
+							<ArrowRight className="h-3.5 w-3.5" />
+							Continue writing
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
+
+			<Separator orientation="vertical" className="w-px mx-0.5 h-6" />
+
+			<div className="flex flex-col gap-1">
+				<div className="flex flex-row gap-0.5">
+					<Button
+						variant={editor.isActive('bold') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Bold"
+						onClick={() => editor.chain().focus().toggleBold().run()}
 					>
-						<div className="flex flex-col gap-0.5">
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
-							>
-								<Wand2 className="h-3.5 w-3.5" />
-								Improve writing
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
-							>
-								<SpellCheck className="h-3.5 w-3.5" />
-								Fix grammar
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
-							>
-								<FileText className="h-3.5 w-3.5" />
-								Summarize
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
-							>
-								<Languages className="h-3.5 w-3.5" />
-								Translate
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
-							>
-								<ArrowRight className="h-3.5 w-3.5" />
-								Continue writing
-							</Button>
-						</div>
-					</PopoverContent>
-				</Popover>
+						<Bold className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('italic') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Italic"
+						onClick={() => editor.chain().focus().toggleItalic().run()}
+					>
+						<Italic className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('underline') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Underline"
+						onClick={() => editor.chain().focus().toggleUnderline().run()}
+					>
+						<Underline className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('strike') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Strikethrough"
+						onClick={() => editor.chain().focus().toggleStrike().run()}
+					>
+						<Strikethrough className="h-3.5 w-3.5" />
+					</Button>
+				</div>
 
-				<Separator orientation="vertical" className="w-px mx-0.5 h-4" />
+				<Separator orientation="horizontal" className="h-px my-0.5" />
 
-				<Button
-					variant={editor.isActive('bold') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Bold"
-					onClick={() => editor.chain().focus().toggleBold().run()}
-				>
-					<Bold className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('italic') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Italic"
-					onClick={() => editor.chain().focus().toggleItalic().run()}
-				>
-					<Italic className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('underline') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Underline"
-					onClick={() => editor.chain().focus().toggleUnderline().run()}
-				>
-					<Underline className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('strike') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Strikethrough"
-					onClick={() => editor.chain().focus().toggleStrike().run()}
-				>
-					<Strikethrough className="h-3.5 w-3.5" />
-				</Button>
-			</div>
-
-			<Separator orientation="horizontal" className="h-px my-0.5" />
-
-			<div className="flex flex-row gap-0.5">
-				<Button
-					variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Text"
-					onClick={() => editor.chain().focus().setParagraph().run()}
-				>
-					<Type className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Heading 1"
-					onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
-				>
-					<Heading1 className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Heading 2"
-					onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
-				>
-					<Heading2 className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Heading 3"
-					onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
-				>
-					<Heading3 className="h-3.5 w-3.5" />
-				</Button>
-				<Separator orientation="vertical" className="w-px mx-0.5" />
-				<Button
-					variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Bullet list"
-					onClick={() => editor.chain().focus().toggleBulletList().run()}
-				>
-					<List className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Ordered list"
-					onClick={() => editor.chain().focus().toggleOrderedList().run()}
-				>
-					<ListOrdered className="h-3.5 w-3.5" />
-				</Button>
+				<div className="flex flex-row gap-0.5">
+					<Button
+						variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Text"
+						onClick={() => editor.chain().focus().setParagraph().run()}
+					>
+						<Type className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('heading', { level: 1 }) ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Heading 1"
+						onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+					>
+						<Heading1 className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('heading', { level: 2 }) ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Heading 2"
+						onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+					>
+						<Heading2 className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('heading', { level: 3 }) ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Heading 3"
+						onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+					>
+						<Heading3 className="h-3.5 w-3.5" />
+					</Button>
+					<Separator orientation="vertical" className="w-px mx-0.5" />
+					<Button
+						variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Bullet list"
+						onClick={() => editor.chain().focus().toggleBulletList().run()}
+					>
+						<List className="h-3.5 w-3.5" />
+					</Button>
+					<Button
+						variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+						size="icon"
+						aria-label="Ordered list"
+						onClick={() => editor.chain().focus().toggleOrderedList().run()}
+					>
+						<ListOrdered className="h-3.5 w-3.5" />
+					</Button>
+				</div>
 			</div>
 		</Card>
 	);
