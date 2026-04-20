@@ -190,7 +190,7 @@ export function usePromptActions({
 		} else {
 			options.onPromptSubmit({ prompt: trimmedPrompt, files: [] });
 		}
-	}, [agentId, files, prompt, deleteNode, editor, options, updateAttributes]);
+	}, [agentId, files, prompt, deleteNode, options, updateAttributes]);
 
 	return useMemo(
 		() => ({
