@@ -501,8 +501,6 @@ function PageContent(): ReactElement {
 								onInsertContent={handleInsertContent}
 								onOpenChat={handleOpenChat}
 								documentId={id}
-								onTextModelChange={handleTextModelChange}
-								onImageModelChange={handleImageModelChange}
 								onEditorReady={handleEditorReady}
 								onUndo={handleUndo}
 								onRedo={handleRedo}
