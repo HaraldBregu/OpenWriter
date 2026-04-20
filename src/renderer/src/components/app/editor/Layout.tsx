@@ -9,6 +9,7 @@ interface LayoutProps {
 	readonly className?: string;
 	readonly editor: Editor | null;
 	readonly onInsertContent?: () => void;
+	readonly onOpenChat?: () => void;
 	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
 }
@@ -20,6 +21,7 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 			className,
 			editor,
 			onInsertContent,
+			onOpenChat,
 			onImageInsert,
 			children,
 		},
