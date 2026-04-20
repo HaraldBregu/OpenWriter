@@ -24,7 +24,6 @@ import type { TaskEvent } from './task-events';
 import type { ProgressReporter, StreamReporter } from './task-handler';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
-import { getTaskStatusText, withTaskStatusText } from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
@@ -36,14 +35,6 @@ const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 	normal: 2,
 	low: 1,
 };
-
-const TASK_STATUS_TEXT = {
-	QUEUED: 'Queued',
-	RUNNING: 'Running',
-	COMPLETED: 'Completed',
-	FAILED: 'Failed',
-	CANCELLED: 'Cancelled',
-} as const;
 
 /** Queued task waiting for an execution slot. */
 interface QueuedTask {
