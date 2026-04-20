@@ -21,8 +21,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 	const enable = node.attrs.enable as boolean;
 	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'text';
 	const options = extension.options as PromptOptions;
-	const storage = (editor.storage as unknown as Record<string, ContentGeneratorStorage>)
-		.contentGenerator;
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
@@ -36,11 +34,9 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			files: [],
 			previewUrls: [],
 			isDragOver: false,
-			selectedImageModel: storage.defaultImageModel ?? IMAGE_MODELS[0],
+			selectedImageModel: IMAGE_MODELS[0],
 			selectedTextModel:
-				storage.defaultTextModel ??
-				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ??
-				TEXT_MODELS[0],
+				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0],
 			selection: '',
 		})
 	);
