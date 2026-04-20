@@ -361,7 +361,7 @@ export interface WorkspaceApi {
 
 /** Background task queue */
 export interface TaskApi {
-	submit: (action: TaskAction) => Promise<TaskActionReturn>;
+	submit: (action: TaskAction) => Promise<IpcResult<TaskActionReturn>>;
 	cancel: (taskId: string) => Promise<IpcResult<boolean>>;
 	list: () => Promise<IpcResult<TaskInfo[]>>;
 	onEvent: (callback: (event: TaskEvent) => void) => () => void;
