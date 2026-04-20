@@ -115,6 +115,36 @@ const output = await agent.execute(
 console.log(`\nstreamed ${output.tokensStreamed} tokens`);
 ```
 
+## Usage — tool calling
+
+```ts
+import { TextAgent } from '@main/agents/text';
+import { createReadOnlyTools } from '@main/agents/tools';
+
+const agent = new TextAgent();
+
+const output = await agent.execute(
+  {
+    providerId: 'openai',
+    apiKey: process.env.OPENAI_API_KEY!,
+    modelName: 'gpt-4o-mini',
+    tools: createReadOnlyTools(process.cwd()),
+    maxIterations: 8,
+    toolSystemPrompt:
+      'You are a code navigator. Use tools to explore the repo before answering.',
+    messages: [
+      { role: 'user', content: 'Find every file that imports chat-model-factory.' },
+    ],
+  },
+  { signal: controller.signal, logger }
+);
+
+console.log(output.content);
+for (const call of output.toolCalls ?? []) {
+  console.log(`[${call.name}]`, call.argumentsRaw, '→', call.output.slice(0, 200));
+}
+```
+
 ## Usage — via AgentRegistry
 
 ```ts
