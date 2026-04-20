@@ -62,22 +62,6 @@ export function usePromptActions({
 		[dispatch, node.attrs.agentId, updateAttributes]
 	);
 
-	const handleImageModelChange = useCallback(
-		(model: ModelInfo) => {
-			dispatch({ type: 'SET_IMAGE_MODEL', payload: model });
-			options.onImageModelChange?.(model);
-		},
-		[dispatch, options]
-	);
-
-	const handleTextModelChange = useCallback(
-		(model: ModelInfo) => {
-			dispatch({ type: 'SET_TEXT_MODEL', payload: model });
-			options.onTextModelChange?.(model);
-		},
-		[dispatch, options]
-	);
-
 	const addFile = useCallback(
 		(newFile: File) => {
 			dispatch({ type: 'ADD_FILE', payload: newFile });
