@@ -267,7 +267,7 @@ export interface TaskSubmitPayload<TInput = unknown> {
 export type TaskState =
 	| 'queued'
 	| 'started'
-	| 'progress'
+	| 'running'
 	| 'completed'
 	| 'error'
 	| 'cancelled';
