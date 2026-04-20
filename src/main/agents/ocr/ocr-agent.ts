@@ -9,16 +9,14 @@ const DEFAULT_PROMPT =
 
 const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
 	openai: undefined,
-	mistral: 'https://api.mistral.ai/v1/',
-	google: 'https://generativelanguage.googleapis.com/v1beta/openai/',
+	anthropic: 'https://api.anthropic.com/v1/',
 };
 
 /**
  * OcrAgent — extract text from images/documents via a vision-capable LLM.
  *
  * Uses the OpenAI-compatible chat/completions endpoint with an image_url
- * content block. Works for any provider supporting the same schema
- * (OpenAI vision, Mistral, Gemini via OpenAI-compat proxy).
+ * content block.
  */
 export class OcrAgent extends BaseAgent<OcrAgentInput, OcrAgentOutput> {
 	readonly type = 'ocr';
