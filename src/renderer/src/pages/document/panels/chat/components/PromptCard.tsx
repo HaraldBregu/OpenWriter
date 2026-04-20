@@ -198,6 +198,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					</div>
 				)}
 			</CardHeader>
+			)}
 
 			<CardContent className="p-0">
 				<Textarea
