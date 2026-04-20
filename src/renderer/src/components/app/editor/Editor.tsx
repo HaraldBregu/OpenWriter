@@ -144,7 +144,7 @@ const Editor = React.memo(
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload),
+						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload, payload.editor),
 						onImageInsert: (file, insertAtPos) =>
 							handleImageFileInsertRef.current(file, insertAtPos),
 						onUndo: () => onUndoRef.current?.(),
