@@ -395,7 +395,6 @@ export class TaskExecutor implements Disposable {
 			const durationMs = Date.now() - task.startedAt!;
 
 			task.status = 'completed';
-			task.metadata = withTaskStatusText(task.metadata, TASK_STATUS_TEXT.COMPLETED);
 			task.completedAt = Date.now();
 			task.result = result;
 
