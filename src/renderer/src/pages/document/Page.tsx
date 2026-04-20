@@ -260,8 +260,6 @@ function PageContent(): ReactElement {
 				return;
 			}
 
-			console.log('Submitting prompt with payload:', payload);
-
 			editorActions.showLoading();
 			editorActions.disable();
 
