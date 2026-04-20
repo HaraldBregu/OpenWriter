@@ -12,6 +12,7 @@ interface ProviderProps {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	onInsertContent?: () => void;
+	onOpenChat?: () => void;
 	onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
 }
@@ -20,6 +21,7 @@ export function Provider({
 	editor,
 	containerRef,
 	onInsertContent,
+	onOpenChat,
 	onImageInsert,
 	children,
 }: ProviderProps): React.JSX.Element {
