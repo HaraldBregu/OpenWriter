@@ -14,6 +14,15 @@ const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
 	anthropic: 'https://api.anthropic.com/v1/',
 };
 
+export function resolveProviderBaseURL(providerId: string): string | undefined {
+	return PROVIDER_BASE_URLS[providerId];
+}
+
+export function createOpenAIClient(providerId: string, apiKey: string): OpenAI {
+	const baseURL = resolveProviderBaseURL(providerId);
+	return new OpenAI({ apiKey, ...(baseURL ? { baseURL } : {}) });
+}
+
 export interface ChatModelOptions {
 	providerId: string;
 	apiKey: string;
@@ -25,10 +34,9 @@ export interface ChatModelOptions {
 
 export function createChatModel(opts: ChatModelOptions): ChatModel {
 	const { apiKey, modelName, temperature, maxTokens } = opts;
-	const baseURL = PROVIDER_BASE_URLS[opts.providerId];
 	const effectiveTemp = isReasoningModel(modelName) ? undefined : temperature;
 
-	const client = new OpenAI({ apiKey, ...(baseURL ? { baseURL } : {}) });
+	const client = createOpenAIClient(opts.providerId, apiKey);
 
 	const model: ChatModel = {
 		_tokenListener: null,
