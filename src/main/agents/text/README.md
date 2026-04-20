@@ -49,10 +49,17 @@ interface ToolCallRecord {
 
 ## Behavior
 
-- `validate` rejects missing `messages`, `apiKey`, or `modelName`.
-- When `input.streaming === true` **and** `ctx.stream` is provided, tokens are forwarded one-by-one through `ctx.stream(token)` and accumulated into `content`.
-- Otherwise a single non-streaming `invoke` call returns the full content.
-- `ctx.signal` is honored: abort stops streaming immediately and propagates an `AbortError`.
+- `validate` rejects missing `messages`, `apiKey`, or `modelName`, and non-positive `maxIterations`.
+- Plain mode (`tools` absent/empty):
+  - Streaming on: tokens forwarded via `ctx.stream(token)`.
+  - Streaming off: single `invoke` → full content.
+- Tool-loop mode (`tools` non-empty):
+  - Uses OpenAI Chat Completions `tools` + `tool_calls` directly.
+  - Parallel tool calls in one turn are executed together (parallel by default; serialised if any tool in the batch declares `executionMode: 'sequential'`).
+  - Tool outputs are fed back as `role: 'tool'` messages and the loop repeats until the assistant returns no `tool_calls`.
+  - Hard cap: `maxIterations` (default 10). Exceeding it throws.
+  - Streaming is disabled in this mode (the final content is returned whole).
+- `ctx.signal` aborts the whole run (LLM call + in-flight tool).
 - Provider/network errors are normalized via `classifyError` + `toUserMessage`.
 
 ## Usage — non-streaming
