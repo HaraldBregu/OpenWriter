@@ -1,30 +1,41 @@
 import { spawn } from "node:child_process";
-import { type Static, Type } from "@sinclair/typebox";
-import type { AgentTool } from "../lib/agent/index.js";
+import type { AgentTool, JSONSchema } from "./types.js";
 import { resolveToCwd } from "./path-utils.js";
 import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, type TruncationResult, truncateHead } from "./truncate.js";
 
-const grepSchema = Type.Object({
-	pattern: Type.String({ description: "Regular expression to search for" }),
-	path: Type.Optional(Type.String({ description: "File or directory to search (default: cwd)" })),
-	glob: Type.Optional(Type.String({ description: "Glob filter, e.g. '*.ts'" })),
-	ignoreCase: Type.Optional(Type.Boolean({ description: "Case-insensitive match" })),
-	contextLines: Type.Optional(Type.Number({ description: "Lines of context around each match" })),
-	limit: Type.Optional(Type.Number({ description: "Max matches to return" })),
-});
-
-export type GrepToolInput = Static<typeof grepSchema>;
+export interface GrepToolInput {
+	pattern: string;
+	path?: string;
+	glob?: string;
+	ignoreCase?: boolean;
+	contextLines?: number;
+	limit?: number;
+}
 
 export interface GrepToolDetails {
 	truncation?: TruncationResult;
 	command: string[];
 }
 
+const grepSchema: JSONSchema = {
+	type: "object",
+	additionalProperties: false,
+	properties: {
+		pattern: { type: "string", description: "Regular expression to search for" },
+		path: { type: "string", description: "File or directory to search (default: cwd)" },
+		glob: { type: "string", description: "Glob filter, e.g. '*.ts'" },
+		ignoreCase: { type: "boolean", description: "Case-insensitive match" },
+		contextLines: { type: "number", description: "Lines of context around each match" },
+		limit: { type: "number", description: "Max matches to return" },
+	},
+	required: ["pattern"],
+};
+
 function resolveSearchBinary(): string {
 	return process.env.PI_GREP_BIN || "rg";
 }
 
-export function createGrepTool(cwd: string): AgentTool<typeof grepSchema, GrepToolDetails | undefined> {
+export function createGrepTool(cwd: string): AgentTool<GrepToolInput, GrepToolDetails | undefined> {
 	return {
 		name: "grep",
 		label: "grep",
@@ -67,7 +78,7 @@ export function createGrepTool(cwd: string): AgentTool<typeof grepSchema, GrepTo
 						details: {
 							command: [bin, ...args],
 							truncation: trunc.truncated ? trunc : undefined,
-						} as any,
+						},
 					});
 				});
 			});
