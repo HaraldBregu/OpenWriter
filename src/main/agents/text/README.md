@@ -22,7 +22,10 @@ interface TextAgentInput {
   modelName: string;         // e.g. 'gpt-4o-mini'
   temperature?: number;
   maxTokens?: number;
-  streaming?: boolean;       // enables token streaming when ctx.stream is set
+  streaming?: boolean;       // enables token streaming (plain mode only)
+  tools?: AgentTool[];       // when set → tool-loop mode
+  maxIterations?: number;    // tool-loop cap (default: 10)
+  toolSystemPrompt?: string; // prepended if messages[0] is not a system turn
 }
 ```
 
@@ -30,8 +33,17 @@ interface TextAgentInput {
 
 ```ts
 interface TextAgentOutput {
-  content: string;        // full assembled completion
-  tokensStreamed: number; // non-zero only when streaming was active
+  content: string;                 // final assistant text
+  tokensStreamed: number;          // non-zero only in plain streaming mode
+  toolCalls?: ToolCallRecord[];    // every tool invocation in order
+  iterations?: number;             // LLM round trips (≥1)
+}
+
+interface ToolCallRecord {
+  name: string;
+  argumentsRaw: string;            // JSON string the model emitted
+  output: string;                  // stringified tool output
+  error?: string;                  // 'unknown_tool' | 'parse_error' | 'execution_error'
 }
 ```
 
