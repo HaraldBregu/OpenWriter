@@ -119,6 +119,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 			onDragLeave={onDragLeave}
 			onDrop={onDrop}
 			className={cn(
+				'py-0!',
 				'relative overflow-hidden shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 dark:bg-card/95 w-full',
 				isFocused
 					? 'border-primary/45 dark:border-primary/55'
@@ -241,11 +242,12 @@ const PromptCard: React.FC<PromptCardProps> = ({
 
 				<Button
 					variant="default"
-					size="icon"
+					size="sm"
 					onClick={onSend}
 					disabled={!canSend}
 					aria-label={t('agenticPanel.send', 'Send message')}
 				>
+					<span>{t('agenticPanel.send', 'Send')}</span>
 					<ArrowUp aria-hidden="true" />
 				</Button>
 			</CardFooter>
