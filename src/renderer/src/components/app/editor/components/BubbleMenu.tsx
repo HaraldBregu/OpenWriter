@@ -16,11 +16,11 @@ import {
 	FileText,
 	Languages,
 	ArrowRight,
+	MessageSquare,
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { Separator } from '@/components/ui/Separator';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/Popover';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
