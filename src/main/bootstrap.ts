@@ -100,6 +100,10 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new OcrAgent());
 	container.register('agentRegistry', agentRegistry);
 
+	// Bridge task system -> agent registry. Submit tasks with type: 'agent'
+	// and an { agentType, input } payload to dispatch any registered agent.
+	taskHandlerRegistry.register(new AgentTaskHandler(agentRegistry, logger));
+
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
