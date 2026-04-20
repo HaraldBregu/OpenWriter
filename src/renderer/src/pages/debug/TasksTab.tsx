@@ -4,13 +4,16 @@ import { Bug } from 'lucide-react';
 import { useDebugTasks } from '../../hooks/use-debug-tasks';
 import { TaskRow } from './TaskRow';
 import { LogPanel } from './LogPanel';
+import { TaskDataDialog } from './TaskDataDialog';
 
 export function TasksTab() {
 	const { t } = useTranslation();
 	const { tasks, queueStats, hide, cancel } = useDebugTasks();
 	const [selectedId, setSelectedId] = useState<string | null>(null);
+	const [dataDialogId, setDataDialogId] = useState<string | null>(null);
 
 	const selectedTask = tasks.find((t) => t.taskId === selectedId) ?? null;
+	const dataDialogTask = tasks.find((t) => t.taskId === dataDialogId) ?? null;
 
 	const handleSelect = useCallback((taskId: string) => {
 		setSelectedId((prev) => (prev === taskId ? null : taskId));
