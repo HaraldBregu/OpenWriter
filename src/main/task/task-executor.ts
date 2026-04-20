@@ -265,7 +265,7 @@ export class TaskExecutor implements Disposable {
 		const completed = this.completedTasks.size;
 
 		for (const task of this.activeTasks.values()) {
-			if (task.status === 'started' || task.status === 'progress') {
+			if (task.status === 'started' || task.status === 'running') {
 				running++;
 			} else {
 				queued++;
