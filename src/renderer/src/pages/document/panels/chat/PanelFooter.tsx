@@ -251,7 +251,6 @@ const PanelFooter: React.FC<InputProps> = ({
 				selectionLabel={selectionLabel}
 				canClearSelection={canClearSelection}
 				placeholder={placeholder}
-				dropStatusId={dropStatusId}
 				currentAgentLabel={currentAgentLabel}
 				wrapperRef={wrapperRef}
 				textareaRef={textareaRef}
