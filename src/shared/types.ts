@@ -311,7 +311,7 @@ export interface TaskAction<TInput = unknown> {
 /**
  * Return type of the task:submit renderer API.
  */
-export type TaskActionReturn = IpcResult<{ taskId: string }>;
+export type TaskActionReturn = { taskId: string };
 
 // ---- Indexing -------------------------------------------------------------
 

@@ -323,6 +323,7 @@ function PageContent(): ReactElement {
 					input: { agentType: agentId, input: agentInput },
 					metadata: { sessionId: resolvedSessionId },
 				});
+				
 				if (!ipcResult.success) {
 					editorActions.hideLoading();
 					editorActions.enable();
