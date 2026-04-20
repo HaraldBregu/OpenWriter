@@ -329,13 +329,6 @@ export function applyTaskEvent(event: TaskEvent): void {
 						status: 'cancelled',
 						streamBuffer: '',
 					};
-				case 'priority-changed': {
-					return {
-						...nextTask,
-						priority: dataField<TaskPriority>(event.data, 'priority') ?? nextTask.priority,
-					};
-				}
-				case 'running':
 				default:
 					return nextTask;
 			}
