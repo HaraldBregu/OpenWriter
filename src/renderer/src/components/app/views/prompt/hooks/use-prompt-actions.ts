@@ -3,7 +3,7 @@ import type React from 'react';
 import type { Editor } from '@tiptap/core';
 import type { Node as ProseMirrorNode } from '@tiptap/pm/model';
 import { TextSelection } from '@tiptap/pm/state';
-import { ModelInfo, PromptOptions } from '@shared/index';
+import { PromptOptions } from '@shared/index';
 import { Action } from '../context';
 
 type AgentId = 'text' | 'image';
