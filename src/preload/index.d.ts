@@ -61,6 +61,7 @@ import type {
 	CustomThemeInfo,
 	Theme,
 } from '../shared/types';
+import type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
