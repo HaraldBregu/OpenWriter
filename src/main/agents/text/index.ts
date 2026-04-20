@@ -1,2 +1,2 @@
 export { TextAgent } from './text-agent';
-export type { TextAgentInput, TextAgentOutput } from './types';
+export type { TextAgentInput, TextAgentOutput, ToolCallRecord } from './types';
