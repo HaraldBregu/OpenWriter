@@ -20,7 +20,7 @@ import {
 	selectResourcesError,
 	selectResourcesStatus,
 } from '@/store/workspace';
-import { useTaskListener } from '@/hooks/use-task-listener';
+import type { TaskEvent, TaskState } from '../../../../../../shared/types';
 import { filterResourcesBySection, RESOURCE_SECTIONS } from '../../shared/resource-sections';
 import { useDataSort } from '../hooks/use-data-sort';
 import { useDataFilter } from '../hooks/use-data-filter';
