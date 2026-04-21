@@ -19,23 +19,8 @@ import {
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import { v7 as uuidv7 } from 'uuid';
-import type { TaskEvent, TaskState } from '../../../../shared/types';
-
-function dataField<T>(data: unknown, key: string): T | undefined {
-	if (typeof data === 'object' && data !== null && key in data) {
-		return (data as Record<string, unknown>)[key] as T;
-	}
-	return undefined;
-}
-
-const TASK_STATUS_LABELS: Record<TaskState, string> = {
-	queued: 'Queued',
-	started: 'Started',
-	running: 'Running',
-	completed: 'Completed',
-	error: 'Error',
-	cancelled: 'Cancelled',
-};
+import type { TaskEvent } from '../../../../shared/types';
+import { TaskStatusBar } from './components/TaskStatusBar';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
