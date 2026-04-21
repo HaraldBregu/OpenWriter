@@ -73,7 +73,7 @@ export class ContentsService {
 	}
 
 	/**
-	 * Load all sub-folders and markdown files from the workspace resources/content/ directory.
+	 * Load all sub-folders and markdown files from the workspace contents/ directory.
 	 * Returns directories as kind='folder' and .md files as kind='file'.
 	 */
 	async getFolders(workspacePath: string): Promise<FolderEntry[]> {
