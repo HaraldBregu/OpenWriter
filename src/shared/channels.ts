@@ -344,6 +344,12 @@ export interface InvokeChannelMap {
 	[AppChannels.getCustomThemeTokens]: { args: [id: string]; result: Theme | null };
 	[AppChannels.deleteTheme]: { args: [id: string]; result: void };
 
+	// ---- Skills management (IpcResult-wrapped) ----
+	[AppChannels.getSkills]: { args: []; result: SkillInfo[] };
+	[AppChannels.openSkillsFolder]: { args: []; result: void };
+	[AppChannels.importSkill]: { args: []; result: SkillInfo[] };
+	[AppChannels.deleteSkill]: { args: [id: string]; result: void };
+
 	// ---- System settings (IpcResult-wrapped) ----
 	[AppChannels.openSystemAccessibility]: { args: []; result: void };
 	[AppChannels.openSystemScreenRecording]: { args: []; result: void };
