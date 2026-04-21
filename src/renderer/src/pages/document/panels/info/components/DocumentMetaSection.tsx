@@ -2,8 +2,11 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Calendar, ImageIcon, PenLine, Tag } from 'lucide-react';
 import { SettingRow } from '@pages/settings/components';
-import { DEFAULT_IMAGE_MODEL_ID, findModelById } from '../../../../../../../shared/models';
-import { DEFAULT_TEXT_MODEL_ID } from '../../../../../../../shared/types';
+import {
+	DEFAULT_IMAGE_MODEL_ID,
+	DEFAULT_TEXT_MODEL_ID,
+	findModelById,
+} from '../../../../../../../shared/models';
 import { useInfoState } from '../hooks/use-info-state';
 
 function formatDate(isoString: string, locale: string): string {
