@@ -15,10 +15,10 @@ import {
 	useDocumentHistory,
 	useDocumentState,
 	useInsertContentDialog,
-	useSidebarVisibility,
 	useEditorInstance,
 	useEditor,
 } from './hooks';
+import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import { v7 as uuidv7 } from 'uuid';
 import { subscribeToTask, type TaskSnapshot } from '../../services/task-event-bus';
 import { useAppDispatch } from '../../store';
