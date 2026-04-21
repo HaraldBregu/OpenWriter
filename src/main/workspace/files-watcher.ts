@@ -17,9 +17,8 @@ interface IgnoredWrite {
 }
 
 /**
- * FilesWatcherService monitors `resources/files/` for external changes.
+ * FilesWatcherService monitors the workspace `files/` folder for external changes.
  *
- * Modelled on DocumentsWatcherService but watches only the files sub-folder.
  * Broadcasts `files:changed` events via EventBus.
  */
 export class FilesWatcherService implements Disposable {
