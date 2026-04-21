@@ -169,7 +169,7 @@ export const TitleBar = React.memo(function TitleBar({
 
 			{showSidebarToggles && (
 				<div
-					className="flex items-center h-full"
+					className="flex items-center h-full mr-4"
 					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
 				>
 					<button

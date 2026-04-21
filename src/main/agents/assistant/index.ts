@@ -5,14 +5,19 @@ export type {
 	AssistantFile,
 	AssistantToolCallRecord,
 } from './types';
+export { AssistantState } from './state';
 export type {
-	AssistantNode,
-	NodeContext,
-	NodeEvent,
-	NodeName,
-	NodeStatus,
-	NodeState,
-	Intent,
-	Order,
-	ImageNodeResult,
-} from './nodes';
+	AssistantSnapshot,
+	AssistantStatus,
+	ControllerAction,
+	ControllerDecision,
+	ImageRecord,
+	StateEvent,
+	StateEventKind,
+	StateListener,
+	StepNodeName,
+	StepRecord,
+	StepStatus,
+} from './state';
+export { ControllerNode, TextNode, ImageNode } from './nodes';
+export type { NodeContext } from './nodes';
