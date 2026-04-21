@@ -173,6 +173,22 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.deleted, callback);
 	},
 	// -------------------------------------------------------------------------
+	// Deprecated resources API — main-side removed. Stubs kept so the
+	// renderer surface still compiles; calls reject at runtime.
+	// -------------------------------------------------------------------------
+	importFiles: (): Promise<never> =>
+		Promise.reject(new Error('resources API removed from main process')),
+	importByPaths: (): Promise<never> =>
+		Promise.reject(new Error('resources API removed from main process')),
+	downloadFromUrl: (): Promise<never> =>
+		Promise.reject(new Error('resources API removed from main process')),
+	loadDocuments: (): Promise<never> =>
+		Promise.reject(new Error('resources API removed from main process')),
+	deleteDocument: (): Promise<never> =>
+		Promise.reject(new Error('resources API removed from main process')),
+	onDocumentFileChange: (): (() => void) => () => {},
+	onDocumentWatcherError: (): (() => void) => () => {},
+	// -------------------------------------------------------------------------
 	// Indexed directory management
 	// -------------------------------------------------------------------------
 	listDirectories: (): Promise<
