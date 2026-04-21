@@ -32,13 +32,12 @@ export {
 	SkillLoadError,
 	SkillNotFoundError,
 	SkillValidationError,
-	bundledSkills,
+	SkillParser,
+	FileSystemSkillSource,
+	FileSystemSkillRepository,
 	buildSkillsPrompt,
 	buildSkillsSnapshot,
 	renderSkillInstructions,
-	parseSkillMarkdown,
-	loadSkillsFromDir,
-	createDefaultSkillRegistry,
 } from './skills';
 export type {
 	Skill,
@@ -47,4 +46,11 @@ export type {
 	SkillExposure,
 	SkillScope,
 	SkillSnapshot,
+	SkillSource,
+	SkillLoadRecord,
+	SkillRepository,
+	ParsedSkill,
+	ParseSkillOptions,
+	FileSystemSkillSourceOptions,
+	FileSystemSkillRepositoryOptions,
 } from './skills';
