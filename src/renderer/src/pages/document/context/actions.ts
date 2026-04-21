@@ -4,9 +4,11 @@ import type { ChatSessionListItem } from '../panels/chat/shared';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
-	| { type: 'LOAD_SUCCEEDED'; title: string; metadata: OutputFileMetadata }
+	| { type: 'LOAD_SUCCEEDED'; title: string; content?: string; metadata: OutputFileMetadata }
 	| { type: 'LOAD_FAILED' }
 	| { type: 'TITLE_CHANGED'; value: string }
+	| { type: 'CONTENT_CHANGED'; value: string }
+	| { type: 'EDITOR_SELECTION_CHANGED'; selection: { from: number; to: number } | null }
 	| { type: 'METADATA_UPDATED'; metadata: OutputFileMetadata | null }
 	| { type: 'IMAGES_UPDATED'; images: DocumentImageInfo[] }
 	| { type: 'TRASH_STARTED' }

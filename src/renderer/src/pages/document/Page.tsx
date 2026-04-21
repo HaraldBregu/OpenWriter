@@ -352,9 +352,17 @@ function PageContent(): ReactElement {
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
+			dispatch({ type: 'CONTENT_CHANGED', value: newContent });
 			debouncedContentSave();
 		},
-		[debouncedContentSave]
+		[dispatch, debouncedContentSave]
+	);
+
+	const handleSelectionChange = useCallback(
+		(selection: { from: number; to: number } | null) => {
+			dispatch({ type: 'EDITOR_SELECTION_CHANGED', selection });
+		},
+		[dispatch]
 	);
 
 	const handleEditorReady = useCallback(
@@ -481,6 +489,7 @@ function PageContent(): ReactElement {
 								value={content}
 								externalValueVersion={contentVersion}
 								onChange={handleContentChange}
+								onSelectionChange={handleSelectionChange}
 								onPromptSubmit={handlePromptSubmit}
 								onInsertContent={handleInsertContent}
 								onOpenChat={handleOpenChat}

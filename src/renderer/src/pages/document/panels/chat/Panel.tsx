@@ -54,8 +54,9 @@ import { PanelBody } from './PanelBody';
 const Chat: React.FC = () => {
 	const { t } = useTranslation();
 	const dispatch = useChatDispatch();
-	const { documentId, selection } = useDocumentState();
+	const { documentId } = useDocumentState();
 	const { editor } = useEditorInstance();
+	const selection = useEditorSelection(editor);
 	const { messages: chatMessages, sessionId, activeTaskId, activeMessageId } = useChatState();
 	const messagesRef = useRef(chatMessages);
 	const lastRecordedTaskStateRef = useRef<string | null>(null);
