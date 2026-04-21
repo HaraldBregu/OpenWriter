@@ -28,6 +28,7 @@ function toLocalResourceUrl(filePath: string): string {
 
 export function OptionMenu(): React.JSX.Element {
 	const { editor, onInsertContent } = useEditor();
+	const { images } = useDocumentState();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
