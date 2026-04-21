@@ -138,7 +138,7 @@ export class Workspace implements Disposable {
 			throw new Error('Invalid document ID: must be a non-empty string');
 		}
 		const currentWorkspace = this.requireWorkspace();
-		const documentDir = path.join(currentWorkspace, 'output', 'documents', documentId);
+		const documentDir = path.join(currentWorkspace, 'documents', documentId);
 		if (!fs.existsSync(documentDir) || !fs.statSync(documentDir).isDirectory()) {
 			throw new Error(`Document folder does not exist for ID "${documentId}".`);
 		}
