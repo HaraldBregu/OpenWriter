@@ -43,6 +43,7 @@ interface AgentInputRecord {
 	imageModelName?: string;
 	documentId?: string;
 	documentPath?: string;
+	workspacePath?: string;
 	[key: string]: unknown;
 }
 
