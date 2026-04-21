@@ -274,8 +274,6 @@ function Container({ children }: LayoutProps) {
 		[setLanguage]
 	);
 
-	const { isMobile } = useSidebar();
-
 	return (
 		<>
 			<TitleBar
@@ -315,9 +313,9 @@ function Container({ children }: LayoutProps) {
 										}
 									/>
 									<DropdownMenuContent
-										className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-										align="start"
-										side={isMobile ? 'bottom' : 'right'}
+										className="w-(--radix-dropdown-menu-trigger-width) min-w-72"
+										side="top"
+										align="end"
 										sideOffset={4}
 									>
 										<DropdownMenuGroup>
@@ -576,10 +574,10 @@ function Container({ children }: LayoutProps) {
 										}
 									/>
 									<DropdownMenuContent
-										className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-										side={isMobile ? 'bottom' : 'right'}
+										className="w-(--radix-dropdown-menu-trigger-width) min-w-72"
+										side="top"
 										align="end"
-										sideOffset={4}
+										sideOffset={14}
 									>
 										<DropdownMenuGroup className="space-y-1">
 											<DropdownMenuLabel className="p-0 font-normal">
