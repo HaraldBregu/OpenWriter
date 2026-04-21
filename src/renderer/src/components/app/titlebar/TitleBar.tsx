@@ -167,6 +167,45 @@ export const TitleBar = React.memo(function TitleBar({
 			{/* ── Spacer (pushes right buttons to the right) ── */}
 			<div className="flex-1" />
 
+			{showSidebarToggles && (
+				<>
+					<button
+						type="button"
+						onClick={() => toggleSidebar('agentic')}
+						className={
+							isMac
+								? 'flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
+								: btnNoHover
+						}
+						title={t('titleBar.toggleAgenticSidebar')}
+						aria-label={t('titleBar.toggleAgenticSidebar')}
+						aria-pressed={activeSidebar === 'agentic'}
+					>
+						<Bot
+							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
+							strokeWidth={1.5}
+						/>
+					</button>
+					<button
+						type="button"
+						onClick={() => toggleSidebar('config')}
+						className={
+							isMac
+								? 'flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
+								: btnNoHover
+						}
+						title={t('titleBar.toggleSidebar')}
+						aria-label={t('titleBar.toggleSidebar')}
+						aria-pressed={activeSidebar === 'config'}
+					>
+						<Info
+							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
+							strokeWidth={1.5}
+						/>
+					</button>
+				</>
+			)}
+
 			{/* ── Right: minimize / maximize / close (Windows only) ── */}
 			{!isMac && (
 				<TitleBarRightContainer>
