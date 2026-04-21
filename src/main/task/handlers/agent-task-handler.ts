@@ -136,7 +136,22 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const workspacePath = base.workspacePath?.trim() || this.resolveWorkspacePath();
 		if (workspacePath) enriched.workspacePath = workspacePath;
 
+		if (agentType === 'assistant' && !base.skills) {
+			const skills = await this.loadSkills();
+			if (skills.length > 0) enriched.skills = skills;
+		}
+
 		return enriched as unknown as T;
+	}
+
+	private async loadSkills(): Promise<Skill[]> {
+		if (!this.skillsStoreService) return [];
+		try {
+			return await this.skillsStoreService.listSkillEntities();
+		} catch (error) {
+			this.logger.warn('AgentTaskHandler', 'Failed to load skills', error);
+			return [];
+		}
 	}
 
 	private resolveWorkspacePath(): string | undefined {
