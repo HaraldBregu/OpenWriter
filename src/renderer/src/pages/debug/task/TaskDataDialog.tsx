@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import type { TrackedTaskState } from '@/services/task-store';
+import type { TrackedTask } from './types';
 import {
 	Dialog,
 	DialogContent,
@@ -10,7 +10,7 @@ import {
 import { formatEventTime } from './task-helpers';
 
 interface TaskDataDialogProps {
-	task: TrackedTaskState | null;
+	task: TrackedTask | null;
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }
