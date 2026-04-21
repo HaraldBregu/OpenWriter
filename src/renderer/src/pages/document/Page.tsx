@@ -100,11 +100,6 @@ function PageContent(): ReactElement {
 				setContent(loadedContent);
 				dispatch({ type: 'CONTENT_CHANGED', value: loadedContent });
 
-				const textModel = findModelById(config.textModel);
-				if (textModel) setDefaultTextModel(textModel);
-				const imageModel = findModelById(config.imageModel);
-				if (imageModel) setDefaultImageModel(imageModel);
-
 				setLoaded(true);
 			} catch {
 				if (!cancelled) {
