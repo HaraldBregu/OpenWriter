@@ -122,12 +122,9 @@ export class AgentTaskHandler
 		return typeof fromMeta === 'string' && fromMeta ? fromMeta : undefined;
 	}
 
-	private resolveDocumentPath(
-		documentId: string,
-		metadata?: Record<string, unknown>
-	): string | undefined {
-		const windowId = metadata?.windowId;
-		if (typeof windowId !== 'number') return undefined;
+	private resolveDocumentPath(documentId: string): string | undefined {
+		const windowId = this.resolveWindowId();
+		if (windowId === undefined) return undefined;
 
 		const context = this.windowContextManager.tryGet(windowId);
 		if (!context) return undefined;
@@ -144,5 +141,10 @@ export class AgentTaskHandler
 			);
 			return undefined;
 		}
+	}
+
+	private resolveWindowId(): number | undefined {
+		const ctx = getTaskExecutionContext();
+		return ctx?.windowId;
 	}
 }
