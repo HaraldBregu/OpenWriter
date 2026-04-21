@@ -259,8 +259,17 @@ function PageContent(): ReactElement {
 			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
 			const textAfter =
 				editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
-			console.log('[Page] text before cursor:', textBefore);
-			console.log('[Page] text after cursor:', textAfter);
+
+			const composedPrompt = [
+				'Text before cursor:',
+				textBefore,
+				'',
+				'Instruction:',
+				payload.prompt,
+				'',
+				'Text after cursor:',
+				textAfter,
+			].join('\n');
 
 			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
 				editorActions.hideLoading();
@@ -287,12 +296,12 @@ function PageContent(): ReactElement {
 
 				const agentInput = isImage
 					? {
-							prompt: payload.prompt,
+							prompt: composedPrompt,
 							providerId: model.providerId,
 							modelName: model.modelId,
 						}
 					: {
-							messages: [{ role: 'user' as const, content: payload.prompt }],
+							messages: [{ role: 'user' as const, content: composedPrompt }],
 							providerId: model.providerId,
 							modelName: model.modelId,
 							streaming: true,
