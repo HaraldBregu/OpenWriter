@@ -1,4 +1,3 @@
-import { addTask } from '@/services/task-store';
 import type { DemoVariant } from './task-constants';
 
 export function formatDuration(ms?: number): string {
@@ -17,12 +16,9 @@ export function formatEventTime(receivedAt: number): string {
 }
 
 export async function submitDemoTask(variant: DemoVariant): Promise<void> {
-	const result = await window.task.submit({
+	await window.task.submit({
 		type: 'demo',
 		input: { variant },
 		options: { priority: 'normal' },
 	});
-	if (result.success && result.data?.taskId) {
-		addTask({ taskId: result.data.taskId, type: 'demo' });
-	}
 }
