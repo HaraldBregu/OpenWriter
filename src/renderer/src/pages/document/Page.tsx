@@ -6,7 +6,6 @@ import { Undo2, Redo2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Separator } from '@/components/ui/Separator';
 import InfoPanel from './panels/info/Panel';
 import Chat from './panels/chat/Panel';
 import HistoryMenu from './components/HistoryMenu';
