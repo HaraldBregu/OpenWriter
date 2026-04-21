@@ -23,11 +23,11 @@ export class FilesService {
 	 * Get the absolute path to the files directory for a workspace.
 	 */
 	getFilesDir(workspacePath: string): string {
-		return path.join(workspacePath, 'resources', FILES_SUBFOLDER);
+		return path.join(workspacePath, FILES_SUBFOLDER);
 	}
 
 	/**
-	 * Ensure the resources/files/ directory exists.
+	 * Ensure the files/ directory exists.
 	 */
 	async ensureFilesDir(workspacePath: string): Promise<void> {
 		const filesDir = this.getFilesDir(workspacePath);
@@ -35,7 +35,7 @@ export class FilesService {
 	}
 
 	/**
-	 * Load all files from the workspace resources/files/ directory.
+	 * Load all files from the workspace files/ directory.
 	 */
 	async getFiles(workspacePath: string): Promise<FileEntry[]> {
 		const filesDir = this.getFilesDir(workspacePath);

@@ -213,7 +213,22 @@
 			"subtitle": "Gestisci le skill AI disponibili in OpenWriter.",
 			"library": "Libreria skill",
 			"libraryDescription": "Le skill installate e configurabili appariranno qui.",
-			"status": "Prossimamente"
+			"status": "Prossimamente",
+			"actions": "Azioni",
+			"openFolder": "Apri cartella skill",
+			"import": "Importa skill",
+			"installed": "Skill installate",
+			"bundled": "Integrata",
+			"user": "Utente",
+			"plugin": "Plugin",
+			"noSkills": "Nessuna skill installata. Importa una cartella di skill oppure copiala nella cartella skill.",
+			"importSuccess": "Skill importata correttamente.",
+			"importSuccessMany": "{{count}} skill importate correttamente.",
+			"importErrorFallback": "Impossibile importare la skill. Riprova.",
+			"confirmDelete": "Conferma",
+			"deleteErrorFallback": "Impossibile eliminare la skill. Riprova.",
+			"dismissError": "Chiudi errore",
+			"dismissSuccess": "Chiudi"
 		},
 		"permissions": {
 			"microphone": "Microfono",
