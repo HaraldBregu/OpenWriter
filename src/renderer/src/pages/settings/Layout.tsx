@@ -59,7 +59,7 @@ export function Layout(): React.JSX.Element {
 
 					<ItemSeparator />
 
-					<ItemGroup className="gap-0.5">
+					<ItemGroup>
 						<NavLink to="/settings/providers" end className={LINK_BASE}>
 							{({ isActive }) => (
 								<Item
@@ -116,7 +116,7 @@ export function Layout(): React.JSX.Element {
 
 					<ItemSeparator />
 
-					<ItemGroup className="gap-0.5">
+					<ItemGroup>
 						<NavLink to="/settings/editor" end className={LINK_BASE}>
 							{({ isActive }) => (
 								<Item
@@ -147,7 +147,7 @@ export function Layout(): React.JSX.Element {
 
 					<ItemSeparator />
 
-					<ItemGroup className="gap-0.5">
+					<ItemGroup>
 						<NavLink to="/settings/system" end className={LINK_BASE}>
 							{({ isActive }) => (
 								<Item
