@@ -1,59 +1,51 @@
 import path from 'node:path';
 import { createGenerateImageTool } from '../../tools';
-import type { AssistantNode, NodeContext } from './node';
+import type { NodeContext } from './node';
 
 const IMAGE_RELATIVE_PATH_PATTERN = /images\/[^\s]+/;
 
-export class ImageNode implements AssistantNode {
+export class ImageNode {
 	readonly name = 'image' as const;
 
-	async run(ctx: NodeContext): Promise<void> {
-		const { input, agentCtx, emit, state } = ctx;
+	async run(ctx: NodeContext, imagePrompt: string): Promise<void> {
+		const { input, agentCtx, state } = ctx;
+		const step = state.beginStep(this.name, imagePrompt);
 
-		if (!input.imageProviderId || !input.imageApiKey || !input.imageModelName) {
-			emit({
-				node: this.name,
-				status: 'error',
-				error: 'Image provider not configured',
+		try {
+			if (!input.imageProviderId || !input.imageApiKey || !input.imageModelName) {
+				throw new Error('Image provider not configured');
+			}
+
+			const documentFolder = path.dirname(input.documentPath);
+			const tool = createGenerateImageTool({
+				cwd: documentFolder,
+				providerId: input.imageProviderId,
+				apiKey: input.imageApiKey,
+				modelName: input.imageModelName,
+				contentFilePath: input.documentPath,
 			});
-			throw new Error('Image provider not configured');
+
+			const args = { prompt: imagePrompt };
+			const runImage = tool.execute.bind(tool);
+			const result = await runImage(`image-${state.images.length + 1}`, args, agentCtx.signal);
+			const output = result.content
+				.map((c) => (c.type === 'text' ? c.text : ''))
+				.join('');
+
+			state.addToolCall({
+				name: tool.name,
+				argumentsRaw: JSON.stringify(args),
+				output,
+			});
+
+			const match = IMAGE_RELATIVE_PATH_PATTERN.exec(output);
+			const relativePath = match ? match[0] : `images/unknown-${Date.now()}.png`;
+			state.addImage({ relativePath, prompt: imagePrompt });
+			state.completeStep(step, { relativePath, prompt: imagePrompt });
+		} catch (error) {
+			const msg = error instanceof Error ? error.message : String(error);
+			state.failStep(step, msg);
+			throw error;
 		}
-
-		emit({ node: this.name, status: 'running', data: { prompt: input.prompt } });
-
-		const documentFolder = path.dirname(input.documentPath);
-		const tool = createGenerateImageTool({
-			cwd: documentFolder,
-			providerId: input.imageProviderId,
-			apiKey: input.imageApiKey,
-			modelName: input.imageModelName,
-			contentFilePath: input.documentPath,
-		});
-
-		const args = { prompt: input.prompt };
-		const runImage = tool.execute.bind(tool);
-		const result = await runImage('image-node', args, agentCtx.signal);
-		const output = result.content
-			.map((c) => (c.type === 'text' ? c.text : ''))
-			.join('');
-
-		state.toolCalls.push({
-			name: tool.name,
-			argumentsRaw: JSON.stringify(args),
-			output,
-		});
-
-		const match = IMAGE_RELATIVE_PATH_PATTERN.exec(output);
-		if (match) {
-			state.imageResult = { relativePath: match[0], prompt: input.prompt };
-		}
-
-		if (!state.textResult) {
-			state.textResult = state.imageResult
-				? `Generated image at ${state.imageResult.relativePath}.`
-				: 'Image generation completed.';
-		}
-
-		emit({ node: this.name, status: 'done', data: state.imageResult });
 	}
 }
