@@ -2,7 +2,8 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from '../../hooks/use-language';
-import { PageContainer } from '@/components/app';
+import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app';
+import { PageBody } from '@/components/app/base/Page';
 import { Separator } from '@/components/ui/Separator';
 
 interface NavItemDefinition {
@@ -67,8 +68,13 @@ export function Layout(): React.JSX.Element {
 				</div>
 
 				{/* Right column — content (3/4 width) */}
-				<div className="w-full overflow-y-auto">
-					<Outlet />
+				<div className="flex min-h-0 w-full flex-col overflow-hidden">
+					<PageHeader>
+						<PageHeaderTitle>{t('settings.title')}</PageHeaderTitle>
+					</PageHeader>
+					<PageBody>
+						<Outlet />
+					</PageBody>
 				</div>
 			</div>
 		</PageContainer>
