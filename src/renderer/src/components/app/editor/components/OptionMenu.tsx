@@ -1,13 +1,30 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Heading, Type, List, ListOrdered, Minus, ImagePlus, FileText } from 'lucide-react';
+import {
+	Heading,
+	Type,
+	List,
+	ListOrdered,
+	Minus,
+	ImagePlus,
+	Images as ImagesIcon,
+	FileText,
+} from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
+import { useDocumentState } from '../../../../pages/document/hooks';
 
 const pluginKey = new PluginKey('optionMenu');
-const ITEM_COUNT = 9;
+const ITEM_COUNT = 10;
+const IMAGES_INDEX = 8;
+
+function toLocalResourceUrl(filePath: string): string {
+	const normalized = filePath.replace(/\\/g, '/');
+	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+	return `local-resource://localhost${urlPath}`;
+}
 
 export function OptionMenu(): React.JSX.Element {
 	const { editor, onInsertContent } = useEditor();
