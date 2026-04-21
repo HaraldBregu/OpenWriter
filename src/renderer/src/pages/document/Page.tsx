@@ -37,6 +37,7 @@ import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import type { AssistantAction } from '@/components/app/editor/context/context';
 import { PromptSubmitPayload } from '@shared/index';
 
+
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 

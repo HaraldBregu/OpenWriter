@@ -141,7 +141,8 @@
       "Bash(awk *)",
       "Bash(wait bqcs9i09l *)",
       "Bash(jobs -l)",
-      "Bash(echo \"EXIT=$?\")"
+      "Bash(echo \"EXIT=$?\")",
+      "mcp__plugin_claude-mermaid_mermaid__mermaid_preview"
     ],
     "deny": [
       "Bash(git push --force:*)",
