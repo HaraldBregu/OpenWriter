@@ -132,7 +132,6 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 			type: 'index-resources',
 			input: {
 				workspacePath,
-				resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
 			},
 		});
 		if (res.success) {
