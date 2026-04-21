@@ -37,6 +37,9 @@ interface AgentInputRecord {
 	providerId?: string;
 	apiKey?: string;
 	modelName?: string;
+	imageProviderId?: string;
+	imageApiKey?: string;
+	imageModelName?: string;
 	documentId?: string;
 	documentPath?: string;
 	[key: string]: unknown;
