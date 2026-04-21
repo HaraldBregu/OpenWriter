@@ -26,10 +26,11 @@ const InfoPanelInner: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 	);
 };
 
-const InfoPanel: React.FC<InfoPanelProps> = (props) => (
+const InfoPanel: React.FC<InfoPanelProps> = React.memo((props) => (
 	<InfoProvider>
 		<InfoPanelInner {...props} />
 	</InfoProvider>
-);
+));
+InfoPanel.displayName = 'InfoPanel';
 
 export default InfoPanel;
