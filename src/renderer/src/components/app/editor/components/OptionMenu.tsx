@@ -365,17 +365,23 @@ export function OptionMenu(): React.JSX.Element {
 				{selectedIndex === IMAGES_INDEX && (
 					<Card
 						size="sm"
-						className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[260px] max-h-[260px] overflow-y-auto"
+						className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
 						onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
 					>
 						{images.length > 0 ? (
 							<div className="flex flex-wrap gap-1">
-								{images.map((img) => (
+								{images.map((img, i) => (
 									<button
 										type="button"
 										key={img.fileName}
-										className="group relative h-[60px] w-[60px] overflow-hidden rounded-md border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+										className={
+											'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
+											(i === imageSelectedIndex
+												? 'border-foreground ring-2 ring-ring'
+												: 'border-border/70')
+										}
 										title={img.fileName}
+										onMouseEnter={() => setImageSelectedIndex(i)}
 										onMouseDown={(e) => {
 											e.preventDefault();
 											runImageFromFile(img.fileName);
