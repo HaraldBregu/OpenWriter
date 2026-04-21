@@ -34,6 +34,7 @@ import {
 	SidebarGroupLabel,
 	SidebarMenu,
 	SidebarMenuAction,
+	SidebarMenuBadge,
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarProvider,
@@ -490,26 +491,28 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/resources/files?type=video" />}
 											className="h-9 px-3"
-											isActive={
-												location.pathname === '/resources/files' && location.search === '?type=video'
-											}
+											disabled
+											tooltip={t('appLayout.comingSoon', 'Coming soon')}
 										>
 											<Video className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('appLayout.video', 'Video')}</span>
+											<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
+												{t('appLayout.comingSoon', 'Coming soon')}
+											</SidebarMenuBadge>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/resources/files?type=audio" />}
 											className="h-9 px-3"
-											isActive={
-												location.pathname === '/resources/files' && location.search === '?type=audio'
-											}
+											disabled
+											tooltip={t('appLayout.comingSoon', 'Coming soon')}
 										>
 											<FileAudio className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('appLayout.audio', 'Audio')}</span>
+											<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
+												{t('appLayout.comingSoon', 'Coming soon')}
+											</SidebarMenuBadge>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 									<SidebarMenuItem>
