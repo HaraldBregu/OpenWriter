@@ -121,7 +121,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 								variant="ghost"
 								size="sm"
 								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
+								onClick={() => onAssistantAction?.('improve', editor)}
 							>
 								<Wand2 className="h-3.5 w-3.5" />
 								Improve writing
@@ -130,7 +130,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 								variant="ghost"
 								size="sm"
 								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
+								onClick={() => onAssistantAction?.('fix-grammar', editor)}
 							>
 								<SpellCheck className="h-3.5 w-3.5" />
 								Fix grammar
@@ -139,7 +139,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 								variant="ghost"
 								size="sm"
 								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
+								onClick={() => onAssistantAction?.('summarize', editor)}
 							>
 								<FileText className="h-3.5 w-3.5" />
 								Summarize
@@ -148,7 +148,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 								variant="ghost"
 								size="sm"
 								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
+								onClick={() => onAssistantAction?.('translate', editor)}
 							>
 								<Languages className="h-3.5 w-3.5" />
 								Translate
@@ -157,7 +157,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 								variant="ghost"
 								size="sm"
 								className="justify-start w-full"
-								onClick={() => editor.chain().focus().run()}
+								onClick={() => onAssistantAction?.('continue-writing', editor)}
 							>
 								<ArrowRight className="h-3.5 w-3.5" />
 								Continue writing
