@@ -56,7 +56,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const handleUpload = useCallback(async () => {
 		dispatch({ type: 'SET_UPLOADING', payload: true });
 		try {
-			const imported = await window.workspace.insertResourcesFiles(
+			const imported = await window.workspace.insertFiles(
 				RESOURCE_SECTIONS.files.uploadExtensions
 			);
 			if (imported.length > 0) {
