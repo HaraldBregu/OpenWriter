@@ -207,6 +207,11 @@ export const AppChannels = {
 	importTheme: 'app:import-theme',
 	getCustomThemeTokens: 'app:get-custom-theme-tokens',
 	deleteTheme: 'app:delete-theme',
+	// Skills management
+	getSkills: 'app:get-skills',
+	openSkillsFolder: 'app:open-skills-folder',
+	importSkill: 'app:import-skill',
+	deleteSkill: 'app:delete-skill',
 	// System settings
 	openSystemAccessibility: 'app:open-system-accessibility',
 	openSystemScreenRecording: 'app:open-system-screen-recording',
