@@ -395,6 +395,34 @@ function PageContent(): ReactElement {
 		[setEditor]
 	);
 
+	const handleAssistantAction = useCallback(
+		(action: AssistantAction, editor: TiptapEditor) => {
+			const { from, to } = editor.state.selection;
+			const selectedText =
+				from === to
+					? ''
+					: (editor.markdown?.serialize(editor.state.doc.cut(from, to).toJSON()) ?? '');
+
+			const instructionByAction: Record<AssistantAction, string> = {
+				improve: 'Improve the writing of the following text while preserving its meaning.',
+				'fix-grammar': 'Fix grammar and spelling mistakes in the following text.',
+				summarize: 'Summarize the following text concisely.',
+				translate: 'Translate the following text to English.',
+				'continue-writing': 'Continue writing from where the text ends, matching tone and style.',
+			};
+
+			void handlePromptSubmit(
+				{
+					prompt: `${instructionByAction[action]}\n\n${selectedText}`.trim(),
+					files: [],
+					editor,
+				},
+				editor
+			);
+		},
+		[handlePromptSubmit]
+	);
+
 	const handleInsertContent = useCallback(() => {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
