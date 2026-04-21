@@ -139,10 +139,20 @@ const Chat: React.FC = () => {
 
 	useEffect(() => {
 		if (!documentId || !activeTaskId || !activeMessageId) return;
+		if (typeof window.task?.onEvent !== 'function') return;
 
 		lastRecordedTaskStateRef.current = null;
 
-		const unsubscribe = subscribeToTask(activeTaskId, (snapshot: TaskSnapshot) => {
+		let snapshot: TaskSnapshot = {
+			status: 'queued',
+			content: '',
+		};
+
+		const unsubscribe = window.task.onEvent((event: TaskEvent) => {
+			if (event.taskId !== activeTaskId) return;
+
+			snapshot = applyTaskEventToSnapshot(snapshot, event);
+
 			const metadataDocumentId = snapshot.metadata?.documentId;
 			const targetDocumentId =
 				typeof metadataDocumentId === 'string' && metadataDocumentId.length > 0
