@@ -52,6 +52,7 @@ import type {
 	AgentSettings,
 	ThemeMode,
 	CustomThemeInfo,
+	SkillInfo,
 	Theme,
 	Service,
 } from './types';
