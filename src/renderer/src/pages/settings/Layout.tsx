@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app';
-import { PageBody } from '@/components/app/base/Page';
+import { PageBody } from '@/components/app/base/page';
 import { useLanguageMode } from '@/hooks/use-language-mode';
 import { Separator } from '@/components/ui/Separator';
 
