@@ -49,14 +49,39 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 		[allResources]
 	);
 
-	const indexingTask = useTaskListener<{
-		indexedCount: number;
-		failedIds: string[];
-		totalChunks: number;
-	}>('index-resources');
+	const [indexingTaskId, setIndexingTaskId] = useState<string | null>(null);
+	const [indexingStatus, setIndexingStatus] = useState<TaskState | null>(null);
+	const indexingTaskCompleted = indexingStatus === 'completed';
+	const indexingTaskActive =
+		indexingStatus === 'queued' || indexingStatus === 'started' || indexingStatus === 'running';
+
+	useEffect(() => {
+		if (typeof window.task?.list !== 'function') return;
+		window.task.list().then((res) => {
+			if (!res.success) return;
+			const active = res.data.find(
+				(t) =>
+					t.type === 'index-resources' &&
+					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
+			);
+			if (active) {
+				setIndexingTaskId(active.taskId);
+				setIndexingStatus(active.status);
+			}
+		});
+	}, []);
+
+	useEffect(() => {
+		if (typeof window.task?.onEvent !== 'function') return;
+		return window.task.onEvent((event: TaskEvent) => {
+			if (indexingTaskId && event.taskId === indexingTaskId) {
+				setIndexingStatus(event.state);
+			}
+		});
+	}, [indexingTaskId]);
 
 	const isLoading = status === 'idle' || status === 'loading';
-	const indexing = indexingTask.isRunning || indexingTask.isQueued;
+	const indexing = indexingTaskActive;
 
 	const [searchQuery, setSearchQuery] = useState('');
 	const [typeFilter, setTypeFilter] = useState('all');
