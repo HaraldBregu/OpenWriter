@@ -299,7 +299,51 @@ export function OptionMenu(): React.JSX.Element {
 				<ImagePlus />
 				<span className="truncate">Image</span>
 			</Button>
-			<Button {...itemProps(8, runInsertContent)}>
+			<div className="relative">
+				<Button
+					{...itemProps(IMAGES_INDEX, () => undefined)}
+					onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
+				>
+					<ImagesIcon />
+					<span className="truncate">Images</span>
+				</Button>
+				{selectedIndex === IMAGES_INDEX && (
+					<Card
+						size="sm"
+						className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[260px] max-h-[260px] overflow-y-auto"
+						onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
+					>
+						{images.length > 0 ? (
+							<div className="flex flex-wrap gap-1">
+								{images.map((img) => (
+									<button
+										type="button"
+										key={img.fileName}
+										className="group relative h-[60px] w-[60px] overflow-hidden rounded-md border border-border/70 bg-accent/45 cursor-pointer dark:bg-muted/40"
+										title={img.fileName}
+										onMouseDown={(e) => {
+											e.preventDefault();
+											runImageFromFile(img.fileName);
+										}}
+									>
+										<img
+											src={toLocalResourceUrl(img.filePath)}
+											alt={img.fileName}
+											className="h-full w-full object-cover"
+											loading="lazy"
+										/>
+									</button>
+								))}
+							</div>
+						) : (
+							<span className="block px-1 py-2 text-xs text-muted-foreground">
+								No images yet
+							</span>
+						)}
+					</Card>
+				)}
+			</div>
+			<Button {...itemProps(9, runInsertContent)}>
 				<FileText />
 				<span className="truncate">Insert content</span>
 			</Button>
