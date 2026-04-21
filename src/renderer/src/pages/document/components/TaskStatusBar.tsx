@@ -1,10 +1,14 @@
-import { useEffect, useState, type ReactElement } from 'react';
+import { useCallback, useEffect, useState, type ReactElement } from 'react';
+import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
 import type { TaskEvent, TaskState } from '../../../../../shared/types';
 
 interface TaskStatusBarProps {
 	readonly taskId: string | null;
 }
+
+const CANCELLABLE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
 
 interface TaskStatusState {
 	readonly status: TaskState;
