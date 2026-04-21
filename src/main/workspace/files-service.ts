@@ -1,21 +1,15 @@
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
-import { RESOURCES_FILES_EXTENSIONS, type FileEntry } from '../../shared/types';
+import { FILES_EXTENSIONS, type FileEntry } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
 import type { LoggerService } from '../services/logger';
 
 const FILES_SUBFOLDER = 'files';
 
-const ALLOWED_FILE_EXTENSIONS = new Set<string>(RESOURCES_FILES_EXTENSIONS);
+const ALLOWED_FILE_EXTENSIONS = new Set<string>(FILES_EXTENSIONS);
 
 /**
- * FilesService manages files within the workspace `resources/files/` sub-folder.
- *
- * Responsibilities:
- *   - List all files in resources/files/
- *   - Copy files into resources/files/ (insert)
- *   - Delete files from resources/files/
- *   - Build FileEntry metadata from filesystem stats
+ * FilesService manages files within the workspace `files/` top-level folder.
  */
 export class FilesService {
 	private static readonly LOG_SOURCE = 'FilesService';
