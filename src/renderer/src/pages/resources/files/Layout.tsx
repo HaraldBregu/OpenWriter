@@ -14,7 +14,7 @@ function Bootstrap(): null {
 		const loadFiles = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const files = await window.workspace.getResourcesFiles();
+				const files = await window.workspace.getFiles();
 				if (!active) return;
 				setEntries(files);
 			} catch {
