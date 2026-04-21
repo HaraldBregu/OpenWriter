@@ -574,7 +574,9 @@ function Container({ children }: LayoutProps) {
 													</ItemMedia>
 													<ItemContent>
 														<ItemTitle>{footerUserName}</ItemTitle>
-														<p className="truncate text-xs text-muted-foreground">{footerUserEmail}</p>
+														<p className="truncate text-xs text-muted-foreground">
+															{footerUserEmail}
+														</p>
 													</ItemContent>
 												</Item>
 											</DropdownMenuLabel>
@@ -624,33 +626,33 @@ function Container({ children }: LayoutProps) {
 											</ItemContent>
 											<ItemActions>
 												<ButtonGroup>
-												<Button
-													variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
-													size="icon-sm"
-													onClick={() => setTheme('light')}
-													aria-label={t('settings.theme.light', 'Light')}
-													aria-pressed={themeMode === 'light'}
-												>
-													<Sun className="size-3.5" />
-												</Button>
-												<Button
-													variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
-													size="icon-sm"
-													onClick={() => setTheme('system')}
-													aria-label={t('settings.theme.system', 'System')}
-													aria-pressed={themeMode === 'system'}
-												>
-													<Monitor className="size-3.5" />
-												</Button>
-												<Button
-													variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
-													size="icon-sm"
-													onClick={() => setTheme('dark')}
-													aria-label={t('settings.theme.dark', 'Dark')}
-													aria-pressed={themeMode === 'dark'}
-												>
-													<Moon className="size-3.5" />
-												</Button>
+													<Button
+														variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
+														size="icon-sm"
+														onClick={() => setTheme('light')}
+														aria-label={t('settings.theme.light', 'Light')}
+														aria-pressed={themeMode === 'light'}
+													>
+														<Sun className="size-3.5" />
+													</Button>
+													<Button
+														variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
+														size="icon-sm"
+														onClick={() => setTheme('system')}
+														aria-label={t('settings.theme.system', 'System')}
+														aria-pressed={themeMode === 'system'}
+													>
+														<Monitor className="size-3.5" />
+													</Button>
+													<Button
+														variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
+														size="icon-sm"
+														onClick={() => setTheme('dark')}
+														aria-label={t('settings.theme.dark', 'Dark')}
+														aria-pressed={themeMode === 'dark'}
+													>
+														<Moon className="size-3.5" />
+													</Button>
 												</ButtonGroup>
 											</ItemActions>
 										</Item>
