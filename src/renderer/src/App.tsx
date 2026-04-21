@@ -132,7 +132,25 @@ const App: React.FC = () => {
 			setShowSplash(false);
 		}, 3000);
 
-		return () => clearTimeout(splashTimer);
+		const preload = (): void => {
+			void import('./pages/document/Page');
+		};
+		const win = window as unknown as {
+			requestIdleCallback?: (cb: () => void) => number;
+			cancelIdleCallback?: (handle: number) => void;
+		};
+		const preloadHandle = win.requestIdleCallback
+			? win.requestIdleCallback(preload)
+			: window.setTimeout(preload, 1500);
+
+		return () => {
+			clearTimeout(splashTimer);
+			if (win.requestIdleCallback && win.cancelIdleCallback) {
+				win.cancelIdleCallback(preloadHandle);
+			} else {
+				window.clearTimeout(preloadHandle);
+			}
+		};
 	}, [startupInfo]);
 
 	if (!startupInfo) {
