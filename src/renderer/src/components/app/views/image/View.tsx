@@ -4,7 +4,6 @@ import type { NodeViewProps } from '@tiptap/react';
 import { Sparkles, Pencil, Trash2, ImageOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/Button';
-import { Card, CardContent } from '@/components/ui/Card';
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
 import { ImagePreviewDialog } from '../../dialogs/ImagePreviewDialog';
@@ -47,9 +46,8 @@ function ImageInner(): React.JSX.Element {
 					onCancel={handleEditorCancel}
 				/>
 			) : (
-				<Card
-					size="sm"
-					className="inline-block max-w-full"
+				<div
+					className="inline-block max-w-full bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 					onMouseEnter={() => setHovered(true)}
 					onMouseLeave={() => setHovered(false)}
 					onFocus={() => setFocused(true)}
@@ -59,13 +57,13 @@ function ImageInner(): React.JSX.Element {
 					role="img"
 					aria-label={alt ?? t('imageNode.imageLabel')}
 				>
-					<CardContent className="relative">
+					<div className="relative">
 						<TooltipProvider delay={TOOLTIP_DELAY_MS}>
 							<div
 								className={cn(
 									'absolute top-2 right-2 z-10',
-									'flex items-center gap-0.5 rounded-xl',
-									'border border-border/80 bg-popover/95 p-1.5',
+									'flex items-center gap-0.5',
+									'border border-border/80 bg-popover/95',
 									'backdrop-blur-md shadow-lg',
 									'pointer-events-none opacity-0',
 									'transition-all duration-200 ease-out',
@@ -137,11 +135,11 @@ function ImageInner(): React.JSX.Element {
 								onLoad={handleLoad}
 								onClick={handleImageClick}
 								draggable={false}
-								className="block max-w-full cursor-pointer rounded-md"
+								className="block max-w-full cursor-pointer"
 							/>
 						)}
-					</CardContent>
-				</Card>
+					</div>
+				</div>
 			)}
 
 			<ImagePreviewDialog

@@ -260,7 +260,7 @@ export function ImageEditor({
 	return (
 		<div
 			ref={editorRef}
-			className="overflow-hidden rounded-[1.55rem] border border-border bg-card/90"
+			className="overflow-hidden border border-border bg-card/90"
 			role="dialog"
 			aria-modal="true"
 			aria-label={t('imageNode.editorLabel', 'Image editor')}
@@ -547,16 +547,13 @@ export function ImageEditor({
 			)}
 
 			<div
-				className={cn(
-					'relative flex items-center justify-center p-3',
-					activeMode === 'ai' && 'hidden'
-				)}
+				className={cn('relative flex items-center justify-center', activeMode === 'ai' && 'hidden')}
 			>
 				{state.hasError && (
 					<div
 						className={cn(
 							'flex h-32 w-64 flex-col items-center justify-center gap-2',
-							'rounded-md border border-dashed border-destructive/40 bg-destructive/5',
+							'border border-dashed border-destructive/40 bg-destructive/5',
 							'text-destructive/70'
 						)}
 						role="alert"
@@ -579,7 +576,7 @@ export function ImageEditor({
 						>
 							<canvas
 								ref={canvasRef}
-								className="block max-w-full rounded"
+								className="block max-w-full"
 								role="img"
 								aria-label={alt ?? t('imageNode.canvasLabel', 'Image being edited')}
 							/>
