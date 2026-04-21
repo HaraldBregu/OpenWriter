@@ -57,6 +57,7 @@ export function Provider({
 			setImageDialogOpen,
 			onInsertContent,
 			onOpenChat,
+			onAssistantAction,
 		}),
 		[
 			state,
@@ -66,6 +67,7 @@ export function Provider({
 			setImageDialogOpen,
 			onInsertContent,
 			onOpenChat,
+			onAssistantAction,
 		]
 	);
 
