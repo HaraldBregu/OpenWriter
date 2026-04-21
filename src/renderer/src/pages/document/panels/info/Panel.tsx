@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card } from '@/components/ui/Card';
 import { DeleteDocumentDialog } from './components/DeleteDocumentDialog';
-import { ImagePreviewDialog } from './components/ImagePreviewDialog';
 import { useDocumentConfig } from './hooks/use-document-config';
 import { PanelBody } from './PanelBody';
 import { PanelHeader } from './PanelHeader';
@@ -21,7 +20,6 @@ const InfoPanelInner: React.FC<InfoPanelProps> = ({ onOpenFolder }) => {
 				<PanelBody />
 			</Card>
 			<DeleteDocumentDialog />
-			<ImagePreviewDialog />
 		</>
 	);
 };
