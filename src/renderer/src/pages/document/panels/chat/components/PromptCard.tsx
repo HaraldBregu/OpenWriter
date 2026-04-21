@@ -1,43 +1,10 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
+import { ImagePlus, Paperclip, SendHorizontal, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
-
-type ContentGeneratorAgentId = 'text' | 'image';
-
-interface ContentGeneratorAgentOption {
-	value: ContentGeneratorAgentId;
-	labelKey: string;
-	labelFallback: string;
-	descriptionKey: string;
-	descriptionFallback: string;
-}
-
-const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOption[] = [
-	{
-		value: 'text',
-		labelKey: 'assistantAgent.text',
-		labelFallback: 'Text',
-		descriptionKey: 'assistantAgent.textDescription',
-		descriptionFallback: 'Generate, rewrite, or continue text',
-	},
-	{
-		value: 'image',
-		labelKey: 'assistantAgent.image',
-		labelFallback: 'Image',
-		descriptionKey: 'assistantAgent.imageDescription',
-		descriptionFallback: 'Create images from a prompt',
-	},
-];
 
 interface PromptCardProps {
 	readonly value: string;
@@ -45,14 +12,11 @@ interface PromptCardProps {
 	readonly isFocused: boolean;
 	readonly isDragOver: boolean;
 	readonly canSend: boolean;
-	readonly agentId: ContentGeneratorAgentId;
-	readonly isImage: boolean;
 	readonly previewUrls: readonly string[];
 	readonly fileNames: readonly string[];
 	readonly selectionLabel?: string | null;
 	readonly canClearSelection: boolean;
 	readonly placeholder?: string;
-	readonly currentAgentLabel: string;
 
 	readonly wrapperRef: React.RefObject<HTMLDivElement | null>;
 	readonly textareaRef: React.RefObject<HTMLTextAreaElement | null>;
@@ -68,7 +32,6 @@ interface PromptCardProps {
 	readonly onOpenFilePicker: () => void;
 	readonly onRemoveImage: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	readonly onClearSelection?: () => void;
-	readonly onAgentChange: (id: ContentGeneratorAgentId) => void;
 }
 
 const PromptCard: React.FC<PromptCardProps> = ({
@@ -77,14 +40,11 @@ const PromptCard: React.FC<PromptCardProps> = ({
 	isFocused,
 	isDragOver,
 	canSend,
-	agentId,
-	isImage,
 	previewUrls,
 	fileNames,
 	selectionLabel,
 	canClearSelection,
 	placeholder,
-	currentAgentLabel,
 	wrapperRef,
 	textareaRef,
 	onChange,
@@ -98,7 +58,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 	onOpenFilePicker,
 	onRemoveImage,
 	onClearSelection,
-	onAgentChange,
 }) => {
 	const { t } = useTranslation();
 
@@ -110,11 +69,8 @@ const PromptCard: React.FC<PromptCardProps> = ({
 			onDragLeave={onDragLeave}
 			onDrop={onDrop}
 			className={cn(
-				'py-0!',
-				'relative overflow-hidden shadow-none backdrop-blur-sm transition-[border-color,background-color] duration-200 dark:bg-card/95 w-full',
-				isFocused
-					? 'border-primary/45 dark:border-primary/55'
-					: 'border-border/85 hover:border-foreground/15 dark:border-border/90 dark:hover:border-foreground/15',
+				'w-full my-2',
+				isFocused && 'border-primary/45 dark:border-primary/55',
 				isDragOver && 'border-primary/55 bg-primary/5 dark:border-primary/55 dark:bg-primary/10'
 			)}
 		>
@@ -192,7 +148,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				</CardHeader>
 			)}
 
-			<CardContent className="p-0">
+			<CardContent>
 				<Textarea
 					ref={textareaRef}
 					data-chat-input=""
@@ -201,7 +157,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					onKeyDown={onKeyDown}
 					onFocus={onFocus}
 					disabled={disabled}
-					rows={3}
+					rows={1}
 					placeholder={
 						placeholder ??
 						t('agenticPanel.inputPlaceholder', 'Ask the assistant for context, facts, or ideas')
@@ -209,113 +165,39 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					aria-label={t('agenticPanel.inputAriaLabel', 'Chat message input')}
 					className={cn(
 						'disabled:bg-transparent! disabled:focus:bg-transparent!',
-						'w-full resize-none border-none bg-transparent dark:bg-transparent text-sm leading-6 text-foreground shadow-none placeholder:text-foreground/45 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 disabled:cursor-not-allowed disabled:opacity-50 dark:placeholder:text-muted-foreground/80'
+						'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+						'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
+						'disabled:cursor-not-allowed disabled:opacity-60'
 					)}
 				/>
 			</CardContent>
 
-			<CardFooter className="gap-2 p-2 bg-transparent border-none">
-				<AgentDropdown
-					agentId={agentId}
-					isImage={isImage}
+			<CardFooter className="bg-transparent border-none">
+				<Button
+					type="button"
+					variant="outline"
+					size="icon"
 					disabled={disabled}
-					currentAgentLabel={currentAgentLabel}
-					onAgentChange={onAgentChange}
-				/>
-
-				<div className="flex-1" />
-
+					onMouseDown={(e) => e.preventDefault()}
+					onClick={onOpenFilePicker}
+					title={t('assistantNode.addAttachment', 'Add attachment')}
+					aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+				>
+					<Paperclip />
+				</Button>
 				<Button
 					variant="default"
-					size="sm"
-					onClick={onSend}
+					className="ml-auto shrink-0"
 					disabled={!canSend}
-					aria-label={t('agenticPanel.send', 'Send message')}
+					onMouseDown={(e) => e.preventDefault()}
+					onClick={onSend}
+					aria-label={t('agenticPanel.submit', 'Submit')}
 				>
-					<span>{t('agenticPanel.send', 'Send')}</span>
-					<ArrowUp aria-hidden="true" />
+					<SendHorizontal />
+					<span>{t('agenticPanel.submit', 'Submit')}</span>
 				</Button>
 			</CardFooter>
 		</Card>
-	);
-};
-
-interface AgentDropdownProps {
-	readonly agentId: ContentGeneratorAgentId;
-	readonly isImage: boolean;
-	readonly disabled: boolean;
-	readonly currentAgentLabel: string;
-	readonly onAgentChange: (id: ContentGeneratorAgentId) => void;
-}
-
-const AgentDropdown: React.FC<AgentDropdownProps> = ({
-	agentId,
-	isImage,
-	disabled,
-	currentAgentLabel,
-	onAgentChange,
-}) => {
-	const { t } = useTranslation();
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				render={
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon"
-						className={cn(
-							'h-8 w-8 rounded-full border border-border/80 bg-background/75 shadow-none hover:border-foreground/15 hover:bg-accent/70 dark:border-border/90 dark:bg-background/50 dark:hover:bg-accent/80',
-							isImage ? 'text-primary' : 'text-foreground/80 dark:text-foreground/90'
-						)}
-						disabled={disabled}
-						title={currentAgentLabel}
-						aria-label={t('assistantNode.switchAgentCurrent', 'Agent: {{agent}}', {
-							agent: currentAgentLabel,
-						})}
-					>
-						{isImage ? (
-							<ImageIcon className="h-4 w-4" aria-hidden="true" />
-						) : (
-							<PenLine className="h-4 w-4" aria-hidden="true" />
-						)}
-					</Button>
-				}
-			/>
-			<DropdownMenuContent
-				align="start"
-				side="top"
-				sideOffset={8}
-				className="z-120 max-h-70 min-w-50"
-			>
-				{CONTENT_GENERATOR_AGENT_OPTIONS.map((option) => {
-					const label = t(option.labelKey, option.labelFallback);
-					const description = t(option.descriptionKey, option.descriptionFallback);
-					const isSelected = option.value === agentId;
-
-					return (
-						<DropdownMenuCheckboxItem
-							key={option.value}
-							checked={isSelected}
-							onCheckedChange={() => onAgentChange(option.value)}
-						>
-							<span className="flex min-w-0 items-center gap-3 p-1">
-								{option.value === 'image' ? (
-									<ImageIcon className="h-3.5 w-3.5" />
-								) : (
-									<PenLine className="h-3.5 w-3.5" />
-								)}
-								<span className="flex min-w-0 flex-col gap-0.5">
-									<span className="truncate text-sm font-medium">{label}</span>
-									<span className="text-xs text-muted-foreground">{description}</span>
-								</span>
-							</span>
-						</DropdownMenuCheckboxItem>
-					);
-				})}
-			</DropdownMenuContent>
-		</DropdownMenu>
 	);
 };
 
