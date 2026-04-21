@@ -1,185 +1,86 @@
 import { app } from 'electron';
-import fs from 'node:fs';
 import path from 'node:path';
 import type { LoggerService } from './logger';
 import type { SkillInfo } from '../../shared/types';
 import {
-	bundledSkills,
-	parseSkillMarkdown,
+	FileSystemSkillRepository,
 	type Skill,
+	type SkillRepository,
 } from '../agents/skills';
 
-const SKILL_FILE_NAME = 'SKILL.md';
 const SKILLS_FOLDER = 'skills';
 
 /**
- * Service that manages user-installed skills under
- * `{userData}/skills/{skillId}/SKILL.md`.
+ * SkillsStoreService — façade over a SkillRepository that lives at
+ * `{userData}/skills/` (same neighborhood as `{userData}/themes/`).
  *
- * Mirrors ThemeService: idempotent directory creation, folder-name as
- * stable id, directory-based import. Bundled skills are merged in from
- * `src/main/agents/skills/bundled` for a unified listing.
+ * The service deliberately stays thin: directory resolution, DTO
+ * translation for IPC, logging. The heavy lifting (parsing, listing,
+ * import, delete) is delegated to the repository so alternate backends
+ * can be swapped in without touching IPC or the renderer.
+ *
+ * Skills are loaded dynamically. If the folder does not exist or is
+ * empty, the service returns an empty list — no bundled defaults are
+ * seeded and no TS skill constants are consulted.
  */
 export class SkillsStoreService {
 	private readonly logger: LoggerService;
+	private readonly repository: SkillRepository;
 
 	constructor(logger: LoggerService) {
 		this.logger = logger;
+		this.repository = new FileSystemSkillRepository({
+			rootDir: this.resolveSkillsDirectory(),
+			onError: (skillId, err) =>
+				this.logger.warn('SkillsStoreService', `Skipping invalid skill "${skillId}"`, err),
+		});
 	}
 
 	getSkillsDirectory(): string {
-		const skillsDir = path.join(app.getPath('userData'), SKILLS_FOLDER);
-		fs.mkdirSync(skillsDir, { recursive: true });
-		return skillsDir;
+		return this.repository.rootDir;
 	}
 
-	listSkills(): SkillInfo[] {
-		const bundled = bundledSkills.map((skill) => this.toInfo(skill, skill.name));
-		const user = this.listUserSkills();
-		return [...bundled, ...user];
+	async listSkills(): Promise<SkillInfo[]> {
+		const skills = await this.repository.list();
+		return skills.map(toSkillInfo);
 	}
 
-	private listUserSkills(): SkillInfo[] {
-		const skillsDir = this.getSkillsDirectory();
-		let entries: fs.Dirent[];
-		try {
-			entries = fs.readdirSync(skillsDir, { withFileTypes: true });
-		} catch (err) {
-			this.logger.error('SkillsStoreService', 'Failed to read skills directory', err);
-			return [];
+	async importSkillsFromPath(sourcePath: string): Promise<SkillInfo[]> {
+		const imported = await this.repository.importFromPath(sourcePath);
+		for (const skill of imported) {
+			this.logger.info(
+				'SkillsStoreService',
+				`Imported skill "${skill.name}" → ${skill.filePath ?? '(unknown path)'}`
+			);
 		}
-
-		const skills: SkillInfo[] = [];
-		for (const entry of entries) {
-			if (!entry.isDirectory()) continue;
-			const skillDir = path.join(skillsDir, entry.name);
-			const skillFile = path.join(skillDir, SKILL_FILE_NAME);
-			if (!fs.existsSync(skillFile)) continue;
-
-			try {
-				const raw = fs.readFileSync(skillFile, 'utf8');
-				const { skill } = parseSkillMarkdown(raw, {
-					scope: 'user',
-					filePath: skillFile,
-					fallbackName: entry.name,
-				});
-				skills.push(this.toInfo(skill, entry.name));
-			} catch (err) {
-				this.logger.warn('SkillsStoreService', `Skipping invalid skill "${entry.name}"`, err);
-			}
-		}
-		return skills;
+		return imported.map(toSkillInfo);
 	}
 
-	/**
-	 * Import one or more skills from an on-disk folder.
-	 *
-	 * Two layouts are supported:
-	 *  - A single-skill folder (contains `SKILL.md` directly).
-	 *  - A collection folder (each subdirectory is a skill with its own `SKILL.md`).
-	 *
-	 * Returns the SkillInfo entries that were imported.
-	 */
-	importSkillsFromPath(sourcePath: string): SkillInfo[] {
-		const stat = fs.statSync(sourcePath);
-		if (!stat.isDirectory()) {
-			throw new Error('Selected path is not a directory');
-		}
-
-		const candidates = this.resolveSkillCandidates(sourcePath);
-		if (candidates.length === 0) {
-			throw new Error(`No ${SKILL_FILE_NAME} found in the selected folder`);
-		}
-
-		const imported: SkillInfo[] = [];
-		for (const candidate of candidates) {
-			try {
-				imported.push(this.importOne(candidate));
-			} catch (err) {
-				this.logger.warn(
-					'SkillsStoreService',
-					`Skipping skill "${path.basename(candidate)}" during import`,
-					err
-				);
-			}
-		}
-
-		if (imported.length === 0) {
-			throw new Error('No valid skills found in the selected folder');
-		}
-		return imported;
-	}
-
-	deleteSkill(id: string): void {
-		const skillsDir = this.getSkillsDirectory();
-		const skillDir = path.join(skillsDir, id);
-
-		if (!skillDir.startsWith(skillsDir + path.sep)) {
-			throw new Error('Invalid skill id');
-		}
-		if (!fs.existsSync(skillDir)) {
-			throw new Error(`Skill "${id}" not found`);
-		}
-
-		fs.rmSync(skillDir, { recursive: true });
+	async deleteSkill(id: string): Promise<void> {
+		await this.repository.delete(id);
 		this.logger.info('SkillsStoreService', `Deleted skill "${id}"`);
 	}
 
-	private resolveSkillCandidates(sourcePath: string): string[] {
-		const direct = path.join(sourcePath, SKILL_FILE_NAME);
-		if (fs.existsSync(direct)) return [sourcePath];
-
-		const children = fs.readdirSync(sourcePath, { withFileTypes: true });
-		return children
-			.filter((entry) => entry.isDirectory())
-			.map((entry) => path.join(sourcePath, entry.name))
-			.filter((dir) => fs.existsSync(path.join(dir, SKILL_FILE_NAME)));
+	private resolveSkillsDirectory(): string {
+		return path.join(app.getPath('userData'), SKILLS_FOLDER);
 	}
+}
 
-	private importOne(sourceDir: string): SkillInfo {
-		const skillFile = path.join(sourceDir, SKILL_FILE_NAME);
-		const raw = fs.readFileSync(skillFile, 'utf8');
-		const { skill } = parseSkillMarkdown(raw, {
-			scope: 'user',
-			fallbackName: path.basename(sourceDir),
-		});
+function toSkillInfo(skill: Skill): SkillInfo {
+	return {
+		id: deriveId(skill),
+		name: skill.name,
+		description: skill.description,
+		scope: skill.scope,
+		emoji: skill.metadata?.emoji,
+		tags: skill.metadata?.tags,
+		filePath: skill.filePath,
+	};
+}
 
-		const folderName = this.sanitizeFolderName(skill.name);
-		if (folderName.length === 0) {
-			throw new Error('Skill name results in an empty folder name after sanitization');
-		}
-
-		const destPath = path.join(this.getSkillsDirectory(), folderName);
-		fs.cpSync(sourceDir, destPath, { recursive: true });
-
-		this.logger.info('SkillsStoreService', `Imported skill "${skill.name}" to ${destPath}`);
-
-		return this.toInfo(
-			{
-				...skill,
-				filePath: path.join(destPath, SKILL_FILE_NAME),
-				scope: 'user',
-			},
-			folderName
-		);
+function deriveId(skill: Skill): string {
+	if (skill.filePath) {
+		return path.basename(path.dirname(skill.filePath));
 	}
-
-	private toInfo(skill: Skill, id: string): SkillInfo {
-		return {
-			id,
-			name: skill.name,
-			description: skill.description,
-			scope: skill.scope,
-			emoji: skill.metadata?.emoji,
-			tags: skill.metadata?.tags,
-			filePath: skill.filePath,
-		};
-	}
-
-	private sanitizeFolderName(name: string): string {
-		return name
-			.replace(/[<>:"/\\|?*\p{Cc}]/gu, '')
-			.replace(/\s+/g, '_')
-			.trim();
-	}
+	return skill.name;
 }
