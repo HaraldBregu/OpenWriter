@@ -1,9 +1,9 @@
 import type {
 	FileEntry,
-	ResourcesFileTypeFilter as FileTypeFilter,
-	ResourcesFilesSortDirection as SortDirection,
-	ResourcesFilesSortKey as SortKey,
-	ResourcesFilesViewMode as ViewMode,
+	FileTypeFilter,
+	FilesSortDirection as SortDirection,
+	FilesSortKey as SortKey,
+	FilesViewMode as ViewMode,
 } from '../../../../../../shared/types';
 
 export type { FileEntry, FileTypeFilter, SortDirection, SortKey, ViewMode };
