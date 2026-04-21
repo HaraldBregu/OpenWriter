@@ -461,27 +461,6 @@ function PageContent(): ReactElement {
 										currentEntryId={currentHistoryEntryId}
 										onRestoreEntry={handleRestoreHistoryEntry}
 									/>
-									<Separator orientation="vertical" className="mx-2 h-5" />
-									<Button
-										variant="ghost"
-										size="icon"
-										title={t('titleBar.toggleAgenticSidebar')}
-										aria-label={t('titleBar.toggleAgenticSidebar')}
-										aria-expanded={activeSidebar === 'agentic'}
-										onClick={() => toggleSidebar('agentic')}
-									>
-										<Bot aria-hidden="true" />
-									</Button>
-									<Button
-										variant="ghost"
-										size="icon"
-										title={t('titleBar.toggleSidebar')}
-										aria-label={t('titleBar.toggleSidebar')}
-										aria-expanded={activeSidebar === 'config'}
-										onClick={() => toggleSidebar('config')}
-									>
-										<Info aria-hidden="true" />
-									</Button>
 								</PageHeaderItems>
 							</PageHeader>
 							<div className="flex min-h-0 flex-1 flex-col">
