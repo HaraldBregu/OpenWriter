@@ -116,7 +116,8 @@ export function bootstrapServices(): BootstrapResult {
 			serviceResolver,
 			storeService,
 			modelResolver,
-			windowContextManager
+			windowContextManager,
+			skillsStoreService
 		)
 	);
 
