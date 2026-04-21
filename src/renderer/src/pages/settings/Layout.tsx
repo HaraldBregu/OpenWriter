@@ -1,9 +1,9 @@
 import React from 'react';
 import { NavLink, Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useLanguage } from '../../hooks/use-language';
 import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app';
 import { PageBody } from '@/components/app/base/Page';
+import { useLanguageMode } from '@/hooks/use-language-mode';
 import { Separator } from '@/components/ui/Separator';
 
 interface NavItemDefinition {
@@ -37,46 +37,46 @@ const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-acce
 
 export function Layout(): React.JSX.Element {
 	const { t } = useTranslation();
-	useLanguage();
+	useLanguageMode();
 
 	return (
 		<PageContainer>
-			<div className="flex h-full w-full mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
-				{/* Left column — navigation (1/4 width) */}
-				<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
-					<div className="px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
-						{NAV_SECTIONS.map((section, sectionIndex) => (
-							<React.Fragment key={section[0]?.path ?? sectionIndex}>
-								{sectionIndex > 0 ? <Separator className="my-2" /> : null}
-								<div className="space-y-0.5">
-									{section.map((item) => (
-										<NavLink
-											key={item.path}
-											to={item.path}
-											end
-											className={({ isActive }) =>
-												`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
-											}
-										>
-											{t(item.labelKey)}
-										</NavLink>
-									))}
-								</div>
-							</React.Fragment>
-						))}
+			<PageHeader>
+				<PageHeaderTitle>{t('settings.title')}</PageHeaderTitle>
+			</PageHeader>
+			<PageBody>
+				<div className="flex min-h-0 w-full flex-1 mx-auto pl-3 pr-0 py-4 sm:pl-6 sm:py-8">
+					{/* Left column — navigation (1/4 width) */}
+					<div className="w-64 overflow-y-auto" role="navigation" aria-label={t('settings.title')}>
+						<div className="px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4">
+							{NAV_SECTIONS.map((section, sectionIndex) => (
+								<React.Fragment key={section[0]?.path ?? sectionIndex}>
+									{sectionIndex > 0 ? <Separator className="my-2" /> : null}
+									<div className="space-y-0.5">
+										{section.map((item) => (
+											<NavLink
+												key={item.path}
+												to={item.path}
+												end
+												className={({ isActive }) =>
+													`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+												}
+											>
+												{t(item.labelKey)}
+											</NavLink>
+										))}
+									</div>
+								</React.Fragment>
+							))}
+						</div>
+					</div>
+
+					{/* Right column — content (3/4 width) */}
+					<div className="min-h-0 w-full overflow-y-auto">
+						<Outlet />
 					</div>
 				</div>
-
-				{/* Right column — content (3/4 width) */}
-				<div className="flex min-h-0 w-full flex-col overflow-hidden">
-					<PageHeader>
-						<PageHeaderTitle>{t('settings.title')}</PageHeaderTitle>
-					</PageHeader>
-					<PageBody>
-						<Outlet />
-					</PageBody>
-				</div>
-			</div>
+			</PageBody>
 		</PageContainer>
 	);
 }
