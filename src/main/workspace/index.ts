@@ -12,7 +12,6 @@ export { WorkspaceMetadataService } from './workspace-metadata';
 export { ProjectWorkspaceService } from './project-workspace';
 
 // File watching
-export { DocumentsWatcherService } from './documents-watcher';
 export { FilesWatcherService } from './files-watcher';
 
 // Contents service (workspace/contents/)
