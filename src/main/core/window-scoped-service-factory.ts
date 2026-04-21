@@ -198,7 +198,7 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register contents service (resources/content/)
+	// Register contents service (workspace/contents/)
 	factory.register({
 		key: 'contentsService',
 		factory: ({ globalContainer }) => {
