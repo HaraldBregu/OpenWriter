@@ -3,9 +3,65 @@ import { useTranslation } from 'react-i18next';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { TextSelection } from '@tiptap/pm/state';
 import { v7 as uuidv7 } from 'uuid';
-import { getTaskStatusText } from '../../../../../../shared/types';
-import { subscribeToTask, type TaskSnapshot } from '../../../../services/task-event-bus';
+import { getTaskStatusText, type TaskEvent, type TaskState } from '../../../../../../shared/types';
 import { useDocumentState, useEditorInstance } from '../../hooks';
+
+interface TaskSnapshot {
+	status: TaskState;
+	content: string;
+	error?: string;
+	result?: unknown;
+	metadata?: Record<string, unknown>;
+}
+
+function dataField<T>(data: unknown, key: string): T | undefined {
+	if (typeof data === 'object' && data !== null && key in data) {
+		return (data as Record<string, unknown>)[key] as T;
+	}
+	return undefined;
+}
+
+function applyTaskEventToSnapshot(prev: TaskSnapshot, event: TaskEvent): TaskSnapshot {
+	const metadata = event.metadata ?? prev.metadata;
+	switch (event.state) {
+		case 'queued':
+		case 'started':
+			return { ...prev, status: event.state, metadata };
+		case 'running': {
+			const streamData = dataField<string>(event.data, 'data');
+			if (typeof streamData === 'string' && streamData.length > 0) {
+				return {
+					...prev,
+					status: 'running',
+					content: prev.content + streamData,
+					metadata,
+				};
+			}
+			return { ...prev, status: 'running', metadata };
+		}
+		case 'completed':
+			return {
+				...prev,
+				status: 'completed',
+				result: dataField<unknown>(event.data, 'result'),
+				metadata,
+			};
+		case 'error': {
+			const errorPayload = event.error;
+			const errorMessage =
+				typeof errorPayload === 'object' && errorPayload !== null && 'message' in errorPayload
+					? String((errorPayload as { message: unknown }).message)
+					: typeof errorPayload === 'string'
+						? errorPayload
+						: undefined;
+			return { ...prev, status: 'error', error: errorMessage, metadata };
+		}
+		case 'cancelled':
+			return { ...prev, status: 'cancelled', metadata };
+		default:
+			return prev;
+	}
+}
 
 interface EditorSelection {
 	readonly from: number;
