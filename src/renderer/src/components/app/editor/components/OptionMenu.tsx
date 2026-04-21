@@ -12,7 +12,7 @@ import {
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import type { ImageEntry } from '../../../../../../../shared/types';
+import type { ImageEntry } from '../../../../../../shared/types';
 import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
 
