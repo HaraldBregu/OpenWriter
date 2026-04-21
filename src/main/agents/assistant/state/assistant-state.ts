@@ -1,9 +1,9 @@
-import type { AssistantToolCallRecord } from '../types';
+import type { AssistantToolCallRecord, AssistantUsageTotals } from '../types';
 import type { StateEvent } from './state-events';
 
 export type AssistantStatus = 'pending' | 'running' | 'done' | 'error' | 'aborted';
 
-export type StepNodeName = 'controller' | 'text' | 'image';
+export type StepNodeName = 'controller' | 'text' | 'image' | 'skill';
 
 export type StepStatus = 'running' | 'done' | 'error' | 'skipped';
 
@@ -23,13 +23,33 @@ export interface StepRecord {
 	completedAt?: number;
 }
 
-export type ControllerAction = 'text' | 'image' | 'done';
+export type ControllerAction = 'text' | 'image' | 'skill' | 'done';
 
 export interface ControllerDecision {
 	action: ControllerAction;
 	instruction?: string;
 	imagePrompt?: string;
+	skillName?: string;
+	toolsAllowlist?: readonly string[];
 	reason?: string;
+}
+
+export interface UsageRecord {
+	inputTokens: number;
+	outputTokens: number;
+	totalTokens: number;
+	elapsedMs: number;
+}
+
+export interface BudgetRecord {
+	kind: 'tokens' | 'time';
+	usedTokens?: number;
+	elapsedMs?: number;
+}
+
+export interface SkillSelectionRecord {
+	skillName: string;
+	instruction?: string;
 }
 
 export interface AssistantSnapshot {
@@ -40,6 +60,8 @@ export interface AssistantSnapshot {
 	toolCalls: AssistantToolCallRecord[];
 	decisions: ControllerDecision[];
 	iterations: number;
+	usage: AssistantUsageTotals;
+	skillsSelected: SkillSelectionRecord[];
 }
 
 export type StateListener = (event: StateEvent) => void;
@@ -53,8 +75,11 @@ export class AssistantState {
 	private readonly _textSegments: string[] = [];
 	private readonly _toolCalls: AssistantToolCallRecord[] = [];
 	private readonly _decisions: ControllerDecision[] = [];
+	private readonly _skillsSelected: SkillSelectionRecord[] = [];
 	private _iterations = 0;
 	private _stepCounter = 0;
+	private _usageInput = 0;
+	private _usageOutput = 0;
 	private readonly _listeners = new Set<StateListener>();
 
 	subscribe(listener: StateListener): () => void {
@@ -90,6 +115,18 @@ export class AssistantState {
 
 	get iterations(): number {
 		return this._iterations;
+	}
+
+	get usage(): AssistantUsageTotals {
+		return {
+			inputTokens: this._usageInput,
+			outputTokens: this._usageOutput,
+			totalTokens: this._usageInput + this._usageOutput,
+		};
+	}
+
+	get skillsSelected(): readonly SkillSelectionRecord[] {
+		return this._skillsSelected;
 	}
 
 	get lastImage(): ImageRecord | undefined {
@@ -149,6 +186,25 @@ export class AssistantState {
 		this.emit({ kind: 'decision', at: Date.now(), payload: { ...decision } });
 	}
 
+	recordInvalidDecision(raw: string, error: string): void {
+		this.emit({ kind: 'decision:invalid', at: Date.now(), payload: { raw, error } });
+	}
+
+	recordUsage(record: UsageRecord): void {
+		this._usageInput += record.inputTokens;
+		this._usageOutput += record.outputTokens;
+		this.emit({ kind: 'usage', at: Date.now(), payload: { ...record } });
+	}
+
+	recordBudget(record: BudgetRecord): void {
+		this.emit({ kind: 'budget', at: Date.now(), payload: { ...record } });
+	}
+
+	recordSkillSelection(record: SkillSelectionRecord): void {
+		this._skillsSelected.push(record);
+		this.emit({ kind: 'skill:selected', at: Date.now(), payload: { ...record } });
+	}
+
 	addImage(image: ImageRecord): void {
 		this._images.push(image);
 		this.emit({ kind: 'image', at: Date.now(), payload: { ...image } });
@@ -177,6 +233,8 @@ export class AssistantState {
 			toolCalls: this._toolCalls.map((t) => ({ ...t })),
 			decisions: this._decisions.map((d) => ({ ...d })),
 			iterations: this._iterations,
+			usage: this.usage,
+			skillsSelected: this._skillsSelected.map((s) => ({ ...s })),
 		};
 	}
 
