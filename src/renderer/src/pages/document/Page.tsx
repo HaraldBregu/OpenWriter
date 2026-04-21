@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { Undo2, Redo2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InfoPanel from './panels/info/Panel';
