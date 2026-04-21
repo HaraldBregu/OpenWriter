@@ -108,6 +108,7 @@ export function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | nu
 	const { status, percent, message } = state;
 	const clampedPercent = Math.max(0, Math.min(100, percent));
 	const isError = status === 'error';
+	const canCancel = CANCELLABLE_STATES.has(status) && !!taskId;
 
 	return (
 		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
@@ -130,6 +131,20 @@ export function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | nu
 			<span className="shrink-0 text-xs tabular-nums text-muted-foreground w-10 text-right">
 				{clampedPercent}%
 			</span>
+			{canCancel && (
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon"
+					className="h-7 w-7 shrink-0"
+					onClick={handleCancel}
+					disabled={cancelling}
+					title="Cancel task"
+					aria-label="Cancel task"
+				>
+					<X className="h-3.5 w-3.5" aria-hidden="true" />
+				</Button>
+			)}
 		</div>
 	);
 }
