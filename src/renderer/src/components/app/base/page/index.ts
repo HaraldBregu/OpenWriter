@@ -8,4 +8,14 @@ export {
 	PageSidebar,
 	PageSidebarInset,
 } from './Page';
-export { PageProvider, usePage, type PageSidebarSide } from './PageContext';
+export { Provider } from './Provider';
+export { usePageContext } from './hooks';
+export {
+	PageContext,
+	type ContextValue,
+	type PageState,
+	type PageAction,
+	type SidebarSide,
+	INITIAL_PAGE_STATE,
+	pageReducer,
+} from './context';
