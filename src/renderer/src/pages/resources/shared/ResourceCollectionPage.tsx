@@ -35,8 +35,6 @@ import {
 } from './resource-sections';
 import { ResourceTable } from './ResourceTable';
 
-const RESOURCES_DIR = 'resources';
-
 interface ResourceCollectionPageProps {
 	readonly sectionId: ResourceSectionId;
 }
