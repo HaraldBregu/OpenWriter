@@ -34,6 +34,7 @@ import type { ModelInfo } from '../../../../shared/types';
 import { findModelById } from '../../../../shared/models';
 import { PageBody } from '@/components/app/base/Page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
+import type { AssistantAction } from '@/components/app/editor/context/context';
 import { PromptSubmitPayload } from '@shared/index';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
