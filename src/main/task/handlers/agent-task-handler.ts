@@ -7,6 +7,7 @@ import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace/workspace';
+import { getTaskExecutionContext } from '../task-execution-context';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
