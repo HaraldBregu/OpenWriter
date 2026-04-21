@@ -15,6 +15,8 @@ export interface AssistantAgentInput {
 	modelName: string;
 	documentId: string;
 	documentPath: string;
+	/** Absolute path to the workspace root. Generated images land in `{workspacePath}/images/`. */
+	workspacePath?: string;
 	imageProviderId?: string;
 	imageApiKey?: string;
 	imageModelName?: string;
