@@ -81,15 +81,27 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuItem,
 	DropdownMenuGroup,
+	DropdownMenuRadioGroup,
+	DropdownMenuRadioItem,
 	DropdownMenuShortcut,
 	DropdownMenuSeparator,
+	DropdownMenuSub,
+	DropdownMenuSubContent,
+	DropdownMenuSubTrigger,
 } from '@/components/ui/DropdownMenu';
+import { useLanguageMode } from '@/hooks/use-language-mode';
+import type { AppLanguage } from '@/contexts/AppContext';
 
 interface LayoutProps {
 	readonly children: React.ReactNode;
 }
 
 const ACCOUNT_MENU_ITEM_CLASS = 'gap-3 px-2 py-2';
+
+const LANGUAGE_OPTIONS: readonly { value: AppLanguage; labelKey: string }[] = [
+	{ value: 'en', labelKey: 'settings.language.en' },
+	{ value: 'it', labelKey: 'settings.language.it' },
+] as const;
 
 function Container({ children }: LayoutProps) {
 	const { t } = useTranslation();
@@ -106,7 +118,8 @@ function Container({ children }: LayoutProps) {
 	const currentWorkspacePath = useAppSelector(selectCurrentWorkspacePath);
 	const recentWorkspaces = useAppSelector(selectRecentWorkspaces);
 	const themeMode = useThemeMode();
-	const { setTheme } = useAppActions();
+	const language = useLanguageMode();
+	const { setTheme, setLanguage } = useAppActions();
 	const shortcutPlatform: Platform =
 		typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac')
 			? 'mac'
@@ -245,14 +258,20 @@ function Container({ children }: LayoutProps) {
 				case 'system':
 					navigate('/settings/system');
 					break;
-				case 'language':
-					navigate('/settings/general');
-					break;
 				default:
 					break;
 			}
 		},
 		[navigate]
+	);
+
+	const handleLanguageChange = useCallback(
+		(value: string) => {
+			if (value === 'en' || value === 'it') {
+				setLanguage(value);
+			}
+		},
+		[setLanguage]
 	);
 
 	const { isMobile } = useSidebar();
@@ -585,18 +604,44 @@ function Container({ children }: LayoutProps) {
 										<DropdownMenuSeparator />
 										<DropdownMenuGroup className="space-y-1">
 											{accountMenuItems.slice(0, 4).map(({ value, label, icon: Icon }) => (
-												<DropdownMenuItem
-													key={value}
-													className={ACCOUNT_MENU_ITEM_CLASS}
-													onClick={() => handleAccountMenuValueChange(value)}
-												>
-													<Icon />
-													<span className="flex-1">{label}</span>
-													{value === 'settings' && <DropdownMenuShortcut>⇧⌘,</DropdownMenuShortcut>}
-													{value === 'language' && (
-														<ChevronRight className="size-4 text-muted-foreground" />
+												<React.Fragment key={value}>
+													{value === 'language' ? (
+														<DropdownMenuSub>
+															<DropdownMenuSubTrigger className={ACCOUNT_MENU_ITEM_CLASS}>
+																<Icon />
+																<span className="flex-1">{label}</span>
+															</DropdownMenuSubTrigger>
+															<DropdownMenuSubContent className="min-w-40 p-1">
+																<DropdownMenuRadioGroup
+																	value={language}
+																	onValueChange={handleLanguageChange}
+																	className="space-y-1"
+																>
+																	{LANGUAGE_OPTIONS.map((option) => (
+																		<DropdownMenuRadioItem
+																			key={option.value}
+																			value={option.value}
+																			className={ACCOUNT_MENU_ITEM_CLASS}
+																		>
+																			{t(option.labelKey)}
+																		</DropdownMenuRadioItem>
+																	))}
+																</DropdownMenuRadioGroup>
+															</DropdownMenuSubContent>
+														</DropdownMenuSub>
+													) : (
+														<DropdownMenuItem
+															className={ACCOUNT_MENU_ITEM_CLASS}
+															onClick={() => handleAccountMenuValueChange(value)}
+														>
+															<Icon />
+															<span className="flex-1">{label}</span>
+															{value === 'settings' && (
+																<DropdownMenuShortcut>⇧⌘,</DropdownMenuShortcut>
+															)}
+														</DropdownMenuItem>
 													)}
-												</DropdownMenuItem>
+												</React.Fragment>
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
