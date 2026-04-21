@@ -8,7 +8,12 @@ import {
 	SelectValue,
 } from '@/components/ui/Select';
 import { SectionHeader, SettingRow } from '../components';
-import { DEFAULT_IMAGE_MODEL_ID, DEFAULT_TEXT_MODEL_ID, IMAGE_MODELS, TEXT_MODELS } from '../../../../../shared/models';
+import {
+	DEFAULT_IMAGE_MODEL_ID,
+	DEFAULT_TEXT_MODEL_ID,
+	IMAGE_MODELS,
+	TEXT_MODELS,
+} from '../../../../../shared/models';
 import { getProvider } from '../../../../../shared/providers';
 import type { AgentSettings, ModelInfo } from '../../../../../shared/types';
 
@@ -193,9 +198,7 @@ const AgentsPage: React.FC = () => {
 			<div className="min-h-5 pt-3 text-xs text-muted-foreground">
 				{status.type === 'saving' && t('settings.agents.saving', 'Saving...')}
 				{status.type === 'saved' && t('settings.agents.saved', 'Saved')}
-				{status.type === 'error' && (
-					<span className="text-destructive">{status.message}</span>
-				)}
+				{status.type === 'error' && <span className="text-destructive">{status.message}</span>}
 			</div>
 		</div>
 	);

@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useState, type ReactElement, type ReactNode } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useMemo,
+	useState,
+	type ReactElement,
+	type ReactNode,
+} from 'react';
 import type { DataContextValue } from './types';
 import type { KnowledgeBase } from '../types';
 import { useAppDispatch, useAppSelector } from '@/store';
@@ -39,7 +46,7 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 
 	const resources = useMemo(
 		() => filterResourcesBySection(allResources, SECTION_ID),
-		[allResources],
+		[allResources]
 	);
 
 	const indexingTask = useTaskListener<{

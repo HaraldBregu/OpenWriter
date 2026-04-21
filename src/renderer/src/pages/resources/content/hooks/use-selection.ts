@@ -18,8 +18,7 @@ interface UseSelectionReturn {
 export function useSelection({ filteredFolders }: UseSelectionParams): UseSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
-	const allChecked =
-		filteredFolders.length > 0 && filteredFolders.every((f) => selected.has(f.id));
+	const allChecked = filteredFolders.length > 0 && filteredFolders.every((f) => selected.has(f.id));
 	const someChecked = !allChecked && filteredFolders.some((f) => selected.has(f.id));
 
 	const handleToggleAll = useCallback(() => {

@@ -9,10 +9,7 @@ interface ProviderProps {
 	readonly documentId: string | undefined;
 }
 
-export function Provider({
-	children,
-	documentId,
-}: ProviderProps): React.JSX.Element {
+export function Provider({ children, documentId }: ProviderProps): React.JSX.Element {
 	const [state, dispatch] = useReducer(documentReducer, {
 		...INITIAL_DOCUMENT_STATE,
 		documentId,
@@ -38,35 +35,34 @@ export function Provider({
 	const openInsertContentDialog = useCallback(() => setInsertContentDialogOpen(true), []);
 	const closeInsertContentDialog = useCallback(() => setInsertContentDialogOpen(false), []);
 
-	const value = useMemo<ContextValue>(() => ({
-		state,
-		dispatch,
-		editor,
-		setEditor,
-		activeSidebar,
-		animate,
-		setActiveSidebar,
-		toggleSidebar,
-		insertContentDialogOpen,
-		openInsertContentDialog,
-		closeInsertContentDialog,
-	}), [
-		state,
-		dispatch,
-		editor,
-		setEditor,
-		activeSidebar,
-		animate,
-		setActiveSidebar,
-		toggleSidebar,
-		insertContentDialogOpen,
-		openInsertContentDialog,
-		closeInsertContentDialog,
-	]);
-
-	return (
-		<DocumentContext.Provider value={value}>
-			{children}
-		</DocumentContext.Provider>
+	const value = useMemo<ContextValue>(
+		() => ({
+			state,
+			dispatch,
+			editor,
+			setEditor,
+			activeSidebar,
+			animate,
+			setActiveSidebar,
+			toggleSidebar,
+			insertContentDialogOpen,
+			openInsertContentDialog,
+			closeInsertContentDialog,
+		}),
+		[
+			state,
+			dispatch,
+			editor,
+			setEditor,
+			activeSidebar,
+			animate,
+			setActiveSidebar,
+			toggleSidebar,
+			insertContentDialogOpen,
+			openInsertContentDialog,
+			closeInsertContentDialog,
+		]
 	);
+
+	return <DocumentContext.Provider value={value}>{children}</DocumentContext.Provider>;
 }

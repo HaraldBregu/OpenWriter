@@ -246,8 +246,6 @@ export function initTaskContent(taskId: string, initialContent: string): void {
 	snapshots.set(taskId, next);
 }
 
-
-
 export const taskEventBus = {
 	subscribeToTask,
 	subscribeToTaskType,

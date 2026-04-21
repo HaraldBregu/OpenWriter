@@ -305,17 +305,16 @@ function PageContent(): ReactElement {
 											onDoubleClick={(event) => event.stopPropagation()}
 										>
 											<div className="inline-flex items-center gap-1">
-												{folder.kind === 'file' &&
-													folder.name.toLowerCase().endsWith('.md') && (
-														<Button
-															variant="ghost"
-															size="icon"
-															onClick={() => setPreviewFolder(folder)}
-															aria-label="Preview"
-														>
-															<Eye className="h-4 w-4" />
-														</Button>
-													)}
+												{folder.kind === 'file' && folder.name.toLowerCase().endsWith('.md') && (
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={() => setPreviewFolder(folder)}
+														aria-label="Preview"
+													>
+														<Eye className="h-4 w-4" />
+													</Button>
+												)}
 												<Button
 													variant="ghost"
 													size="icon"

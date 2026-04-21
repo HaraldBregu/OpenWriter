@@ -11,9 +11,5 @@ export function Provider({ children }: ProviderProps): React.JSX.Element {
 	const [state, dispatch] = useReducer(homeReducer, INITIAL_HOME_STATE);
 	const value = useMemo<ContextValue>(() => ({ state, dispatch }), [state, dispatch]);
 
-	return (
-		<HomeContext.Provider value={value}>
-			{children}
-		</HomeContext.Provider>
-	);
+	return <HomeContext.Provider value={value}>{children}</HomeContext.Provider>;
 }

@@ -15,9 +15,7 @@ interface UseSelectionReturn {
 	handleToggleRow: (id: string) => void;
 }
 
-export function useSelection({
-	filteredEntries,
-}: UseSelectionParams): UseSelectionReturn {
+export function useSelection({ filteredEntries }: UseSelectionParams): UseSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
 	const allChecked = filteredEntries.length > 0 && filteredEntries.every((f) => selected.has(f.id));

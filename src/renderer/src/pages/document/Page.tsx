@@ -94,7 +94,6 @@ function PageContent(): ReactElement {
 
 				setTitle(config.title || '');
 				setContent(loadedContent);
-				dispatch({ type: 'CONTENT_CHANGED', value: loadedContent });
 
 				setLoaded(true);
 			} catch {

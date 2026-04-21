@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Clock3, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from '@/components/ui/Empty';
+import {
+	Empty,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+	EmptyDescription,
+} from '@/components/ui/Empty';
 import { useAppSelector } from '@/store';
 import { selectAllDocuments } from '@/store/workspace';
 import { formatRelativeTime } from '../shared/format-time';
@@ -32,7 +38,9 @@ export function RecentDocuments(): ReactElement {
 						<EmptyMedia variant="icon">
 							<FolderOpen />
 						</EmptyMedia>
-						<EmptyTitle>{t('home.noRecentWritings', 'No writings yet. Create one to get started.')}</EmptyTitle>
+						<EmptyTitle>
+							{t('home.noRecentWritings', 'No writings yet. Create one to get started.')}
+						</EmptyTitle>
 						<EmptyDescription>
 							{t('home.noRecentWritingsHint', 'Your recent documents will appear here.')}
 						</EmptyDescription>

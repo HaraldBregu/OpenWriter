@@ -12,7 +12,9 @@ import type { Provider, ProviderId, Service } from './types';
 // Provider constants — sourced from PROVIDERS tuple in ./types
 // ---------------------------------------------------------------------------
 
-const findProvider = <TId extends ProviderId>(id: TId): Extract<(typeof PROVIDERS)[number], { id: TId }> =>
+const findProvider = <TId extends ProviderId>(
+	id: TId
+): Extract<(typeof PROVIDERS)[number], { id: TId }> =>
 	PROVIDERS.find((p) => p.id === id) as Extract<(typeof PROVIDERS)[number], { id: TId }>;
 
 export const OPENAI = findProvider('openai');

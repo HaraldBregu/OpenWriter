@@ -69,12 +69,8 @@ export function MarkdownPreviewDialog({
 					<DialogDescription render={<div />} className="flex min-h-0 flex-1">
 						<ScrollArea className="h-full w-full">
 							<div className="p-6">
-								{loading && (
-									<p className="text-sm text-muted-foreground">Loading…</p>
-								)}
-								{error && (
-									<p className="text-sm text-destructive">{error}</p>
-								)}
+								{loading && <p className="text-sm text-muted-foreground">Loading…</p>}
+								{error && <p className="text-sm text-destructive">{error}</p>}
 								{!loading && !error && content !== null && (
 									<div className="prose prose-sm max-w-none text-foreground dark:prose-invert">
 										<Markdown remarkPlugins={[remarkGfm]}>{content}</Markdown>

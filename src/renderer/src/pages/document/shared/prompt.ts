@@ -66,4 +66,3 @@ export function normalizeTaskPromptContext(
 		after: stripTaskPromptMarkers(after).trimStart(),
 	};
 }
-

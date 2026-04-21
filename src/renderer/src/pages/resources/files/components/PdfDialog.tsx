@@ -21,7 +21,11 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { ScrollArea } from '@/components/ui/ScrollArea';
 import { MIME_TYPE_PDF } from '../../shared/resource-preview-utils';
 import { useContext } from '../hooks/use-context';
-import { formatFileSize, getFileExtension, getFileNameWithoutExtension } from '../shared/file-utils';
+import {
+	formatFileSize,
+	getFileExtension,
+	getFileNameWithoutExtension,
+} from '../shared/file-utils';
 
 const PROVIDER_COLORS: Record<string, string> = {
 	openai: 'bg-green-600',
@@ -71,7 +75,6 @@ function SectionHeader({
 		</div>
 	);
 }
-
 
 export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useContext();

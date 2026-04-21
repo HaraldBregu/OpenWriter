@@ -1,7 +1,13 @@
 import type { ReactElement } from 'react';
 import { Database, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Empty, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+} from '@/components/ui/Empty';
 import { useContext } from '../hooks/use-context';
 import { KnowledgeBaseCreateCard } from './KnowledgeBaseCreateCard';
 import { KnowledgeBaseItemCard } from './KnowledgeBaseItemCard';
@@ -40,10 +46,7 @@ export function KnowledgeBaseGrid(): ReactElement {
 					onDelete={handleDeleteKnowledgeBase}
 				/>
 			))}
-			<KnowledgeBaseCreateCard
-				onCreateClick={() => setKbDialogOpen(true)}
-				disabled={uploading}
-			/>
+			<KnowledgeBaseCreateCard onCreateClick={() => setKbDialogOpen(true)} disabled={uploading} />
 		</div>
 	);
 }

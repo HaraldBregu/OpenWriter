@@ -100,7 +100,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 			dispatch({ type: 'SET_UPLOADING', payload: true });
 			try {
 				const imported = await window.workspace.insertContents(
-					extensions ?? section.uploadExtensions,
+					extensions ?? section.uploadExtensions
 				);
 				if (imported.length > 0) {
 					await refreshFolders();
@@ -111,7 +111,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 				dispatch({ type: 'SET_UPLOADING', payload: false });
 			}
 		},
-		[section, refreshFolders],
+		[section, refreshFolders]
 	);
 
 	const handleToggleEdit = useCallback(() => {
@@ -135,7 +135,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 			setSelected(new Set([id]));
 			dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
 		},
-		[setSelected],
+		[setSelected]
 	);
 
 	const handleConfirmDelete = useCallback(async () => {

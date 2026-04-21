@@ -59,7 +59,7 @@ const GENERIC_CONFIG: GenericConfig = {
 	description: "Carica un'immagine o un PDF per configurare l'estrazione.",
 	submitLabel: 'Esegui',
 	emptyTitle: 'Carica un file',
-	emptyDescription: 'Trascina qui un\'immagine (PNG, JPG, WEBP…) o un PDF, oppure',
+	emptyDescription: "Trascina qui un'immagine (PNG, JPG, WEBP…) o un PDF, oppure",
 	selectLabel: 'Scegli file',
 	placeholder: 'File',
 	changeLabel: 'Cambia file',
@@ -134,11 +134,7 @@ interface ExtractorDialogProps {
 	readonly onRun?: (payload: ExtractorRunPayload) => void | Promise<void>;
 }
 
-export function ExtractorDialog({
-	open,
-	onOpenChange,
-	onRun,
-}: ExtractorDialogProps): ReactElement {
+export function ExtractorDialog({ open, onOpenChange, onRun }: ExtractorDialogProps): ReactElement {
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 	const [selectedExtras, setSelectedExtras] = useState<ExtraValue[]>(['descrizione']);
 	const [outputFileName, setOutputFileName] = useState('');

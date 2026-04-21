@@ -85,7 +85,7 @@ export function KnowledgeBaseDialog({
 
 	const selectedModel = useMemo(
 		() => EMBEDDING_MODELS.find((m) => m.modelId === embeddingModel),
-		[embeddingModel],
+		[embeddingModel]
 	);
 
 	useEffect(() => {
@@ -159,9 +159,7 @@ export function KnowledgeBaseDialog({
 			return;
 		}
 
-		const markdownPaths = files
-			.filter((f) => selected.has(f.id))
-			.map((f) => f.path);
+		const markdownPaths = files.filter((f) => selected.has(f.id)).map((f) => f.path);
 
 		setStep('processing');
 		await submit({
@@ -186,7 +184,7 @@ export function KnowledgeBaseDialog({
 			}
 			onOpenChange(nextOpen);
 		},
-		[isRunning, onOpenChange, reset],
+		[isRunning, onOpenChange, reset]
 	);
 
 	const handleCancel = useCallback(() => {
@@ -244,7 +242,12 @@ export function KnowledgeBaseDialog({
 						<Separator />
 						<div className="flex flex-col gap-2">
 							<Label htmlFor="kb-model">Embedding Model</Label>
-							<Select value={embeddingModel} onValueChange={(v) => { if (v !== null) setEmbeddingModel(v); }}>
+							<Select
+								value={embeddingModel}
+								onValueChange={(v) => {
+									if (v !== null) setEmbeddingModel(v);
+								}}
+							>
 								<SelectTrigger id="kb-model" className="w-full">
 									<SelectValue placeholder="Select model" />
 								</SelectTrigger>
@@ -258,7 +261,8 @@ export function KnowledgeBaseDialog({
 							</Select>
 							{selectedModel && (
 								<p className="text-xs text-muted-foreground">
-									Provider: {selectedModel.providerId} &middot; Context: {selectedModel.contextWindow?.toLocaleString() ?? 'N/A'} tokens
+									Provider: {selectedModel.providerId} &middot; Context:{' '}
+									{selectedModel.contextWindow?.toLocaleString() ?? 'N/A'} tokens
 								</p>
 							)}
 						</div>
@@ -346,9 +350,7 @@ export function KnowledgeBaseDialog({
 								Model: {selectedModel?.name ?? embeddingModel}
 							</p>
 							{result.failedPaths.length > 0 && (
-								<p className="text-destructive mt-1">
-									{result.failedPaths.length} files failed
-								</p>
+								<p className="text-destructive mt-1">{result.failedPaths.length} files failed</p>
 							)}
 						</div>
 					</div>
@@ -377,10 +379,7 @@ export function KnowledgeBaseDialog({
 							<Button variant="outline" onClick={handleBack}>
 								Back
 							</Button>
-							<Button
-								onClick={handleStart}
-								disabled={selected.size === 0}
-							>
+							<Button onClick={handleStart} disabled={selected.size === 0}>
 								Start Embedding ({selected.size})
 							</Button>
 						</div>
@@ -391,9 +390,7 @@ export function KnowledgeBaseDialog({
 						</Button>
 					)}
 					{(step === 'completed' || step === 'error') && (
-						<Button onClick={() => handleClose(false)}>
-							Close
-						</Button>
+						<Button onClick={() => handleClose(false)}>Close</Button>
 					)}
 				</DialogFooter>
 			</DialogContent>

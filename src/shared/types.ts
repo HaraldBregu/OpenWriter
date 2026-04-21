@@ -204,13 +204,7 @@ export interface TaskSubmitPayload<TInput = unknown> {
 	metadata?: Record<string, unknown>;
 }
 
-export type TaskState =
-	| 'queued'
-	| 'started'
-	| 'running'
-	| 'completed'
-	| 'error'
-	| 'cancelled';
+export type TaskState = 'queued' | 'started' | 'running' | 'completed' | 'error' | 'cancelled';
 
 export interface TaskInfo {
 	taskId: string;

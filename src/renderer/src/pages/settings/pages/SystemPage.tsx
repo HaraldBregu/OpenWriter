@@ -146,9 +146,7 @@ const SystemPage: React.FC = () => {
 						<SelectValue />
 					</SelectTrigger>
 					<SelectContent>
-						<SelectItem value={DEFAULT_THEME_ID}>
-							{t('settings.appTheme.default')}
-						</SelectItem>
+						<SelectItem value={DEFAULT_THEME_ID}>{t('settings.appTheme.default')}</SelectItem>
 						{customThemes.map((theme) => (
 							<SelectItem key={theme.id} value={theme.id}>
 								{theme.name}

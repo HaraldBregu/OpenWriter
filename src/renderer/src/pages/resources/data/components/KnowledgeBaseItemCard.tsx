@@ -1,6 +1,13 @@
 import type { ReactElement } from 'react';
 import { Database, FileText, MoreVertical, Puzzle, Trash2 } from 'lucide-react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardAction } from '@/components/ui/Card';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+	CardAction,
+} from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import {
@@ -12,7 +19,10 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import type { KnowledgeBase, KnowledgeBaseStatus } from '../types';
 
-const STATUS_VARIANT: Record<KnowledgeBaseStatus, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+const STATUS_VARIANT: Record<
+	KnowledgeBaseStatus,
+	'default' | 'secondary' | 'destructive' | 'outline'
+> = {
 	ready: 'default',
 	building: 'secondary',
 	error: 'destructive',
@@ -72,7 +82,9 @@ export function KnowledgeBaseItemCard({
 				<CardTitle className="truncate">{knowledgeBase.name}</CardTitle>
 				<CardAction>
 					<DropdownMenu>
-						<DropdownMenuTrigger render={<Button variant="ghost" size="icon-sm" aria-label="Actions" />}>
+						<DropdownMenuTrigger
+							render={<Button variant="ghost" size="icon-sm" aria-label="Actions" />}
+						>
 							<MoreVertical />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
@@ -87,9 +99,7 @@ export function KnowledgeBaseItemCard({
 
 			<CardContent className="flex flex-1 flex-col gap-3">
 				{knowledgeBase.description && (
-					<p className="text-sm text-muted-foreground line-clamp-2">
-						{knowledgeBase.description}
-					</p>
+					<p className="text-sm text-muted-foreground line-clamp-2">{knowledgeBase.description}</p>
 				)}
 
 				<div className="flex flex-wrap items-center gap-1.5">
@@ -103,22 +113,12 @@ export function KnowledgeBaseItemCard({
 						<Puzzle className="h-3.5 w-3.5 text-muted-foreground" />
 						<span className="truncate font-medium">{knowledgeBase.embeddingModel}</span>
 					</div>
-					<div className="text-xs text-muted-foreground">
-						{knowledgeBase.embeddingProvider}
-					</div>
+					<div className="text-xs text-muted-foreground">{knowledgeBase.embeddingProvider}</div>
 				</div>
 
 				<div className="flex items-center gap-4">
-					<StatItem
-						icon={FileText}
-						label="Documents"
-						value={knowledgeBase.documentCount}
-					/>
-					<StatItem
-						icon={Database}
-						label="Chunks"
-						value={knowledgeBase.chunkCount}
-					/>
+					<StatItem icon={FileText} label="Documents" value={knowledgeBase.documentCount} />
+					<StatItem icon={Database} label="Chunks" value={knowledgeBase.chunkCount} />
 				</div>
 
 				{knowledgeBase.error && (

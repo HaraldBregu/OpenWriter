@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useReducer, useRef, type ReactElement, type ReactNode } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useReducer,
+	useRef,
+	type ReactElement,
+	type ReactNode,
+} from 'react';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
@@ -48,7 +55,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		dispatch({ type: 'SET_UPLOADING', payload: true });
 		try {
 			const imported = await window.workspace.insertResourcesFiles(
-				RESOURCE_SECTIONS.files.uploadExtensions,
+				RESOURCE_SECTIONS.files.uploadExtensions
 			);
 			if (imported.length > 0) {
 				dispatch({ type: 'ADD_ENTRIES', payload: imported });
@@ -66,44 +73,44 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 
 	const setEntries = useCallback(
 		(entries: FilesContextValue['entries']) => dispatch({ type: 'SET_ENTRIES', payload: entries }),
-		[],
+		[]
 	);
 
 	const removeEntry = useCallback(
 		(id: string) => dispatch({ type: 'REMOVE_ENTRY', payload: id }),
-		[],
+		[]
 	);
 
 	const setIsLoading = useCallback(
 		(loading: boolean) => dispatch({ type: 'SET_IS_LOADING', payload: loading }),
-		[],
+		[]
 	);
 
 	const setSearchQuery = useCallback(
 		(query: string) => dispatch({ type: 'SET_SEARCH_QUERY', payload: query }),
-		[],
+		[]
 	);
 
 	const setViewMode = useCallback(
 		(mode: FilesContextValue['viewMode']) => dispatch({ type: 'SET_VIEW_MODE', payload: mode }),
-		[],
+		[]
 	);
 
 	const setTypeFilter = useCallback(
 		(filter: FilesContextValue['typeFilter']) =>
 			dispatch({ type: 'SET_TYPE_FILTER', payload: filter }),
-		[],
+		[]
 	);
 
 	const setConfirmOpen = useCallback(
 		(open: boolean) => dispatch({ type: 'SET_CONFIRM_OPEN', payload: open }),
-		[],
+		[]
 	);
 
 	const handleOpenFileDetails = useCallback(
 		(file: FilesContextValue['activeFile'] & object) =>
 			dispatch({ type: 'OPEN_FILE_DETAILS', payload: file }),
-		[],
+		[]
 	);
 
 	const handleFileDetailsOpenChange = useCallback((open: boolean) => {
@@ -120,9 +127,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const handleConfirmDelete = useCallback(async () => {
 		const ids = [...selected];
 		try {
-			await Promise.all(
-				ids.map((id) => window.workspace.deleteResourcesFileEntry(id)),
-			);
+			await Promise.all(ids.map((id) => window.workspace.deleteResourcesFileEntry(id)));
 			dispatch({ type: 'REMOVE_ENTRIES', payload: ids });
 			setSelected(new Set());
 			dispatch({ type: 'DELETE_SUCCESS' });
