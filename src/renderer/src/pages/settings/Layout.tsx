@@ -20,6 +20,7 @@ const NAV_SECTIONS: readonly NavItemDefinition[][] = [
 		{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
 		{ path: '/settings/models', labelKey: 'settings.tabs.models' },
 		{ path: '/settings/agents', labelKey: 'settings.tabs.agents' },
+		{ path: '/settings/skill', labelKey: 'settings.tabs.skill' },
 	],
 	[
 		{ path: '/settings/editor', labelKey: 'settings.tabs.editor' },

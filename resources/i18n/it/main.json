@@ -140,6 +140,7 @@
 			"models": "Modelli",
 			"providers": "Provider",
 			"agents": "Agenti",
+			"skill": "Abilita",
 			"media": "Media",
 			"devices": "Dispositivi",
 			"tools": "Strumenti",
@@ -166,6 +167,7 @@
 			"clipboard": "Appunti",
 			"application": "Applicazione",
 			"profile": "Profilo",
+			"skill": "Abilita",
 			"editor": "Editor",
 			"developer": "Sviluppatore"
 		},
@@ -205,6 +207,13 @@
 		"developer": {
 			"mode": "Modalità Sviluppatore",
 			"modeDescription": "Abilita strumenti e opzioni avanzate per sviluppatori"
+		},
+		"skill": {
+			"title": "Abilita",
+			"subtitle": "Gestisci le abilita AI disponibili in OpenWriter.",
+			"library": "Libreria abilita",
+			"libraryDescription": "Le abilita installate e configurabili appariranno qui.",
+			"status": "Prossimamente"
 		},
 		"permissions": {
 			"microphone": "Microfono",

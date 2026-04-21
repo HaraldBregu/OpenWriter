@@ -18,7 +18,7 @@ import {
 	PageHeaderItems,
 	PageHeaderTitle,
 	PageSubHeader,
-} from '@/components/app/base/Page';
+} from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import {

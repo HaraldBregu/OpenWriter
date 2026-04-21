@@ -140,6 +140,7 @@
 			"models": "Models",
 			"providers": "Providers",
 			"agents": "Agents",
+			"skill": "Skill",
 			"media": "Media",
 			"devices": "Devices",
 			"tools": "Tools",
@@ -166,6 +167,7 @@
 			"clipboard": "Clipboard",
 			"application": "Application",
 			"profile": "Profile",
+			"skill": "Skill",
 			"editor": "Editor",
 			"developer": "Developer"
 		},
@@ -205,6 +207,13 @@
 		"developer": {
 			"mode": "Developer Mode",
 			"modeDescription": "Enable advanced developer tools and options"
+		},
+		"skill": {
+			"title": "Skill",
+			"subtitle": "Manage AI skills available to OpenWriter.",
+			"library": "Skill library",
+			"libraryDescription": "Installed and configurable skills will appear here.",
+			"status": "Coming soon"
 		},
 		"permissions": {
 			"microphone": "Microphone",
