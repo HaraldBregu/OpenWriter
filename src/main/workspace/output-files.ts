@@ -203,8 +203,8 @@ export class OutputFilesService implements Disposable {
 	 * Save a new output entry.
 	 *
 	 * Creates:
-	 *   output/<type>/<uuid>/config.json
-	 *   output/<type>/<uuid>/content.md
+	 *   documents/<uuid>/config.json
+	 *   documents/<uuid>/content.md
 	 *
 	 * The UUID folder name is the stable ID for this entry.
 	 */
