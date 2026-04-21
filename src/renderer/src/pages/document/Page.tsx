@@ -256,8 +256,9 @@ function PageContent(): ReactElement {
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
 			const { from, to } = editor.state.selection;
 			const doc = editor.state.doc;
-			const textBefore = doc.textBetween(0, from, '\n');
-			const textAfter = doc.textBetween(to, doc.content.size, '\n');
+			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
+			const textAfter =
+				editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
 			console.log('[Page] text before cursor:', textBefore);
 			console.log('[Page] text after cursor:', textAfter);
 
