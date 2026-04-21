@@ -151,11 +151,7 @@ export class ContentsService {
 	}
 
 	/**
-	 * Delete a file or folder from the workspace resources/content/ directory.
-	 *
-	 * @param workspacePath - Workspace root path
-	 * @param entryId - The entry ID (basename) to delete
-	 * @param markWritten - Optional callback to mark files as written (prevents watcher loops)
+	 * Delete a file or folder from the workspace contents/ directory.
 	 */
 	async deleteContent(
 		workspacePath: string,
