@@ -739,7 +739,7 @@ export class WorkspaceIpc implements IpcModule {
 		// -------------------------------------------------------------------------
 
 		ipcMain.handle(
-			WorkspaceChannels.getResourcesFiles,
+			WorkspaceChannels.getFiles,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
@@ -749,11 +749,11 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected. Please select a workspace first.');
 				}
 				return filesService.getFiles(currentPath);
-			}, WorkspaceChannels.getResourcesFiles)
+			}, WorkspaceChannels.getFiles)
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.insertResourcesFiles,
+			WorkspaceChannels.insertFiles,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, extensions?: string[]) => {
 				const hasFilter = extensions && extensions.length > 0;
 				const filters: FileFilter[] = hasFilter
@@ -792,11 +792,11 @@ export class WorkspaceIpc implements IpcModule {
 					: undefined;
 
 				return filesService.insertFiles(currentPath, result.filePaths, markWritten);
-			}, WorkspaceChannels.insertResourcesFiles)
+			}, WorkspaceChannels.insertFiles)
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.deleteResourcesFileEntry,
+			WorkspaceChannels.deleteFileEntry,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
@@ -815,7 +815,74 @@ export class WorkspaceIpc implements IpcModule {
 					: undefined;
 
 				await filesService.deleteFile(currentPath, id, markWritten);
-			}, WorkspaceChannels.deleteResourcesFileEntry)
+			}, WorkspaceChannels.deleteFileEntry)
+		);
+
+		// -------------------------------------------------------------------------
+		// Images (workspace/images/)
+		// -------------------------------------------------------------------------
+
+		ipcMain.handle(
+			WorkspaceChannels.getImages,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const imagesService = ctx.getService<ImagesService>('imagesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+				return imagesService.getImages(currentPath);
+			}, WorkspaceChannels.getImages)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.insertImages,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, extensions?: string[]) => {
+				const hasFilter = extensions && extensions.length > 0;
+				const filters: FileFilter[] = hasFilter
+					? [
+							{
+								name: `Supported Images (${extensions.join(', ')})`,
+								extensions: extensions.map((ext) => ext.replace(/^\./, '')),
+							},
+						]
+					: [{ name: 'All Files', extensions: ['*'] }];
+
+				const result = await dialog.showOpenDialog({
+					properties: ['openFile', 'multiSelections'],
+					filters,
+					message: hasFilter ? `Supported formats: ${extensions.join(', ')}` : undefined,
+				});
+
+				if (result.canceled || result.filePaths.length === 0) {
+					return [];
+				}
+
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const imagesService = ctx.getService<ImagesService>('imagesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+
+				return imagesService.insertImages(currentPath, result.filePaths);
+			}, WorkspaceChannels.insertImages)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.deleteImage,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent, id: string) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const imagesService = ctx.getService<ImagesService>('imagesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) {
+					throw new Error('No workspace selected. Please select a workspace first.');
+				}
+				await imagesService.deleteImage(currentPath, id);
+			}, WorkspaceChannels.deleteImage)
 		);
 
 		logger.info('WorkspaceIpc', `Registered ${this.name} module`);
