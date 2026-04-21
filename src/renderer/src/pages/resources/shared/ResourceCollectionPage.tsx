@@ -128,7 +128,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 			type: 'index-resources',
 			input: {
 				workspacePath,
-				resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
 			},
 		});
 		if (res.success) {
