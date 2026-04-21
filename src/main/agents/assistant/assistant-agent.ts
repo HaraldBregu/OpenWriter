@@ -77,12 +77,23 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 		}
 	}
 
-	private buildTools(documentFolder: string): AgentTool[] {
-		return [
+	private buildTools(documentFolder: string, input: AssistantAgentInput): AgentTool[] {
+		const tools: AgentTool[] = [
 			createReadTool(documentFolder),
 			createEditTool(documentFolder),
 			createWriteTool(documentFolder),
 		];
+		if (input.imageModelName && input.imageApiKey && input.imageProviderId) {
+			tools.push(
+				createGenerateImageTool({
+					cwd: documentFolder,
+					providerId: input.imageProviderId,
+					apiKey: input.imageApiKey,
+					modelName: input.imageModelName,
+				})
+			);
+		}
+		return tools;
 	}
 
 	private buildUserContent(input: AssistantAgentInput): string {
