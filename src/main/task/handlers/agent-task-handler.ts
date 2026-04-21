@@ -10,6 +10,8 @@ import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace/workspace';
 import { getTaskExecutionContext } from '../task-execution-context';
 import { DEFAULT_IMAGE_MODEL_ID } from '../../../shared/models';
+import type { SkillsStoreService } from '../../services/skills-store-service';
+import type { Skill } from '../../agents/skills';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
