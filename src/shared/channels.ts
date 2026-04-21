@@ -17,7 +17,6 @@ import type {
 	TaskInfo,
 	TaskEvent,
 	ResourceInfo,
-	DocumentFileChangeEvent,
 	ContentEntryChangeEvent,
 	FileEntry,
 	FileEntryChangeEvent,
