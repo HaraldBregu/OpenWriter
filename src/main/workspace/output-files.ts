@@ -143,7 +143,7 @@ export class OutputFilesService implements Disposable {
 	private cleanupInterval: NodeJS.Timeout | null = null;
 	private workspaceEventUnsubscribe: (() => void) | null = null;
 
-	private readonly OUTPUT_DIR_NAME = 'output';
+	private readonly OUTPUT_DIR_NAME = 'documents';
 	private readonly CONFIG_FILENAME = 'config.json';
 	private readonly CONTENT_FILENAME = 'content.md';
 	private readonly CHAT_DIRNAME = 'chats';
