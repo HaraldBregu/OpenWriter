@@ -26,13 +26,6 @@ export interface AppEvents {
 		reason: 'deleted' | 'inaccessible' | 'renamed';
 		timestamp: number;
 	};
-	'resources:file-changed': {
-		type: 'added' | 'changed' | 'removed';
-		fileId: string;
-		filePath: string;
-		timestamp: number;
-	};
-	'resources:watcher-error': { error: string; timestamp: number };
 	'files:changed': {
 		type: 'added' | 'changed' | 'removed';
 		fileId: string;
