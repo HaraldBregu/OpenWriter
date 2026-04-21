@@ -3,9 +3,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
 import type { WorkspaceService } from './workspace-service';
-import type { FileMetadata } from '../shared/file_manager';
 import type { WorkspaceMetadataService } from './workspace-metadata';
-import type { DocumentsWatcherService } from './documents-watcher';
 import type {
 	OutputFilesService,
 	OutputFile,
@@ -15,7 +13,6 @@ import type {
 	UpdateOutputFileInput,
 } from './output-files';
 import { VALID_OUTPUT_TYPES } from './output-files';
-import { DocumentsService } from './documents';
 import type { LoggerService } from '../services/logger';
 import type {
 	DirectoryEntry,
