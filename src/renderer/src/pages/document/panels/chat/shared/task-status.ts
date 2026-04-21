@@ -1,4 +1,4 @@
-import type { TaskState } from '../../../../../../shared/types';
+import type { TaskState } from '../../../../../../../shared/types';
 import type { ChatMessageStatus } from './types';
 
 export function mapTaskStatusToChatStatus(status: TaskState): ChatMessageStatus {
