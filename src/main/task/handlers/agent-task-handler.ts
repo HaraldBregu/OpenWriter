@@ -8,6 +8,7 @@ import type { ModelResolver } from '../../shared/model-resolver';
 import type { WindowContextManager } from '../../core/window-context';
 import type { Workspace } from '../../workspace/workspace';
 import { getTaskExecutionContext } from '../task-execution-context';
+import { DEFAULT_IMAGE_MODEL_ID } from '../../../shared/models';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
