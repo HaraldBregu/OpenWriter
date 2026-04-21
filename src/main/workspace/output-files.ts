@@ -220,12 +220,12 @@ export class OutputFilesService implements Disposable {
 			throw new Error('Content must be a string.');
 		}
 
-		const typeDir = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, input.type);
-		await this.ensureDirectory(typeDir);
+		const documentsDir = path.join(currentWorkspace, this.OUTPUT_DIR_NAME);
+		await this.ensureDirectory(documentsDir);
 
 		const timestamp = Date.now();
 		const folderName = randomUUID();
-		const folderPath = path.join(typeDir, folderName);
+		const folderPath = path.join(documentsDir, folderName);
 
 		await this.ensureDirectory(folderPath);
 		await this.ensureDocumentSupportDirectories(folderPath, input.type);
@@ -326,26 +326,26 @@ export class OutputFilesService implements Disposable {
 
 		this.validateOutputType(outputType);
 
-		const typeDir = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType);
+		const documentsDir = path.join(currentWorkspace, this.OUTPUT_DIR_NAME);
 
 		try {
-			await fs.access(typeDir);
+			await fs.access(documentsDir);
 		} catch {
 			this.logger?.info(
 				'OutputFilesService',
-				`Type directory does not exist for "${outputType}", returning empty array`
+				`Documents directory does not exist, returning empty array`
 			);
 			return [];
 		}
 
-		const entries = await fs.readdir(typeDir, { withFileTypes: true });
+		const entries = await fs.readdir(documentsDir, { withFileTypes: true });
 		const outputFiles: OutputFile[] = [];
 
 		for (const entry of entries) {
 			if (entry.name.startsWith('.')) continue;
 
 			if (entry.isDirectory() && this.DATE_FOLDER_RE.test(entry.name)) {
-				const folderPath = path.join(typeDir, entry.name);
+				const folderPath = path.join(documentsDir, entry.name);
 				try {
 					const file = await this.loadFolder(folderPath, outputType);
 					outputFiles.push(file);
