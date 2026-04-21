@@ -1,6 +1,5 @@
 import type { ModelInfo } from '../../shared/types';
-import { AI_MODELS } from '../../shared/models';
-import { DEFAULT_TEXT_MODEL_ID } from '../../shared/types';
+import { AI_MODELS, DEFAULT_TEXT_MODEL_ID } from '../../shared/models';
 
 /**
  * ModelResolver -- resolves a ModelInfo entry from the catalogue by modelId.
