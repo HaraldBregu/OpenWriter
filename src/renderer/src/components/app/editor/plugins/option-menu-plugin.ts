@@ -190,7 +190,13 @@ export const OptionMenuPlugin = (options: OptionMenuPluginProps): Plugin => {
 					return true;
 				}
 
-				if (event.key === 'ArrowUp' || event.key === 'ArrowDown' || event.key === 'Enter') {
+				if (
+					event.key === 'ArrowUp' ||
+					event.key === 'ArrowDown' ||
+					event.key === 'ArrowLeft' ||
+					event.key === 'ArrowRight' ||
+					event.key === 'Enter'
+				) {
 					return options.onKeyEvent(event);
 				}
 
