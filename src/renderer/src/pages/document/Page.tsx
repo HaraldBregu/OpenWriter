@@ -353,20 +353,23 @@ function PageContent(): ReactElement {
 	}, [id, title, loaded, appDispatch]);
 
 	useEffect(() => {
-		if (!id || typeof window.task?.onEvent !== 'function') return;
+		setAssistantActiveTaskId(null);
+		if (!id || typeof window.task?.list !== 'function') return;
+		let cancelled = false;
 
 		window.task.list().then((res) => {
-			if (!res.success) return;
-			const docTasks = res.data.filter((t) => t.metadata?.documentId === id);
-			docTasks.forEach((t) => {
-				console.log('[document task]', t.taskId, t.status, t);
-			});
+			if (cancelled || !res.success) return;
+			const active = res.data.find(
+				(t) =>
+					t.metadata?.documentId === id &&
+					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
+			);
+			if (active) setAssistantActiveTaskId(active.taskId);
 		});
 
-		return window.task.onEvent((event) => {
-			if (event.metadata?.documentId !== id) return;
-			console.log('[document task progress]', event.taskId, event.state, event);
-		});
+		return () => {
+			cancelled = true;
+		};
 	}, [id]);
 
 	const handleContentChange = useCallback(
