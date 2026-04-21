@@ -1,26 +1,28 @@
+import path from 'node:path';
 import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
 import type { AgentRegistry } from '../../agents/core/agent-registry';
 import type { AgentContext } from '../../agents/core/agent';
 import type { LoggerService } from '../../services/logger';
 import type { ServiceResolver } from '../../shared/service-resolver';
+import type { ModelResolver } from '../../shared/model-resolver';
+import type { WindowContextManager } from '../../core/window-context';
+import type { Workspace } from '../../workspace/workspace';
 
 /**
- * AgentTaskHandler -- bridges the task system to the agent registry.
+ * AgentTaskHandler — bridges the task system to the agent registry.
  *
  * Submit a task with `type: 'agent'` and an input of the shape below.
- * The handler resolves the agent by `agentType`, builds an `AgentContext`
- * (forwarding signal, progress and stream reporters, logger, metadata),
- * and executes the agent's strategy.
- *
- * Renderer payloads never carry API keys. When the agent input contains a
- * `providerId` without an `apiKey`, the handler resolves the key via
- * `ServiceResolver` (which reads from the main-side StoreService).
+ * The handler resolves the agent by `agentType`, enriches the input with
+ * provider/model/apiKey from main-side services, resolves the document
+ * file path from the caller window's Workspace facade, then executes
+ * the agent's strategy. Renderer payloads never carry credentials or
+ * filesystem paths.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
-	/** Registered agent type (e.g. 'text', 'image', 'rag', 'ocr'). */
+	/** Registered agent type (e.g. 'assistant', 'rag', 'ocr'). */
 	agentType: string;
-	/** Input payload forwarded to the agent's `execute`, after apiKey enrichment. */
+	/** Input payload forwarded to the agent's `execute`, after enrichment. */
 	input: TAgentInput;
 }
 
@@ -29,9 +31,13 @@ export interface AgentTaskOutput<TAgentOutput = unknown> {
 	output: TAgentOutput;
 }
 
-interface ProviderCredentials {
+interface AgentInputRecord {
 	providerId?: string;
 	apiKey?: string;
+	modelName?: string;
+	documentId?: string;
+	documentPath?: string;
+	[key: string]: unknown;
 }
 
 export class AgentTaskHandler
@@ -42,7 +48,9 @@ export class AgentTaskHandler
 	constructor(
 		private readonly agents: AgentRegistry,
 		private readonly logger: LoggerService,
-		private readonly serviceResolver?: ServiceResolver
+		private readonly serviceResolver: ServiceResolver,
+		private readonly modelResolver: ModelResolver,
+		private readonly windowContextManager: WindowContextManager
 	) {}
 
 	validate(input: AgentTaskInput): void {
@@ -65,7 +73,7 @@ export class AgentTaskHandler
 		metadata?: Record<string, unknown>
 	): Promise<AgentTaskOutput> {
 		const agent = this.agents.get(input.agentType);
-		const enrichedInput = this.enrichWithApiKey(input.input);
+		const enrichedInput = await this.enrichInput(input.input, metadata);
 
 		const ctx: AgentContext = {
 			signal,
@@ -79,18 +87,61 @@ export class AgentTaskHandler
 		return { agentType: input.agentType, output };
 	}
 
-	/**
-	 * If the agent input carries a providerId but no apiKey, resolve the
-	 * service from the main-side StoreService and splice the key in. Leaves
-	 * non-credential payloads untouched.
-	 */
-	private enrichWithApiKey<T>(raw: T): T {
-		if (!this.serviceResolver || !raw || typeof raw !== 'object') return raw;
+	private async enrichInput<T>(raw: T, metadata?: Record<string, unknown>): Promise<T> {
+		if (!raw || typeof raw !== 'object') return raw;
 
-		const creds = raw as ProviderCredentials;
-		if (!creds.providerId || creds.apiKey?.trim()) return raw;
+		const base = raw as AgentInputRecord;
+		const model = this.modelResolver.resolve({ modelId: base.modelName });
+		const providerId = base.providerId?.trim() || model.providerId;
+		const service = this.serviceResolver.resolve({ providerId });
 
-		const resolved = this.serviceResolver.resolve({ providerId: creds.providerId });
-		return { ...(raw as object), apiKey: resolved.apiKey } as T;
+		const enriched: AgentInputRecord = {
+			...base,
+			providerId: service.provider.id,
+			apiKey: base.apiKey?.trim() || service.apiKey,
+			modelName: model.modelId,
+		};
+
+		const documentId = this.extractDocumentId(base, metadata);
+		if (documentId) {
+			enriched.documentId = documentId;
+			const documentPath = this.resolveDocumentPath(documentId, metadata);
+			if (documentPath) enriched.documentPath = documentPath;
+		}
+
+		return enriched as unknown as T;
+	}
+
+	private extractDocumentId(
+		base: AgentInputRecord,
+		metadata?: Record<string, unknown>
+	): string | undefined {
+		if (typeof base.documentId === 'string' && base.documentId) return base.documentId;
+		const fromMeta = metadata?.documentId;
+		return typeof fromMeta === 'string' && fromMeta ? fromMeta : undefined;
+	}
+
+	private resolveDocumentPath(
+		documentId: string,
+		metadata?: Record<string, unknown>
+	): string | undefined {
+		const windowId = metadata?.windowId;
+		if (typeof windowId !== 'number') return undefined;
+
+		const context = this.windowContextManager.tryGet(windowId);
+		if (!context) return undefined;
+
+		try {
+			const workspace = context.container.get<Workspace>('workspaceManager');
+			const folder = workspace.getDocumentFolderPath(documentId);
+			return path.join(folder, 'content.md');
+		} catch (error) {
+			this.logger.warn(
+				'AgentTaskHandler',
+				`Failed to resolve document path for ${documentId}`,
+				error
+			);
+			return undefined;
+		}
 	}
 }
