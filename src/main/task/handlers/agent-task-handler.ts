@@ -59,7 +59,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		private readonly serviceResolver: ServiceResolver,
 		private readonly storeService: StoreService,
 		private readonly modelResolver: ModelResolver,
-		private readonly windowContextManager: WindowContextManager
+		private readonly windowContextManager: WindowContextManager,
+		private readonly skillsStoreService?: SkillsStoreService
 	) {}
 
 	validate(input: AgentTaskInput): void {
