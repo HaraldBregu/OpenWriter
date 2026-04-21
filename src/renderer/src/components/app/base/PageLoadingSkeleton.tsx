@@ -1,6 +1,6 @@
 import React from 'react';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { PageContainer, PageHeader, PageHeaderTitle, PageHeaderItems, PageBody } from './Page';
+import { PageContainer, PageHeader, PageHeaderTitle, PageHeaderItems, PageBody } from './page';
 
 export const PageLoadingSkeleton = React.memo(function PageLoadingSkeleton() {
 	return (
