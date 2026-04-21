@@ -164,14 +164,6 @@ const PanelFooter: React.FC<InputProps> = ({
 		[addFile]
 	);
 
-	const handleModelChange = useCallback(
-		(model: ModelInfo) => {
-			if (isImage) setSelectedImageModel(model);
-			else setSelectedTextModel(model);
-		},
-		[isImage]
-	);
-
 	const canSend = useMemo(() => value.trim().length > 0 && !disabled, [value, disabled]);
 
 	const currentAgent = useMemo(
