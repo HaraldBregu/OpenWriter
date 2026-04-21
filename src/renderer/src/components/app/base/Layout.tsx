@@ -25,6 +25,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
+import { Item, ItemActions, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/Item';
 import {
 	SidebarContent,
 	SidebarFooter,
@@ -87,6 +88,8 @@ import {
 interface LayoutProps {
 	readonly children: React.ReactNode;
 }
+
+const ACCOUNT_MENU_ITEM_CLASS = 'gap-3 px-2 py-2';
 
 function Container({ children }: LayoutProps) {
 	const { t } = useTranslation();
@@ -558,27 +561,30 @@ function Container({ children }: LayoutProps) {
 										align="end"
 										sideOffset={4}
 									>
-										<DropdownMenuGroup>
+										<DropdownMenuGroup className="space-y-1">
 											<DropdownMenuLabel className="p-0 font-normal">
-												<div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-													<Avatar className="h-8 w-8 rounded-lg">
-														<AvatarImage src="" alt={footerUserName} />
-														<AvatarFallback className="rounded-lg">
-															{footerUserInitial}
-														</AvatarFallback>
-													</Avatar>
-													<div className="grid flex-1 text-left text-sm leading-tight">
-														<span className="truncate font-medium">{footerUserName}</span>
-														<span className="truncate text-xs">{footerUserEmail}</span>
-													</div>
-												</div>
+												<Item size="xs" className="px-1 py-1.5">
+													<ItemMedia>
+														<Avatar className="h-8 w-8 rounded-lg">
+															<AvatarImage src="" alt={footerUserName} />
+															<AvatarFallback className="rounded-lg">
+																{footerUserInitial}
+															</AvatarFallback>
+														</Avatar>
+													</ItemMedia>
+													<ItemContent>
+														<ItemTitle>{footerUserName}</ItemTitle>
+														<p className="truncate text-xs text-muted-foreground">{footerUserEmail}</p>
+													</ItemContent>
+												</Item>
 											</DropdownMenuLabel>
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuGroup>
+										<DropdownMenuGroup className="space-y-1">
 											{accountMenuItems.slice(0, 4).map(({ value, label, icon: Icon }) => (
 												<DropdownMenuItem
 													key={value}
+													className={ACCOUNT_MENU_ITEM_CLASS}
 													onClick={() => handleAccountMenuValueChange(value)}
 												>
 													<Icon />
@@ -591,10 +597,11 @@ function Container({ children }: LayoutProps) {
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuGroup>
+										<DropdownMenuGroup className="space-y-1">
 											{accountMenuItems.slice(4, 8).map(({ value, label, icon: Icon }) => (
 												<DropdownMenuItem
 													key={value}
+													className={ACCOUNT_MENU_ITEM_CLASS}
 													onClick={() => handleAccountMenuValueChange(value)}
 												>
 													<Icon />
@@ -603,14 +610,20 @@ function Container({ children }: LayoutProps) {
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem onClick={() => handleAccountMenuValueChange('logOut')}>
+										<DropdownMenuItem
+											className={ACCOUNT_MENU_ITEM_CLASS}
+											onClick={() => handleAccountMenuValueChange('logOut')}
+										>
 											<LogOut />
 											{t('menu.logOut', 'Log out')}
 										</DropdownMenuItem>
 										<DropdownMenuSeparator />
-										<div className="flex items-center justify-between px-2 py-1.5">
-											<span className="text-sm">{t('settings.theme.title')}</span>
-											<ButtonGroup>
+										<Item size="xs" className="px-2 py-2">
+											<ItemContent>
+												<ItemTitle className="font-normal">{t('settings.theme.title')}</ItemTitle>
+											</ItemContent>
+											<ItemActions>
+												<ButtonGroup>
 												<Button
 													variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
 													size="icon-sm"
@@ -638,8 +651,9 @@ function Container({ children }: LayoutProps) {
 												>
 													<Moon className="size-3.5" />
 												</Button>
-											</ButtonGroup>
-										</div>
+												</ButtonGroup>
+											</ItemActions>
+										</Item>
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</SidebarMenuItem>
