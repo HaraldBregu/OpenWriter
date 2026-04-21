@@ -28,7 +28,6 @@ import { useDataSelection } from '../hooks/use-data-selection';
 import { Context } from './Context';
 
 const SECTION_ID = 'data' as const;
-const RESOURCES_DIR = 'resources';
 
 interface DataProviderProps {
 	readonly children: ReactNode;
