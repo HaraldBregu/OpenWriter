@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import type {
 	FileEntry,
-	ResourcesFileTypeFilter as FileTypeFilter,
-	ResourcesFilesSortDirection as SortDirection,
-	ResourcesFilesSortKey as SortKey,
+	FileTypeFilter,
+	FilesSortDirection as SortDirection,
+	FilesSortKey as SortKey,
 } from '../../../../../../shared/types';
 import { matchesTypeFilter } from '../shared/file-utils';
 
