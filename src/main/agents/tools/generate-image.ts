@@ -66,7 +66,6 @@ export function createGenerateImageTool(
 					prompt: input.prompt,
 					size: input.size ?? '1024x1024',
 					n: 1,
-					response_format: 'b64_json',
 				},
 				signal ? { signal } : undefined
 			);

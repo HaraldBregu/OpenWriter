@@ -1,10 +1,47 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react';
+import React, { useRef, useEffect, useCallback, useMemo, useSyncExternalStore } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { Editor as TiptapEditor } from '@tiptap/core';
 import { TextSelection } from '@tiptap/pm/state';
 import { v7 as uuidv7 } from 'uuid';
 import { getTaskStatusText } from '../../../../../../shared/types';
 import { subscribeToTask, type TaskSnapshot } from '../../../../services/task-event-bus';
 import { useDocumentState, useEditorInstance } from '../../hooks';
+
+interface EditorSelection {
+	readonly from: number;
+	readonly to: number;
+}
+
+function useEditorSelection(editor: TiptapEditor | null): EditorSelection | null {
+	const snapshotRef = useRef<EditorSelection | null>(null);
+
+	const subscribe = useCallback(
+		(onStoreChange: () => void) => {
+			if (!editor || editor.isDestroyed) return () => {};
+			const update = (): void => {
+				const { from, to } = editor.state.selection;
+				const prev = snapshotRef.current;
+				if (prev && prev.from === from && prev.to === to) return;
+				snapshotRef.current = { from, to };
+				onStoreChange();
+			};
+			update();
+			editor.on('selectionUpdate', update);
+			return () => {
+				editor.off('selectionUpdate', update);
+				snapshotRef.current = null;
+				onStoreChange();
+			};
+		},
+		[editor]
+	);
+
+	return useSyncExternalStore(
+		subscribe,
+		() => snapshotRef.current,
+		() => null
+	);
+}
 import { useChatState, useChatDispatch, useChatPersistence } from './hooks';
 import { ChatProvider } from './Provider';
 import { buildTaskPrompt, getSelectedEditorText, mapTaskStatusToChatStatus } from './shared';
