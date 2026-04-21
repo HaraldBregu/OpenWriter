@@ -5,33 +5,6 @@ import { PromptCard } from './components/PromptCard';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
-type ContentGeneratorAgentId = 'text' | 'image';
-
-interface ContentGeneratorAgentOption {
-	value: ContentGeneratorAgentId;
-	labelKey: string;
-	labelFallback: string;
-	descriptionKey: string;
-	descriptionFallback: string;
-}
-
-const CONTENT_GENERATOR_AGENT_OPTIONS: readonly ContentGeneratorAgentOption[] = [
-	{
-		value: 'text',
-		labelKey: 'assistantAgent.text',
-		labelFallback: 'Text',
-		descriptionKey: 'assistantAgent.textDescription',
-		descriptionFallback: 'Generate, rewrite, or continue text',
-	},
-	{
-		value: 'image',
-		labelKey: 'assistantAgent.image',
-		labelFallback: 'Image',
-		descriptionKey: 'assistantAgent.imageDescription',
-		descriptionFallback: 'Create images from a prompt',
-	},
-];
-
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
@@ -61,7 +34,6 @@ const PanelFooter: React.FC<InputProps> = ({
 	const { t } = useTranslation();
 	const [value, setValue] = useState('');
 	const [isFocused, setIsFocused] = useState(false);
-	const [agentId, setAgentId] = useState<ContentGeneratorAgentId>('text');
 	const [files, setFiles] = useState<File[]>([]);
 	const [previewUrls, setPreviewUrls] = useState<string[]>([]);
 	const [isDragOver, setIsDragOver] = useState(false);
@@ -69,8 +41,6 @@ const PanelFooter: React.FC<InputProps> = ({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
-
-	const isImage = agentId === 'image';
 
 	const adjustHeight = useCallback(() => {
 		const el = textareaRef.current;
@@ -166,13 +136,6 @@ const PanelFooter: React.FC<InputProps> = ({
 
 	const canSend = useMemo(() => value.trim().length > 0 && !disabled, [value, disabled]);
 
-	const currentAgent = useMemo(
-		() =>
-			CONTENT_GENERATOR_AGENT_OPTIONS.find((o) => o.value === agentId) ??
-			CONTENT_GENERATOR_AGENT_OPTIONS[0],
-		[agentId]
-	);
-
 	const handleFocus = useCallback(() => {
 		setIsFocused(true);
 	}, []);
@@ -190,8 +153,6 @@ const PanelFooter: React.FC<InputProps> = ({
 					count: files.length,
 				})
 			: '';
-
-	const currentAgentLabel = t(currentAgent.labelKey, currentAgent.labelFallback);
 
 	const fileNames = useMemo(() => files.map((f) => f.name), [files]);
 
@@ -225,14 +186,11 @@ const PanelFooter: React.FC<InputProps> = ({
 				isFocused={isFocused}
 				isDragOver={isDragOver}
 				canSend={canSend}
-				agentId={agentId}
-				isImage={isImage}
 				previewUrls={previewUrls}
 				fileNames={fileNames}
 				selectionLabel={selectionLabel}
 				canClearSelection={canClearSelection}
 				placeholder={placeholder}
-				currentAgentLabel={currentAgentLabel}
 				wrapperRef={wrapperRef}
 				textareaRef={textareaRef}
 				onChange={handleChange}
@@ -246,7 +204,6 @@ const PanelFooter: React.FC<InputProps> = ({
 				onOpenFilePicker={openFilePicker}
 				onRemoveImage={handleRemoveClick}
 				onClearSelection={onClearSelection}
-				onAgentChange={setAgentId}
 			/>
 		</CardFooter>
 	);
