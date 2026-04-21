@@ -7,7 +7,7 @@ import {
 	PageHeader,
 	PageHeaderItems,
 	PageHeaderTitle,
-} from '@/components/app/base/Page';
+} from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import Layout from './Layout';
