@@ -11,7 +11,6 @@ import type { AppStartupInfo } from '../../shared/types';
 import WelcomePage from './pages/welcome/WelcomePage';
 import ConfigPage from './pages/welcome/ConfigPage';
 import { Layout as SettingsLayout } from './pages/settings';
-import { initializeTaskStore } from './services/task-store';
 import {
 	loadDocuments,
 	refreshDocument,
@@ -21,8 +20,6 @@ import {
 } from './store/workspace';
 import { TooltipProvider } from './components/ui/Tooltip';
 import './index.css';
-
-initializeTaskStore();
 
 // IPC → Redux bridge: load documents on startup and re-load on file changes.
 let documentsInitialized = false;
