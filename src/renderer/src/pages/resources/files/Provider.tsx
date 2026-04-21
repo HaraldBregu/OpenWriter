@@ -40,7 +40,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		if (!mountedRef.current) return;
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
-			const files = await window.workspace.getResourcesFiles();
+			const files = await window.workspace.getFiles();
 			if (!mountedRef.current) return;
 			dispatch({ type: 'SET_ENTRIES', payload: files });
 		} catch {
