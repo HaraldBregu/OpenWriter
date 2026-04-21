@@ -208,13 +208,23 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register files service (resources/files/)
+	// Register files service (workspace/files/)
 	factory.register({
 		key: 'filesService',
 		factory: ({ globalContainer }) => {
 			const fileManagement = globalContainer.get<FileManager>('fileManagement');
 			const logger = globalContainer.get<LoggerService>('logger');
 			return new FilesService(fileManagement, logger);
+		},
+	});
+
+	// Register images service (workspace/images/)
+	factory.register({
+		key: 'imagesService',
+		factory: ({ globalContainer }) => {
+			const fileManagement = globalContainer.get<FileManager>('fileManagement');
+			const logger = globalContainer.get<LoggerService>('logger');
+			return new ImagesService(fileManagement, logger);
 		},
 	});
 
