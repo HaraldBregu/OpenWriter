@@ -107,6 +107,13 @@ export class AgentTaskHandler
 			modelName: model.modelId,
 		};
 
+		const imageCreds = this.resolveImageCredentials(base);
+		if (imageCreds) {
+			enriched.imageProviderId = imageCreds.providerId;
+			enriched.imageApiKey = imageCreds.apiKey;
+			enriched.imageModelName = imageCreds.modelName;
+		}
+
 		const documentId = this.extractDocumentId(base, metadata);
 		if (documentId) {
 			enriched.documentId = documentId;
@@ -115,6 +122,29 @@ export class AgentTaskHandler
 		}
 
 		return enriched as unknown as T;
+	}
+
+	private resolveImageCredentials(
+		base: AgentInputRecord
+	): { providerId: string; apiKey: string; modelName: string } | undefined {
+		try {
+			const modelId = base.imageModelName?.trim() || DEFAULT_IMAGE_MODEL_ID;
+			const model = this.modelResolver.resolve({ modelId });
+			const providerId = base.imageProviderId?.trim() || model.providerId;
+			const service = this.serviceResolver.resolve({ providerId });
+			return {
+				providerId: service.provider.id,
+				apiKey: base.imageApiKey?.trim() || service.apiKey,
+				modelName: model.modelId,
+			};
+		} catch (error) {
+			this.logger.warn(
+				'AgentTaskHandler',
+				'Image provider not configured; generate_image tool will be disabled',
+				error
+			);
+			return undefined;
+		}
 	}
 
 	private extractDocumentId(
