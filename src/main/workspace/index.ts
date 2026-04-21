@@ -15,11 +15,14 @@ export { ProjectWorkspaceService } from './project-workspace';
 export { DocumentsWatcherService } from './documents-watcher';
 export { FilesWatcherService } from './files-watcher';
 
-// Contents service (resources/content/)
+// Contents service (workspace/contents/)
 export { ContentsService } from './contents-service';
 
-// Files service (resources/files/)
+// Files service (workspace/files/)
 export { FilesService } from './files-service';
+
+// Images service (workspace/images/)
+export { ImagesService } from './images-service';
 
 // Output file management
 export type {
