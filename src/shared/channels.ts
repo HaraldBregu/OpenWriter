@@ -281,13 +281,6 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.openDocumentImagesFolder]: { args: [documentId: string]; result: void };
 	[WorkspaceChannels.getDocumentPath]: { args: [documentId: string]; result: string };
 
-	// ---- Resources (IpcResult-wrapped) ----
-	[WorkspaceChannels.importFiles]: { args: [extensions?: string[]]; result: ResourceInfo[] };
-	[WorkspaceChannels.importByPaths]: { args: [paths: string[]]; result: ResourceInfo[] };
-	[WorkspaceChannels.downloadFromUrl]: { args: [url: string]; result: ResourceInfo };
-	[WorkspaceChannels.documentsLoadAll]: { args: []; result: ResourceInfo[] };
-	[WorkspaceChannels.deleteFile]: { args: [id: string]; result: void };
-
 	// ---- Document images (IpcResult-wrapped) ----
 	[WorkspaceChannels.saveDocumentImage]: {
 		args: [params: SaveDocumentImageParams];
