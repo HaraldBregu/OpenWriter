@@ -8,6 +8,7 @@ export interface EditorActions {
 	disable: () => void;
 	closePrompt: () => void;
 	clearPromptInput: () => void;
+	insertPromptView: () => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertMarkdownText: (
 		text: string,
