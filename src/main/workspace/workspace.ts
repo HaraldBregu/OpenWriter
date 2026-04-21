@@ -43,7 +43,7 @@ const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
 
 /** Top-level sub-folders to auto-create when a workspace is opened. */
-const WORKSPACE_SUBFOLDERS = ['files', 'contents', 'data', 'images'] as const;
+const WORKSPACE_SUBFOLDERS = ['files', 'contents', 'data', 'images', 'documents'] as const;
 
 /**
  * Workspace is a Facade over all workspace domain services.
