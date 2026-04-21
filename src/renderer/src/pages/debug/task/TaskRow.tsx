@@ -1,12 +1,12 @@
 import { Square, EyeOff, ListTree } from 'lucide-react';
 import { getTaskStatusText } from '../../../../../shared/types';
-import type { TrackedTaskState } from '@/services/task-store';
+import type { TrackedTask } from './types';
 import { StatusBadge } from './StatusBadge';
 import { ProgressBar } from './ProgressBar';
 import { formatDuration } from './task-helpers';
 
 interface TaskRowProps {
-	task: TrackedTaskState;
+	task: TrackedTask;
 	isSelected: boolean;
 	onSelect: () => void;
 	onCancel: () => void;
