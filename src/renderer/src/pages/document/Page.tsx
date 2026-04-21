@@ -30,8 +30,6 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/componen
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
 import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
-import type { ModelInfo } from '../../../../shared/types';
-import { findModelById } from '../../../../shared/models';
 import { PageBody } from '@/components/app/base/Page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import type { AssistantAction } from '@/components/app/editor/context/context';
