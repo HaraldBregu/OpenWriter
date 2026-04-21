@@ -106,7 +106,7 @@ export class AgentTaskHandler
 		const documentId = this.extractDocumentId(base, metadata);
 		if (documentId) {
 			enriched.documentId = documentId;
-			const documentPath = this.resolveDocumentPath(documentId, metadata);
+			const documentPath = this.resolveDocumentPath(documentId);
 			if (documentPath) enriched.documentPath = documentPath;
 		}
 
