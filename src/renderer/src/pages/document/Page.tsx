@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import { Bot, Undo2, Redo2, Info } from 'lucide-react';
+import { Undo2, Redo2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
