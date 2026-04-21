@@ -111,62 +111,6 @@ export interface ModelInfo {
 	readonly notes?: string;
 }
 
-export interface InferenceCapabilities {
-	/** When true, callers MUST NOT pass temperature to the API. */
-	reasoning: boolean;
-	/** Model can accept image/file content in the messages array. */
-	vision: boolean;
-	/** Model supports incremental token streaming. */
-	streaming: boolean;
-}
-
-export interface GenerationCapabilities {
-	/** Model supports the dedicated image generation API (not just vision input). */
-	imageGeneration: boolean;
-	/** Model supports the embeddings API. */
-	embeddings: boolean;
-}
-
-export interface ModelCapabilities {
-	inference: InferenceCapabilities;
-	generation: GenerationCapabilities;
-}
-
-export type ImageSize =
-	| '256x256'
-	| '512x512'
-	| '1024x1024'
-	| '1024x1792'
-	| '1792x1024'
-	| '1536x1024'
-	| '1024x1536';
-
-export type ImageQuality = 'standard' | 'hd' | 'low' | 'medium' | 'high';
-
-export type ImageOutputFormat = 'url' | 'b64_json';
-
-export interface ImageGenerationConfig {
-	defaultSize: ImageSize;
-	defaultQuality: ImageQuality;
-	maxImagesPerRequest: number;
-	outputFormat: ImageOutputFormat;
-	supportedSizes: readonly ImageSize[];
-	supportedQualities: readonly ImageQuality[];
-}
-
-export type ModelCategory = 'chat' | 'image' | 'embedding';
-
-export interface ModelDescriptor {
-	providerId: string;
-	id: string;
-	name: string;
-	description: string;
-	contextWindow: string;
-	category: ModelCategory;
-	capabilities: ModelCapabilities;
-	imageGenerationConfig?: ImageGenerationConfig;
-}
-
 export interface Provider {
 	id: string;
 	name: string;
