@@ -23,11 +23,12 @@ export function PdfExportSection({
 	downloadLabel,
 	previewLabel,
 }: PdfExportSectionProps): React.ReactElement {
-	const { title, content, images } = useDocumentState();
+	const { title, images } = useDocumentState();
+	const { editor } = useEditorInstance();
 	const [isExpanded, setIsExpanded] = useState(false);
 	const previewPanelId = useId();
 
-	const snapshotRef = useRef<DocumentPdfTemplateProps>({ title, content, images });
+	const snapshotRef = useRef<DocumentPdfTemplateProps>({ title, content: '', images });
 	const [refreshKey, setRefreshKey] = useState(0);
 
 	const templateProps: DocumentPdfTemplateProps = useMemo(
@@ -37,9 +38,10 @@ export function PdfExportSection({
 	);
 
 	const handleRefresh = useCallback(() => {
+		const content = editor && !editor.isDestroyed ? (editor.getMarkdown?.() ?? '') : '';
 		snapshotRef.current = { title, content, images };
 		setRefreshKey((k) => k + 1);
-	}, [title, content, images]);
+	}, [title, images, editor]);
 
 	const pdfDocument = useMemo(() => <DocumentPdfTemplate {...templateProps} />, [templateProps]);
 
