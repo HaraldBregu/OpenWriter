@@ -86,7 +86,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	const refreshFolders = useCallback(async () => {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
-			const next = await window.workspace.getResourcesContents();
+			const next = await window.workspace.getContentsFolders();
 			dispatch({ type: 'SET_FOLDERS', payload: next });
 		} catch {
 			dispatch({ type: 'SET_FOLDERS', payload: [] });
