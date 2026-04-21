@@ -219,16 +219,6 @@ export interface WorkspaceApi {
 	/** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
 	onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Document import, download, and file-watch events
-	// -------------------------------------------------------------------------
-	importFiles: (extensions?: string[]) => Promise<ResourceInfo[]>;
-	importByPaths: (paths: string[]) => Promise<ResourceInfo[]>;
-	downloadFromUrl: (url: string) => Promise<ResourceInfo>;
-	loadDocuments: () => Promise<ResourceInfo[]>;
-	deleteDocument: (id: string) => Promise<void>;
-	onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void;
-	onDocumentWatcherError: (callback: (error: WatcherError) => void) => () => void;
-	// -------------------------------------------------------------------------
 	// Indexed directory management
 	// -------------------------------------------------------------------------
 	listDirectories: () => Promise<DirectoryEntry[]>;
