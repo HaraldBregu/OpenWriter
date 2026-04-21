@@ -19,11 +19,13 @@ export function PanelBody(): React.ReactElement {
 			<DocumentMetaSection />
 			<ImagesSection />
 			{documentId && documentConfig && (
-				<PdfExportSection
-					exportLabel={t('configSidebar.exportPdf')}
-					downloadLabel={t('common.download')}
-					previewLabel={t('common.preview')}
-				/>
+				<Suspense fallback={null}>
+					<PdfExportSection
+						exportLabel={t('configSidebar.exportPdf')}
+						downloadLabel={t('common.download')}
+						previewLabel={t('common.preview')}
+					/>
+				</Suspense>
 			)}
 			<ActionsSection />
 		</CardContent>
