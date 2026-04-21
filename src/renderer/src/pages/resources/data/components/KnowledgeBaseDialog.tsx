@@ -24,9 +24,15 @@ import { ScrollArea } from '@/components/ui/ScrollArea';
 import { Separator } from '@/components/ui/Separator';
 import { useAppSelector } from '@/store';
 import { selectCurrentWorkspacePath } from '@/store/workspace';
-import { useTaskSubmit } from '@/hooks/use-task-submit';
 import { AI_MODELS, DEFAULT_EMBEDDING_MODEL_ID } from '../../../../../../shared/models';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { ResourceInfo, TaskEvent, TaskState } from '../../../../../../shared/types';
+
+function dataField<T>(data: unknown, key: string): T | undefined {
+	if (typeof data === 'object' && data !== null && key in data) {
+		return (data as Record<string, unknown>)[key] as T;
+	}
+	return undefined;
+}
 
 interface NbTaskInput {
 	readonly name: string;
