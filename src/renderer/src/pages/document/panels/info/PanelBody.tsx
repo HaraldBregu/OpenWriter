@@ -4,7 +4,6 @@ import { CardContent } from '@/components/ui/Card';
 import { useDocumentState } from '../../hooks';
 import { ActionsSection } from './components/ActionsSection';
 import { DocumentMetaSection } from './components/DocumentMetaSection';
-import { ImagesSection } from './components/ImagesSection';
 import { useInfoState } from './hooks/use-info-state';
 
 const PdfExportSection = lazy(() => import('./components/PdfExportSection'));
@@ -17,7 +16,6 @@ export function PanelBody(): React.ReactElement {
 	return (
 		<CardContent className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden pt-2 pb-6 space-y-2">
 			<DocumentMetaSection />
-			<ImagesSection />
 			{documentId && documentConfig && (
 				<Suspense fallback={null}>
 					<PdfExportSection
