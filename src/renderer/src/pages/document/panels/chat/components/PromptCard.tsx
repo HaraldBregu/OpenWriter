@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowUp, ChevronDown, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
+import { ArrowUp, ImageIcon, ImagePlus, PenLine, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
 import { Textarea } from '@/components/ui/Textarea';
@@ -8,12 +8,9 @@ import {
 	DropdownMenu,
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { cn } from '@/lib/utils';
-import { getProvider } from '../../../../../../../shared/providers';
-import type { ModelInfo } from '../../../../../../../shared/types';
 
 type ContentGeneratorAgentId = 'text' | 'image';
 
@@ -50,8 +47,6 @@ interface PromptCardProps {
 	readonly canSend: boolean;
 	readonly agentId: ContentGeneratorAgentId;
 	readonly isImage: boolean;
-	readonly selectedModel: ModelInfo;
-	readonly modelOptions: readonly ModelInfo[];
 	readonly previewUrls: readonly string[];
 	readonly fileNames: readonly string[];
 	readonly selectionLabel?: string | null;
@@ -74,7 +69,6 @@ interface PromptCardProps {
 	readonly onRemoveImage: (e: React.MouseEvent<HTMLButtonElement>) => void;
 	readonly onClearSelection?: () => void;
 	readonly onAgentChange: (id: ContentGeneratorAgentId) => void;
-	readonly onModelChange: (model: ModelInfo) => void;
 }
 
 const PromptCard: React.FC<PromptCardProps> = ({
@@ -85,8 +79,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 	canSend,
 	agentId,
 	isImage,
-	selectedModel,
-	modelOptions,
 	previewUrls,
 	fileNames,
 	selectionLabel,
@@ -107,7 +99,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 	onRemoveImage,
 	onClearSelection,
 	onAgentChange,
-	onModelChange,
 }) => {
 	const { t } = useTranslation();
 
@@ -233,12 +224,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				/>
 
 				<div className="flex-1" />
-				<ModelDropdown
-					selectedModel={selectedModel}
-					modelOptions={modelOptions}
-					disabled={disabled}
-					onModelChange={onModelChange}
-				/>
 
 				<Button
 					variant="default"
@@ -329,66 +314,6 @@ const AgentDropdown: React.FC<AgentDropdownProps> = ({
 						</DropdownMenuCheckboxItem>
 					);
 				})}
-			</DropdownMenuContent>
-		</DropdownMenu>
-	);
-};
-
-interface ModelDropdownProps {
-	readonly selectedModel: ModelInfo;
-	readonly modelOptions: readonly ModelInfo[];
-	readonly disabled: boolean;
-	readonly onModelChange: (model: ModelInfo) => void;
-}
-
-const ModelDropdown: React.FC<ModelDropdownProps> = ({
-	selectedModel,
-	modelOptions,
-	disabled,
-	onModelChange,
-}) => {
-	const { t } = useTranslation();
-
-	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
-				render={
-					<Button
-						variant="outline"
-						size="sm"
-						disabled={disabled}
-						aria-label={t('agenticPanel.selectModelCurrent', 'Model: {{model}}', {
-							model: selectedModel.name,
-						})}
-					>
-						<span className="min-w-0 truncate" aria-hidden="true">
-							{selectedModel.name}
-						</span>
-						<ChevronDown className="h-3 w-3 shrink-0 opacity-70" aria-hidden="true" />
-					</Button>
-				}
-			/>
-			<DropdownMenuContent
-				align="start"
-				side="top"
-				sideOffset={8}
-				className="z-120 max-h-70 min-w-50"
-			>
-				{modelOptions.map((model) => (
-					<DropdownMenuItem
-						key={model.modelId}
-						onSelect={() => onModelChange(model)}
-						aria-current={selectedModel.modelId === model.modelId ? 'true' : undefined}
-						className={cn()}
-					>
-						<div className="flex min-w-0 flex-col gap-0.5">
-							<span className="truncate text-sm font-medium">{model.name}</span>
-							<span className="text-xs text-muted-foreground">
-								{getProvider(model.providerId)?.name ?? model.providerId}
-							</span>
-						</div>
-					</DropdownMenuItem>
-				))}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
