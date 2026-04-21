@@ -232,12 +232,14 @@ function PageContent(): ReactElement {
 				event.state === 'cancelled'
 			) {
 				debouncedContentSave.cancel();
+				let reloadedContent = false;
 				if (id && event.state === 'completed') {
 					try {
 						const reloaded = await window.workspace.getDocumentContent(id);
 						setContent(reloaded);
 						setContentVersion((v) => v + 1);
 						dispatch({ type: 'CONTENT_CHANGED', value: reloaded });
+						reloadedContent = true;
 					} catch {
 						// ignore reload errors — editor keeps current state
 					}
@@ -246,6 +248,15 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 				editorActions.clearPromptInput();
 				setAssistantActiveTaskId(null);
+				if (reloadedContent) {
+					// Content reload wipes the prompt node (editor-only atom).
+					// Re-insert after the editor commits the new content so user can iterate.
+					requestAnimationFrame(() => {
+						requestAnimationFrame(() => {
+							editorActions.insertPromptView();
+						});
+					});
+				}
 			}
 		});
 	}, [assistantActiveTaskId, editorActions, id, dispatch, debouncedContentSave]);
