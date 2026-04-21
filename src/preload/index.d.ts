@@ -246,9 +246,9 @@ export interface WorkspaceApi {
 	/** Open the current workspace root folder in the system file explorer. */
 	openWorkspaceFolder: () => Promise<void>;
 	openDataFolder: () => Promise<void>;
-	openResourcesFolder: () => Promise<void>;
-	openResourcesContentsFolder: () => Promise<void>;
+	openContentsFolder: () => Promise<void>;
 	openFilesFolder: () => Promise<void>;
+	openImagesFolder: () => Promise<void>;
 	/** Open the folder for a specific document by its ID in the system file explorer. */
 	openDocumentFolder: (documentId: string) => Promise<void>;
 	/** Open the images sub-folder for a specific document in the system file explorer. */
