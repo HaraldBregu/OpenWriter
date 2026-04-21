@@ -66,7 +66,7 @@ const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'size', label: 'File size', className: 'w-28 text-right' },
 ];
 
-const PAGE_TITLES: Record<ResourcesFileTypeFilter, string> = {
+const PAGE_TITLES: Record<FileTypeFilter, string> = {
 	all: 'Files',
 	image: 'Images',
 	video: 'Video',
@@ -191,7 +191,7 @@ function PageContent(): ReactElement {
 								<DropdownMenuContent align="end" sideOffset={8} alignOffset={-4}>
 									<DropdownMenuRadioGroup
 										value={typeFilter}
-										onValueChange={(value) => setTypeFilter(value as ResourcesFileTypeFilter)}
+										onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
 									>
 										{RESOURCES_FILE_TYPE_FILTERS.map(({ value, label }) => (
 											<DropdownMenuRadioItem key={value} value={value}>
