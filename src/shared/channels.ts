@@ -75,14 +75,6 @@ export const WorkspaceChannels = {
 	removeRecent: 'workspace-remove-recent',
 	changed: 'workspace:changed',
 	deleted: 'workspace:deleted',
-	// Resources
-	importFiles: 'resources:import-files',
-	importByPaths: 'resources:import-by-paths',
-	downloadFromUrl: 'resources:download-from-url',
-	documentsLoadAll: 'resources:load-all',
-	deleteFile: 'resources:delete-file',
-	documentsFileChanged: 'resources:file-changed',
-	documentsWatcherError: 'resources:watcher-error',
 	// Directories
 	list: 'directories:list',
 	add: 'directories:add',
