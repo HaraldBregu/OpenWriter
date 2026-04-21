@@ -1,6 +1,6 @@
 import React from 'react';
 import { Zap, Clock, Radio, AlertTriangle } from 'lucide-react';
-import type { TaskState } from '@/services/task-store';
+import type { TaskState } from '../../../../../shared/types';
 
 export type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error';
 
