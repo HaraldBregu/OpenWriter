@@ -16,7 +16,7 @@ import { TitleBarContainer } from '../titlebar/TitleBarContainer';
 import { TitleBarLeftContainer } from '../titlebar/TitleBarLeftContainer';
 import { TitleBarCenterContainer } from '../titlebar/TitleBarCenterContainer';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
-import { PageBody, PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from './Page';
+import { PageBody, PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from './page';
 
 const SIDEBAR_NAV_ITEMS = 2;
 const SIDEBAR_GROUP_ITEMS = 4;
