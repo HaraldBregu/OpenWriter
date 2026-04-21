@@ -13,6 +13,9 @@ export interface AssistantAgentInput {
 	modelName: string;
 	documentId: string;
 	documentPath: string;
+	imageProviderId?: string;
+	imageApiKey?: string;
+	imageModelName?: string;
 	temperature?: number;
 	maxTokens?: number;
 	maxIterations?: number;
