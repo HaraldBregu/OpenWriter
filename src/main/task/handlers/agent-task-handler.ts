@@ -46,6 +46,7 @@ interface AgentInputRecord {
 	documentId?: string;
 	documentPath?: string;
 	workspacePath?: string;
+	skills?: Skill[];
 	[key: string]: unknown;
 }
 
