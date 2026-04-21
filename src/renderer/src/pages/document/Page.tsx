@@ -202,28 +202,35 @@ function PageContent(): ReactElement {
 	useEffect(() => {
 		if (!assistantActiveTaskId) return;
 
-		return subscribeToTask(assistantActiveTaskId, (snap: TaskSnapshot) => {
+		return subscribeToTask(assistantActiveTaskId, async (snap: TaskSnapshot) => {
 			if (snap.status === 'started') {
 				editorActions.showLoading();
 				return;
 			}
 
-			const completed = snap.status === 'completed';
-			const output = snap.result as { content?: string } | undefined;
-			const streamContent = output?.content ?? snap.streamedContent ?? '';
-
-			if (streamContent) {
-				editorActions.insertText(streamContent, { preventEditorUpdate: !completed });
-			}
-
-			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
+			if (
+				snap.status === 'completed' ||
+				snap.status === 'error' ||
+				snap.status === 'cancelled'
+			) {
+				debouncedContentSave.cancel();
+				if (id && snap.status === 'completed') {
+					try {
+						const reloaded = await window.workspace.getDocumentContent(id);
+						setContent(reloaded);
+						setContentVersion((v) => v + 1);
+						dispatch({ type: 'CONTENT_CHANGED', value: reloaded });
+					} catch {
+						// ignore reload errors — editor keeps current state
+					}
+				}
 				editorActions.hideLoading();
 				editorActions.enable();
 				editorActions.clearPromptInput();
 				setAssistantActiveTaskId(null);
 			}
 		});
-	}, [assistantActiveTaskId, editorActions]);
+	}, [assistantActiveTaskId, editorActions, id, dispatch, debouncedContentSave]);
 
 	const handlePromptSubmit = useCallback(
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
