@@ -81,6 +81,7 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 					providerId: input.imageProviderId,
 					apiKey: input.imageApiKey,
 					modelName: input.imageModelName,
+					contentFilePath: input.documentPath,
 				})
 			);
 		}
