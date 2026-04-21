@@ -516,6 +516,7 @@ function PageContent(): ReactElement {
 								onPromptSubmit={handlePromptSubmit}
 								onInsertContent={handleInsertContent}
 								onOpenChat={handleOpenChat}
+								onAssistantAction={handleAssistantAction}
 								documentId={id}
 								onEditorReady={handleEditorReady}
 								onUndo={handleUndo}
