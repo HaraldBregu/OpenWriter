@@ -47,6 +47,7 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 										containerRef={containerRef}
 										onInsertContent={onInsertContent}
 										onOpenChat={onOpenChat}
+										onAssistantAction={onAssistantAction}
 										onImageInsert={onImageInsert}
 									>
 										{children}
