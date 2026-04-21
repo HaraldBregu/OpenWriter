@@ -5,7 +5,11 @@ export type StateEventKind =
 	| 'image'
 	| 'text'
 	| 'tool'
-	| 'decision';
+	| 'decision'
+	| 'decision:invalid'
+	| 'usage'
+	| 'budget'
+	| 'skill:selected';
 
 export interface StateEvent {
 	kind: StateEventKind;
