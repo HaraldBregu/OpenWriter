@@ -195,6 +195,52 @@ export function OptionMenu(): React.JSX.Element {
 
 	const onKeyEvent = useCallback(
 		(event: KeyboardEvent): boolean => {
+			const idx = selectedIndexRef.current;
+			const imgIdx = imageSelectedIndexRef.current;
+			const inSubmenu = idx === IMAGES_INDEX && imgIdx >= 0;
+
+			if (inSubmenu) {
+				const len = imagesRef.current.length;
+
+				if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
+					event.preventDefault();
+					if (len > 0) setImageSelectedIndex((p) => Math.min(len - 1, p + 1));
+					return true;
+				}
+
+				if (event.key === 'ArrowLeft') {
+					event.preventDefault();
+					if (imgIdx <= 0) setImageSelectedIndex(-1);
+					else setImageSelectedIndex((p) => p - 1);
+					return true;
+				}
+
+				if (event.key === 'ArrowUp') {
+					event.preventDefault();
+					setImageSelectedIndex((p) => Math.max(0, p - 1));
+					return true;
+				}
+
+				if (event.key === 'Enter') {
+					event.preventDefault();
+					const img = imagesRef.current[imgIdx];
+					if (img) runImageFromFile(img.fileName);
+					return true;
+				}
+
+				return false;
+			}
+
+			if (
+				event.key === 'ArrowRight' &&
+				idx === IMAGES_INDEX &&
+				imagesRef.current.length > 0
+			) {
+				event.preventDefault();
+				setImageSelectedIndex(0);
+				return true;
+			}
+
 			if (event.key === 'ArrowDown') {
 				event.preventDefault();
 				setSelectedIndex((prev) => (prev + 1) % ITEM_COUNT);
@@ -215,7 +261,7 @@ export function OptionMenu(): React.JSX.Element {
 
 			return false;
 		},
-		[runByIndex]
+		[runByIndex, runImageFromFile]
 	);
 
 	const onKeyEventRef = useRef(onKeyEvent);
