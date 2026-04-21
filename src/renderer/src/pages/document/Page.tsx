@@ -278,23 +278,10 @@ function PageContent(): ReactElement {
 				const resolvedSessionId = sessionRef.current ?? uuidv7();
 				sessionRef.current = resolvedSessionId;
 
-				const model = isImage ? defaultImageModel : defaultTextModel;
-				if (!model) {
-					editorActions.hideLoading();
-					editorActions.enable();
-					return;
-				}
-
 				const agentInput = isImage
-					? {
-							prompt: composedPrompt,
-							providerId: model.providerId,
-							modelName: model.modelId,
-						}
+					? { prompt: composedPrompt }
 					: {
 							messages: [{ role: 'user' as const, content: composedPrompt }],
-							providerId: model.providerId,
-							modelName: model.modelId,
 							streaming: true,
 						};
 
