@@ -121,18 +121,22 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 		});
 	}, [resources]);
 
-	const handleIndex = useCallback(() => {
+	const handleIndex = useCallback(async () => {
 		if (!section.supportsIndexing || !workspacePath || indexing) {
 			return;
 		}
 
-		window.task.submit({
+		const res = await window.task.submit({
 			type: 'index-resources',
 			input: {
 				workspacePath,
 				resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
 			},
 		});
+		if (res.success) {
+			setIndexingTaskId(res.data.taskId);
+			setIndexingStatus('queued');
+		}
 	}, [indexing, section.supportsIndexing, workspacePath]);
 
 	const handleUpload = useCallback(() => {
