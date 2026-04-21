@@ -50,8 +50,6 @@ function PageContent(): ReactElement {
 	const [content, setContent] = useState('');
 	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
-	const [defaultTextModel, setDefaultTextModel] = useState<ModelInfo | undefined>(undefined);
-	const [defaultImageModel, setDefaultImageModel] = useState<ModelInfo | undefined>(undefined);
 
 	const { activeSidebar, setActiveSidebar, toggleSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
