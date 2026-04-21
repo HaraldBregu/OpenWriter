@@ -264,6 +264,7 @@ function Container({ children }: LayoutProps) {
 				onToggleSidebar={toggleSidebar}
 				onNavigateBack={isLandingPage ? undefined : handleNavigateBack}
 				onNavigateForward={isLandingPage ? undefined : handleNavigateForward}
+				showSidebarToggles={location.pathname.startsWith('/content/')}
 			/>
 
 			<SidebarPageContainer>
