@@ -13,8 +13,10 @@ import type { LoggerService } from '../services/logger';
 // ---------------------------------------------------------------------------
 
 /**
- * Valid output content types.
- * Each type maps to a subdirectory under <workspace>/output/.
+ * Valid output content types. Only `documents` is supported; the value is
+ * retained as a nominal tag on the public API for forward compatibility,
+ * but on-disk the type segment is no longer used — entries live directly
+ * under <workspace>/documents/<uuid>/.
  */
 export type OutputType = 'documents';
 
