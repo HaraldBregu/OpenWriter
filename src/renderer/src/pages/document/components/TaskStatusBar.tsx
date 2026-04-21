@@ -48,6 +48,20 @@ function dataField<T>(data: unknown, key: string): T | undefined {
 
 export function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | null {
 	const [state, setState] = useState<TaskStatusState | null>(null);
+	const [cancelling, setCancelling] = useState(false);
+
+	const handleCancel = useCallback(() => {
+		if (!taskId || cancelling) return;
+		if (typeof window.task?.cancel !== 'function') return;
+		setCancelling(true);
+		window.task.cancel(taskId).catch(() => {
+			setCancelling(false);
+		});
+	}, [taskId, cancelling]);
+
+	useEffect(() => {
+		setCancelling(false);
+	}, [taskId]);
 
 	useEffect(() => {
 		if (!taskId) {
