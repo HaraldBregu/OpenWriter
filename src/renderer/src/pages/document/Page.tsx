@@ -204,11 +204,9 @@ function PageContent(): ReactElement {
 
 	const editorActions = useEditor(editorRef);
 
-	const textSessionIdRef = useRef<string | null>(null);
-	const imageSessionIdRef = useRef<string | null>(null);
+	const sessionIdRef = useRef<string | null>(null);
 
 	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
-	const [assistantActiveAgentId, setAssistantActiveAgentId] = useState<'text' | 'image'>('text');
 	const assistantIsRunning = assistantActiveTaskId !== null;
 
 	useEffect(() => {
@@ -225,23 +223,17 @@ function PageContent(): ReactElement {
 			const streamContent = output?.content ?? snap.streamedContent ?? '';
 
 			if (streamContent) {
-				const isImageAgent = assistantActiveAgentId === 'image';
-				if (completed && isImageAgent) {
-					editorActions.insertMarkdownText(streamContent, { preventEditorUpdate: !completed });
-				} else {
-					editorActions.insertText(streamContent, { preventEditorUpdate: !completed });
-				}
+				editorActions.insertText(streamContent, { preventEditorUpdate: !completed });
 			}
 
 			if (completed || snap.status === 'error' || snap.status === 'cancelled') {
-				// editorActions.closePrompt();
 				editorActions.hideLoading();
 				editorActions.enable();
 				editorActions.clearPromptInput();
 				setAssistantActiveTaskId(null);
 			}
 		});
-	}, [assistantActiveAgentId, assistantActiveTaskId, editorActions]);
+	}, [assistantActiveTaskId, editorActions]);
 
 	const handlePromptSubmit = useCallback(
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
