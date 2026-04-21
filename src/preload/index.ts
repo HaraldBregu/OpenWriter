@@ -325,14 +325,14 @@ const workspace: WorkspaceApi = {
 	openDataFolder: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDataFolder);
 	},
-	openResourcesFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openResourcesFolder);
-	},
-	openResourcesContentsFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openResourcesContentsFolder);
+	openContentsFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openContentsFolder);
 	},
 	openFilesFolder: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openFilesFolder);
+	},
+	openImagesFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openImagesFolder);
 	},
 	openDocumentFolder: (documentId: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDocumentFolder, documentId);
