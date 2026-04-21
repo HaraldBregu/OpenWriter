@@ -6,7 +6,6 @@ import { createGrepTool, grepTool } from "./grep.js";
 import { createLsTool, lsTool } from "./ls.js";
 import { createReadTool, readTool } from "./read.js";
 import { createWriteTool, writeTool } from "./write.js";
-import { createGenerateImageTool } from "./generate-image.js";
 
 export type { AgentTool, JSONSchema, ToolContent, ToolResult } from "./types.js";
 export { bashTool, createBashTool } from "./bash.js";
