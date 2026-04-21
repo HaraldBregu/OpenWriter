@@ -114,7 +114,7 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 		ctx: AgentContext
 	): Promise<AssistantAgentOutput> {
 		const documentFolder = path.dirname(input.documentPath);
-		const tools = this.buildTools(documentFolder);
+		const tools = this.buildTools(documentFolder, input);
 		const openaiTools = toOpenAITools(tools);
 		const maxIterations = input.maxIterations ?? DEFAULT_MAX_ITERATIONS;
 
