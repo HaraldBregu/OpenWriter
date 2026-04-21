@@ -13,7 +13,7 @@ function Bootstrap(): null {
 		const loadFolders = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const folders = await window.workspace.getResourcesContents();
+				const folders = await window.workspace.getContentsFolders();
 				if (!active) return;
 				setFolders(folders);
 			} catch {
