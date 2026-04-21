@@ -731,5 +731,3 @@ export function withTaskStatusText(
 
 	return Object.keys(next).length > 0 ? next : undefined;
 }
-
-export const DEFAULT_TEXT_MODEL_ID = 'gpt-4.1';
