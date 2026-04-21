@@ -201,17 +201,6 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
-	 * Get the resources directory path for the current workspace.
-	 * Returns null if no workspace is set.
-	 */
-	getResourcesPath(): string | null {
-		if (!this.currentPath) {
-			return null;
-		}
-		return path.join(this.currentPath, 'resources');
-	}
-
-	/**
 	 * Cleanup on shutdown.
 	 */
 	destroy(): void {

@@ -213,7 +213,22 @@
 			"subtitle": "Manage AI skills available to OpenWriter.",
 			"library": "Skill library",
 			"libraryDescription": "Installed and configurable skills will appear here.",
-			"status": "Coming soon"
+			"status": "Coming soon",
+			"actions": "Actions",
+			"openFolder": "Open Skills Folder",
+			"import": "Import Skill",
+			"installed": "Installed Skills",
+			"bundled": "Bundled",
+			"user": "User",
+			"plugin": "Plugin",
+			"noSkills": "No skills installed yet. Import a skill folder or drop one into the skills directory.",
+			"importSuccess": "Skill imported successfully.",
+			"importSuccessMany": "{{count}} skills imported successfully.",
+			"importErrorFallback": "Failed to import the skill. Please try again.",
+			"confirmDelete": "Confirm",
+			"deleteErrorFallback": "Failed to delete the skill. Please try again.",
+			"dismissError": "Dismiss error",
+			"dismissSuccess": "Dismiss"
 		},
 		"permissions": {
 			"microphone": "Microphone",
