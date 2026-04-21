@@ -61,6 +61,7 @@ import type {
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
+	SkillInfo,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
