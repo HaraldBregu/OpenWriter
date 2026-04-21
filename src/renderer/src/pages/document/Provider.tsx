@@ -2,7 +2,7 @@ import React, { useReducer, useMemo, useState, useCallback, type ReactNode } fro
 import type { Editor } from '@tiptap/core';
 import { documentReducer } from './context/reducer';
 import { INITIAL_DOCUMENT_STATE } from './context/state';
-import { DocumentContext, type ActiveSidebar, type ContextValue } from './context/context';
+import { DocumentContext, type ContextValue } from './context/context';
 
 interface ProviderProps {
 	readonly children: ReactNode;
@@ -20,17 +20,6 @@ export function Provider({ children, documentId }: ProviderProps): React.JSX.Ele
 		setEditorState(ed);
 	}, []);
 
-	const [activeSidebar, setActiveSidebar] = useState<ActiveSidebar>('config');
-	const [animate, setAnimate] = useState(true);
-
-	const toggleSidebar = useCallback((sidebar: Exclude<ActiveSidebar, null>) => {
-		setActiveSidebar((prev) => {
-			const isSwitching = prev !== null && prev !== sidebar;
-			setAnimate(!isSwitching);
-			return prev === sidebar ? null : sidebar;
-		});
-	}, []);
-
 	const [insertContentDialogOpen, setInsertContentDialogOpen] = useState(false);
 	const openInsertContentDialog = useCallback(() => setInsertContentDialogOpen(true), []);
 	const closeInsertContentDialog = useCallback(() => setInsertContentDialogOpen(false), []);
@@ -41,10 +30,6 @@ export function Provider({ children, documentId }: ProviderProps): React.JSX.Ele
 			dispatch,
 			editor,
 			setEditor,
-			activeSidebar,
-			animate,
-			setActiveSidebar,
-			toggleSidebar,
 			insertContentDialogOpen,
 			openInsertContentDialog,
 			closeInsertContentDialog,
@@ -54,10 +39,6 @@ export function Provider({ children, documentId }: ProviderProps): React.JSX.Ele
 			dispatch,
 			editor,
 			setEditor,
-			activeSidebar,
-			animate,
-			setActiveSidebar,
-			toggleSidebar,
 			insertContentDialogOpen,
 			openInsertContentDialog,
 			closeInsertContentDialog,
