@@ -664,13 +664,12 @@ export class OutputFilesService implements Disposable {
 	}
 
 	/**
-	 * Start watching the output directory for file changes.
+	 * Start watching the documents directory for file changes.
 	 *
 	 * Depth layout:
-	 *   output/               depth 0 (root, not counted)
-	 *   output/<type>/        depth 1
-	 *   output/<type>/<id>/   depth 2  <- UUID (or legacy date) entry folders
-	 *   output/<type>/<id>/<file>      depth 3  <- config.json + block .md files
+	 *   documents/               depth 0 (root, not counted)
+	 *   documents/<id>/          depth 1  <- UUID (or legacy date) entry folders
+	 *   documents/<id>/<file>    depth 2  <- config.json, content.md, chats/
 	 */
 	private async startWatching(workspacePath: string): Promise<void> {
 		const outputDir = path.join(workspacePath, this.OUTPUT_DIR_NAME);
@@ -685,7 +684,7 @@ export class OutputFilesService implements Disposable {
 		try {
 			await fs.mkdir(outputDir, { recursive: true });
 		} catch (err) {
-			this.logger?.error('OutputFilesService', 'Failed to create output directory', err);
+			this.logger?.error('OutputFilesService', 'Failed to create documents directory', err);
 			return;
 		}
 
@@ -701,48 +700,30 @@ export class OutputFilesService implements Disposable {
 				},
 				usePolling: true,
 				interval: 500,
-				// depth=4 covers output/ -> <type>/ -> <uuid>/ -> images/ -> <file>
-				depth: 4,
+				// depth=2 covers documents/ -> <uuid>/ -> <file>
+				depth: 2,
 				alwaysStat: false,
 				ignored: (filePath: string) => {
-					// Chokidar v5 normalizes all paths to forward slashes internally,
-					// but path.join/path.sep use backslashes on Windows. Normalize here
-					// so all comparisons are consistent.
 					const normalized = path.normalize(filePath);
 					const base = path.basename(normalized);
 
-					// Always watch the root output dir itself
 					if (normalized === outputDir) return false;
-
-					// Ignore dotfiles and temp files
 					if (base.startsWith('.') || base.endsWith('.tmp')) return true;
 
 					const rel = path.relative(outputDir, normalized);
 					const parts = rel.split(path.sep);
 
-					// Depth 1 — allow valid type directories (e.g. documents)
+					// Depth 1 — allow UUID (or legacy date) named entry folders
 					if (parts.length === 1) {
-						return !(VALID_OUTPUT_TYPES as readonly string[]).includes(parts[0]);
+						return !this.DATE_FOLDER_RE.test(parts[0]);
 					}
 
-					// Depth 2 — allow UUID (or legacy date) named folders inside type dirs
+					// Depth 2 — allow config.json, content.md, legacy DATA.md inside entry folders
 					if (parts.length === 2) {
-						return !this.DATE_FOLDER_RE.test(parts[1]);
-					}
-
-					// Depth 3 — allow config.json, content.md, legacy DATA.md, and the images/ subfolder
-					if (parts.length === 3) {
-						const name = parts[2];
+						const name = parts[1];
 						if (name === this.CONFIG_FILENAME) return false;
 						if (name === this.CONTENT_FILENAME) return false;
 						if (name === this.LEGACY_DATA_FILENAME) return false;
-						if (name === 'images') return false;
-						return true;
-					}
-
-					// Depth 4 — allow image files directly inside the images/ subfolder
-					if (parts.length === 4) {
-						if (parts[2] === 'images') return false;
 						return true;
 					}
 
