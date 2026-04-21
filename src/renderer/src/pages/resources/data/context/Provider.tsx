@@ -112,10 +112,10 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 	}, [dispatch]);
 
 	useEffect(() => {
-		if (indexingTask.isCompleted) {
+		if (indexingTaskCompleted) {
 			dispatch(loadIndexingInfo());
 		}
-	}, [dispatch, indexingTask.isCompleted]);
+	}, [dispatch, indexingTaskCompleted]);
 
 	useEffect(() => {
 		setSelected((current) => {
