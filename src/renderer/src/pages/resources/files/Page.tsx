@@ -193,7 +193,7 @@ function PageContent(): ReactElement {
 										value={typeFilter}
 										onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
 									>
-										{RESOURCES_FILE_TYPE_FILTERS.map(({ value, label }) => (
+										{FILE_TYPE_FILTERS.map(({ value, label }) => (
 											<DropdownMenuRadioItem key={value} value={value}>
 												{label}
 											</DropdownMenuRadioItem>
