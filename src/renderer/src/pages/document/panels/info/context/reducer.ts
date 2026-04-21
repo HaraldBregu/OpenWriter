@@ -11,10 +11,6 @@ export function infoReducer(state: InfoState, action: InfoAction): InfoState {
 			return { ...state, isDeleting: true };
 		case 'DELETE_FINISHED':
 			return { ...state, isDeleting: false, confirmDeleteOpen: false };
-		case 'IMAGE_PREVIEW_OPENED':
-			return { ...state, previewImage: { src: action.src, alt: action.alt } };
-		case 'IMAGE_PREVIEW_CLOSED':
-			return { ...state, previewImage: null };
 		default: {
 			const _exhaustive: never = action;
 			return _exhaustive;
