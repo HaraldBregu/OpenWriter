@@ -374,7 +374,7 @@ export class OutputFilesService implements Disposable {
 
 		this.validateOutputType(outputType);
 
-		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id);
+		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, id);
 
 		try {
 			const stat = await fs.stat(folderPath);
@@ -415,7 +415,7 @@ export class OutputFilesService implements Disposable {
 			throw new Error('Content must be a string.');
 		}
 
-		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id);
+		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, id);
 		const configPath = path.join(folderPath, this.CONFIG_FILENAME);
 		const contentPath = path.join(folderPath, this.CONTENT_FILENAME);
 		await this.ensureDocumentSupportDirectories(folderPath, outputType);
@@ -500,7 +500,7 @@ export class OutputFilesService implements Disposable {
 
 		this.validateOutputType(outputType);
 
-		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id);
+		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, id);
 
 		try {
 			const stat = await fs.stat(folderPath);
@@ -553,7 +553,7 @@ export class OutputFilesService implements Disposable {
 
 		this.validateOutputType(outputType);
 
-		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, outputType, id);
+		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, id);
 
 		try {
 			const stat = await fs.stat(folderPath);
