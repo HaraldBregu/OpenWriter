@@ -4,16 +4,10 @@ import type { FolderEntry, ResourceInfo } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
 import type { LoggerService } from '../services/logger';
 
-const CONTENTS_SUBFOLDER = 'content';
+const CONTENTS_SUBFOLDER = 'contents';
 
 /**
- * ContentsService manages files within the workspace `resources/content/` sub-folder.
- *
- * Responsibilities:
- *   - List all files in resources/content/
- *   - Copy files into resources/content/ (insert)
- *   - Delete files from resources/content/
- *   - Build ResourceInfo metadata from filesystem stats
+ * ContentsService manages files within the workspace `contents/` top-level folder.
  */
 export class ContentsService {
 	private static readonly LOG_SOURCE = 'ContentsService';
