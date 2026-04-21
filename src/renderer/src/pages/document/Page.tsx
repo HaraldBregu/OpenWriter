@@ -85,8 +85,6 @@ function PageContent(): ReactElement {
 		setLoaded(false);
 		setTitle('');
 		setContent('');
-		setDefaultTextModel(undefined);
-		setDefaultImageModel(undefined);
 		dispatch({ type: 'METADATA_UPDATED', metadata: null });
 
 		async function load() {
