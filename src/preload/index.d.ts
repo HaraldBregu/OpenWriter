@@ -308,33 +308,46 @@ export interface WorkspaceApi {
 	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
 	onDocumentContentChanges: (documentId: string, callback: (content: string) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Contents (resources/content/ sub-folder)
+	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
-	/** Load all files from the workspace resources/content/ directory. */
+	/** Load all files from the workspace contents/ directory. */
 	getContents: () => Promise<ResourceInfo[]>;
-	/** Load all sub-folders from the workspace resources/content/ directory. */
-	getResourcesContents: () => Promise<FolderEntry[]>;
-	/** Open a file picker, copy selected files into resources/content/, return the new entries. */
+	/** Load all sub-folders from the workspace contents/ directory. */
+	getContentsFolders: () => Promise<FolderEntry[]>;
+	/** Open a file picker, copy selected files into contents/, return the new entries. */
 	insertContents: (extensions?: string[]) => Promise<ResourceInfo[]>;
-	/** Delete a file from resources/content/ by its ID. */
+	/** Delete a file from contents/ by its ID. */
 	deleteContent: (id: string) => Promise<void>;
-	/** Subscribe to file change events in resources/content/. */
+	/** Subscribe to file change events in contents/. */
 	onContentsChanged: (callback: (event: ContentEntryChangeEvent) => void) => () => void;
 	/** Subscribe to contents watcher error events. */
 	onContentsWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Files (resources/files/ sub-folder)
+	// Files (workspace/files/)
 	// -------------------------------------------------------------------------
-	/** Load all files from the workspace resources/files/ directory. */
-	getResourcesFiles: () => Promise<FileEntry[]>;
-	/** Open a file picker, copy selected files into resources/files/, return the new entries. */
-	insertResourcesFiles: (extensions?: string[]) => Promise<FileEntry[]>;
-	/** Delete a file from resources/files/ by its ID. */
-	deleteResourcesFileEntry: (id: string) => Promise<void>;
-	/** Subscribe to file change events in resources/files/. */
-	onResourcesFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
+	/** Load all files from the workspace files/ directory. */
+	getFiles: () => Promise<FileEntry[]>;
+	/** Open a file picker, copy selected files into files/, return the new entries. */
+	insertFiles: (extensions?: string[]) => Promise<FileEntry[]>;
+	/** Delete a file from files/ by its ID. */
+	deleteFileEntry: (id: string) => Promise<void>;
+	/** Subscribe to file change events in files/. */
+	onFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
 	/** Subscribe to files watcher error events. */
-	onResourcesFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
+	onFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
+	// -------------------------------------------------------------------------
+	// Images (workspace/images/)
+	// -------------------------------------------------------------------------
+	/** Load all images from the workspace images/ directory. */
+	getImages: () => Promise<ImageEntry[]>;
+	/** Open a file picker, copy selected images into images/, return the new entries. */
+	insertImages: (extensions?: string[]) => Promise<ImageEntry[]>;
+	/** Delete an image from images/ by its ID. */
+	deleteImage: (id: string) => Promise<void>;
+	/** Subscribe to image change events in images/. */
+	onImagesChanged: (callback: (event: ImageEntryChangeEvent) => void) => () => void;
+	/** Subscribe to images watcher error events. */
+	onImagesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
