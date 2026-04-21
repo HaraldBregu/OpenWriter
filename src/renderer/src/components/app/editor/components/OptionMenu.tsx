@@ -32,6 +32,7 @@ export function OptionMenu(): React.JSX.Element {
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
+	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
 	const slashPosRef = useRef<number | null>(null);
 	const menuControlsRef = useRef<OptionMenuControls>({ forceHide: () => undefined });
 	const isLockedRef = useRef(false);
@@ -40,6 +41,10 @@ export function OptionMenu(): React.JSX.Element {
 	queryRef.current = query;
 	const selectedIndexRef = useRef(selectedIndex);
 	selectedIndexRef.current = selectedIndex;
+	const imageSelectedIndexRef = useRef(imageSelectedIndex);
+	imageSelectedIndexRef.current = imageSelectedIndex;
+	const imagesRef = useRef(images);
+	imagesRef.current = images;
 
 	const onInsertContentRef = useRef(onInsertContent);
 	onInsertContentRef.current = onInsertContent;
@@ -47,6 +52,10 @@ export function OptionMenu(): React.JSX.Element {
 	useEffect(() => {
 		setSelectedIndex(0);
 	}, [query]);
+
+	useEffect(() => {
+		if (selectedIndex !== IMAGES_INDEX) setImageSelectedIndex(-1);
+	}, [selectedIndex]);
 
 	const deleteSlash = useCallback((): { slashPos: number; queryLength: number } | null => {
 		const slashPos = slashPosRef.current;
