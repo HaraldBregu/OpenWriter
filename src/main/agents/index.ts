@@ -26,3 +26,25 @@ export type {
 } from './rag';
 export { OcrAgent } from './ocr';
 export type { OcrAgentInput, OcrAgentOutput, OcrPage, OcrSourceKind } from './ocr';
+export {
+	SkillRegistry,
+	SkillError,
+	SkillLoadError,
+	SkillNotFoundError,
+	SkillValidationError,
+	bundledSkills,
+	buildSkillsPrompt,
+	buildSkillsSnapshot,
+	renderSkillInstructions,
+	parseSkillMarkdown,
+	loadSkillsFromDir,
+	createDefaultSkillRegistry,
+} from './skills';
+export type {
+	Skill,
+	SkillEntry,
+	SkillMetadata,
+	SkillExposure,
+	SkillScope,
+	SkillSnapshot,
+} from './skills';
