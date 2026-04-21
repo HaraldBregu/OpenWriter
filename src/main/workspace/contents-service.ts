@@ -21,11 +21,11 @@ export class ContentsService {
 	 * Get the absolute path to the contents directory for a workspace.
 	 */
 	getContentsDir(workspacePath: string): string {
-		return path.join(workspacePath, 'resources', CONTENTS_SUBFOLDER);
+		return path.join(workspacePath, CONTENTS_SUBFOLDER);
 	}
 
 	/**
-	 * Ensure the resources/content/ directory exists.
+	 * Ensure the contents/ directory exists.
 	 */
 	async ensureContentsDir(workspacePath: string): Promise<void> {
 		const contentsDir = this.getContentsDir(workspacePath);
@@ -33,7 +33,7 @@ export class ContentsService {
 	}
 
 	/**
-	 * Load all files from the workspace resources/content/ directory.
+	 * Load all files from the workspace contents/ directory.
 	 */
 	async getContents(workspacePath: string): Promise<ResourceInfo[]> {
 		const contentsDir = this.getContentsDir(workspacePath);
