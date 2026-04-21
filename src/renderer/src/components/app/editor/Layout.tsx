@@ -2,6 +2,7 @@ import { forwardRef, useRef, type ReactNode } from 'react';
 import type { Editor } from '@tiptap/core';
 import { cn } from '@/lib/utils';
 import { Provider } from './Provider';
+import type { AssistantAction } from './context/context';
 import { GUTTER_WIDTH } from './shared/common';
 
 interface LayoutProps {
@@ -10,6 +11,7 @@ interface LayoutProps {
 	readonly editor: Editor | null;
 	readonly onInsertContent?: () => void;
 	readonly onOpenChat?: () => void;
+	readonly onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
 	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
 }
@@ -22,6 +24,7 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 			editor,
 			onInsertContent,
 			onOpenChat,
+			onAssistantAction,
 			onImageInsert,
 			children,
 		},
