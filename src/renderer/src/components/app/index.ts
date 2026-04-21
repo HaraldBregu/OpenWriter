@@ -1,3 +1,10 @@
 export { AppIconOpenWriter } from './icons/AppIconOpenWriter';
 
-export { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from './base/Page';
+export {
+	PageContainer,
+	PageHeader,
+	PageHeaderItems,
+	PageHeaderTitle,
+	PageSidebar,
+	PageSidebarInset,
+} from './base/Page';
