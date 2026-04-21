@@ -41,7 +41,7 @@ export class ControllerNode {
 	constructor(private readonly opts: ControllerNodeOptions) {}
 
 	async decide(ctx: NodeContext): Promise<ControllerDecision> {
-		const { input, agentCtx, state } = ctx;
+		const { input, state } = ctx;
 		const step = state.beginStep(this.name);
 		try {
 			const client = createOpenAIClient(input.providerId, input.apiKey);
