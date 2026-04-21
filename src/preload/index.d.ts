@@ -21,6 +21,8 @@ import type {
 	FileEntry,
 	FileEntryChangeEvent,
 	FolderEntry,
+	ImageEntry,
+	ImageEntryChangeEvent,
 	TaskAction,
 	TaskActionReturn,
 	TaskInfo,
