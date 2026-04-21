@@ -481,7 +481,6 @@ function PageContent(): ReactElement {
 								value={content}
 								externalValueVersion={contentVersion}
 								onChange={handleContentChange}
-								onSelectionChange={handleSelectionChange}
 								onPromptSubmit={handlePromptSubmit}
 								onInsertContent={handleInsertContent}
 								onOpenChat={handleOpenChat}
