@@ -36,6 +36,8 @@ export function getFileNameWithoutExtension(name: string): string {
 
 export function getMimeTypeLabel(mimeType: string): string {
 	if (mimeType.startsWith(MIME_PREFIX_IMAGE)) return 'Image';
+	if (mimeType.startsWith('video/')) return 'Video';
+	if (mimeType.startsWith('audio/')) return 'Audio';
 	if (mimeType === MIME_TYPE_PDF) return 'PDF';
 	if (mimeType === MIME_TYPE_JSON) return 'JSON';
 	return 'File';
@@ -43,6 +45,12 @@ export function getMimeTypeLabel(mimeType: string): string {
 
 export function matchesTypeFilter(mimeType: string, filter: FileTypeFilter): boolean {
 	switch (filter) {
+		case 'image':
+			return mimeType.startsWith(MIME_PREFIX_IMAGE);
+		case 'video':
+			return mimeType.startsWith('video/');
+		case 'audio':
+			return mimeType.startsWith('audio/');
 		case 'json':
 			return mimeType === MIME_TYPE_JSON;
 		case 'markdown':

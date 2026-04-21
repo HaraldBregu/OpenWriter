@@ -6,6 +6,7 @@ import {
 	type ReactElement,
 	type ReactNode,
 } from 'react';
+import { useLocation } from 'react-router-dom';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
 import { filesReducer } from './context/reducer';
@@ -20,6 +21,7 @@ interface FilesProviderProps {
 }
 
 export function Provider({ children }: FilesProviderProps): ReactElement {
+	const location = useLocation();
 	const mountedRef = useRef(true);
 	const [state, dispatch] = useReducer(filesReducer, initialFilesState);
 
@@ -170,6 +172,15 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 			dispatch({ type: 'CLOSE_FILE_DETAILS' });
 		}
 	}, [state.activeFile, state.entries]);
+
+	useEffect(() => {
+		const type = new URLSearchParams(location.search).get('type');
+		const nextFilter =
+			type === 'image' || type === 'video' || type === 'audio'
+				? type
+				: initialFilesState.typeFilter;
+		dispatch({ type: 'SET_TYPE_FILTER', payload: nextFilter });
+	}, [location.search]);
 
 	const value: FilesContextValue = {
 		entries: state.entries,

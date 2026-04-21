@@ -290,12 +290,23 @@ export interface ResourceInfo {
 export const RESOURCES_FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
 
 export type ResourcesFilesViewMode = 'list' | 'grid';
-export type ResourcesFileTypeFilter = 'all' | 'json' | 'markdown' | 'text' | 'pdf';
+export type ResourcesFileTypeFilter =
+	| 'all'
+	| 'image'
+	| 'video'
+	| 'audio'
+	| 'json'
+	| 'markdown'
+	| 'text'
+	| 'pdf';
 export type ResourcesFilesSortKey = 'name' | 'createdAt' | 'mimeType' | 'size';
 export type ResourcesFilesSortDirection = 'none' | 'asc' | 'desc';
 
 export const RESOURCES_FILE_TYPE_FILTERS: { value: ResourcesFileTypeFilter; label: string }[] = [
 	{ value: 'all', label: 'All' },
+	{ value: 'image', label: 'Images' },
+	{ value: 'video', label: 'Video' },
+	{ value: 'audio', label: 'Audio' },
 	{ value: 'json', label: 'JSON' },
 	{ value: 'markdown', label: 'Markdown' },
 	{ value: 'text', label: 'Text' },

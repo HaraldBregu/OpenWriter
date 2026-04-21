@@ -66,6 +66,17 @@ const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'size', label: 'File size', className: 'w-28 text-right' },
 ];
 
+const PAGE_TITLES: Record<ResourcesFileTypeFilter, string> = {
+	all: 'Files',
+	image: 'Images',
+	video: 'Video',
+	audio: 'Audio',
+	json: 'Files',
+	markdown: 'Files',
+	text: 'Files',
+	pdf: 'Files',
+};
+
 function PageContent(): ReactElement {
 	const {
 		selected,
@@ -102,6 +113,7 @@ function PageContent(): ReactElement {
 		fileCount === 1
 			? 'This will permanently delete 1 file. This action cannot be undone.'
 			: `This will permanently delete ${fileCount} files. This action cannot be undone.`;
+	const pageTitle = PAGE_TITLES[typeFilter];
 
 	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
 		if (editMode) return;
@@ -114,7 +126,7 @@ function PageContent(): ReactElement {
 	return (
 		<PageContainer>
 			<PageHeader>
-				<PageHeaderTitle>Files</PageHeaderTitle>
+				<PageHeaderTitle>{pageTitle}</PageHeaderTitle>
 				<PageHeaderItems>
 					{editMode && selected.size > 0 && (
 						<Button variant="destructive" size="lg" onClick={handleDelete}>

@@ -38,6 +38,7 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 	SidebarHeader,
+	SidebarSeparator,
 	useSidebar,
 	Sidebar,
 } from '@/components/ui/Sidebar';
@@ -66,8 +67,10 @@ import {
 	MoreHorizontal,
 	Pencil,
 	Trash2,
-	File,
+	FileAudio,
+	FileImage,
 	FileText,
+	Video,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { CommandModalProvider, useCommandModal } from '../command-modals';
@@ -469,19 +472,43 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						{/* Resources */}
 						<SidebarGroup>
-							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 							<SidebarGroupContent>
 								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/resources/files" />}
+											render={<Link to="/resources/files?type=image" />}
 											className="h-9 px-3"
-											isActive={location.pathname === '/resources/files'}
+											isActive={
+												location.pathname === '/resources/files' && location.search === '?type=image'
+											}
 										>
-											<File className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.files')}</span>
+											<FileImage className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.images', 'Images')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/resources/files?type=video" />}
+											className="h-9 px-3"
+											isActive={
+												location.pathname === '/resources/files' && location.search === '?type=video'
+											}
+										>
+											<Video className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.video', 'Video')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
+											render={<Link to="/resources/files?type=audio" />}
+											className="h-9 px-3"
+											isActive={
+												location.pathname === '/resources/files' && location.search === '?type=audio'
+											}
+										>
+											<FileAudio className="h-5 w-5 shrink-0" />
+											<span className="flex-1 truncate">{t('appLayout.audio', 'Audio')}</span>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
 									<SidebarMenuItem>
@@ -510,7 +537,7 @@ function Container({ children }: LayoutProps) {
 
 						{/* Debug */}
 						<SidebarGroup className="py-0">
-							<SidebarGroupLabel>{t('appLayout.debug')}</SidebarGroupLabel>
+							<SidebarSeparator className="my-2" />
 							<SidebarGroupContent>
 								<SidebarMenu>
 									<SidebarMenuItem>

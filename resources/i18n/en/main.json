@@ -1017,6 +1017,8 @@
 		"documents": "Documents",
 		"content": "Content",
 		"images": "Images",
+		"video": "Video",
+		"audio": "Audio",
 		"files": "Files",
 		"data": "Data",
 		"integrations": "Integrations",
