@@ -268,14 +268,16 @@ function PageContent(): ReactElement {
 				sessionIdRef.current = resolvedSessionId;
 
 				const agentInput = {
-					messages: [{ role: 'user' as const, content: composedPrompt }],
-					files: payload.files,
-					streaming: true,
+					prompt: composedPrompt,
+					files: payload.files.map((f) => ({
+						name: f.name,
+						mimeType: f.type || undefined,
+					})),
 				};
 
 				const ipcResult = await window.task.submit({
 					type: 'agent',
-					input: { agentType: 'text', input: agentInput },
+					input: { agentType: 'assistant', input: agentInput },
 					metadata: { sessionId: resolvedSessionId, documentId: id },
 				});
 
