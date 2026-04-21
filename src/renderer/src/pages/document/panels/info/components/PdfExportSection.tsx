@@ -133,3 +133,5 @@ export function PdfExportSection({
 		</>
 	);
 }
+
+export default PdfExportSection;

@@ -294,11 +294,20 @@
 		"agents": {
 			"title": "Agents",
 			"description": "Configure the AI model and parameters for each agent.",
+			"subtitle": "Configure the model assignments each agent uses for its work.",
 			"provider": "Provider",
 			"model": "Model",
+			"textModel": "Text generation",
+			"textModelDescription": "Used by the assistant for writing, chat, reasoning, and document edits.",
+			"imageModel": "Image generation",
+			"imageModelDescription": "Used by the assistant when image generation tools are available.",
 			"temperature": "Temperature",
 			"thinkingMode": "Thinking Mode",
-			"thinkingModeDescription": "Enable extended reasoning for complex tasks"
+			"thinkingModeDescription": "Enable extended reasoning for complex tasks",
+			"saving": "Saving...",
+			"saved": "Saved",
+			"loadError": "Unable to load agent settings.",
+			"saveError": "Unable to save agent settings."
 		},
 		"themes": {
 			"title": "Themes",
