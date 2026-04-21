@@ -41,6 +41,8 @@ export interface TitleBarProps {
 	onNavigateBack?: () => void;
 	/** Called when the forward navigation button is clicked */
 	onNavigateForward?: () => void;
+	/** When true, renders agentic + info sidebar toggle buttons on the right */
+	showSidebarToggles?: boolean;
 }
 
 export const TitleBar = React.memo(function TitleBar({
@@ -48,8 +50,10 @@ export const TitleBar = React.memo(function TitleBar({
 	onToggleSidebar,
 	onNavigateBack,
 	onNavigateForward,
+	showSidebarToggles = false,
 }: TitleBarProps) {
 	const { t } = useTranslation();
+	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullScreen, setIsFullScreen] = useState(false);
 
