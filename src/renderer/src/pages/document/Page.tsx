@@ -137,16 +137,11 @@ function PageContent(): ReactElement {
 			if (event.type === 'removed') {
 				documentDeletedRef.current = true;
 				navigate('/home', { replace: true });
-				return;
-			}
-
-			if (event.type === 'changed' || event.type === 'added') {
-				loadImages();
 			}
 		});
 
 		return unsubscribe;
-	}, [id, loadImages, navigate]);
+	}, [id, navigate]);
 
 	useEffect(() => {
 		if (!id) return;
