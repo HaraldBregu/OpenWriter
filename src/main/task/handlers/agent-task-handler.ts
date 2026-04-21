@@ -129,7 +129,24 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			if (documentPath) enriched.documentPath = documentPath;
 		}
 
+		const workspacePath = base.workspacePath?.trim() || this.resolveWorkspacePath();
+		if (workspacePath) enriched.workspacePath = workspacePath;
+
 		return enriched as unknown as T;
+	}
+
+	private resolveWorkspacePath(): string | undefined {
+		const windowId = this.resolveWindowId();
+		if (windowId === undefined) return undefined;
+		const context = this.windowContextManager.tryGet(windowId);
+		if (!context) return undefined;
+		try {
+			const workspace = context.container.get<Workspace>('workspaceManager');
+			return workspace.getCurrent() ?? undefined;
+		} catch (error) {
+			this.logger.warn('AgentTaskHandler', 'Failed to resolve workspace path', error);
+			return undefined;
+		}
 	}
 
 	private resolveImageCredentials(

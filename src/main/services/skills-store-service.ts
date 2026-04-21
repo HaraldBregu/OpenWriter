@@ -45,6 +45,10 @@ export class SkillsStoreService {
 		return skills.map(toSkillInfo);
 	}
 
+	async listSkillEntities(): Promise<Skill[]> {
+		return this.repository.list();
+	}
+
 	async importSkillsFromPath(sourcePath: string): Promise<SkillInfo[]> {
 		const imported = await this.repository.importFromPath(sourcePath);
 		for (const skill of imported) {
