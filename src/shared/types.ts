@@ -177,7 +177,6 @@ export interface WorkspaceInfo {
 	path: string;
 	lastOpened: number;
 	data: string;
-	resources: string;
 	/**
 	 * Project name read from `project_workspace.openwriter` in the workspace root.
 	 * `null` when the file is missing or unreadable — consumers should fall back
