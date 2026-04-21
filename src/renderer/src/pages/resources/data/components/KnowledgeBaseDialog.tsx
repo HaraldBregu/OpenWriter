@@ -76,18 +76,93 @@ export function KnowledgeBaseDialog({
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 	const [noApiKey, setNoApiKey] = useState(false);
 
-	const {
-		submit,
-		cancel,
-		reset,
-		isRunning,
-		isCompleted,
-		isError,
-		progress,
-		progressMessage,
-		error,
-		result,
-	} = useTaskSubmit<NbTaskInput, NbTaskOutput>('build-knowledge-base', {} as NbTaskInput);
+	const [taskId, setTaskId] = useState<string | null>(null);
+	const [taskStatus, setTaskStatus] = useState<TaskState | null>(null);
+	const [progress, setProgress] = useState<{ percent: number; message?: string }>({ percent: 0 });
+	const [error, setError] = useState<string | undefined>(undefined);
+	const [result, setResult] = useState<NbTaskOutput | undefined>(undefined);
+
+	const isRunning =
+		taskStatus === 'queued' || taskStatus === 'started' || taskStatus === 'running';
+	const isCompleted = taskStatus === 'completed';
+	const isError = taskStatus === 'error';
+	const progressMessage = progress.message;
+
+	useEffect(() => {
+		if (!taskId) return;
+		if (typeof window.task?.onEvent !== 'function') return;
+
+		return window.task.onEvent((event: TaskEvent) => {
+			if (event.taskId !== taskId) return;
+
+			setTaskStatus(event.state);
+
+			if (event.state === 'running') {
+				const percent = dataField<number>(event.data, 'percent');
+				const message = dataField<string>(event.data, 'message');
+				if (percent !== undefined || message !== undefined) {
+					setProgress({ percent: percent ?? 0, message });
+				}
+				return;
+			}
+			if (event.state === 'completed') {
+				setResult(dataField<NbTaskOutput>(event.data, 'result'));
+				setProgress({ percent: 100 });
+				return;
+			}
+			if (event.state === 'error') {
+				const errorPayload = event.error;
+				const errorMessage =
+					typeof errorPayload === 'object' &&
+					errorPayload !== null &&
+					'message' in errorPayload
+						? String((errorPayload as { message: unknown }).message)
+						: typeof errorPayload === 'string'
+							? errorPayload
+							: undefined;
+				setError(errorMessage);
+			}
+		});
+	}, [taskId]);
+
+	const submit = useCallback(async (input: NbTaskInput): Promise<void> => {
+		if (typeof window.task?.submit !== 'function') return;
+
+		setTaskStatus('queued');
+		setProgress({ percent: 0 });
+		setError(undefined);
+		setResult(undefined);
+
+		const res = await window.task.submit({
+			type: 'build-knowledge-base',
+			input,
+		});
+
+		if (!res.success) {
+			setTaskStatus('error');
+			setError(res.error.message);
+			return;
+		}
+
+		setTaskId(res.data.taskId);
+	}, []);
+
+	const cancel = useCallback(() => {
+		if (!taskId) return;
+		if (typeof window.task?.cancel !== 'function') return;
+		window.task.cancel(taskId).catch(() => {
+			// best effort; cancelled event will update state
+		});
+	}, [taskId]);
+
+	const reset = useCallback(() => {
+		if (isRunning) return;
+		setTaskId(null);
+		setTaskStatus(null);
+		setProgress({ percent: 0 });
+		setError(undefined);
+		setResult(undefined);
+	}, [isRunning]);
 
 	const selectedModel = useMemo(
 		() => EMBEDDING_MODELS.find((m) => m.modelId === embeddingModel),
