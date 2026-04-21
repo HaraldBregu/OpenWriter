@@ -1,13 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-	Heading,
-	Type,
-	List,
-	ListOrdered,
-	Minus,
-	ImagePlus,
-	FileText,
-} from 'lucide-react';
+import { Heading, Type, List, ListOrdered, Minus, ImagePlus, FileText } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';

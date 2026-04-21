@@ -115,11 +115,7 @@ export class ContentsService {
 					modifiedAt: stats.mtimeMs,
 				});
 			} catch (err) {
-				this.logger?.warn(
-					ContentsService.LOG_SOURCE,
-					`Failed to stat entry ${entry.name}`,
-					err
-				);
+				this.logger?.warn(ContentsService.LOG_SOURCE, `Failed to stat entry ${entry.name}`, err);
 			}
 		}
 

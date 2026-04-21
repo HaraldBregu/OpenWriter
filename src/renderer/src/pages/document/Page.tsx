@@ -20,10 +20,7 @@ import {
 	useEditor,
 } from './hooks';
 import { v7 as uuidv7 } from 'uuid';
-import {
-	subscribeToTask,
-	type TaskSnapshot,
-} from '../../services/task-event-bus';
+import { subscribeToTask, type TaskSnapshot } from '../../services/task-event-bus';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
@@ -34,7 +31,6 @@ import { PageBody } from '@/components/app/base/Page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import type { AssistantAction } from '@/components/app/editor/context/context';
 import { PromptSubmitPayload } from '@shared/index';
-
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
@@ -240,8 +236,7 @@ function PageContent(): ReactElement {
 			const { from, to } = editor.state.selection;
 			const doc = editor.state.doc;
 			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
-			const textAfter =
-				editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
+			const textAfter = editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
 
 			const composedPrompt = [
 				'Text before cursor:',

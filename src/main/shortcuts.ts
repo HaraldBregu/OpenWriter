@@ -25,7 +25,11 @@ function parseAccelerator(accelerator: string, isMac: boolean): KeyCombo {
 	return {
 		key,
 		ctrl: mods.includes('ctrl') || mods.includes('control') || (!isMac && hasCmdOrCtrl),
-		meta: mods.includes('cmd') || mods.includes('command') || mods.includes('meta') || (isMac && hasCmdOrCtrl),
+		meta:
+			mods.includes('cmd') ||
+			mods.includes('command') ||
+			mods.includes('meta') ||
+			(isMac && hasCmdOrCtrl),
 		shift: mods.includes('shift'),
 		alt: mods.includes('alt') || mods.includes('option'),
 	};

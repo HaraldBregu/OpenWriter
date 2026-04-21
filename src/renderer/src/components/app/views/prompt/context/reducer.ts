@@ -1,10 +1,7 @@
 import type { State } from './state';
 import type { Action } from './actions';
 
-export function contentGeneratorReducer(
-	state: State,
-	action: Action
-): State {
+export function contentGeneratorReducer(state: State, action: Action): State {
 	switch (action.type) {
 		case 'SET_PROMPT':
 			return { ...state, prompt: action.payload };

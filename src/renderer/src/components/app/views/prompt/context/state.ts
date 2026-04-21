@@ -1,10 +1,10 @@
 import type { ModelInfo } from 'src/shared/types';
 
-type  AgentId = 'text' | 'image';
+type AgentId = 'text' | 'image';
 
 export interface State {
 	prompt: string;
-	agentId:  AgentId;
+	agentId: AgentId;
 	files: File[];
 	previewUrls: string[];
 	isDragOver: boolean;

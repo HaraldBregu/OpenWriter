@@ -1,7 +1,14 @@
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
 import i18next from 'i18next';
-import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription, EmptyContent } from '@/components/ui/Empty';
+import {
+	Empty,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle,
+	EmptyDescription,
+	EmptyContent,
+} from '@/components/ui/Empty';
 
 interface ErrorBoundaryProps {
 	children: React.ReactNode;
@@ -79,37 +86,37 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 			return (
 				<div className="flex h-full w-full flex-1 items-center justify-center">
 					<Empty>
-					<EmptyHeader>
-						<EmptyMedia>
-							<AlertCircle className="h-10 w-10 text-destructive" />
-						</EmptyMedia>
-						<EmptyTitle>{t('errorBoundary.routeTitle')}</EmptyTitle>
-						<EmptyDescription>{t('errorBoundary.routeMessage')}</EmptyDescription>
-					</EmptyHeader>
-					<EmptyContent>
-						<p className="text-xs text-muted-foreground/60 font-mono break-all">
-							{this.state.error?.message}
-						</p>
-						<div className="flex gap-2 justify-center">
-							<button
-								type="button"
-								onClick={this.handleReset}
-								className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
-							>
-								{t('errorBoundary.tryAgainButton')}
-							</button>
-							<button
-								type="button"
-								onClick={() => {
-									window.location.hash = '#/home';
-								}}
-								className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-muted transition-colors"
-							>
-								{t('errorBoundary.goHome')}
-							</button>
-						</div>
-					</EmptyContent>
-				</Empty>
+						<EmptyHeader>
+							<EmptyMedia>
+								<AlertCircle className="h-10 w-10 text-destructive" />
+							</EmptyMedia>
+							<EmptyTitle>{t('errorBoundary.routeTitle')}</EmptyTitle>
+							<EmptyDescription>{t('errorBoundary.routeMessage')}</EmptyDescription>
+						</EmptyHeader>
+						<EmptyContent>
+							<p className="text-xs text-muted-foreground/60 font-mono break-all">
+								{this.state.error?.message}
+							</p>
+							<div className="flex gap-2 justify-center">
+								<button
+									type="button"
+									onClick={this.handleReset}
+									className="px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm hover:bg-primary/90 transition-colors"
+								>
+									{t('errorBoundary.tryAgainButton')}
+								</button>
+								<button
+									type="button"
+									onClick={() => {
+										window.location.hash = '#/home';
+									}}
+									className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-muted transition-colors"
+								>
+									{t('errorBoundary.goHome')}
+								</button>
+							</div>
+						</EmptyContent>
+					</Empty>
 				</div>
 			);
 		}

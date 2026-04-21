@@ -38,30 +38,15 @@ const PopoverContent = React.forwardRef<
 PopoverContent.displayName = 'PopoverContent';
 
 function PopoverHeader({ className, ...props }: React.ComponentProps<'div'>) {
-	return (
-		<div
-			className={cn('flex flex-col gap-1', className)}
-			{...props}
-		/>
-	);
+	return <div className={cn('flex flex-col gap-1', className)} {...props} />;
 }
 
 function PopoverTitle({ className, ...props }: React.ComponentProps<'p'>) {
-	return (
-		<p
-			className={cn('text-sm font-medium leading-none', className)}
-			{...props}
-		/>
-	);
+	return <p className={cn('text-sm font-medium leading-none', className)} {...props} />;
 }
 
 function PopoverDescription({ className, ...props }: React.ComponentProps<'div'>) {
-	return (
-		<div
-			className={cn('text-sm text-muted-foreground', className)}
-			{...props}
-		/>
-	);
+	return <div className={cn('text-sm text-muted-foreground', className)} {...props} />;
 }
 
 export { Popover, PopoverTrigger, PopoverContent, PopoverHeader, PopoverTitle, PopoverDescription };

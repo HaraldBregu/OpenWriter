@@ -237,17 +237,6 @@ export function useTask<TInput = unknown, TResult = unknown>(
 			isError: status === 'error',
 			isCancelled: status === 'cancelled',
 		}),
-		[
-			taskId,
-			status,
-			metadata,
-			progressMessage,
-			durationMs,
-			error,
-			result,
-			submit,
-			cancel,
-			reset,
-		]
+		[taskId, status, metadata, progressMessage, durationMs, error, result, submit, cancel, reset]
 	);
 }

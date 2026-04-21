@@ -25,9 +25,7 @@ export function ReduxStateTab() {
 
 	void tick;
 
-	const slices: { name: SliceName; data: unknown }[] = [
-		{ name: 'workspace', data: workspace },
-	];
+	const slices: { name: SliceName; data: unknown }[] = [{ name: 'workspace', data: workspace }];
 
 	return (
 		<div className="flex-1 overflow-auto p-6 space-y-3">

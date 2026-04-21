@@ -31,9 +31,7 @@ export function createEmbeddingModel(opts: EmbeddingOptions): EmbeddingModel {
 
 	async function embed(input: string[]): Promise<number[][]> {
 		const response = await client.embeddings.create({ model: modelName, input });
-		return response.data
-			.sort((a, b) => a.index - b.index)
-			.map((item) => item.embedding);
+		return response.data.sort((a, b) => a.index - b.index).map((item) => item.embedding);
 	}
 
 	return {

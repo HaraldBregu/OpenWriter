@@ -111,11 +111,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 							</Button>
 						}
 					/>
-					<PopoverContent
-						side="top"
-						align="end"
-						className="w-56 p-1"
-					>
+					<PopoverContent side="top" align="end" className="w-56 p-1">
 						<div className="flex flex-col gap-0.5">
 							<Button
 								variant="ghost"

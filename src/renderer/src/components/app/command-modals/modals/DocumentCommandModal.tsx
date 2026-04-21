@@ -32,17 +32,11 @@ export function DocumentCommandModal({ open, onOpenChange }: CommandModalProps) 
 			title={t('commandPalette.documents.title', 'Open document')}
 			description={t('commandPalette.documents.description', 'Search and open a document')}
 		>
-			<CommandInput
-				placeholder={t('commandPalette.documents.placeholder', 'Search documents…')}
-			/>
+			<CommandInput placeholder={t('commandPalette.documents.placeholder', 'Search documents…')} />
 			<CommandList>
-				<CommandEmpty>
-					{t('commandPalette.documents.empty', 'No documents found.')}
-				</CommandEmpty>
+				<CommandEmpty>{t('commandPalette.documents.empty', 'No documents found.')}</CommandEmpty>
 				{documents.length > 0 && (
-					<CommandGroup
-						heading={t('commandPalette.documents.heading', 'Documents')}
-					>
+					<CommandGroup heading={t('commandPalette.documents.heading', 'Documents')}>
 						{documents.map((doc) => (
 							<CommandItem
 								key={doc.id}

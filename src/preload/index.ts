@@ -8,7 +8,13 @@ import {
 	LogChannels,
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
-import type { AgentSettings, Service, ThemeMode, WorkspaceInfo, DocumentConfig } from '../shared/types';
+import type {
+	AgentSettings,
+	Service,
+	ThemeMode,
+	WorkspaceInfo,
+	DocumentConfig,
+} from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------

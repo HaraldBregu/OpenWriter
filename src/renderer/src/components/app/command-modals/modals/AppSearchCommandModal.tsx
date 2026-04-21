@@ -61,9 +61,7 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 				placeholder={t('menu.search', 'Search')}
 			/>
 			<div className="flex items-center justify-between border-b px-3 py-2 text-xs text-muted-foreground">
-				<span>
-					{t('search.commandHint', 'Search anything in the app')}
-				</span>
+				<span>{t('search.commandHint', 'Search anything in the app')}</span>
 				<span>
 					{t('search.resultsSummary', {
 						count: totalCount,
@@ -119,10 +117,7 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 													{item.title}
 												</span>
 												<span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-													{t(
-														`search.kind.${item.kind}`,
-														APP_SEARCH_RESULT_KIND_LABELS[item.kind]
-													)}
+													{t(`search.kind.${item.kind}`, APP_SEARCH_RESULT_KIND_LABELS[item.kind])}
 												</span>
 											</div>
 											<p className="line-clamp-2 text-xs text-muted-foreground">

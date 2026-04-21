@@ -21,7 +21,6 @@ export { ContentsService } from './contents-service';
 // Files service (resources/files/)
 export { FilesService } from './files-service';
 
-
 // Output file management
 export type {
 	OutputType,

@@ -10,9 +10,5 @@ export const TitleBarCenterContainerTitle = memo(function AppTitleBarCenterConta
 	className,
 	children,
 }: TitleBarCenterContainerTitleProps): ReactElement {
-	return (
-		<span className={cn('text-sm font-normal tracking-wide', className)}>
-			{children}
-		</span>
-	);
+	return <span className={cn('text-sm font-normal tracking-wide', className)}>{children}</span>;
 });

@@ -69,7 +69,7 @@ export function usePromptActions({
 				.then((result) => {
 					dispatch({ type: 'ADD_PREVIEW_URL', payload: result });
 				})
-				.catch(() => { });
+				.catch(() => {});
 		},
 		[dispatch]
 	);

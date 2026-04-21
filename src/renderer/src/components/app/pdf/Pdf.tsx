@@ -43,7 +43,7 @@ export const Pdf = forwardRef<PDFViewerRef, PdfProps>(function Pdf(
 		onInit,
 		onReady,
 	},
-	ref,
+	ref
 ) {
 	return (
 		<PDFViewer

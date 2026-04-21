@@ -3,7 +3,7 @@ import type React from 'react';
 import type { State } from './state';
 import type { ModelInfo } from 'src/shared/types';
 
-type  AgentId = 'text' | 'image';
+type AgentId = 'text' | 'image';
 
 export interface ContextValue {
 	state: State;

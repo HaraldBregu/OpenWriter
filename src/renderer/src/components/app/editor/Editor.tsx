@@ -1,10 +1,4 @@
-import React, {
-	useCallback,
-	useEffect,
-	useImperativeHandle,
-	useMemo,
-	useRef,
-} from 'react';
+import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
@@ -184,7 +178,13 @@ const Editor = React.memo(
 							});
 						});
 					},
-					onUpdate: ({ editor: ed, transaction }: { editor: TiptapEditor; transaction: Transaction }) => {
+					onUpdate: ({
+						editor: ed,
+						transaction,
+					}: {
+						editor: TiptapEditor;
+						transaction: Transaction;
+					}) => {
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
@@ -537,7 +537,6 @@ const Editor = React.memo(
 					if (!editor.isDestroyed) editor.commands.focus('start');
 				});
 			}, [editor, autoFocus]);
-
 
 			const handleImageInsert = useCallback(
 				async (result: { src: string; alt: string; title: string }) => {

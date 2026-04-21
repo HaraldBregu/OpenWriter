@@ -5,14 +5,13 @@ import { chatReducer } from '../panels/chat/context';
 export function documentReducer(state: DocumentState, action: DocumentAction): DocumentState {
 	switch (action.type) {
 		case 'LOAD_STARTED':
-			return { ...state, loaded: false, title: '', content: '', metadata: null, images: [] };
+			return { ...state, loaded: false, title: '', metadata: null, images: [] };
 
 		case 'LOAD_SUCCEEDED':
 			return {
 				...state,
 				loaded: true,
 				title: action.title,
-				content: action.content,
 				metadata: action.metadata,
 			};
 
@@ -22,17 +21,11 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 		case 'TITLE_CHANGED':
 			return { ...state, title: action.value };
 
-		case 'CONTENT_CHANGED':
-			return { ...state, content: action.value };
-
 		case 'METADATA_UPDATED':
 			return { ...state, metadata: action.metadata };
 
 		case 'IMAGES_UPDATED':
 			return { ...state, images: action.images };
-
-		case 'EDITOR_SELECTION_CHANGED':
-			return { ...state, selection: action.selection };
 
 		case 'TRASH_STARTED':
 			return { ...state, isTrashing: true };

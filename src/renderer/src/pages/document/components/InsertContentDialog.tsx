@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
+import {
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+	type KeyboardEvent,
+	type ReactElement,
+} from 'react';
 import { Slice } from '@tiptap/pm/model';
 import {
 	Dialog,
@@ -66,7 +73,7 @@ export function InsertContentDialog(): ReactElement {
 				// ignore read failures
 			}
 		},
-		[closeInsertContentDialog, editor],
+		[closeInsertContentDialog, editor]
 	);
 
 	const handleKeyDown = useCallback(
@@ -85,7 +92,7 @@ export function InsertContentDialog(): ReactElement {
 				if (item) handleSelect(item);
 			}
 		},
-		[items, activeIndex, handleSelect],
+		[items, activeIndex, handleSelect]
 	);
 
 	return (
@@ -114,9 +121,7 @@ export function InsertContentDialog(): ReactElement {
 								}}
 								className={cn(
 									'cursor-pointer rounded-md px-3 py-2 text-sm outline-none',
-									idx === activeIndex
-										? 'bg-accent text-accent-foreground'
-										: 'hover:bg-accent/50',
+									idx === activeIndex ? 'bg-accent text-accent-foreground' : 'hover:bg-accent/50'
 								)}
 								onMouseEnter={() => setActiveIndex(idx)}
 								onClick={() => handleSelect(item)}

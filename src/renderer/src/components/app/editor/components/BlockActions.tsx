@@ -15,7 +15,10 @@ import { useEditor } from '../hooks';
 
 export const BlockActions = React.memo(function BlockActions(): React.JSX.Element {
 	const { t } = useTranslation();
-	const { editor, state: { hoveredBlock } } = useEditor();
+	const {
+		editor,
+		state: { hoveredBlock },
+	} = useEditor();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const lockedTopRef = useRef<number>(0);
 	const lastTopRef = useRef<number>(0);
@@ -106,11 +109,7 @@ export const BlockActions = React.memo(function BlockActions(): React.JSX.Elemen
 			<DropdownMenu open={menuOpen} onOpenChange={handleOpenChange}>
 				<DropdownMenuTrigger
 					render={
-						<Button
-							variant="ghost"
-							size="icon"
-							aria-label={t('blockActions.title')}
-						>
+						<Button variant="ghost" size="icon" aria-label={t('blockActions.title')}>
 							<MoreVertical />
 						</Button>
 					}

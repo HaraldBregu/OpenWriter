@@ -3,10 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { TextSelection } from '@tiptap/pm/state';
 import { v7 as uuidv7 } from 'uuid';
 import { getTaskStatusText } from '../../../../../../shared/types';
-import {
-	subscribeToTask,
-	type TaskSnapshot,
-} from '../../../../services/task-event-bus';
+import { subscribeToTask, type TaskSnapshot } from '../../../../services/task-event-bus';
 import { useDocumentState, useEditorInstance } from '../../hooks';
 import { useChatState, useChatDispatch, useChatPersistence } from './hooks';
 import { ChatProvider } from './Provider';

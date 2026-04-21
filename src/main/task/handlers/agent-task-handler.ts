@@ -46,9 +46,7 @@ interface AgentInputRecord {
 	[key: string]: unknown;
 }
 
-export class AgentTaskHandler
-	implements TaskHandler<AgentTaskInput, AgentTaskOutput>
-{
+export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOutput> {
 	readonly type = 'agent';
 
 	constructor(
