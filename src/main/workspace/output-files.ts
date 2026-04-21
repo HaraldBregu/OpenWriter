@@ -944,18 +944,15 @@ export class OutputFilesService implements Disposable {
 	}
 
 	/**
-	 * Extract output type and file ID from a file path.
-	 *
-	 * Handles both depth-3 paths (config.json / DATA.md / <block>.md) and
-	 * depth-2 paths (the entry folder itself, e.g. on unlinkDir).
+	 * Extract file ID from a path. The nominal output type is always
+	 * `documents` now (only supported value).
 	 *
 	 * Expected formats (UUID variant — new):
-	 *   output/<type>/<uuid>              -> { outputType, fileId: uuid }
-	 *   output/<type>/<uuid>/config.json  -> { outputType, fileId: uuid }
-	 *   output/<type>/<uuid>/<uuid>.md    -> { outputType, fileId: uuid }
+	 *   documents/<uuid>              -> { outputType: 'documents', fileId: uuid }
+	 *   documents/<uuid>/config.json  -> { outputType: 'documents', fileId: uuid }
 	 *
 	 * Legacy date-folder variant is also accepted (backward compat):
-	 *   output/<type>/<YYYY-MM-DD_HHmmss>              -> { outputType, fileId: date-folder }
+	 *   documents/<YYYY-MM-DD_HHmmss> -> { outputType: 'documents', fileId: date-folder }
 	 */
 	private extractIdsFromPath(filePath: string): {
 		outputType: OutputType | null;
@@ -965,21 +962,13 @@ export class OutputFilesService implements Disposable {
 		const parts = normalized.split(path.sep);
 		const outputIndex = parts.lastIndexOf(this.OUTPUT_DIR_NAME);
 
-		if (outputIndex === -1 || outputIndex + 2 >= parts.length) {
+		if (outputIndex === -1 || outputIndex + 1 >= parts.length) {
 			return { outputType: null, fileId: null };
 		}
 
-		const typePart = parts[outputIndex + 1];
-		if (!(VALID_OUTPUT_TYPES as readonly string[]).includes(typePart)) {
-			return { outputType: null, fileId: null };
-		}
-
-		const outputType = typePart as OutputType;
-		const thirdSegment = parts[outputIndex + 2];
-
-		// The third segment is a UUID (or legacy date) entry folder
-		if (this.DATE_FOLDER_RE.test(thirdSegment)) {
-			return { outputType, fileId: thirdSegment };
+		const entryFolder = parts[outputIndex + 1];
+		if (this.DATE_FOLDER_RE.test(entryFolder)) {
+			return { outputType: 'documents', fileId: entryFolder };
 		}
 
 		return { outputType: null, fileId: null };
