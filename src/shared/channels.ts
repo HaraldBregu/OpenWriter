@@ -22,6 +22,8 @@ import type {
 	FileEntry,
 	FileEntryChangeEvent,
 	FolderEntry,
+	ImageEntry,
+	ImageEntryChangeEvent,
 	OutputFile,
 	OutputFileChangeEvent,
 	SaveOutputInput,
@@ -94,9 +96,9 @@ export const WorkspaceChannels = {
 	// Shell
 	openWorkspaceFolder: 'workspace:open-workspace-folder',
 	openDataFolder: 'workspace:open-data-folder',
-	openResourcesFolder: 'workspace:open-resources-folder',
-	openResourcesContentsFolder: 'workspace:open-resources-contents-folder',
+	openContentsFolder: 'workspace:open-contents-folder',
 	openFilesFolder: 'workspace:open-files-folder',
+	openImagesFolder: 'workspace:open-images-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
 	openDocumentImagesFolder: 'workspace:open-document-images-folder',
 	getDocumentPath: 'workspace:get-document-path',
@@ -135,9 +137,9 @@ export const WorkspaceChannels = {
 	getDocumentContent: 'workspace:get-document-content',
 	updateDocumentContent: 'workspace:update-document-content',
 	documentContentChanged: 'workspace:document-content-changed',
-	// Contents (resources/content/ sub-folder)
+	// Contents (workspace/contents/)
 	getContents: 'contents:get-all',
-	getResourcesContents: 'contents:get-folders',
+	getContentsFolders: 'contents:get-folders',
 	insertContents: 'contents:insert',
 	deleteContent: 'contents:delete',
 	contentsChanged: 'contents:changed',
@@ -145,12 +147,18 @@ export const WorkspaceChannels = {
 	// OCR model preference
 	getOcrModelId: 'workspace:get-ocr-model-id',
 	setOcrModelId: 'workspace:set-ocr-model-id',
-	// Files (resources/files/ sub-folder)
-	getResourcesFiles: 'files:get-all',
-	insertResourcesFiles: 'files:insert',
-	deleteResourcesFileEntry: 'files:delete',
-	resourcesFilesChanged: 'files:changed',
-	resourcesFilesWatcherError: 'files:watcher-error',
+	// Files (workspace/files/)
+	getFiles: 'files:get-all',
+	insertFiles: 'files:insert',
+	deleteFileEntry: 'files:delete',
+	filesChanged: 'files:changed',
+	filesWatcherError: 'files:watcher-error',
+	// Images (workspace/images/)
+	getImages: 'images:get-all',
+	insertImages: 'images:insert',
+	deleteImage: 'images:delete',
+	imagesChanged: 'images:changed',
+	imagesWatcherError: 'images:watcher-error',
 } as const;
 
 export const WindowChannels = {
@@ -274,9 +282,9 @@ export interface InvokeChannelMap {
 	// ---- Shell (IpcResult-wrapped) ----
 	[WorkspaceChannels.openWorkspaceFolder]: { args: []; result: void };
 	[WorkspaceChannels.openDataFolder]: { args: []; result: void };
-	[WorkspaceChannels.openResourcesFolder]: { args: []; result: void };
-	[WorkspaceChannels.openResourcesContentsFolder]: { args: []; result: void };
+	[WorkspaceChannels.openContentsFolder]: { args: []; result: void };
 	[WorkspaceChannels.openFilesFolder]: { args: []; result: void };
+	[WorkspaceChannels.openImagesFolder]: { args: []; result: void };
 	[WorkspaceChannels.openDocumentFolder]: { args: [documentId: string]; result: void };
 	[WorkspaceChannels.openDocumentImagesFolder]: { args: [documentId: string]; result: void };
 	[WorkspaceChannels.getDocumentPath]: { args: [documentId: string]; result: string };
@@ -391,9 +399,9 @@ export interface InvokeChannelMap {
 		result: void;
 	};
 
-	// ---- Contents: resources/content/ (IpcResult-wrapped) ----
+	// ---- Contents: workspace/contents/ (IpcResult-wrapped) ----
 	[WorkspaceChannels.getContents]: { args: []; result: ResourceInfo[] };
-	[WorkspaceChannels.getResourcesContents]: { args: []; result: FolderEntry[] };
+	[WorkspaceChannels.getContentsFolders]: { args: []; result: FolderEntry[] };
 	[WorkspaceChannels.insertContents]: { args: [extensions?: string[]]; result: ResourceInfo[] };
 	[WorkspaceChannels.deleteContent]: { args: [id: string]; result: void };
 
@@ -401,10 +409,15 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.getOcrModelId]: { args: []; result: string };
 	[WorkspaceChannels.setOcrModelId]: { args: [modelId: string]; result: void };
 
-	// ---- Files: resources/files/ (IpcResult-wrapped) ----
-	[WorkspaceChannels.getResourcesFiles]: { args: []; result: FileEntry[] };
-	[WorkspaceChannels.insertResourcesFiles]: { args: [extensions?: string[]]; result: FileEntry[] };
-	[WorkspaceChannels.deleteResourcesFileEntry]: { args: [id: string]; result: void };
+	// ---- Files: workspace/files/ (IpcResult-wrapped) ----
+	[WorkspaceChannels.getFiles]: { args: []; result: FileEntry[] };
+	[WorkspaceChannels.insertFiles]: { args: [extensions?: string[]]; result: FileEntry[] };
+	[WorkspaceChannels.deleteFileEntry]: { args: [id: string]; result: void };
+
+	// ---- Images: workspace/images/ (IpcResult-wrapped) ----
+	[WorkspaceChannels.getImages]: { args: []; result: ImageEntry[] };
+	[WorkspaceChannels.insertImages]: { args: [extensions?: string[]]; result: ImageEntry[] };
+	[WorkspaceChannels.deleteImage]: { args: [id: string]; result: void };
 }
 
 /**
@@ -454,6 +467,9 @@ export interface EventChannelMap {
 	[WorkspaceChannels.contentsChanged]: { data: ContentEntryChangeEvent };
 	[WorkspaceChannels.contentsWatcherError]: { data: WatcherError };
 	// ---- Files watcher events ----
-	[WorkspaceChannels.resourcesFilesChanged]: { data: FileEntryChangeEvent };
-	[WorkspaceChannels.resourcesFilesWatcherError]: { data: WatcherError };
+	[WorkspaceChannels.filesChanged]: { data: FileEntryChangeEvent };
+	[WorkspaceChannels.filesWatcherError]: { data: WatcherError };
+	// ---- Images watcher events ----
+	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
+	[WorkspaceChannels.imagesWatcherError]: { data: WatcherError };
 }
