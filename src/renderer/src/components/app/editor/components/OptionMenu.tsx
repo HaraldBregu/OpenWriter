@@ -134,6 +134,20 @@ export function OptionMenu(): React.JSX.Element {
 		onInsertContentRef.current?.();
 	}, [editor, deleteSlash]);
 
+	const runImageFromFile = useCallback(
+		(fileName: string, altName?: string) => {
+			const ctx = deleteSlash();
+			if (!ctx) return;
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+				.setImage({ src: `images/${fileName}`, alt: altName ?? fileName })
+				.run();
+		},
+		[editor, deleteSlash]
+	);
+
 	const runByIndex = useCallback(
 		(idx: number) => {
 			switch (idx) {
@@ -153,7 +167,9 @@ export function OptionMenu(): React.JSX.Element {
 					return runHorizontalRule();
 				case 7:
 					return runImage();
-				case 8:
+				case IMAGES_INDEX:
+					return;
+				case 9:
 					return runInsertContent();
 			}
 		},
