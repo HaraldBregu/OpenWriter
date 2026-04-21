@@ -87,13 +87,13 @@ async function appendImageToContent(
 
 export function createGenerateImageTool(
 	deps: GenerateImageToolDeps
-): AgentTool<GenerateImageToolInput, undefined> {
-	const { cwd, providerId, apiKey, modelName, contentFilePath } = deps;
+): AgentTool<GenerateImageToolInput, GenerateImageToolDetails> {
+	const { imagesRoot, providerId, apiKey, modelName, contentFilePath } = deps;
 	return {
 		name: 'generate_image',
 		label: 'generate image',
 		description:
-			'Generate an image from a text prompt, save it at images/<filename>.png inside the document folder, and append a markdown image reference (![alt](images/<filename>.png)) to content.md automatically.',
+			'Generate an image from a text prompt, save it at images/<filename>.png inside the workspace folder, and append a markdown image reference (relative to content.md) automatically.',
 		parameters: generateImageSchema,
 		executionMode: 'sequential',
 		async execute(_id, input, signal) {
@@ -112,25 +112,29 @@ export function createGenerateImageTool(
 			if (!b64) throw new Error('Image provider returned no image data');
 
 			const filename = sanitizeFilename(input.filename);
-			const imagesDir = resolveToCwd('images', cwd);
+			const imagesDir = resolveToCwd('images', imagesRoot);
 			await fsMkdir(imagesDir, { recursive: true });
-			const abs = path.join(imagesDir, filename);
-			await fsWriteFile(abs, Buffer.from(b64, 'base64'));
+			const absolutePath = path.join(imagesDir, filename);
+			await fsWriteFile(absolutePath, Buffer.from(b64, 'base64'));
 
-			const relative = `images/${filename}`;
+			const relativePath = toPosix(path.relative(path.dirname(contentFilePath), absolutePath));
 			const alt = buildAltText(input.prompt);
-			const markdown = `![${alt}](${relative})\n`;
+			const markdown = `![${alt}](${relativePath})\n`;
 			const mode = await appendImageToContent(contentFilePath, markdown);
 
 			return {
 				content: [
 					{
 						type: 'text',
-						text: `Saved image to ${relative} and ${mode === 'created' ? 'created content.md with' : 'appended to content.md'} the markdown reference: ${markdown.trim()}`,
+						text: `Saved image to ${absolutePath} and ${mode === 'created' ? 'created content.md with' : 'appended to content.md'} the markdown reference: ${markdown.trim()}`,
 					},
 				],
-				details: undefined,
+				details: { absolutePath, relativePath, filename },
 			};
 		},
 	};
+}
+
+function toPosix(p: string): string {
+	return p.split(path.sep).join('/');
 }
