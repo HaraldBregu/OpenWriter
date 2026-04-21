@@ -1,11 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useId } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	DEFAULT_TEXT_MODEL_ID,
-	IMAGE_MODELS,
-	TEXT_MODELS,
-} from '../../../../../../shared/models';
-import type { ModelInfo } from '../../../../../../shared/types';
 import { CardFooter } from '@/components/ui/Card';
 import { PromptCard } from './components/PromptCard';
 
