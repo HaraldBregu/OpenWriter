@@ -434,8 +434,6 @@ export interface EventChannelMap {
 	[WorkspaceChannels.changed]: { data: WorkspaceChangedEvent };
 	[WorkspaceChannels.deleted]: { data: WorkspaceDeletedEvent };
 	[TaskChannels.event]: { data: TaskEvent };
-	[WorkspaceChannels.documentsFileChanged]: { data: DocumentFileChangeEvent };
-	[WorkspaceChannels.documentsWatcherError]: { data: WatcherError };
 	[WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent };
 	[WorkspaceChannels.outputWatcherError]: { data: WatcherError };
 	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
