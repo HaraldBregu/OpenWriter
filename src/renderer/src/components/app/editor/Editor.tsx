@@ -442,6 +442,11 @@ const Editor = React.memo(
 						});
 						editor.view.dispatch(tr.setMeta('preventEditorUpdate', true));
 					},
+					insertPromptView() {
+						if (!editor || editor.isDestroyed) return;
+						const endPos = editor.state.doc.content.size;
+						editor.chain().focus(endPos).insertPromptView().run();
+					},
 					splitBlock() {
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.splitBlock();
