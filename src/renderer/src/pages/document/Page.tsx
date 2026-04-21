@@ -352,17 +352,9 @@ function PageContent(): ReactElement {
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
-			dispatch({ type: 'CONTENT_CHANGED', value: newContent });
 			debouncedContentSave();
 		},
-		[dispatch, debouncedContentSave]
-	);
-
-	const handleSelectionChange = useCallback(
-		(selection: { from: number; to: number } | null) => {
-			dispatch({ type: 'EDITOR_SELECTION_CHANGED', selection });
-		},
-		[dispatch]
+		[debouncedContentSave]
 	);
 
 	const handleEditorReady = useCallback(
