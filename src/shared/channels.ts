@@ -49,6 +49,7 @@ import type {
 	DocumentConfig,
 	AppLogEntry,
 	AppStartupInfo,
+	AgentSettings,
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
@@ -190,6 +191,8 @@ export const AppChannels = {
 	getServices: 'app:get-services',
 	addService: 'app:add-service',
 	deleteService: 'app:delete-service',
+	getAgents: 'app:get-agents',
+	updateAgent: 'app:update-agent',
 	getStartupInfo: 'app:get-startup-info',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	// Logs
@@ -233,6 +236,8 @@ export interface InvokeChannelMap {
 		result: Service & { id: string };
 	};
 	[AppChannels.deleteService]: { args: [id: string]; result: void };
+	[AppChannels.getAgents]: { args: []; result: AgentSettings[] };
+	[AppChannels.updateAgent]: { args: [agent: AgentSettings]; result: AgentSettings };
 	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
 	[AppChannels.completeFirstRunConfiguration]: {
 		args: [services: Service[]];

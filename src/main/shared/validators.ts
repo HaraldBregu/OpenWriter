@@ -3,7 +3,8 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { Service } from '../../shared/types';
+import type { AgentSettings, Service } from '../../shared/types';
+import { findModelById } from '../../shared/models';
 import { isKnownProvider } from '../../shared/providers';
 
 export class StoreValidators {
@@ -72,6 +73,36 @@ export class StoreValidators {
 		}
 		if (agentName.length > this.MAX_FIELD_LENGTH) {
 			throw new Error('Agent name exceeds maximum length');
+		}
+	}
+
+	static validateAgentSettings(agent: AgentSettings): void {
+		if (typeof agent !== 'object' || agent === null) {
+			throw new Error('Agent settings must be an object');
+		}
+		if (typeof agent.id !== 'string' || agent.id.trim().length === 0) {
+			throw new Error('Agent ID must be a non-empty string');
+		}
+		if (agent.id.length > this.MAX_FIELD_LENGTH) {
+			throw new Error('Agent ID exceeds maximum length');
+		}
+		this.validateAgentName(agent.name);
+
+		if (typeof agent.models !== 'object' || agent.models === null) {
+			throw new Error('Agent models must be an object');
+		}
+
+		const modelIds = [agent.models.text, agent.models.image].filter(
+			(modelId): modelId is string => typeof modelId === 'string' && modelId.trim().length > 0
+		);
+
+		for (const modelId of modelIds) {
+			if (modelId.length > this.MAX_FIELD_LENGTH) {
+				throw new Error('Agent model ID exceeds maximum length');
+			}
+			if (!findModelById(modelId)) {
+				throw new Error(`Unknown model: ${modelId}`);
+			}
 		}
 	}
 

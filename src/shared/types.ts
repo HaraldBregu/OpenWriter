@@ -127,6 +127,14 @@ export interface Service {
 	apiKey: string;
 }
 
+export type AgentModelRole = 'text' | 'image';
+
+export interface AgentSettings {
+	id: string;
+	name: string;
+	models: Partial<Record<AgentModelRole, string>>;
+}
+
 // ---- Logs -----------------------------------------------------------------
 
 export type AppLogLevel = 'DEBUG' | 'INFO' | 'WARN' | 'ERROR';

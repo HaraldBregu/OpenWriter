@@ -1,11 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { useTranslation } from 'react-i18next';
 import { CardContent } from '@/components/ui/Card';
 import { useDocumentState } from '../../hooks';
 import { ActionsSection } from './components/ActionsSection';
 import { DocumentMetaSection } from './components/DocumentMetaSection';
 import { ImagesSection } from './components/ImagesSection';
-import { PdfExportSection } from './components/PdfExportSection';
 import { useInfoState } from './hooks/use-info-state';
+
+const PdfExportSection = lazy(() => import('./components/PdfExportSection'));
 
 export function PanelBody(): React.ReactElement {
 	const { t } = useTranslation();

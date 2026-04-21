@@ -14,7 +14,7 @@ import { toServiceConfig } from '../../shared/providers';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
-import type { Service, ThemeMode, WritingContextMenuAction } from '../../shared/types';
+import type { AgentSettings, Service, ThemeMode, WritingContextMenuAction } from '../../shared/types';
 
 const execFileAsync = promisify(execFile);
 
@@ -184,6 +184,19 @@ export class AppIpc implements IpcModule {
 				StoreValidators.validateServiceId(id);
 				return store.deleteService(id);
 			}, AppChannels.deleteService)
+		);
+
+		ipcMain.handle(
+			AppChannels.getAgents,
+			wrapSimpleHandler(() => store.getAgents(), AppChannels.getAgents)
+		);
+
+		ipcMain.handle(
+			AppChannels.updateAgent,
+			wrapSimpleHandler((agent: AgentSettings) => {
+				StoreValidators.validateAgentSettings(agent);
+				return store.updateAgent(agent);
+			}, AppChannels.updateAgent)
 		);
 
 		ipcMain.handle(

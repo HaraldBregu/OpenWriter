@@ -8,7 +8,7 @@ import {
 	LogChannels,
 } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
-import type { Service, ThemeMode, WorkspaceInfo, DocumentConfig } from '../shared/types';
+import type { AgentSettings, Service, ThemeMode, WorkspaceInfo, DocumentConfig } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------
@@ -64,6 +64,12 @@ const app: AppApi = {
 	},
 	deleteService: (id: string): Promise<void> => {
 		return typedInvokeUnwrap(AppChannels.deleteService, id);
+	},
+	getAgents: (): Promise<AgentSettings[]> => {
+		return typedInvokeUnwrap(AppChannels.getAgents);
+	},
+	updateAgent: (agent: AgentSettings): Promise<AgentSettings> => {
+		return typedInvokeUnwrap(AppChannels.updateAgent, agent);
 	},
 	getStartupInfo: () => {
 		return typedInvokeUnwrap(AppChannels.getStartupInfo);

@@ -55,6 +55,7 @@ import type {
 	DocumentConfig,
 	AppLogEntry,
 	AppStartupInfo,
+	AgentSettings,
 	IpcResult,
 	Service,
 	ThemeMode,
@@ -111,6 +112,7 @@ export type {
 	Service,
 	AppLogEntry,
 	AppStartupInfo,
+	AgentSettings,
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
@@ -143,6 +145,8 @@ export interface AppApi {
 	getServices: () => Promise<Array<Service & { id: string }>>;
 	addService: (service: Service) => Promise<Service & { id: string }>;
 	deleteService: (id: string) => Promise<void>;
+	getAgents: () => Promise<AgentSettings[]>;
+	updateAgent: (agent: AgentSettings) => Promise<AgentSettings>;
 	getStartupInfo: () => Promise<AppStartupInfo>;
 	completeFirstRunConfiguration: (services: Service[]) => Promise<AppStartupInfo>;
 	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */

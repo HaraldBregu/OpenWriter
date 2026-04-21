@@ -3,6 +3,7 @@ import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-hand
 import type { AgentRegistry } from '../../agents/core/agent-registry';
 import type { AgentContext } from '../../agents/core/agent';
 import type { LoggerService } from '../../services/logger';
+import type { StoreService } from '../../services/store';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
 import type { WindowContextManager } from '../../core/window-context';
@@ -54,6 +55,7 @@ export class AgentTaskHandler
 		private readonly agents: AgentRegistry,
 		private readonly logger: LoggerService,
 		private readonly serviceResolver: ServiceResolver,
+		private readonly storeService: StoreService,
 		private readonly modelResolver: ModelResolver,
 		private readonly windowContextManager: WindowContextManager
 	) {}
@@ -78,7 +80,7 @@ export class AgentTaskHandler
 		metadata?: Record<string, unknown>
 	): Promise<AgentTaskOutput> {
 		const agent = this.agents.get(input.agentType);
-		const enrichedInput = await this.enrichInput(input.input, metadata);
+		const enrichedInput = await this.enrichInput(input.agentType, input.input, metadata);
 
 		const ctx: AgentContext = {
 			signal,
@@ -92,11 +94,18 @@ export class AgentTaskHandler
 		return { agentType: input.agentType, output };
 	}
 
-	private async enrichInput<T>(raw: T, metadata?: Record<string, unknown>): Promise<T> {
+	private async enrichInput<T>(
+		agentType: string,
+		raw: T,
+		metadata?: Record<string, unknown>
+	): Promise<T> {
 		if (!raw || typeof raw !== 'object') return raw;
 
 		const base = raw as AgentInputRecord;
-		const model = this.modelResolver.resolve({ modelId: base.modelName });
+		const agentSettings = this.storeService.getAgentById(agentType);
+		const model = this.modelResolver.resolve({
+			modelId: base.modelName?.trim() || agentSettings?.models.text,
+		});
 		const providerId = base.providerId?.trim() || model.providerId;
 		const service = this.serviceResolver.resolve({ providerId });
 
@@ -107,7 +116,7 @@ export class AgentTaskHandler
 			modelName: model.modelId,
 		};
 
-		const imageCreds = this.resolveImageCredentials(base);
+		const imageCreds = this.resolveImageCredentials(base, agentSettings?.models.image);
 		if (imageCreds) {
 			enriched.imageProviderId = imageCreds.providerId;
 			enriched.imageApiKey = imageCreds.apiKey;
@@ -125,10 +134,11 @@ export class AgentTaskHandler
 	}
 
 	private resolveImageCredentials(
-		base: AgentInputRecord
+		base: AgentInputRecord,
+		defaultImageModelId?: string
 	): { providerId: string; apiKey: string; modelName: string } | undefined {
 		try {
-			const modelId = base.imageModelName?.trim() || DEFAULT_IMAGE_MODEL_ID;
+			const modelId = base.imageModelName?.trim() || defaultImageModelId || DEFAULT_IMAGE_MODEL_ID;
 			const model = this.modelResolver.resolve({ modelId });
 			const providerId = base.imageProviderId?.trim() || model.providerId;
 			const service = this.serviceResolver.resolve({ providerId });

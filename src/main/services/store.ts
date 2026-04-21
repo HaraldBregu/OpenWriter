@@ -1,8 +1,9 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
 import { getProvider, isKnownProvider, toServiceConfig } from '../../shared/providers';
-import type { Provider, Service } from '../../shared/types';
+import type { AgentSettings, Provider, Service } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
+import { DEFAULT_IMAGE_MODEL_ID, DEFAULT_TEXT_MODEL_ID, findModelById } from '../../shared/models';
 
 export interface WorkspaceInfo {
 	path: string;
@@ -11,6 +12,7 @@ export interface WorkspaceInfo {
 
 export interface StoreSchema {
 	services: Service[];
+	agents: AgentSettings[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
@@ -19,6 +21,16 @@ export interface StoreSchema {
 
 const DEFAULTS: StoreSchema = {
 	services: [],
+	agents: [
+		{
+			id: 'assistant',
+			name: 'Assistant Agent',
+			models: {
+				text: DEFAULT_TEXT_MODEL_ID,
+				image: DEFAULT_IMAGE_MODEL_ID,
+			},
+		},
+	],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
@@ -93,6 +105,63 @@ function cloneService(service: Service): Service {
 	return { provider: { ...service.provider }, apiKey: service.apiKey };
 }
 
+function cloneAgent(agent: AgentSettings): AgentSettings {
+	return {
+		id: agent.id,
+		name: agent.name,
+		models: { ...agent.models },
+	};
+}
+
+function normalizeAgentInput(value: unknown): AgentSettings | null {
+	if (!isRecord(value)) {
+		return null;
+	}
+
+	const id = typeof value.id === 'string' ? value.id.trim() : '';
+	const name = typeof value.name === 'string' ? value.name.trim() : '';
+	const models = isRecord(value.models) ? value.models : {};
+	const textModelId = typeof models.text === 'string' ? models.text.trim() : '';
+	const imageModelId = typeof models.image === 'string' ? models.image.trim() : '';
+
+	if (!id || !name) {
+		return null;
+	}
+
+	return {
+		id,
+		name,
+		models: {
+			...(textModelId && findModelById(textModelId) ? { text: textModelId } : {}),
+			...(imageModelId && findModelById(imageModelId) ? { image: imageModelId } : {}),
+		},
+	};
+}
+
+function normalizeAgents(value: unknown): AgentSettings[] {
+	const normalized = Array.isArray(value)
+		? value.map(normalizeAgentInput).filter((agent): agent is AgentSettings => agent !== null)
+		: [];
+	const assistant = normalized.find((agent) => agent.id === 'assistant');
+
+	if (!assistant) {
+		return DEFAULTS.agents.map(cloneAgent);
+	}
+
+	return normalized.map((agent) =>
+		agent.id === 'assistant'
+			? {
+					...agent,
+					name: agent.name || 'Assistant Agent',
+					models: {
+						text: agent.models.text ?? DEFAULT_TEXT_MODEL_ID,
+						image: agent.models.image ?? DEFAULT_IMAGE_MODEL_ID,
+					},
+				}
+			: agent
+	);
+}
+
 export class StoreService {
 	private store: SettingsStore;
 
@@ -105,6 +174,7 @@ export class StoreService {
 
 		this.migrateLegacyServiceSettings();
 		this.normalizeStoredServices();
+		this.normalizeStoredAgents();
 		this.reconcileStartupState();
 		this.incrementStartupCount();
 	}
@@ -163,6 +233,46 @@ export class StoreService {
 		this.store.set('isInitialized', true);
 
 		return this.getStartupInfo();
+	}
+
+	// --- Agent settings ---
+
+	getAgents(): AgentSettings[] {
+		return this.store.get('agents').map(cloneAgent);
+	}
+
+	getAgentById(agentId: string): AgentSettings | undefined {
+		const normalized = agentId.trim();
+		return this.getAgents().find((agent) => agent.id === normalized);
+	}
+
+	updateAgent(agent: AgentSettings): AgentSettings {
+		const normalized = normalizeAgentInput(agent);
+		if (!normalized) {
+			throw new Error('Invalid agent settings');
+		}
+
+		const agents = this.store.get('agents').map(cloneAgent);
+		const index = agents.findIndex((entry) => entry.id === normalized.id);
+		const nextAgent =
+			normalized.id === 'assistant'
+				? {
+						...normalized,
+						models: {
+							text: normalized.models.text ?? DEFAULT_TEXT_MODEL_ID,
+							image: normalized.models.image ?? DEFAULT_IMAGE_MODEL_ID,
+						},
+					}
+				: normalized;
+
+		if (index >= 0) {
+			agents[index] = nextAgent;
+		} else {
+			agents.push(nextAgent);
+		}
+
+		this.store.set('agents', normalizeAgents(agents));
+		return cloneAgent(nextAgent);
 	}
 
 	// --- Workspace settings ---
@@ -247,6 +357,18 @@ export class StoreService {
 
 		if (needsRewrite) {
 			this.store.set('services', normalized);
+		}
+	}
+
+	private normalizeStoredAgents(): void {
+		const normalized = normalizeAgents(this.rawStore.get('agents'));
+		const current = this.store.get('agents');
+		const needsRewrite =
+			current.length !== normalized.length ||
+			current.some((agent, index) => JSON.stringify(agent) !== JSON.stringify(normalized[index]));
+
+		if (needsRewrite) {
+			this.store.set('agents', normalized);
 		}
 	}
 

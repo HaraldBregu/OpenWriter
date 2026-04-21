@@ -108,6 +108,7 @@ export function bootstrapServices(): BootstrapResult {
 			agentRegistry,
 			logger,
 			serviceResolver,
+			storeService,
 			modelResolver,
 			windowContextManager
 		)
