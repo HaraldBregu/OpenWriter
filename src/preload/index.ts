@@ -462,10 +462,10 @@ const workspace: WorkspaceApi = {
 		});
 	},
 	// -------------------------------------------------------------------------
-	// Contents (resources/content/)
+	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
 	getContents: () => typedInvokeUnwrap(WorkspaceChannels.getContents),
-	getResourcesContents: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesContents),
+	getContentsFolders: () => typedInvokeUnwrap(WorkspaceChannels.getContentsFolders),
 	insertContents: (extensions?: string[]) =>
 		typedInvokeUnwrap(WorkspaceChannels.insertContents, extensions),
 	deleteContent: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteContent, id),
@@ -485,14 +485,13 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.contentsWatcherError, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Files (resources/files/)
+	// Files (workspace/files/)
 	// -------------------------------------------------------------------------
-	getResourcesFiles: () => typedInvokeUnwrap(WorkspaceChannels.getResourcesFiles),
-	insertResourcesFiles: (extensions?: string[]) =>
-		typedInvokeUnwrap(WorkspaceChannels.insertResourcesFiles, extensions),
-	deleteResourcesFileEntry: (id: string) =>
-		typedInvokeUnwrap(WorkspaceChannels.deleteResourcesFileEntry, id),
-	onResourcesFilesChanged: (
+	getFiles: () => typedInvokeUnwrap(WorkspaceChannels.getFiles),
+	insertFiles: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
+	deleteFileEntry: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteFileEntry, id),
+	onFilesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
 			fileId: string;
@@ -500,12 +499,34 @@ const workspace: WorkspaceApi = {
 			timestamp: number;
 		}) => void
 	): (() => void) => {
-		return typedOn(WorkspaceChannels.resourcesFilesChanged, callback);
+		return typedOn(WorkspaceChannels.filesChanged, callback);
 	},
-	onResourcesFilesWatcherError: (
+	onFilesWatcherError: (
 		callback: (error: { error: string; timestamp: number }) => void
 	): (() => void) => {
-		return typedOn(WorkspaceChannels.resourcesFilesWatcherError, callback);
+		return typedOn(WorkspaceChannels.filesWatcherError, callback);
+	},
+	// -------------------------------------------------------------------------
+	// Images (workspace/images/)
+	// -------------------------------------------------------------------------
+	getImages: () => typedInvokeUnwrap(WorkspaceChannels.getImages),
+	insertImages: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertImages, extensions),
+	deleteImage: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteImage, id),
+	onImagesChanged: (
+		callback: (event: {
+			type: 'added' | 'changed' | 'removed';
+			imageId: string;
+			imagePath: string;
+			timestamp: number;
+		}) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.imagesChanged, callback);
+	},
+	onImagesWatcherError: (
+		callback: (error: { error: string; timestamp: number }) => void
+	): (() => void) => {
+		return typedOn(WorkspaceChannels.imagesWatcherError, callback);
 	},
 	// -------------------------------------------------------------------------
 	// Filesystem
