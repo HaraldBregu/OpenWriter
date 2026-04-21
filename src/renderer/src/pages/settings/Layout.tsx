@@ -12,32 +12,6 @@ import {
 import { useLanguageMode } from '@/hooks/use-language-mode';
 import { Separator } from '@/components/ui/Separator';
 
-interface NavItemDefinition {
-	readonly path: string;
-	readonly labelKey: string;
-}
-
-const NAV_SECTIONS: readonly NavItemDefinition[][] = [
-	[
-		{ path: '/settings/general', labelKey: 'settings.tabs.general' },
-		{ path: '/settings/workspace', labelKey: 'settings.tabs.workspace' },
-	],
-	[
-		{ path: '/settings/providers', labelKey: 'settings.tabs.providers' },
-		{ path: '/settings/models', labelKey: 'settings.tabs.models' },
-		{ path: '/settings/agents', labelKey: 'settings.tabs.agents' },
-		{ path: '/settings/skill', labelKey: 'settings.tabs.skill' },
-	],
-	[
-		{ path: '/settings/editor', labelKey: 'settings.tabs.editor' },
-		{ path: '/settings/themes', labelKey: 'settings.tabs.themes' },
-	],
-	[
-		{ path: '/settings/system', labelKey: 'settings.tabs.system' },
-		{ path: '/settings/developer', labelKey: 'settings.tabs.developer' },
-	],
-];
-
 const LINK_BASE = 'block rounded-md px-2.5 py-1 text-sm transition-colors sm:px-3 sm:py-1.5';
 const LINK_ACTIVE = 'bg-accent text-accent-foreground font-medium';
 const LINK_INACTIVE = 'text-muted-foreground hover:text-foreground hover:bg-accent/50';
@@ -58,25 +32,113 @@ export function Layout(): React.JSX.Element {
 						role="navigation"
 						aria-label={t('settings.title')}
 					>
-						{NAV_SECTIONS.map((section, sectionIndex) => (
-							<React.Fragment key={section[0]?.path ?? sectionIndex}>
-								{sectionIndex > 0 ? <Separator className="my-2" /> : null}
-								<div className="space-y-0.5">
-									{section.map((item) => (
-										<NavLink
-											key={item.path}
-											to={item.path}
-											end
-											className={({ isActive }) =>
-												`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
-											}
-										>
-											{t(item.labelKey)}
-										</NavLink>
-									))}
-								</div>
-							</React.Fragment>
-						))}
+						<div className="space-y-0.5">
+							<NavLink
+								to="/settings/general"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.general')}
+							</NavLink>
+							<NavLink
+								to="/settings/workspace"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.workspace')}
+							</NavLink>
+						</div>
+
+						<Separator className="my-2" />
+
+						<div className="space-y-0.5">
+							<NavLink
+								to="/settings/providers"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.providers')}
+							</NavLink>
+							<NavLink
+								to="/settings/models"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.models')}
+							</NavLink>
+							<NavLink
+								to="/settings/agents"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.agents')}
+							</NavLink>
+							<NavLink
+								to="/settings/skill"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.skill')}
+							</NavLink>
+						</div>
+
+						<Separator className="my-2" />
+
+						<div className="space-y-0.5">
+							<NavLink
+								to="/settings/editor"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.editor')}
+							</NavLink>
+							<NavLink
+								to="/settings/themes"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.themes')}
+							</NavLink>
+						</div>
+
+						<Separator className="my-2" />
+
+						<div className="space-y-0.5">
+							<NavLink
+								to="/settings/system"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.system')}
+							</NavLink>
+							<NavLink
+								to="/settings/developer"
+								end
+								className={({ isActive }) =>
+									`${LINK_BASE} ${isActive ? LINK_ACTIVE : LINK_INACTIVE}`
+								}
+							>
+								{t('settings.tabs.developer')}
+							</NavLink>
+						</div>
 					</div>
 				</PageSidebar>
 				<PageSidebarInset>
