@@ -78,12 +78,7 @@ export class FilesService {
 	}
 
 	/**
-	 * Insert (copy) files into the workspace resources/files/ directory.
-	 *
-	 * @param workspacePath - Workspace root path
-	 * @param sourcePaths - Absolute paths of source files to copy
-	 * @param markWritten - Optional callback to mark files as written (prevents watcher loops)
-	 * @returns Array of FileEntry for the newly copied files
+	 * Insert (copy) files into the workspace files/ directory.
 	 */
 	async insertFiles(
 		workspacePath: string,
