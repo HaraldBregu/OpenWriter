@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
-import { useDocumentState } from '../../../../pages/document/hooks';
+import { useDocumentState } from '@/pages/document/hooks';
 
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 10;
