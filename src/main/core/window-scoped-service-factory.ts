@@ -157,16 +157,6 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register documents watcher (depends on workspace)
-	factory.register({
-		key: 'documentsWatcher',
-		factory: async ({ workspaceService, eventBus }) => {
-			const service = new DocumentsWatcherService(eventBus);
-			await service.initialize(workspaceService.getCurrent());
-			return service;
-		},
-	});
-
 	// Register output files service
 	factory.register({
 		key: 'outputFiles',
