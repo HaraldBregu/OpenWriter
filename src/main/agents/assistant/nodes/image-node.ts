@@ -2,8 +2,6 @@ import path from 'node:path';
 import { createGenerateImageTool } from '../../tools';
 import type { NodeContext } from './node';
 
-const IMAGE_RELATIVE_PATH_PATTERN = /images\/[^\s]+/;
-
 export class ImageNode {
 	readonly name = 'image' as const;
 
@@ -16,9 +14,9 @@ export class ImageNode {
 				throw new Error('Image provider not configured');
 			}
 
-			const documentFolder = path.dirname(input.documentPath);
+			const imagesRoot = input.workspacePath ?? path.dirname(input.documentPath);
 			const tool = createGenerateImageTool({
-				cwd: documentFolder,
+				imagesRoot,
 				providerId: input.imageProviderId,
 				apiKey: input.imageApiKey,
 				modelName: input.imageModelName,
@@ -38,8 +36,7 @@ export class ImageNode {
 				output,
 			});
 
-			const match = IMAGE_RELATIVE_PATH_PATTERN.exec(output);
-			const relativePath = match ? match[0] : `images/unknown-${Date.now()}.png`;
+			const relativePath = result.details?.relativePath ?? `images/unknown-${Date.now()}.png`;
 			state.addImage({ relativePath, prompt: imagePrompt });
 			state.completeStep(step, { relativePath, prompt: imagePrompt });
 		} catch (error) {
