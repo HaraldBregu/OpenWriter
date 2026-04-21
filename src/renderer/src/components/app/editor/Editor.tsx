@@ -172,9 +172,12 @@ const Editor = React.memo(
 					onCreate: ({ editor: ed }: { editor: TiptapEditor }) => {
 						const initial = initialValueRef.current;
 						if (!initial) return;
-						ed.commands.setContent(initial, {
-							emitUpdate: false,
-							contentType: 'markdown',
+						queueMicrotask(() => {
+							if (ed.isDestroyed) return;
+							ed.commands.setContent(initial, {
+								emitUpdate: false,
+								contentType: 'markdown',
+							});
 						});
 					},
 					onUpdate: ({ editor: ed, transaction }: { editor: TiptapEditor; transaction: Transaction }) => {
