@@ -3,18 +3,16 @@ import type { AgentContext } from '../core/agent';
 import { AgentValidationError } from '../core/agent-errors';
 import { classifyError, toUserMessage } from '../../shared/ai-utils';
 import {
-	IntentNode,
-	PlannerNode,
-	ImageNode,
+	ControllerNode,
 	TextNode,
-	type AssistantNode,
+	ImageNode,
 	type NodeContext,
-	type NodeEvent,
-	type NodeState,
 } from './nodes';
+import { AssistantState, type ControllerDecision, type StateEvent } from './state';
 import type { AssistantAgentInput, AssistantAgentOutput } from './types';
 
-const PROGRESS_PER_NODE = 25;
+const DEFAULT_MAX_CONTROLLER_STEPS = 12;
+const PROGRESS_PER_STEP_PERCENT = 90;
 
 export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgentOutput> {
 	readonly type = 'assistant';
@@ -44,62 +42,72 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 		input: AssistantAgentInput,
 		ctx: AgentContext
 	): Promise<AssistantAgentOutput> {
-		const state: NodeState = { toolCalls: [], iterations: 0 };
-		const emit = (event: NodeEvent): void => {
+		const state = new AssistantState();
+		const unsubscribe = state.subscribe((event: StateEvent) => {
 			ctx.stream?.(JSON.stringify(event) + '\n');
-		};
-		const nodeCtx: NodeContext = { input, agentCtx: ctx, emit, state };
+		});
+
+		state.setStatus('running');
+
+		const nodeCtx: NodeContext = { input, agentCtx: ctx, state };
+		const controller = new ControllerNode();
+		const textNode = new TextNode();
+		const imageNode = new ImageNode();
+
+		const maxSteps = input.maxIterations ?? DEFAULT_MAX_CONTROLLER_STEPS;
 
 		try {
-			const planning: AssistantNode[] = [new IntentNode(), new PlannerNode()];
-			let step = 0;
-			for (const node of planning) {
+			for (let step = 1; step <= maxSteps; step++) {
 				this.ensureNotAborted(ctx.signal);
-				step++;
-				ctx.progress?.(step * PROGRESS_PER_NODE, node.name);
-				await this.runNode(node, nodeCtx);
+				ctx.progress?.(progressFor(step, maxSteps), `step ${step}`);
+
+				const decision = await controller.decide(nodeCtx);
+				if (decision.action === 'done') break;
+
+				this.ensureNotAborted(ctx.signal);
+				await dispatch(decision, nodeCtx, textNode, imageNode);
 			}
 
-			const execution = planExecution(state);
-			for (const node of execution) {
-				this.ensureNotAborted(ctx.signal);
-				step++;
-				ctx.progress?.(Math.min(90, step * PROGRESS_PER_NODE), node.name);
-				await this.runNode(node, nodeCtx);
-			}
-
+			state.setStatus('done');
 			ctx.progress?.(100, 'done');
 
 			return {
-				content: state.textResult ?? '',
-				toolCalls: state.toolCalls,
+				content: state.finalText,
+				toolCalls: [...state.toolCalls],
 				iterations: state.iterations,
 			};
 		} catch (error) {
 			const kind = classifyError(error);
-			if (kind === 'abort') throw error;
+			if (kind === 'abort') {
+				state.setStatus('aborted');
+				throw error;
+			}
+			state.setStatus('error');
 			const raw = error instanceof Error ? error.message : String(error);
 			throw new Error(toUserMessage(kind, raw));
-		}
-	}
-
-	private async runNode(node: AssistantNode, ctx: NodeContext): Promise<void> {
-		try {
-			await node.run(ctx);
-		} catch (error) {
-			const raw = error instanceof Error ? error.message : String(error);
-			ctx.emit({ node: node.name, status: 'error', error: raw });
-			throw error;
+		} finally {
+			unsubscribe();
 		}
 	}
 }
 
-function planExecution(state: NodeState): AssistantNode[] {
-	const { intent, order } = state;
-	if (intent === 'none') return [];
-	if (intent === 'image') return [new ImageNode()];
-	if (intent === 'text') return [new TextNode()];
-	return order === 'text_first'
-		? [new TextNode(), new ImageNode()]
-		: [new ImageNode(), new TextNode()];
+async function dispatch(
+	decision: ControllerDecision,
+	ctx: NodeContext,
+	textNode: TextNode,
+	imageNode: ImageNode
+): Promise<void> {
+	if (decision.action === 'text') {
+		const instruction = decision.instruction?.trim() || ctx.input.prompt;
+		await textNode.run(ctx, instruction);
+		return;
+	}
+	if (decision.action === 'image') {
+		const imagePrompt = decision.imagePrompt?.trim() || ctx.input.prompt;
+		await imageNode.run(ctx, imagePrompt);
+	}
+}
+
+function progressFor(step: number, maxSteps: number): number {
+	return Math.min(PROGRESS_PER_STEP_PERCENT, Math.round((step / maxSteps) * PROGRESS_PER_STEP_PERCENT));
 }

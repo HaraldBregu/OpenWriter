@@ -177,7 +177,7 @@ export const TitleBar = React.memo(function TitleBar({
 						onClick={() => toggleSidebar('agentic')}
 						className={
 							isMac
-								? 'flex items-center justify-center h-full text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
+								? 'flex items-center justify-center h-full px-3 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
 								: btnNoHover
 						}
 						title={t('titleBar.toggleAgenticSidebar')}
