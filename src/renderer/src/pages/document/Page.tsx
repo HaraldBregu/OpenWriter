@@ -19,7 +19,7 @@ import {
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import { v7 as uuidv7 } from 'uuid';
-import { subscribeToTask, type TaskSnapshot } from '../../services/task-event-bus';
+import type { TaskEvent } from '../../../../shared/types';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
