@@ -34,7 +34,7 @@ const generateImageSchema: JSONSchema = {
 		},
 		size: {
 			type: 'string',
-			enum: ['256x256', '512x512', '1024x1024', '1792x1024', '1024x1792'],
+			enum: ['1024x1024', '1024x1536', '1536x1024', 'auto'],
 			description: 'Output size. Defaults to 1024x1024.',
 		},
 	},
