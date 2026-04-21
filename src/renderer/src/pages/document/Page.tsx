@@ -338,6 +338,23 @@ function PageContent(): ReactElement {
 		appDispatch(documentMetadataPatched({ id, title, updatedAt: Date.now() }));
 	}, [id, title, loaded, appDispatch]);
 
+	useEffect(() => {
+		if (!id || typeof window.task?.onEvent !== 'function') return;
+
+		window.task.list().then((res) => {
+			if (!res.success) return;
+			const docTasks = res.data.filter((t) => t.metadata?.documentId === id);
+			docTasks.forEach((t) => {
+				console.log('[document task]', t.taskId, t.status, t);
+			});
+		});
+
+		return window.task.onEvent((event) => {
+			if (event.metadata?.documentId !== id) return;
+			console.log('[document task progress]', event.taskId, event.state, event);
+		});
+	}, [id]);
+
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
