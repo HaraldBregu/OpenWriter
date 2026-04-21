@@ -473,6 +473,7 @@ function Container({ children }: LayoutProps) {
 						)}
 
 						<SidebarGroup>
+							<SidebarSeparator className="my-2" />
 							<SidebarGroupContent>
 								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
