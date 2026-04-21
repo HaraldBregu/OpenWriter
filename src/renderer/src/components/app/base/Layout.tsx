@@ -194,6 +194,11 @@ function Container({ children }: LayoutProps) {
 			icon: Settings,
 		},
 		{
+			value: 'agents',
+			label: t('settings.tabs.agents', 'Agents'),
+			icon: Sparkles,
+		},
+		{
 			value: 'system',
 			label: t('settings.tabs.system', 'System'),
 			icon: Monitor,
@@ -230,6 +235,9 @@ function Container({ children }: LayoutProps) {
 			switch (value) {
 				case 'settings':
 					navigate('/settings');
+					break;
+				case 'agents':
+					navigate('/settings/agents');
 					break;
 				case 'system':
 					navigate('/settings/system');
