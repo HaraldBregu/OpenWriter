@@ -127,15 +127,19 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 		});
 	}, [resources, setSelected]);
 
-	const handleIndex = useCallback(() => {
+	const handleIndex = useCallback(async () => {
 		if (!workspacePath || indexing) return;
-		window.task.submit({
+		const res = await window.task.submit({
 			type: 'index-resources',
 			input: {
 				workspacePath,
 				resourcesPath: `${workspacePath}/${RESOURCES_DIR}`,
 			},
 		});
+		if (res.success) {
+			setIndexingTaskId(res.data.taskId);
+			setIndexingStatus('queued');
+		}
 	}, [indexing, workspacePath]);
 
 	const handleUpload = useCallback(() => {
