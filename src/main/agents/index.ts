@@ -1,27 +1,19 @@
 /**
  * Agents — feature-scoped AI capability strategies.
  *
- * Each subfolder owns a single capability (text, image, rag, ocr, ...) and
+ * Each subfolder owns a single capability (assistant, rag, ocr, ...) and
  * exports its Agent class plus its input/output types. Core primitives
  * (Agent interface, BaseAgent, AgentRegistry) live under `./core`.
- *
- * New agents follow the same shape:
- *   1. Create `agents/<name>/` with `types.ts`, `<name>-agent.ts`, `index.ts`.
- *   2. Extend `BaseAgent<Input, Output>` and implement `run`.
- *   3. Re-export from this barrel.
  */
 
 export * from './core';
-export { TextAgent } from './text';
-export type { TextAgentInput, TextAgentOutput } from './text';
-export { ImageAgent } from './image';
+export { AssistantAgent } from './assistant';
 export type {
-	ImageAgentInput,
-	ImageAgentOutput,
-	ImageSize,
-	ImageResponseFormat,
-	GeneratedImage,
-} from './image';
+	AssistantAgentInput,
+	AssistantAgentOutput,
+	AssistantFile,
+	AssistantToolCallRecord,
+} from './assistant';
 export { RagAgent, InMemoryVectorStore, splitText } from './rag';
 export type {
 	RagAgentInput,
