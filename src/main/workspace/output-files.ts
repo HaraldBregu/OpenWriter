@@ -124,12 +124,11 @@ const APP_DEFAULTS = {
  *   - Load individual files by type and ID
  *   - Delete output files / folders
  *   - Watch for external file changes
- *   - Organize files by type (output/<type>/)
  *   - Prevent infinite loops with file watcher
  *   - Transparently migrate legacy formats on first load
  *
  * File Structure:
- *   <workspace>/output/<type>/<uuid>/
+ *   <workspace>/documents/<uuid>/
  *     +-- config.json          (metadata only)
  *     +-- content.md           (single content file)
  *
