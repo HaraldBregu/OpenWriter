@@ -23,6 +23,12 @@ export { createReadTool, readTool } from "./read.js";
 export type { ReadToolInput, ReadToolDetails } from "./read.js";
 export { createWriteTool, writeTool } from "./write.js";
 export type { WriteToolInput } from "./write.js";
+export { createGenerateImageTool } from "./generate-image.js";
+export type {
+	GenerateImageToolInput,
+	GenerateImageToolDeps,
+	GenerateImageSize,
+} from "./generate-image.js";
 export { toOpenAITools, executeToolCalls } from "./openai-adapter.js";
 export type { OpenAIChatTool, ParsedToolCall, ToolExecutionResult } from "./openai-adapter.js";
 
