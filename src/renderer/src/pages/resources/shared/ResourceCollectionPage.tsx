@@ -13,7 +13,7 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/AlertDialog';
 import { Button } from '@/components/ui/Button';
-import { useTaskListener } from '@/hooks/use-task-listener';
+import type { TaskEvent, TaskState } from '../../../../../shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
 	importResourcesRequested,
