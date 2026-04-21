@@ -443,30 +443,6 @@ export class Workspace implements Disposable {
 		return current;
 	}
 
-	private validateDownloadUrl(url: string): void {
-		const urlObj = new URL(url);
-
-		if (urlObj.protocol !== 'https:') {
-			throw new Error(`Invalid protocol "${urlObj.protocol}". Only HTTPS downloads are allowed.`);
-		}
-
-		const hostname = urlObj.hostname;
-		const privatePatterns = [
-			/^localhost$/i,
-			/^127\./,
-			/^192\.168\./,
-			/^10\./,
-			/^172\.(1[6-9]|2\d|3[01])\./,
-			/^::1$/,
-			/^fc00:/,
-			/^fd00:/,
-		];
-
-		if (privatePatterns.some((pattern) => pattern.test(hostname))) {
-			throw new Error(`Downloads from private networks are not allowed: ${hostname}`);
-		}
-	}
-
 	private isValidOutputType(type: string): type is OutputType {
 		return (VALID_OUTPUT_TYPES as readonly string[]).includes(type);
 	}
