@@ -153,23 +153,16 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.openResourcesFolder,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
-				const resourcesDir = this.mgr(event, container).getResourcesFolderPath();
-				await shell.openPath(resourcesDir);
-			}, WorkspaceChannels.openResourcesFolder)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.openResourcesContentsFolder,
+			WorkspaceChannels.openContentsFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
 				const contentsService = ctx.getService<ContentsService>('contentsService', container);
 				const currentPath = workspaceService.getCurrent();
 				if (!currentPath) return;
+				await contentsService.ensureContentsDir(currentPath);
 				await shell.openPath(contentsService.getContentsDir(currentPath));
-			}, WorkspaceChannels.openResourcesContentsFolder)
+			}, WorkspaceChannels.openContentsFolder)
 		);
 
 		ipcMain.handle(
@@ -180,8 +173,22 @@ export class WorkspaceIpc implements IpcModule {
 				const filesService = ctx.getService<FilesService>('filesService', container);
 				const currentPath = workspaceService.getCurrent();
 				if (!currentPath) return;
+				await filesService.ensureFilesDir(currentPath);
 				await shell.openPath(filesService.getFilesDir(currentPath));
 			}, WorkspaceChannels.openFilesFolder)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.openImagesFolder,
+			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
+				const ctx = getWindowContext(event, container);
+				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
+				const imagesService = ctx.getService<ImagesService>('imagesService', container);
+				const currentPath = workspaceService.getCurrent();
+				if (!currentPath) return;
+				await imagesService.ensureImagesDir(currentPath);
+				await shell.openPath(imagesService.getImagesDir(currentPath));
+			}, WorkspaceChannels.openImagesFolder)
 		);
 
 		ipcMain.handle(
