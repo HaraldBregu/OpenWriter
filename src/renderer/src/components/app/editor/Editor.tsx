@@ -111,6 +111,7 @@ const Editor = React.memo(
 				onPromptSubmit,
 				onInsertContent,
 				onOpenChat,
+				onAssistantAction,
 				documentId,
 				onEditorReady,
 				onUndo,
