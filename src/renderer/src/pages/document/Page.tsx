@@ -481,6 +481,7 @@ function PageContent(): ReactElement {
 									/>
 								</PageHeaderItems>
 							</PageHeader>
+							<TaskStatusBar taskId={assistantActiveTaskId} />
 							<div className="flex min-h-0 flex-1 flex-col">
 								{loaded && (
 									<Editor
