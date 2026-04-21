@@ -421,87 +421,91 @@ function PageContent(): ReactElement {
 
 	return (
 		<PageContainer>
-			<PageHeader>
-				<PageHeaderTitle>
-					<Input
-						type="text"
-						value={title}
-						onChange={(e) => handleTitleChange(e.target.value)}
-						placeholder={t('writing.titlePlaceholder')}
-						className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
-					/>
-				</PageHeaderTitle>
-				<PageHeaderItems>
-					<Button
-						variant="ghost"
-						size="icon"
-						title="Undo"
-						aria-label="Undo"
-						onClick={handleUndo}
-						disabled={!canUndo}
-					>
-						<Undo2 aria-hidden="true" />
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						title="Redo"
-						aria-label="Redo"
-						onClick={handleRedo}
-						disabled={!canRedo}
-					>
-						<Redo2 aria-hidden="true" />
-					</Button>
-					<HistoryMenu
-						entries={historyEntries}
-						currentEntryId={currentHistoryEntryId}
-						onRestoreEntry={handleRestoreHistoryEntry}
-					/>
-					<Separator orientation="vertical" className="mx-2 h-5" />
-					<Button
-						variant="ghost"
-						size="icon"
-						title={t('titleBar.toggleAgenticSidebar')}
-						aria-label={t('titleBar.toggleAgenticSidebar')}
-						aria-expanded={activeSidebar === 'agentic'}
-						onClick={() => toggleSidebar('agentic')}
-					>
-						<Bot aria-hidden="true" />
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						title={t('titleBar.toggleSidebar')}
-						aria-label={t('titleBar.toggleSidebar')}
-						aria-expanded={activeSidebar === 'config'}
-						onClick={() => toggleSidebar('config')}
-					>
-						<Info aria-hidden="true" />
-					</Button>
-				</PageHeaderItems>
-			</PageHeader>
 			<PageBody>
 				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 					<ResizablePanel defaultSize="70%" minSize="40%">
-						{loaded && (
-							<Editor
-								key={id}
-								disabled={assistantIsRunning}
-								ref={editorRef}
-								value={content}
-								externalValueVersion={contentVersion}
-								onChange={handleContentChange}
-								onSelectionChange={handleSelectionChange}
-								onPromptSubmit={handlePromptSubmit}
-								onInsertContent={handleInsertContent}
-								onOpenChat={handleOpenChat}
-								onAssistantAction={handleAssistantAction}
-								documentId={id}
-								onEditorReady={handleEditorReady}
-								onUndo={handleUndo}
-								onRedo={handleRedo}
-							/>
-						)}
+						<div className="flex h-full flex-col">
+							<PageHeader>
+								<PageHeaderTitle>
+									<Input
+										type="text"
+										value={title}
+										onChange={(e) => handleTitleChange(e.target.value)}
+										placeholder={t('writing.titlePlaceholder')}
+										className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+									/>
+								</PageHeaderTitle>
+								<PageHeaderItems>
+									<Button
+										variant="ghost"
+										size="icon"
+										title="Undo"
+										aria-label="Undo"
+										onClick={handleUndo}
+										disabled={!canUndo}
+									>
+										<Undo2 aria-hidden="true" />
+									</Button>
+									<Button
+										variant="ghost"
+										size="icon"
+										title="Redo"
+										aria-label="Redo"
+										onClick={handleRedo}
+										disabled={!canRedo}
+									>
+										<Redo2 aria-hidden="true" />
+									</Button>
+									<HistoryMenu
+										entries={historyEntries}
+										currentEntryId={currentHistoryEntryId}
+										onRestoreEntry={handleRestoreHistoryEntry}
+									/>
+									<Separator orientation="vertical" className="mx-2 h-5" />
+									<Button
+										variant="ghost"
+										size="icon"
+										title={t('titleBar.toggleAgenticSidebar')}
+										aria-label={t('titleBar.toggleAgenticSidebar')}
+										aria-expanded={activeSidebar === 'agentic'}
+										onClick={() => toggleSidebar('agentic')}
+									>
+										<Bot aria-hidden="true" />
+									</Button>
+									<Button
+										variant="ghost"
+										size="icon"
+										title={t('titleBar.toggleSidebar')}
+										aria-label={t('titleBar.toggleSidebar')}
+										aria-expanded={activeSidebar === 'config'}
+										onClick={() => toggleSidebar('config')}
+									>
+										<Info aria-hidden="true" />
+									</Button>
+								</PageHeaderItems>
+							</PageHeader>
+							<div className="flex min-h-0 flex-1 flex-col">
+								{loaded && (
+									<Editor
+										key={id}
+										disabled={assistantIsRunning}
+										ref={editorRef}
+										value={content}
+										externalValueVersion={contentVersion}
+										onChange={handleContentChange}
+										onSelectionChange={handleSelectionChange}
+										onPromptSubmit={handlePromptSubmit}
+										onInsertContent={handleInsertContent}
+										onOpenChat={handleOpenChat}
+										onAssistantAction={handleAssistantAction}
+										documentId={id}
+										onEditorReady={handleEditorReady}
+										onUndo={handleUndo}
+										onRedo={handleRedo}
+									/>
+								)}
+							</div>
+						</div>
 					</ResizablePanel>
 					{activeSidebar && <ResizableHandle />}
 					<ResizablePanel
