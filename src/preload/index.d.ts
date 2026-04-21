@@ -219,6 +219,17 @@ export interface WorkspaceApi {
 	/** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
 	onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
+	// Deprecated resources API — main-side removed, renderer surface kept.
+	// Every call rejects at runtime; listeners are no-ops returning unsubscribe.
+	// -------------------------------------------------------------------------
+	importFiles: (extensions?: string[]) => Promise<ResourceInfo[]>;
+	importByPaths: (paths: string[]) => Promise<ResourceInfo[]>;
+	downloadFromUrl: (url: string) => Promise<ResourceInfo>;
+	loadDocuments: () => Promise<ResourceInfo[]>;
+	deleteDocument: (id: string) => Promise<void>;
+	onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void;
+	onDocumentWatcherError: (callback: (error: WatcherError) => void) => () => void;
+	// -------------------------------------------------------------------------
 	// Indexed directory management
 	// -------------------------------------------------------------------------
 	listDirectories: () => Promise<DirectoryEntry[]>;
