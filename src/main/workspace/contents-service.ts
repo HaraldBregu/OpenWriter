@@ -117,12 +117,7 @@ export class ContentsService {
 	}
 
 	/**
-	 * Insert (copy) files into the workspace resources/content/ directory.
-	 *
-	 * @param workspacePath - Workspace root path
-	 * @param sourcePaths - Absolute paths of source files to copy
-	 * @param markWritten - Optional callback to mark files as written (prevents watcher loops)
-	 * @returns Array of ResourceInfo for the newly copied files
+	 * Insert (copy) files into the workspace contents/ directory.
 	 */
 	async insertContents(
 		workspacePath: string,
