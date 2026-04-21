@@ -301,13 +301,13 @@ export interface ResourceInfo {
 	lastModified: number;
 }
 
-// ---- Files (workspace/resources/files/) ------------------------------------
+// ---- Files (workspace/files/) ---------------------------------------------
 
-/** Allowed file extensions for the resources/files/ folder. */
-export const RESOURCES_FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
+/** Allowed file extensions for the workspace files/ folder. */
+export const FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
 
-export type ResourcesFilesViewMode = 'list' | 'grid';
-export type ResourcesFileTypeFilter =
+export type FilesViewMode = 'list' | 'grid';
+export type FileTypeFilter =
 	| 'all'
 	| 'image'
 	| 'video'
@@ -316,10 +316,10 @@ export type ResourcesFileTypeFilter =
 	| 'markdown'
 	| 'text'
 	| 'pdf';
-export type ResourcesFilesSortKey = 'name' | 'createdAt' | 'mimeType' | 'size';
-export type ResourcesFilesSortDirection = 'none' | 'asc' | 'desc';
+export type FilesSortKey = 'name' | 'createdAt' | 'mimeType' | 'size';
+export type FilesSortDirection = 'none' | 'asc' | 'desc';
 
-export const RESOURCES_FILE_TYPE_FILTERS: { value: ResourcesFileTypeFilter; label: string }[] = [
+export const FILE_TYPE_FILTERS: { value: FileTypeFilter; label: string }[] = [
 	{ value: 'all', label: 'All' },
 	{ value: 'image', label: 'Images' },
 	{ value: 'video', label: 'Video' },
@@ -331,13 +331,13 @@ export const RESOURCES_FILE_TYPE_FILTERS: { value: ResourcesFileTypeFilter; labe
 ];
 
 export interface FileEntry {
-	/** Unique identifier — the file's basename within resources/files/ */
+	/** Unique identifier — the file's basename within files/ */
 	id: string;
 	/** Display name (basename) */
 	name: string;
 	/** Absolute path on disk */
 	path: string;
-	/** Path relative to the workspace resources/files/ folder */
+	/** Path relative to the workspace files/ folder */
 	relativePath: string;
 	/** Size in bytes */
 	size: number;
@@ -347,6 +347,46 @@ export interface FileEntry {
 	createdAt: number;
 	/** Timestamp (ms) of the last modification on disk */
 	modifiedAt: number;
+}
+
+// ---- Images (workspace/images/) -------------------------------------------
+
+/** Allowed image extensions for the workspace images/ folder. */
+export const IMAGES_EXTENSIONS = [
+	'.jpg',
+	'.jpeg',
+	'.png',
+	'.gif',
+	'.webp',
+	'.svg',
+	'.avif',
+	'.bmp',
+] as const;
+
+export interface ImageEntry {
+	/** Unique identifier — the file's basename within images/ */
+	id: string;
+	/** Display name (basename) */
+	name: string;
+	/** Absolute path on disk */
+	path: string;
+	/** Path relative to the workspace images/ folder */
+	relativePath: string;
+	/** Size in bytes */
+	size: number;
+	/** Detected MIME type */
+	mimeType: string;
+	/** Timestamp (ms) when the image was first imported / detected */
+	createdAt: number;
+	/** Timestamp (ms) of the last modification on disk */
+	modifiedAt: number;
+}
+
+export interface ImageEntryChangeEvent {
+	type: 'added' | 'changed' | 'removed';
+	imageId: string;
+	imagePath: string;
+	timestamp: number;
 }
 
 export interface FileEntryChangeEvent {
