@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
-import type { TrackedTaskState } from '@/services/task-store';
+import type { TrackedTask } from './types';
 import { formatEventTime } from './task-helpers';
 
 interface LogPanelProps {
-	task: TrackedTaskState;
+	task: TrackedTask;
 	onClose: () => void;
 }
 
