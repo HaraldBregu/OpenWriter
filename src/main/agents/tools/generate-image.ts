@@ -19,12 +19,19 @@ export interface GenerateImageToolInput {
 }
 
 export interface GenerateImageToolDeps {
-	cwd: string;
+	/** Root directory under which the `images/` folder is created. Typically the workspace root. */
+	imagesRoot: string;
 	providerId: string;
 	apiKey: string;
 	modelName: string;
 	/** Absolute path to the document's content.md. The tool appends the markdown image reference here. */
 	contentFilePath: string;
+}
+
+export interface GenerateImageToolDetails {
+	readonly absolutePath: string;
+	readonly relativePath: string;
+	readonly filename: string;
 }
 
 const generateImageSchema: JSONSchema = {
