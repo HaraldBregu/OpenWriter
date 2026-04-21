@@ -67,6 +67,7 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			disable,
 			closePrompt,
 			clearPromptInput,
+			insertPromptView,
 			insertText,
 			insertMarkdownText,
 		}),
@@ -77,6 +78,7 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			disable,
 			closePrompt,
 			clearPromptInput,
+			insertPromptView,
 			insertText,
 			insertMarkdownText,
 		]
