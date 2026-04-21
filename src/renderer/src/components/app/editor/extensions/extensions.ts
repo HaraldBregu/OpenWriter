@@ -57,7 +57,9 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		PromptExtension.configure({
 			onPromptSubmit: handlers.onPromptSubmit,
 		}),
-		Markdown,
+		Markdown.configure({
+			markedOptions: { gfm: true },
+		}),
 		Placeholder.configure({
 			placeholder: ({ node }) => {
 				if (node.type.name === 'paragraph') {
