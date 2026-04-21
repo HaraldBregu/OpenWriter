@@ -154,7 +154,7 @@ export function DataProvider({ children }: DataProviderProps): ReactElement {
 	}, [setSelected]);
 
 	const handleOpenResourcesFolder = useCallback(() => {
-		window.workspace.openResourcesFolder();
+		window.workspace.openWorkspaceFolder();
 	}, []);
 
 	const handleOpenDataFolder = useCallback(() => {
