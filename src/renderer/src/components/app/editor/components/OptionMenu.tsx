@@ -12,9 +12,9 @@ import {
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import type { ImageEntry } from '../../../../../../../shared/types';
 import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
-import { useDocumentState } from '@/pages/document/hooks';
 
 const pluginKey = new PluginKey('optionMenu');
 const ITEM_COUNT = 10;
@@ -28,11 +28,11 @@ function toLocalResourceUrl(filePath: string): string {
 
 export function OptionMenu(): React.JSX.Element {
 	const { editor, onInsertContent } = useEditor();
-	const { images } = useDocumentState();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
+	const [images, setImages] = useState<ImageEntry[]>([]);
 	const slashPosRef = useRef<number | null>(null);
 	const menuControlsRef = useRef<OptionMenuControls>({ forceHide: () => undefined });
 	const isLockedRef = useRef(false);
@@ -48,6 +48,26 @@ export function OptionMenu(): React.JSX.Element {
 
 	const onInsertContentRef = useRef(onInsertContent);
 	onInsertContentRef.current = onInsertContent;
+
+	useEffect(() => {
+		let cancelled = false;
+		const loadImages = async (): Promise<void> => {
+			try {
+				const entries = await window.workspace.getImages();
+				if (!cancelled) setImages(entries);
+			} catch {
+				if (!cancelled) setImages([]);
+			}
+		};
+		void loadImages();
+		const unsubscribe = window.workspace.onImagesChanged(() => {
+			void loadImages();
+		});
+		return () => {
+			cancelled = true;
+			unsubscribe();
+		};
+	}, []);
 
 	useEffect(() => {
 		setSelectedIndex(0);
@@ -143,15 +163,15 @@ export function OptionMenu(): React.JSX.Element {
 		onInsertContentRef.current?.();
 	}, [editor, deleteSlash]);
 
-	const runImageFromFile = useCallback(
-		(fileName: string, altName?: string) => {
+	const runImageFromWorkspace = useCallback(
+		(image: ImageEntry) => {
 			const ctx = deleteSlash();
 			if (!ctx) return;
 			editor
 				.chain()
 				.focus()
 				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
-				.setImage({ src: `images/${fileName}`, alt: altName ?? fileName })
+				.setImage({ src: toLocalResourceUrl(image.path), alt: image.name })
 				.run();
 		},
 		[editor, deleteSlash]
@@ -224,7 +244,7 @@ export function OptionMenu(): React.JSX.Element {
 				if (event.key === 'Enter') {
 					event.preventDefault();
 					const img = imagesRef.current[imgIdx];
-					if (img) runImageFromFile(img.fileName);
+					if (img) runImageFromWorkspace(img);
 					return true;
 				}
 
@@ -261,7 +281,7 @@ export function OptionMenu(): React.JSX.Element {
 
 			return false;
 		},
-		[runByIndex, runImageFromFile]
+		[runByIndex, runImageFromWorkspace]
 	);
 
 	const onKeyEventRef = useRef(onKeyEvent);
@@ -373,23 +393,23 @@ export function OptionMenu(): React.JSX.Element {
 								{images.map((img, i) => (
 									<button
 										type="button"
-										key={img.fileName}
+										key={img.id}
 										className={
 											'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
 											(i === imageSelectedIndex
 												? 'border-foreground ring-2 ring-ring'
 												: 'border-border/70')
 										}
-										title={img.fileName}
+										title={img.name}
 										onMouseEnter={() => setImageSelectedIndex(i)}
 										onMouseDown={(e) => {
 											e.preventDefault();
-											runImageFromFile(img.fileName);
+											runImageFromWorkspace(img);
 										}}
 									>
 										<img
-											src={toLocalResourceUrl(img.filePath)}
-											alt={img.fileName}
+											src={toLocalResourceUrl(img.path)}
+											alt={img.name}
 											className="h-full w-full object-cover"
 											loading="lazy"
 										/>
