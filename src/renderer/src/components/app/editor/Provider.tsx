@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useReducer } from 'react';
 import type { Editor } from '@tiptap/core';
 import { EditorContext } from './context/context';
-import type { EditorContextValue } from './context/context';
+import type { AssistantAction, EditorContextValue } from './context/context';
 import { editorReducer } from './context/reducer';
 import type { EditorState } from './context/state';
 import type { HoveredBlock } from './context/state';
@@ -13,6 +13,7 @@ interface ProviderProps {
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	onInsertContent?: () => void;
 	onOpenChat?: () => void;
+	onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
 	onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
 }
@@ -22,6 +23,7 @@ export function Provider({
 	containerRef,
 	onInsertContent,
 	onOpenChat,
+	onAssistantAction,
 	onImageInsert,
 	children,
 }: ProviderProps): React.JSX.Element {
