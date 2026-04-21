@@ -106,10 +106,10 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	}, [dispatch, section.supportsIndexing]);
 
 	useEffect(() => {
-		if (section.supportsIndexing && indexingTask.isCompleted) {
+		if (section.supportsIndexing && indexingTaskCompleted) {
 			dispatch(loadIndexingInfo());
 		}
-	}, [dispatch, indexingTask.isCompleted, section.supportsIndexing]);
+	}, [dispatch, indexingTaskCompleted, section.supportsIndexing]);
 
 	useEffect(() => {
 		setSelected((current) => {
