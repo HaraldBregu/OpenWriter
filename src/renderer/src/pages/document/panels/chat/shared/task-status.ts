@@ -1,7 +1,7 @@
-import type { TaskSnapshot } from '../../../../../services/task-event-bus';
+import type { TaskState } from '../../../../../../shared/types';
 import type { ChatMessageStatus } from './types';
 
-export function mapTaskStatusToChatStatus(status: TaskSnapshot['status']): ChatMessageStatus {
+export function mapTaskStatusToChatStatus(status: TaskState): ChatMessageStatus {
 	switch (status) {
 		case 'queued':
 		case 'started':
