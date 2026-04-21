@@ -77,6 +77,24 @@ export interface CustomThemeInfo {
 	readonly license: string;
 }
 
+/**
+ * Serializable skill metadata returned to the renderer over IPC.
+ * Mirrors the packaged-skill shape (see src/main/agents/skills) but
+ * strips the runtime `instructions` body — the renderer only needs
+ * identity + selection hints for display.
+ *
+ * `id` is the folder name on disk (stable identifier).
+ */
+export interface SkillInfo {
+	readonly id: string;
+	readonly name: string;
+	readonly description: string;
+	readonly scope: 'bundled' | 'user' | 'plugin';
+	readonly emoji?: string;
+	readonly tags?: readonly string[];
+	readonly filePath?: string;
+}
+
 export type ProviderId = (typeof PROVIDERS)[number]['id'];
 export type ProviderName = (typeof PROVIDERS)[number]['name'];
 

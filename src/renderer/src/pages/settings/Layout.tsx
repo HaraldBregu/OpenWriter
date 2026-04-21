@@ -28,159 +28,153 @@ export function Layout(): React.JSX.Element {
 			</PageHeader>
 			<PageBody className="flex-row overflow-hidden">
 				<PageSidebar className="w-64 border-r-0">
-					<div
-						className="px-2 pt-6 pb-3 sm:px-3 sm:pt-12 sm:pb-4"
-						role="navigation"
-						aria-label={t('settings.title')}
-					>
-						<ItemGroup className="gap-0.5">
-							<NavLink to="/settings/general" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.general')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/workspace" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.workspace')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-						</ItemGroup>
+					<ItemGroup className="gap-0.5">
+						<NavLink to="/settings/general" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.general')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/workspace" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.workspace')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+					</ItemGroup>
 
-						<ItemSeparator />
+					<ItemSeparator />
 
-						<ItemGroup className="gap-0.5">
-							<NavLink to="/settings/providers" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.providers')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/models" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.models')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/agents" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.agents')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/skill" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.skill')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-						</ItemGroup>
+					<ItemGroup className="gap-0.5">
+						<NavLink to="/settings/providers" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.providers')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/models" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.models')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/agents" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.agents')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/skill" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.skill')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+					</ItemGroup>
 
-						<ItemSeparator />
+					<ItemSeparator />
 
-						<ItemGroup className="gap-0.5">
-							<NavLink to="/settings/editor" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.editor')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/themes" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.themes')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-						</ItemGroup>
+					<ItemGroup className="gap-0.5">
+						<NavLink to="/settings/editor" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.editor')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/themes" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.themes')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+					</ItemGroup>
 
-						<ItemSeparator />
+					<ItemSeparator />
 
-						<ItemGroup className="gap-0.5">
-							<NavLink to="/settings/system" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.system')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-							<NavLink to="/settings/developer" end className={LINK_BASE}>
-								{({ isActive }) => (
-									<Item
-										size="xs"
-										role="listitem"
-										className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
-									>
-										<ItemContent>
-											<ItemTitle>{t('settings.tabs.developer')}</ItemTitle>
-										</ItemContent>
-									</Item>
-								)}
-							</NavLink>
-						</ItemGroup>
-					</div>
+					<ItemGroup className="gap-0.5">
+						<NavLink to="/settings/system" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.system')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+						<NavLink to="/settings/developer" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.developer')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
+					</ItemGroup>
 				</PageSidebar>
 				<PageSidebarInset>
 					<Outlet />

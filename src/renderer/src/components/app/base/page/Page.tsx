@@ -131,7 +131,7 @@ export const PageSidebar = memo(function PageSidebar({
 	return (
 		<aside
 			className={cn(
-				'flex shrink-0 flex-col overflow-y-auto',
+				'flex shrink-0 flex-col overflow-y-auto p-4 mt-6',
 				state.sidebarSide === 'left' ? 'order-first border-r' : 'order-last border-l',
 				className
 			)}
@@ -151,6 +151,6 @@ export const PageSidebarInset = memo(function PageSidebarInset({
 	className,
 }: PageSidebarInsetProps): React.ReactElement {
 	return (
-		<div className={cn('flex min-w-0 flex-1 flex-col overflow-y-auto', className)}>{children}</div>
+		<div className={cn('flex min-w-0 flex-1 flex-col overflow-y-auto p-4', className)}>{children}</div>
 	);
 });
