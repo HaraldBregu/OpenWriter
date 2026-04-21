@@ -1,5 +1,5 @@
 import { Database, File, FileText, type LucideIcon } from 'lucide-react';
-import { RESOURCES_FILES_EXTENSIONS, type ResourceInfo } from '../../../../../shared/types';
+import { FILES_EXTENSIONS, type ResourceInfo } from '../../../../../shared/types';
 
 export type ResourceSectionId = 'files' | 'content' | 'data';
 
