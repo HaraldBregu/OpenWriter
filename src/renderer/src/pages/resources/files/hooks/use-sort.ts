@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import type {
-	ResourcesFilesSortDirection as SortDirection,
-	ResourcesFilesSortKey as SortKey,
+	FilesSortDirection as SortDirection,
+	FilesSortKey as SortKey,
 } from '../../../../../../shared/types';
 
 function nextSortDirection(current: SortDirection): SortDirection {
