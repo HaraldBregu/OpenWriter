@@ -5,3 +5,14 @@ export type {
 	AssistantFile,
 	AssistantToolCallRecord,
 } from './types';
+export type {
+	AssistantNode,
+	NodeContext,
+	NodeEvent,
+	NodeName,
+	NodeStatus,
+	NodeState,
+	Intent,
+	Order,
+	ImageNodeResult,
+} from './nodes';
