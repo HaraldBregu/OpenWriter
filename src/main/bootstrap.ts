@@ -73,6 +73,9 @@ export function bootstrapServices(): BootstrapResult {
 	// Theme management service
 	container.register('themeService', new ThemeService(logger));
 
+	// Skills management service (user-installed skills under userData/skills/)
+	container.register('skillsStoreService', new SkillsStoreService(logger));
+
 	// Create WindowFactory with logger access
 	const windowFactory = new WindowFactory(logger);
 	container.register('windowFactory', windowFactory);
