@@ -168,7 +168,10 @@ export const TitleBar = React.memo(function TitleBar({
 			<div className="flex-1" />
 
 			{showSidebarToggles && (
-				<>
+				<div
+					className="flex items-center h-full"
+					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
+				>
 					<button
 						type="button"
 						onClick={() => toggleSidebar('agentic')}
@@ -203,7 +206,7 @@ export const TitleBar = React.memo(function TitleBar({
 							strokeWidth={1.5}
 						/>
 					</button>
-				</>
+				</div>
 			)}
 
 			{/* ── Right: minimize / maximize / close (Windows only) ── */}
