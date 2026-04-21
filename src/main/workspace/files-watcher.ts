@@ -59,10 +59,10 @@ export class FilesWatcherService implements Disposable {
 	}
 
 	/**
-	 * Start watching `resources/files/` within the given workspace.
+	 * Start watching `files/` within the given workspace.
 	 */
 	async startWatching(workspacePath: string): Promise<void> {
-		const filesDir = path.join(workspacePath, 'resources', FILES_SUBFOLDER);
+		const filesDir = path.join(workspacePath, FILES_SUBFOLDER);
 
 		if (this.currentDirectory === filesDir && this.watcher !== null) {
 			return;
