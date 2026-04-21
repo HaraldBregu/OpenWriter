@@ -107,3 +107,41 @@ export const PageBody = memo(function PageBody({
 		<div className={cn('flex min-h-0 flex-1 flex-col overflow-y-auto', className)}>{children}</div>
 	);
 });
+
+interface PageSidebarProps {
+	readonly children: ReactNode;
+	readonly side: 'left' | 'right';
+	readonly className?: string;
+}
+
+export const PageSidebar = memo(function PageSidebar({
+	children,
+	side,
+	className,
+}: PageSidebarProps): React.ReactElement {
+	return (
+		<aside
+			className={cn(
+				'flex shrink-0 flex-col overflow-y-auto',
+				side === 'left' ? 'order-first border-r' : 'order-last border-l',
+				className
+			)}
+		>
+			{children}
+		</aside>
+	);
+});
+
+interface PageSidebarInsetProps {
+	readonly children: ReactNode;
+	readonly className?: string;
+}
+
+export const PageSidebarInset = memo(function PageSidebarInset({
+	children,
+	className,
+}: PageSidebarInsetProps): React.ReactElement {
+	return (
+		<div className={cn('flex min-w-0 flex-1 flex-col overflow-y-auto', className)}>{children}</div>
+	);
+});
