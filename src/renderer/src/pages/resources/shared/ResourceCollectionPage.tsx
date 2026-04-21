@@ -170,7 +170,7 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	}, []);
 
 	const handleOpenResourcesFolder = useCallback(() => {
-		window.workspace.openResourcesFolder();
+		window.workspace.openWorkspaceFolder();
 	}, []);
 
 	return (
