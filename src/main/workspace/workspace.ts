@@ -50,19 +50,13 @@ const WORKSPACE_SUBFOLDERS = ['files', 'contents', 'data', 'images', 'documents'
  * remain in the IPC layer; this class has no Electron dependency.
  */
 export class Workspace implements Disposable {
-	private readonly documents: DocumentsService;
-
 	constructor(
 		private readonly workspace: WorkspaceService,
-		private readonly fileManagement: FileManager,
 		private readonly metadata: WorkspaceMetadataService,
-		private readonly watcher: DocumentsWatcherService | null,
 		private readonly outputFiles: OutputFilesService,
 		private readonly projectWorkspace: ProjectWorkspaceService,
 		private readonly logger: LoggerService
-	) {
-		this.documents = new DocumentsService(this.fileManagement, this.watcher);
-	}
+	) {}
 
 	destroy(): void {
 		// No-op: sub-services manage their own lifecycle via ServiceContainer
