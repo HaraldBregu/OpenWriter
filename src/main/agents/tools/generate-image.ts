@@ -1,7 +1,13 @@
 import path from 'node:path';
-import { mkdir as fsMkdir, writeFile as fsWriteFile } from 'node:fs/promises';
+import {
+	appendFile as fsAppendFile,
+	mkdir as fsMkdir,
+	readFile as fsReadFile,
+	writeFile as fsWriteFile,
+} from 'node:fs/promises';
 import type { AgentTool, JSONSchema } from './types.js';
 import { resolveToCwd } from './path-utils.js';
+import { withFileMutationQueue } from './file-mutation-queue.js';
 import { createOpenAIClient } from '../../shared/chat-model-factory';
 
 export type GenerateImageSize = '1024x1024' | '1024x1536' | '1536x1024' | 'auto';
@@ -17,6 +23,8 @@ export interface GenerateImageToolDeps {
 	providerId: string;
 	apiKey: string;
 	modelName: string;
+	/** Absolute path to the document's content.md. The tool appends the markdown image reference here. */
+	contentFilePath: string;
 }
 
 const generateImageSchema: JSONSchema = {
@@ -46,15 +54,39 @@ function sanitizeFilename(input: string | undefined): string {
 	return base.toLowerCase().endsWith('.png') ? base : `${base}.png`;
 }
 
+function buildAltText(prompt: string): string {
+	const collapsed = prompt.replace(/\s+/g, ' ').trim();
+	return collapsed.length > 80 ? collapsed.slice(0, 77) + '...' : collapsed;
+}
+
+async function appendImageToContent(
+	contentFilePath: string,
+	markdown: string
+): Promise<'appended' | 'created'> {
+	return withFileMutationQueue(contentFilePath, async () => {
+		await fsMkdir(path.dirname(contentFilePath), { recursive: true });
+		let existing = '';
+		try {
+			existing = await fsReadFile(contentFilePath, 'utf-8');
+		} catch {
+			await fsWriteFile(contentFilePath, markdown.trimStart(), 'utf-8');
+			return 'created';
+		}
+		const separator = existing.length === 0 || existing.endsWith('\n\n') ? '' : existing.endsWith('\n') ? '\n' : '\n\n';
+		await fsAppendFile(contentFilePath, `${separator}${markdown}`, 'utf-8');
+		return 'appended';
+	});
+}
+
 export function createGenerateImageTool(
 	deps: GenerateImageToolDeps
 ): AgentTool<GenerateImageToolInput, undefined> {
-	const { cwd, providerId, apiKey, modelName } = deps;
+	const { cwd, providerId, apiKey, modelName, contentFilePath } = deps;
 	return {
 		name: 'generate_image',
 		label: 'generate image',
 		description:
-			'Generate an image from a text prompt and save it at images/<filename>.png inside the document folder. Returns the relative markdown path the caller should embed in content.md via the edit tool.',
+			'Generate an image from a text prompt, save it at images/<filename>.png inside the document folder, and append a markdown image reference (![alt](images/<filename>.png)) to content.md automatically.',
 		parameters: generateImageSchema,
 		executionMode: 'sequential',
 		async execute(_id, input, signal) {
@@ -79,12 +111,15 @@ export function createGenerateImageTool(
 			await fsWriteFile(abs, Buffer.from(b64, 'base64'));
 
 			const relative = `images/${filename}`;
-			const alt = input.prompt.length > 80 ? input.prompt.slice(0, 77) + '...' : input.prompt;
+			const alt = buildAltText(input.prompt);
+			const markdown = `![${alt}](${relative})\n`;
+			const mode = await appendImageToContent(contentFilePath, markdown);
+
 			return {
 				content: [
 					{
 						type: 'text',
-						text: `Saved image to ${relative}. Embed it in content.md with markdown: ![${alt}](${relative})`,
+						text: `Saved image to ${relative} and ${mode === 'created' ? 'created content.md with' : 'appended to content.md'} the markdown reference: ${markdown.trim()}`,
 					},
 				],
 				details: undefined,
