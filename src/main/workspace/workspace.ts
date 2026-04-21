@@ -243,36 +243,6 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
-	// Documents
-	// -------------------------------------------------------------------------
-
-	async importFiles(filePaths: string[], extensions?: string[]): Promise<FileMetadata[]> {
-		const currentWorkspace = this.requireWorkspace();
-		return this.documents.importFiles(currentWorkspace, filePaths, extensions);
-	}
-
-	async importByPaths(paths: string[]): Promise<FileMetadata[]> {
-		const currentWorkspace = this.requireWorkspace();
-		return this.documents.importFiles(currentWorkspace, paths);
-	}
-
-	async downloadFromUrl(url: string): Promise<FileMetadata> {
-		this.validateDownloadUrl(url);
-		const currentWorkspace = this.requireWorkspace();
-		return this.documents.downloadFromUrl(currentWorkspace, url);
-	}
-
-	async loadDocuments(): Promise<FileMetadata[]> {
-		const currentWorkspace = this.requireWorkspace();
-		return this.documents.loadAll(currentWorkspace);
-	}
-
-	async deleteDocument(id: string): Promise<void> {
-		const currentWorkspace = this.requireWorkspace();
-		await this.documents.deleteFile(id, currentWorkspace);
-	}
-
-	// -------------------------------------------------------------------------
 	// OCR model preference
 	// -------------------------------------------------------------------------
 
