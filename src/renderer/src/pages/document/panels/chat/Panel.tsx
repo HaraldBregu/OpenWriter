@@ -338,7 +338,7 @@ const Chat: React.FC = () => {
 	);
 };
 
-const ChatPanel: React.FC = () => {
+const ChatPanel: React.FC = React.memo(() => {
 	const { documentId } = useDocumentState();
 	useChatPersistence(documentId);
 
@@ -347,6 +347,7 @@ const ChatPanel: React.FC = () => {
 			<Chat />
 		</ChatProvider>
 	);
-};
+});
+ChatPanel.displayName = 'ChatPanel';
 
 export default ChatPanel;
