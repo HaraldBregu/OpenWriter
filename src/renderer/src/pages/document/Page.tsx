@@ -215,20 +215,23 @@ function PageContent(): ReactElement {
 
 	useEffect(() => {
 		if (!assistantActiveTaskId) return;
+		if (typeof window.task?.onEvent !== 'function') return;
 
-		return subscribeToTask(assistantActiveTaskId, async (snap: TaskSnapshot) => {
-			if (snap.status === 'started') {
+		return window.task.onEvent(async (event: TaskEvent) => {
+			if (event.taskId !== assistantActiveTaskId) return;
+
+			if (event.state === 'started') {
 				editorActions.showLoading();
 				return;
 			}
 
 			if (
-				snap.status === 'completed' ||
-				snap.status === 'error' ||
-				snap.status === 'cancelled'
+				event.state === 'completed' ||
+				event.state === 'error' ||
+				event.state === 'cancelled'
 			) {
 				debouncedContentSave.cancel();
-				if (id && snap.status === 'completed') {
+				if (id && event.state === 'completed') {
 					try {
 						const reloaded = await window.workspace.getDocumentContent(id);
 						setContent(reloaded);
