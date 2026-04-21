@@ -247,7 +247,6 @@ const PanelFooter: React.FC<InputProps> = ({
 				onRemoveImage={handleRemoveClick}
 				onClearSelection={onClearSelection}
 				onAgentChange={setAgentId}
-				onModelChange={handleModelChange}
 			/>
 		</CardFooter>
 	);
