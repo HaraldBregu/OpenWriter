@@ -120,11 +120,7 @@ export class FilesService {
 	}
 
 	/**
-	 * Delete a file from the workspace resources/files/ directory.
-	 *
-	 * @param workspacePath - Workspace root path
-	 * @param fileId - The file ID (basename) to delete
-	 * @param markWritten - Optional callback to mark files as written (prevents watcher loops)
+	 * Delete a file from the workspace files/ directory.
 	 */
 	async deleteFile(
 		workspacePath: string,
