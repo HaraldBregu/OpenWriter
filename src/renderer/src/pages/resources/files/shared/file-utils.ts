@@ -1,4 +1,4 @@
-import type { ResourcesFileTypeFilter as FileTypeFilter } from '../../../../../../shared/types';
+import type { FileTypeFilter } from '../../../../../../shared/types';
 import {
 	MIME_PREFIX_IMAGE,
 	MIME_TYPE_JSON,
