@@ -264,7 +264,7 @@ export function OptionMenu(): React.JSX.Element {
 		<Card
 			ref={menuRef}
 			size="sm"
-			className="z-50 gap-1! p-1! m-0! text-left"
+			className="z-50 gap-1! p-1! m-0! text-left overflow-visible!"
 			style={{ visibility: 'hidden', position: 'absolute' }}
 		>
 			<Button {...itemProps(0, () => runHeading(1))}>
