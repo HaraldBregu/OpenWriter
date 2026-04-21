@@ -39,8 +39,20 @@ export function useTextareaSetup({ textareaRef, onSubmit, onDelete }: UseTextare
 			}
 		};
 
+		const stopClipboard = (e: ClipboardEvent): void => {
+			e.stopPropagation();
+		};
+
 		textarea.addEventListener('keydown', handleKeyDown);
-		return () => textarea.removeEventListener('keydown', handleKeyDown);
+		textarea.addEventListener('copy', stopClipboard);
+		textarea.addEventListener('cut', stopClipboard);
+		textarea.addEventListener('paste', stopClipboard);
+		return () => {
+			textarea.removeEventListener('keydown', handleKeyDown);
+			textarea.removeEventListener('copy', stopClipboard);
+			textarea.removeEventListener('cut', stopClipboard);
+			textarea.removeEventListener('paste', stopClipboard);
+		};
 	}, [resizeTextarea, textareaRef]);
 
 	return { submitRef, resizeTextarea };
