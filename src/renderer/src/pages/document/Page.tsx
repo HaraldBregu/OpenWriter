@@ -264,22 +264,18 @@ function PageContent(): ReactElement {
 			editorActions.disable();
 
 			try {
-				const isImage = payload.files.length > 0;
-				const agentId = isImage ? 'image' : 'text';
-				const sessionRef = isImage ? imageSessionIdRef : textSessionIdRef;
-				const resolvedSessionId = sessionRef.current ?? uuidv7();
-				sessionRef.current = resolvedSessionId;
+				const resolvedSessionId = sessionIdRef.current ?? uuidv7();
+				sessionIdRef.current = resolvedSessionId;
 
-				const agentInput = isImage
-					? { prompt: composedPrompt }
-					: {
-							messages: [{ role: 'user' as const, content: composedPrompt }],
-							streaming: true,
-						};
+				const agentInput = {
+					messages: [{ role: 'user' as const, content: composedPrompt }],
+					files: payload.files,
+					streaming: true,
+				};
 
 				const ipcResult = await window.task.submit({
 					type: 'agent',
-					input: { agentType: agentId, input: agentInput },
+					input: { agentType: 'text', input: agentInput },
 					metadata: { sessionId: resolvedSessionId, documentId: id },
 				});
 
@@ -290,7 +286,6 @@ function PageContent(): ReactElement {
 				}
 
 				const taskId = ipcResult.data.taskId;
-				setAssistantActiveAgentId(agentId);
 				setAssistantActiveTaskId(taskId);
 			} catch {
 				editorActions.hideLoading();
