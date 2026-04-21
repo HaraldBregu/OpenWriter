@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PageContainer, PageBody } from '@/components/app/base/Page';
+import { PageContainer, PageBody } from '@/components/app/base/page';
 import { Separator } from '@/components/ui/Separator';
 import {
 	QuickActions,
