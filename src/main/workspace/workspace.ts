@@ -133,15 +133,6 @@ export class Workspace implements Disposable {
 		return dataDir;
 	}
 
-	getResourcesFolderPath(): string {
-		const currentWorkspace = this.requireWorkspace();
-		const resourcesDir = path.join(currentWorkspace, RESOURCES_DIR);
-		if (!fs.existsSync(resourcesDir)) {
-			fs.mkdirSync(resourcesDir, { recursive: true });
-		}
-		return resourcesDir;
-	}
-
 	getDocumentFolderPath(documentId: string): string {
 		if (!documentId || typeof documentId !== 'string') {
 			throw new Error('Invalid document ID: must be a non-empty string');

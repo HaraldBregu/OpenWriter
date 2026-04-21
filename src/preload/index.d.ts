@@ -169,6 +169,14 @@ export interface AppApi {
 	getCustomThemeTokens: (id: string) => Promise<Theme | null>;
 	/** Delete a custom theme by its folder ID. */
 	deleteTheme: (id: string) => Promise<void>;
+	/** Get all bundled + user-installed skills. */
+	getSkills: () => Promise<SkillInfo[]>;
+	/** Open the user skills folder in the system file explorer. */
+	openSkillsFolder: () => Promise<void>;
+	/** Open a folder picker to import one-or-many skills; returns the imported skill entries (empty if cancelled). */
+	importSkill: () => Promise<SkillInfo[]>;
+	/** Delete a user-installed skill by its folder ID. */
+	deleteSkill: (id: string) => Promise<void>;
 	/** Open the macOS System Preferences > Accessibility pane. */
 	openSystemAccessibility: () => Promise<void>;
 	/** Open the macOS System Preferences > Screen Recording pane. */
