@@ -7,4 +7,4 @@ export {
 	PageHeaderTitle,
 	PageSidebar,
 	PageSidebarInset,
-} from './base/Page';
+} from './base/page';
