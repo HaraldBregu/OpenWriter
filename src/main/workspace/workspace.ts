@@ -82,7 +82,7 @@ export class Workspace implements Disposable {
 	async setCurrent(workspacePath: string): Promise<void> {
 		this.logger.info('Workspace', `Setting workspace: ${workspacePath}`);
 		this.workspace.setCurrent(workspacePath);
-		await this.ensureResourceSubfolders(workspacePath);
+		await this.ensureWorkspaceSubfolders(workspacePath);
 		await this.projectWorkspace.getOrCreate();
 	}
 
@@ -94,7 +94,6 @@ export class Workspace implements Disposable {
 				return {
 					...w,
 					data: path.join(w.path, DATA_DIR),
-					resources: path.join(w.path, RESOURCES_DIR),
 					name: info?.name ?? null,
 				};
 			})
