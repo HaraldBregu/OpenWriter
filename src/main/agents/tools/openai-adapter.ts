@@ -2,14 +2,14 @@
  * Adapters between AgentTool and the OpenAI Chat Completions tool API.
  */
 
-import type OpenAI from "openai";
-import type { AgentTool } from "./types.js";
+import type OpenAI from 'openai';
+import type { AgentTool } from './types.js';
 
 export type OpenAIChatTool = OpenAI.Chat.Completions.ChatCompletionTool;
 
 export function toOpenAITools(tools: AgentTool[]): OpenAIChatTool[] {
 	return tools.map((tool) => ({
-		type: "function",
+		type: 'function',
 		function: {
 			name: tool.name,
 			description: tool.description,
@@ -35,16 +35,16 @@ export interface ToolExecutionResult {
 async function runSingle(
 	call: ParsedToolCall,
 	registry: Map<string, AgentTool>,
-	signal?: AbortSignal,
+	signal?: AbortSignal
 ): Promise<ToolExecutionResult> {
-	const base: Omit<ToolExecutionResult, "output"> = {
+	const base: Omit<ToolExecutionResult, 'output'> = {
 		callId: call.id,
 		name: call.name,
 		argumentsRaw: call.argumentsRaw,
 	};
 	const tool = registry.get(call.name);
 	if (!tool) {
-		return { ...base, output: `Error: unknown tool '${call.name}'`, error: "unknown_tool" };
+		return { ...base, output: `Error: unknown tool '${call.name}'`, error: 'unknown_tool' };
 	}
 	let parsed: unknown;
 	try {
@@ -53,16 +53,16 @@ async function runSingle(
 		return {
 			...base,
 			output: `Error parsing tool arguments: ${(err as Error).message}`,
-			error: "parse_error",
+			error: 'parse_error',
 		};
 	}
 	try {
 		const prepared = tool.prepareArguments ? tool.prepareArguments(parsed) : parsed;
 		const result = await tool.execute(call.id, prepared as never, signal);
-		const text = result.content.map((c) => c.text).join("\n");
-		return { ...base, output: text || "(no output)" };
+		const text = result.content.map((c) => c.text).join('\n');
+		return { ...base, output: text || '(no output)' };
 	} catch (err) {
-		return { ...base, output: `Error: ${(err as Error).message}`, error: "execution_error" };
+		return { ...base, output: `Error: ${(err as Error).message}`, error: 'execution_error' };
 	}
 }
 
@@ -74,14 +74,14 @@ async function runSingle(
 export async function executeToolCalls(
 	calls: ParsedToolCall[],
 	tools: AgentTool[],
-	signal?: AbortSignal,
+	signal?: AbortSignal
 ): Promise<ToolExecutionResult[]> {
 	const registry = new Map<string, AgentTool>(tools.map((t) => [t.name, t]));
-	const needsSequential = calls.some((c) => registry.get(c.name)?.executionMode === "sequential");
+	const needsSequential = calls.some((c) => registry.get(c.name)?.executionMode === 'sequential');
 	if (needsSequential) {
 		const out: ToolExecutionResult[] = [];
 		for (const call of calls) {
-			if (signal?.aborted) throw new DOMException("Aborted", "AbortError");
+			if (signal?.aborted) throw new DOMException('Aborted', 'AbortError');
 			out.push(await runSingle(call, registry, signal));
 		}
 		return out;

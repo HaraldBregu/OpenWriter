@@ -5,21 +5,12 @@ import type { AgentContext } from '../core/agent';
 import { AgentValidationError } from '../core/agent-errors';
 import { createOpenAIClient } from '../../shared/chat-model-factory';
 import { classifyError, isReasoningModel, toUserMessage } from '../../shared/ai-utils';
-import {
-	executeToolCalls,
-	toOpenAITools,
-	type AgentTool,
-	type ParsedToolCall,
-} from '../tools';
+import { executeToolCalls, toOpenAITools, type AgentTool, type ParsedToolCall } from '../tools';
 import { createReadTool } from '../tools/read';
 import { createEditTool } from '../tools/edit';
 import { createWriteTool } from '../tools/write';
 import { createGenerateImageTool } from '../tools/generate-image';
-import type {
-	AssistantAgentInput,
-	AssistantAgentOutput,
-	AssistantToolCallRecord,
-} from './types';
+import type { AssistantAgentInput, AssistantAgentOutput, AssistantToolCallRecord } from './types';
 
 const DEFAULT_MAX_ITERATIONS = 10;
 const CONTENT_FILE_NAME = 'content.md';
@@ -130,10 +121,7 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 
 		for (let iteration = 1; iteration <= maxIterations; iteration++) {
 			this.ensureNotAborted(ctx.signal);
-			ctx.progress?.(
-				Math.min(90, (iteration / maxIterations) * 90),
-				`iteration ${iteration}`
-			);
+			ctx.progress?.(Math.min(90, (iteration / maxIterations) * 90), `iteration ${iteration}`);
 
 			const response = await client.chat.completions.create(
 				{

@@ -4,12 +4,7 @@ import type { AgentTool, JSONSchema } from './types.js';
 import { resolveToCwd } from './path-utils.js';
 import { createOpenAIClient } from '../../shared/chat-model-factory';
 
-export type GenerateImageSize =
-	| '256x256'
-	| '512x512'
-	| '1024x1024'
-	| '1792x1024'
-	| '1024x1792';
+export type GenerateImageSize = '256x256' | '512x512' | '1024x1024' | '1792x1024' | '1024x1792';
 
 export interface GenerateImageToolInput {
 	prompt: string;

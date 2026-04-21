@@ -1,10 +1,16 @@
-import { spawn } from "node:child_process";
-import { randomBytes } from "node:crypto";
-import { createWriteStream, existsSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import type { AgentTool, JSONSchema } from "./types.js";
-import { DEFAULT_MAX_BYTES, DEFAULT_MAX_LINES, formatSize, type TruncationResult, truncateTail } from "./truncate.js";
+import { spawn } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
+import { createWriteStream, existsSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import type { AgentTool, JSONSchema } from './types.js';
+import {
+	DEFAULT_MAX_BYTES,
+	DEFAULT_MAX_LINES,
+	formatSize,
+	type TruncationResult,
+	truncateTail,
+} from './truncate.js';
 
 export interface BashToolInput {
 	command: string;
@@ -17,33 +23,33 @@ export interface BashToolDetails {
 }
 
 const bashSchema: JSONSchema = {
-	type: "object",
+	type: 'object',
 	additionalProperties: false,
 	properties: {
-		command: { type: "string", description: "Bash command to execute" },
-		timeout: { type: "number", description: "Timeout in seconds (optional, no default timeout)" },
+		command: { type: 'string', description: 'Bash command to execute' },
+		timeout: { type: 'number', description: 'Timeout in seconds (optional, no default timeout)' },
 	},
-	required: ["command"],
+	required: ['command'],
 };
 
 function getTempFilePath(): string {
-	return join(tmpdir(), `pi-bash-${randomBytes(8).toString("hex")}.log`);
+	return join(tmpdir(), `pi-bash-${randomBytes(8).toString('hex')}.log`);
 }
 
 function getShell(): { shell: string; args: string[] } {
-	if (process.platform === "win32") {
-		return { shell: process.env.ComSpec ?? "cmd.exe", args: ["/d", "/s", "/c"] };
+	if (process.platform === 'win32') {
+		return { shell: process.env.ComSpec ?? 'cmd.exe', args: ['/d', '/s', '/c'] };
 	}
-	return { shell: process.env.SHELL ?? "/bin/bash", args: ["-c"] };
+	return { shell: process.env.SHELL ?? '/bin/bash', args: ['-c'] };
 }
 
 export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDetails | undefined> {
 	return {
-		name: "bash",
-		label: "bash",
+		name: 'bash',
+		label: 'bash',
 		description: `Execute a bash command in the current working directory. Returns stdout and stderr. Output is truncated to last ${DEFAULT_MAX_LINES} lines or ${DEFAULT_MAX_BYTES / 1024}KB (whichever is hit first). If truncated, full output is saved to a temp file. Optionally provide a timeout in seconds.`,
 		parameters: bashSchema,
-		executionMode: "sequential",
+		executionMode: 'sequential',
 		async execute(_id, { command, timeout }, signal, onUpdate) {
 			if (!existsSync(cwd)) {
 				throw new Error(`Working directory does not exist: ${cwd}`);
@@ -55,7 +61,7 @@ export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDe
 				const child = spawn(shell, [...args, command], {
 					cwd,
 					env: process.env,
-					stdio: ["ignore", "pipe", "pipe"],
+					stdio: ['ignore', 'pipe', 'pipe'],
 				});
 
 				let tempFilePath: string | undefined;
@@ -85,11 +91,11 @@ export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDe
 						if (removed) chunksBytes -= removed.length;
 					}
 					if (onUpdate) {
-						const text = Buffer.concat(chunks).toString("utf-8");
+						const text = Buffer.concat(chunks).toString('utf-8');
 						const trunc = truncateTail(text);
 						if (trunc.truncated) ensureTempFile();
 						onUpdate({
-							content: [{ type: "text", text: trunc.content || "" }],
+							content: [{ type: 'text', text: trunc.content || '' }],
 							details: {
 								truncation: trunc.truncated ? trunc : undefined,
 								fullOutputPath: tempFilePath,
@@ -98,54 +104,58 @@ export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDe
 					}
 				};
 
-				child.stdout?.on("data", handleData);
-				child.stderr?.on("data", handleData);
+				child.stdout?.on('data', handleData);
+				child.stderr?.on('data', handleData);
 
 				if (timeout !== undefined && timeout > 0) {
 					timeoutHandle = setTimeout(() => {
 						timedOut = true;
-						child.kill("SIGKILL");
+						child.kill('SIGKILL');
 					}, timeout * 1000);
 				}
 
-				const onAbort = () => child.kill("SIGKILL");
+				const onAbort = () => child.kill('SIGKILL');
 				if (signal) {
 					if (signal.aborted) onAbort();
-					else signal.addEventListener("abort", onAbort, { once: true });
+					else signal.addEventListener('abort', onAbort, { once: true });
 				}
 
-				child.on("error", (err) => {
+				child.on('error', (err) => {
 					if (timeoutHandle) clearTimeout(timeoutHandle);
-					if (signal) signal.removeEventListener("abort", onAbort);
+					if (signal) signal.removeEventListener('abort', onAbort);
 					if (tempFileStream) tempFileStream.end();
 					reject(err);
 				});
 
-				child.on("close", (exitCode) => {
+				child.on('close', (exitCode) => {
 					if (timeoutHandle) clearTimeout(timeoutHandle);
-					if (signal) signal.removeEventListener("abort", onAbort);
+					if (signal) signal.removeEventListener('abort', onAbort);
 					if (tempFileStream) tempFileStream.end();
 
-					const fullOutput = Buffer.concat(chunks).toString("utf-8");
+					const fullOutput = Buffer.concat(chunks).toString('utf-8');
 					const trunc = truncateTail(fullOutput);
 					if (trunc.truncated) ensureTempFile();
 
 					if (signal?.aborted) {
-						reject(new Error(`${fullOutput}${fullOutput ? "\n\n" : ""}Command aborted`));
+						reject(new Error(`${fullOutput}${fullOutput ? '\n\n' : ''}Command aborted`));
 						return;
 					}
 					if (timedOut) {
-						reject(new Error(`${fullOutput}${fullOutput ? "\n\n" : ""}Command timed out after ${timeout} seconds`));
+						reject(
+							new Error(
+								`${fullOutput}${fullOutput ? '\n\n' : ''}Command timed out after ${timeout} seconds`
+							)
+						);
 						return;
 					}
 
-					let outputText = trunc.content || "(no output)";
+					let outputText = trunc.content || '(no output)';
 					let details: BashToolDetails | undefined;
 					if (trunc.truncated) {
 						details = { truncation: trunc, fullOutputPath: tempFilePath };
 						const startLine = trunc.totalLines - trunc.outputLines + 1;
 						const endLine = trunc.totalLines;
-						if (trunc.truncatedBy === "lines") {
+						if (trunc.truncatedBy === 'lines') {
 							outputText += `\n\n[Showing lines ${startLine}-${endLine} of ${trunc.totalLines}. Full output: ${tempFilePath}]`;
 						} else {
 							outputText += `\n\n[Showing lines ${startLine}-${endLine} of ${trunc.totalLines} (${formatSize(DEFAULT_MAX_BYTES)} limit). Full output: ${tempFilePath}]`;
@@ -157,7 +167,7 @@ export function createBashTool(cwd: string): AgentTool<BashToolInput, BashToolDe
 						reject(new Error(outputText));
 						return;
 					}
-					resolve({ content: [{ type: "text", text: outputText }], details });
+					resolve({ content: [{ type: 'text', text: outputText }], details });
 				});
 			});
 		},

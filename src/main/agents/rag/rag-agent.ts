@@ -101,7 +101,11 @@ export class RagAgent extends BaseAgent<RagAgentInput, RagAgentOutput> {
 		return { kind: 'query', answer, citations };
 	}
 
-	private embedder(input: { providerId: string; apiKey: string; embeddingModel?: string }): EmbeddingModel {
+	private embedder(input: {
+		providerId: string;
+		apiKey: string;
+		embeddingModel?: string;
+	}): EmbeddingModel {
 		return createEmbeddingModel({
 			providerId: input.providerId,
 			apiKey: input.apiKey,
@@ -110,9 +114,7 @@ export class RagAgent extends BaseAgent<RagAgentInput, RagAgentOutput> {
 	}
 
 	private buildMessages(input: RagQueryInput, citations: DocumentChunk[]): ChatMessage[] {
-		const contextBlock = citations
-			.map((c, i) => `[${i + 1}] ${c.pageContent}`)
-			.join('\n\n');
+		const contextBlock = citations.map((c, i) => `[${i + 1}] ${c.pageContent}`).join('\n\n');
 
 		const system: ChatMessage = {
 			role: 'system',

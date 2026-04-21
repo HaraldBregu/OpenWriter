@@ -80,7 +80,6 @@ export function bootstrapServices(): BootstrapResult {
 	const windowContextManager = new WindowContextManager(container, eventBus);
 	container.register('windowContextManager', windowContextManager);
 
-
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
 	taskHandlerRegistry.register(new DemoTaskHandler());

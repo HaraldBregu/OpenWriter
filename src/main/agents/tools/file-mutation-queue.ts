@@ -1,5 +1,5 @@
-import { realpathSync } from "node:fs";
-import { resolve } from "node:path";
+import { realpathSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 const fileMutationQueues = new Map<string, Promise<void>>();
 

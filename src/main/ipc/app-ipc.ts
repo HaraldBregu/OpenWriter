@@ -14,7 +14,12 @@ import { toServiceConfig } from '../../shared/providers';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
-import type { AgentSettings, Service, ThemeMode, WritingContextMenuAction } from '../../shared/types';
+import type {
+	AgentSettings,
+	Service,
+	ThemeMode,
+	WritingContextMenuAction,
+} from '../../shared/types';
 
 const execFileAsync = promisify(execFile);
 

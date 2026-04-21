@@ -44,10 +44,10 @@ OpenWriter combines the best open-source tools into a cohesive desktop writing e
 
 ### AI and Language Models
 
-| Technology   | Version | Purpose                            |
-| ------------ | ------- | ---------------------------------- |
-| OpenAI SDK   | latest  | LLM orchestration and API access   |
-| hnswlib-node | latest  | Vector similarity search           |
+| Technology   | Version | Purpose                          |
+| ------------ | ------- | -------------------------------- |
+| OpenAI SDK   | latest  | LLM orchestration and API access |
+| hnswlib-node | latest  | Vector similarity search         |
 
 ### File Processing
 

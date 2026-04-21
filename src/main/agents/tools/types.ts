@@ -8,7 +8,7 @@
 export type JSONSchema = Record<string, unknown>;
 
 export interface ToolTextContent {
-	type: "text";
+	type: 'text';
 	text: string;
 }
 
@@ -24,12 +24,12 @@ export interface AgentTool<Input = unknown, Details = unknown> {
 	label?: string;
 	description: string;
 	parameters: JSONSchema;
-	executionMode?: "parallel" | "sequential";
+	executionMode?: 'parallel' | 'sequential';
 	prepareArguments?: (input: unknown) => Input;
 	execute(
 		callId: string,
 		input: Input,
 		signal?: AbortSignal,
-		onUpdate?: (partial: ToolResult<Details>) => void,
+		onUpdate?: (partial: ToolResult<Details>) => void
 	): Promise<ToolResult<Details>>;
 }

@@ -197,7 +197,6 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-
 	// Register contents service (resources/content/)
 	factory.register({
 		key: 'contentsService',
@@ -217,7 +216,6 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 			return new FilesService(fileManagement, logger);
 		},
 	});
-
 
 	// Register workspace manager (Facade over all workspace services)
 	factory.register({
