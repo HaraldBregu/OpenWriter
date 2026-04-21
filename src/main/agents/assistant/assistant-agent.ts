@@ -14,6 +14,7 @@ import {
 import { createReadTool } from '../tools/read';
 import { createEditTool } from '../tools/edit';
 import { createWriteTool } from '../tools/write';
+import { createGenerateImageTool } from '../tools/generate-image';
 import type {
 	AssistantAgentInput,
 	AssistantAgentOutput,
