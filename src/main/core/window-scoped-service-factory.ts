@@ -187,7 +187,7 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register files watcher (resources/files/)
+	// Register files watcher (workspace/files/)
 	factory.register({
 		key: 'filesWatcher',
 		factory: async ({ workspaceService, eventBus, globalContainer }) => {
