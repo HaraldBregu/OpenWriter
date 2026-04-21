@@ -671,7 +671,7 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.getResourcesContents,
+			WorkspaceChannels.getContentsFolders,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
 				const ctx = getWindowContext(event, container);
 				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
@@ -681,7 +681,7 @@ export class WorkspaceIpc implements IpcModule {
 					throw new Error('No workspace selected. Please select a workspace first.');
 				}
 				return contentsService.getFolders(currentPath);
-			}, WorkspaceChannels.getResourcesContents)
+			}, WorkspaceChannels.getContentsFolders)
 		);
 
 		ipcMain.handle(
