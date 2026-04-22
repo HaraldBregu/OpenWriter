@@ -115,7 +115,7 @@ export function TaskStatusBar({ taskId, phaseLabel }: TaskStatusBarProps): React
 	return (
 		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
 			<Badge variant={STATUS_VARIANT[status]} className="shrink-0">
-				{STATUS_LABELS[status]}
+				{displayLabel}
 			</Badge>
 			<div className="flex-1 min-w-0">
 				<div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
