@@ -39,6 +39,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 	const {
 		documentId,
 		sessionIdRef,
+		ready,
 		onPhase,
 		onDelta,
 		onRecovery,
