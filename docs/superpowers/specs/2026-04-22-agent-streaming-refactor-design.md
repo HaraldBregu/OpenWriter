@@ -100,11 +100,13 @@ Notes:
 - Instantiate projection + mapper per execution.
 - `ctx.onEvent` callback:
   1. `projection.apply(event)`
-  2. `const mapped = mapper.map(event, projection)`
-  3. If phase changed: `recordEvent({ kind: 'phase', at: Date.now(), payload: mapped })`
-  4. If event is text: `recordEvent({ kind: 'delta', at: Date.now(), payload: { token, fullContent: projection.fullContent } })`
-- Return value: `{ agentType, output: { content: projection.fullContent, stoppedReason } }`.
+  2. `const mapped = mapper.map(event, projection)` → `{ phase, label } | null`
+  3. If `mapped !== null` (phase changed): `recordEvent({ kind: 'phase', at: Date.now(), payload: mapped })` (typed as `AgentPhasePayload`).
+  4. If event is text with a non-empty delta: `recordEvent({ kind: 'delta', at: Date.now(), payload: { token, fullContent: projection.fullContent } })` (typed as `AgentDeltaPayload`).
+- `execute` signature changes: `Promise<AgentCompletedOutput>` (was `AgentTaskOutput`).
+- Returns `{ content: projection.fullContent, stoppedReason }`.
 - `DocumentStreamWriter` import + usage removed.
+- `AgentTaskInput` shape unchanged (`{ agentType, input }`).
 
 **Deleted — `src/main/task/handlers/document-stream-writer.ts`**
 - No longer used. Tests referencing it deleted.
