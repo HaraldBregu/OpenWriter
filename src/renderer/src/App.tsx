@@ -356,30 +356,6 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="/debug/tasks"
-														element={
-															<RouteWrapper>
-																<DebugTasksPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
-														path="/debug/redux"
-														element={
-															<RouteWrapper>
-																<DebugReduxPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
-														path="/debug/logs"
-														element={
-															<RouteWrapper>
-																<DebugLogsPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
 														path="/resources/files"
 														element={
 															<RouteWrapper>
