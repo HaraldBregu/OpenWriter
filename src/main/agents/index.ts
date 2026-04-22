@@ -9,6 +9,16 @@
 export * from './core';
 export { AssistantAgent } from './assistant';
 export type { AssistantAgentInput, AssistantAgentOutput } from './assistant';
+export { WriterAgent } from './writer';
+export type {
+	WriterAgentInput,
+	WriterAgentOutput,
+	WriterDecision,
+	WriterAction,
+	WriterIntent,
+	WriterIntentClassification,
+	WriterSkill,
+} from './writer';
 export { RagAgent, InMemoryVectorStore, splitText } from './rag';
 export type {
 	RagAgentInput,
