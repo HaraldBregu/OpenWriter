@@ -394,15 +394,6 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.fsCreateFile,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, params: FsCreateFileParams) =>
-					this.mgr(event, container).createFile(params),
-				WorkspaceChannels.fsCreateFile
-			)
-		);
-
-		ipcMain.handle(
 			WorkspaceChannels.fsCreateFolder,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent, params: FsCreateFolderParams) =>
