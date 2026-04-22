@@ -215,12 +215,11 @@ Behavior:
 ### Refresh recovery
 
 1. Page mounts, loads content from disk (unchanged).
-2. `useAssistantTask` mount effect:
-   1. `task.list()` → find task where `metadata.documentId === id` and state in `{ queued, started, running }`.
-   2. If found, `task.getSnapshot(taskId)` → `{ phase, fullContent, metadata: { posFrom, posTo } }`.
-   3. `editorInsert.begin(posFrom, posTo)`.
-   4. `editorInsert.appendDelta(fullContent)` (one-shot replay — `insertedLength` becomes `fullContent.length`).
-   5. Subscribe to `task.onEvent` for subsequent events.
+2. `useAssistantTask` mount effect calls `task.findForDocument(id)` and branches on `state`:
+   1. **No task found** → idle.
+   2. **Active (`queued | started | running`)**: `task.getSnapshot(taskId)` → `{ phase, fullContent, metadata: { posFrom, posTo } }`. `editorInsert.begin(posFrom, posTo)`; `editorInsert.appendDelta(fullContent)` (one-shot replay). Subscribe to `task.onEvent`.
+   3. **Recently completed with `result`**: `editorInsert.begin(metadata.posFrom, metadata.posTo)`; `editorInsert.commitFinal(result.content)`; save to disk via `updateDocumentContent`. No event subscription needed.
+   4. **Recently errored/cancelled**: leave editor untouched (partial text was discarded on the original page).
 
 ### Cancel
 
