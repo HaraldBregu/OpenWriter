@@ -266,8 +266,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 				editorActions.clearPromptInput();
 				if (!id) return;
-				const editor = editorRef.current;
-				const markdown = editor ? getEditorMarkdown(editor) : content;
+				const markdown = content;
 				setContent(markdown);
 				dispatch({ type: 'CONTENT_CHANGED', value: markdown });
 				debouncedContentSave.cancel();
