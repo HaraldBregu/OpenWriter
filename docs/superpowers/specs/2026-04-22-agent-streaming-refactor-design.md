@@ -301,9 +301,10 @@ Same as cancel — `onError` triggers `revert()`. Status bar surfaces the messag
 **Modified:**
 - `src/shared/types.ts` (new types)
 - `src/main/task/handlers/agent-task-handler.ts`
-- `src/main/task/task-executor.ts` (`getAgentSnapshot`)
+- `src/main/task/task-executor.ts` (`getAgentSnapshot`, `findAgentTaskForDocument`)
 - `src/main/task/index.ts` (re-exports)
-- `src/preload/` task API (add `getSnapshot`)
+- Main-process task IPC module (add `task:get-snapshot`, `task:find-for-document` handlers)
+- `src/preload/` task API (add `getSnapshot`, `findForDocument`)
 - `src/renderer/src/pages/document/Page.tsx`
 - `src/renderer/src/pages/document/components/TaskStatusBar.tsx`
 - `src/renderer/src/pages/document/hooks/index.ts` (re-exports)
