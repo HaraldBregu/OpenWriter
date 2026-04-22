@@ -50,7 +50,6 @@ import {
 	ChevronsUpDown,
 	Database,
 	Search,
-	ListTodo,
 	Globe,
 	CircleHelp,
 	CircleArrowUp,
