@@ -218,7 +218,7 @@ function PageContent(): ReactElement {
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
-					window.workspace.updateDocumentContent(id, contentRef.current);
+					window.workspace.updateDocument(id, { content: contentRef.current });
 				},
 				CONTENT_SAVE_DEBOUNCE_MS,
 				{ leading: false, trailing: true }
