@@ -135,7 +135,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 			setActiveTaskId(result.data.taskId);
 			return true;
 		},
-		[documentId, sessionIdRef]
+		[agentType, documentId, sessionIdRef]
 	);
 
 	const cancel = useCallback(async (): Promise<void> => {
