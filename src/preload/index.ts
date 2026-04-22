@@ -306,16 +306,6 @@ const workspace: WorkspaceApi = {
 		typedInvokeUnwrap(WorkspaceChannels.getDocumentContent, documentId),
 	updateDocumentContent: (documentId: string, content: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateDocumentContent, documentId, content),
-	onDocumentContentChanges: (
-		documentId: string,
-		callback: (content: string) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.documentContentChanged, (event) => {
-			if (event.documentId === documentId) {
-				callback(event.content);
-			}
-		});
-	},
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
