@@ -54,7 +54,6 @@
 		"@fontsource/alegreya": "^5.2.8",
 		"@fontsource/merriweather": "^5.2.11",
 		"@mistralai/mistralai": "^2.2.0",
-		"@react-pdf/renderer": "^4.4.0",
 		"@reduxjs/toolkit": "^2.11.2",
 		"@tiptap/core": "3.22.3",
 		"@tiptap/extension-blockquote": "3.22.3",
