@@ -46,13 +46,13 @@ export type AgentPhase =
   | 'error'
   | 'cancelled';
 
-export type AgentRunningData =
-  | { kind: 'phase'; phase: AgentPhase; label: string }
-  | { kind: 'delta'; token: string; fullContent: string };
+// --- Typed payloads for AgentEvent emitted via recordEvent ---
+export interface AgentPhasePayload { phase: AgentPhase; label: string }
+export interface AgentDeltaPayload { token: string; fullContent: string }
 
-export interface AgentCompletedData {
+// --- Handler return value (wire: TaskEvent.data.result on 'completed') ---
+export interface AgentCompletedOutput {
   content: string;
-  durationMs: number;
   stoppedReason: 'done' | 'max-steps' | 'stagnation';
 }
 
@@ -66,9 +66,21 @@ export interface AgentTaskSnapshot {
 }
 ```
 
+### Wire format (actual `TaskEvent.data` shape)
+
+- `state: 'queued' | 'started' | 'cancelled'` → `data: {}` (unchanged).
+- `state: 'running'` → `data: { event: AgentEvent }` (unchanged wrapping in `TaskExecutor`).
+  - `data.event.kind === 'phase'` → `data.event.payload: AgentPhasePayload`.
+  - `data.event.kind === 'delta'` → `data.event.payload: AgentDeltaPayload`.
+  - Other `event.kind` values may pass through (logged but not routed by the renderer hooks).
+- `state: 'completed'` → `data: { result: AgentCompletedOutput; durationMs: number }`.
+  - **Breaking change from current behavior:** `AgentTaskHandler` used to return `{ agentType, output }`; it now returns `AgentCompletedOutput` directly. `agentType` is already in `TaskInfo.type`, so the wrapper is redundant.
+- `state: 'error'` → `data: null`, `error: { code, message }` (unchanged).
+
 Notes:
 - `TaskEvent.data` remains `unknown` at the generic task-system level. Agent-task consumers narrow by checking `state` and `metadata.documentId`.
 - `fullContent` is joined text deltas only. Images are markdown tokens, already part of the text stream.
+- Task system continues to emit progress events (`data: { percent, message, detail }`) — renderer ignores them for agent tasks; phase/delta events are the source of truth.
 
 ## Components
 
