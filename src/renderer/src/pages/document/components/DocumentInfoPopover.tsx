@@ -1,9 +1,23 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Info, Download, Trash2, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/Popover';
+import {
+	Popover,
+	PopoverContent,
+	PopoverDescription,
+	PopoverHeader,
+	PopoverTitle,
+	PopoverTrigger,
+} from '@/components/ui/Popover';
+import {
+	Item,
+	ItemContent,
+	ItemGroup,
+	ItemMedia,
+	ItemTitle,
+} from '@/components/ui/Item';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -14,6 +28,7 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/AlertDialog';
+import type { DocumentConfig } from '@shared/index';
 
 interface DocumentInfoPopoverProps {
 	readonly documentId: string | null;
@@ -26,15 +41,26 @@ function sanitizeFileName(name: string): string {
 	return trimmed.replace(/[\\/:*?"<>|]+/g, '-').slice(0, 120);
 }
 
+function formatDate(isoString: string, locale: string): string {
+	const date = new Date(isoString);
+	return date.toLocaleDateString(locale, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
+
 export default function DocumentInfoPopover({
 	documentId,
 	title,
 	content,
 }: DocumentInfoPopoverProps): React.ReactElement {
-	const { t } = useTranslation();
+	const { t, i18n } = useTranslation();
 	const navigate = useNavigate();
-	const [documentPath, setDocumentPath] = useState<string>('');
 	const [open, setOpen] = useState(false);
+	const [documentConfig, setDocumentConfig] = useState<DocumentConfig | null>(null);
 	const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
 	const [isDeleting, setIsDeleting] = useState(false);
 
@@ -42,17 +68,23 @@ export default function DocumentInfoPopover({
 		if (!documentId || !open) return;
 		let cancelled = false;
 		window.workspace
-			.getDocumentPath(documentId)
-			.then((path) => {
-				if (!cancelled) setDocumentPath(path);
+			.getDocumentConfig(documentId)
+			.then((config) => {
+				if (!cancelled) setDocumentConfig(config);
 			})
 			.catch(() => {
-				if (!cancelled) setDocumentPath('');
+				if (!cancelled) setDocumentConfig(null);
 			});
 		return () => {
 			cancelled = true;
 		};
 	}, [documentId, open]);
+
+	const lastUpdatedLabel = useMemo(() => {
+		const iso = documentConfig?.updatedAt ?? documentConfig?.createdAt;
+		if (!iso) return null;
+		return formatDate(iso, i18n.language);
+	}, [documentConfig?.updatedAt, documentConfig?.createdAt, i18n.language]);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
@@ -104,59 +136,67 @@ export default function DocumentInfoPopover({
 					}
 				/>
 				<PopoverContent align="end" className="w-80 p-0">
-					<div className="space-y-3 p-4">
-						<div className="space-y-1">
-							<p className="text-xs uppercase tracking-wide text-muted-foreground">
-								{t('common.name', 'Name')}
-							</p>
-							<p className="text-sm font-medium text-foreground break-words">{displayTitle}</p>
+					<PopoverHeader className="flex flex-row items-start justify-between gap-3 p-4 pb-3">
+						<div className="flex min-w-0 flex-1 flex-col gap-1">
+							<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
+							{lastUpdatedLabel && (
+								<PopoverDescription>
+									{t('configSidebar.updatedAt', 'Updated')} · {lastUpdatedLabel}
+								</PopoverDescription>
+							)}
 						</div>
-						<div className="space-y-1">
-							<p className="text-xs uppercase tracking-wide text-muted-foreground">
-								{t('projectSettings.path', 'Path')}
-							</p>
-							<button
-								type="button"
-								onClick={handleOpenFolder}
-								disabled={!documentPath}
-								className="group flex w-full items-start gap-2 rounded-md text-left text-sm text-foreground/85 hover:text-foreground disabled:cursor-not-allowed disabled:opacity-60"
-								title={documentPath || ''}
-							>
-								<FolderOpen
-									className="h-3.5 w-3.5 mt-0.5 shrink-0 text-muted-foreground group-hover:text-foreground"
-									aria-hidden="true"
-								/>
-								<span className="break-all text-xs font-mono text-muted-foreground group-hover:text-foreground">
-									{documentPath || '—'}
-								</span>
-							</button>
-						</div>
-					</div>
-					<div className="border-t p-2">
-						<button
-							type="button"
-							onClick={handleExport}
+						<Button
+							variant="ghost"
+							size="icon-sm"
+							onClick={handleOpenFolder}
 							disabled={!documentId}
-							className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground/85 transition-colors hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60"
+							title={t('configSidebar.openFolder', 'Open folder')}
+							aria-label={t('configSidebar.openFolder', 'Open folder')}
 						>
-							<Download
-								className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
-								aria-hidden="true"
-							/>
-							{t('configSidebar.export', 'Export')}
-						</button>
-						<button
-							type="button"
-							onClick={() => setConfirmDeleteOpen(true)}
-							disabled={!documentId || isDeleting}
-							className="flex w-full items-center gap-2 rounded-md px-2 py-2 text-sm text-foreground/85 transition-colors hover:bg-destructive/10 hover:text-destructive focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-60"
-						>
-							<Trash2
-								className="h-3.5 w-3.5 shrink-0 text-muted-foreground"
-								aria-hidden="true"
-							/>
-							{t('configSidebar.deletePermanently', 'Delete permanently')}
-						</button>
+							<FolderOpen aria-hidden="true" />
+						</Button>
+					</PopoverHeader>
+					<div className="border-t p-2">
+						<ItemGroup>
+							<Item
+								size="xs"
+								render={
+									<button
+										type="button"
+										onClick={handleExport}
+										disabled={!documentId}
+										className="w-full cursor-pointer text-left hover:bg-accent disabled:pointer-events-none disabled:opacity-60"
+									/>
+								}
+							>
+								<ItemMedia variant="icon">
+									<Download className="text-muted-foreground" aria-hidden="true" />
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>{t('configSidebar.export', 'Export')}</ItemTitle>
+								</ItemContent>
+							</Item>
+							<Item
+								size="xs"
+								render={
+									<button
+										type="button"
+										onClick={() => setConfirmDeleteOpen(true)}
+										disabled={!documentId || isDeleting}
+										className="w-full cursor-pointer text-left text-destructive hover:bg-destructive/10 disabled:pointer-events-none disabled:opacity-60"
+									/>
+								}
+							>
+								<ItemMedia variant="icon">
+									<Trash2 aria-hidden="true" />
+								</ItemMedia>
+								<ItemContent>
+									<ItemTitle>
+										{t('configSidebar.deletePermanently', 'Delete permanently')}
+									</ItemTitle>
+								</ItemContent>
+							</Item>
+						</ItemGroup>
 					</div>
 				</PopoverContent>
 			</Popover>
