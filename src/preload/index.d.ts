@@ -270,22 +270,9 @@ export interface WorkspaceApi {
 	// Every call rejects at runtime; listeners are no-ops returning unsubscribe.
 	// -------------------------------------------------------------------------
 	importFiles: (extensions?: string[]) => Promise<ResourceInfo[]>;
-	importByPaths: (paths: string[]) => Promise<ResourceInfo[]>;
-	downloadFromUrl: (url: string) => Promise<ResourceInfo>;
 	loadDocuments: () => Promise<ResourceInfo[]>;
 	deleteDocument: (id: string) => Promise<void>;
 	onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void;
-	onDocumentWatcherError: (callback: (error: WatcherError) => void) => () => void;
-	// -------------------------------------------------------------------------
-	// Indexed directory management
-	// -------------------------------------------------------------------------
-	listDirectories: () => Promise<DirectoryEntry[]>;
-	addDirectory: (dirPath: string) => Promise<DirectoryEntry>;
-	addDirectories: (dirPaths: string[]) => Promise<DirectoryAddManyResult>;
-	removeDirectory: (id: string) => Promise<boolean>;
-	validateDirectory: (dirPath: string) => Promise<DirectoryValidationResult>;
-	markDirectoryIndexed: (id: string, isIndexed: boolean) => Promise<boolean>;
-	onDirectoriesChanged: (callback: (directories: DirectoryEntry[]) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Indexing info
 	// -------------------------------------------------------------------------
