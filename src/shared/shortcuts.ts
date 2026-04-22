@@ -37,6 +37,11 @@ export const SHORTCUT_BINDINGS: Record<ShortcutId, ShortcutBinding> = {
 		win: 'Ctrl+K',
 		linux: 'Ctrl+K',
 	},
+	[ShortcutId.newDocument]: {
+		mac: '⌃⌥N',
+		win: 'Ctrl+Alt+N',
+		linux: 'Ctrl+Alt+N',
+	},
 };
 
 /**
