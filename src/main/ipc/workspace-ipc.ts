@@ -496,10 +496,6 @@ export class WorkspaceIpc implements IpcModule {
 					Promise.resolve(mgr.getDocumentFolderPath(documentId)),
 				]);
 				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
-				eventBus.broadcast(WorkspaceChannels.documentContentChanged, {
-					documentId,
-					content,
-				});
 				eventBus.emit('document:changed', {
 					windowId,
 					document: {
