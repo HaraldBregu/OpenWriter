@@ -8,12 +8,7 @@
 
 export * from './core';
 export { AssistantAgent } from './assistant';
-export type {
-	AssistantAgentInput,
-	AssistantAgentOutput,
-	AssistantFile,
-	AssistantToolCallRecord,
-} from './assistant';
+export type { AssistantAgentInput, AssistantAgentOutput } from './assistant';
 export { RagAgent, InMemoryVectorStore, splitText } from './rag';
 export type {
 	RagAgentInput,
