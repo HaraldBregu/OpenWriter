@@ -8,7 +8,6 @@ import {
 	TipSection,
 	ResourcesSection,
 	ToolsSection,
-	DebugSection,
 } from './components';
 import Layout from './Layout';
 
