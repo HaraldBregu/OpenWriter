@@ -111,7 +111,6 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 			}
 
 			state.setStatus('done');
-			ctx.progress?.(100, stoppedReason);
 
 			return {
 				content: state.finalText,
