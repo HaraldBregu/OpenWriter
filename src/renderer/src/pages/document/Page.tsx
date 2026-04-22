@@ -239,6 +239,7 @@ function PageContent(): ReactElement {
 		documentId: id,
 		sessionIdRef,
 		ready: loaded && editor != null,
+		agentType: 'writer',
 		onPhase: useCallback((_, label: string) => {
 			setPhaseLabel(label);
 		}, []),
