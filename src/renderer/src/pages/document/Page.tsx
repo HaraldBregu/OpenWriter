@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/Input';
 import InfoPanel from './panels/info/Panel';
 import Chat from './panels/chat/Panel';
 import HistoryMenu from './components/HistoryMenu';
+import DocumentInfoPopover from './components/DocumentInfoPopover';
 import {
 	useDocumentDispatch,
 	useDocumentHistory,
