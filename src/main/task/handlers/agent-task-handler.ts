@@ -12,26 +12,18 @@ import { getTaskExecutionContext } from '../task-execution-context';
 import { DEFAULT_IMAGE_MODEL_ID } from '../../../shared/models';
 import type { SkillsStoreService } from '../../services/skills-store-service';
 import type { Skill } from '../../agents/skills';
-import { DocumentStreamWriter } from './document-stream-writer';
+import type { AgentCompletedOutput } from '../../../shared/types';
+import { AgentStreamProjection } from './agent-stream-projection';
+import { AgentPhaseMapper } from './agent-phase-mapper';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
  *
- * Submit a task with `type: 'agent'` and an input of the shape below. The
- * handler resolves the agent by `agentType`, enriches the input with
- * provider/model/apiKey from main-side services, resolves the document
- * file path from the caller window's Workspace facade, then executes the
- * agent's strategy. Renderer payloads never carry credentials or
- * filesystem paths.
- *
- * While the agent runs, it emits typed `AgentEvent`s through `ctx.onEvent`.
- * The handler:
- *   - appends `text` deltas to `content.md` on disk;
- *   - drives task progress (0% during reasoning events, token-count ramp
- *     during `text` events, 100% on completion);
- *   - forwards every event to the task's `recordEvent` sink, which
- *     persists it on `ActiveTask.events` and broadcasts it to the
- *     renderer as a `task:event` payload.
+ * Tokens stream through `recordEvent` only; disk is written by the renderer
+ * on task completion. Two event kinds are emitted for renderer consumption:
+ *   - `phase` ({ phase, label }) — status-bar display.
+ *   - `delta` ({ token, fullContent }) — live editor insertion.
+ * Other AgentEvents still flow through `recordEvent` for diagnostics.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
@@ -39,11 +31,6 @@ export interface AgentTaskInput<TAgentInput = unknown> {
 	agentType: string;
 	/** Input payload forwarded to the agent's `execute`, after enrichment. */
 	input: TAgentInput;
-}
-
-export interface AgentTaskOutput<TAgentOutput = unknown> {
-	agentType: string;
-	output: TAgentOutput;
 }
 
 const LOG_SOURCE = 'AgentTaskHandler';
@@ -64,7 +51,12 @@ interface AgentInputRecord {
 	[key: string]: unknown;
 }
 
-export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOutput> {
+interface AgentRunOutput {
+	content?: unknown;
+	stoppedReason?: unknown;
+}
+
+export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentCompletedOutput> {
 	readonly type = 'agent';
 
 	constructor(
@@ -95,15 +87,15 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		reporter: ProgressReporter,
 		metadata?: Record<string, unknown>,
 		recordEvent?: RecordEvent
-	): Promise<AgentTaskOutput> {
+	): Promise<AgentCompletedOutput> {
 		const agent = this.agents.get(input.agentType);
 		const startedAt = Date.now();
 		const enrichedInput = await this.enrichInput(input.agentType, input.input, metadata);
-		const record = (enrichedInput ?? {}) as AgentInputRecord;
 
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
-		const writer = await this.initDocumentWriter(record.documentPath);
+		const projection = new AgentStreamProjection();
+		const phaseMapper = new AgentPhaseMapper();
 		let tokens = 0;
 
 		reporter.progress(0, 'reasoning');
@@ -116,32 +108,45 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				reporter.progress(percent, message);
 			},
 			onEvent: (event: AgentEvent) => {
+				projection.apply(event);
+
+				const phase = phaseMapper.map(event);
+				if (phase) {
+					recordEvent?.({ kind: 'phase', at: Date.now(), payload: phase });
+				}
+
 				if (event.kind === 'text') {
 					const delta = extractTextDelta(event.payload);
 					if (delta) {
-						writer?.appendDelta(delta);
 						tokens += 1;
 						reporter.progress(rampPct(tokens), 'response');
+						recordEvent?.({
+							kind: 'delta',
+							at: Date.now(),
+							payload: { token: delta, fullContent: projection.fullContent },
+						});
+						return;
 					}
-				} else {
-					reporter.progress(0, 'reasoning');
 				}
+
 				recordEvent?.(event);
 			},
 		};
 
 		try {
-			const output = await agent.execute(enrichedInput, ctx);
-			await writer?.end();
+			const raw = (await agent.execute(enrichedInput, ctx)) as AgentRunOutput;
+			const content =
+				typeof raw?.content === 'string' ? raw.content : projection.fullContent;
+			const stoppedReason = resolveStoppedReason(raw?.stoppedReason);
 			reporter.progress(100, 'done');
 			this.logger.info(LOG_SOURCE, `[${input.agentType}] completed`, {
 				elapsedMs: Date.now() - startedAt,
 				tokens,
-				output: summarizeOutput(output),
+				contentLength: content.length,
+				stoppedReason,
 			});
-			return { agentType: input.agentType, output };
+			return { content, stoppedReason };
 		} catch (error) {
-			await writer?.end();
 			const err = error instanceof Error ? error : new Error(String(error));
 			const level = err.name === 'AbortError' ? 'warn' : 'error';
 			this.logger[level](LOG_SOURCE, `[${input.agentType}] failed`, {
@@ -150,20 +155,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				name: err.name,
 			});
 			throw error;
-		}
-	}
-
-	private async initDocumentWriter(
-		documentPath: string | undefined
-	): Promise<DocumentStreamWriter | undefined> {
-		if (!documentPath) return undefined;
-		const writer = new DocumentStreamWriter(documentPath, this.logger);
-		try {
-			await writer.begin();
-			return writer;
-		} catch (error) {
-			this.logger.warn(LOG_SOURCE, `Failed to open document stream for ${documentPath}`, error);
-			return undefined;
 		}
 	}
 
@@ -316,23 +307,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 	}
 }
 
-function summarizeOutput(output: unknown): Record<string, unknown> {
-	if (!output || typeof output !== 'object') {
-		return { type: typeof output };
-	}
-	const record = output as Record<string, unknown>;
-	const summary: Record<string, unknown> = {};
-	if (typeof record.content === 'string') summary.contentLength = record.content.length;
-	if (typeof record.iterations === 'number') summary.iterations = record.iterations;
-	if (typeof record.stoppedReason === 'string') summary.stoppedReason = record.stoppedReason;
-	if (Array.isArray(record.toolCalls)) summary.toolCalls = record.toolCalls.length;
-	const usage = record.usage;
-	if (usage && typeof usage === 'object') {
-		summary.usage = usage;
-	}
-	return summary;
-}
-
 function extractTextDelta(payload: unknown): string {
 	if (!payload || typeof payload !== 'object') return '';
 	const text = (payload as { text?: unknown }).text;
@@ -341,4 +315,9 @@ function extractTextDelta(payload: unknown): string {
 
 function rampPct(tokens: number): number {
 	return Math.min(PROGRESS_RAMP_CAP, Math.round(tokens * PROGRESS_RAMP_K));
+}
+
+function resolveStoppedReason(raw: unknown): AgentCompletedOutput['stoppedReason'] {
+	if (raw === 'done' || raw === 'max-steps' || raw === 'stagnation') return raw;
+	return 'done';
 }
