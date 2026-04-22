@@ -2,12 +2,13 @@ import { contextBridge, webUtils } from 'electron';
 import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } from './typed-ipc';
 import {
 	AppChannels,
+	ExtensionChannels,
 	WindowChannels,
 	WorkspaceChannels,
 	TaskChannels,
 	LogChannels,
 } from '../shared/channels';
-import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
+import type { AppApi, ExtensionsApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type {
 	AgentSettings,
 	Service,
@@ -499,6 +500,25 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
+// window.extensions — Extension registry and command execution
+// ---------------------------------------------------------------------------
+const extensions: ExtensionsApi = {
+	list: () => typedInvokeUnwrap(ExtensionChannels.list),
+	getState: (extensionId) => typedInvokeUnwrap(ExtensionChannels.getState, extensionId),
+	getCommands: () => typedInvokeUnwrap(ExtensionChannels.getCommands),
+	executeCommand: (commandId, payload) =>
+		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
+	setEnabled: (extensionId, enabled) =>
+		typedInvokeUnwrap(ExtensionChannels.setEnabled, extensionId, enabled),
+	reload: (extensionId) => typedInvokeUnwrap(ExtensionChannels.reload, extensionId),
+	setActiveDocument: (documentId) =>
+		typedInvokeUnwrap(ExtensionChannels.setActiveDocument, documentId),
+	openFolder: () => typedInvokeUnwrap(ExtensionChannels.openFolder),
+	onRegistryChanged: (callback) => typedOn(ExtensionChannels.registryChanged, callback),
+	onRuntimeChanged: (callback) => typedOn(ExtensionChannels.runtimeChanged, callback),
+} satisfies ExtensionsApi;
+
+// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -507,6 +527,7 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('win', win);
 		contextBridge.exposeInMainWorld('workspace', workspace);
 		contextBridge.exposeInMainWorld('task', task);
+		contextBridge.exposeInMainWorld('extensions', extensions);
 	} catch (error) {
 		console.error('[preload] Failed to expose IPC APIs:', error);
 	}
@@ -519,4 +540,6 @@ if (process.contextIsolated) {
 	globalThis.workspace = workspace;
 	// @ts-ignore (define in dts)
 	globalThis.task = task;
+	// @ts-ignore (define in dts)
+	globalThis.extensions = extensions;
 }

@@ -64,6 +64,12 @@ import type {
 	CustomThemeInfo,
 	Theme,
 	SkillInfo,
+	ExtensionCommandExecutionResult,
+	ExtensionCommandInfo,
+	ExtensionRegistrySnapshot,
+	ExtensionRuntimeChangedPayload,
+	ExtensionRuntimeInfo,
+	ExtensionRuntimeState,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
@@ -122,6 +128,12 @@ export type {
 	CustomThemeInfo,
 	Theme,
 	SkillInfo,
+	ExtensionCommandExecutionResult,
+	ExtensionCommandInfo,
+	ExtensionRegistrySnapshot,
+	ExtensionRuntimeChangedPayload,
+	ExtensionRuntimeInfo,
+	ExtensionRuntimeState,
 };
 export type { ShortcutId } from '../shared/shortcuts';
 
@@ -204,6 +216,22 @@ export interface WindowApi {
 	isFullScreen: () => Promise<boolean>;
 	onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void;
 	onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void;
+}
+
+export interface ExtensionsApi {
+	list: () => Promise<ExtensionRuntimeInfo[]>;
+	getState: (extensionId: string) => Promise<ExtensionRuntimeState>;
+	getCommands: () => Promise<ExtensionCommandInfo[]>;
+	executeCommand: (
+		commandId: string,
+		payload?: unknown
+	) => Promise<ExtensionCommandExecutionResult>;
+	setEnabled: (extensionId: string, enabled: boolean) => Promise<void>;
+	reload: (extensionId: string) => Promise<void>;
+	setActiveDocument: (documentId: string | null) => Promise<void>;
+	openFolder: () => Promise<void>;
+	onRegistryChanged: (callback: (payload: ExtensionRegistrySnapshot) => void) => () => void;
+	onRuntimeChanged: (callback: (payload: ExtensionRuntimeChangedPayload) => void) => () => void;
 }
 
 /** Workspace folder selection, recent workspaces, and document/directory/output management */
@@ -413,5 +441,6 @@ declare global {
 		win?: WindowApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
+		extensions: ExtensionsApi;
 	}
 }

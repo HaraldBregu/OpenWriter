@@ -130,9 +130,12 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		const ctx: AgentContext = {
 			signal,
 			logger: this.logger,
+			// Agent-reported progress is ignored — the handler drives task
+			// progress via reasoning/response dispatch below.
 			progress: (percent, message) => {
-				this.logger.debug(LOG_SOURCE, `[${input.agentType}] progress ${percent}%`, { message });
-				reporter.progress(percent, message);
+				this.logger.debug(LOG_SOURCE, `[${input.agentType}] agent-progress ${percent}%`, {
+					message,
+				});
 			},
 			stream: (chunk) => {
 				this.dispatchStreamChunk(input.agentType, chunk, {

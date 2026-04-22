@@ -1,4 +1,4 @@
-import { ipcMain, dialog, shell } from 'electron';
+import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
 import type { IpcMainInvokeEvent, FileFilter } from 'electron';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
@@ -545,10 +545,25 @@ export class WorkspaceIpc implements IpcModule {
 				async (event: IpcMainInvokeEvent, documentId: string, config: Partial<DocumentConfig>) => {
 					const mgr = this.mgr(event, container);
 					await mgr.updateDocumentConfig(documentId, config);
-					const updated = await mgr.getDocumentConfig(documentId);
+					const [updated, content, documentPath] = await Promise.all([
+						mgr.getDocumentConfig(documentId),
+						mgr.getDocumentContent(documentId),
+						mgr.getDocumentPath(documentId),
+					]);
+					const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
 					eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
 						documentId,
 						config: updated,
+					});
+					eventBus.emit('document:changed', {
+						windowId,
+						document: {
+							id: documentId,
+							title: updated.title,
+							content,
+							path: documentPath,
+							windowId,
+						},
 					});
 				},
 				WorkspaceChannels.updateDocumentConfig
@@ -573,10 +588,24 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string, content: string) => {
 				const mgr = this.mgr(event, container);
 				await mgr.updateDocumentContent(documentId, content);
-				const updated = await mgr.getDocumentConfig(documentId);
-				eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
+				const [updated, documentPath] = await Promise.all([
+					mgr.getDocumentConfig(documentId),
+					mgr.getDocumentPath(documentId),
+				]);
+				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
+				eventBus.broadcast(WorkspaceChannels.documentContentChanged, {
 					documentId,
-					config: updated,
+					content,
+				});
+				eventBus.emit('document:changed', {
+					windowId,
+					document: {
+						id: documentId,
+						title: updated.title,
+						content,
+						path: documentPath,
+						windowId,
+					},
 				});
 			}, WorkspaceChannels.updateDocumentContent)
 		);

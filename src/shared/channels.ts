@@ -56,6 +56,12 @@ import type {
 	SkillInfo,
 	Theme,
 	Service,
+	ExtensionCommandExecutionResult,
+	ExtensionCommandInfo,
+	ExtensionRegistrySnapshot,
+	ExtensionRuntimeChangedPayload,
+	ExtensionRuntimeInfo,
+	ExtensionRuntimeState,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
@@ -221,6 +227,19 @@ export const AppChannels = {
 	shortcut: 'app:shortcut',
 } as const;
 
+export const ExtensionChannels = {
+	list: 'extensions:list',
+	getState: 'extensions:get-state',
+	getCommands: 'extensions:get-commands',
+	executeCommand: 'extensions:execute-command',
+	setEnabled: 'extensions:set-enabled',
+	reload: 'extensions:reload',
+	setActiveDocument: 'extensions:set-active-document',
+	openFolder: 'extensions:open-folder',
+	registryChanged: 'extensions:registry-changed',
+	runtimeChanged: 'extensions:runtime-changed',
+} as const;
+
 // ===========================================================================
 // Channel-to-Type Maps
 // ===========================================================================
@@ -355,6 +374,22 @@ export interface InvokeChannelMap {
 	[AppChannels.setTrayEnabled]: { args: [enabled: boolean]; result: void };
 	[AppChannels.getTrayEnabled]: { args: []; result: boolean };
 
+	// ---- Extensions (IpcResult-wrapped) ----
+	[ExtensionChannels.list]: { args: []; result: ExtensionRuntimeInfo[] };
+	[ExtensionChannels.getState]: { args: [extensionId: string]; result: ExtensionRuntimeState };
+	[ExtensionChannels.getCommands]: { args: []; result: ExtensionCommandInfo[] };
+	[ExtensionChannels.executeCommand]: {
+		args: [commandId: string, payload?: unknown];
+		result: ExtensionCommandExecutionResult;
+	};
+	[ExtensionChannels.setEnabled]: {
+		args: [extensionId: string, enabled: boolean];
+		result: void;
+	};
+	[ExtensionChannels.reload]: { args: [extensionId: string]; result: void };
+	[ExtensionChannels.setActiveDocument]: { args: [documentId: string | null]; result: void };
+	[ExtensionChannels.openFolder]: { args: []; result: void };
+
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
@@ -454,4 +489,6 @@ export interface EventChannelMap {
 	// ---- Images watcher events ----
 	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
 	[WorkspaceChannels.imagesWatcherError]: { data: WatcherError };
+	[ExtensionChannels.registryChanged]: { data: ExtensionRegistrySnapshot };
+	[ExtensionChannels.runtimeChanged]: { data: ExtensionRuntimeChangedPayload };
 }
