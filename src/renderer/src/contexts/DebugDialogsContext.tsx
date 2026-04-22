@@ -22,13 +22,22 @@ export function DebugDialogsProvider({ children }: { children: ReactNode }) {
 	const openLogDialog = useCallback(() => setLogOpen(true), []);
 
 	useEffect(() => {
-		const unsubTasks = window.app.onOpenTasksDialog(openTasksDialog);
-		const unsubLogs = window.app.onOpenLogsDialog(openLogDialog);
-		const unsubRedux = window.app.onOpenReduxDialog(openReduxDialog);
+		const unsubTasks =
+			typeof window.app?.onOpenTasksDialog === 'function'
+				? window.app.onOpenTasksDialog(openTasksDialog)
+				: undefined;
+		const unsubLogs =
+			typeof window.app?.onOpenLogsDialog === 'function'
+				? window.app.onOpenLogsDialog(openLogDialog)
+				: undefined;
+		const unsubRedux =
+			typeof window.app?.onOpenReduxDialog === 'function'
+				? window.app.onOpenReduxDialog(openReduxDialog)
+				: undefined;
 		return () => {
-			unsubTasks();
-			unsubLogs();
-			unsubRedux();
+			unsubTasks?.();
+			unsubLogs?.();
+			unsubRedux?.();
 		};
 	}, [openTasksDialog, openLogDialog, openReduxDialog]);
 
