@@ -268,15 +268,6 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.update,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, params: Parameters<Workspace['updateOutput']>[0]) =>
-					this.mgr(event, container).updateOutput(params),
-				WorkspaceChannels.update
-			)
-		);
-
-		ipcMain.handle(
 			WorkspaceChannels.outputLoadAll,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).loadOutputs(),
