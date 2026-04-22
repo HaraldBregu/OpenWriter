@@ -302,11 +302,9 @@ export interface WorkspaceApi {
 	loadOutputs: () => Promise<OutputFile[]>;
 	loadOutputsByType: (type: string) => Promise<OutputFile[]>;
 	loadOutput: (params: { type: string; id: string }) => Promise<OutputFile | null>;
-	updateOutput: (params: OutputUpdateParams) => Promise<void>;
 	deleteOutput: (params: { type: string; id: string }) => Promise<void>;
 	trashOutput: (params: { type: string; id: string }) => Promise<void>;
 	onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void;
-	onOutputWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Project workspace (project_workspace.openwriter)
 	// -------------------------------------------------------------------------
