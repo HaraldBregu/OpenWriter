@@ -1,12 +1,7 @@
 import path from 'node:path';
-import type {
-	TaskHandler,
-	ProgressReporter,
-	StreamReporter,
-	TaskStateWriter,
-} from '../task-handler';
+import type { TaskHandler, ProgressReporter, RecordEvent } from '../task-handler';
 import type { AgentRegistry } from '../../agents/core/agent-registry';
-import type { AgentContext } from '../../agents/core/agent';
+import type { AgentContext, AgentEvent } from '../../agents/core/agent';
 import type { LoggerService } from '../../services/logger';
 import type { StoreService } from '../../services/store';
 import type { ServiceResolver } from '../../shared/service-resolver';
@@ -22,20 +17,21 @@ import { DocumentStreamWriter } from './document-stream-writer';
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
  *
- * Submit a task with `type: 'agent'` and an input of the shape below.
- * The handler resolves the agent by `agentType`, enriches the input with
+ * Submit a task with `type: 'agent'` and an input of the shape below. The
+ * handler resolves the agent by `agentType`, enriches the input with
  * provider/model/apiKey from main-side services, resolves the document
- * file path from the caller window's Workspace facade, then executes
- * the agent's strategy. Renderer payloads never carry credentials or
+ * file path from the caller window's Workspace facade, then executes the
+ * agent's strategy. Renderer payloads never carry credentials or
  * filesystem paths.
  *
- * While the agent runs, the handler classifies each stream event as
- * either `reasoning` (controller decisions, skill selections, step
- * boundaries) or `response` (generated text). Reasoning events keep
- * progress at 0 and are stored on the task as `reasoningLog`. Response
- * events append text deltas to the document file (`content.md`) and to
- * the task's `streamedContent` buffer, and advance progress via a token
- * count ramp.
+ * While the agent runs, it emits typed `AgentEvent`s through `ctx.onEvent`.
+ * The handler:
+ *   - appends `text` deltas to `content.md` on disk;
+ *   - drives task progress (0% during reasoning events, token-count ramp
+ *     during `text` events, 100% on completion);
+ *   - forwards every event to the task's `recordEvent` sink, which
+ *     persists it on `ActiveTask.events` and broadcasts it to the
+ *     renderer as a `task:event` payload.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
@@ -50,23 +46,9 @@ export interface AgentTaskOutput<TAgentOutput = unknown> {
 	output: TAgentOutput;
 }
 
-interface StreamEvent {
-	kind?: string;
-	payload?: unknown;
-	at?: number;
-}
-
 const LOG_SOURCE = 'AgentTaskHandler';
-const STREAM_PREVIEW_CHARS = 160;
 const PROGRESS_RAMP_K = 0.5;
 const PROGRESS_RAMP_CAP = 99;
-const REASONING_KINDS = new Set([
-	'decision',
-	'decision:invalid',
-	'skill:selected',
-	'step:begin',
-	'step:end',
-]);
 
 interface AgentInputRecord {
 	providerId?: string;
@@ -111,9 +93,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		input: AgentTaskInput,
 		signal: AbortSignal,
 		reporter: ProgressReporter,
-		streamReporter?: StreamReporter,
 		metadata?: Record<string, unknown>,
-		stateWriter?: TaskStateWriter
+		recordEvent?: RecordEvent
 	): Promise<AgentTaskOutput> {
 		const agent = this.agents.get(input.agentType);
 		const startedAt = Date.now();
@@ -123,30 +104,30 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
 		const writer = await this.initDocumentWriter(record.documentPath);
-		const progressState = { tokens: 0 };
+		let tokens = 0;
 
 		reporter.progress(0, 'reasoning');
 
 		const ctx: AgentContext = {
 			signal,
 			logger: this.logger,
-			// Agent-reported progress is ignored — the handler drives task
-			// progress via reasoning/response dispatch below.
-			progress: (percent, message) => {
-				this.logger.debug(LOG_SOURCE, `[${input.agentType}] agent-progress ${percent}%`, {
-					message,
-				});
-			},
-			stream: (chunk) => {
-				this.dispatchStreamChunk(input.agentType, chunk, {
-					writer,
-					reporter,
-					stateWriter,
-					streamReporter,
-					progressState,
-				});
-			},
 			metadata,
+			progress: (percent, message) => {
+				reporter.progress(percent, message);
+			},
+			onEvent: (event: AgentEvent) => {
+				if (event.kind === 'text') {
+					const delta = extractTextDelta(event.payload);
+					if (delta) {
+						writer?.appendDelta(delta);
+						tokens += 1;
+						reporter.progress(rampPct(tokens), 'response');
+					}
+				} else {
+					reporter.progress(0, 'reasoning');
+				}
+				recordEvent?.(event);
+			},
 		};
 
 		try {
@@ -155,6 +136,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			reporter.progress(100, 'done');
 			this.logger.info(LOG_SOURCE, `[${input.agentType}] completed`, {
 				elapsedMs: Date.now() - startedAt,
+				tokens,
 				output: summarizeOutput(output),
 			});
 			return { agentType: input.agentType, output };
@@ -185,70 +167,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		}
 	}
 
-	private dispatchStreamChunk(
-		agentType: string,
-		chunk: string,
-		deps: {
-			writer: DocumentStreamWriter | undefined;
-			reporter: ProgressReporter;
-			stateWriter: TaskStateWriter | undefined;
-			streamReporter: StreamReporter | undefined;
-			progressState: { tokens: number };
-		}
-	): void {
-		const event = tryParseEvent(chunk);
-		if (event?.kind) {
-			if (REASONING_KINDS.has(event.kind)) {
-				this.handleReasoning(agentType, event, deps);
-			} else if (event.kind === 'text') {
-				this.handleResponse(agentType, event, deps);
-			} else {
-				this.logAgentEvent(agentType, event);
-			}
-		} else {
-			this.logStreamChunk(agentType, chunk);
-		}
-
-		deps.streamReporter?.stream(chunk);
-	}
-
-	private handleReasoning(
-		agentType: string,
-		event: StreamEvent,
-		deps: { reporter: ProgressReporter; stateWriter: TaskStateWriter | undefined }
-	): void {
-		deps.stateWriter?.pushReasoning({
-			at: event.at ?? Date.now(),
-			kind: event.kind ?? 'unknown',
-			payload: event.payload,
-		});
-		deps.reporter.progress(0, 'reasoning');
-		this.logAgentEvent(agentType, event);
-	}
-
-	private handleResponse(
-		agentType: string,
-		event: StreamEvent,
-		deps: {
-			writer: DocumentStreamWriter | undefined;
-			reporter: ProgressReporter;
-			stateWriter: TaskStateWriter | undefined;
-			progressState: { tokens: number };
-		}
-	): void {
-		const delta = extractTextDelta(event.payload);
-		if (!delta) {
-			this.logAgentEvent(agentType, event);
-			return;
-		}
-		deps.writer?.appendDelta(delta);
-		deps.stateWriter?.appendResponseDelta(delta);
-		deps.progressState.tokens += 1;
-		deps.stateWriter?.setTokenCount(deps.progressState.tokens);
-		deps.reporter.progress(rampPct(deps.progressState.tokens), 'response');
-		this.logAgentEvent(agentType, event);
-	}
-
 	private logTaskStart(
 		agentType: string,
 		enriched: unknown,
@@ -265,41 +183,6 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			skillsCount: record.skills?.length ?? 0,
 			metadataKeys: metadata ? Object.keys(metadata) : [],
 		});
-	}
-
-	private logStreamChunk(agentType: string, chunk: string): void {
-		const trimmed = chunk.trim();
-		if (!trimmed) return;
-		this.logger.debug(LOG_SOURCE, `[${agentType}] stream`, {
-			preview: trimmed.slice(0, STREAM_PREVIEW_CHARS),
-		});
-	}
-
-	private logAgentEvent(agentType: string, event: StreamEvent): void {
-		const tag = `[${agentType}] ${event.kind ?? 'event'}`;
-		switch (event.kind) {
-			case 'status':
-				this.logger.info(LOG_SOURCE, tag, event.payload);
-				return;
-			case 'decision':
-			case 'skill:selected':
-				this.logger.info(LOG_SOURCE, tag, event.payload);
-				return;
-			case 'decision:invalid':
-			case 'budget':
-				this.logger.warn(LOG_SOURCE, tag, event.payload);
-				return;
-			case 'tool':
-			case 'text':
-			case 'image':
-			case 'usage':
-			case 'step:begin':
-			case 'step:end':
-				this.logger.debug(LOG_SOURCE, tag, event.payload);
-				return;
-			default:
-				this.logger.debug(LOG_SOURCE, tag, event.payload);
-		}
 	}
 
 	private async enrichInput<T>(
@@ -448,16 +331,6 @@ function summarizeOutput(output: unknown): Record<string, unknown> {
 		summary.usage = usage;
 	}
 	return summary;
-}
-
-function tryParseEvent(chunk: string): StreamEvent | undefined {
-	const trimmed = chunk.trim();
-	if (!trimmed) return undefined;
-	try {
-		return JSON.parse(trimmed) as StreamEvent;
-	} catch {
-		return undefined;
-	}
 }
 
 function extractTextDelta(payload: unknown): string {
