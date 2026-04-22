@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { Undo2, Redo2 } from 'lucide-react';
+import { v7 as uuidv7 } from 'uuid';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -18,11 +19,18 @@ import {
 	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
-	useAssistantTask,
 	useEditorStreamInsert,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
-import type { ExtensionDocPanelInfo } from '../../../../shared/types';
+import type {
+	AgentCompletedOutput,
+	AgentDeltaPayload,
+	AgentPhase,
+	AgentPhasePayload,
+	AssistantTaskMetadata,
+	ExtensionDocPanelInfo,
+	TaskEvent,
+} from '../../../../shared/types';
 import { TaskStatusBar } from './components/TaskStatusBar';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
@@ -37,6 +45,7 @@ import { PromptSubmitPayload } from '@shared/index';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
+const AGENT_TYPE = 'writer';
 
 function PageContent(): ReactElement {
 	const { documentId: id } = useDocumentState();
@@ -235,67 +244,174 @@ function PageContent(): ReactElement {
 
 	const editorInsert = useEditorStreamInsert();
 
-	const assistant = useAssistantTask({
-		documentId: id,
-		sessionIdRef,
-		ready: loaded && editor != null,
-		agentType: 'writer',
-		onPhase: useCallback((_, label: string) => {
-			setPhaseLabel(label);
-		}, []),
-		onDelta: useCallback(
-			(token: string) => {
-				editorInsert.appendDelta(token);
-			},
-			[editorInsert]
-		),
-		onRecovery: useCallback(
-			(fullContent: string, metadata) => {
-				editorActions.showLoading();
-				editorActions.disable();
-				editorInsert.begin(metadata.posFrom, metadata.posTo);
-				if (fullContent) editorInsert.appendDelta(fullContent);
-			},
-			[editorInsert, editorActions]
-		),
-		onCompleted: useCallback(
-			(content: string) => {
-				editorInsert.commitFinal(content);
-				setPhaseLabel(null);
-				editorActions.hideLoading();
-				editorActions.enable();
-				editorActions.clearPromptInput();
-				if (!id) return;
-				const markdown = content;
-				setContent(markdown);
-				dispatch({ type: 'CONTENT_CHANGED', value: markdown });
-				debouncedContentSave.cancel();
-				window.workspace.updateDocumentContent(id, markdown).catch(() => {
-					// document may have been deleted mid-run; ignore
-				});
-				requestAnimationFrame(() => {
-					requestAnimationFrame(() => {
-						editorActions.insertPromptView();
-					});
-				});
-			},
-			[editorInsert, editorActions, id, dispatch, debouncedContentSave]
-		),
-		onCancelled: useCallback(() => {
-			editorInsert.revert();
-			setPhaseLabel(null);
-			editorActions.hideLoading();
-			editorActions.enable();
-		}, [editorInsert, editorActions]),
-		onError: useCallback(() => {
-			editorInsert.revert();
-			setPhaseLabel(null);
-			editorActions.hideLoading();
-			editorActions.enable();
-		}, [editorInsert, editorActions]),
-	});
+	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+	const activeTaskIdRef = useRef<string | null>(null);
+	activeTaskIdRef.current = activeTaskId;
 
-	const assistantIsRunning = assistant.isRunning;
+	const assistantIsRunning = activeTaskId !== null;
+
+	const handleDelta = useCallback(
+		(token: string) => {
+			editorInsert.appendDelta(token);
+		},
+		[editorInsert]
+	);
+
+	const handleRecovery = useCallback(
+		(fullContent: string, metadata: AssistantTaskMetadata) => {
+			editorActions.showLoading();
+			editorActions.disable();
+			editorInsert.begin(metadata.posFrom, metadata.posTo);
+			if (fullContent) editorInsert.appendDelta(fullContent);
+		},
+		[editorInsert, editorActions]
+	);
+
+	const handleCompleted = useCallback(
+		(completedContent: string) => {
+			editorInsert.commitFinal(completedContent);
+			setPhaseLabel(null);
+			editorActions.hideLoading();
+			editorActions.enable();
+			editorActions.clearPromptInput();
+			if (!id) return;
+			setContent(completedContent);
+			dispatch({ type: 'CONTENT_CHANGED', value: completedContent });
+			debouncedContentSave.cancel();
+			window.workspace.updateDocumentContent(id, completedContent).catch(() => {
+				// document may have been deleted mid-run; ignore
+			});
+			requestAnimationFrame(() => {
+				requestAnimationFrame(() => {
+					editorActions.insertPromptView();
+				});
+			});
+		},
+		[editorInsert, editorActions, id, dispatch, debouncedContentSave]
+	);
+
+	const handleCancelOrError = useCallback(() => {
+		editorInsert.revert();
+		setPhaseLabel(null);
+		editorActions.hideLoading();
+		editorActions.enable();
+	}, [editorInsert, editorActions]);
+
+	const taskHandlersRef = useRef({ handleDelta, handleRecovery, handleCompleted, handleCancelOrError });
+	taskHandlersRef.current = { handleDelta, handleRecovery, handleCompleted, handleCancelOrError };
+
+	// Subscribe once to task events; route to the active task via refs.
+	useEffect(() => {
+		if (typeof window.task?.onEvent !== 'function') return;
+		return window.task.onEvent((event: TaskEvent) => {
+			const currentId = activeTaskIdRef.current;
+			if (!currentId || event.taskId !== currentId) return;
+			const h = taskHandlersRef.current;
+
+			if (event.state === 'running') {
+				const inner = readInnerEvent(event.data);
+				if (!inner) return;
+				if (inner.kind === 'phase') {
+					const payload = inner.payload as AgentPhasePayload;
+					if (payload?.phase) setPhaseLabel(payload.label);
+				} else if (inner.kind === 'delta') {
+					const payload = inner.payload as AgentDeltaPayload;
+					if (typeof payload?.token === 'string' && typeof payload?.fullContent === 'string') {
+						h.handleDelta(payload.token);
+					}
+				}
+				return;
+			}
+
+			if (event.state === 'completed') {
+				const result = readCompletedResult(event.data);
+				if (result) h.handleCompleted(result.content);
+				setActiveTaskId(null);
+				return;
+			}
+
+			if (event.state === 'cancelled' || event.state === 'error') {
+				h.handleCancelOrError();
+				setActiveTaskId(null);
+			}
+		});
+	}, []);
+
+	// Mount-time recovery: find any existing task tied to this document.
+	const ready = loaded && editor != null;
+	useEffect(() => {
+		if (!id || !ready) return;
+		if (typeof window.task?.findForDocument !== 'function') return;
+		let cancelled = false;
+
+		(async () => {
+			const lookup = await window.task.findForDocument(id);
+			if (cancelled || !lookup.success || !lookup.data) return;
+			const found = lookup.data;
+			const h = taskHandlersRef.current;
+
+			if (isActiveTaskState(found.state)) {
+				setActiveTaskId(found.taskId);
+				if (typeof window.task.getSnapshot === 'function') {
+					const snap = await window.task.getSnapshot(found.taskId);
+					if (cancelled) return;
+					if (snap.success && snap.data) {
+						h.handleRecovery(snap.data.fullContent, snap.data.metadata);
+						setPhaseLabel(labelForPhase(snap.data.phase));
+					}
+				}
+				return;
+			}
+
+			if (found.state === 'completed' && found.result) {
+				h.handleRecovery('', found.metadata);
+				h.handleCompleted(found.result.content);
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [id, ready]);
+
+	const submitAssistantTask = useCallback(
+		async (args: {
+			prompt: string;
+			files: { name: string; mimeType?: string }[];
+			posFrom: number;
+			posTo: number;
+		}): Promise<boolean> => {
+			if (!id || activeTaskIdRef.current) return false;
+			if (typeof window.task?.submit !== 'function') return false;
+
+			const sessionId = sessionIdRef.current ?? uuidv7();
+			sessionIdRef.current = sessionId;
+
+			const metadata: AssistantTaskMetadata = {
+				sessionId,
+				documentId: id,
+				posFrom: args.posFrom,
+				posTo: args.posTo,
+			};
+
+			const result = await window.task.submit({
+				type: 'agent',
+				input: {
+					agentType: AGENT_TYPE,
+					input: {
+						prompt: args.prompt,
+						files: args.files.map((f) => ({ name: f.name, mimeType: f.mimeType })),
+					},
+				},
+				metadata: metadata as unknown as Record<string, unknown>,
+			});
+
+			if (!result.success) return false;
+			setActiveTaskId(result.data.taskId);
+			return true;
+		},
+		[id]
+	);
 
 	const handlePromptSubmit = useCallback(
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
@@ -321,7 +437,7 @@ function PageContent(): ReactElement {
 			editorActions.disable();
 			editorInsert.begin(from, to);
 
-			const submitted = await assistant.submit({
+			const submitted = await submitAssistantTask({
 				prompt: composedPrompt,
 				files: payload.files.map((f) => ({ name: f.name, mimeType: f.type || undefined })),
 				posFrom: from,
@@ -334,7 +450,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 			}
 		},
-		[assistant, assistantIsRunning, editorActions, editorInsert, id]
+		[submitAssistantTask, assistantIsRunning, editorActions, editorInsert, id]
 	);
 
 	const handleHistoryRestore = useCallback(
@@ -503,7 +619,7 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
-							<TaskStatusBar taskId={assistant.activeTaskId} phaseLabel={phaseLabel} />
+							<TaskStatusBar taskId={activeTaskId} phaseLabel={phaseLabel} />
 							<div className="flex min-h-0 flex-1 flex-col">
 								{loaded && (
 									<Editor
@@ -546,6 +662,50 @@ function PageContent(): ReactElement {
 			</PageBody>
 		</PageContainer>
 	);
+}
+
+function isActiveTaskState(state: string): boolean {
+	return state === 'queued' || state === 'started' || state === 'running';
+}
+
+function labelForPhase(phase: AgentPhase): string {
+	switch (phase) {
+		case 'thinking':
+			return 'Thinking';
+		case 'writing':
+			return 'Writing';
+		case 'generating-image':
+			return 'Generating image';
+		case 'completed':
+			return 'Done';
+		case 'error':
+			return 'Error';
+		case 'cancelled':
+			return 'Cancelled';
+		default:
+			return 'Queued';
+	}
+}
+
+function readInnerEvent(data: unknown): { kind: string; payload: unknown } | null {
+	if (!data || typeof data !== 'object') return null;
+	const event = (data as { event?: unknown }).event;
+	if (!event || typeof event !== 'object') return null;
+	const { kind, payload } = event as { kind?: unknown; payload?: unknown };
+	if (typeof kind !== 'string') return null;
+	return { kind, payload };
+}
+
+function readCompletedResult(data: unknown): AgentCompletedOutput | null {
+	if (!data || typeof data !== 'object') return null;
+	const result = (data as { result?: unknown }).result;
+	if (!result || typeof result !== 'object') return null;
+	const { content, stoppedReason } = result as Record<string, unknown>;
+	if (typeof content !== 'string') return null;
+	if (stoppedReason !== 'done' && stoppedReason !== 'max-steps' && stoppedReason !== 'stagnation') {
+		return null;
+	}
+	return { content, stoppedReason };
 }
 
 export default function Page(): ReactElement {
