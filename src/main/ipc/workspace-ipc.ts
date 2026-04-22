@@ -19,7 +19,6 @@ import { WorkspaceChannels } from '../../shared/channels';
 import type {
 	FsReadFileParams,
 	FsWriteFileParams,
-	FsCreateFileParams,
 	FsCreateFolderParams,
 	FsRenameParams,
 	FsListDirParams,
