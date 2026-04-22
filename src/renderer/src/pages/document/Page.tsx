@@ -233,59 +233,75 @@ function PageContent(): ReactElement {
 	const editorActions = useEditor(editorRef);
 
 	const sessionIdRef = useRef<string | null>(null);
+	const [phaseLabel, setPhaseLabel] = useState<string | null>(null);
 
-	const [assistantActiveTaskId, setAssistantActiveTaskId] = useState<string | null>(null);
-	const assistantIsRunning = assistantActiveTaskId !== null;
+	const editorInsert = useEditorStreamInsert();
+	const submitRangeRef = useRef<{ from: number; to: number } | null>(null);
 
-	useEffect(() => {
-		if (!assistantActiveTaskId) return;
-		if (typeof window.task?.onEvent !== 'function') return;
-
-		return window.task.onEvent(async (event: TaskEvent) => {
-			if (event.taskId !== assistantActiveTaskId) return;
-
-			if (event.state === 'started') {
-				editorActions.showLoading();
-				return;
-			}
-
-			if (
-				event.state === 'completed' ||
-				event.state === 'error' ||
-				event.state === 'cancelled'
-			) {
-				debouncedContentSave.cancel();
-				let reloadedContent = false;
-				if (id && event.state === 'completed') {
-					try {
-						const reloaded = await window.workspace.getDocumentContent(id);
-						setContent(reloaded);
-						setContentVersion((v) => v + 1);
-						dispatch({ type: 'CONTENT_CHANGED', value: reloaded });
-						reloadedContent = true;
-					} catch {
-						// ignore reload errors — editor keeps current state
-					}
-				}
+	const assistant = useAssistantTask({
+		documentId: id,
+		sessionIdRef,
+		onPhase: useCallback((_, label: string) => {
+			setPhaseLabel(label);
+		}, []),
+		onDelta: useCallback(
+			(token: string) => {
+				editorInsert.appendDelta(token);
+			},
+			[editorInsert]
+		),
+		onRecovery: useCallback(
+			(fullContent: string, metadata) => {
+				submitRangeRef.current = { from: metadata.posFrom, to: metadata.posTo };
+				editorInsert.begin(metadata.posFrom, metadata.posTo);
+				if (fullContent) editorInsert.appendDelta(fullContent);
+			},
+			[editorInsert]
+		),
+		onCompleted: useCallback(
+			(content: string) => {
+				editorInsert.commitFinal(content);
+				setPhaseLabel(null);
 				editorActions.hideLoading();
 				editorActions.enable();
 				editorActions.clearPromptInput();
-				setAssistantActiveTaskId(null);
-				if (reloadedContent) {
-					// Content reload wipes the prompt node (editor-only atom).
-					// Re-insert after the editor commits the new content so user can iterate.
+				if (!id) return;
+				const editor = editorRef.current;
+				const markdown = editor ? getEditorMarkdown(editor) : content;
+				setContent(markdown);
+				dispatch({ type: 'CONTENT_CHANGED', value: markdown });
+				debouncedContentSave.cancel();
+				window.workspace.updateDocumentContent(id, markdown).catch(() => {
+					// document may have been deleted mid-run; ignore
+				});
+				requestAnimationFrame(() => {
 					requestAnimationFrame(() => {
-						requestAnimationFrame(() => {
-							editorActions.insertPromptView();
-						});
+						editorActions.insertPromptView();
 					});
-				}
-			}
-		});
-	}, [assistantActiveTaskId, editorActions, id, dispatch, debouncedContentSave]);
+				});
+			},
+			[editorInsert, editorActions, id, dispatch, debouncedContentSave]
+		),
+		onCancelled: useCallback(() => {
+			editorInsert.revert();
+			setPhaseLabel(null);
+			editorActions.hideLoading();
+			editorActions.enable();
+		}, [editorInsert, editorActions]),
+		onError: useCallback(() => {
+			editorInsert.revert();
+			setPhaseLabel(null);
+			editorActions.hideLoading();
+			editorActions.enable();
+		}, [editorInsert, editorActions]),
+	});
+
+	const assistantIsRunning = assistant.isRunning;
 
 	const handlePromptSubmit = useCallback(
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
+			if (!id || assistantIsRunning) return;
+
 			const { from, to } = editor.state.selection;
 			const doc = editor.state.doc;
 			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
@@ -302,47 +318,25 @@ function PageContent(): ReactElement {
 				textAfter,
 			].join('\n');
 
-			if (!id || assistantIsRunning || typeof window.task?.submit !== 'function') {
-				editorActions.hideLoading();
-				editorActions.enable();
-				return;
-			}
-
 			editorActions.showLoading();
 			editorActions.disable();
+			submitRangeRef.current = { from, to };
+			editorInsert.begin(from, to);
 
-			try {
-				const resolvedSessionId = sessionIdRef.current ?? uuidv7();
-				sessionIdRef.current = resolvedSessionId;
+			const submitted = await assistant.submit({
+				prompt: composedPrompt,
+				files: payload.files.map((f) => ({ name: f.name, mimeType: f.type || undefined })),
+				posFrom: from,
+				posTo: to,
+			});
 
-				const agentInput = {
-					prompt: composedPrompt,
-					files: payload.files.map((f) => ({
-						name: f.name,
-						mimeType: f.type || undefined,
-					})),
-				};
-
-				const ipcResult = await window.task.submit({
-					type: 'agent',
-					input: { agentType: 'assistant', input: agentInput },
-					metadata: { sessionId: resolvedSessionId, documentId: id },
-				});
-
-				if (!ipcResult.success) {
-					editorActions.hideLoading();
-					editorActions.enable();
-					return;
-				}
-
-				const taskId = ipcResult.data.taskId;
-				setAssistantActiveTaskId(taskId);
-			} catch {
+			if (!submitted) {
+				editorInsert.revert();
 				editorActions.hideLoading();
 				editorActions.enable();
 			}
 		},
-		[assistantIsRunning, id, editorActions]
+		[assistant, assistantIsRunning, editorActions, editorInsert, id]
 	);
 
 	const handleHistoryRestore = useCallback(
