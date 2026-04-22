@@ -24,7 +24,16 @@ import type { TaskEvent } from './task-events';
 import type { ProgressReporter, RecordEvent } from './task-handler';
 import type { AgentEvent } from '../agents/core/agent';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
-import type { TaskQueueStatus } from '../../shared/types';
+import type {
+	TaskQueueStatus,
+	AgentTaskSnapshot,
+	AgentTaskLookupResult,
+	AgentPhase,
+	AgentPhasePayload,
+	AgentDeltaPayload,
+	AgentCompletedOutput,
+	AssistantTaskMetadata,
+} from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
