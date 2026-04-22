@@ -51,6 +51,7 @@ export const SHORTCUT_BINDINGS: Record<ShortcutId, ShortcutBinding> = {
 export const SHORTCUT_ACCELERATORS: Record<ShortcutId, string> = {
 	[ShortcutId.openDocumentList]: 'CmdOrCtrl+D',
 	[ShortcutId.openAppSearch]: 'CmdOrCtrl+K',
+	[ShortcutId.newDocument]: 'Ctrl+Alt+N',
 };
 
 export type Platform = 'mac' | 'win' | 'linux';
