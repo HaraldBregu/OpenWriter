@@ -110,6 +110,7 @@ export function TaskStatusBar({ taskId, phaseLabel }: TaskStatusBarProps): React
 	const clampedPercent = Math.max(0, Math.min(100, percent));
 	const isError = status === 'error';
 	const canCancel = CANCELLABLE_STATES.has(status) && !!taskId;
+	const displayLabel = phaseLabel ?? STATUS_LABELS[status];
 
 	return (
 		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
