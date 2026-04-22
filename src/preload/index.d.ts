@@ -201,6 +201,12 @@ export interface AppApi {
 	getPathForFile: (file: File) => string;
 	/** Subscribe to app-level keyboard shortcut events emitted from the main process. */
 	onShortcut: (callback: (id: ShortcutId) => void) => () => void;
+	/** Subscribe to open-tasks-dialog events emitted from the Developer menu. */
+	onOpenTasksDialog: (callback: () => void) => () => void;
+	/** Subscribe to open-logs-dialog events emitted from the Developer menu. */
+	onOpenLogsDialog: (callback: () => void) => () => void;
+	/** Subscribe to open-redux-dialog events emitted from the Developer menu. */
+	onOpenReduxDialog: (callback: () => void) => () => void;
 }
 
 /** Window controls (minimize / maximize / close / fullscreen) */
