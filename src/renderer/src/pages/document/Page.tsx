@@ -317,7 +317,6 @@ function PageContent(): ReactElement {
 
 			editorActions.showLoading();
 			editorActions.disable();
-			submitRangeRef.current = { from, to };
 			editorInsert.begin(from, to);
 
 			const submitted = await assistant.submit({
