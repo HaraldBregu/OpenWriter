@@ -384,7 +384,7 @@ function Container({ children }: LayoutProps) {
 											<Plus className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.document', 'Document')}</span>
 											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
-												Ctrl+Alt+N
+												{newDocumentShortcutLabel}
 											</span>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
