@@ -116,9 +116,9 @@ Notes:
 - Reads `ActiveTask` (including `completedTasks` within TTL). Rebuilds `{ phase, fullContent }` by iterating stored `events`.
 - Returns `undefined` if task unknown.
 
-**New IPC channel — `task:get-snapshot`**
-- Wired in the task IPC module (alongside existing `task:submit`, `task:list`, `task:cancel`).
-- Preload: `window.task.getSnapshot(taskId) → Promise<IpcResult<AgentTaskSnapshot | null>>`.
+**New IPC channels**
+- `task:get-snapshot` — returns projection-rebuilt `AgentTaskSnapshot` for a given `taskId`, scoped to agent tasks. Preload: `window.task.getSnapshot(taskId) → Promise<IpcResult<AgentTaskSnapshot | null>>`.
+- `task:find-for-document` — scans active + recently-completed tasks of type `agent` whose `metadata.documentId` matches the arg. Returns the most recent one. Preload: `window.task.findForDocument(documentId) → Promise<IpcResult<{ taskId: string; state: TaskState; result?: AgentCompletedOutput; completedAt?: number } | null>>`.
 
 ### Renderer
 
