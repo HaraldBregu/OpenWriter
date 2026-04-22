@@ -331,11 +331,6 @@ const workspace: WorkspaceApi = {
 	): (() => void) => {
 		return typedOn(WorkspaceChannels.filesChanged, callback);
 	},
-	onFilesWatcherError: (
-		callback: (error: { error: string; timestamp: number }) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.filesWatcherError, callback);
-	},
 	// -------------------------------------------------------------------------
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
