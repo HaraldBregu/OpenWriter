@@ -324,8 +324,6 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	/** Get the combined config for a document (metadata + model overrides). */
 	getDocumentConfig: (documentId: string) => Promise<DocumentConfig>;
-	/** Persist model overrides for a document and broadcast a config-changed event. */
-	updateDocumentConfig: (documentId: string, config: Partial<DocumentConfig>) => Promise<void>;
 	/** Subscribe to config changes for a specific document. */
 	onDocumentConfigChanges: (
 		documentId: string,
@@ -335,7 +333,14 @@ export interface WorkspaceApi {
 	// Document content
 	// -------------------------------------------------------------------------
 	getDocumentContent: (documentId: string) => Promise<string>;
-	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
+	/**
+	 * Update a document's config and/or content in a single call.
+	 * Broadcasts a config-changed event when `patch.config` is provided.
+	 */
+	updateDocument: (
+		documentId: string,
+		patch: { config?: Partial<DocumentConfig>; content?: string }
+	) => Promise<void>;
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
