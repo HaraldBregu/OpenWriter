@@ -365,14 +365,8 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	/** Load all images from the workspace images/ directory. */
 	getImages: () => Promise<ImageEntry[]>;
-	/** Open a file picker, copy selected images into images/, return the new entries. */
-	insertImages: (extensions?: string[]) => Promise<ImageEntry[]>;
-	/** Delete an image from images/ by its ID. */
-	deleteImage: (id: string) => Promise<void>;
 	/** Subscribe to image change events in images/. */
 	onImagesChanged: (callback: (event: ImageEntryChangeEvent) => void) => () => void;
-	/** Subscribe to images watcher error events. */
-	onImagesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
