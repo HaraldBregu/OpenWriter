@@ -86,18 +86,102 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		metadata?: Record<string, unknown>
 	): Promise<AgentTaskOutput> {
 		const agent = this.agents.get(input.agentType);
+		const startedAt = Date.now();
 		const enrichedInput = await this.enrichInput(input.agentType, input.input, metadata);
+
+		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
 		const ctx: AgentContext = {
 			signal,
 			logger: this.logger,
-			progress: (percent, message) => reporter.progress(percent, message),
-			stream: streamReporter ? (chunk) => streamReporter.stream(chunk) : undefined,
+			progress: (percent, message) => {
+				this.logger.debug(LOG_SOURCE, `[${input.agentType}] progress ${percent}%`, { message });
+				reporter.progress(percent, message);
+			},
+			stream: streamReporter
+				? (chunk) => {
+						this.logStreamChunk(input.agentType, chunk);
+						streamReporter.stream(chunk);
+					}
+				: (chunk) => this.logStreamChunk(input.agentType, chunk),
 			metadata,
 		};
 
-		const output = await agent.execute(enrichedInput, ctx);
-		return { agentType: input.agentType, output };
+		try {
+			const output = await agent.execute(enrichedInput, ctx);
+			this.logger.info(LOG_SOURCE, `[${input.agentType}] completed`, {
+				elapsedMs: Date.now() - startedAt,
+				output: summarizeOutput(output),
+			});
+			return { agentType: input.agentType, output };
+		} catch (error) {
+			const err = error instanceof Error ? error : new Error(String(error));
+			const level = err.name === 'AbortError' ? 'warn' : 'error';
+			this.logger[level](LOG_SOURCE, `[${input.agentType}] failed`, {
+				elapsedMs: Date.now() - startedAt,
+				error: err.message,
+				name: err.name,
+			});
+			throw error;
+		}
+	}
+
+	private logTaskStart(
+		agentType: string,
+		enriched: unknown,
+		metadata?: Record<string, unknown>
+	): void {
+		const record = (enriched ?? {}) as AgentInputRecord;
+		this.logger.info(LOG_SOURCE, `[${agentType}] started`, {
+			providerId: record.providerId,
+			modelName: record.modelName,
+			imageProviderId: record.imageProviderId,
+			imageModelName: record.imageModelName,
+			documentId: record.documentId,
+			hasWorkspacePath: Boolean(record.workspacePath),
+			skillsCount: record.skills?.length ?? 0,
+			metadataKeys: metadata ? Object.keys(metadata) : [],
+		});
+	}
+
+	private logStreamChunk(agentType: string, chunk: string): void {
+		const trimmed = chunk.trim();
+		if (!trimmed) return;
+		try {
+			const event = JSON.parse(trimmed) as { kind?: string; payload?: unknown };
+			this.logAgentEvent(agentType, event);
+		} catch {
+			this.logger.debug(LOG_SOURCE, `[${agentType}] stream`, {
+				preview: trimmed.slice(0, STREAM_PREVIEW_CHARS),
+			});
+		}
+	}
+
+	private logAgentEvent(agentType: string, event: { kind?: string; payload?: unknown }): void {
+		const tag = `[${agentType}] ${event.kind ?? 'event'}`;
+		switch (event.kind) {
+			case 'status':
+				this.logger.info(LOG_SOURCE, tag, event.payload);
+				return;
+			case 'decision':
+			case 'skill:selected':
+				this.logger.info(LOG_SOURCE, tag, event.payload);
+				return;
+			case 'decision:invalid':
+			case 'budget':
+				this.logger.warn(LOG_SOURCE, tag, event.payload);
+				return;
+			case 'tool':
+			case 'text':
+			case 'image':
+			case 'usage':
+			case 'step:begin':
+			case 'step:end':
+				this.logger.debug(LOG_SOURCE, tag, event.payload);
+				return;
+			default:
+				this.logger.debug(LOG_SOURCE, tag, event.payload);
+		}
 	}
 
 	private async enrichInput<T>(
