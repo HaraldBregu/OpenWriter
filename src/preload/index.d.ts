@@ -102,6 +102,8 @@ export type {
 	WritingContextMenuAction,
 	AgentStreamEvent,
 	AgentDefinitionInfo,
+	AgentTaskSnapshot,
+	AgentTaskLookupResult,
 	IpcResult,
 	FsReadFileParams,
 	FsWriteFileParams,
