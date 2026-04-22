@@ -21,6 +21,17 @@ export function DebugDialogsProvider({ children }: { children: ReactNode }) {
 	const openReduxDialog = useCallback(() => setReduxOpen(true), []);
 	const openLogDialog = useCallback(() => setLogOpen(true), []);
 
+	useEffect(() => {
+		const unsubTasks = window.app.onOpenTasksDialog(openTasksDialog);
+		const unsubLogs = window.app.onOpenLogsDialog(openLogDialog);
+		const unsubRedux = window.app.onOpenReduxDialog(openReduxDialog);
+		return () => {
+			unsubTasks();
+			unsubLogs();
+			unsubRedux();
+		};
+	}, [openTasksDialog, openLogDialog, openReduxDialog]);
+
 	return (
 		<DebugDialogsContext.Provider value={{ openTasksDialog, openReduxDialog, openLogDialog }}>
 			{children}
