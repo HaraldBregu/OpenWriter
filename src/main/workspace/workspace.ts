@@ -294,20 +294,6 @@ export class Workspace implements Disposable {
 		return file;
 	}
 
-	async updateOutput(params: {
-		type: string;
-		id: string;
-		content: string;
-		metadata: Record<string, unknown>;
-	}): Promise<void> {
-		this.validateOutputUpdateParams(params);
-		await this.outputFiles.update(params.type as OutputType, params.id, {
-			content: params.content,
-			metadata: params.metadata as UpdateOutputFileInput['metadata'],
-		});
-		this.logger.info('Workspace', `Updated output file: ${params.type}/${params.id}`);
-	}
-
 	async deleteOutput(params: { type: string; id: string }): Promise<void> {
 		this.validateOutputTypeAndId(params);
 		await this.outputFiles.delete(params.type as OutputType, params.id);
