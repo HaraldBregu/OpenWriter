@@ -6,6 +6,7 @@ import type { TaskEvent, TaskState } from '../../../../../shared/types';
 
 interface TaskStatusBarProps {
 	readonly taskId: string | null;
+	readonly phaseLabel?: string | null;
 }
 
 const CANCELLABLE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
