@@ -236,7 +236,6 @@ function PageContent(): ReactElement {
 	const [phaseLabel, setPhaseLabel] = useState<string | null>(null);
 
 	const editorInsert = useEditorStreamInsert();
-	const submitRangeRef = useRef<{ from: number; to: number } | null>(null);
 
 	const assistant = useAssistantTask({
 		documentId: id,
@@ -252,7 +251,6 @@ function PageContent(): ReactElement {
 		),
 		onRecovery: useCallback(
 			(fullContent: string, metadata) => {
-				submitRangeRef.current = { from: metadata.posFrom, to: metadata.posTo };
 				editorInsert.begin(metadata.posFrom, metadata.posTo);
 				if (fullContent) editorInsert.appendDelta(fullContent);
 			},
