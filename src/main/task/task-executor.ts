@@ -378,6 +378,25 @@ export class TaskExecutor implements Disposable {
 				},
 			};
 
+			const stateWriter: TaskStateWriter = {
+				pushReasoning: (entry: ReasoningLogEntry) => {
+					const current = this.activeTasks.get(taskId);
+					if (!current) return;
+					if (!current.reasoningLog) current.reasoningLog = [];
+					current.reasoningLog.push(entry);
+				},
+				appendResponseDelta: (delta: string) => {
+					const current = this.activeTasks.get(taskId);
+					if (!current) return;
+					current.streamedContent = (current.streamedContent ?? '') + delta;
+				},
+				setTokenCount: (count: number) => {
+					const current = this.activeTasks.get(taskId);
+					if (!current) return;
+					current.tokenCount = count;
+				},
+			};
+
 			const result = await runWithTaskExecutionContext(
 				{
 					taskId,
@@ -386,7 +405,15 @@ export class TaskExecutor implements Disposable {
 					windowId,
 					metadata,
 				},
-				() => handler.execute(input, controller.signal, reporter, streamReporter, metadata)
+				() =>
+					handler.execute(
+						input,
+						controller.signal,
+						reporter,
+						streamReporter,
+						metadata,
+						stateWriter
+					)
 			);
 
 			// Task may have been cancelled during execution
