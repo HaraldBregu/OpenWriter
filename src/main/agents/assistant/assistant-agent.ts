@@ -20,7 +20,6 @@ const DEFAULT_MAX_TOTAL_TOKENS = 200_000;
 const DEFAULT_RUN_TIMEOUT_MS = 5 * 60_000;
 const DEFAULT_PER_CALL_TIMEOUT_MS = 90_000;
 const DEFAULT_STAGNATION_WINDOW = 3;
-const PROGRESS_PER_STEP_PERCENT = 90;
 
 export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgentOutput> {
 	readonly type = 'assistant';

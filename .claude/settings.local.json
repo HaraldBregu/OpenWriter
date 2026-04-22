@@ -143,7 +143,8 @@
       "Bash(jobs -l)",
       "Bash(echo \"EXIT=$?\")",
       "mcp__plugin_claude-mermaid_mermaid__mermaid_preview",
-      "Bash(ulimit -n 4096)"
+      "Bash(ulimit -n 4096)",
+      "Bash(bash /tmp/check_fns.sh)"
     ],
     "deny": [
       "Bash(git push --force:*)",

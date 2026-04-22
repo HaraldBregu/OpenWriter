@@ -147,6 +147,24 @@ function PageContent(): ReactElement {
 	}, [loadImages]);
 
 	useEffect(() => {
+		void loadExtensionDocPanels();
+	}, [loadExtensionDocPanels]);
+
+	useEffect(() => {
+		const unsubscribeRegistry = window.extensions.onRegistryChanged(() => {
+			void loadExtensionDocPanels();
+		});
+		const unsubscribeDocPanels = window.extensions.onDocPanelsChanged(() => {
+			void loadExtensionDocPanels();
+		});
+
+		return () => {
+			unsubscribeRegistry();
+			unsubscribeDocPanels();
+		};
+	}, [loadExtensionDocPanels]);
+
+	useEffect(() => {
 		if (!id) return;
 
 		const unsubscribe = window.workspace.onOutputFileChange((event) => {
@@ -457,7 +475,7 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handleOpenChat = useCallback(() => {
-		setActiveSidebar('agentic');
+		setActiveSidebar('builtin:agentic');
 		requestAnimationFrame(() => {
 			const el = document.querySelector<HTMLTextAreaElement>('[data-chat-input]');
 			el?.focus();
@@ -468,6 +486,39 @@ function PageContent(): ReactElement {
 		if (!id) return;
 		window.workspace.openDocumentFolder(id);
 	}, [id]);
+
+	const sidebarItems = useMemo<DocumentSidebarTabItem[]>(
+		() => [
+			{
+				id: 'builtin:agentic',
+				title: t('agenticPanel.headerTitle', 'Chat'),
+				meta: 'Built-in',
+			},
+			{
+				id: 'builtin:config',
+				title: t('configSidebar.documentInfo', 'Document info'),
+				meta: 'Built-in',
+			},
+			...extensionDocPanels.map((panel) => ({
+				id: panel.id,
+				title: panel.title,
+				meta: panel.extensionName,
+			})),
+		],
+		[extensionDocPanels, t]
+	);
+
+	const activeExtensionPanel = useMemo(
+		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
+		[activeSidebar, extensionDocPanels]
+	);
+
+	useEffect(() => {
+		if (!activeSidebar) return;
+		if (activeSidebar === 'builtin:agentic' || activeSidebar === 'builtin:config') return;
+		if (extensionDocPanels.some((panel) => panel.id === activeSidebar)) return;
+		setActiveSidebar('builtin:config');
+	}, [activeSidebar, extensionDocPanels, setActiveSidebar]);
 
 	return (
 		<PageContainer>
@@ -551,9 +602,21 @@ function PageContent(): ReactElement {
 						collapsible
 						collapsedSize="0%"
 					>
-						<div className="h-full">
-							{activeSidebar === 'config' && <InfoPanel onOpenFolder={handleOpenFolder} />}
-							{activeSidebar === 'agentic' && <Chat />}
+						<div className="flex h-full min-h-0 flex-col">
+							<DocumentSidebarTabs
+								items={sidebarItems}
+								activePanelId={activeSidebar}
+								onSelect={setActiveSidebar}
+							/>
+							<div className="min-h-0 flex-1">
+								{activeSidebar === 'builtin:config' && (
+									<InfoPanel onOpenFolder={handleOpenFolder} />
+								)}
+								{activeSidebar === 'builtin:agentic' && <Chat />}
+								{activeExtensionPanel && id ? (
+									<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
+								) : null}
+							</div>
 						</div>
 					</ResizablePanel>
 				</ResizablePanelGroup>
