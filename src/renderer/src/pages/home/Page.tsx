@@ -48,10 +48,6 @@ function PageContent(): ReactElement {
 
 					<Separator />
 
-					<DebugSection />
-
-					<Separator />
-
 					<TipSection />
 				</div>
 			</PageBody>
