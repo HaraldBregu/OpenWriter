@@ -133,7 +133,7 @@ export class RagAgent extends BaseAgent<RagAgentInput, RagAgentOutput> {
 		for await (const token of model.stream(messages, ctx.signal)) {
 			this.ensureNotAborted(ctx.signal);
 			content += token;
-			ctx.stream?.(token);
+			ctx.onEvent?.({ kind: 'text', at: Date.now(), payload: { text: token } });
 		}
 		return content;
 	}
