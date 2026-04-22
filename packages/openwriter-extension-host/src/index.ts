@@ -319,7 +319,7 @@ process.parentPort?.on('message', (message) => {
 		'data' in maybeEnvelope &&
 		maybeEnvelope.data !== undefined
 			? (maybeEnvelope.data as MainToExtensionHostMessage)
-			: (message as MainToExtensionHostMessage);
+			: (message as unknown as MainToExtensionHostMessage);
 
 	Promise.resolve(runtime.handleMessage(nextMessage)).catch((error) => {
 		process.parentPort?.postMessage({
