@@ -11,6 +11,7 @@
  */
 
 import { app } from 'electron';
+import path from 'node:path';
 
 // Core infrastructure
 import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManager } from './core';
@@ -29,6 +30,7 @@ import { ServiceResolver } from './shared/service-resolver';
 import { ModelResolver } from './shared/model-resolver';
 import { AgentRegistry, AssistantAgent, RagAgent, OcrAgent } from './agents';
 import { DemoTaskHandler, AgentTaskHandler } from './task/handlers';
+import { ExtensionManager, ExtensionsIpc } from './extensions';
 
 // IPC modules
 import type { IpcModule } from './ipc';
@@ -105,6 +107,19 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new OcrAgent());
 	container.register('agentRegistry', agentRegistry);
 
+	container.register(
+		'extensionManager',
+		new ExtensionManager({
+			container,
+			eventBus,
+			logger,
+			store: storeService,
+			windowContextManager,
+			taskExecutor: container.get<TaskExecutor>('taskExecutor'),
+			hostEntryPath: path.join(__dirname, 'extension-host.js'),
+		})
+	);
+
 	// Bridge task system -> agent registry. Submit tasks with type: 'agent'
 	// and an { agentType, input } payload to dispatch any registered agent.
 	// The handler enriches the payload with apiKey, providerId, modelName
@@ -144,6 +159,7 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 
 	const ipcModules: IpcModule[] = [
 		new AppIpc(),
+		new ExtensionsIpc(),
 		new WorkspaceIpc(),
 		new TaskManagerIpc(),
 		new WindowIpc(),

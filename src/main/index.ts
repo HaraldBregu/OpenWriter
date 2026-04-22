@@ -26,6 +26,7 @@ import type { WorkspaceService } from './workspace/workspace-service';
 import type { WorkspaceMetadataService } from './workspace/workspace-metadata';
 import type { ProjectWorkspaceService } from './workspace/project-workspace';
 import type { ThemeMode } from '../shared/types';
+import type { ExtensionManager } from './extensions/extension-manager';
 import {
 	bootstrapServices,
 	bootstrapIpcModules,
@@ -144,6 +145,9 @@ app.on('open-file', (event, filePath) => {
 });
 
 app.whenReady().then(async () => {
+	const extensionManager = container.get<ExtensionManager>('extensionManager');
+	await extensionManager.initialize();
+
 	// Serve local files via the local-resource:// protocol so the renderer
 	// can display images stored in document folders regardless of its origin.
 	protocol.handle('local-resource', (request) => {

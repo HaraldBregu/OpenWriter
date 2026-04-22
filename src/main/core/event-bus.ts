@@ -1,5 +1,6 @@
 import { BrowserWindow } from 'electron';
 import type { ThemeMode } from '../../shared/types';
+import type { ExtensionDocumentSnapshot } from '../../../packages/openwriter-extension-types/src/index';
 
 /**
  * Base event structure for main process events
@@ -58,6 +59,7 @@ export interface AppEvents {
 		windowId?: number;
 	};
 	'task:cancelled': { taskId: string; taskType: string; windowId?: number };
+	'document:changed': { document: ExtensionDocumentSnapshot; windowId?: number };
 	'tray:set-enabled': { enabled: boolean };
 }
 

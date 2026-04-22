@@ -5,6 +5,7 @@
 		"src/main/**/*",
 		"src/preload/**/*",
 		"src/shared/**/*",
+		"packages/**/*",
 		"package.json",
 		"resources/*.json",
 		"src/env.d.ts"

@@ -799,3 +799,34 @@ export function withTaskStatusText(
 
 	return Object.keys(next).length > 0 ? next : undefined;
 }
+
+export type {
+	ExtensionActivationEvent,
+	ExtensionAppInfo,
+	ExtensionCapability,
+	ExtensionCommandAvailability,
+	ExtensionCommandContribution,
+	ExtensionCommandExecutionResult,
+	ExtensionCommandInfo,
+	ExtensionCommandQuery,
+	ExtensionDocumentChangedEvent,
+	ExtensionDocumentSnapshot,
+	ExtensionDocumentUpdate,
+	ExtensionEventPayloadMap,
+	ExtensionEventType,
+	ExtensionExecutionContext,
+	ExtensionHostRequestMap,
+	ExtensionInfo,
+	ExtensionManifest,
+	ExtensionRegistrySnapshot,
+	ExtensionRuntimeChangedPayload,
+	ExtensionRuntimeInfo,
+	ExtensionRuntimeState,
+	ExtensionSource,
+	ExtensionTaskEvent,
+	ExtensionTaskState,
+	ExtensionTaskSubmission,
+	ExtensionTaskSubmissionResult,
+	ExtensionWorkspaceChangedEvent,
+	ExtensionWorkspaceSnapshot,
+} from '../../packages/openwriter-extension-types/src/index';

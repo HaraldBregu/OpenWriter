@@ -1,5 +1,10 @@
 import path from 'node:path';
-import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
+import type {
+	TaskHandler,
+	ProgressReporter,
+	StreamReporter,
+	TaskStateWriter,
+} from '../task-handler';
 import type { AgentRegistry } from '../../agents/core/agent-registry';
 import type { AgentContext } from '../../agents/core/agent';
 import type { LoggerService } from '../../services/logger';
@@ -12,6 +17,7 @@ import { getTaskExecutionContext } from '../task-execution-context';
 import { DEFAULT_IMAGE_MODEL_ID } from '../../../shared/models';
 import type { SkillsStoreService } from '../../services/skills-store-service';
 import type { Skill } from '../../agents/skills';
+import { DocumentStreamWriter } from './document-stream-writer';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
@@ -22,6 +28,14 @@ import type { Skill } from '../../agents/skills';
  * file path from the caller window's Workspace facade, then executes
  * the agent's strategy. Renderer payloads never carry credentials or
  * filesystem paths.
+ *
+ * While the agent runs, the handler classifies each stream event as
+ * either `reasoning` (controller decisions, skill selections, step
+ * boundaries) or `response` (generated text). Reasoning events keep
+ * progress at 0 and are stored on the task as `reasoningLog`. Response
+ * events append text deltas to the document file (`content.md`) and to
+ * the task's `streamedContent` buffer, and advance progress via a token
+ * count ramp.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
@@ -36,8 +50,23 @@ export interface AgentTaskOutput<TAgentOutput = unknown> {
 	output: TAgentOutput;
 }
 
+interface StreamEvent {
+	kind?: string;
+	payload?: unknown;
+	at?: number;
+}
+
 const LOG_SOURCE = 'AgentTaskHandler';
 const STREAM_PREVIEW_CHARS = 160;
+const PROGRESS_RAMP_K = 0.5;
+const PROGRESS_RAMP_CAP = 99;
+const REASONING_KINDS = new Set([
+	'decision',
+	'decision:invalid',
+	'skill:selected',
+	'step:begin',
+	'step:end',
+]);
 
 interface AgentInputRecord {
 	providerId?: string;
@@ -83,13 +112,20 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		signal: AbortSignal,
 		reporter: ProgressReporter,
 		streamReporter?: StreamReporter,
-		metadata?: Record<string, unknown>
+		metadata?: Record<string, unknown>,
+		stateWriter?: TaskStateWriter
 	): Promise<AgentTaskOutput> {
 		const agent = this.agents.get(input.agentType);
 		const startedAt = Date.now();
 		const enrichedInput = await this.enrichInput(input.agentType, input.input, metadata);
+		const record = (enrichedInput ?? {}) as AgentInputRecord;
 
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
+
+		const writer = await this.initDocumentWriter(record.documentPath);
+		const progressState = { tokens: 0 };
+
+		reporter.progress(0, 'reasoning');
 
 		const ctx: AgentContext = {
 			signal,
@@ -98,23 +134,29 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 				this.logger.debug(LOG_SOURCE, `[${input.agentType}] progress ${percent}%`, { message });
 				reporter.progress(percent, message);
 			},
-			stream: streamReporter
-				? (chunk) => {
-						this.logStreamChunk(input.agentType, chunk);
-						streamReporter.stream(chunk);
-					}
-				: (chunk) => this.logStreamChunk(input.agentType, chunk),
+			stream: (chunk) => {
+				this.dispatchStreamChunk(input.agentType, chunk, {
+					writer,
+					reporter,
+					stateWriter,
+					streamReporter,
+					progressState,
+				});
+			},
 			metadata,
 		};
 
 		try {
 			const output = await agent.execute(enrichedInput, ctx);
+			await writer?.end();
+			reporter.progress(100, 'done');
 			this.logger.info(LOG_SOURCE, `[${input.agentType}] completed`, {
 				elapsedMs: Date.now() - startedAt,
 				output: summarizeOutput(output),
 			});
 			return { agentType: input.agentType, output };
 		} catch (error) {
+			await writer?.end();
 			const err = error instanceof Error ? error : new Error(String(error));
 			const level = err.name === 'AbortError' ? 'warn' : 'error';
 			this.logger[level](LOG_SOURCE, `[${input.agentType}] failed`, {
@@ -124,6 +166,84 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 			});
 			throw error;
 		}
+	}
+
+	private async initDocumentWriter(
+		documentPath: string | undefined
+	): Promise<DocumentStreamWriter | undefined> {
+		if (!documentPath) return undefined;
+		const writer = new DocumentStreamWriter(documentPath, this.logger);
+		try {
+			await writer.begin();
+			return writer;
+		} catch (error) {
+			this.logger.warn(LOG_SOURCE, `Failed to open document stream for ${documentPath}`, error);
+			return undefined;
+		}
+	}
+
+	private dispatchStreamChunk(
+		agentType: string,
+		chunk: string,
+		deps: {
+			writer: DocumentStreamWriter | undefined;
+			reporter: ProgressReporter;
+			stateWriter: TaskStateWriter | undefined;
+			streamReporter: StreamReporter | undefined;
+			progressState: { tokens: number };
+		}
+	): void {
+		const event = tryParseEvent(chunk);
+		if (event?.kind) {
+			if (REASONING_KINDS.has(event.kind)) {
+				this.handleReasoning(agentType, event, deps);
+			} else if (event.kind === 'text') {
+				this.handleResponse(agentType, event, deps);
+			} else {
+				this.logAgentEvent(agentType, event);
+			}
+		} else {
+			this.logStreamChunk(agentType, chunk);
+		}
+
+		deps.streamReporter?.stream(chunk);
+	}
+
+	private handleReasoning(
+		agentType: string,
+		event: StreamEvent,
+		deps: { reporter: ProgressReporter; stateWriter: TaskStateWriter | undefined }
+	): void {
+		deps.stateWriter?.pushReasoning({
+			at: event.at ?? Date.now(),
+			kind: event.kind ?? 'unknown',
+			payload: event.payload,
+		});
+		deps.reporter.progress(0, 'reasoning');
+		this.logAgentEvent(agentType, event);
+	}
+
+	private handleResponse(
+		agentType: string,
+		event: StreamEvent,
+		deps: {
+			writer: DocumentStreamWriter | undefined;
+			reporter: ProgressReporter;
+			stateWriter: TaskStateWriter | undefined;
+			progressState: { tokens: number };
+		}
+	): void {
+		const delta = extractTextDelta(event.payload);
+		if (!delta) {
+			this.logAgentEvent(agentType, event);
+			return;
+		}
+		deps.writer?.appendDelta(delta);
+		deps.stateWriter?.appendResponseDelta(delta);
+		deps.progressState.tokens += 1;
+		deps.stateWriter?.setTokenCount(deps.progressState.tokens);
+		deps.reporter.progress(rampPct(deps.progressState.tokens), 'response');
+		this.logAgentEvent(agentType, event);
 	}
 
 	private logTaskStart(
@@ -147,17 +267,12 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 	private logStreamChunk(agentType: string, chunk: string): void {
 		const trimmed = chunk.trim();
 		if (!trimmed) return;
-		try {
-			const event = JSON.parse(trimmed) as { kind?: string; payload?: unknown };
-			this.logAgentEvent(agentType, event);
-		} catch {
-			this.logger.debug(LOG_SOURCE, `[${agentType}] stream`, {
-				preview: trimmed.slice(0, STREAM_PREVIEW_CHARS),
-			});
-		}
+		this.logger.debug(LOG_SOURCE, `[${agentType}] stream`, {
+			preview: trimmed.slice(0, STREAM_PREVIEW_CHARS),
+		});
 	}
 
-	private logAgentEvent(agentType: string, event: { kind?: string; payload?: unknown }): void {
+	private logAgentEvent(agentType: string, event: StreamEvent): void {
 		const tag = `[${agentType}] ${event.kind ?? 'event'}`;
 		switch (event.kind) {
 			case 'status':
@@ -330,4 +445,24 @@ function summarizeOutput(output: unknown): Record<string, unknown> {
 		summary.usage = usage;
 	}
 	return summary;
+}
+
+function tryParseEvent(chunk: string): StreamEvent | undefined {
+	const trimmed = chunk.trim();
+	if (!trimmed) return undefined;
+	try {
+		return JSON.parse(trimmed) as StreamEvent;
+	} catch {
+		return undefined;
+	}
+}
+
+function extractTextDelta(payload: unknown): string {
+	if (!payload || typeof payload !== 'object') return '';
+	const text = (payload as { text?: unknown }).text;
+	return typeof text === 'string' ? text : '';
+}
+
+function rampPct(tokens: number): number {
+	return Math.min(PROGRESS_RAMP_CAP, Math.round(tokens * PROGRESS_RAMP_K));
 }

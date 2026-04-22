@@ -13,6 +13,7 @@ export interface WorkspaceInfo {
 export interface StoreSchema {
 	services: Service[];
 	agents: AgentSettings[];
+	extensionEnabled: Record<string, boolean>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
@@ -31,6 +32,7 @@ const DEFAULTS: StoreSchema = {
 			},
 		},
 	],
+	extensionEnabled: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
@@ -276,6 +278,20 @@ export class StoreService {
 	}
 
 	// --- Workspace settings ---
+
+	getExtensionEnabled(extensionId: string, defaultEnabled: boolean): boolean {
+		const stored = this.store.get('extensionEnabled');
+		const value = stored[extensionId];
+		return typeof value === 'boolean' ? value : defaultEnabled;
+	}
+
+	setExtensionEnabled(extensionId: string, enabled: boolean): void {
+		const next = {
+			...this.store.get('extensionEnabled'),
+			[extensionId]: enabled,
+		};
+		this.store.set('extensionEnabled', next);
+	}
 
 	getCurrentWorkspace(): string | null {
 		return this.store.get('currentWorkspace');

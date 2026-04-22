@@ -7,6 +7,11 @@
 	"extraResources": [
 		"out/preload/preload.mjs",
 		{
+			"from": "./extensions",
+			"to": "extensions",
+			"filter": ["**/*"]
+		},
+		{
 			"from": "./resources",
 			"to": "resources",
 			"filter": ["icons/**"]

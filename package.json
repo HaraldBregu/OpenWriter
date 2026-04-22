@@ -8,6 +8,7 @@
 	"copyright": "© 2026 OpenWriter Project. All rights reserved.",
 	"type": "module",
 	"license": "MIT",
+	"workspaces": ["packages/*"],
 	"main": "./out/main/index.js",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development electron-vite dev --inspect",
@@ -40,6 +41,7 @@
 		"test:renderer": "jest --config jest.config.cjs --selectProjects renderer",
 		"test:coverage": "jest --config jest.config.cjs --coverage",
 		"test:e2e": "npx playwright test --config playwright.config.ts",
+		"create:extension": "node packages/create-openwriter-extension/bin/create-openwriter-extension.mjs",
 		"generate-icons": "electron-icon-builder --input=resources/icons/icon.png --output=./resources",
 		"shadcn": "shadcn-ui",
 		"format": "prettier --write .",

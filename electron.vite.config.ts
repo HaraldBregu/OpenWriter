@@ -12,6 +12,10 @@ export default defineConfig({
 			rollupOptions: {
 				input: {
 					index: resolve(__dirname, 'src/main/index.ts'),
+					'extension-host': resolve(
+						__dirname,
+						'packages/openwriter-extension-host/src/index.ts'
+					),
 				},
 				output: {
 					entryFileNames: '[name].js',
