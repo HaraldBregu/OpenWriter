@@ -423,21 +423,6 @@ export class Workspace implements Disposable {
 		}
 	}
 
-	private validateOutputUpdateParams(params: {
-		type: string;
-		id: string;
-		content: string;
-		metadata: Record<string, unknown>;
-	}): void {
-		this.validateOutputTypeAndId(params);
-		if (typeof params.content !== 'string') {
-			throw new Error('Invalid content: must be a string');
-		}
-		if (!params.metadata || typeof params.metadata !== 'object' || Array.isArray(params.metadata)) {
-			throw new Error('Invalid metadata: must be an object');
-		}
-	}
-
 	private buildFileManager(): FileManager {
 		const extraRoots: string[] = [];
 		const workspacePath = this.workspace.getCurrent();
