@@ -1,4 +1,6 @@
-import type { ReasoningLogEntry } from './task-descriptor';
+import type { AgentEvent } from '../agents/core/agent';
+
+export type { AgentEvent };
 
 /**
  * Progress reporter for task execution.
@@ -15,25 +17,12 @@ export interface ProgressReporter {
 }
 
 /**
- * Stream reporter for real-time data delivery.
- * Used by handlers to emit streamed chunks as they arrive.
+ * Sink for typed agent events. Handlers invoke this to persist each event
+ * onto the live `ActiveTask` record and to forward it to the renderer via
+ * the task event bus. Replaces the previous separate `StreamReporter` +
+ * `TaskStateWriter` pair.
  */
-export interface StreamReporter {
-	/** Emit a raw data batch. Each call delivers one chunk to the renderer. */
-	stream(data: string): void;
-}
-
-/**
- * Live mutator for the ActiveTask record. Handlers use this to persist
- * partial streaming state (reasoning log, response buffer, token count)
- * onto the task so callers can observe progress mid-execution via
- * `getTaskResult`.
- */
-export interface TaskStateWriter {
-	pushReasoning(entry: ReasoningLogEntry): void;
-	appendResponseDelta(delta: string): void;
-	setTokenCount(count: number): void;
-}
+export type RecordEvent = (event: AgentEvent) => void;
 
 /**
  * Task handler interface for implementing background operations.
@@ -65,17 +54,15 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 	 * @param input - Task input data
 	 * @param signal - Abort signal for cancellation
 	 * @param reporter - Progress reporter for status updates
-	 * @param streamReporter - Optional stream reporter for token delivery
 	 * @param metadata - Optional task-level metadata from the submission
-	 * @param stateWriter - Optional live mutator for the task record
+	 * @param recordEvent - Optional typed-event sink (persists to ActiveTask, forwards to renderer)
 	 * @returns Promise resolving to task output
 	 */
 	execute(
 		input: TInput,
 		signal: AbortSignal,
 		reporter: ProgressReporter,
-		streamReporter?: StreamReporter,
 		metadata?: Record<string, unknown>,
-		stateWriter?: TaskStateWriter
+		recordEvent?: RecordEvent
 	): Promise<TOutput>;
 }

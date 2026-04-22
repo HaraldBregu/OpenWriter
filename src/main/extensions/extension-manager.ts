@@ -169,6 +169,7 @@ export class ExtensionManager implements Disposable {
 		const activeDocumentId = this.getActiveDocumentId(windowId);
 
 		return Array.from(this.records.values())
+			.filter((record) => record.manifest.validationErrors.length === 0)
 			.filter((record) => query.includeDisabled || record.manifest.enabled)
 			.flatMap((record) =>
 				record.manifest.commands
@@ -181,6 +182,78 @@ export class ExtensionManager implements Disposable {
 					}))
 			)
 			.sort((left, right) => left.title.localeCompare(right.title));
+	}
+
+	getDocPanels(windowId?: number, documentId?: string | null): ExtensionDocPanelInfo[] {
+		if (!documentId) return [];
+
+		return Array.from(this.records.values())
+			.filter((record) => record.manifest.enabled)
+			.filter((record) => record.manifest.validationErrors.length === 0)
+			.flatMap((record) =>
+				record.manifest.docPanels.map((panel) => ({
+					...panel,
+					id: extensionDocPanelId(record.manifest.id, panel.id),
+					localId: panel.id,
+					extensionId: record.manifest.id,
+					extensionName: record.manifest.name,
+					enabled: record.manifest.enabled,
+				}))
+			)
+			.sort((left, right) => {
+				const orderDiff = (left.order ?? 0) - (right.order ?? 0);
+				return orderDiff !== 0 ? orderDiff : left.title.localeCompare(right.title);
+			});
+	}
+
+	async getDocPanelContent(
+		panelId: string,
+		documentId: string,
+		windowId?: number,
+		reason: ExtensionDocPanelRenderReason = 'open'
+	): Promise<ExtensionDocPanelContent> {
+		const resolved = parseExtensionDocPanelId(panelId);
+		if (!resolved) {
+			throw new Error(`Unknown doc panel "${panelId}".`);
+		}
+
+		const record = this.getRecord(resolved.extensionId);
+		if (!record.manifest.enabled) {
+			throw new Error(`Extension "${record.manifest.name}" is disabled.`);
+		}
+		if (record.manifest.validationErrors.length > 0) {
+			throw new Error(`Extension "${record.manifest.name}" failed validation and cannot run.`);
+		}
+		if (!record.manifest.docPanels.some((panel) => panel.id === resolved.panelId)) {
+			throw new Error(`Doc panel "${panelId}" is not contributed by "${record.manifest.name}".`);
+		}
+
+		const context: ExtensionExecutionContext = {
+			windowId,
+			documentId,
+			reason: `doc-panel:${resolved.panelId}:${reason}`,
+		};
+		await this.ensureActivated(record, context.reason, context);
+
+		const requestId = randomUUID();
+		const deferred = createDeferred<ExtensionDocPanelContent>();
+		record.pendingDocPanelResults.set(requestId, deferred);
+
+		record.host?.send({
+			kind: 'doc-panel.render',
+			payload: {
+				requestId,
+				panelId: resolved.panelId,
+				context: {
+					panelId: resolved.panelId,
+					documentId,
+					windowId,
+					reason,
+				},
+			},
+		});
+
+		return deferred.promise;
 	}
 
 	async executeCommand(
@@ -240,6 +313,7 @@ export class ExtensionManager implements Disposable {
 
 		this.broadcastRegistryChanged();
 		this.broadcastRuntimeChanged(extensionId);
+		this.broadcastDocPanelsChanged();
 	}
 
 	async reload(extensionId: string): Promise<void> {
@@ -252,10 +326,13 @@ export class ExtensionManager implements Disposable {
 		}
 
 		this.broadcastRuntimeChanged(extensionId);
+		this.broadcastDocPanelsChanged();
 	}
 
 	setActiveDocument(windowId: number, documentId: string | null): void {
 		this.activeDocumentsByWindow.set(windowId, documentId);
+
+		this.broadcastDocPanelsChanged(windowId, documentId);
 
 		if (!documentId) return;
 
@@ -330,6 +407,8 @@ export class ExtensionManager implements Disposable {
 					reason: 'document-changed',
 				});
 			}
+
+			this.broadcastDocPanelContentChanged(payload.document.id, payload.windowId);
 		});
 
 		const forwardTaskEvent = (payload: ExtensionTaskEvent): void => {
@@ -442,6 +521,7 @@ export class ExtensionManager implements Disposable {
 			lastError: manifest.validationErrors[0],
 			crashCount: 0,
 			registeredCommands: [],
+			registeredDocPanels: [],
 		};
 	}
 
@@ -491,6 +571,8 @@ export class ExtensionManager implements Disposable {
 				permissions: manifest.permissions ?? [],
 				activationEvents: manifest.activationEvents ?? [],
 				commands: manifest.contributes?.commands ?? [],
+				docPanels: manifest.contributes?.docPanels ?? [],
+				docPages: manifest.contributes?.docPages ?? [],
 				validationErrors: errors,
 			});
 		}
