@@ -499,11 +499,7 @@ function PageContent(): ReactElement {
 										currentEntryId={currentHistoryEntryId}
 										onRestoreEntry={handleRestoreHistoryEntry}
 									/>
-									<DocumentInfoPopover
-										documentId={id ?? null}
-										title={title}
-										content={content}
-									/>
+									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
 							<TaskStatusBar taskId={assistant.activeTaskId} phaseLabel={phaseLabel} />
@@ -539,17 +535,11 @@ function PageContent(): ReactElement {
 						collapsible
 						collapsedSize="0%"
 					>
-						<div className="flex h-full min-h-0 flex-col">
-							<div className="min-h-0 flex-1">
-								{activeSidebar === 'builtin:config' && (
-									<InfoPanel onOpenFolder={handleOpenFolder} />
-								)}
-								{activeSidebar === 'builtin:agentic' && <Chat />}
-								{activeExtensionPanel && id ? (
-									<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
-								) : null}
-							</div>
-						</div>
+						{activeSidebar === 'builtin:config' && <InfoPanel onOpenFolder={handleOpenFolder} />}
+						{activeSidebar === 'builtin:agentic' && <Chat />}
+						{activeExtensionPanel && id ? (
+							<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
+						) : null}
 					</ResizablePanel>
 				</ResizablePanelGroup>
 			</PageBody>
