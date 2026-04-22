@@ -202,6 +202,10 @@ export const AppChannels = {
 	getTrayEnabled: 'app:get-tray-enabled',
 	// Global keyboard shortcuts (main → renderer)
 	shortcut: 'app:shortcut',
+	// Developer dialogs (main → renderer)
+	openTasksDialog: 'app:open-tasks-dialog',
+	openLogsDialog: 'app:open-logs-dialog',
+	openReduxDialog: 'app:open-redux-dialog',
 } as const;
 
 export const ExtensionChannels = {
