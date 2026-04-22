@@ -122,18 +122,9 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Bridge task system -> agent registry. Submit tasks with type: 'agent'
 	// and an { agentType, input } payload to dispatch any registered agent.
-	// The handler enriches the payload with apiKey, providerId, modelName
-	// and the active window's document path before handing it to the agent.
+	// The handler enriches the payload with apiKey, providerId, modelName.
 	taskHandlerRegistry.register(
-		new AgentTaskHandler(
-			agentRegistry,
-			logger,
-			serviceResolver,
-			storeService,
-			modelResolver,
-			windowContextManager,
-			skillsStoreService
-		)
+		new AgentTaskHandler(agentRegistry, logger, serviceResolver, storeService, modelResolver)
 	);
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
