@@ -204,12 +204,7 @@ export class Workspace implements Disposable {
 		if (config.title !== undefined) {
 			existing.title = config.title;
 		}
-		if (config.textModel !== undefined) {
-			existing.defaultTextModelId = config.textModel;
-		}
-		if (config.imageModel !== undefined) {
-			existing.defaultImageModelId = config.imageModel;
-		}
+		existing.updatedAt = new Date().toISOString();
 
 		const manager = this.buildFileManager();
 		await manager.writeFile(configFilePath, JSON.stringify(existing, null, 2));
