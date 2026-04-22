@@ -33,6 +33,9 @@
 	"light": "Light",
 	"dark": "Dark",
 	"system": "System",
+	"tasks": "Tasks",
+	"logs": "Logs",
+	"redux": "Redux State",
 	"showConsole": "Show Console",
 	"refresh": "Reload"
 }
