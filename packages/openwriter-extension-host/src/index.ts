@@ -2,9 +2,14 @@ import { AsyncLocalStorage } from 'node:async_hooks';
 import { randomUUID } from 'node:crypto';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
-import type { ExtensionContext, ExtensionModule } from '../../openwriter-extension-sdk/src/index';
+import type {
+	ExtensionContext,
+	ExtensionDocPanelRegistration,
+	ExtensionModule,
+} from '../../openwriter-extension-sdk/src/index';
 import type {
 	ExtensionDocumentChangedEvent,
+	ExtensionDocPanelContent,
 	ExtensionEventPayloadMap,
 	ExtensionExecutionContext,
 	ExtensionHostRequestMap,
@@ -25,6 +30,14 @@ class ExtensionHostRuntime {
 	private module: ExtensionModule | null = null;
 	private activated = false;
 	private readonly commandHandlers = new Map<string, (payload?: unknown) => Promise<unknown> | unknown>();
+	private readonly docPanelRenderers = new Map<
+		string,
+		(
+			context: ExtensionDocPanelRegistration['render'] extends (context: infer TContext) => unknown
+				? TContext
+				: never
+		) => Promise<ExtensionDocPanelContent> | ExtensionDocPanelContent
+	>();
 	private readonly workspaceListeners = new Set<
 		(event: ExtensionWorkspaceChangedEvent) => void | Promise<void>
 	>();
@@ -41,7 +54,7 @@ class ExtensionHostRuntime {
 				await this.bootstrap(message.payload.manifest, message.payload.extensionPath);
 				break;
 			case 'activate':
-				await this.activate(message.payload.reason);
+				await this.activate(message.payload.reason, message.payload.context);
 				break;
 			case 'deactivate':
 				await this.deactivate();
@@ -51,6 +64,13 @@ class ExtensionHostRuntime {
 					message.payload.requestId,
 					message.payload.commandId,
 					message.payload.payload,
+					message.payload.context
+				);
+				break;
+			case 'doc-panel.render':
+				await this.renderDocPanel(
+					message.payload.requestId,
+					message.payload.panelId,
 					message.payload.context
 				);
 				break;
@@ -82,7 +102,7 @@ class ExtensionHostRuntime {
 		this.send({ kind: 'ready' });
 	}
 
-	private async activate(reason: string): Promise<void> {
+	private async activate(reason: string, context?: ExtensionExecutionContext): Promise<void> {
 		if (!this.module || !this.manifest) {
 			throw new Error('Extension bootstrap has not completed.');
 		}
@@ -91,8 +111,10 @@ class ExtensionHostRuntime {
 			return;
 		}
 
-		const context = this.createContext();
-		await this.module.activate(context);
+		const extensionContext = this.createContext();
+		await this.invocationContext.run(context, async () => {
+			await this.module?.activate(extensionContext);
+		});
 		this.activated = true;
 		this.send({ kind: 'activated', payload: { activated: true } });
 		this.log('info', `Activated`, { reason });
@@ -110,6 +132,7 @@ class ExtensionHostRuntime {
 
 		this.activated = false;
 		this.commandHandlers.clear();
+		this.docPanelRenderers.clear();
 		this.workspaceListeners.clear();
 		this.documentListeners.clear();
 		this.taskListeners.clear();
@@ -152,6 +175,15 @@ class ExtensionHostRuntime {
 					this.send({ kind: 'command.registered', payload: { id: command.id } });
 					return () => {
 						this.commandHandlers.delete(command.id);
+					};
+				},
+			},
+			panels: {
+				registerDocPanel: (panel) => {
+					this.docPanelRenderers.set(panel.id, panel.render);
+					this.send({ kind: 'doc-panel.registered', payload: { id: panel.id } });
+					return () => {
+						this.docPanelRenderers.delete(panel.id);
 					};
 				},
 			},
@@ -243,6 +275,45 @@ class ExtensionHostRuntime {
 						ok: false,
 						error: error instanceof Error ? error.message : String(error),
 					},
+				},
+			});
+		}
+	}
+
+	private async renderDocPanel(
+		requestId: string,
+		panelId: string,
+		context: {
+			panelId: string;
+			documentId: string;
+			windowId?: number;
+			reason: 'open' | 'refresh' | 'document-changed';
+		}
+	): Promise<void> {
+		try {
+			if (!this.activated) {
+				await this.activate('doc-panel', context);
+			}
+
+			const renderer = this.docPanelRenderers.get(panelId);
+			if (!renderer) {
+				throw new Error(`Doc panel "${panelId}" is not registered by the extension runtime.`);
+			}
+
+			const result = await this.invocationContext.run(context, async () => renderer(context));
+			this.send({
+				kind: 'doc-panel.result',
+				payload: {
+					requestId,
+					result,
+				},
+			});
+		} catch (error) {
+			this.send({
+				kind: 'error',
+				payload: {
+					requestId,
+					error: error instanceof Error ? error.message : String(error),
 				},
 			});
 		}

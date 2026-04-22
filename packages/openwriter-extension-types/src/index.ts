@@ -1,6 +1,13 @@
 export const OPENWRITER_EXTENSION_API_VERSION = '1';
 
-export type ExtensionCapability = 'commands' | 'host-data' | 'host-actions' | 'tasks' | 'events';
+export type ExtensionCapability =
+	| 'commands'
+	| 'host-data'
+	| 'host-actions'
+	| 'tasks'
+	| 'events'
+	| 'doc-panels'
+	| 'doc-pages';
 
 export const EXTENSION_CAPABILITIES: readonly ExtensionCapability[] = [
 	'commands',
@@ -8,6 +15,8 @@ export const EXTENSION_CAPABILITIES: readonly ExtensionCapability[] = [
 	'host-actions',
 	'tasks',
 	'events',
+	'doc-panels',
+	'doc-pages',
 ];
 
 export type ExtensionPermission =
@@ -54,6 +63,23 @@ export interface ExtensionCommandContribution {
 	when?: ExtensionCommandAvailability;
 }
 
+export interface ExtensionDocPanelContribution {
+	id: string;
+	title: string;
+	description?: string;
+	when?: 'document';
+	icon?: string;
+	order?: number;
+}
+
+export interface ExtensionDocPageContribution {
+	id: string;
+	title: string;
+	description?: string;
+	icon?: string;
+	order?: number;
+}
+
 export interface ExtensionManifest {
 	id: string;
 	name: string;
@@ -68,6 +94,8 @@ export interface ExtensionManifest {
 	activationEvents?: ExtensionActivationEvent[];
 	contributes?: {
 		commands?: ExtensionCommandContribution[];
+		docPanels?: ExtensionDocPanelContribution[];
+		docPages?: ExtensionDocPageContribution[];
 	};
 }
 
@@ -101,6 +129,68 @@ export interface ExtensionDocumentSnapshot {
 export interface ExtensionDocumentUpdate {
 	title?: string;
 	content?: string;
+}
+
+export type ExtensionDocPanelNoticeTone = 'info' | 'warning' | 'error' | 'success';
+export type ExtensionDocPanelButtonVariant = 'default' | 'outline' | 'secondary' | 'ghost';
+export type ExtensionDocPanelRenderReason = 'open' | 'refresh' | 'document-changed';
+
+export interface ExtensionDocPanelTextBlock {
+	type: 'text';
+	text: string;
+}
+
+export interface ExtensionDocPanelMarkdownBlock {
+	type: 'markdown';
+	markdown: string;
+}
+
+export interface ExtensionDocPanelKeyValueItem {
+	label: string;
+	value: string;
+}
+
+export interface ExtensionDocPanelKeyValueListBlock {
+	type: 'keyValueList';
+	items: ExtensionDocPanelKeyValueItem[];
+}
+
+export interface ExtensionDocPanelNoticeBlock {
+	type: 'notice';
+	tone?: ExtensionDocPanelNoticeTone;
+	title?: string;
+	description: string;
+}
+
+export interface ExtensionDocPanelButtonAction {
+	id: string;
+	label: string;
+	commandId: string;
+	payload?: unknown;
+	variant?: ExtensionDocPanelButtonVariant;
+}
+
+export interface ExtensionDocPanelButtonRowBlock {
+	type: 'buttonRow';
+	buttons: ExtensionDocPanelButtonAction[];
+}
+
+export type ExtensionDocPanelBlock =
+	| ExtensionDocPanelTextBlock
+	| ExtensionDocPanelMarkdownBlock
+	| ExtensionDocPanelKeyValueListBlock
+	| ExtensionDocPanelNoticeBlock
+	| ExtensionDocPanelButtonRowBlock;
+
+export interface ExtensionDocPanelContent {
+	blocks: ExtensionDocPanelBlock[];
+}
+
+export interface ExtensionDocPanelRenderContext {
+	panelId: string;
+	documentId: string;
+	windowId?: number;
+	reason: ExtensionDocPanelRenderReason;
 }
 
 export interface ExtensionTaskSubmitOptions {
@@ -217,6 +307,7 @@ export interface ExtensionRuntimeState {
 	lastError?: string;
 	crashCount: number;
 	registeredCommands: string[];
+	registeredDocPanels: string[];
 }
 
 export interface ExtensionInfo {
@@ -235,6 +326,8 @@ export interface ExtensionInfo {
 	permissions: ExtensionPermission[];
 	activationEvents: ExtensionActivationEvent[];
 	commands: ExtensionCommandContribution[];
+	docPanels: ExtensionDocPanelContribution[];
+	docPages: ExtensionDocPageContribution[];
 	validationErrors: string[];
 }
 
@@ -257,11 +350,23 @@ export interface ExtensionCommandInfo extends ExtensionCommandContribution {
 	enabled: boolean;
 }
 
+export interface ExtensionDocPanelInfo extends Omit<ExtensionDocPanelContribution, 'id'> {
+	id: string;
+	localId: string;
+	extensionId: string;
+	extensionName: string;
+	enabled: boolean;
+}
+
 export interface ExtensionCommandQuery {
 	includeDisabled?: boolean;
 }
 
 export interface ExtensionCommandRegistration {
+	id: string;
+}
+
+export interface ExtensionDocPanelRegistration {
 	id: string;
 }
 
@@ -280,6 +385,12 @@ export interface ExtensionHostExecuteCommandPayload {
 	commandId: string;
 	payload?: unknown;
 	context?: ExtensionExecutionContext;
+}
+
+export interface ExtensionHostRenderDocPanelPayload {
+	requestId: string;
+	panelId: string;
+	context: ExtensionDocPanelRenderContext;
 }
 
 export interface ExtensionHostDispatchEventPayload<
@@ -311,6 +422,11 @@ export interface ExtensionCommandResultPayload {
 	result: ExtensionCommandExecutionResult;
 }
 
+export interface ExtensionDocPanelResultPayload {
+	requestId: string;
+	result: ExtensionDocPanelContent;
+}
+
 export interface ExtensionHostLifecyclePayload {
 	activated: boolean;
 }
@@ -326,11 +442,22 @@ export interface ExtensionHostLogPayload {
 	data?: unknown;
 }
 
+export interface ExtensionDocPanelsChangedPayload {
+	documentId?: string | null;
+	windowId?: number;
+}
+
+export interface ExtensionDocPanelContentChangedPayload {
+	documentId: string;
+	windowId?: number;
+}
+
 export type MainToExtensionHostMessage =
 	| { kind: 'bootstrap'; payload: ExtensionHostBootstrapPayload }
 	| { kind: 'activate'; payload: ExtensionHostActivatePayload }
 	| { kind: 'deactivate' }
 	| { kind: 'command.execute'; payload: ExtensionHostExecuteCommandPayload }
+	| { kind: 'doc-panel.render'; payload: ExtensionHostRenderDocPanelPayload }
 	| { kind: 'event.dispatch'; payload: ExtensionHostDispatchEventPayload }
 	| { kind: 'host.result'; payload: ExtensionHostCallResultPayload };
 
@@ -340,6 +467,8 @@ export type ExtensionHostToMainMessage =
 	| { kind: 'deactivated'; payload: ExtensionHostLifecyclePayload }
 	| { kind: 'command.registered'; payload: ExtensionCommandRegistration }
 	| { kind: 'command.result'; payload: ExtensionCommandResultPayload }
+	| { kind: 'doc-panel.registered'; payload: ExtensionDocPanelRegistration }
+	| { kind: 'doc-panel.result'; payload: ExtensionDocPanelResultPayload }
 	| { kind: 'host.call'; payload: ExtensionHostCallPayload }
 	| { kind: 'error'; payload: ExtensionHostErrorPayload }
 	| { kind: 'log'; payload: ExtensionHostLogPayload };
@@ -352,4 +481,24 @@ export function isCommandActivationEvent(
 
 export function commandActivationEvent(commandId: string): `onCommand:${string}` {
 	return `onCommand:${commandId}`;
+}
+
+export function extensionDocPanelId(extensionId: string, panelId: string): string {
+	return `extension:${extensionId}:${panelId}`;
+}
+
+export function parseExtensionDocPanelId(
+	value: string
+): { extensionId: string; panelId: string } | null {
+	if (!value.startsWith('extension:')) return null;
+
+	const withoutPrefix = value.slice('extension:'.length);
+	const separatorIndex = withoutPrefix.indexOf(':');
+	if (separatorIndex < 0) return null;
+
+	const extensionId = withoutPrefix.slice(0, separatorIndex);
+	const panelId = withoutPrefix.slice(separatorIndex + 1);
+	if (!extensionId || !panelId) return null;
+
+	return { extensionId, panelId };
 }

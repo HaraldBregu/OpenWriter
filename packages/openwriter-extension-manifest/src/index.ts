@@ -4,6 +4,8 @@ import {
 	type ExtensionActivationEvent,
 	type ExtensionCapability,
 	type ExtensionCommandContribution,
+	type ExtensionDocPageContribution,
+	type ExtensionDocPanelContribution,
 	type ExtensionManifest,
 	type ExtensionPermission,
 	EXTENSION_CAPABILITIES,
@@ -71,6 +73,39 @@ function normalizeCommands(value: unknown): ExtensionCommandContribution[] {
 		.filter((command) => command.id.length > 0 && command.title.length > 0);
 }
 
+function normalizeDocPanels(value: unknown): ExtensionDocPanelContribution[] {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.filter(isRecord)
+		.map((entry) => {
+			const id = asString(entry.id) ?? '';
+			const title = asString(entry.title) ?? '';
+			const description = asString(entry.description) ?? undefined;
+			const icon = asString(entry.icon) ?? undefined;
+			const when: ExtensionDocPanelContribution['when'] = 'document';
+			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
+			return { id, title, description, when, icon, order };
+		})
+		.filter((panel) => panel.id.length > 0 && panel.title.length > 0);
+}
+
+function normalizeDocPages(value: unknown): ExtensionDocPageContribution[] {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.filter(isRecord)
+		.map((entry) => {
+			const id = asString(entry.id) ?? '';
+			const title = asString(entry.title) ?? '';
+			const description = asString(entry.description) ?? undefined;
+			const icon = asString(entry.icon) ?? undefined;
+			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
+			return { id, title, description, icon, order };
+		})
+		.filter((page) => page.id.length > 0 && page.title.length > 0);
+}
+
 function validateRelativeMain(main: string): string | null {
 	if (!main) return 'Missing "main" entrypoint.';
 	if (path.isAbsolute(main)) return '"main" must be relative to the extension root.';
@@ -120,6 +155,8 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 		activationEvents: uniqueStrings(asArray(input.activationEvents, isActivationEvent)) as ExtensionActivationEvent[],
 		contributes: {
 			commands: normalizeCommands(input.contributes && isRecord(input.contributes) ? input.contributes.commands : []),
+			docPanels: normalizeDocPanels(input.contributes && isRecord(input.contributes) ? input.contributes.docPanels : []),
+			docPages: normalizeDocPages(input.contributes && isRecord(input.contributes) ? input.contributes.docPages : []),
 		},
 	};
 
@@ -151,6 +188,8 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 	if (mainError) errors.push(mainError);
 
 	const commands = manifest.contributes?.commands ?? [];
+	const docPanels = manifest.contributes?.docPanels ?? [];
+	const docPages = manifest.contributes?.docPages ?? [];
 	const commandIds = new Set<string>();
 	for (const command of commands) {
 		if (!EXTENSION_ID_PATTERN.test(command.id)) {
@@ -163,6 +202,28 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 			errors.push(`Duplicate command id "${command.id}".`);
 		}
 		commandIds.add(command.id);
+	}
+
+	const docPanelIds = new Set<string>();
+	for (const panel of docPanels) {
+		if (!EXTENSION_ID_PATTERN.test(panel.id)) {
+			errors.push(`Doc panel "${panel.id}" has an invalid id.`);
+		}
+		if (docPanelIds.has(panel.id)) {
+			errors.push(`Duplicate doc panel id "${panel.id}".`);
+		}
+		docPanelIds.add(panel.id);
+	}
+
+	const docPageIds = new Set<string>();
+	for (const page of docPages) {
+		if (!EXTENSION_ID_PATTERN.test(page.id)) {
+			errors.push(`Doc page "${page.id}" has an invalid id.`);
+		}
+		if (docPageIds.has(page.id)) {
+			errors.push(`Duplicate doc page id "${page.id}".`);
+		}
+		docPageIds.add(page.id);
 	}
 
 	for (const activationEvent of manifest.activationEvents ?? []) {
@@ -197,6 +258,6 @@ function createFallbackManifest(): ExtensionManifest {
 		capabilities: [],
 		permissions: [],
 		activationEvents: [],
-		contributes: { commands: [] },
+		contributes: { commands: [], docPanels: [], docPages: [] },
 	};
 }

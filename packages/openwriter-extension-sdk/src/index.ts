@@ -1,6 +1,9 @@
 import type {
 	ExtensionAppInfo,
 	ExtensionCommandContribution,
+	ExtensionDocPanelContent,
+	ExtensionDocPanelInfo,
+	ExtensionDocPanelRenderContext,
 	ExtensionDocumentSnapshot,
 	ExtensionDocumentUpdate,
 	ExtensionManifest,
@@ -48,6 +51,17 @@ export interface ExtensionCommandsApi {
 	register(command: ExtensionCommandRegistration): () => void;
 }
 
+export interface ExtensionDocPanelRegistration {
+	id: string;
+	render: (
+		context: ExtensionDocPanelRenderContext
+	) => Promise<ExtensionDocPanelContent> | ExtensionDocPanelContent;
+}
+
+export interface ExtensionPanelsApi {
+	registerDocPanel(panel: ExtensionDocPanelRegistration): () => void;
+}
+
 export interface ExtensionLoggerApi {
 	info(message: string, data?: unknown): void;
 	warn(message: string, data?: unknown): void;
@@ -57,6 +71,7 @@ export interface ExtensionLoggerApi {
 export interface ExtensionContext {
 	manifest: ExtensionManifest;
 	commands: ExtensionCommandsApi;
+	panels: ExtensionPanelsApi;
 	events: ExtensionEventsApi;
 	host: ExtensionHostApi;
 	storage: ExtensionStorageApi;
@@ -78,6 +93,16 @@ export type {
 	ExtensionCommandContribution,
 	ExtensionCommandExecutionResult,
 	ExtensionCommandInfo,
+	ExtensionDocPanelBlock,
+	ExtensionDocPanelButtonAction,
+	ExtensionDocPanelContent,
+	ExtensionDocPanelContribution,
+	ExtensionDocPanelInfo,
+	ExtensionDocPanelKeyValueItem,
+	ExtensionDocPanelNoticeTone,
+	ExtensionDocPanelRenderContext,
+	ExtensionDocPanelRenderReason,
+	ExtensionDocPageContribution,
 	ExtensionDocumentChangedEvent,
 	ExtensionDocumentSnapshot,
 	ExtensionDocumentUpdate,
