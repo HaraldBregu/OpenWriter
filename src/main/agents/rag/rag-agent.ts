@@ -89,7 +89,7 @@ export class RagAgent extends BaseAgent<RagAgentInput, RagAgentOutput> {
 			providerId: input.providerId,
 			apiKey: input.apiKey,
 			modelName: input.chatModel,
-			streaming: Boolean(ctx.stream),
+			streaming: Boolean(ctx.onEvent),
 		});
 
 		const messages = this.buildMessages(input, citations);
