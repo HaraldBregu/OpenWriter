@@ -47,7 +47,7 @@ function dataField<T>(data: unknown, key: string): T | undefined {
 	return undefined;
 }
 
-export function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | null {
+export function TaskStatusBar({ taskId, phaseLabel }: TaskStatusBarProps): ReactElement | null {
 	const [state, setState] = useState<TaskStatusState | null>(null);
 	const [cancelling, setCancelling] = useState(false);
 
