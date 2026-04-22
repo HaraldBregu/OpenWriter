@@ -42,6 +42,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 		documentId,
 		sessionIdRef,
 		ready,
+		agentType = 'assistant',
 		onPhase,
 		onDelta,
 		onRecovery,
