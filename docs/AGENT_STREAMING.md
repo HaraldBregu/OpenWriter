@@ -1,64 +1,132 @@
 # Agent Streaming
 
-How the assistant agent's output reaches the document file and the task
-record in real time.
+How the assistant agent's typed events reach the document file, the task
+record, and the renderer in real time.
 
 ## Goal
 
-While an `agent` task runs, two things must happen live:
+While an `agent` task runs, three things must happen live:
 
 1. Generated text is appended to the document file (`content.md`) token
    by token, without the agent itself touching the filesystem.
-2. Partial state (reasoning events, streamed text, token counts) is
-   persisted on the `ActiveTask` record so callers can observe progress
-   via `task:get` / `task:list`.
+2. Every event emitted by the agent is persisted on the `ActiveTask`
+   record so callers can observe progress via `task:get` / `task:list`.
+3. The renderer receives each event via the `task:event` bus and decides
+   how to render it (document editor for `text`, timeline for the rest).
 
-The agent emits a stream of events. The task handler classifies each
-event as **reasoning** or **response** and drives both side effects.
+The agent emits a stream of typed `AgentEvent`s. The task handler
+inspects `kind`, drives side effects, and forwards every event to the
+task-level `recordEvent` sink.
 
-## Event classification
+## Event shape
 
-The assistant emits `StateEvent`s via `AssistantState.subscribe`. The
-handler groups them into two behavioural categories:
+```ts
+interface AgentEvent {
+  kind: string;       // e.g. 'text', 'status', 'decision', 'tool', 'image',
+                      //      'step:begin', 'step:end', 'skill:selected', ...
+  at: number;         // epoch ms
+  payload: unknown;   // shape specific to `kind`
+}
+```
 
-| Event `kind` | Category | Effect on task |
-|---|---|---|
-| `decision` | reasoning | append to `reasoningLog`, `progress(0)` |
-| `decision:invalid` | reasoning | append to `reasoningLog`, `progress(0)` |
-| `skill:selected` | reasoning | append to `reasoningLog`, `progress(0)` |
-| `step:begin` | reasoning | append to `reasoningLog`, `progress(0)` |
-| `step:end` | reasoning | append to `reasoningLog`, `progress(0)` |
-| `text` | response | append delta to `content.md` + `streamedContent`, bump token count, ramp progress |
-| `status`, `tool`, `image`, `usage`, `budget` | pass-through | logged, forwarded to renderer, no side effects |
+The assistant agent reuses its existing `StateEvent` taxonomy; each
+state-level event is cast to `AgentEvent` at the subscription boundary
+without JSON stringification.
 
-Classification lives in `AgentTaskHandler.dispatchStreamChunk`. Adding a
-new reasoning kind means extending the `REASONING_KINDS` set.
+| `kind`              | Payload                                      | Handler side effect                              |
+| ------------------- | -------------------------------------------- | ------------------------------------------------ |
+| `text`              | `{ text: string }`                           | Append to `content.md` + bump token count + ramp progress |
+| `status`            | `{ status: 'running' \| 'done' \| ...}`      | Forward only                                     |
+| `decision`          | `{ action, instruction?, reason?, ... }`    | Forward; progress back to 0                      |
+| `decision:invalid`  | `{ raw, error }`                             | Forward; progress back to 0                      |
+| `skill:selected`    | `{ skillName, instruction? }`                | Forward; progress back to 0                      |
+| `step:begin`        | `StepRecord`                                 | Forward; progress back to 0                      |
+| `step:end`          | `StepRecord`                                 | Forward; progress back to 0                      |
+| `tool`              | `AssistantToolCallRecord`                    | Forward                                          |
+| `image`             | `{ relativePath, prompt }`                   | Forward                                          |
+| `usage`             | `UsageRecord`                                | Forward                                          |
+| `budget`            | `BudgetRecord`                               | Forward                                          |
+
+Adding a new event kind never requires handler changes unless it should
+influence `content.md` writes or progress — in that case extend the
+`if (event.kind === 'text')` branch in `AgentTaskHandler.execute`.
 
 ## Pipeline
 
 ```mermaid
 flowchart LR
     subgraph Agent[AssistantAgent]
-        Controller[ControllerNode<br/>callChat] -->|decision| State
+        Controller[ControllerNode<br/>callChat] --> State
         TextNode[TextNode<br/>streamChat] -->|text deltas| State[AssistantState]
     end
-    State -->|JSON per event| Dispatch[AgentTaskHandler<br/>dispatchStreamChunk]
-    Dispatch -->|decision, step:*, skill:selected| Reasoning[handleReasoning]
-    Dispatch -->|text| Response[handleResponse]
-    Reasoning --> TaskRecord[(ActiveTask)]
-    Reasoning --> Renderer
-    Response --> Writer[DocumentStreamWriter]
-    Response --> TaskRecord
-    Response --> Renderer
-    Writer -->|fs.write delta| ContentMd[(content.md)]
-    TaskRecord -->|task:event| Renderer[Renderer IPC]
+    State -->|typed StateEvent| Subscribe[state.subscribe]
+    Subscribe -->|ctx.onEvent| Handler[AgentTaskHandler.onEvent]
+    Handler -->|text delta| Writer[DocumentStreamWriter]
+    Handler -->|reporter.progress| Reporter[ProgressReporter]
+    Handler -->|recordEvent| Executor[TaskExecutor]
+    Executor -->|ActiveTask.events[]| Task[(ActiveTask)]
+    Executor -->|task:event running| Renderer
+    Writer -->|fs.write| ContentMd[(content.md)]
+    Reporter -->|task:event running| Renderer[Renderer IPC]
 ```
+
+Three terminals per `text` delta:
+
+1. `content.md` on disk (via `DocumentStreamWriter`)
+2. `ActiveTask.events[]` in memory
+3. `task:event` with `{ data: { event } }` to the renderer
+
+The renderer filters by `event.kind`: `text` → append to the document
+editor, everything else → timeline entry.
 
 ## Components
 
-### `DocumentStreamWriter`
+### `AgentContext` — `src/main/agents/core/agent.ts`
 
-`src/main/task/handlers/document-stream-writer.ts`.
+```ts
+interface AgentContext {
+  readonly signal: AbortSignal;
+  readonly logger: LoggerService;
+  readonly progress?: (percent: number, message?: string) => void;
+  readonly onEvent?: (event: AgentEvent) => void;
+  readonly metadata?: Record<string, unknown>;
+}
+```
+
+No more `ctx.stream(string)`. Agents emit typed events via `ctx.onEvent`.
+`ctx.progress` remains for phase-based agents (e.g. `RagAgent`); the
+assistant agent does not use it — its handler drives progress from
+events.
+
+### `AssistantAgent` — `src/main/agents/assistant/assistant-agent.ts`
+
+Subscribes once at the top of `run` and forwards each `StateEvent` to
+`ctx.onEvent`:
+
+```ts
+const unsubscribe = state.subscribe((event) => {
+  ctx.onEvent?.({ kind: event.kind, at: event.at, payload: event.payload });
+});
+```
+
+Controller loop no longer calls `ctx.progress`. Progress is computed by
+the handler from the event stream.
+
+### `TextNode` — `src/main/agents/assistant/nodes/text-node.ts`
+
+Calls `streamChat` with `onContentDelta: (delta) => state.emitTextDelta(delta)`.
+`AssistantState.emitTextDelta` emits a `text` event per chunk.
+Registered tools: `read` only — file writes belong to the handler, not
+the agent.
+
+### `streamChat` — `src/main/agents/assistant/llm-call.ts`
+
+Wraps `client.chat.completions.create({ stream: true, stream_options:
+{ include_usage: true } })`. Returns a `ChatCompletion`-shaped aggregate
+so callers reuse the same post-processing as `callChat`. No retry — use
+`callChat` for idempotent re-attempts.
+
+### `DocumentStreamWriter` — `src/main/task/handlers/document-stream-writer.ts`
 
 Owns the lifecycle of one document stream for one task run.
 
@@ -73,59 +141,7 @@ end()           await the chain, close the FileHandle; idempotent
 via an internal `Promise` chain; per-write errors are caught so the
 chain survives and subsequent deltas still flush.
 
-### `TaskStateWriter`
-
-`src/main/task/task-handler.ts`.
-
-```
-pushReasoning(entry)
-appendResponseDelta(delta)
-setTokenCount(count)
-```
-
-Built by `TaskExecutor` per task; closes over the `activeTasks` Map
-entry so handler mutations are visible to `listTasks` / `getTaskResult`.
-
-### `ActiveTask` — new fields
-
-`src/main/task/task-descriptor.ts`.
-
-| Field | Type | Meaning |
-|---|---|---|
-| `reasoningLog` | `ReasoningLogEntry[]` | All reasoning events observed, in order |
-| `streamedContent` | `string` | Full response text accumulated from deltas |
-| `tokenCount` | `number` | Running count of response deltas |
-
-`ReasoningLogEntry = { at: number; kind: string; payload: unknown }`.
-
-### `TextNode` — streaming + no file tools
-
-`src/main/agents/assistant/nodes/text-node.ts`.
-
-- Calls `streamChat` (not `callChat`).
-- Invokes `state.emitTextDelta(delta)` for every content chunk from
-  the LLM stream. That emits a `text` event per token.
-- Tools registered: `read` only. `write` and `edit` are no longer
-  registered — the handler owns the file.
-- When an iteration ends with no tool calls,
-  `state.finalizeTextSegment()` moves the streamed segment into
-  `_textSegments` so `state.finalText` reflects the full output.
-
-### `streamChat`
-
-`src/main/agents/assistant/llm-call.ts`.
-
-Wraps `client.chat.completions.create({ stream: true, stream_options:
-{ include_usage: true } })`. Accumulates content and tool-call
-fragments per `chunk.choices[0].delta`, then returns a
-`ChatCompletion`-shaped aggregate so callers reuse the same
-post-processing as `callChat`. Charges the run budget from the usage
-reported in the final chunk. No retry/backoff — callers needing retry
-should fall back to `callChat`.
-
-### `AgentTaskHandler`
-
-`src/main/task/handlers/agent-task-handler.ts`.
+### `AgentTaskHandler` — `src/main/task/handlers/agent-task-handler.ts`
 
 On `execute`:
 
@@ -134,22 +150,64 @@ On `execute`:
    `documentPath` is present. Failure is logged and the writer is
    dropped — the agent still runs, with file writes disabled.
 3. `reporter.progress(0, 'reasoning')` publishes the initial state.
-4. `agent.execute` is invoked with a `ctx.stream` that dispatches every
-   JSON chunk through `dispatchStreamChunk`.
-5. Agent-reported `ctx.progress` calls are **ignored**; the handler
-   owns task progress exclusively.
-6. On resolve: `writer.end()`, `reporter.progress(100, 'done')`.
-7. On reject: `writer.end()` still runs (finally-style), partial
+4. `agent.execute` is invoked with a `ctx.onEvent` that:
+   - for `kind === 'text'`: appends the delta to the writer, bumps the
+     token count, and reports `reporter.progress(rampPct(tokens), 'response')`;
+   - for any other kind: reports `reporter.progress(0, 'reasoning')`;
+   - always calls `recordEvent(event)` to persist + forward to the renderer.
+5. On resolve: `writer.end()`, `reporter.progress(100, 'done')`.
+6. On reject: `writer.end()` still runs (finally-style); partial
    `content.md` is preserved.
+
+### `RecordEvent` — `src/main/task/task-handler.ts`
+
+Single sink passed to every handler. Replaces the previous
+`StreamReporter` + `TaskStateWriter` pair.
+
+```ts
+type RecordEvent = (event: AgentEvent) => void;
+```
+
+### `TaskExecutor` — `src/main/task/task-executor.ts`
+
+Builds `recordEvent` inline per task:
+
+```ts
+const recordEvent: RecordEvent = (event) => {
+  const current = this.activeTasks.get(taskId);
+  if (!current) return;
+  (current.events ??= []).push(event);
+  this.send(windowId, 'task:event', {
+    state: 'running',
+    taskId,
+    data: { event },
+    error: null,
+    metadata: task.metadata,
+  });
+};
+```
+
+`listTasks()` includes a shallow copy of `events` so readers see the
+live log without mutation risk.
+
+### `ActiveTask` — `src/main/task/task-descriptor.ts`
+
+| Field | Type | Meaning |
+| --- | --- | --- |
+| `events` | `AgentEvent[]?` | Ordered log of every typed event observed, present only on event-emitting handlers |
+
+The previous `reasoningLog`, `streamedContent`, and `tokenCount` fields
+have been removed. Consumers derive what they need from `events`:
+`streamedContent` = `events.filter(e => e.kind === 'text').map(e => e.payload.text).join('')`.
 
 ## Progress semantics
 
-| Phase | Percent |
-|---|---|
-| Pre-run | `0, 'reasoning'` |
-| Any reasoning event | `0, 'reasoning'` |
-| Response delta | `rampPct(tokenCount), 'response'` |
-| Success | `100, 'done'` |
+| Phase              | Percent                              |
+| ------------------ | ------------------------------------ |
+| Pre-run            | `0, 'reasoning'`                     |
+| Non-`text` event   | `0, 'reasoning'`                     |
+| `text` event       | `rampPct(tokens), 'response'`        |
+| Success            | `100, 'done'`                        |
 
 `rampPct(n) = min(99, round(n * 0.5))`. 200 deltas saturate the cap at
 99 %; the jump to 100 % only happens on completion.
@@ -157,62 +215,81 @@ On `execute`:
 ## Task record lifecycle (example)
 
 ```
-submit   → status='queued'                                     reasoningLog=[]  streamedContent=''  tokenCount=0
-started  → status='running'                                    (unchanged)
-decision → reasoningLog=[{kind:'decision',...}]                progress=0
-step:begin → reasoningLog=[..., {kind:'step:begin',...}]       progress=0
-text     → streamedContent='Hello'     tokenCount=1            progress=1
-text     → streamedContent='Hello, '   tokenCount=2            progress=1
-... (many text events)                                         progress ramps to 99
-step:end → reasoningLog=[..., {kind:'step:end',...}]           progress=0
-done     → status='completed'                                  progress=100
+submit     → status='queued'                                       events=undefined
+started    → status='running'                                      (unchanged)
+status     → events=[{kind:'status',payload:{status:'running'}}]   progress=0
+step:begin → events=[..., {kind:'step:begin', ...}]                progress=0
+decision   → events=[..., {kind:'decision',   payload:{action:'text'}}] progress=0
+text       → events=[..., {kind:'text',       payload:{text:'Hello'}}]  progress=1
+text       → events=[..., {kind:'text',       payload:{text:', '}}]      progress=1
+...                                                                 progress ramps to 99
+step:end   → events=[..., {kind:'step:end', ...}]                  progress=0
+status     → events=[..., {kind:'status', payload:{status:'done'}}]
+done       → status='completed'                                    progress=100
 ```
+
+## Renderer contract
+
+The renderer subscribes to `task:event` and routes by `event.kind`:
+
+- `kind === 'text'` → append `payload.text` to the document editor buffer.
+- everything else  → add a timeline entry with `kind`, `at`, and a
+  renderer-local label derived from `payload`.
+
+Progress events (`data.percent`) update a global progress indicator;
+they are a separate `data` shape on the same `task:event` channel.
 
 ## Error handling
 
 | Failure | Effect |
-|---|---|
-| `writer.begin()` fails | writer dropped, warned in log, agent still runs without file writes |
-| `writer.write()` fails mid-stream | error caught on the chain, logged, subsequent writes still flush |
-| Agent throws (`AbortError`) | `writer.end()` in catch, task `cancelled`, partial `content.md` retained |
-| Agent throws (any other) | `writer.end()` in catch, task `error`, partial `content.md` retained |
-| No `documentPath` resolved | no writer created, response events still populate `streamedContent` on the task |
+| --- | --- |
+| `writer.begin()` fails | Writer dropped, warning logged; agent still runs with file writes disabled |
+| `writer.write()` fails mid-stream | Error caught on the chain, logged; subsequent writes still flush |
+| Agent throws `AbortError` | `writer.end()` in catch; task `cancelled`; partial `content.md` retained |
+| Agent throws (other) | `writer.end()` in catch; task `error`; partial `content.md` retained |
+| No `documentPath` resolved | No writer created; events still populate `ActiveTask.events` and reach the renderer |
 
 ## Known limitations
 
-- **Content leakage on tool-call iterations.** `streamChat` emits
-  deltas live. If the model produces content *and* a tool call in the
-  same iteration, the content has already been written to `content.md`
+- **Content leakage on tool-call iterations.** `streamChat` emits deltas
+  live. If the model produces content *and* a tool call in the same
+  iteration, the content has already been written to `content.md`
   before the tool call is known. With only `read` registered this is
   uncommon in practice.
 - **Concurrent tasks on the same document.** `withFileMutationQueue`
   serializes `begin()`, but two writers may hold open `FileHandle`s on
   the same path simultaneously. If task B calls `begin()` while task A
-  is still appending, B's `'w'` open truncates the file. Queue this
-  at the task-submit layer if concurrent edits become real.
+  is still appending, B's `'w'` open truncates the file. Queue this at
+  the task-submit layer if concurrent edits become real.
 - **No resume.** `content.md` is truncated at task start. If the user
   cancels, the previous document state is gone.
+- **Progress ramp caps early.** `rampPct` saturates at ~200 tokens; the
+  bar sits at 99 % for the remainder of long generations.
 
 ## Extension points
 
-- **New reasoning source.** Emit a new `StateEventKind` and add it to
-  `REASONING_KINDS` in the handler. No other change is needed.
+- **New event kind.** Emit it from the agent via `ctx.onEvent`. No
+  handler change unless it should influence file writes or progress.
+- **New event-emitting handler.** Implement `TaskHandler`, accept the
+  `recordEvent` parameter, and call it with `AgentEvent`-shaped values.
+  The executor forwards them to the renderer and persists them on
+  `ActiveTask.events`.
 - **Debounced writes.** Replace the per-delta `handle.write` with a
   buffered flush inside `DocumentStreamWriter`. The public API does
   not change.
-- **Richer progress.** Swap `rampPct` for a budget-aware calculation
-  that divides `tokenCount` by `input.maxTokens`. The token count is
-  already persisted on the task record.
+- **Budget-aware progress.** Swap `rampPct` for a `tokens / maxTokens`
+  calculation. The token counter already lives inside `AgentTaskHandler.execute`.
 
 ## Touched files
 
 ```
-src/main/task/handlers/agent-task-handler.ts      refactor — stream dispatch, writer lifecycle, progress
-src/main/task/handlers/document-stream-writer.ts  new     — fs lifecycle for content.md
-src/main/task/task-handler.ts                     add     — TaskStateWriter interface, execute() signature
-src/main/task/task-descriptor.ts                  add     — reasoningLog, streamedContent, tokenCount, ReasoningLogEntry
-src/main/task/task-executor.ts                    add     — build TaskStateWriter, expose new fields in listTasks
-src/main/agents/assistant/llm-call.ts             add     — streamChat, stream types
-src/main/agents/assistant/state/assistant-state.ts add    — emitTextDelta, finalizeTextSegment, _currentSegment
-src/main/agents/assistant/nodes/text-node.ts      refactor — streamChat, remove write/edit tools, per-delta emit
+src/main/agents/core/agent.ts                       add  — AgentEvent, onEvent; remove stream
+src/main/task/task-handler.ts                       refactor — RecordEvent; remove StreamReporter, TaskStateWriter
+src/main/task/task-descriptor.ts                    refactor — events[] field; remove reasoningLog/streamedContent/tokenCount
+src/main/task/task-executor.ts                      refactor — recordEvent closure; new execute() call shape
+src/main/task/handlers/agent-task-handler.ts        refactor — typed onEvent dispatch, shrink by ~60%
+src/main/task/handlers/demo-task-handler.ts         refactor — recordEvent replaces streamReporter
+src/main/agents/assistant/assistant-agent.ts        refactor — ctx.onEvent; remove ctx.progress calls
+src/main/agents/rag/rag-agent.ts                    refactor — ctx.onEvent emits text events
+src/shared/types.ts                                 docs   — TaskEvent.data shape for running state
 ```
