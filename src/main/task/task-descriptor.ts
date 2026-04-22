@@ -99,4 +99,34 @@ export interface ActiveTask {
 	 * Included in every TaskEvent for this task.
 	 */
 	metadata?: Record<string, unknown>;
+
+	/**
+	 * Reasoning events observed during execution (controller decisions,
+	 * skill selections, step boundaries). Appended live by handlers that
+	 * classify stream events as reasoning. Present only while streaming
+	 * agents are running; absent for tasks that never produce reasoning.
+	 */
+	reasoningLog?: ReasoningLogEntry[];
+
+	/**
+	 * Response text accumulated live from streamed agent output.
+	 * Handlers append deltas as they arrive. Holds the full generated
+	 * content once the task completes.
+	 */
+	streamedContent?: string;
+
+	/**
+	 * Running count of response-stream deltas observed. Used by handlers
+	 * to compute progress without knowing the total output size.
+	 */
+	tokenCount?: number;
+}
+
+/**
+ * A single reasoning event captured from an agent stream.
+ */
+export interface ReasoningLogEntry {
+	at: number;
+	kind: string;
+	payload: unknown;
 }
