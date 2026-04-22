@@ -15,13 +15,27 @@ import type { LoggerService } from '../../services/logger';
 
 export type AgentProgressReporter = (percent: number, message?: string) => void;
 
-export type AgentStreamReporter = (chunk: string) => void;
+/**
+ * Typed event emitted by an agent while it runs. Replaces the previous
+ * raw-string `stream` channel. Handlers switch on `kind` to classify and
+ * persist, then forward the event to the renderer via the task event bus.
+ */
+export interface AgentEvent {
+	/** Event discriminator (e.g. `text`, `status`, `decision`, `tool`, `image`, `step:begin`). */
+	kind: string;
+	/** Unix epoch ms when the event was produced. */
+	at: number;
+	/** Event-specific payload. Shape is defined by each `kind`. */
+	payload: unknown;
+}
+
+export type AgentEventReporter = (event: AgentEvent) => void;
 
 export interface AgentContext {
 	readonly signal: AbortSignal;
 	readonly logger: LoggerService;
 	readonly progress?: AgentProgressReporter;
-	readonly stream?: AgentStreamReporter;
+	readonly onEvent?: AgentEventReporter;
 	readonly metadata?: Record<string, unknown>;
 }
 

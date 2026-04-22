@@ -16,6 +16,10 @@ import {
 	type ExtensionCommandExecutionResult,
 	type ExtensionCommandInfo,
 	type ExtensionCommandQuery,
+	type ExtensionDocPanelContent,
+	type ExtensionDocPanelContentChangedPayload,
+	type ExtensionDocPanelInfo,
+	type ExtensionDocPanelsChangedPayload,
 	type ExtensionEventType,
 	type ExtensionHostToMainMessage,
 	type ExtensionInfo,
@@ -26,6 +30,9 @@ import {
 	type ExtensionTaskEvent,
 	type MainToExtensionHostMessage,
 	type ExtensionExecutionContext,
+	type ExtensionDocPanelRenderReason,
+	extensionDocPanelId,
+	parseExtensionDocPanelId,
 } from '../../../packages/openwriter-extension-types/src/index';
 import { ExtensionChannels } from '../../shared/channels';
 
@@ -36,6 +43,7 @@ interface ManagedExtensionRecord {
 	readyDeferred: Deferred<void> | null;
 	activationDeferred: Deferred<void> | null;
 	pendingCommandResults: Map<string, Deferred<ExtensionCommandExecutionResult>>;
+	pendingDocPanelResults: Map<string, Deferred<ExtensionDocPanelContent>>;
 }
 
 interface Deferred<T> {
@@ -127,24 +135,34 @@ export class ExtensionManager implements Disposable {
 				readyDeferred: null,
 				activationDeferred: null,
 				pendingCommandResults: new Map(),
+				pendingDocPanelResults: new Map(),
 			});
 		}
 
 		this.broadcastRegistryChanged();
+		this.broadcastDocPanelsChanged();
 	}
 
 	listExtensions(): ExtensionRuntimeInfo[] {
 		return Array.from(this.records.values())
 			.map((record) => ({
 				...record.manifest,
-				runtime: { ...record.state, registeredCommands: [...record.state.registeredCommands] },
+				runtime: {
+					...record.state,
+					registeredCommands: [...record.state.registeredCommands],
+					registeredDocPanels: [...record.state.registeredDocPanels],
+				},
 			}))
 			.sort((left, right) => left.name.localeCompare(right.name));
 	}
 
 	getRuntimeState(extensionId: string): ExtensionRuntimeState {
 		const record = this.getRecord(extensionId);
-		return { ...record.state, registeredCommands: [...record.state.registeredCommands] };
+		return {
+			...record.state,
+			registeredCommands: [...record.state.registeredCommands],
+			registeredDocPanels: [...record.state.registeredDocPanels],
+		};
 	}
 
 	getCommands(windowId?: number, query: ExtensionCommandQuery = {}): ExtensionCommandInfo[] {

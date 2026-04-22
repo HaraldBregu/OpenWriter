@@ -506,7 +506,14 @@ const extensions: ExtensionsApi = {
 	list: () => typedInvokeUnwrap(ExtensionChannels.list),
 	getState: (extensionId) => typedInvokeUnwrap(ExtensionChannels.getState, extensionId),
 	getCommands: () => typedInvokeUnwrap(ExtensionChannels.getCommands),
+	getDocPanels: (documentId) => typedInvokeUnwrap(ExtensionChannels.getDocPanels, documentId),
+	getDocPanelContent: (panelId, documentId) =>
+		typedInvokeUnwrap(ExtensionChannels.getDocPanelContent, panelId, documentId),
+	refreshDocPanel: (panelId, documentId) =>
+		typedInvokeUnwrap(ExtensionChannels.refreshDocPanel, panelId, documentId),
 	executeCommand: (commandId, payload) =>
+		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
+	executeDocPanelAction: (commandId, payload) =>
 		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
 	setEnabled: (extensionId, enabled) =>
 		typedInvokeUnwrap(ExtensionChannels.setEnabled, extensionId, enabled),
@@ -516,6 +523,9 @@ const extensions: ExtensionsApi = {
 	openFolder: () => typedInvokeUnwrap(ExtensionChannels.openFolder),
 	onRegistryChanged: (callback) => typedOn(ExtensionChannels.registryChanged, callback),
 	onRuntimeChanged: (callback) => typedOn(ExtensionChannels.runtimeChanged, callback),
+	onDocPanelsChanged: (callback) => typedOn(ExtensionChannels.docPanelsChanged, callback),
+	onDocPanelContentChanged: (callback) =>
+		typedOn(ExtensionChannels.docPanelContentChanged, callback),
 } satisfies ExtensionsApi;
 
 // ---------------------------------------------------------------------------

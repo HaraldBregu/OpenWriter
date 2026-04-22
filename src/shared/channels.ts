@@ -58,6 +58,10 @@ import type {
 	Service,
 	ExtensionCommandExecutionResult,
 	ExtensionCommandInfo,
+	ExtensionDocPanelContent,
+	ExtensionDocPanelContentChangedPayload,
+	ExtensionDocPanelInfo,
+	ExtensionDocPanelsChangedPayload,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -232,12 +236,17 @@ export const ExtensionChannels = {
 	getState: 'extensions:get-state',
 	getCommands: 'extensions:get-commands',
 	executeCommand: 'extensions:execute-command',
+	getDocPanels: 'extensions:get-doc-panels',
+	getDocPanelContent: 'extensions:get-doc-panel-content',
+	refreshDocPanel: 'extensions:refresh-doc-panel',
 	setEnabled: 'extensions:set-enabled',
 	reload: 'extensions:reload',
 	setActiveDocument: 'extensions:set-active-document',
 	openFolder: 'extensions:open-folder',
 	registryChanged: 'extensions:registry-changed',
 	runtimeChanged: 'extensions:runtime-changed',
+	docPanelsChanged: 'extensions:doc-panels-changed',
+	docPanelContentChanged: 'extensions:doc-panel-content-changed',
 } as const;
 
 // ===========================================================================
@@ -382,6 +391,18 @@ export interface InvokeChannelMap {
 		args: [commandId: string, payload?: unknown];
 		result: ExtensionCommandExecutionResult;
 	};
+	[ExtensionChannels.getDocPanels]: {
+		args: [documentId: string];
+		result: ExtensionDocPanelInfo[];
+	};
+	[ExtensionChannels.getDocPanelContent]: {
+		args: [panelId: string, documentId: string];
+		result: ExtensionDocPanelContent;
+	};
+	[ExtensionChannels.refreshDocPanel]: {
+		args: [panelId: string, documentId: string];
+		result: ExtensionDocPanelContent;
+	};
 	[ExtensionChannels.setEnabled]: {
 		args: [extensionId: string, enabled: boolean];
 		result: void;
@@ -491,4 +512,6 @@ export interface EventChannelMap {
 	[WorkspaceChannels.imagesWatcherError]: { data: WatcherError };
 	[ExtensionChannels.registryChanged]: { data: ExtensionRegistrySnapshot };
 	[ExtensionChannels.runtimeChanged]: { data: ExtensionRuntimeChangedPayload };
+	[ExtensionChannels.docPanelsChanged]: { data: ExtensionDocPanelsChangedPayload };
+	[ExtensionChannels.docPanelContentChanged]: { data: ExtensionDocPanelContentChangedPayload };
 }

@@ -66,6 +66,10 @@ import type {
 	SkillInfo,
 	ExtensionCommandExecutionResult,
 	ExtensionCommandInfo,
+	ExtensionDocPanelContent,
+	ExtensionDocPanelContentChangedPayload,
+	ExtensionDocPanelInfo,
+	ExtensionDocPanelsChangedPayload,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -130,6 +134,10 @@ export type {
 	SkillInfo,
 	ExtensionCommandExecutionResult,
 	ExtensionCommandInfo,
+	ExtensionDocPanelContent,
+	ExtensionDocPanelContentChangedPayload,
+	ExtensionDocPanelInfo,
+	ExtensionDocPanelsChangedPayload,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -222,7 +230,14 @@ export interface ExtensionsApi {
 	list: () => Promise<ExtensionRuntimeInfo[]>;
 	getState: (extensionId: string) => Promise<ExtensionRuntimeState>;
 	getCommands: () => Promise<ExtensionCommandInfo[]>;
+	getDocPanels: (documentId: string) => Promise<ExtensionDocPanelInfo[]>;
+	getDocPanelContent: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
+	refreshDocPanel: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
 	executeCommand: (
+		commandId: string,
+		payload?: unknown
+	) => Promise<ExtensionCommandExecutionResult>;
+	executeDocPanelAction: (
 		commandId: string,
 		payload?: unknown
 	) => Promise<ExtensionCommandExecutionResult>;
@@ -232,6 +247,10 @@ export interface ExtensionsApi {
 	openFolder: () => Promise<void>;
 	onRegistryChanged: (callback: (payload: ExtensionRegistrySnapshot) => void) => () => void;
 	onRuntimeChanged: (callback: (payload: ExtensionRuntimeChangedPayload) => void) => () => void;
+	onDocPanelsChanged: (callback: (payload: ExtensionDocPanelsChangedPayload) => void) => () => void;
+	onDocPanelContentChanged: (
+		callback: (payload: ExtensionDocPanelContentChangedPayload) => void
+	) => () => void;
 }
 
 /** Workspace folder selection, recent workspaces, and document/directory/output management */
