@@ -360,8 +360,6 @@ export interface WorkspaceApi {
 	deleteFileEntry: (id: string) => Promise<void>;
 	/** Subscribe to file change events in files/. */
 	onFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
-	/** Subscribe to files watcher error events. */
-	onFilesWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
