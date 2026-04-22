@@ -3,7 +3,7 @@
 // Import directly from the specific file when needed within the taskManager subtree.
 export type { TaskPriority, TaskState, TaskOptions, ActiveTask } from './task/task-descriptor';
 
-export type { ProgressReporter, StreamReporter, TaskHandler } from './task/task-handler';
+export type { ProgressReporter, RecordEvent, TaskHandler, AgentEvent } from './task/task-handler';
 
 // ---- Core types ----------------------------------------------------------
 // Note: Core types are co-located with their implementation files.
