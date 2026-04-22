@@ -206,11 +206,11 @@ Behavior:
    2. Initial `recordEvent` with `phase: thinking`.
    3. Agent runs; each `AgentEvent` processed through projection + mapper → emits phase/delta events via `recordEvent`.
    4. Returns `{ content, stoppedReason }`.
-4. `TaskExecutor` emits `completed` event with `data: { content, durationMs, stoppedReason }`.
-5. Renderer:
-   - Phase events → `onPhase` → status bar label.
-   - Delta events → `onDelta` → `editorInsert.appendDelta(token)`.
-   - Completed → `onCompleted` → `editorInsert.commitFinal(data.content)` + `updateDocumentContent(id, editor.getMarkdown())` + editor re-enabled.
+4. `TaskExecutor` emits `completed` with `data: { result: AgentCompletedOutput; durationMs }`.
+5. Renderer dispatch (inside `useAssistantTask.onEvent`):
+   - `state: 'running'` + `data.event.kind === 'phase'` → `onPhase(payload.phase, payload.label)` → status bar.
+   - `state: 'running'` + `data.event.kind === 'delta'` → `onDelta(payload.token, payload.fullContent)` → `editorInsert.appendDelta(token)`.
+   - `state: 'completed'` → `onCompleted(data.result.content)` → `editorInsert.commitFinal(content)` + `updateDocumentContent(id, editor.getMarkdown())` + editor re-enabled.
 
 ### Refresh recovery
 
