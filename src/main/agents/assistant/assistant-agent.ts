@@ -175,6 +175,3 @@ async function dispatch(
 	}
 }
 
-function progressFor(step: number, maxSteps: number): number {
-	return Math.min(PROGRESS_PER_STEP_PERCENT, Math.round((step / maxSteps) * PROGRESS_PER_STEP_PERCENT));
-}
