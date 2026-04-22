@@ -130,6 +130,7 @@ function Container({ children }: LayoutProps) {
 				? 'win'
 				: 'linux';
 	const searchShortcutLabel = getShortcutLabel(ShortcutId.openAppSearch, shortcutPlatform);
+	const newDocumentShortcutLabel = getShortcutLabel(ShortcutId.newDocument, shortcutPlatform);
 
 	// Listen for workspace changes from main process and update Redux
 	useWorkspaceListener();
