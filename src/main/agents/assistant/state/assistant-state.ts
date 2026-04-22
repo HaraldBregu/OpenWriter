@@ -216,6 +216,23 @@ export class AssistantState {
 		this.emit({ kind: 'text', at: Date.now(), payload: { text } });
 	}
 
+	/**
+	 * Emit a single streamed token/chunk without finalizing the segment.
+	 * Subscribers receive a `text` event per delta; the segment is flushed
+	 * to `_textSegments` via `finalizeTextSegment()` once the iteration ends.
+	 */
+	emitTextDelta(delta: string): void {
+		if (!delta) return;
+		this._currentSegment += delta;
+		this.emit({ kind: 'text', at: Date.now(), payload: { text: delta } });
+	}
+
+	finalizeTextSegment(): void {
+		if (!this._currentSegment) return;
+		this._textSegments.push(this._currentSegment);
+		this._currentSegment = '';
+	}
+
 	addToolCall(record: AssistantToolCallRecord): void {
 		this._toolCalls.push(record);
 		this.emit({ kind: 'tool', at: Date.now(), payload: { ...record } });
