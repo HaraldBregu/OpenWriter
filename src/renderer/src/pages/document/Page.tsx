@@ -11,7 +11,6 @@ import Chat from './panels/chat/Panel';
 import ExtensionPanel from './panels/extension/Panel';
 import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoPopover from './components/DocumentInfoPopover';
-import { DocumentSidebarTabs, type DocumentSidebarTabItem } from './components/DocumentSidebarTabs';
 import {
 	useDocumentDispatch,
 	useDocumentHistory,
@@ -35,7 +34,6 @@ import { PageBody } from '@/components/app/base/page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import type { AssistantAction } from '@/components/app/editor/context/context';
 import { PromptSubmitPayload } from '@shared/index';
-import type { ActiveSidebar } from '@/contexts/SidebarVisibilityProvider';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
@@ -447,27 +445,6 @@ function PageContent(): ReactElement {
 		window.workspace.openDocumentFolder(id);
 	}, [id]);
 
-	const sidebarItems = useMemo<DocumentSidebarTabItem[]>(
-		() => [
-			{
-				id: 'builtin:agentic',
-				title: t('agenticPanel.headerTitle', 'Chat'),
-				meta: 'Built-in',
-			},
-			{
-				id: 'builtin:config',
-				title: t('configSidebar.documentInfo', 'Document info'),
-				meta: 'Built-in',
-			},
-			...extensionDocPanels.map((panel) => ({
-				id: panel.id,
-				title: panel.title,
-				meta: panel.extensionName,
-			})),
-		],
-		[extensionDocPanels, t]
-	);
-
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
 		[activeSidebar, extensionDocPanels]
@@ -563,11 +540,6 @@ function PageContent(): ReactElement {
 						collapsedSize="0%"
 					>
 						<div className="flex h-full min-h-0 flex-col">
-							<DocumentSidebarTabs
-								items={sidebarItems}
-								activePanelId={activeSidebar}
-								onSelect={(panelId) => setActiveSidebar(panelId as Exclude<ActiveSidebar, null>)}
-							/>
 							<div className="min-h-0 flex-1">
 								{activeSidebar === 'builtin:config' && (
 									<InfoPanel onOpenFolder={handleOpenFolder} />
