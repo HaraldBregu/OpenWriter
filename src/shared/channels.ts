@@ -112,13 +112,11 @@ export const WorkspaceChannels = {
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
 	updateProjectDescription: 'project-workspace:update-description',
-	// Document config
+	// Document config + content (merged writer)
 	getDocumentConfig: 'workspace:get-document-config',
-	updateDocumentConfig: 'workspace:update-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
-	// Document content
 	getDocumentContent: 'workspace:get-document-content',
-	updateDocumentContent: 'workspace:update-document-content',
+	updateDocument: 'workspace:update-document',
 	// Contents (workspace/contents/)
 	getContents: 'contents:get-all',
 	getContentsFolders: 'contents:get-folders',
