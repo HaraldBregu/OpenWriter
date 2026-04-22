@@ -1,4 +1,3 @@
-import path from 'node:path';
 import type { TaskHandler, ProgressReporter, RecordEvent } from '../task-handler';
 import type { AgentRegistry } from '../../agents/core/agent-registry';
 import type { AgentContext, AgentEvent } from '../../agents/core/agent';
@@ -6,12 +5,6 @@ import type { LoggerService } from '../../services/logger';
 import type { StoreService } from '../../services/store';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
-import type { WindowContextManager } from '../../core/window-context';
-import type { Workspace } from '../../workspace/workspace';
-import { getTaskExecutionContext } from '../task-execution-context';
-import { DEFAULT_IMAGE_MODEL_ID } from '../../../shared/models';
-import type { SkillsStoreService } from '../../services/skills-store-service';
-import type { Skill } from '../../agents/skills';
 import type { AgentCompletedOutput } from '../../../shared/types';
 import { AgentStreamProjection } from './agent-stream-projection';
 import { AgentPhaseMapper } from './agent-phase-mapper';
@@ -19,17 +12,15 @@ import { AgentPhaseMapper } from './agent-phase-mapper';
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
  *
- * Tokens stream through `recordEvent` only; disk is written by the renderer
- * on task completion. Two event kinds are emitted for renderer consumption:
+ * Enriches the incoming payload with `{ providerId, apiKey, modelName }`
+ * resolved from store settings, then dispatches to the registered agent.
+ * Streaming tokens flow through `recordEvent` as:
  *   - `phase` ({ phase, label }) — status-bar display.
  *   - `delta` ({ token, fullContent }) — live editor insertion.
- * Other AgentEvents still flow through `recordEvent` for diagnostics.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
-	/** Registered agent type (e.g. 'assistant', 'rag', 'ocr'). */
 	agentType: string;
-	/** Input payload forwarded to the agent's `execute`, after enrichment. */
 	input: TAgentInput;
 }
 
@@ -41,13 +32,6 @@ interface AgentInputRecord {
 	providerId?: string;
 	apiKey?: string;
 	modelName?: string;
-	imageProviderId?: string;
-	imageApiKey?: string;
-	imageModelName?: string;
-	documentId?: string;
-	documentPath?: string;
-	workspacePath?: string;
-	skills?: Skill[];
 	[key: string]: unknown;
 }
 
@@ -64,9 +48,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		private readonly logger: LoggerService,
 		private readonly serviceResolver: ServiceResolver,
 		private readonly storeService: StoreService,
-		private readonly modelResolver: ModelResolver,
-		private readonly windowContextManager: WindowContextManager,
-		private readonly skillsStoreService?: SkillsStoreService
+		private readonly modelResolver: ModelResolver
 	) {}
 
 	validate(input: AgentTaskInput): void {
@@ -90,7 +72,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 	): Promise<AgentCompletedOutput> {
 		const agent = this.agents.get(input.agentType);
 		const startedAt = Date.now();
-		const enrichedInput = await this.enrichInput(input.agentType, input.input, metadata);
+		const enrichedInput = this.enrichInput(input.agentType, input.input);
 
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
@@ -167,20 +149,11 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		this.logger.info(LOG_SOURCE, `[${agentType}] started`, {
 			providerId: record.providerId,
 			modelName: record.modelName,
-			imageProviderId: record.imageProviderId,
-			imageModelName: record.imageModelName,
-			documentId: record.documentId,
-			hasWorkspacePath: Boolean(record.workspacePath),
-			skillsCount: record.skills?.length ?? 0,
 			metadataKeys: metadata ? Object.keys(metadata) : [],
 		});
 	}
 
-	private async enrichInput<T>(
-		agentType: string,
-		raw: T,
-		metadata?: Record<string, unknown>
-	): Promise<T> {
+	private enrichInput<T>(agentType: string, raw: T): T {
 		if (!raw || typeof raw !== 'object') return raw;
 
 		const base = raw as AgentInputRecord;
@@ -191,119 +164,12 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		const providerId = base.providerId?.trim() || model.providerId;
 		const service = this.serviceResolver.resolve({ providerId });
 
-		const enriched: AgentInputRecord = {
+		return {
 			...base,
 			providerId: service.provider.id,
 			apiKey: base.apiKey?.trim() || service.apiKey,
 			modelName: model.modelId,
-		};
-
-		const imageCreds = this.resolveImageCredentials(base, agentSettings?.models.image);
-		if (imageCreds) {
-			enriched.imageProviderId = imageCreds.providerId;
-			enriched.imageApiKey = imageCreds.apiKey;
-			enriched.imageModelName = imageCreds.modelName;
-		}
-
-		const documentId = this.extractDocumentId(base, metadata);
-		if (documentId) {
-			enriched.documentId = documentId;
-			const documentPath = this.resolveDocumentPath(documentId);
-			if (documentPath) enriched.documentPath = documentPath;
-		}
-
-		const workspacePath = base.workspacePath?.trim() || this.resolveWorkspacePath();
-		if (workspacePath) enriched.workspacePath = workspacePath;
-
-		if (agentType === 'assistant' && !base.skills) {
-			const skills = await this.loadSkills();
-			if (skills.length > 0) enriched.skills = skills;
-		}
-
-		return enriched as unknown as T;
-	}
-
-	private async loadSkills(): Promise<Skill[]> {
-		if (!this.skillsStoreService) return [];
-		try {
-			return await this.skillsStoreService.listSkillEntities();
-		} catch (error) {
-			this.logger.warn('AgentTaskHandler', 'Failed to load skills', error);
-			return [];
-		}
-	}
-
-	private resolveWorkspacePath(): string | undefined {
-		const windowId = this.resolveWindowId();
-		if (windowId === undefined) return undefined;
-		const context = this.windowContextManager.tryGet(windowId);
-		if (!context) return undefined;
-		try {
-			const workspace = context.container.get<Workspace>('workspaceManager');
-			return workspace.getCurrent() ?? undefined;
-		} catch (error) {
-			this.logger.warn('AgentTaskHandler', 'Failed to resolve workspace path', error);
-			return undefined;
-		}
-	}
-
-	private resolveImageCredentials(
-		base: AgentInputRecord,
-		defaultImageModelId?: string
-	): { providerId: string; apiKey: string; modelName: string } | undefined {
-		try {
-			const modelId = base.imageModelName?.trim() || defaultImageModelId || DEFAULT_IMAGE_MODEL_ID;
-			const model = this.modelResolver.resolve({ modelId });
-			const providerId = base.imageProviderId?.trim() || model.providerId;
-			const service = this.serviceResolver.resolve({ providerId });
-			return {
-				providerId: service.provider.id,
-				apiKey: base.imageApiKey?.trim() || service.apiKey,
-				modelName: model.modelId,
-			};
-		} catch (error) {
-			this.logger.warn(
-				'AgentTaskHandler',
-				'Image provider not configured; generate_image tool will be disabled',
-				error
-			);
-			return undefined;
-		}
-	}
-
-	private extractDocumentId(
-		base: AgentInputRecord,
-		metadata?: Record<string, unknown>
-	): string | undefined {
-		if (typeof base.documentId === 'string' && base.documentId) return base.documentId;
-		const fromMeta = metadata?.documentId;
-		return typeof fromMeta === 'string' && fromMeta ? fromMeta : undefined;
-	}
-
-	private resolveDocumentPath(documentId: string): string | undefined {
-		const windowId = this.resolveWindowId();
-		if (windowId === undefined) return undefined;
-
-		const context = this.windowContextManager.tryGet(windowId);
-		if (!context) return undefined;
-
-		try {
-			const workspace = context.container.get<Workspace>('workspaceManager');
-			const folder = workspace.getDocumentFolderPath(documentId);
-			return path.join(folder, 'content.md');
-		} catch (error) {
-			this.logger.warn(
-				'AgentTaskHandler',
-				`Failed to resolve document path for ${documentId}`,
-				error
-			);
-			return undefined;
-		}
-	}
-
-	private resolveWindowId(): number | undefined {
-		const ctx = getTaskExecutionContext();
-		return ctx?.windowId;
+		} as unknown as T;
 	}
 }
 
