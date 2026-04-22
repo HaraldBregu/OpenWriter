@@ -593,3 +593,67 @@ export class TaskExecutor implements Disposable {
 		}
 	}
 }
+
+// ---- Agent-task helpers ---------------------------------------------------
+
+const ACTIVE_STATES = new Set<ActiveTask['status']>(['queued', 'started', 'running']);
+
+function isActiveState(status: ActiveTask['status']): boolean {
+	return ACTIVE_STATES.has(status);
+}
+
+function readAssistantMetadata(
+	metadata: Record<string, unknown> | undefined
+): AssistantTaskMetadata | null {
+	if (!metadata) return null;
+	const { sessionId, documentId, posFrom, posTo } = metadata;
+	if (
+		typeof sessionId !== 'string' ||
+		typeof documentId !== 'string' ||
+		typeof posFrom !== 'number' ||
+		typeof posTo !== 'number'
+	) {
+		return null;
+	}
+	return { sessionId, documentId, posFrom, posTo };
+}
+
+function readCompletedResult(raw: unknown): AgentCompletedOutput | undefined {
+	if (!raw || typeof raw !== 'object') return undefined;
+	const { content, stoppedReason } = raw as Record<string, unknown>;
+	if (typeof content !== 'string') return undefined;
+	if (stoppedReason !== 'done' && stoppedReason !== 'max-steps' && stoppedReason !== 'stagnation') {
+		return undefined;
+	}
+	return { content, stoppedReason };
+}
+
+function projectEvents(task: ActiveTask): { phase: AgentPhase; fullContent: string } {
+	let phase: AgentPhase = 'thinking';
+	let fullContent = '';
+	for (const event of task.events ?? []) {
+		if (event.kind === 'phase') {
+			const p = (event.payload as AgentPhasePayload)?.phase;
+			if (p) phase = p;
+		} else if (event.kind === 'delta') {
+			const payload = event.payload as AgentDeltaPayload;
+			if (typeof payload?.fullContent === 'string') fullContent = payload.fullContent;
+		}
+	}
+	return { phase, fullContent };
+}
+
+function phaseForState(status: ActiveTask['status'], derived: AgentPhase): AgentPhase {
+	switch (status) {
+		case 'queued':
+			return 'queued';
+		case 'completed':
+			return 'completed';
+		case 'error':
+			return 'error';
+		case 'cancelled':
+			return 'cancelled';
+		default:
+			return derived;
+	}
+}
