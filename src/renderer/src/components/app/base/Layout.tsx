@@ -76,6 +76,7 @@ import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { CommandModalProvider, useCommandModal } from '../command-modals';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
+import { useDebugDialogs } from '@/contexts/DebugDialogsContext';
 import { getShortcutLabel, ShortcutId, type Platform } from '../../../../../shared/shortcuts';
 import {
 	DropdownMenu,
@@ -123,6 +124,7 @@ function Container({ children }: LayoutProps) {
 	const themeMode = useThemeMode();
 	const language = useLanguageMode();
 	const { setTheme, setLanguage } = useAppActions();
+	const { openTasksDialog, openReduxDialog, openLogDialog } = useDebugDialogs();
 	const shortcutPlatform: Platform =
 		typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac')
 			? 'mac'
