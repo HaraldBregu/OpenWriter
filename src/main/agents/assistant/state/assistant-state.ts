@@ -80,6 +80,7 @@ export class AssistantState {
 	private _stepCounter = 0;
 	private _usageInput = 0;
 	private _usageOutput = 0;
+	private _currentSegment = '';
 	private readonly _listeners = new Set<StateListener>();
 
 	subscribe(listener: StateListener): () => void {
