@@ -79,6 +79,20 @@ export class TaskManagerIpc implements IpcModule {
 			return executor.listTasks().map(toTaskInfo);
 		});
 
+		/**
+		 * Rebuild an agent task's projection snapshot for page-refresh recovery.
+		 */
+		registerQuery(TaskChannels.getSnapshot, (taskId: string) => {
+			return executor.getAgentSnapshot(taskId) ?? null;
+		});
+
+		/**
+		 * Find the most recent agent task tied to the given document.
+		 */
+		registerQuery(TaskChannels.findForDocument, (documentId: string) => {
+			return executor.findAgentTaskForDocument(documentId);
+		});
+
 		// --- Window close cleanup -------------------------------------------------
 		// When a window closes, cancel all tasks owned by it to prevent orphaned work.
 		eventBus.on('window:closed', (event) => {
