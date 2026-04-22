@@ -63,9 +63,6 @@ if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === '
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
 const HomePage = lazy(() => import('./pages/home/Page'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
-const DebugTasksPage = lazy(() => import('./pages/debug/task/DebugTasksPage'));
-const DebugReduxPage = lazy(() => import('./pages/debug/DebugReduxPage'));
-const DebugLogsPage = lazy(() => import('./pages/debug/DebugLogsPage'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
 const FilesPage = lazy(() => import('./pages/resources/files/Page'));
 const DataPage = lazy(() => import('./pages/resources/data/Page'));
