@@ -382,6 +382,12 @@ const task: TaskApi = {
 	onEvent: (callback) => {
 		return typedOn(TaskChannels.event, callback);
 	},
+	getSnapshot: (taskId: string) => {
+		return typedInvokeRaw(TaskChannels.getSnapshot, taskId);
+	},
+	findForDocument: (documentId: string) => {
+		return typedInvokeRaw(TaskChannels.findForDocument, documentId);
+	},
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
