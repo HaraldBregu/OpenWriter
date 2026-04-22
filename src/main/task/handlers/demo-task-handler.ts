@@ -1,4 +1,4 @@
-import type { TaskHandler, ProgressReporter, StreamReporter } from '../task-handler';
+import type { TaskHandler, ProgressReporter, RecordEvent } from '../task-handler';
 import type { LoggerService } from '../../services/logger';
 
 export interface DemoTaskInput {
@@ -47,7 +47,8 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutpu
 		input: DemoTaskInput,
 		signal: AbortSignal,
 		reporter: ProgressReporter,
-		streamReporter?: StreamReporter
+		_metadata?: Record<string, unknown>,
+		recordEvent?: RecordEvent
 	): Promise<DemoTaskOutput> {
 		const startedAt = Date.now();
 		this.logger?.info(LOG_SOURCE, 'Demo task started', { promptLength: input.prompt.length });
@@ -59,7 +60,7 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutpu
 				await sleep(STEP_DELAY_MS, signal);
 				const chunk = STREAM_CHUNKS[i];
 				content += chunk;
-				streamReporter?.stream(chunk);
+				recordEvent?.({ kind: 'text', at: Date.now(), payload: { text: chunk } });
 				const percent = Math.round(((i + 1) / STREAM_CHUNKS.length) * 100);
 				reporter.progress(percent, `Streaming ${i + 1}/${STREAM_CHUNKS.length}`);
 			}

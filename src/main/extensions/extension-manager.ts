@@ -184,7 +184,7 @@ export class ExtensionManager implements Disposable {
 			.sort((left, right) => left.title.localeCompare(right.title));
 	}
 
-	getDocPanels(windowId?: number, documentId?: string | null): ExtensionDocPanelInfo[] {
+	getDocPanels(_windowId?: number, documentId?: string | null): ExtensionDocPanelInfo[] {
 		if (!documentId) return [];
 
 		return Array.from(this.records.values())
