@@ -1,4 +1,5 @@
 import type { TaskPriority, TaskState } from '../../shared/types';
+import type { AgentEvent } from '../agents/core/agent';
 export type { TaskPriority, TaskState };
 
 /**
@@ -101,32 +102,10 @@ export interface ActiveTask {
 	metadata?: Record<string, unknown>;
 
 	/**
-	 * Reasoning events observed during execution (controller decisions,
-	 * skill selections, step boundaries). Appended live by handlers that
-	 * classify stream events as reasoning. Present only while streaming
-	 * agents are running; absent for tasks that never produce reasoning.
+	 * Ordered log of typed events emitted by the handler during execution.
+	 * Handlers append via the `recordEvent` sink; the executor also
+	 * forwards each event to the renderer as a `task:event` running
+	 * payload. Present only for handlers that emit events (agent/demo).
 	 */
-	reasoningLog?: ReasoningLogEntry[];
-
-	/**
-	 * Response text accumulated live from streamed agent output.
-	 * Handlers append deltas as they arrive. Holds the full generated
-	 * content once the task completes.
-	 */
-	streamedContent?: string;
-
-	/**
-	 * Running count of response-stream deltas observed. Used by handlers
-	 * to compute progress without knowing the total output size.
-	 */
-	tokenCount?: number;
-}
-
-/**
- * A single reasoning event captured from an agent stream.
- */
-export interface ReasoningLogEntry {
-	at: number;
-	kind: string;
-	payload: unknown;
+	events?: AgentEvent[];
 }
