@@ -201,19 +201,20 @@ export class TaskExecutor implements Disposable {
 	 * Return a snapshot of all active tasks (queued + running).
 	 */
 	listTasks(): ActiveTask[] {
-		return Array.from(this.activeTasks.values()).map(
-			({ taskId, type, status, priority, startedAt, completedAt, windowId, metadata }) => ({
-				taskId,
-				type,
-				status,
-				priority,
-				startedAt,
-				completedAt,
-				windowId,
-				metadata,
-				controller: undefined as unknown as AbortController,
-			})
-		);
+		return Array.from(this.activeTasks.values()).map((task) => ({
+			taskId: task.taskId,
+			type: task.type,
+			status: task.status,
+			priority: task.priority,
+			startedAt: task.startedAt,
+			completedAt: task.completedAt,
+			windowId: task.windowId,
+			metadata: task.metadata,
+			reasoningLog: task.reasoningLog ? [...task.reasoningLog] : undefined,
+			streamedContent: task.streamedContent,
+			tokenCount: task.tokenCount,
+			controller: undefined as unknown as AbortController,
+		}));
 	}
 
 	/**
