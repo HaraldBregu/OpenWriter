@@ -384,11 +384,6 @@ export interface WorkspaceApi {
 	 */
 	writeFile: (params: FsWriteFileParams) => Promise<void>;
 	/**
-	 * Create a new file, optionally pre-populated with content.
-	 * Idempotent by default; pass `failIfExists: true` for exclusive creation.
-	 */
-	createFile: (params: FsCreateFileParams) => Promise<void>;
-	/**
 	 * Create a directory, optionally with recursive ancestor creation (mkdir -p).
 	 * Idempotent by default; pass `failIfExists: true` for exclusive creation.
 	 */
