@@ -84,14 +84,6 @@ export const WorkspaceChannels = {
 	removeRecent: 'workspace-remove-recent',
 	changed: 'workspace:changed',
 	deleted: 'workspace:deleted',
-	// Directories
-	list: 'directories:list',
-	add: 'directories:add',
-	addMany: 'directories:add-many',
-	remove: 'directories:remove',
-	validate: 'directories:validate',
-	markIndexed: 'directories:mark-indexed',
-	directoriesChanged: 'directories:changed',
 	// Indexing
 	getIndexingInfo: 'indexing:get-info',
 	// Shell
@@ -99,9 +91,7 @@ export const WorkspaceChannels = {
 	openDataFolder: 'workspace:open-data-folder',
 	openContentsFolder: 'workspace:open-contents-folder',
 	openFilesFolder: 'workspace:open-files-folder',
-	openImagesFolder: 'workspace:open-images-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
-	openDocumentImagesFolder: 'workspace:open-document-images-folder',
 	getDocumentPath: 'workspace:get-document-path',
 	// Document images
 	saveDocumentImage: 'output:save-document-image',
