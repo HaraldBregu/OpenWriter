@@ -2,7 +2,13 @@ import type OpenAI from 'openai';
 import type { RunBudget, UsageDelta } from './budget';
 
 export type ChatCompletion = OpenAI.Chat.Completions.ChatCompletion;
+export type ChatCompletionChunk = OpenAI.Chat.Completions.ChatCompletionChunk;
+export type ChatCompletionMessage = OpenAI.Chat.Completions.ChatCompletionMessage;
 export type ChatParams = OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming;
+export type ChatStreamParams = Omit<
+	OpenAI.Chat.Completions.ChatCompletionCreateParamsStreaming,
+	'stream'
+>;
 
 export interface LlmCallOptions {
 	client: OpenAI;
@@ -12,6 +18,17 @@ export interface LlmCallOptions {
 	label: string;
 	timeoutMs: number;
 	maxRetries?: number;
+}
+
+export interface StreamChatOptions {
+	client: OpenAI;
+	params: ChatStreamParams;
+	signal: AbortSignal;
+	budget: RunBudget;
+	label: string;
+	timeoutMs: number;
+	/** Invoked for each content delta as it arrives from the model. */
+	onContentDelta?: (delta: string) => void;
 }
 
 const DEFAULT_MAX_RETRIES = 3;
