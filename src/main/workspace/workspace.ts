@@ -228,8 +228,22 @@ export class Workspace implements Disposable {
 	async updateDocumentContent(documentId: string, content: string): Promise<void> {
 		const docPath = this.getDocumentFolderPath(documentId);
 		const contentFilePath = path.join(docPath, 'content.md');
+		const configFilePath = path.join(docPath, 'config.json');
 
 		await fsPromises.writeFile(contentFilePath, content, 'utf-8');
+
+		let existing: Record<string, unknown> = {};
+		try {
+			const raw = await fsPromises.readFile(configFilePath, 'utf-8');
+			existing = JSON.parse(raw) as Record<string, unknown>;
+		} catch {
+			// config.json doesn't exist yet — skip timestamp bump
+			return;
+		}
+
+		existing.updatedAt = new Date().toISOString();
+		const manager = this.buildFileManager();
+		await manager.writeFile(configFilePath, JSON.stringify(existing, null, 2));
 	}
 
 	// -------------------------------------------------------------------------
