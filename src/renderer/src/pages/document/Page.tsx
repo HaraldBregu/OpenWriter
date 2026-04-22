@@ -45,7 +45,7 @@ function PageContent(): ReactElement {
 	const dispatch = useDocumentDispatch();
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
-	const { setEditor } = useEditorInstance();
+	const { editor, setEditor } = useEditorInstance();
 
 	const [title, setTitle] = useState('');
 	const [content, setContent] = useState('');
