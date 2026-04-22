@@ -336,20 +336,6 @@ export class Workspace implements Disposable {
 		});
 	}
 
-	async createFile(params: FsCreateFileParams): Promise<void> {
-		this.validateFsParams(params, ['filePath']);
-		if (params.content !== undefined && typeof params.content !== 'string') {
-			throw new Error('fs:create-file: content must be a string when provided');
-		}
-		const manager = this.buildFileManager();
-		await manager.createFile(params.filePath, {
-			content: params.content,
-			encoding: params.encoding,
-			failIfExists: params.failIfExists,
-			createParents: params.createParents,
-		});
-	}
-
 	async createFolder(params: FsCreateFolderParams): Promise<void> {
 		this.validateFsParams(params, ['folderPath']);
 		const manager = this.buildFileManager();
