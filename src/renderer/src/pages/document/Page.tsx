@@ -240,6 +240,7 @@ function PageContent(): ReactElement {
 	const assistant = useAssistantTask({
 		documentId: id,
 		sessionIdRef,
+		ready: loaded && editor != null,
 		onPhase: useCallback((_, label: string) => {
 			setPhaseLabel(label);
 		}, []),
@@ -251,10 +252,12 @@ function PageContent(): ReactElement {
 		),
 		onRecovery: useCallback(
 			(fullContent: string, metadata) => {
+				editorActions.showLoading();
+				editorActions.disable();
 				editorInsert.begin(metadata.posFrom, metadata.posTo);
 				if (fullContent) editorInsert.appendDelta(fullContent);
 			},
-			[editorInsert]
+			[editorInsert, editorActions]
 		),
 		onCompleted: useCallback(
 			(content: string) => {
