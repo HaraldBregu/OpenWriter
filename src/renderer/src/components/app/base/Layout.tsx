@@ -57,7 +57,6 @@ import {
 	Download,
 	Info,
 	LogOut,
-	CirclePlus,
 	Home,
 	Plus,
 	ScrollText,
