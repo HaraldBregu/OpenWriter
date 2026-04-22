@@ -2,14 +2,16 @@ import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import { Undo2, Redo2 } from 'lucide-react';
+import { Bot, Info, Undo2, Redo2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import InfoPanel from './panels/info/Panel';
 import Chat from './panels/chat/Panel';
+import ExtensionPanel from './panels/extension/Panel';
 import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoPopover from './components/DocumentInfoPopover';
+import { DocumentSidebarTabs, type DocumentSidebarTabItem } from './components/DocumentSidebarTabs';
 import {
 	useDocumentDispatch,
 	useDocumentHistory,
@@ -20,7 +22,7 @@ import {
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import { v7 as uuidv7 } from 'uuid';
-import type { TaskEvent } from '../../../../shared/types';
+import type { ExtensionDocPanelInfo, TaskEvent } from '../../../../shared/types';
 import { TaskStatusBar } from './components/TaskStatusBar';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
@@ -47,6 +49,7 @@ function PageContent(): ReactElement {
 	const [content, setContent] = useState('');
 	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
+	const [extensionDocPanels, setExtensionDocPanels] = useState<ExtensionDocPanelInfo[]>([]);
 
 	const { activeSidebar, setActiveSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
@@ -62,6 +65,20 @@ function PageContent(): ReactElement {
 			sidebarPanelRef.current?.collapse();
 		}
 	}, [activeSidebar, sidebarPanelRef]);
+
+	const loadExtensionDocPanels = useCallback(async () => {
+		if (!id) {
+			setExtensionDocPanels([]);
+			return;
+		}
+
+		try {
+			const panels = await window.extensions.getDocPanels(id);
+			setExtensionDocPanels(panels);
+		} catch {
+			setExtensionDocPanels([]);
+		}
+	}, [id]);
 
 	const stateRef = useRef({ title });
 	stateRef.current = { title };

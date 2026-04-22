@@ -248,7 +248,12 @@ export interface TaskQueueStatus {
  *
  * - `state`    — discriminant identifying the lifecycle stage.
  * - `taskId`   — unique identifier of the task this event belongs to.
- * - `data`     — success payload (shape varies per event type); null on error events.
+ * - `data`     — success payload, shape varies per `state`:
+ *     - `queued` / `started` / `cancelled`: `{}`
+ *     - `running` (progress): `{ percent: number, message?: string, detail?: unknown }`
+ *     - `running` (typed event): `{ event: { kind: string, at: number, payload: unknown } }`
+ *     - `completed`: `{ result: unknown, durationMs: number }`
+ *     - `error`: `null`
  * - `error`    — error payload; null on success events.
  * - `metadata` — caller-supplied metadata attached at submit time; matches TaskSubmitPayload.metadata.
  */
