@@ -124,14 +124,11 @@ export const WorkspaceChannels = {
 	// Document content
 	getDocumentContent: 'workspace:get-document-content',
 	updateDocumentContent: 'workspace:update-document-content',
-	documentContentChanged: 'workspace:document-content-changed',
 	// Contents (workspace/contents/)
 	getContents: 'contents:get-all',
 	getContentsFolders: 'contents:get-folders',
 	insertContents: 'contents:insert',
 	deleteContent: 'contents:delete',
-	contentsChanged: 'contents:changed',
-	contentsWatcherError: 'contents:watcher-error',
 	// OCR model preference
 	getOcrModelId: 'workspace:get-ocr-model-id',
 	setOcrModelId: 'workspace:set-ocr-model-id',
@@ -140,13 +137,9 @@ export const WorkspaceChannels = {
 	insertFiles: 'files:insert',
 	deleteFileEntry: 'files:delete',
 	filesChanged: 'files:changed',
-	filesWatcherError: 'files:watcher-error',
 	// Images (workspace/images/)
 	getImages: 'images:get-all',
-	insertImages: 'images:insert',
-	deleteImage: 'images:delete',
 	imagesChanged: 'images:changed',
-	imagesWatcherError: 'images:watcher-error',
 } as const;
 
 export const WindowChannels = {
