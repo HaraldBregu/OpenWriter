@@ -98,7 +98,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 		return () => {
 			cancelled = true;
 		};
-	}, [documentId]);
+	}, [documentId, ready]);
 
 	const submit = useCallback(
 		async ({ prompt, files, posFrom, posTo }: AssistantTaskSubmitArgs): Promise<boolean> => {
