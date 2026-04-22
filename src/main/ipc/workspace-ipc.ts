@@ -255,62 +255,6 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		// -------------------------------------------------------------------------
-		// Directories
-		// -------------------------------------------------------------------------
-
-		ipcMain.handle(
-			WorkspaceChannels.list,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent) => this.mgr(event, container).getDirectories(),
-				WorkspaceChannels.list
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.add,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, dirPath: string) =>
-					this.mgr(event, container).addDirectory(dirPath),
-				WorkspaceChannels.add
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.addMany,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, dirPaths: string[]) =>
-					this.mgr(event, container).addDirectories(dirPaths),
-				WorkspaceChannels.addMany
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.remove,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, id: string) => this.mgr(event, container).removeDirectory(id),
-				WorkspaceChannels.remove
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.validate,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, dirPath: string) =>
-					this.mgr(event, container).validateDirectory(dirPath),
-				WorkspaceChannels.validate
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.markIndexed,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, id: string, isIndexed: boolean) =>
-					this.mgr(event, container).markDirectoryIndexed(id, isIndexed),
-				WorkspaceChannels.markIndexed
-			)
-		);
-
-		// -------------------------------------------------------------------------
 		// Output files
 		// -------------------------------------------------------------------------
 
