@@ -14,7 +14,7 @@ import type {
 	ExtensionDocPanelBlock,
 	ExtensionDocPanelButtonAction,
 	ExtensionDocPanelContent,
-} from '../../../../../shared/types';
+} from '@shared/types';
 
 interface ExtensionPanelProps {
 	panelId: string;

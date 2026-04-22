@@ -7,13 +7,22 @@
 	"description": "Reads application and workspace context and logs it to the extension host log.",
 	"author": "OpenWriter",
 	"defaultEnabled": true,
-	"capabilities": ["commands", "host-data", "events"],
-	"permissions": ["app.read", "workspace.read", "task.observe"],
+	"capabilities": ["commands", "host-data", "events", "doc-panels"],
+	"permissions": ["app.read", "workspace.read", "document.read", "task.observe"],
 	"activationEvents": [
 		"onStartup",
 		"onCommand:example.workspace-inspector.log-context"
 	],
 	"contributes": {
+		"docPanels": [
+			{
+				"id": "workspace-summary",
+				"title": "Workspace summary",
+				"description": "Shows the current workspace and document context.",
+				"when": "document",
+				"order": 10
+			}
+		],
 		"commands": [
 			{
 				"id": "example.workspace-inspector.log-context",

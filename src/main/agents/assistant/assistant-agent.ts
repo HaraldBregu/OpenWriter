@@ -93,7 +93,6 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 			for (let step = 1; step <= maxSteps; step++) {
 				this.ensureNotAborted(ctx.signal);
 				budget.checkOrThrow();
-				ctx.progress?.(progressFor(step, maxSteps), `step ${step}`);
 
 				const decision = await controller.decide(nodeCtx);
 				if (decision.action === 'done') {
