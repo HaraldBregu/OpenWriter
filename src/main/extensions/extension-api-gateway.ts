@@ -174,17 +174,18 @@ export class ExtensionApiGateway {
 	): Promise<ExtensionDocumentSnapshot> {
 		const { windowId, manager } = this.resolveWorkspaceManager(context);
 
-		if (patch.title !== undefined) {
-			await manager.updateDocumentConfig(documentId, { title: patch.title });
-			const config = await manager.getDocumentConfig(documentId);
-			this.options.eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
-				documentId,
-				config,
+		if (patch.title !== undefined || patch.content !== undefined) {
+			await manager.updateDocument(documentId, {
+				...(patch.title !== undefined ? { config: { title: patch.title } } : {}),
+				...(patch.content !== undefined ? { content: patch.content } : {}),
 			});
-		}
-
-		if (patch.content !== undefined) {
-			await manager.updateDocumentContent(documentId, patch.content);
+			if (patch.title !== undefined) {
+				const config = await manager.getDocumentConfig(documentId);
+				this.options.eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
+					documentId,
+					config,
+				});
+			}
 		}
 
 		const snapshot = await this.readDocument(documentId, { ...context, windowId, documentId });
