@@ -256,6 +256,73 @@ export class TaskExecutor implements Disposable {
 	}
 
 	/**
+	 * Rebuild a projection snapshot (phase + fullContent) for an agent task.
+	 * Searches active tasks first, then recently-completed (within TTL).
+	 * Returns `undefined` when the task is unknown or not an agent task.
+	 */
+	getAgentSnapshot(taskId: string): AgentTaskSnapshot | undefined {
+		const task = this.activeTasks.get(taskId) ?? this.completedTasks.get(taskId)?.task;
+		if (!task || task.type !== 'agent') return undefined;
+
+		const metadata = readAssistantMetadata(task.metadata);
+		if (!metadata) return undefined;
+
+		const { phase, fullContent } = projectEvents(task);
+
+		return {
+			taskId: task.taskId,
+			state: task.status,
+			phase: phaseForState(task.status, phase),
+			fullContent,
+			metadata,
+			startedAt: task.startedAt,
+		};
+	}
+
+	/**
+	 * Find the most recent agent task associated with a document ID. Used by
+	 * the renderer on mount to recover from navigation/unmount that happened
+	 * while a task was running or just finished.
+	 */
+	findAgentTaskForDocument(documentId: string): AgentTaskLookupResult | null {
+		type Candidate = { task: ActiveTask; completedAt?: number };
+		let best: Candidate | null = null;
+
+		const consider = (task: ActiveTask, completedAt?: number): void => {
+			if (task.type !== 'agent') return;
+			const metadata = readAssistantMetadata(task.metadata);
+			if (!metadata || metadata.documentId !== documentId) return;
+			if (!best) {
+				best = { task, completedAt };
+				return;
+			}
+			if (isActiveState(task.status) && !isActiveState(best.task.status)) {
+				best = { task, completedAt };
+				return;
+			}
+			const bestTs = best.completedAt ?? best.task.startedAt ?? 0;
+			const currTs = completedAt ?? task.startedAt ?? 0;
+			if (currTs > bestTs) best = { task, completedAt };
+		};
+
+		for (const task of this.activeTasks.values()) consider(task);
+		for (const entry of this.completedTasks.values()) consider(entry.task, entry.task.completedAt);
+
+		if (!best) return null;
+		const candidate = best as Candidate;
+		const metadata = readAssistantMetadata(candidate.task.metadata);
+		if (!metadata) return null;
+
+		return {
+			taskId: candidate.task.taskId,
+			state: candidate.task.status,
+			metadata,
+			result: readCompletedResult(candidate.task.result),
+			completedAt: candidate.task.completedAt,
+		};
+	}
+
+	/**
 	 * Return a snapshot of queue metrics.
 	 */
 	getQueueStatus(): TaskQueueStatus {
