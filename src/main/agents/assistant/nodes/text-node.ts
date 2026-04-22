@@ -59,16 +59,9 @@ export class TextNode {
 
 		try {
 			const documentFolder = path.dirname(input.documentPath);
-			const allTools: AgentTool[] = [
-				createReadTool(documentFolder),
-				createEditTool(documentFolder),
-				createWriteTool(documentFolder),
-			];
+			const allTools: AgentTool[] = [createReadTool(documentFolder)];
 			const tools = filterTools(allTools, runOpts.toolsAllowlist);
-			if (tools.length === 0) {
-				throw new Error('Tool allowlist excluded every tool; nothing to execute');
-			}
-			const openaiTools = toOpenAITools(tools);
+			const openaiTools = tools.length > 0 ? toOpenAITools(tools) : undefined;
 			const maxIterations =
 				input.maxTextIterations ?? input.maxIterations ?? DEFAULT_INNER_ITERATIONS;
 
@@ -94,12 +87,12 @@ export class TextNode {
 				}
 				iteration += 1;
 
-				const response = await callChat({
+				const response = await streamChat({
 					client,
 					params: {
 						model: input.modelName,
 						messages,
-						tools: openaiTools,
+						...(openaiTools ? { tools: openaiTools } : {}),
 						...(effectiveTemp !== undefined ? { temperature: effectiveTemp } : {}),
 						...(input.maxTokens ? { max_tokens: input.maxTokens } : {}),
 					},
@@ -107,6 +100,7 @@ export class TextNode {
 					budget: this.opts.budget,
 					label: runOpts.skill ? `skill:${runOpts.skill.name}` : 'text',
 					timeoutMs: this.opts.perCallTimeoutMs,
+					onContentDelta: (delta) => state.emitTextDelta(delta),
 				});
 
 				const assistant = response.choices[0]?.message;
@@ -124,6 +118,7 @@ export class TextNode {
 				if (toolCalls.length === 0) {
 					finalText = assistant.content ?? '';
 					completed = true;
+					state.finalizeTextSegment();
 					break;
 				}
 
@@ -160,9 +155,6 @@ export class TextNode {
 			}
 
 			state.bumpIterations(iteration);
-			if (finalText.trim()) {
-				state.appendText(finalText);
-			}
 			state.completeStep(step, { iterations: iteration, summary: finalText });
 		} catch (error) {
 			const msg = error instanceof Error ? error.message : String(error);
