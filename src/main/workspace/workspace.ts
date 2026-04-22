@@ -10,7 +10,6 @@ import type {
 	OutputType,
 	SaveOutputFileInput,
 	SaveOutputFileResult,
-	UpdateOutputFileInput,
 } from './output-files';
 import { VALID_OUTPUT_TYPES } from './output-files';
 import type { LoggerService } from '../services/logger';
