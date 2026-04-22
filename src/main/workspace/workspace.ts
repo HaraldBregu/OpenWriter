@@ -34,7 +34,6 @@ import type {
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';
 import { FileManager } from '../shared/file_manager';
-import { DEFAULT_TEXT_MODEL_ID, DEFAULT_IMAGE_MODEL_ID } from '../../shared/models';
 
 const DATA_DIR = 'data';
 const INDEXING_INFO_FILE = 'indexing-info.json';
