@@ -16,6 +16,8 @@ import type {
 	TaskAction,
 	TaskInfo,
 	TaskEvent,
+	AgentTaskSnapshot,
+	AgentTaskLookupResult,
 	ResourceInfo,
 	FileEntry,
 	FileEntryChangeEvent,
