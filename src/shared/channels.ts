@@ -456,26 +456,16 @@ export interface EventChannelMap {
 	[WorkspaceChannels.deleted]: { data: WorkspaceDeletedEvent };
 	[TaskChannels.event]: { data: TaskEvent };
 	[WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent };
-	[WorkspaceChannels.outputWatcherError]: { data: WatcherError };
-	[WorkspaceChannels.directoriesChanged]: { data: DirectoryEntry[] };
 	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
 	[WorkspaceChannels.documentConfigChanged]: {
 		data: { documentId: string; config: DocumentConfig };
 	};
-	[WorkspaceChannels.documentContentChanged]: {
-		data: { documentId: string; content: string };
-	};
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
 	[AppChannels.shortcut]: { data: ShortcutId };
-	// ---- Contents watcher events ----
-	[WorkspaceChannels.contentsChanged]: { data: ContentEntryChangeEvent };
-	[WorkspaceChannels.contentsWatcherError]: { data: WatcherError };
 	// ---- Files watcher events ----
 	[WorkspaceChannels.filesChanged]: { data: FileEntryChangeEvent };
-	[WorkspaceChannels.filesWatcherError]: { data: WatcherError };
 	// ---- Images watcher events ----
 	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
-	[WorkspaceChannels.imagesWatcherError]: { data: WatcherError };
 	[ExtensionChannels.registryChanged]: { data: ExtensionRegistrySnapshot };
 	[ExtensionChannels.runtimeChanged]: { data: ExtensionRuntimeChangedPayload };
 	[ExtensionChannels.docPanelsChanged]: { data: ExtensionDocPanelsChangedPayload };
