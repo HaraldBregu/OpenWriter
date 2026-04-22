@@ -1,12 +1,12 @@
 import type { ReactElement } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ListTodo, Database, ScrollText } from 'lucide-react';
+import { useDebugDialogs } from '@/contexts/DebugDialogsContext';
 import { CategoryCard } from './CategoryCard';
 
 export function DebugSection(): ReactElement {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
+	const { openTasksDialog, openReduxDialog, openLogDialog } = useDebugDialogs();
 
 	return (
 		<section className="space-y-3">
@@ -19,21 +19,21 @@ export function DebugSection(): ReactElement {
 					labelKey="debug.tasks"
 					descriptionKey="home.tasksDescription"
 					accent="bg-foreground/8 text-foreground"
-					onClick={() => navigate('/debug/tasks')}
+					onClick={openTasksDialog}
 				/>
 				<CategoryCard
 					icon={Database}
 					labelKey="appLayout.redux"
 					descriptionKey="home.reduxDescription"
 					accent="bg-muted text-foreground"
-					onClick={() => navigate('/debug/redux')}
+					onClick={openReduxDialog}
 				/>
 				<CategoryCard
 					icon={ScrollText}
 					labelKey="home.logs"
 					descriptionKey="home.logsDescription"
 					accent="bg-secondary text-foreground"
-					onClick={() => navigate('/debug/logs')}
+					onClick={openLogDialog}
 				/>
 			</div>
 		</section>

@@ -547,9 +547,8 @@ function Container({ children }: LayoutProps) {
 								<SidebarMenu>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/debug/tasks" />}
 											className="h-9 px-3"
-											isActive={location.pathname === '/debug/tasks'}
+											onClick={openTasksDialog}
 										>
 											<ListTodo className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('debug.tasks')}</span>
@@ -557,9 +556,8 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/debug/redux" />}
 											className="h-9 px-3"
-											isActive={location.pathname === '/debug/redux'}
+											onClick={openReduxDialog}
 										>
 											<Database className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
@@ -567,9 +565,8 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/debug/logs" />}
 											className="h-9 px-3"
-											isActive={location.pathname === '/debug/logs'}
+											onClick={openLogDialog}
 										>
 											<ScrollText className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
