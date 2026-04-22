@@ -179,34 +179,11 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.openImagesFolder,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent) => {
-				const ctx = getWindowContext(event, container);
-				const workspaceService = ctx.getService<WorkspaceService>('workspace', container);
-				const imagesService = ctx.getService<ImagesService>('imagesService', container);
-				const currentPath = workspaceService.getCurrent();
-				if (!currentPath) return;
-				await imagesService.ensureImagesDir(currentPath);
-				await shell.openPath(imagesService.getImagesDir(currentPath));
-			}, WorkspaceChannels.openImagesFolder)
-		);
-
-		ipcMain.handle(
 			WorkspaceChannels.openDocumentFolder,
 			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string) => {
 				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
 				await shell.openPath(documentDir);
 			}, WorkspaceChannels.openDocumentFolder)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.openDocumentImagesFolder,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string) => {
-				const documentDir = this.mgr(event, container).getDocumentFolderPath(documentId);
-				const imagesDir = path.join(documentDir, 'images');
-				await fsPromises.mkdir(imagesDir, { recursive: true });
-				await shell.openPath(imagesDir);
-			}, WorkspaceChannels.openDocumentImagesFolder)
 		);
 
 		ipcMain.handle(
