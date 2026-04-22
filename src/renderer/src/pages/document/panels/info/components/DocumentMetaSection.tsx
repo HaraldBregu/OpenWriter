@@ -1,12 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Calendar, ImageIcon, PenLine, Tag } from 'lucide-react';
+import { Calendar, Tag } from 'lucide-react';
 import { SettingRow } from '@pages/settings/components';
-import {
-	DEFAULT_IMAGE_MODEL_ID,
-	DEFAULT_TEXT_MODEL_ID,
-	findModelById,
-} from '../../../../../../../shared/models';
 import { useInfoState } from '../hooks/use-info-state';
 
 function formatDate(isoString: string, locale: string): string {
@@ -17,23 +12,13 @@ function formatDate(isoString: string, locale: string): string {
 		day: 'numeric',
 		hour: '2-digit',
 		minute: '2-digit',
+		hour12: false,
 	});
 }
 
 export function DocumentMetaSection(): React.ReactElement | null {
 	const { t, i18n } = useTranslation();
 	const { documentConfig } = useInfoState();
-
-	const textModelName = useMemo(() => {
-		if (!documentConfig) return findModelById(DEFAULT_TEXT_MODEL_ID)?.name ?? DEFAULT_TEXT_MODEL_ID;
-		return findModelById(documentConfig.textModel)?.name ?? documentConfig.textModel;
-	}, [documentConfig]);
-
-	const imageModelName = useMemo(() => {
-		if (!documentConfig)
-			return findModelById(DEFAULT_IMAGE_MODEL_ID)?.name ?? DEFAULT_IMAGE_MODEL_ID;
-		return findModelById(documentConfig.imageModel)?.name ?? documentConfig.imageModel;
-	}, [documentConfig]);
 
 	const formattedDate = useMemo(() => {
 		const iso = documentConfig?.updatedAt ?? documentConfig?.createdAt;
@@ -65,24 +50,6 @@ export function DocumentMetaSection(): React.ReactElement | null {
 					</div>
 				</SettingRow>
 			)}
-
-			<SettingRow label={t('configSidebar.textModel', 'Text Model')}>
-				<div className="flex items-center gap-1.5">
-					<PenLine className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-					<span className="text-sm text-foreground truncate max-w-[140px] block">
-						{textModelName}
-					</span>
-				</div>
-			</SettingRow>
-
-			<SettingRow label={t('configSidebar.imageModel', 'Image Model')}>
-				<div className="flex items-center gap-1.5">
-					<ImageIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
-					<span className="text-sm text-foreground truncate max-w-[140px] block">
-						{imageModelName}
-					</span>
-				</div>
-			</SettingRow>
 		</>
 	);
 }
