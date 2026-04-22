@@ -253,14 +253,6 @@ const workspace: WorkspaceApi = {
 	loadOutput: (params: { type: string; id: string }) => {
 		return typedInvokeUnwrap(WorkspaceChannels.outputLoadOne, params);
 	},
-	updateOutput: (params: {
-		type: string;
-		id: string;
-		content: string;
-		metadata: Record<string, unknown>;
-	}): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.update, params);
-	},
 	deleteOutput: (params: { type: string; id: string }): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.outputDelete, params);
 	},
