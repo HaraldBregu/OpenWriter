@@ -379,26 +379,6 @@ function PageContent(): ReactElement {
 		appDispatch(documentMetadataPatched({ id, title, updatedAt: Date.now() }));
 	}, [id, title, loaded, appDispatch]);
 
-	useEffect(() => {
-		setAssistantActiveTaskId(null);
-		if (!id || typeof window.task?.list !== 'function') return;
-		let cancelled = false;
-
-		window.task.list().then((res) => {
-			if (cancelled || !res.success) return;
-			const active = res.data.find(
-				(t) =>
-					t.metadata?.documentId === id &&
-					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
-			);
-			if (active) setAssistantActiveTaskId(active.taskId);
-		});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [id]);
-
 	const handleContentChange = useCallback(
 		(newContent: string) => {
 			setContent(newContent);
