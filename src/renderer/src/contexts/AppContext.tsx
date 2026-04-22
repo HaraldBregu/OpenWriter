@@ -29,7 +29,9 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 	return (
 		<ThemeProvider initialTheme={initialState?.theme}>
 			<LanguageProvider initialLanguage={initialState?.language}>
-				<SidebarVisibilityProvider>{children}</SidebarVisibilityProvider>
+				<SidebarVisibilityProvider>
+					<DebugDialogsProvider>{children}</DebugDialogsProvider>
+				</SidebarVisibilityProvider>
 			</LanguageProvider>
 		</ThemeProvider>
 	);
