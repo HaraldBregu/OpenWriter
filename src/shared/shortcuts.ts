@@ -13,6 +13,8 @@ export const ShortcutId = {
 	openDocumentList: 'openDocumentList',
 	/** Open the app-wide search modal. */
 	openAppSearch: 'openAppSearch',
+	/** Create a new document in the current workspace. */
+	newDocument: 'newDocument',
 } as const;
 
 export type ShortcutId = (typeof ShortcutId)[keyof typeof ShortcutId];
