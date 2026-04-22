@@ -179,77 +179,11 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	importFiles: (): Promise<never> =>
 		Promise.reject(new Error('resources API removed from main process')),
-	importByPaths: (): Promise<never> =>
-		Promise.reject(new Error('resources API removed from main process')),
-	downloadFromUrl: (): Promise<never> =>
-		Promise.reject(new Error('resources API removed from main process')),
 	loadDocuments: (): Promise<never> =>
 		Promise.reject(new Error('resources API removed from main process')),
 	deleteDocument: (): Promise<never> =>
 		Promise.reject(new Error('resources API removed from main process')),
 	onDocumentFileChange: (): (() => void) => () => {},
-	onDocumentWatcherError: (): (() => void) => () => {},
-	// -------------------------------------------------------------------------
-	// Indexed directory management
-	// -------------------------------------------------------------------------
-	listDirectories: (): Promise<
-		Array<{
-			id: string;
-			path: string;
-			addedAt: number;
-			isIndexed: boolean;
-			lastIndexedAt?: number;
-		}>
-	> => {
-		return typedInvokeUnwrap(WorkspaceChannels.list);
-	},
-	addDirectory: (
-		dirPath: string
-	): Promise<{
-		id: string;
-		path: string;
-		addedAt: number;
-		isIndexed: boolean;
-		lastIndexedAt?: number;
-	}> => {
-		return typedInvokeUnwrap(WorkspaceChannels.add, dirPath);
-	},
-	addDirectories: (
-		dirPaths: string[]
-	): Promise<{
-		added: Array<{
-			id: string;
-			path: string;
-			addedAt: number;
-			isIndexed: boolean;
-			lastIndexedAt?: number;
-		}>;
-		errors: Array<{ path: string; error: string }>;
-	}> => {
-		return typedInvokeUnwrap(WorkspaceChannels.addMany, dirPaths);
-	},
-	removeDirectory: (id: string): Promise<boolean> => {
-		return typedInvokeUnwrap(WorkspaceChannels.remove, id);
-	},
-	validateDirectory: (dirPath: string): Promise<{ valid: boolean; error?: string }> => {
-		return typedInvokeUnwrap(WorkspaceChannels.validate, dirPath);
-	},
-	markDirectoryIndexed: (id: string, isIndexed: boolean): Promise<boolean> => {
-		return typedInvokeUnwrap(WorkspaceChannels.markIndexed, id, isIndexed);
-	},
-	onDirectoriesChanged: (
-		callback: (
-			directories: Array<{
-				id: string;
-				path: string;
-				addedAt: number;
-				isIndexed: boolean;
-				lastIndexedAt?: number;
-			}>
-		) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.directoriesChanged, callback);
-	},
 	// -------------------------------------------------------------------------
 	// Indexing info
 	// -------------------------------------------------------------------------
