@@ -36,6 +36,9 @@ export interface AgentTaskOutput<TAgentOutput = unknown> {
 	output: TAgentOutput;
 }
 
+const LOG_SOURCE = 'AgentTaskHandler';
+const STREAM_PREVIEW_CHARS = 160;
+
 interface AgentInputRecord {
 	providerId?: string;
 	apiKey?: string;
