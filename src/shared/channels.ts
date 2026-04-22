@@ -304,17 +304,8 @@ export interface InvokeChannelMap {
 		args: [params: { type: string; id: string }];
 		result: OutputFile | null;
 	};
-	[WorkspaceChannels.update]: { args: [params: OutputUpdateParams]; result: void };
 	[WorkspaceChannels.outputDelete]: { args: [params: { type: string; id: string }]; result: void };
 	[WorkspaceChannels.outputTrash]: { args: [params: { type: string; id: string }]; result: void };
-
-	// ---- Directories (IpcResult-wrapped) ----
-	[WorkspaceChannels.list]: { args: []; result: DirectoryEntry[] };
-	[WorkspaceChannels.add]: { args: [dirPath: string]; result: DirectoryEntry };
-	[WorkspaceChannels.addMany]: { args: [dirPaths: string[]]; result: DirectoryAddManyResult };
-	[WorkspaceChannels.remove]: { args: [id: string]; result: boolean };
-	[WorkspaceChannels.validate]: { args: [dirPath: string]; result: DirectoryValidationResult };
-	[WorkspaceChannels.markIndexed]: { args: [id: string, isIndexed: boolean]; result: boolean };
 
 	// ---- App — writing context menu (raw invoke) ----
 	[AppChannels.showWritingContextMenu]: {
