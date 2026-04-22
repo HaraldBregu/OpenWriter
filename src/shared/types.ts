@@ -751,6 +751,86 @@ export interface AgentDefinitionInfo {
 	category: 'writing' | 'editing' | 'analysis' | 'utility';
 }
 
+// ---- Agent Task Streaming -------------------------------------------------
+
+/**
+ * Metadata attached to `type: 'agent'` tasks submitted from the document page.
+ * Carries the editor insertion range so main can reflect it back to the
+ * renderer on mount-time recovery.
+ */
+export interface AssistantTaskMetadata {
+	sessionId: string;
+	documentId: string;
+	posFrom: number;
+	posTo: number;
+}
+
+/** Renderer-facing payload for the `task:submit` input when `type === 'agent'`. */
+export interface AgentTaskSubmitInput {
+	agentType: 'assistant' | 'rag' | 'ocr';
+	input: {
+		prompt: string;
+		files: { name: string; mimeType?: string }[];
+	};
+}
+
+/** Display phase surfaced to the status bar. Derived on main from AgentEvent kinds. */
+export type AgentPhase =
+	| 'queued'
+	| 'thinking'
+	| 'writing'
+	| 'generating-image'
+	| 'completed'
+	| 'error'
+	| 'cancelled';
+
+/** Payload for AgentEvent.kind === 'phase'. */
+export interface AgentPhasePayload {
+	phase: AgentPhase;
+	label: string;
+}
+
+/** Payload for AgentEvent.kind === 'delta'. `fullContent` is authoritative for recovery. */
+export interface AgentDeltaPayload {
+	token: string;
+	fullContent: string;
+}
+
+/**
+ * Return value of AgentTaskHandler.execute. Appears on the wire as
+ * `TaskEvent.data.result` when `state === 'completed'`.
+ */
+export interface AgentCompletedOutput {
+	content: string;
+	stoppedReason: 'done' | 'max-steps' | 'stagnation';
+}
+
+/**
+ * Projection-rebuilt snapshot used for page-refresh recovery. Returned by
+ * the `task:get-snapshot` IPC channel.
+ */
+export interface AgentTaskSnapshot {
+	taskId: string;
+	state: TaskState;
+	phase: AgentPhase;
+	fullContent: string;
+	metadata: AssistantTaskMetadata;
+	startedAt?: number;
+}
+
+/**
+ * Return value of the `task:find-for-document` IPC channel. Scans both active
+ * and recently-completed tasks (within `COMPLETED_TASK_TTL_MS`) to support
+ * the unmount-during-completion edge case.
+ */
+export interface AgentTaskLookupResult {
+	taskId: string;
+	state: TaskState;
+	metadata: AssistantTaskMetadata;
+	result?: AgentCompletedOutput;
+	completedAt?: number;
+}
+
 // ---- IPC Result
 
 /**
