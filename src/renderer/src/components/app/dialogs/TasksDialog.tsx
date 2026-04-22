@@ -13,7 +13,7 @@ export function TasksDialog({ open, onOpenChange }: TasksDialogProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="!w-screen !h-screen !max-w-none !max-h-none rounded-none flex flex-col p-0 gap-0">
+			<DialogContent className="flex h-[calc(100vh-6rem)] min-w-[calc(100vw-8rem)] flex-col p-0 gap-0">
 				<DialogHeader className="px-6 py-3 border-b shrink-0">
 					<DialogTitle className="flex items-center gap-2 text-lg font-semibold">
 						<Bug className="h-5 w-5 text-muted-foreground" />
