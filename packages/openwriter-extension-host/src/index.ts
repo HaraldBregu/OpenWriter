@@ -10,6 +10,7 @@ import type {
 import type {
 	ExtensionDocumentChangedEvent,
 	ExtensionDocPanelContent,
+	ExtensionDocPanelRenderContext,
 	ExtensionEventPayloadMap,
 	ExtensionExecutionContext,
 	ExtensionHostRequestMap,
@@ -32,11 +33,7 @@ class ExtensionHostRuntime {
 	private readonly commandHandlers = new Map<string, (payload?: unknown) => Promise<unknown> | unknown>();
 	private readonly docPanelRenderers = new Map<
 		string,
-		(
-			context: ExtensionDocPanelRegistration['render'] extends (context: infer TContext) => unknown
-				? TContext
-				: never
-		) => Promise<ExtensionDocPanelContent> | ExtensionDocPanelContent
+		ExtensionDocPanelRegistration['render']
 	>();
 	private readonly workspaceListeners = new Set<
 		(event: ExtensionWorkspaceChangedEvent) => void | Promise<void>
@@ -247,7 +244,7 @@ class ExtensionHostRuntime {
 	): Promise<void> {
 		try {
 			if (!this.activated) {
-				await this.activate('command');
+				await this.activate('command', context);
 			}
 
 			const handler = this.commandHandlers.get(commandId);
@@ -283,12 +280,7 @@ class ExtensionHostRuntime {
 	private async renderDocPanel(
 		requestId: string,
 		panelId: string,
-		context: {
-			panelId: string;
-			documentId: string;
-			windowId?: number;
-			reason: 'open' | 'refresh' | 'document-changed';
-		}
+		context: ExtensionDocPanelRenderContext
 	): Promise<void> {
 		try {
 			if (!this.activated) {
