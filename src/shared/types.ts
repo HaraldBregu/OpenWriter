@@ -707,8 +707,6 @@ export interface DocumentConfig {
 	type: string;
 	createdAt: string;
 	updatedAt: string;
-	textModel: string;
-	imageModel: string;
 }
 
 // ---- Project Workspace ----------------------------------------------------
