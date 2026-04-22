@@ -1,0 +1,9 @@
+{
+	"name": "@openwriter/create-extension",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"bin": {
+		"create-openwriter-extension": "./bin/create-openwriter-extension.mjs"
+	}
+}

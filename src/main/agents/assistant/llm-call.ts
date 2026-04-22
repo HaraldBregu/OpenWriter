@@ -82,6 +82,126 @@ function usageFrom(response: ChatCompletion): UsageDelta {
 	};
 }
 
+/**
+ * streamChat — streaming chat completion.
+ *
+ * Consumes the SSE stream from OpenAI-compatible providers, invokes
+ * `onContentDelta` for each content chunk, accumulates tool-call
+ * fragments, and returns a `ChatCompletion`-shaped aggregate so callers
+ * can reuse the same post-processing as `callChat`.
+ *
+ * Usage accounting requires `stream_options.include_usage = true`,
+ * which this function enables automatically. No retry/backoff — the
+ * caller should fall back to `callChat` for idempotent re-attempts.
+ */
+export async function streamChat(opts: StreamChatOptions): Promise<ChatCompletion> {
+	const { client, params, signal, budget, label, timeoutMs, onContentDelta } = opts;
+	if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
+
+	const timeoutController = new AbortController();
+	const timer = setTimeout(() => timeoutController.abort(), timeoutMs);
+	const merged = mergeSignals(signal, timeoutController.signal);
+
+	try {
+		const stream = await client.chat.completions.create(
+			{ ...params, stream: true, stream_options: { include_usage: true } },
+			{ signal: merged }
+		);
+
+		const aggregator = new StreamAggregator();
+		for await (const chunk of stream) {
+			aggregator.ingest(chunk, onContentDelta);
+		}
+
+		const completion = aggregator.finalize(params.model);
+		budget.charge(usageFrom(completion));
+		return completion;
+	} catch (error) {
+		if (isAbortError(error) && signal.aborted) throw error;
+		throw decorate(error, label, 0);
+	} finally {
+		clearTimeout(timer);
+	}
+}
+
+interface ToolCallAccumulator {
+	id?: string;
+	type: 'function';
+	function: { name: string; arguments: string };
+}
+
+class StreamAggregator {
+	private content = '';
+	private toolCalls = new Map<number, ToolCallAccumulator>();
+	private finishReason: ChatCompletion['choices'][number]['finish_reason'] = 'stop';
+	private usage: ChatCompletion['usage'];
+	private chunkId = '';
+	private created = 0;
+
+	ingest(chunk: ChatCompletionChunk, onContentDelta?: (delta: string) => void): void {
+		this.chunkId = chunk.id || this.chunkId;
+		this.created = chunk.created || this.created;
+		if (chunk.usage) {
+			this.usage = chunk.usage;
+		}
+		const choice = chunk.choices?.[0];
+		if (!choice) return;
+		if (choice.finish_reason) {
+			this.finishReason = choice.finish_reason;
+		}
+		const delta = choice.delta;
+		if (delta?.content) {
+			this.content += delta.content;
+			onContentDelta?.(delta.content);
+		}
+		if (delta?.tool_calls) {
+			for (const tc of delta.tool_calls) {
+				const existing = this.toolCalls.get(tc.index) ?? {
+					type: 'function' as const,
+					function: { name: '', arguments: '' },
+				};
+				if (tc.id) existing.id = tc.id;
+				if (tc.function?.name) existing.function.name = tc.function.name;
+				if (tc.function?.arguments) existing.function.arguments += tc.function.arguments;
+				this.toolCalls.set(tc.index, existing);
+			}
+		}
+	}
+
+	finalize(model: string): ChatCompletion {
+		const toolCalls = Array.from(this.toolCalls.entries())
+			.sort(([a], [b]) => a - b)
+			.map(([, tc]) => ({
+				id: tc.id ?? '',
+				type: tc.type,
+				function: { name: tc.function.name, arguments: tc.function.arguments },
+			}));
+
+		const message: ChatCompletionMessage = {
+			role: 'assistant',
+			content: this.content || null,
+			refusal: null,
+			...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
+		};
+
+		return {
+			id: this.chunkId || '',
+			object: 'chat.completion',
+			created: this.created || Math.floor(Date.now() / 1000),
+			model,
+			choices: [
+				{
+					index: 0,
+					message,
+					finish_reason: this.finishReason,
+					logprobs: null,
+				},
+			],
+			usage: this.usage,
+		};
+	}
+}
+
 function isAbortError(error: unknown): boolean {
 	if (!(error instanceof Error)) return false;
 	return error.name === 'AbortError' || /abort/i.test(error.message);
