@@ -441,37 +441,6 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
-		ipcMain.handle(
-			WorkspaceChannels.updateDocumentConfig,
-			wrapIpcHandler(
-				async (event: IpcMainInvokeEvent, documentId: string, config: Partial<DocumentConfig>) => {
-					const mgr = this.mgr(event, container);
-					await mgr.updateDocumentConfig(documentId, config);
-					const [updated, content, documentPath] = await Promise.all([
-						mgr.getDocumentConfig(documentId),
-						mgr.getDocumentContent(documentId),
-						Promise.resolve(mgr.getDocumentFolderPath(documentId)),
-					]);
-					const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
-					eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
-						documentId,
-						config: updated,
-					});
-					eventBus.emit('document:changed', {
-						windowId,
-						document: {
-							id: documentId,
-							title: updated.title,
-							content,
-							path: documentPath,
-							windowId,
-						},
-					});
-				},
-				WorkspaceChannels.updateDocumentConfig
-			)
-		);
-
 		// -------------------------------------------------------------------------
 		// Document content
 		// -------------------------------------------------------------------------
@@ -486,26 +455,40 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.updateDocumentContent,
-			wrapIpcHandler(async (event: IpcMainInvokeEvent, documentId: string, content: string) => {
-				const mgr = this.mgr(event, container);
-				await mgr.updateDocumentContent(documentId, content);
-				const [updated, documentPath] = await Promise.all([
-					mgr.getDocumentConfig(documentId),
-					Promise.resolve(mgr.getDocumentFolderPath(documentId)),
-				]);
-				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
-				eventBus.emit('document:changed', {
-					windowId,
-					document: {
-						id: documentId,
-						title: updated.title,
-						content,
-						path: documentPath,
+			WorkspaceChannels.updateDocument,
+			wrapIpcHandler(
+				async (
+					event: IpcMainInvokeEvent,
+					documentId: string,
+					patch: { config?: Partial<DocumentConfig>; content?: string }
+				) => {
+					const mgr = this.mgr(event, container);
+					await mgr.updateDocument(documentId, patch);
+					const [updated, content, documentPath] = await Promise.all([
+						mgr.getDocumentConfig(documentId),
+						mgr.getDocumentContent(documentId),
+						Promise.resolve(mgr.getDocumentFolderPath(documentId)),
+					]);
+					const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
+					if (patch.config !== undefined) {
+						eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
+							documentId,
+							config: updated,
+						});
+					}
+					eventBus.emit('document:changed', {
 						windowId,
-					},
-				});
-			}, WorkspaceChannels.updateDocumentContent)
+						document: {
+							id: documentId,
+							title: updated.title,
+							content,
+							path: documentPath,
+							windowId,
+						},
+					});
+				},
+				WorkspaceChannels.updateDocument
+			)
 		);
 
 		// -------------------------------------------------------------------------
