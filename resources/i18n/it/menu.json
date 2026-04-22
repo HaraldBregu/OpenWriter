@@ -33,6 +33,9 @@
 	"light": "Chiaro",
 	"dark": "Scuro",
 	"system": "Sistema",
+	"tasks": "Attività",
+	"logs": "Log",
+	"redux": "Stato Redux",
 	"showConsole": "Mostra Console",
 	"refresh": "Ricarica"
 }
