@@ -175,26 +175,11 @@ function PageContent(): ReactElement {
 			if (event.type === 'removed') {
 				documentDeletedRef.current = true;
 				navigate('/home', { replace: true });
-				return;
 			}
-
-			if (!event.filePath.endsWith('content.md')) return;
-
-			window.workspace
-				.getDocumentContent(id)
-				.then((reloaded) => {
-					if (reloaded === contentRef.current) return;
-					setContent(reloaded);
-					setContentVersion((v) => v + 1);
-					dispatch({ type: 'CONTENT_CHANGED', value: reloaded });
-				})
-				.catch(() => {
-					// ignore reload errors — editor keeps current state
-				});
 		});
 
 		return unsubscribe;
-	}, [id, navigate, dispatch]);
+	}, [id, navigate]);
 
 	useEffect(() => {
 		if (!id) return;
