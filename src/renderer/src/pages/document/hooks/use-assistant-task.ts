@@ -67,7 +67,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 
 	// Mount-time recovery: find any existing task tied to this document.
 	useEffect(() => {
-		if (!documentId) return;
+		if (!documentId || !ready) return;
 		if (typeof window.task?.findForDocument !== 'function') return;
 		let cancelled = false;
 
