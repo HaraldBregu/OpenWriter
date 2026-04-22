@@ -377,21 +377,11 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/" />}
-											className="group/btn h-9 px-3"
-											isActive={location.pathname === '/'}
-										>
-											<Sparkles className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('menu.welcome', 'Welcome')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
 											className="group/btn h-9 px-3"
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<CirclePlus className="h-5 w-5 shrink-0" />
+											<Plus className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('sidebar.document', 'Document')}</span>
 											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 												Ctrl+Alt+N
