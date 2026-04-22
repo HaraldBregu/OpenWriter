@@ -105,6 +105,15 @@ const app: AppApi = {
 	onShortcut: (callback: (id: ShortcutId) => void): (() => void) => {
 		return typedOn(AppChannels.shortcut, callback);
 	},
+	onOpenTasksDialog: (callback: () => void): (() => void) => {
+		return typedOn(AppChannels.openTasksDialog, callback);
+	},
+	onOpenLogsDialog: (callback: () => void): (() => void) => {
+		return typedOn(AppChannels.openLogsDialog, callback);
+	},
+	onOpenReduxDialog: (callback: () => void): (() => void) => {
+		return typedOn(AppChannels.openReduxDialog, callback);
+	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
