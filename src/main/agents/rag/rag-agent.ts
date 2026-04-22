@@ -93,7 +93,7 @@ export class RagAgent extends BaseAgent<RagAgentInput, RagAgentOutput> {
 		});
 
 		const messages = this.buildMessages(input, citations);
-		const answer = ctx.stream
+		const answer = ctx.onEvent
 			? await this.streamAnswer(chatModel, messages, ctx)
 			: await chatModel.invoke(messages, ctx.signal);
 

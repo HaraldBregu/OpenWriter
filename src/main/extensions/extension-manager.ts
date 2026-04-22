@@ -626,32 +626,33 @@ export class ExtensionManager implements Disposable {
 			onMessage: (message) => {
 				void this.handleHostMessage(record, message);
 			},
-				onExit: (code) => {
-					record.host = null;
-					record.state.status = code === 0 ? 'stopped' : 'crashed';
-					record.state.activated = false;
-					record.state.pid = undefined;
+			onExit: (code) => {
+				record.host = null;
+				record.state.status = code === 0 ? 'stopped' : 'crashed';
+				record.state.activated = false;
+				record.state.pid = undefined;
 				record.state.crashCount += code === 0 ? 0 : 1;
-				record.state.lastError = code === 0 ? record.state.lastError : `Extension host exited with code ${code}.`;
+				record.state.lastError =
+					code === 0 ? record.state.lastError : `Extension host exited with code ${code}.`;
 				record.readyDeferred?.reject(new Error(record.state.lastError ?? 'Extension host exited.'));
 				record.readyDeferred = null;
 				record.activationDeferred?.reject(
 					new Error(record.state.lastError ?? 'Extension activation interrupted.')
 				);
 				record.activationDeferred = null;
-					for (const pending of record.pendingCommandResults.values()) {
-						pending.reject(new Error(record.state.lastError ?? 'Extension host exited.'));
-					}
-					record.pendingCommandResults.clear();
-					for (const pending of record.pendingDocPanelResults.values()) {
-						pending.reject(new Error(record.state.lastError ?? 'Extension host exited.'));
-					}
-					record.pendingDocPanelResults.clear();
-					record.state.registeredCommands = [];
-					record.state.registeredDocPanels = [];
-					this.broadcastRuntimeChanged(record.manifest.id);
-				},
-			});
+				for (const pending of record.pendingCommandResults.values()) {
+					pending.reject(new Error(record.state.lastError ?? 'Extension host exited.'));
+				}
+				record.pendingCommandResults.clear();
+				for (const pending of record.pendingDocPanelResults.values()) {
+					pending.reject(new Error(record.state.lastError ?? 'Extension host exited.'));
+				}
+				record.pendingDocPanelResults.clear();
+				record.state.registeredCommands = [];
+				record.state.registeredDocPanels = [];
+				this.broadcastRuntimeChanged(record.manifest.id);
+			},
+		});
 
 		record.host = host;
 		await host.start();
@@ -670,16 +671,16 @@ export class ExtensionManager implements Disposable {
 					description: record.manifest.description,
 					author: record.manifest.author,
 					defaultEnabled: record.manifest.enabled,
-						capabilities: record.manifest.capabilities,
-						permissions: record.manifest.permissions,
-						activationEvents: record.manifest.activationEvents,
-						contributes: {
-							commands: record.manifest.commands,
-							docPanels: record.manifest.docPanels,
-							docPages: record.manifest.docPages,
-						},
+					capabilities: record.manifest.capabilities,
+					permissions: record.manifest.permissions,
+					activationEvents: record.manifest.activationEvents,
+					contributes: {
+						commands: record.manifest.commands,
+						docPanels: record.manifest.docPanels,
+						docPages: record.manifest.docPages,
 					},
-					extensionPath: record.manifest.extensionPath,
+				},
+				extensionPath: record.manifest.extensionPath,
 			},
 		} as MainToExtensionHostMessage);
 		await record.readyDeferred.promise;
@@ -709,35 +710,35 @@ export class ExtensionManager implements Disposable {
 				record.activationDeferred = null;
 				this.broadcastRuntimeChanged(record.manifest.id);
 				break;
-				case 'command.registered':
-					if (!record.state.registeredCommands.includes(message.payload.id)) {
-						record.state.registeredCommands = [...record.state.registeredCommands, message.payload.id];
-						this.broadcastRuntimeChanged(record.manifest.id);
-					}
-					break;
-				case 'doc-panel.registered': {
-					const runtimeId = extensionDocPanelId(record.manifest.id, message.payload.id);
-					if (!record.state.registeredDocPanels.includes(runtimeId)) {
-						record.state.registeredDocPanels = [...record.state.registeredDocPanels, runtimeId];
-						this.broadcastRuntimeChanged(record.manifest.id);
-					}
-					break;
+			case 'command.registered':
+				if (!record.state.registeredCommands.includes(message.payload.id)) {
+					record.state.registeredCommands = [...record.state.registeredCommands, message.payload.id];
+					this.broadcastRuntimeChanged(record.manifest.id);
 				}
-				case 'command.result': {
-					const pending = record.pendingCommandResults.get(message.payload.requestId);
-					if (!pending) break;
-					record.pendingCommandResults.delete(message.payload.requestId);
-					pending.resolve(message.payload.result);
-					break;
+				break;
+			case 'doc-panel.registered': {
+				const runtimeId = extensionDocPanelId(record.manifest.id, message.payload.id);
+				if (!record.state.registeredDocPanels.includes(runtimeId)) {
+					record.state.registeredDocPanels = [...record.state.registeredDocPanels, runtimeId];
+					this.broadcastRuntimeChanged(record.manifest.id);
 				}
-				case 'doc-panel.result': {
-					const pending = record.pendingDocPanelResults.get(message.payload.requestId);
-					if (!pending) break;
-					record.pendingDocPanelResults.delete(message.payload.requestId);
-					pending.resolve(message.payload.result);
-					break;
-				}
-				case 'host.call': {
+				break;
+			}
+			case 'command.result': {
+				const pending = record.pendingCommandResults.get(message.payload.requestId);
+				if (!pending) break;
+				record.pendingCommandResults.delete(message.payload.requestId);
+				pending.resolve(message.payload.result);
+				break;
+			}
+			case 'doc-panel.result': {
+				const pending = record.pendingDocPanelResults.get(message.payload.requestId);
+				if (!pending) break;
+				record.pendingDocPanelResults.delete(message.payload.requestId);
+				pending.resolve(message.payload.result);
+				break;
+			}
+			case 'host.call': {
 				try {
 					const result = await this.gateway.handle(
 						record.manifest,
@@ -765,21 +766,21 @@ export class ExtensionManager implements Disposable {
 				}
 				break;
 			}
-				case 'error':
-					record.state.lastError = message.payload.error;
-					if (message.payload.requestId) {
-						const pendingDocPanel = record.pendingDocPanelResults.get(message.payload.requestId);
-						if (pendingDocPanel) {
-							record.pendingDocPanelResults.delete(message.payload.requestId);
-							pendingDocPanel.reject(new Error(message.payload.error));
-						}
+			case 'error':
+				record.state.lastError = message.payload.error;
+				if (message.payload.requestId) {
+					const pendingDocPanel = record.pendingDocPanelResults.get(message.payload.requestId);
+					if (pendingDocPanel) {
+						record.pendingDocPanelResults.delete(message.payload.requestId);
+						pendingDocPanel.reject(new Error(message.payload.error));
 					}
-					if (!message.payload.requestId) {
-						record.activationDeferred?.reject(new Error(message.payload.error));
-						record.activationDeferred = null;
-					}
-					this.broadcastRuntimeChanged(record.manifest.id);
-					break;
+				}
+				if (!message.payload.requestId) {
+					record.activationDeferred?.reject(new Error(message.payload.error));
+					record.activationDeferred = null;
+				}
+				this.broadcastRuntimeChanged(record.manifest.id);
+				break;
 			case 'log':
 				this.options.logger[message.payload.level](
 					`Extension:${record.manifest.id}`,
