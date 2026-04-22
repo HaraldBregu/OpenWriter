@@ -199,6 +199,15 @@ function Container({ children }: LayoutProps) {
 		onCreated: handleDocumentCreated,
 	});
 
+	useEffect(() => {
+		if (typeof window.app?.onShortcut !== 'function') return;
+		return window.app.onShortcut((id) => {
+			if (id === ShortcutId.newDocument) {
+				createWriting();
+			}
+		});
+	}, [createWriting]);
+
 	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
 	const sidebarTitle = projectName || workspaceNameFromPath || 'OpenWriter';
 	const sidebarSubtitle = projectDescription?.trim() || t('appLayout.workspaceLabel', 'Workspace');
