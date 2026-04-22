@@ -64,7 +64,8 @@ function normalizeCommands(value: unknown): ExtensionCommandContribution[] {
 			const id = asString(entry.id) ?? '';
 			const title = asString(entry.title) ?? '';
 			const description = asString(entry.description) ?? '';
-			const when = entry.when === 'document' ? 'document' : 'always';
+			const when: ExtensionCommandContribution['when'] =
+				entry.when === 'document' ? 'document' : 'always';
 			return { id, title, description, when };
 		})
 		.filter((command) => command.id.length > 0 && command.title.length > 0);

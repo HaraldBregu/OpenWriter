@@ -141,6 +141,7 @@
 			"providers": "Provider",
 			"agents": "Agenti",
 			"skill": "Skill",
+			"extensions": "Estensioni",
 			"media": "Media",
 			"devices": "Dispositivi",
 			"tools": "Strumenti",
@@ -229,6 +230,25 @@
 			"deleteErrorFallback": "Impossibile eliminare la skill. Riprova.",
 			"dismissError": "Chiudi errore",
 			"dismissSuccess": "Chiudi"
+		},
+		"extensions": {
+			"title": "Estensioni",
+			"subtitle": "Gestisci le estensioni isolate, controlla il loro stato runtime ed esegui i loro comandi.",
+			"actions": "Azioni",
+			"openFolder": "Apri cartella estensioni",
+			"installed": "Estensioni installate",
+			"empty": "Nessuna estensione trovata nelle cartelle bundled o utente.",
+			"noDescription": "Nessuna descrizione disponibile.",
+			"reload": "Ricarica",
+			"reloadSuccess": "Estensione ricaricata correttamente.",
+			"reloadError": "Impossibile ricaricare l'estensione selezionata.",
+			"toggleError": "Impossibile aggiornare lo stato dell'estensione.",
+			"commands": "Comandi disponibili",
+			"noCommands": "Nessun comando di estensione disponibile per questa finestra.",
+			"runCommand": "Esegui",
+			"commandSuccess": "Il comando dell'estensione e stato completato correttamente.",
+			"commandError": "Il comando dell'estensione non e riuscito.",
+			"dismiss": "Chiudi messaggio"
 		},
 		"permissions": {
 			"microphone": "Microfono",

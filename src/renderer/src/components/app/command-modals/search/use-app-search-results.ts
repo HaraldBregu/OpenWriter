@@ -1,4 +1,5 @@
 import { FolderOpen, LibraryBig } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { getResourceSection, RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
 import { useAppSelector } from '@/store';
@@ -10,6 +11,40 @@ export function useAppSearchResults(query: string) {
 	const { t } = useTranslation();
 	const documents = useAppSelector(selectAllDocuments);
 	const resources = useAppSelector(selectResources);
+	const [extensionCommands, setExtensionCommands] = useState<
+		Array<{ id: string; title: string; description: string; extensionName: string }>
+	>([]);
+
+	const loadExtensionCommands = useCallback(async () => {
+		if (typeof window.extensions?.getCommands !== 'function') {
+			setExtensionCommands([]);
+			return;
+		}
+
+		try {
+			const commands = await window.extensions.getCommands();
+			setExtensionCommands(
+				commands.map((command) => ({
+					id: command.id,
+					title: command.title,
+					description: command.description,
+					extensionName: command.extensionName,
+				}))
+			);
+		} catch {
+			setExtensionCommands([]);
+		}
+	}, []);
+
+	useEffect(() => {
+		void loadExtensionCommands();
+		const unsubscribe = window.extensions?.onRegistryChanged
+			? window.extensions.onRegistryChanged(() => {
+					void loadExtensionCommands();
+				})
+			: undefined;
+		return unsubscribe;
+	}, [loadExtensionCommands]);
 
 	const sections = buildAppSearchSections({
 		query,
@@ -36,6 +71,7 @@ export function useAppSearchResults(query: string) {
 			};
 		}),
 		actions: APP_SEARCH_ACTIONS,
+		extensionCommands,
 		icons: {
 			document: FolderOpen,
 			resource: LibraryBig,
@@ -49,6 +85,9 @@ export function useAppSearchResults(query: string) {
 			},
 			resources: {
 				title: t('search.resourcesTitle', 'Resources'),
+			},
+			extensions: {
+				title: t('search.extensionsTitle', 'Extension commands'),
 			},
 		},
 	});

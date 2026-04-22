@@ -1,5 +1,12 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {
+	HashRouter as Router,
+	Routes,
+	Route,
+	Navigate,
+	matchPath,
+	useLocation,
+} from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import { AppProvider } from './contexts';
@@ -74,6 +81,7 @@ const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
 const EditorPage = lazy(() => import('./pages/settings/pages/EditorPage'));
 const DeveloperPage = lazy(() => import('./pages/settings/pages/DeveloperPage'));
 const ModelsPage = lazy(() => import('./pages/settings/pages/ModelsPage'));
+const ExtensionsPage = lazy(() => import('./pages/settings/pages/ExtensionsPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,
@@ -87,6 +95,21 @@ function RouteWrapper({ children }: { children: React.ReactNode }) {
 			<Suspense fallback={<PageLoadingSkeleton />}>{children}</Suspense>
 		</ErrorBoundary>
 	);
+}
+
+function ExtensionRouteContextSync(): null {
+	const location = useLocation();
+
+	useEffect(() => {
+		if (typeof window.extensions?.setActiveDocument !== 'function') {
+			return;
+		}
+
+		const match = matchPath('/content/:id', location.pathname);
+		void window.extensions.setActiveDocument(match?.params.id ?? null);
+	}, [location.pathname]);
+
+	return null;
 }
 
 const App: React.FC = () => {
@@ -169,9 +192,10 @@ const App: React.FC = () => {
 		<ErrorBoundary level="root">
 			<Provider store={store}>
 				<AppProvider>
-					<TooltipProvider>
-						<Router>
-							<Routes>
+						<TooltipProvider>
+							<Router>
+								<ExtensionRouteContextSync />
+								<Routes>
 								<Route
 									path="/splash"
 									element={
@@ -274,6 +298,14 @@ const App: React.FC = () => {
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
 																	<SkillPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="extensions"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<ExtensionsPage />
 																</Suspense>
 															}
 														/>

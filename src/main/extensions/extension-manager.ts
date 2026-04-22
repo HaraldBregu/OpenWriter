@@ -186,8 +186,9 @@ export class ExtensionManager implements Disposable {
 			documentId: this.getActiveDocumentId(windowId),
 			reason: `command:${commandId}`,
 		};
+		const activationReason = context.reason ?? `command:${commandId}`;
 
-		await this.ensureActivated(record, context.reason, context);
+		await this.ensureActivated(record, activationReason, context);
 
 		const requestId = randomUUID();
 		const deferred = createDeferred<ExtensionCommandExecutionResult>();
@@ -282,7 +283,10 @@ export class ExtensionManager implements Disposable {
 			for (const record of this.records.values()) {
 				if (!record.manifest.enabled) continue;
 				if (record.manifest.activationEvents.includes('onWorkspaceOpened')) {
-					void this.ensureActivated(record, 'workspace-opened');
+					void this.ensureActivated(record, 'workspace-opened').then(() => {
+						void this.dispatchEvent(record, 'workspace.changed', payload);
+					});
+					continue;
 				}
 				void this.dispatchEvent(record, 'workspace.changed', payload);
 			}
@@ -661,25 +665,16 @@ export class ExtensionManager implements Disposable {
 		payload: unknown,
 		context?: ExtensionExecutionContext
 	): Promise<void> {
-		if (!record.host || record.state.status === 'invalid') return;
+		if (!record.host || record.state.status === 'invalid' || !record.state.activated) return;
 
-		try {
-			await this.ensureHost(record);
-			record.host?.send({
-				kind: 'event.dispatch',
-				payload: {
-					eventType,
-					payload: payload as never,
-					context,
-				},
-			});
-		} catch (error) {
-			this.options.logger.warn(
-				'ExtensionManager',
-				`Failed to dispatch ${eventType} to ${record.manifest.id}`,
-				error
-			);
-		}
+		record.host.send({
+			kind: 'event.dispatch',
+			payload: {
+				eventType,
+				payload: payload as never,
+				context,
+			},
+		});
 	}
 
 	private async stopRecord(record: ManagedExtensionRecord): Promise<void> {

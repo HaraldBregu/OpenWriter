@@ -141,6 +141,7 @@
 			"providers": "Providers",
 			"agents": "Agents",
 			"skill": "Skill",
+			"extensions": "Extensions",
 			"media": "Media",
 			"devices": "Devices",
 			"tools": "Tools",
@@ -229,6 +230,25 @@
 			"deleteErrorFallback": "Failed to delete the skill. Please try again.",
 			"dismissError": "Dismiss error",
 			"dismissSuccess": "Dismiss"
+		},
+		"extensions": {
+			"title": "Extensions",
+			"subtitle": "Manage isolated extensions, inspect their runtime state, and run their commands.",
+			"actions": "Actions",
+			"openFolder": "Open Extensions Folder",
+			"installed": "Installed Extensions",
+			"empty": "No extensions were found in the bundled or user extension folders.",
+			"noDescription": "No description provided.",
+			"reload": "Reload",
+			"reloadSuccess": "Extension reloaded successfully.",
+			"reloadError": "Unable to reload the selected extension.",
+			"toggleError": "Unable to update the extension state.",
+			"commands": "Available Commands",
+			"noCommands": "No extension commands are currently available for this window.",
+			"runCommand": "Run",
+			"commandSuccess": "Extension command finished successfully.",
+			"commandError": "Extension command failed.",
+			"dismiss": "Dismiss message"
 		},
 		"permissions": {
 			"microphone": "Microphone",

@@ -22,7 +22,6 @@ type PendingHostCall = {
 
 class ExtensionHostRuntime {
 	private manifest: ExtensionManifest | null = null;
-	private extensionPath = '';
 	private module: ExtensionModule | null = null;
 	private activated = false;
 	private readonly commandHandlers = new Map<string, (payload?: unknown) => Promise<unknown> | unknown>();
@@ -71,7 +70,6 @@ class ExtensionHostRuntime {
 
 	private async bootstrap(manifest: ExtensionManifest, extensionPath: string): Promise<void> {
 		this.manifest = manifest;
-		this.extensionPath = extensionPath;
 
 		const moduleUrl = pathToFileURL(path.join(extensionPath, manifest.main)).href;
 		const loaded = (await import(moduleUrl)) as { default?: ExtensionModule };
@@ -314,7 +312,16 @@ class ExtensionHostRuntime {
 const runtime = new ExtensionHostRuntime();
 
 process.parentPort?.on('message', (message) => {
-	Promise.resolve(runtime.handleMessage(message as MainToExtensionHostMessage)).catch((error) => {
+	const maybeEnvelope = message as unknown as { data?: unknown };
+	const nextMessage =
+		typeof maybeEnvelope === 'object' &&
+		maybeEnvelope !== null &&
+		'data' in maybeEnvelope &&
+		maybeEnvelope.data !== undefined
+			? (maybeEnvelope.data as MainToExtensionHostMessage)
+			: (message as MainToExtensionHostMessage);
+
+	Promise.resolve(runtime.handleMessage(nextMessage)).catch((error) => {
 		process.parentPort?.postMessage({
 			kind: 'error',
 			payload: {

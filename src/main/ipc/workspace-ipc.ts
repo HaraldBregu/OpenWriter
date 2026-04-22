@@ -548,7 +548,7 @@ export class WorkspaceIpc implements IpcModule {
 					const [updated, content, documentPath] = await Promise.all([
 						mgr.getDocumentConfig(documentId),
 						mgr.getDocumentContent(documentId),
-						mgr.getDocumentPath(documentId),
+						Promise.resolve(mgr.getDocumentFolderPath(documentId)),
 					]);
 					const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
 					eventBus.broadcast(WorkspaceChannels.documentConfigChanged, {
@@ -590,7 +590,7 @@ export class WorkspaceIpc implements IpcModule {
 				await mgr.updateDocumentContent(documentId, content);
 				const [updated, documentPath] = await Promise.all([
 					mgr.getDocumentConfig(documentId),
-					mgr.getDocumentPath(documentId),
+					Promise.resolve(mgr.getDocumentFolderPath(documentId)),
 				]);
 				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
 				eventBus.broadcast(WorkspaceChannels.documentContentChanged, {

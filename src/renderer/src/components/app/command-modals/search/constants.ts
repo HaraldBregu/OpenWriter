@@ -8,6 +8,7 @@ export const APP_SEARCH_RESULT_KIND_LABELS = {
 	action: 'Action',
 	document: 'Document',
 	resource: 'Resource',
+	extension: 'Extension',
 } as const;
 
 export const APP_SEARCH_ACTIONS: AppSearchActionDefinition[] = [

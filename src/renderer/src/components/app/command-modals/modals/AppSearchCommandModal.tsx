@@ -23,10 +23,16 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 	const deferredQuery = useDeferredValue(query);
 	const { sections, totalCount } = useAppSearchResults(deferredQuery);
 
-	function handleSelect(item: AppSearchResultItem): void {
+	async function handleSelect(item: AppSearchResultItem): Promise<void> {
 		onOpenChange(false);
 		setQuery('');
-		navigate(item.href);
+		if (item.commandId) {
+			await window.extensions.executeCommand(item.commandId);
+			return;
+		}
+		if (item.href) {
+			navigate(item.href);
+		}
 	}
 
 	function handleOpenChange(nextOpen: boolean): void {
@@ -105,7 +111,9 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 									<CommandItem
 										key={item.id}
 										value={`${item.title} ${item.description} ${item.meta}`}
-										onSelect={() => handleSelect(item)}
+										onSelect={() => {
+											void handleSelect(item);
+										}}
 										className="items-start gap-3 rounded-xl px-3 py-3"
 									>
 										<div className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-xl bg-muted text-muted-foreground">

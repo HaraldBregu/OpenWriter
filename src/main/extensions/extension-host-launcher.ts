@@ -72,7 +72,7 @@ export class ExtensionHostLauncher implements Disposable {
 			});
 
 			child.once('error', (error) => {
-				reject(new Error(`[${error.type}] ${error.location}`));
+				reject(new Error(String(error)));
 			});
 		});
 	}

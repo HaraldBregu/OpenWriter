@@ -1,0 +1,23 @@
+{
+	"id": "example.hello-world",
+	"name": "Hello World",
+	"version": "0.1.0",
+	"apiVersion": "1",
+	"main": "dist/index.js",
+	"description": "Appends a simple line to the active document.",
+	"author": "OpenWriter",
+	"defaultEnabled": true,
+	"capabilities": ["commands", "host-data", "host-actions"],
+	"permissions": ["document.read", "document.write"],
+	"activationEvents": ["onCommand:example.hello-world.append-note"],
+	"contributes": {
+		"commands": [
+			{
+				"id": "example.hello-world.append-note",
+				"title": "Hello World: Append note",
+				"description": "Append a simple line to the active document.",
+				"when": "document"
+			}
+		]
+	}
+}

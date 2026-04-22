@@ -69,19 +69,31 @@ export class ExtensionApiGateway {
 				return (await this.getWorkspaceSnapshot(context)) as ExtensionHostRequestMap[TMethod]['result'];
 			case 'documents.getActive':
 				return (await this.getActiveDocument(context)) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'documents.getById':
-				return (await this.readDocument(args[0], context)) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'documents.update':
-				return (await this.updateDocument(args[0], args[1], context)) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'tasks.submit':
-				return this.submitTask(extension.id, args[0], context) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'storage.get':
-				return (await this.getStorageValue(extension.id, args[0])) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'storage.set':
-				return (await this.setStorageValue(extension.id, args[0], args[1])) as ExtensionHostRequestMap[TMethod]['result'];
-			case 'storage.delete':
-				await this.deleteStorageValue(extension.id, args[0]);
+			case 'documents.getById': {
+				const [documentId] = args as ExtensionHostRequestMap['documents.getById']['args'];
+				return (await this.readDocument(documentId, context)) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'documents.update': {
+				const [documentId, patch] = args as ExtensionHostRequestMap['documents.update']['args'];
+				return (await this.updateDocument(documentId, patch, context)) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'tasks.submit': {
+				const [submission] = args as ExtensionHostRequestMap['tasks.submit']['args'];
+				return this.submitTask(extension.id, submission, context) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'storage.get': {
+				const [key] = args as ExtensionHostRequestMap['storage.get']['args'];
+				return (await this.getStorageValue(extension.id, key)) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'storage.set': {
+				const [key, value] = args as ExtensionHostRequestMap['storage.set']['args'];
+				return (await this.setStorageValue(extension.id, key, value)) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'storage.delete': {
+				const [key] = args as ExtensionHostRequestMap['storage.delete']['args'];
+				await this.deleteStorageValue(extension.id, key);
 				return undefined as ExtensionHostRequestMap[TMethod]['result'];
+			}
 		}
 	}
 
@@ -150,7 +162,7 @@ export class ExtensionApiGateway {
 		const [content, config, pathOnDisk] = await Promise.all([
 			manager.getDocumentContent(documentId),
 			manager.getDocumentConfig(documentId),
-			manager.getDocumentPath(documentId),
+			Promise.resolve(manager.getDocumentFolderPath(documentId)),
 		]);
 		return this.buildDocumentSnapshot(documentId, content, config, pathOnDisk, windowId);
 	}

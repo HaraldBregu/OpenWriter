@@ -1,0 +1,26 @@
+{
+	"id": "example.workspace-inspector",
+	"name": "Workspace Inspector",
+	"version": "0.1.0",
+	"apiVersion": "1",
+	"main": "dist/index.js",
+	"description": "Reads application and workspace context and logs it to the extension host log.",
+	"author": "OpenWriter",
+	"defaultEnabled": true,
+	"capabilities": ["commands", "host-data", "events"],
+	"permissions": ["app.read", "workspace.read", "task.observe"],
+	"activationEvents": [
+		"onStartup",
+		"onCommand:example.workspace-inspector.log-context"
+	],
+	"contributes": {
+		"commands": [
+			{
+				"id": "example.workspace-inspector.log-context",
+				"title": "Workspace Inspector: Log context",
+				"description": "Log the current app and workspace context to the extension log.",
+				"when": "always"
+			}
+		]
+	}
+}

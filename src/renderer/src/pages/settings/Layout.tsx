@@ -112,6 +112,19 @@ export function Layout(): React.JSX.Element {
 								</Item>
 							)}
 						</NavLink>
+						<NavLink to="/settings/extensions" end className={LINK_BASE}>
+							{({ isActive }) => (
+								<Item
+									size="xs"
+									role="listitem"
+									className={`${ITEM_BASE} ${isActive ? ITEM_ACTIVE : ITEM_INACTIVE}`}
+								>
+									<ItemContent>
+										<ItemTitle>{t('settings.tabs.extensions')}</ItemTitle>
+									</ItemContent>
+								</Item>
+							)}
+						</NavLink>
 					</ItemGroup>
 
 					<ItemSeparator />
