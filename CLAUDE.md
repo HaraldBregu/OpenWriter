@@ -1,34 +1,69 @@
 # CLAUDE.md
 
-## File Naming Conventions
 
-- **`.ts`** files: lowercase kebab-case (e.g., `my-component.ts`)
-- **`.tsx`** files: PascalCase (e.g., `MyComponent.tsx`)
-- **`.md`** files: UPPERCASE or UPPER_SNAKE_CASE (e.g., `README.md`, `GETTING_STARTED.md`)
-- **`.json`** files: kebab-case, or lowercase if a single word (e.g., `tsconfig.json`, `my-config.json`)
-- **Folders**: lowercase snake_case (e.g., `my_folder`, `user_settings`)
 
-## Components
+# CLAUDE.md
 
-Always use the primary UI components from `src/renderer/src/components/ui/` first before creating new ones or importing from external libraries directly.
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
-**Do NOT modify any files under `src/renderer/src/components/ui/` unless the user explicitly requests it.**
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-## SonarQube Best Practices
+## 1. Think Before Coding
 
-After implementing or modifying code, verify it follows SonarQube best practices:
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
 
-- **No code smells**: Avoid duplicated code, overly complex functions, and dead code. Keep cognitive complexity low.
-- **No bugs**: Ensure no null pointer dereferences, incorrect type comparisons, or unreachable code paths.
-- **No vulnerabilities**: Avoid hardcoded credentials, SQL injection, XSS, and insecure randomness. Sanitize all user inputs.
-- **No security hotspots**: Review usage of cryptography, file system access, HTTP requests, and dynamic code execution.
-- **Maintainability**: Keep functions short and focused (single responsibility). Limit function parameters (max ~4). Avoid deeply nested control flow (max 3 levels).
-- **Reliability**: Handle all error cases explicitly. Avoid empty catch blocks. Do not ignore return values.
-- **Code quality rules**:
-  - Do not use `any` type in TypeScript — use proper types or `unknown`.
-  - Prefer `const` over `let`; never use `var`.
-  - Do not leave `console.log` statements in production code.
-  - Remove commented-out code instead of leaving it in.
-  - Do not use magic numbers — extract them into named constants.
-  - Avoid non-null assertions (`!`) — use proper null checks instead.
-  - Do not add comments on every function or line of code — only add comments on important or complex functions where the logic is not self-evident.
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+## 2. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+## 3. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: Every changed line should trace directly to the user's request.
+
+## 4. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

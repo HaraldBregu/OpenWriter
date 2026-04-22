@@ -275,6 +275,11 @@ export interface InvokeChannelMap {
 	[TaskChannels.submit]: { args: [action: TaskAction]; result: { taskId: string } };
 	[TaskChannels.cancel]: { args: [taskId: string]; result: boolean };
 	[TaskChannels.list]: { args: []; result: TaskInfo[] };
+	[TaskChannels.getSnapshot]: { args: [taskId: string]; result: AgentTaskSnapshot | null };
+	[TaskChannels.findForDocument]: {
+		args: [documentId: string];
+		result: AgentTaskLookupResult | null;
+	};
 
 	// ---- Indexing (IpcResult-wrapped) ----
 	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
