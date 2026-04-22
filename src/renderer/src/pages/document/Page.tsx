@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import { Bot, Info, Undo2, Redo2 } from 'lucide-react';
+import { Undo2, Redo2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -606,7 +606,7 @@ function PageContent(): ReactElement {
 							<DocumentSidebarTabs
 								items={sidebarItems}
 								activePanelId={activeSidebar}
-								onSelect={setActiveSidebar}
+								onSelect={(panelId) => setActiveSidebar(panelId as typeof activeSidebar)}
 							/>
 							<div className="min-h-0 flex-1">
 								{activeSidebar === 'builtin:config' && (

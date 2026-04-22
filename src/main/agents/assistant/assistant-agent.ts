@@ -63,7 +63,7 @@ export class AssistantAgent extends BaseAgent<AssistantAgentInput, AssistantAgen
 	): Promise<AssistantAgentOutput> {
 		const state = new AssistantState();
 		const unsubscribe = state.subscribe((event: StateEvent) => {
-			ctx.stream?.(JSON.stringify(event) + '\n');
+			ctx.onEvent?.({ kind: event.kind, at: event.at, payload: event.payload });
 		});
 
 		state.setStatus('running');
