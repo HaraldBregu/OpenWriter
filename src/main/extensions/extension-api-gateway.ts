@@ -185,10 +185,6 @@ export class ExtensionApiGateway {
 
 		if (patch.content !== undefined) {
 			await manager.updateDocumentContent(documentId, patch.content);
-			this.options.eventBus.broadcast(WorkspaceChannels.documentContentChanged, {
-				documentId,
-				content: patch.content,
-			});
 		}
 
 		const snapshot = await this.readDocument(documentId, { ...context, windowId, documentId });
