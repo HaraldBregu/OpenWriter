@@ -41,6 +41,7 @@ function classify(event: AgentEvent): AgentPhase | null {
 		case 'decision:invalid':
 		case 'skill:selected':
 		case 'tool':
+		case 'intent':
 			return 'thinking';
 		default:
 			return null;
