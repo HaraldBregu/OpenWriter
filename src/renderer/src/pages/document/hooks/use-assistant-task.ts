@@ -13,6 +13,8 @@ interface UseAssistantTaskParams {
 	documentId: string | null | undefined;
 	sessionIdRef: MutableRefObject<string | null>;
 	ready: boolean;
+	/** Agent to dispatch. Defaults to 'assistant'. */
+	agentType?: 'assistant' | 'writer';
 	onPhase: (phase: AgentPhase, label: string) => void;
 	onDelta: (token: string, fullContent: string) => void;
 	onRecovery: (fullContent: string, metadata: AssistantTaskMetadata) => void;
