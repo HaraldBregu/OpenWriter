@@ -1,3 +1,5 @@
+import type { ReasoningLogEntry } from './task-descriptor';
+
 /**
  * Progress reporter for task execution.
  * Provides a callback interface for tasks to report progress updates.
@@ -19,6 +21,18 @@ export interface ProgressReporter {
 export interface StreamReporter {
 	/** Emit a raw data batch. Each call delivers one chunk to the renderer. */
 	stream(data: string): void;
+}
+
+/**
+ * Live mutator for the ActiveTask record. Handlers use this to persist
+ * partial streaming state (reasoning log, response buffer, token count)
+ * onto the task so callers can observe progress mid-execution via
+ * `getTaskResult`.
+ */
+export interface TaskStateWriter {
+	pushReasoning(entry: ReasoningLogEntry): void;
+	appendResponseDelta(delta: string): void;
+	setTokenCount(count: number): void;
 }
 
 /**
@@ -53,6 +67,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 	 * @param reporter - Progress reporter for status updates
 	 * @param streamReporter - Optional stream reporter for token delivery
 	 * @param metadata - Optional task-level metadata from the submission
+	 * @param stateWriter - Optional live mutator for the task record
 	 * @returns Promise resolving to task output
 	 */
 	execute(
@@ -60,6 +75,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 		signal: AbortSignal,
 		reporter: ProgressReporter,
 		streamReporter?: StreamReporter,
-		metadata?: Record<string, unknown>
+		metadata?: Record<string, unknown>,
+		stateWriter?: TaskStateWriter
 	): Promise<TOutput>;
 }
