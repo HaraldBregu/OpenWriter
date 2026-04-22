@@ -12,6 +12,7 @@ import type {
 interface UseAssistantTaskParams {
 	documentId: string | null | undefined;
 	sessionIdRef: MutableRefObject<string | null>;
+	ready: boolean;
 	onPhase: (phase: AgentPhase, label: string) => void;
 	onDelta: (token: string, fullContent: string) => void;
 	onRecovery: (fullContent: string, metadata: AssistantTaskMetadata) => void;

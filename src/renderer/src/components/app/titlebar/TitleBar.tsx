@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Menu, PanelLeft, Minus, X, ArrowLeft, ArrowRight, Bot, Info } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useMatch } from 'react-router-dom';
 import { TitleBarContainer } from './TitleBarContainer';
 import { TitleBarCenterContainer } from './TitleBarCenterContainer';
 import { TitleBarLeftContainer } from './TitleBarLeftContainer';
 import { TitleBarRightContainer } from './TitleBarRightContainer';
 import { TitleBarCenterContainerTitle } from './TitleBarCenterContainerTitle';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
+import type { ExtensionDocPanelInfo } from '@shared/types';
 
 // Synchronous platform check — no hooks, no async, no state.
 // macOS uses native traffic-light buttons; every other OS needs custom controls.
@@ -54,8 +56,11 @@ export const TitleBar = React.memo(function TitleBar({
 }: TitleBarProps) {
 	const { t } = useTranslation();
 	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
+	const contentMatch = useMatch('/content/:id');
+	const documentId = contentMatch?.params.id ?? null;
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullScreen, setIsFullScreen] = useState(false);
+	const [extensionPanels, setExtensionPanels] = useState<ExtensionDocPanelInfo[]>([]);
 
 	useEffect(() => {
 		if (!window.win) return;
@@ -70,6 +75,43 @@ export const TitleBar = React.memo(function TitleBar({
 			unsubFs();
 		};
 	}, []);
+
+	const loadExtensionPanels = useCallback(async () => {
+		if (!showSidebarToggles || !documentId || typeof window.extensions?.getDocPanels !== 'function') {
+			setExtensionPanels([]);
+			return;
+		}
+
+		try {
+			const panels = await window.extensions.getDocPanels(documentId);
+			setExtensionPanels(panels);
+		} catch {
+			setExtensionPanels([]);
+		}
+	}, [documentId, showSidebarToggles]);
+
+	useEffect(() => {
+		void loadExtensionPanels();
+	}, [loadExtensionPanels]);
+
+	useEffect(() => {
+		if (!showSidebarToggles || typeof window.extensions?.onRegistryChanged !== 'function') {
+			return;
+		}
+
+		const unsubscribeRegistry = window.extensions.onRegistryChanged(() => {
+			void loadExtensionPanels();
+		});
+		const unsubscribeDocPanels = window.extensions.onDocPanelsChanged((payload) => {
+			if (documentId && payload.documentId && payload.documentId !== documentId) return;
+			void loadExtensionPanels();
+		});
+
+		return () => {
+			unsubscribeRegistry();
+			unsubscribeDocPanels();
+		};
+	}, [documentId, loadExtensionPanels, showSidebarToggles]);
 
 	const btnBase = `
     flex items-center justify-center h-full w-[46px]
@@ -88,6 +130,34 @@ export const TitleBar = React.memo(function TitleBar({
     flex items-center justify-center h-full w-[28px]
     text-muted-foreground
   `;
+
+	const sidebarToggleButtonClass = (isActive: boolean): string =>
+		isMac
+			? `flex items-center justify-center h-full px-2 transition-colors hover:text-foreground ${
+					isActive ? 'text-foreground' : 'text-muted-foreground'
+				}`
+			: `flex items-center justify-center h-full w-[38px] transition-colors ${
+					isActive ? 'text-foreground bg-accent/60' : 'text-muted-foreground hover:text-foreground'
+				}`;
+
+	const renderExtensionButtonContent = (panel: ExtensionDocPanelInfo): React.ReactElement => {
+		const fallback = panel.title.trim().charAt(0).toUpperCase() || '?';
+		const iconLabel = panel.icon?.trim();
+
+		if (iconLabel) {
+			return (
+				<span className="flex min-w-[1.25rem] items-center justify-center text-[11px] font-semibold leading-none">
+					{iconLabel}
+				</span>
+			);
+		}
+
+		return (
+			<span className="flex size-4 items-center justify-center rounded-full border border-current/25 text-[10px] font-semibold leading-none">
+				{fallback}
+			</span>
+		);
+	};
 
 	return (
 		<TitleBarContainer>
@@ -175,11 +245,7 @@ export const TitleBar = React.memo(function TitleBar({
 					<button
 						type="button"
 						onClick={() => toggleSidebar('builtin:agentic')}
-						className={
-							isMac
-								? 'flex items-center justify-center h-full px-2 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
-								: btnNoHover
-						}
+						className={sidebarToggleButtonClass(activeSidebar === 'builtin:agentic')}
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
 						aria-pressed={activeSidebar === 'builtin:agentic'}
@@ -192,11 +258,7 @@ export const TitleBar = React.memo(function TitleBar({
 					<button
 						type="button"
 						onClick={() => toggleSidebar('builtin:config')}
-						className={
-							isMac
-								? 'flex items-center justify-center h-full px-2 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
-								: btnNoHover
-						}
+						className={sidebarToggleButtonClass(activeSidebar === 'builtin:config')}
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
 						aria-pressed={activeSidebar === 'builtin:config'}
@@ -206,6 +268,19 @@ export const TitleBar = React.memo(function TitleBar({
 							strokeWidth={1.5}
 						/>
 					</button>
+					{extensionPanels.map((panel) => (
+						<button
+							key={panel.id}
+							type="button"
+							onClick={() => toggleSidebar(panel.id as `extension:${string}`)}
+							className={sidebarToggleButtonClass(activeSidebar === panel.id)}
+							title={`${panel.title} · ${panel.extensionName}`}
+							aria-label={`${panel.title} · ${panel.extensionName}`}
+							aria-pressed={activeSidebar === panel.id}
+						>
+							{renderExtensionButtonContent(panel)}
+						</button>
+					))}
 				</div>
 			)}
 

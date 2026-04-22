@@ -1,0 +1,58 @@
+{
+	"id": "example.host-data-showcase",
+	"name": "Host Data Showcase",
+	"version": "0.1.0",
+	"apiVersion": "1",
+	"main": "dist/index.js",
+	"description": "Demonstrates reading app, workspace, and document data, persisting extension state, and performing a safe document update.",
+	"author": "OpenWriter",
+	"defaultEnabled": true,
+	"capabilities": ["commands", "host-data", "host-actions", "events", "doc-panels"],
+	"permissions": ["app.read", "workspace.read", "document.read", "document.write", "task.observe"],
+	"activationEvents": [
+		"onStartup",
+		"onDocumentOpened",
+		"onCommand:example.host-data-showcase.refresh-snapshot",
+		"onCommand:example.host-data-showcase.log-snapshot",
+		"onCommand:example.host-data-showcase.append-note",
+		"onCommand:example.host-data-showcase.clear-state"
+	],
+	"contributes": {
+		"docPanels": [
+			{
+				"id": "host-data-summary",
+				"title": "Host data",
+				"description": "Shows app, workspace, document, and extension state.",
+				"when": "document",
+				"icon": "HD",
+				"order": 20
+			}
+		],
+		"commands": [
+			{
+				"id": "example.host-data-showcase.refresh-snapshot",
+				"title": "Host Data Showcase: Refresh snapshot",
+				"description": "Read app, workspace, and document state and persist the latest snapshot.",
+				"when": "document"
+			},
+			{
+				"id": "example.host-data-showcase.log-snapshot",
+				"title": "Host Data Showcase: Log snapshot",
+				"description": "Read current host state and write it to the extension log.",
+				"when": "document"
+			},
+			{
+				"id": "example.host-data-showcase.append-note",
+				"title": "Host Data Showcase: Append inspection note",
+				"description": "Append a clearly labeled note to the active document.",
+				"when": "document"
+			},
+			{
+				"id": "example.host-data-showcase.clear-state",
+				"title": "Host Data Showcase: Clear extension state",
+				"description": "Clear the extension storage used by the showcase.",
+				"when": "document"
+			}
+		]
+	}
+}
