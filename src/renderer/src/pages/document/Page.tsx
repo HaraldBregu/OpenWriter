@@ -278,7 +278,7 @@ function PageContent(): ReactElement {
 			setContent(completedContent);
 			dispatch({ type: 'CONTENT_CHANGED', value: completedContent });
 			debouncedContentSave.cancel();
-			window.workspace.updateDocumentContent(id, completedContent).catch(() => {
+			window.workspace.updateDocument(id, { content: completedContent }).catch(() => {
 				// document may have been deleted mid-run; ignore
 			});
 			requestAnimationFrame(() => {
