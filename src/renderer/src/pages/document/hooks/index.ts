@@ -10,8 +10,3 @@ export { useEditor } from './use-editor';
 export type { EditorActions } from './use-editor';
 export { useEditorStreamInsert } from './use-editor-stream-insert';
 export type { EditorStreamInsert } from './use-editor-stream-insert';
-export { useAssistantTask } from './use-assistant-task';
-export type {
-	AssistantTaskSubmitArgs,
-	UseAssistantTaskResult,
-} from './use-assistant-task';
