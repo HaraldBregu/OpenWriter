@@ -35,7 +35,7 @@ export function ReduxStateDialog({ open, onOpenChange }: ReduxStateDialogProps) 
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="max-w-3xl h-[80vh] flex flex-col p-0 gap-0">
+			<DialogContent className="w-[95vw] max-w-none h-[92vh] flex flex-col p-0 gap-0">
 				<DialogHeader className="px-6 py-3 border-b shrink-0">
 					<DialogTitle className="flex items-center gap-2 text-lg font-semibold">
 						<Database className="h-5 w-5 text-muted-foreground" />
