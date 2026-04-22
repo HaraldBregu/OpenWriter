@@ -349,10 +349,6 @@ export interface WorkspaceApi {
 	insertContents: (extensions?: string[]) => Promise<ResourceInfo[]>;
 	/** Delete a file from contents/ by its ID. */
 	deleteContent: (id: string) => Promise<void>;
-	/** Subscribe to file change events in contents/. */
-	onContentsChanged: (callback: (event: ContentEntryChangeEvent) => void) => () => void;
-	/** Subscribe to contents watcher error events. */
-	onContentsWatcherError: (callback: (error: WatcherError) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Files (workspace/files/)
 	// -------------------------------------------------------------------------
