@@ -19,10 +19,11 @@ import {
 	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
+	useAssistantTask,
+	useEditorStreamInsert,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
-import { v7 as uuidv7 } from 'uuid';
-import type { ExtensionDocPanelInfo, TaskEvent } from '../../../../shared/types';
+import type { ExtensionDocPanelInfo } from '../../../../shared/types';
 import { TaskStatusBar } from './components/TaskStatusBar';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
