@@ -259,34 +259,6 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
-	// Directories
-	// -------------------------------------------------------------------------
-
-	getDirectories(): DirectoryEntry[] {
-		return this.metadata.getDirectories();
-	}
-
-	addDirectory(dirPath: string): DirectoryEntry {
-		return this.metadata.addDirectory(dirPath);
-	}
-
-	addDirectories(dirPaths: string[]): DirectoryAddManyResult {
-		return this.metadata.addDirectories(dirPaths);
-	}
-
-	removeDirectory(id: string): boolean {
-		return this.metadata.removeDirectory(id);
-	}
-
-	validateDirectory(dirPath: string): DirectoryValidationResult {
-		return this.metadata.validateDirectory(dirPath);
-	}
-
-	markDirectoryIndexed(id: string, isIndexed: boolean): boolean {
-		return this.metadata.markDirectoryIndexed(id, isIndexed);
-	}
-
-	// -------------------------------------------------------------------------
 	// Output files
 	// -------------------------------------------------------------------------
 
