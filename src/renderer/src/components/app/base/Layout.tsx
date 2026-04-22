@@ -540,41 +540,6 @@ function Container({ children }: LayoutProps) {
 							</SidebarGroupContent>
 						</SidebarGroup>
 
-						{/* Debug */}
-						<SidebarGroup className="py-0">
-							<SidebarSeparator className="my-2" />
-							<SidebarGroupContent>
-								<SidebarMenu>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											className="h-9 px-3"
-											onClick={openTasksDialog}
-										>
-											<ListTodo className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('debug.tasks')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											className="h-9 px-3"
-											onClick={openReduxDialog}
-										>
-											<Database className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.redux', 'Redux')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											className="h-9 px-3"
-											onClick={openLogDialog}
-										>
-											<ScrollText className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('debug.logs', 'Logs')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
