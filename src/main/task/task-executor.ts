@@ -365,36 +365,18 @@ export class TaskExecutor implements Disposable {
 				},
 			};
 
-			const streamReporter: StreamReporter = {
-				stream: (data: string) => {
-					if (!this.activeTasks.has(taskId)) return;
-					this.send(windowId, 'task:event', {
-						state: 'running',
-						taskId,
-						data: { data },
-						error: null,
-						metadata: task.metadata,
-					} satisfies TaskEvent);
-				},
-			};
-
-			const stateWriter: TaskStateWriter = {
-				pushReasoning: (entry: ReasoningLogEntry) => {
-					const current = this.activeTasks.get(taskId);
-					if (!current) return;
-					if (!current.reasoningLog) current.reasoningLog = [];
-					current.reasoningLog.push(entry);
-				},
-				appendResponseDelta: (delta: string) => {
-					const current = this.activeTasks.get(taskId);
-					if (!current) return;
-					current.streamedContent = (current.streamedContent ?? '') + delta;
-				},
-				setTokenCount: (count: number) => {
-					const current = this.activeTasks.get(taskId);
-					if (!current) return;
-					current.tokenCount = count;
-				},
+			const recordEvent: RecordEvent = (event: AgentEvent) => {
+				const current = this.activeTasks.get(taskId);
+				if (!current) return;
+				if (!current.events) current.events = [];
+				current.events.push(event);
+				this.send(windowId, 'task:event', {
+					state: 'running',
+					taskId,
+					data: { event },
+					error: null,
+					metadata: task.metadata,
+				} satisfies TaskEvent);
 			};
 
 			const result = await runWithTaskExecutionContext(
@@ -405,15 +387,7 @@ export class TaskExecutor implements Disposable {
 					windowId,
 					metadata,
 				},
-				() =>
-					handler.execute(
-						input,
-						controller.signal,
-						reporter,
-						streamReporter,
-						metadata,
-						stateWriter
-					)
+				() => handler.execute(input, controller.signal, reporter, metadata, recordEvent)
 			);
 
 			// Task may have been cancelled during execution
