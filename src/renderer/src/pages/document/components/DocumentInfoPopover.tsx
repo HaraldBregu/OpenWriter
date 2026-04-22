@@ -136,7 +136,7 @@ export default function DocumentInfoPopover({
 						</Button>
 					}
 				/>
-				<PopoverContent align="end" className="w-80 p-0">
+				<PopoverContent align="end" className="w-64 p-0">
 					<PopoverHeader className="flex flex-row items-start justify-between gap-3 p-4 pb-3">
 						<div className="flex min-w-0 flex-1 flex-col gap-1">
 							<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
