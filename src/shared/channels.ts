@@ -152,6 +152,8 @@ export const TaskChannels = {
 	cancel: 'task:cancel',
 	list: 'task:list',
 	event: 'task:event',
+	getSnapshot: 'task:get-snapshot',
+	findForDocument: 'task:find-for-document',
 } as const;
 
 export const LogChannels = {
