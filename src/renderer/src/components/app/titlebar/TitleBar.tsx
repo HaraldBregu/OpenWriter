@@ -174,7 +174,7 @@ export const TitleBar = React.memo(function TitleBar({
 				>
 					<button
 						type="button"
-						onClick={() => toggleSidebar('agentic')}
+						onClick={() => toggleSidebar('builtin:agentic')}
 						className={
 							isMac
 								? 'flex items-center justify-center h-full px-2 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
@@ -182,7 +182,7 @@ export const TitleBar = React.memo(function TitleBar({
 						}
 						title={t('titleBar.toggleAgenticSidebar')}
 						aria-label={t('titleBar.toggleAgenticSidebar')}
-						aria-pressed={activeSidebar === 'agentic'}
+						aria-pressed={activeSidebar === 'builtin:agentic'}
 					>
 						<Bot
 							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
@@ -191,7 +191,7 @@ export const TitleBar = React.memo(function TitleBar({
 					</button>
 					<button
 						type="button"
-						onClick={() => toggleSidebar('config')}
+						onClick={() => toggleSidebar('builtin:config')}
 						className={
 							isMac
 								? 'flex items-center justify-center h-full px-2 text-muted-foreground transition-colors hover:text-foreground aria-pressed:text-foreground'
@@ -199,7 +199,7 @@ export const TitleBar = React.memo(function TitleBar({
 						}
 						title={t('titleBar.toggleSidebar')}
 						aria-label={t('titleBar.toggleSidebar')}
-						aria-pressed={activeSidebar === 'config'}
+						aria-pressed={activeSidebar === 'builtin:config'}
 					>
 						<Info
 							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}

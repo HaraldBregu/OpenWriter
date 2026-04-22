@@ -211,9 +211,7 @@ export class TaskExecutor implements Disposable {
 			completedAt: task.completedAt,
 			windowId: task.windowId,
 			metadata: task.metadata,
-			reasoningLog: task.reasoningLog ? [...task.reasoningLog] : undefined,
-			streamedContent: task.streamedContent,
-			tokenCount: task.tokenCount,
+			events: task.events ? [...task.events] : undefined,
 			controller: undefined as unknown as AbortController,
 		}));
 	}
