@@ -205,7 +205,7 @@ function PageContent(): ReactElement {
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
 					const { title: currentTitle } = stateRef.current;
-					window.workspace.updateDocumentConfig(id, { title: currentTitle });
+					window.workspace.updateDocument(id, { config: { title: currentTitle } });
 				},
 				METADATA_SAVE_DEBOUNCE_MS,
 				{ leading: false, trailing: true }
