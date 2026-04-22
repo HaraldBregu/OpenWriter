@@ -121,7 +121,6 @@ function Container({ children }: LayoutProps) {
 	const themeMode = useThemeMode();
 	const language = useLanguageMode();
 	const { setTheme, setLanguage } = useAppActions();
-	const { openTasksDialog, openReduxDialog, openLogDialog } = useDebugDialogs();
 	const shortcutPlatform: Platform =
 		typeof navigator !== 'undefined' && navigator.userAgent.includes('Mac')
 			? 'mac'
