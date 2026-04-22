@@ -14,13 +14,9 @@ import type {
 import { VALID_OUTPUT_TYPES } from './output-files';
 import type { LoggerService } from '../services/logger';
 import type {
-	DirectoryEntry,
-	DirectoryAddManyResult,
-	DirectoryValidationResult,
 	IndexingInfo,
 	FsReadFileParams,
 	FsWriteFileParams,
-	FsCreateFileParams,
 	FsCreateFolderParams,
 	FsDeleteFolderParams,
 	FsRenameParams,
