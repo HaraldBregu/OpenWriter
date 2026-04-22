@@ -314,3 +314,20 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentTaskOu
 		return ctx?.windowId;
 	}
 }
+
+function summarizeOutput(output: unknown): Record<string, unknown> {
+	if (!output || typeof output !== 'object') {
+		return { type: typeof output };
+	}
+	const record = output as Record<string, unknown>;
+	const summary: Record<string, unknown> = {};
+	if (typeof record.content === 'string') summary.contentLength = record.content.length;
+	if (typeof record.iterations === 'number') summary.iterations = record.iterations;
+	if (typeof record.stoppedReason === 'string') summary.stoppedReason = record.stoppedReason;
+	if (Array.isArray(record.toolCalls)) summary.toolCalls = record.toolCalls.length;
+	const usage = record.usage;
+	if (usage && typeof usage === 'object') {
+		summary.usage = usage;
+	}
+	return summary;
+}
