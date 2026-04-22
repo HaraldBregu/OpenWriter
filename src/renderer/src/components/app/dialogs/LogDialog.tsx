@@ -92,7 +92,7 @@ export function LogDialog({ open, onOpenChange }: LogDialogProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className="w-screen h-screen max-w-none rounded-none flex flex-col p-0 gap-0">
+			<DialogContent className="!w-screen !h-screen !max-w-none !max-h-none rounded-none flex flex-col p-0 gap-0">
 				<DialogHeader className="px-6 py-3 border-b shrink-0">
 					<DialogTitle className="flex items-center gap-2 text-lg font-semibold">
 						<ScrollText className="h-5 w-5 text-muted-foreground" />

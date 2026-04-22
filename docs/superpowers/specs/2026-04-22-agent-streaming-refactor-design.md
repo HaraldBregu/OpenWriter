@@ -244,6 +244,7 @@ Same as cancel — `onError` triggers `revert()`. Status bar surfaces the messag
 - **App crash / quit.** `ActiveTask` is in-memory. No recovery on restart. Acceptable — disk holds pre-submit content unchanged.
 - **Budget exceeded.** `BudgetExceededError` → `state: 'error'`. Treated as generic error (revert). Surfacing partial content on budget is out of scope.
 - **Image generation failure.** `ImageNode` emits error event; text stream continues. Agent-level concern, not renderer's.
+- **Task completes while renderer is unmounted.** Disk is written by the renderer on `onCompleted`; if the page unmounted (window closed, navigated away), the write never happens. Mitigation: on mount, `useAssistantTask` queries for recently-completed tasks tied to this `documentId`. If found and its `completedAt` is within a short window (e.g. last 5 minutes, aligned with `COMPLETED_TASK_TTL_MS`), renderer applies `editorInsert.commitFinal(result.content)` and saves to disk. Requires extending the task IPC surface: add `window.task.findForDocument(documentId)` that returns `{ taskId, state, result? } | null`, searching both `activeTasks` and `completedTasks`.
 
 ## Testing
 
