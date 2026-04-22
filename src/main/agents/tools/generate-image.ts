@@ -58,7 +58,7 @@ const generateImageSchema: JSONSchema = {
 };
 
 function sanitizeFilename(input: string | undefined): string {
-	const base = (input ?? `image-${Date.now()}`).replace(/[^a-zA-Z0-9._-]/g, '_');
+	const base = (input ?? randomUUID()).replace(/[^a-zA-Z0-9._-]/g, '_');
 	return base.toLowerCase().endsWith('.png') ? base : `${base}.png`;
 }
 
