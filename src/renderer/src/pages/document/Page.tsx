@@ -494,6 +494,11 @@ function PageContent(): ReactElement {
 										currentEntryId={currentHistoryEntryId}
 										onRestoreEntry={handleRestoreHistoryEntry}
 									/>
+									<DocumentInfoPopover
+										documentId={id ?? null}
+										title={title}
+										content={content}
+									/>
 								</PageHeaderItems>
 							</PageHeader>
 							<TaskStatusBar taskId={assistantActiveTaskId} />
