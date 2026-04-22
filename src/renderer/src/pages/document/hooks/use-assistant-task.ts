@@ -122,7 +122,7 @@ export function useAssistantTask(params: UseAssistantTaskParams): UseAssistantTa
 			const result = await window.task.submit({
 				type: 'agent',
 				input: {
-					agentType: 'assistant',
+					agentType,
 					input: {
 						prompt,
 						files: files.map((f) => ({ name: f.name, mimeType: f.mimeType })),
