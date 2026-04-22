@@ -270,11 +270,6 @@ const workspace: WorkspaceApi = {
 	): (() => void) => {
 		return typedOn(WorkspaceChannels.outputFileChanged, callback);
 	},
-	onOutputWatcherError: (
-		callback: (error: { error: string; timestamp: number }) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.outputWatcherError, callback);
-	},
 	// -------------------------------------------------------------------------
 	// Project workspace (project_workspace.openwriter)
 	// -------------------------------------------------------------------------
