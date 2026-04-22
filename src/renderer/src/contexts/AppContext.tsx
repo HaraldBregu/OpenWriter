@@ -3,6 +3,7 @@ import type { ThemeMode } from '../../../shared/types';
 import { ThemeProvider } from './ThemeProvider';
 import { LanguageProvider } from './LanguageProvider';
 import { SidebarVisibilityProvider } from './SidebarVisibilityProvider';
+import { DebugDialogsProvider } from './DebugDialogsContext';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
