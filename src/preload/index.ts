@@ -296,8 +296,6 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	getDocumentConfig: (documentId: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.getDocumentConfig, documentId),
-	updateDocumentConfig: (documentId: string, config: Partial<DocumentConfig>) =>
-		typedInvokeUnwrap(WorkspaceChannels.updateDocumentConfig, documentId, config),
 	onDocumentConfigChanges: (
 		documentId: string,
 		callback: (config: DocumentConfig) => void
@@ -313,8 +311,10 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	getDocumentContent: (documentId: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.getDocumentContent, documentId),
-	updateDocumentContent: (documentId: string, content: string) =>
-		typedInvokeUnwrap(WorkspaceChannels.updateDocumentContent, documentId, content),
+	updateDocument: (
+		documentId: string,
+		patch: { config?: Partial<DocumentConfig>; content?: string }
+	) => typedInvokeUnwrap(WorkspaceChannels.updateDocument, documentId, patch),
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
