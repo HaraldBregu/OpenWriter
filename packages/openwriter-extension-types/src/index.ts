@@ -224,6 +224,7 @@ export interface ExtensionInfo {
 	name: string;
 	version: string;
 	apiVersion: string;
+	main: string;
 	description?: string;
 	author?: string;
 	source: ExtensionSource;
@@ -237,8 +238,12 @@ export interface ExtensionInfo {
 	validationErrors: string[];
 }
 
+export interface ExtensionRuntimeInfo extends ExtensionInfo {
+	runtime: ExtensionRuntimeState;
+}
+
 export interface ExtensionRegistrySnapshot {
-	extensions: ExtensionInfo[];
+	extensions: ExtensionRuntimeInfo[];
 }
 
 export interface ExtensionRuntimeChangedPayload {

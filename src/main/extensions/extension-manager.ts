@@ -20,6 +20,7 @@ import {
 	type ExtensionHostToMainMessage,
 	type ExtensionInfo,
 	type ExtensionRegistrySnapshot,
+	type ExtensionRuntimeInfo,
 	type ExtensionRuntimeChangedPayload,
 	type ExtensionRuntimeState,
 	type ExtensionTaskEvent,
@@ -132,7 +133,7 @@ export class ExtensionManager implements Disposable {
 		this.broadcastRegistryChanged();
 	}
 
-	listExtensions(): Array<ExtensionInfo & { runtime: ExtensionRuntimeState }> {
+	listExtensions(): ExtensionRuntimeInfo[] {
 		return Array.from(this.records.values())
 			.map((record) => ({
 				...record.manifest,
@@ -457,6 +458,7 @@ export class ExtensionManager implements Disposable {
 				name: manifest.name || entry.name,
 				version: manifest.version,
 				apiVersion: manifest.apiVersion,
+				main: manifest.main,
 				description: manifest.description,
 				author: manifest.author,
 				source,
@@ -555,7 +557,7 @@ export class ExtensionManager implements Disposable {
 					name: record.manifest.name,
 					version: record.manifest.version,
 					apiVersion: record.manifest.apiVersion,
-					main: path.relative(record.manifest.extensionPath, path.join(record.manifest.extensionPath, path.relative(record.manifest.extensionPath, path.join(record.manifest.extensionPath, record.manifest.manifestPath.replace(path.join(record.manifest.extensionPath, ''), ''))))),
+					main: record.manifest.main,
 					description: record.manifest.description,
 					author: record.manifest.author,
 					defaultEnabled: record.manifest.enabled,

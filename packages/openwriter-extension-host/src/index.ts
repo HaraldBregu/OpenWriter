@@ -313,8 +313,8 @@ class ExtensionHostRuntime {
 
 const runtime = new ExtensionHostRuntime();
 
-process.parentPort?.on('message', (event) => {
-	Promise.resolve(runtime.handleMessage(event.data as MainToExtensionHostMessage)).catch((error) => {
+process.parentPort?.on('message', (message) => {
+	Promise.resolve(runtime.handleMessage(message as MainToExtensionHostMessage)).catch((error) => {
 		process.parentPort?.postMessage({
 			kind: 'error',
 			payload: {

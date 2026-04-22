@@ -36,15 +36,18 @@ export class DocumentStreamWriter {
 		});
 	}
 
-	async appendDelta(delta: string): Promise<void> {
-		if (this.closed) return;
+	appendDelta(delta: string): void {
+		if (this.closed || !delta) return;
 		if (!this.handle) {
 			throw new Error('DocumentStreamWriter.appendDelta before begin');
 		}
-		if (!delta) return;
 		const handle = this.handle;
-		this.chain = this.chain.then(() => handle.write(delta).then(() => undefined));
-		await this.chain;
+		this.chain = this.chain
+			.catch(() => undefined)
+			.then(() => handle.write(delta).then(() => undefined))
+			.catch((error) => {
+				this.logger.warn(LOG_SOURCE, `Write failed for ${this.filePath}`, error);
+			});
 	}
 
 	async end(): Promise<void> {
