@@ -171,8 +171,6 @@ export class Workspace implements Disposable {
 			type?: string;
 			createdAt?: string;
 			updatedAt?: string;
-			defaultTextModelId?: string;
-			defaultImageModelId?: string;
 		};
 
 		let stored: StoredJson = {};
@@ -188,8 +186,6 @@ export class Workspace implements Disposable {
 			type: stored.type ?? '',
 			createdAt: stored.createdAt ?? '',
 			updatedAt: stored.updatedAt ?? '',
-			textModel: stored.defaultTextModelId ?? DEFAULT_TEXT_MODEL_ID,
-			imageModel: stored.defaultImageModelId ?? DEFAULT_IMAGE_MODEL_ID,
 		};
 	}
 
