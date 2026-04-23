@@ -566,26 +566,17 @@ function PageContent(): ReactElement {
 
 	const handleAssistantAction = useCallback(
 		(action: AssistantAction, editor: TiptapEditor) => {
-			const { from, to } = editor.state.selection;
-			const selectedText =
-				from === to
-					? ''
-					: (editor.markdown?.serialize(editor.state.doc.cut(from, to).toJSON()) ?? '');
-
 			const instructionByAction: Record<AssistantAction, string> = {
-				improve: 'Improve the writing of the following text while preserving its meaning.',
-				'fix-grammar': 'Fix grammar and spelling mistakes in the following text.',
-				summarize: 'Summarize the following text concisely.',
-				translate: 'Translate the following text to English.',
-				'continue-writing': 'Continue writing from where the text ends, matching tone and style.',
+				improve: 'Improve the writing of the selected text while preserving its meaning.',
+				'fix-grammar': 'Fix grammar and spelling mistakes in the selected text.',
+				summarize: 'Summarize the selected text concisely.',
+				translate: 'Translate the selected text to English.',
+				'continue-writing':
+					'Continue writing from where the text ends, matching tone and style.',
 			};
 
 			void handlePromptSubmit(
-				{
-					prompt: `${instructionByAction[action]}\n\n${selectedText}`.trim(),
-					files: [],
-					editor,
-				},
+				{ prompt: instructionByAction[action], files: [], editor },
 				editor
 			);
 		},
