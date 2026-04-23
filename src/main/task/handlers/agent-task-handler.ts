@@ -37,7 +37,7 @@ interface AgentInputRecord {
 	[key: string]: unknown;
 }
 
-const WRITER_AGENT_TYPE = 'writer';
+const TEXT_WRITER_AGENT_TYPE = 'text-writer';
 
 interface AgentRunOutput {
 	content?: unknown;
