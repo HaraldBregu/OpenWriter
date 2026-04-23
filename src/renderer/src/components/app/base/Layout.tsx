@@ -37,6 +37,8 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarMenuSub,
+	SidebarMenuSubButton,
+	SidebarMenuSubItem,
 	SidebarProvider,
 	SidebarHeader,
 	useSidebar,
