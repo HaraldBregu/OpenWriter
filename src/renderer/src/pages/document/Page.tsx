@@ -325,8 +325,8 @@ function PageContent(): ReactElement {
 		editorActions.enable();
 	}, [editorInsert, editorActions]);
 
-	const taskHandlersRef = useRef({ handleDelta, handleRecovery, handleCompleted, handleCancelOrError });
-	taskHandlersRef.current = { handleDelta, handleRecovery, handleCompleted, handleCancelOrError };
+	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
+	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
 
 	// Subscribe once to task events; route to the active task via refs.
 	useEffect(() => {
