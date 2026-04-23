@@ -383,7 +383,10 @@ function PageContent(): ReactElement {
 
 			if (event.state === 'completed') {
 				const result = readCompletedResult(event.data);
-				if (result) h.handleCompleted(result.content);
+				if (result) {
+					h.handleCompleted(result.content);
+					markTaskApplied(event.taskId);
+				}
 				setActiveTaskId(null);
 				return;
 			}
