@@ -4,8 +4,11 @@ The defining feature of OpenWriter: writing is produced by a **loop of
 agents** working together, not by one prompt-to-completion call.
 
 This document describes the loop from a functional standpoint — what the
-agents decide, what the user sees, and where the loop stops. For the
-streaming / IPC plumbing see [../AGENT_STREAMING.md](../AGENT_STREAMING.md).
+agents decide, what the user sees, and where the loop stops. For streaming
+and IPC plumbing, read the code directly:
+`src/main/agents/core/agent.ts` (event contract),
+`src/main/task/task-executor.ts` (lifecycle + transport),
+`src/main/task/handlers/agent-task-handler.ts` (bridge).
 
 ## Why A Loop, Not A Single Call?
 
