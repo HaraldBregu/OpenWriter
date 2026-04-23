@@ -22,6 +22,26 @@ Individual docs:
 - [Media Ingestion](./functional/MEDIA_INGESTION.md) — transcription, OCR, resources library, RAG
 - [Settings And Providers](./functional/SETTINGS_AND_PROVIDERS.md) — providers, models, agents, themes, languages
 
+## Agents Docs — `agents/`
+
+Deep dive on the built-in AI agents, skills, tools, and retrieval.
+
+Start at [agents/README.md](./agents/README.md).
+
+Individual docs:
+
+- [Overview](./agents/OVERVIEW.md) — agent concept, runtime model, lifecycle, dispatch, events
+- [Agent Types](./agents/AGENT_TYPES.md) — capability matrix across every built-in agent
+- [Writer](./agents/WRITER.md) — intent / controller / text loop, skills, stopping conditions
+- [Painter](./agents/PAINTER.md) — image generation agent (current + planned dedicated form)
+- [Assistant](./agents/ASSISTANT.md) — minimal one-shot streaming path
+- [OCR](./agents/OCR.md) — vision-LLM text extraction
+- [Transcription](./agents/TRANSCRIPTION.md) — audio/video → text
+- [Embedding And RAG](./agents/EMBEDDING_AND_RAG.md) — chunking, embeddings, vector store, retrieval
+- [Skills](./agents/SKILLS.md) — portable markdown workflows with optional scripts
+- [RAG Augmentation](./agents/RAG_AUGMENTATION.md) — feeding retrieval into Writer and Painter
+- [Authoring](./agents/AUTHORING.md) — adding a new agent to the registry
+
 ## Extensions Docs — `extensions/`
 
 Everything about the extension system: manifest, host API, contributions,
