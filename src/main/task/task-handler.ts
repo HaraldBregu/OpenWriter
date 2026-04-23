@@ -1,29 +1,3 @@
-import type { AgentEvent } from '../agents/core/agent';
-
-export type { AgentEvent };
-
-/**
- * Progress reporter for task execution.
- * Provides a callback interface for tasks to report progress updates.
- */
-export interface ProgressReporter {
-	/**
-	 * Report progress for the current task.
-	 * @param percent - Progress percentage (0-100)
-	 * @param message - Optional human-readable progress message
-	 * @param detail - Optional additional detail data
-	 */
-	progress(percent: number, message?: string, detail?: unknown): void;
-}
-
-/**
- * Sink for typed agent events. Handlers invoke this to persist each event
- * onto the live `ActiveTask` record and to forward it to the renderer via
- * the task event bus. Replaces the previous separate `StreamReporter` +
- * `TaskStateWriter` pair.
- */
-export type RecordEvent = (event: AgentEvent) => void;
-
 /**
  * Task handler interface for implementing background operations.
  * Uses Strategy pattern to encapsulate task-specific behavior.
@@ -53,16 +27,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 	 *
 	 * @param input - Task input data
 	 * @param signal - Abort signal for cancellation
-	 * @param reporter - Progress reporter for status updates
-	 * @param metadata - Optional task-level metadata from the submission
-	 * @param recordEvent - Optional typed-event sink (persists to ActiveTask, forwards to renderer)
 	 * @returns Promise resolving to task output
 	 */
-	execute(
-		input: TInput,
-		signal: AbortSignal,
-		reporter: ProgressReporter,
-		metadata?: Record<string, unknown>,
-		recordEvent?: RecordEvent
-	): Promise<TOutput>;
+	execute(input: TInput, signal: AbortSignal): Promise<TOutput>;
 }
