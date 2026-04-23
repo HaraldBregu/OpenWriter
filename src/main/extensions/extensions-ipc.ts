@@ -4,6 +4,7 @@ import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { ExtensionManager } from './extension-manager';
 import type { LoggerService } from '../services/logger';
+import type { ExtensionDocumentContextSnapshot } from '../../shared/types';
 import { wrapSimpleHandler, wrapIpcHandler } from '../ipc/ipc-error-handler';
 import { ExtensionChannels } from '../../shared/channels';
 
@@ -87,6 +88,15 @@ export class ExtensionsIpc implements IpcModule {
 				if (!windowId) return;
 				manager.setActiveDocument(windowId, documentId);
 			}, ExtensionChannels.setActiveDocument)
+		);
+
+		ipcMain.handle(
+			ExtensionChannels.setDocumentContext,
+			wrapIpcHandler((event, documentId: string, context: ExtensionDocumentContextSnapshot) => {
+				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
+				if (!windowId) return;
+				manager.setDocumentContext(windowId, documentId, context);
+			}, ExtensionChannels.setDocumentContext)
 		);
 
 		ipcMain.handle(

@@ -142,7 +142,20 @@ export const TitleBar = React.memo(function TitleBar({
 
 	const renderExtensionButtonContent = (panel: ExtensionDocPanelInfo): React.ReactElement => {
 		const fallback = panel.title.trim().charAt(0).toUpperCase() || '?';
-		const iconLabel = panel.icon?.trim();
+		const icon = panel.icon;
+
+		if (panel.iconAssetUri && icon && typeof icon !== 'string' && icon.type === 'asset') {
+			return (
+				<img
+					src={panel.iconAssetUri}
+					alt=""
+					aria-hidden="true"
+					className="size-4 object-contain"
+				/>
+			);
+		}
+
+		const iconLabel = typeof icon === 'string' ? icon.trim() : '';
 
 		if (iconLabel) {
 			return (

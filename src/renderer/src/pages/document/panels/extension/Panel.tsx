@@ -79,17 +79,19 @@ function BlockRenderer({
 				</div>
 			) : null}
 			{blocks.map((block, index) => {
+				const blockKey = block.id ?? `${block.type}-${index}`;
+
 				switch (block.type) {
 					case 'text':
 						return (
-							<p key={index} className="whitespace-pre-wrap text-sm leading-6 text-foreground">
+							<p key={blockKey} className="whitespace-pre-wrap text-sm leading-6 text-foreground">
 								{block.text}
 							</p>
 						);
 					case 'markdown':
 						return (
 							<div
-								key={index}
+								key={blockKey}
 								className="prose prose-sm max-w-none text-foreground dark:prose-invert"
 							>
 								<ReactMarkdown>{block.markdown}</ReactMarkdown>
@@ -98,7 +100,7 @@ function BlockRenderer({
 					case 'keyValueList':
 						return (
 							<div
-								key={index}
+								key={blockKey}
 								className="overflow-hidden rounded-lg border border-border/70"
 							>
 								{block.items.map((item, itemIndex) => (
@@ -114,7 +116,7 @@ function BlockRenderer({
 						);
 					case 'notice':
 						return (
-							<div key={index} className={toneClasses(block.tone)}>
+							<div key={blockKey} className={toneClasses(block.tone)}>
 								<div className="flex gap-2 rounded-lg border px-3 py-2 text-sm">
 									<NoticeIcon tone={block.tone} />
 									<div className="space-y-1">
@@ -126,7 +128,7 @@ function BlockRenderer({
 						);
 					case 'buttonRow':
 						return (
-							<div key={index} className="flex flex-wrap gap-2">
+							<div key={blockKey} className="flex flex-wrap gap-2">
 								{block.buttons.map((button) => {
 									const isPending = pendingActionId === button.id;
 									return (
@@ -149,7 +151,7 @@ function BlockRenderer({
 						);
 					default:
 						return (
-							<div key={index} className={toneClasses('warning')}>
+							<div key={blockKey} className={toneClasses('warning')}>
 								<div className="flex gap-2 rounded-lg border px-3 py-2 text-sm">
 									<TriangleAlert className="mt-0.5 size-4 shrink-0" />
 									<span>Unsupported panel block.</span>
@@ -180,19 +182,26 @@ export default function ExtensionPanel({
 
 	const loadContent = useCallback(
 		async (mode: 'open' | 'refresh' = 'open') => {
-			setLoading(true);
-			setError(null);
+			if (mode === 'open') {
+				setLoading(true);
+				setError(null);
+			}
 			try {
 				const next =
 					mode === 'refresh'
 						? await window.extensions.refreshDocPanel(panelId, documentId)
 						: await window.extensions.getDocPanelContent(panelId, documentId);
 				setContent(next);
+				setError(null);
 			} catch (nextError) {
 				setError(extractErrorMessage(nextError));
-				setContent(null);
+				if (mode === 'open') {
+					setContent(null);
+				}
 			} finally {
-				setLoading(false);
+				if (mode === 'open') {
+					setLoading(false);
+				}
 			}
 		},
 		[documentId, panelId]

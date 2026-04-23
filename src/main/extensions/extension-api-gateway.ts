@@ -13,6 +13,7 @@ import type {
 	DocumentConfig,
 } from '../../shared/types';
 import type {
+	ExtensionDocumentContextSnapshot,
 	ExtensionDocumentSnapshot,
 	ExtensionDocumentUpdate,
 	ExtensionExecutionContext,
@@ -31,6 +32,7 @@ const HOST_PERMISSIONS: {
 	'workspace.getCurrent': 'workspace.read',
 	'documents.getActive': 'document.read',
 	'documents.getById': 'document.read',
+	'documents.getContext': 'document.read',
 	'documents.update': 'document.write',
 	'tasks.submit': 'task.submit',
 	'storage.get': null,
@@ -45,6 +47,10 @@ export interface ExtensionApiGatewayOptions {
 	windowContextManager: WindowContextManager;
 	taskExecutor: TaskExecutor;
 	getActiveDocumentId: (windowId?: number) => string | null;
+	getDocumentContext: (
+		documentId: string,
+		windowId?: number
+	) => ExtensionDocumentContextSnapshot | null;
 }
 
 export class ExtensionApiGateway {
@@ -72,6 +78,10 @@ export class ExtensionApiGateway {
 			case 'documents.getById': {
 				const [documentId] = args as ExtensionHostRequestMap['documents.getById']['args'];
 				return (await this.readDocument(documentId, context)) as ExtensionHostRequestMap[TMethod]['result'];
+			}
+			case 'documents.getContext': {
+				const [documentId] = args as ExtensionHostRequestMap['documents.getContext']['args'];
+				return this.getDocumentContext(documentId, context) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'documents.update': {
 				const [documentId, patch] = args as ExtensionHostRequestMap['documents.update']['args'];
@@ -165,6 +175,16 @@ export class ExtensionApiGateway {
 			Promise.resolve(manager.getDocumentFolderPath(documentId)),
 		]);
 		return this.buildDocumentSnapshot(documentId, content, config, pathOnDisk, windowId);
+	}
+
+	private getDocumentContext(
+		documentId: string | undefined,
+		context?: ExtensionExecutionContext
+	): ExtensionDocumentContextSnapshot | null {
+		const { windowId } = this.resolveWorkspaceManager(context);
+		const resolvedDocumentId = documentId ?? context?.documentId ?? this.options.getActiveDocumentId(windowId);
+		if (!resolvedDocumentId) return null;
+		return this.options.getDocumentContext(resolvedDocumentId, windowId);
 	}
 
 	private async updateDocument(
