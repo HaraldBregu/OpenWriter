@@ -21,6 +21,7 @@ import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { TaskHandlerRegistry } from './task-handler-registry';
 import type { TaskEvent } from './task-events';
+import type { Emit } from './task-handler';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
