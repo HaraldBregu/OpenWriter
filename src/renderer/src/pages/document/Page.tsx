@@ -303,11 +303,18 @@ function PageContent(): ReactElement {
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.taskId !== activeTaskId) return;
 			setTaskStatus({ status: event.state, message: event.data });
+			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
-				editorInsert.appendDelta(event.data);
+				handlers.handleDelta(event.data);
+			} else if (event.state === 'finished') {
+				handlers.handleCompleted(event.data);
+				setActiveTaskId(null);
+			} else if (event.state === 'cancelled') {
+				handlers.handleCancelOrError();
+				setActiveTaskId(null);
 			}
 		});
-	}, [activeTaskId, editorInsert]);
+	}, [activeTaskId]);
 
 	const handleDelta = useCallback(
 		(token: string) => {
