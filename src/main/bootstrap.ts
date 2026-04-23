@@ -110,6 +110,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new WriterAgent());
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
+	agentRegistry.register(new TranscriptionAgent());
 	container.register('agentRegistry', agentRegistry);
 
 	container.register(
