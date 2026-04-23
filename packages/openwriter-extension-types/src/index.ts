@@ -56,6 +56,13 @@ export type ExtensionRuntimeStatus =
 	| 'crashed'
 	| 'invalid';
 
+export interface ExtensionIconAsset {
+	type: 'asset';
+	path: string;
+}
+
+export type ExtensionIconDefinition = string | ExtensionIconAsset;
+
 export interface ExtensionCommandContribution {
 	id: string;
 	title: string;
@@ -68,7 +75,7 @@ export interface ExtensionDocPanelContribution {
 	title: string;
 	description?: string;
 	when?: 'document';
-	icon?: string;
+	icon?: ExtensionIconDefinition;
 	order?: number;
 }
 
@@ -76,7 +83,7 @@ export interface ExtensionDocPageContribution {
 	id: string;
 	title: string;
 	description?: string;
-	icon?: string;
+	icon?: ExtensionIconDefinition;
 	order?: number;
 }
 
@@ -126,6 +133,27 @@ export interface ExtensionDocumentSnapshot {
 	windowId?: number;
 }
 
+export interface ExtensionDocumentSelectionSnapshot {
+	from: number;
+	to: number;
+	text: string;
+}
+
+export interface ExtensionDocumentEditorStateSnapshot {
+	isFocused: boolean;
+	isEditable: boolean;
+	isEmpty: boolean;
+	activeNode: string | null;
+	activeMarks: string[];
+}
+
+export interface ExtensionDocumentContextSnapshot {
+	documentId: string;
+	markdown: string;
+	selection: ExtensionDocumentSelectionSnapshot | null;
+	editorState: ExtensionDocumentEditorStateSnapshot;
+}
+
 export interface ExtensionDocumentUpdate {
 	title?: string;
 	content?: string;
@@ -136,11 +164,13 @@ export type ExtensionDocPanelButtonVariant = 'default' | 'outline' | 'secondary'
 export type ExtensionDocPanelRenderReason = 'open' | 'refresh' | 'document-changed';
 
 export interface ExtensionDocPanelTextBlock {
+	id?: string;
 	type: 'text';
 	text: string;
 }
 
 export interface ExtensionDocPanelMarkdownBlock {
+	id?: string;
 	type: 'markdown';
 	markdown: string;
 }
@@ -151,11 +181,13 @@ export interface ExtensionDocPanelKeyValueItem {
 }
 
 export interface ExtensionDocPanelKeyValueListBlock {
+	id?: string;
 	type: 'keyValueList';
 	items: ExtensionDocPanelKeyValueItem[];
 }
 
 export interface ExtensionDocPanelNoticeBlock {
+	id?: string;
 	type: 'notice';
 	tone?: ExtensionDocPanelNoticeTone;
 	title?: string;
@@ -171,6 +203,7 @@ export interface ExtensionDocPanelButtonAction {
 }
 
 export interface ExtensionDocPanelButtonRowBlock {
+	id?: string;
 	type: 'buttonRow';
 	buttons: ExtensionDocPanelButtonAction[];
 }
@@ -191,6 +224,7 @@ export interface ExtensionDocPanelRenderContext {
 	documentId: string;
 	windowId?: number;
 	reason: ExtensionDocPanelRenderReason;
+	documentContext: ExtensionDocumentContextSnapshot | null;
 }
 
 export interface ExtensionTaskSubmitOptions {
@@ -262,6 +296,11 @@ export interface ExtensionHostRequestMap {
 	'documents.getById': {
 		args: [documentId: string];
 		result: ExtensionDocumentSnapshot;
+		permission: 'document.read';
+	};
+	'documents.getContext': {
+		args: [documentId?: string];
+		result: ExtensionDocumentContextSnapshot | null;
 		permission: 'document.read';
 	};
 	'documents.update': {
@@ -356,6 +395,7 @@ export interface ExtensionDocPanelInfo extends Omit<ExtensionDocPanelContributio
 	extensionId: string;
 	extensionName: string;
 	enabled: boolean;
+	iconAssetUri?: string;
 }
 
 export interface ExtensionCommandQuery {
@@ -450,6 +490,8 @@ export interface ExtensionDocPanelsChangedPayload {
 export interface ExtensionDocPanelContentChangedPayload {
 	documentId: string;
 	windowId?: number;
+	reason?: 'document' | 'context';
+	changedKeys?: Array<'markdown' | 'selection' | 'editorState'>;
 }
 
 export type MainToExtensionHostMessage =

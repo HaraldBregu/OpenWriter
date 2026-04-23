@@ -120,9 +120,18 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Bridge task system -> agent registry. Submit tasks with type: 'agent'
 	// and an { agentType, input } payload to dispatch any registered agent.
-	// The handler enriches the payload with apiKey, providerId, modelName.
+	// The handler enriches the payload with apiKey, providerId, modelName
+	// and — for the writer agent — the available skills catalog.
+	const skillsStoreService = container.get<SkillsStoreService>('skillsStoreService');
 	taskHandlerRegistry.register(
-		new AgentTaskHandler(agentRegistry, logger, serviceResolver, storeService, modelResolver)
+		new AgentTaskHandler(
+			agentRegistry,
+			logger,
+			serviceResolver,
+			storeService,
+			modelResolver,
+			skillsStoreService
+		)
 	);
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle

@@ -4,6 +4,7 @@ import type {
 	ExtensionDocPanelContent,
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelRenderContext,
+	ExtensionDocumentContextSnapshot,
 	ExtensionDocumentSnapshot,
 	ExtensionDocumentUpdate,
 	ExtensionManifest,
@@ -28,6 +29,7 @@ export interface ExtensionHostApi {
 	documents: {
 		getActive(): Promise<ExtensionDocumentSnapshot | null>;
 		getById(documentId: string): Promise<ExtensionDocumentSnapshot>;
+		getContext(documentId?: string): Promise<ExtensionDocumentContextSnapshot | null>;
 		update(documentId: string, patch: ExtensionDocumentUpdate): Promise<ExtensionDocumentSnapshot>;
 	};
 	tasks: {
@@ -102,6 +104,7 @@ export type {
 	ExtensionDocPanelNoticeTone,
 	ExtensionDocPanelRenderContext,
 	ExtensionDocPanelRenderReason,
+	ExtensionDocumentContextSnapshot,
 	ExtensionDocPageContribution,
 	ExtensionDocumentChangedEvent,
 	ExtensionDocumentSnapshot,
