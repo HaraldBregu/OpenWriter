@@ -48,7 +48,7 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutpu
 	async execute(
 		input: DemoTaskInput,
 		signal: AbortSignal,
-		reporter: ProgressReporter,
+		_reporter: ProgressReporter,
 		_metadata?: Record<string, unknown>,
 		recordEvent?: RecordEvent
 	): Promise<DemoTaskOutput> {
@@ -58,19 +58,15 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutpu
 		try {
 			for (const label of PHASES) {
 				await sleep(PHASE_DELAY_MS, signal);
-				reporter.progress(0, label);
-				recordEvent?.({ kind: 'phase', at: Date.now(), payload: { label } });
+				recordEvent?.({ kind: 'phase', at: Date.now(), payload: label });
 			}
 
 			const tokens = tokenize(LOREM);
 			let content = '';
-			for (let i = 0; i < tokens.length; i++) {
+			for (const token of tokens) {
 				await sleep(TOKEN_DELAY_MS, signal);
-				const token = tokens[i];
 				content += token;
-				recordEvent?.({ kind: 'text', at: Date.now(), payload: { text: token } });
-				const percent = Math.round(((i + 1) / tokens.length) * 100);
-				reporter.progress(percent, 'Writing...');
+				recordEvent?.({ kind: 'text', at: Date.now(), payload: token });
 			}
 
 			this.logger?.info(LOG_SOURCE, 'Demo task completed', {
