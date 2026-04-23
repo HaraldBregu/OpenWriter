@@ -277,7 +277,6 @@ function PageContent(): ReactElement {
 
 	const editorActions = useEditor(editorRef);
 
-	const sessionIdRef = useRef<string | null>(null);
 	const [phaseLabel, setPhaseLabel] = useState<string | null>(null);
 
 	const editorInsert = useEditorStreamInsert();
