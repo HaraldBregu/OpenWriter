@@ -35,7 +35,7 @@ import {
 	RagAgent,
 	OcrAgent,
 	TranscriptionAgent,
-	WriterAgent,
+	TextWriterAgent,
 } from './agents';
 import { DemoTaskHandler, AgentTaskHandler, TranscriptionTaskHandler } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
