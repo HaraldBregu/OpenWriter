@@ -219,6 +219,9 @@ export const ExtensionChannels = {
 	getDocPanels: 'extensions:get-doc-panels',
 	getDocPanelContent: 'extensions:get-doc-panel-content',
 	refreshDocPanel: 'extensions:refresh-doc-panel',
+	getPreferences: 'extensions:get-preferences',
+	setPreference: 'extensions:set-preference',
+	installLocal: 'extensions:install-local',
 	setEnabled: 'extensions:set-enabled',
 	reload: 'extensions:reload',
 	setActiveDocument: 'extensions:set-active-document',
@@ -376,6 +379,21 @@ export interface InvokeChannelMap {
 	[ExtensionChannels.refreshDocPanel]: {
 		args: [panelId: string, documentId: string];
 		result: ExtensionDocPanelContent;
+	};
+	[ExtensionChannels.getPreferences]: {
+		args: [extensionId: string];
+		result: {
+			definitions: import('../../packages/openwriter-extension-types/src/index').ExtensionPreferenceContribution[];
+			values: Record<string, unknown>;
+		};
+	};
+	[ExtensionChannels.setPreference]: {
+		args: [extensionId: string, key: string, value: unknown];
+		result: void;
+	};
+	[ExtensionChannels.installLocal]: {
+		args: [];
+		result: ExtensionRuntimeInfo | null;
 	};
 	[ExtensionChannels.setEnabled]: {
 		args: [extensionId: string, enabled: boolean];

@@ -160,7 +160,7 @@ The right-hand sidebar can host:
 
 Extension panels receive a typed document context snapshot (markdown,
 selection, active marks) and can contribute their own UI alongside the
-editor. See [EXTENSIONS.md](./EXTENSIONS.md).
+editor. See [../extensions/README.md](../extensions/README.md).
 
 ## Images In The Document
 
