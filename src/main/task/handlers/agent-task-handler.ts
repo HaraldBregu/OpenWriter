@@ -199,8 +199,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 			modelName: model.modelId,
 		};
 
-		if (agentType === WRITER_AGENT_TYPE && !base.skills) {
-			enriched.skills = await this.loadSkillsForWriter();
+		if (agentType === TEXT_WRITER_AGENT_TYPE && !base.skills) {
+			enriched.skills = await this.loadSkillsForTextWriter();
 		}
 
 		return enriched as unknown as T;
