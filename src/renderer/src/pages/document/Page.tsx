@@ -388,24 +388,12 @@ function PageContent(): ReactElement {
 			if (!id || assistantIsRunning) return;
 
 			const { from, to } = editor.state.selection;
-			const doc = editor.state.doc;
-			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
-			const textAfter = editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
-			const selectedText =
-				from === to ? '' : (editor.markdown?.serialize(doc.cut(from, to).toJSON()) ?? '');
-
-			const raw = buildEditorAgentRaw({
-				textBefore,
-				selectedText,
-				textAfter,
-				prompt: payload.prompt,
-			});
 
 			editorActions.showLoading();
 			editorActions.disable();
 			editorInsert.begin(from, to);
 
-			const submitted = await submitAssistantTask({ raw, posFrom: from, posTo: to });
+			const submitted = await submitAssistantTask(payload.prompt);
 
 			if (!submitted) {
 				editorInsert.revert();
