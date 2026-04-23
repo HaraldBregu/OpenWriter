@@ -95,7 +95,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 						delay={100}
 						closeDelay={150}
 						render={
-							<Button variant="ghost" size="icon" aria-label="Assistant">
+							<Button variant="ghost" size="icon" aria-label="Assistant" className="ml-auto">
 								<Sparkles className="h-3.5 w-3.5" />
 							</Button>
 						}
