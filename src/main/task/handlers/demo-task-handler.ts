@@ -5,11 +5,7 @@ export interface DemoTaskInput {
 	prompt: string;
 }
 
-export interface DemoTaskOutput {
-	content: string;
-}
-
-const STATE_DELAY_MS = 300;
+const STATE_DELAY_MS = 500;
 const LOG_SOURCE = 'DemoTaskHandler';
 
 function sleep(ms: number, signal: AbortSignal): Promise<void> {
@@ -30,45 +26,29 @@ function sleep(ms: number, signal: AbortSignal): Promise<void> {
 	});
 }
 
-export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutput> {
+export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 	readonly type = 'demo';
 
 	constructor(private readonly logger?: LoggerService) {}
 
-	async execute(
-		input: DemoTaskInput,
-		signal: AbortSignal,
-		emit: Emit
-	): Promise<DemoTaskOutput> {
+	async execute(input: DemoTaskInput, signal: AbortSignal, emit: Emit): Promise<string> {
 		this.logger?.info(LOG_SOURCE, 'Demo task started', { promptLength: input.prompt.length });
 
-		emit({ state: 'queued', data: {}, error: null });
+		emit({ state: 'queued', data: 'queued' });
 		await sleep(STATE_DELAY_MS, signal);
 
-		emit({ state: 'started', data: {}, error: null });
+		emit({ state: 'started', data: 'started' });
 		await sleep(STATE_DELAY_MS, signal);
 
-		emit({ state: 'running', data: { percent: 50, message: 'working' }, error: null });
+		emit({ state: 'running', data: 'running' });
 		await sleep(STATE_DELAY_MS, signal);
 
-		const content = `demo: ${input.prompt}`;
-
-		emit({
-			state: 'completed',
-			data: { result: { content }, durationMs: STATE_DELAY_MS * 3 },
-			error: null,
-		});
+		const result = `demo: ${input.prompt}`;
+		emit({ state: 'finished', data: result });
 		await sleep(STATE_DELAY_MS, signal);
 
-		emit({ state: 'cancelled', data: {}, error: null });
-		await sleep(STATE_DELAY_MS, signal);
+		emit({ state: 'cancelled', data: 'cancelled' });
 
-		emit({
-			state: 'error',
-			data: null,
-			error: { message: 'demo error example', code: 'DEMO_ERROR' },
-		});
-
-		return { content };
+		return result;
 	}
 }
