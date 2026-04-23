@@ -6,7 +6,15 @@ export interface DemoTaskInput {
 }
 
 const STATE_DELAY_MS = 500;
+const TOKEN_DELAY_MS = 80;
 const LOG_SOURCE = 'DemoTaskHandler';
+
+const LOREM =
+	'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+
+function tokenize(text: string): string[] {
+	return text.match(/\S+\s*/g) ?? [];
+}
 
 function sleep(ms: number, signal: AbortSignal): Promise<void> {
 	return new Promise((resolve, reject) => {
