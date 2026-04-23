@@ -16,7 +16,6 @@ import {
 	FileText,
 	Languages,
 	ArrowRight,
-	MessageSquare,
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import { Button } from '@/components/ui/Button';
