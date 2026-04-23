@@ -99,12 +99,4 @@ export interface ActiveTask {
 	 * Included in every TaskEvent for this task.
 	 */
 	metadata?: Record<string, unknown>;
-
-	/**
-	 * Ordered log of typed events emitted by the handler during execution.
-	 * Handlers append via the `recordEvent` sink; the executor also
-	 * forwards each event to the renderer as a `task:event` running
-	 * payload. Present only for handlers that emit events (agent/demo).
-	 */
-	events?: AgentEvent[];
 }
