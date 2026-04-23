@@ -38,6 +38,7 @@ const HOST_PERMISSIONS: {
 	'storage.get': null,
 	'storage.set': null,
 	'storage.delete': null,
+	'preferences.get': null,
 };
 
 export interface ExtensionApiGatewayOptions {
@@ -104,6 +105,8 @@ export class ExtensionApiGateway {
 				await this.deleteStorageValue(extension.id, key);
 				return undefined as ExtensionHostRequestMap[TMethod]['result'];
 			}
+			case 'preferences.get':
+				return this.getPreferences(extension) as ExtensionHostRequestMap[TMethod]['result'];
 		}
 	}
 
@@ -300,5 +303,22 @@ export class ExtensionApiGateway {
 			return;
 		}
 		await this.writeStorage(extensionId, data);
+	}
+
+	private getPreferences(extension: ExtensionInfo): Record<string, unknown> {
+		const stored = this.options.store.getExtensionPreferences(extension.id);
+		const values: Record<string, unknown> = {};
+
+		for (const preference of extension.preferences) {
+			if (stored[preference.id] !== undefined) {
+				values[preference.id] = stored[preference.id];
+				continue;
+			}
+			if (preference.default !== undefined) {
+				values[preference.id] = preference.default;
+			}
+		}
+
+		return values;
 	}
 }

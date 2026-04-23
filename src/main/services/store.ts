@@ -14,6 +14,7 @@ export interface StoreSchema {
 	services: Service[];
 	agents: AgentSettings[];
 	extensionEnabled: Record<string, boolean>;
+	extensionPreferences: Record<string, Record<string, unknown>>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
@@ -33,6 +34,7 @@ const DEFAULTS: StoreSchema = {
 		},
 	],
 	extensionEnabled: {},
+	extensionPreferences: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
@@ -291,6 +293,23 @@ export class StoreService {
 			[extensionId]: enabled,
 		};
 		this.store.set('extensionEnabled', next);
+	}
+
+	getExtensionPreferences(extensionId: string): Record<string, unknown> {
+		const stored = this.store.get('extensionPreferences');
+		const values = stored[extensionId];
+		return isRecord(values) ? { ...values } : {};
+	}
+
+	setExtensionPreference(extensionId: string, key: string, value: unknown): void {
+		const stored = this.store.get('extensionPreferences');
+		this.store.set('extensionPreferences', {
+			...stored,
+			[extensionId]: {
+				...(isRecord(stored[extensionId]) ? stored[extensionId] : {}),
+				[key]: value,
+			},
+		});
 	}
 
 	getCurrentWorkspace(): string | null {

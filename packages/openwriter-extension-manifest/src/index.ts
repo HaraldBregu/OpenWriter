@@ -8,6 +8,8 @@ import {
 	type ExtensionDocPanelContribution,
 	type ExtensionManifest,
 	type ExtensionPermission,
+	type ExtensionPreferenceContribution,
+	type ExtensionPreferenceOption,
 	EXTENSION_CAPABILITIES,
 	EXTENSION_PERMISSIONS,
 	isCommandActivationEvent,
@@ -21,6 +23,7 @@ export interface ParsedExtensionManifest {
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 const EXTENSION_ID_PATTERN = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
+const PREFERENCE_TYPES = ['textfield', 'password', 'checkbox', 'dropdown', 'file', 'directory'] as const;
 
 function asString(value: unknown): string | null {
 	return typeof value === 'string' ? value.trim() : null;
@@ -123,6 +126,53 @@ function normalizeDocPages(value: unknown): ExtensionDocPageContribution[] {
 		.filter((page) => page.id.length > 0 && page.title.length > 0);
 }
 
+function normalizePreferenceOptions(value: unknown): ExtensionPreferenceOption[] {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.filter(isRecord)
+		.map((entry) => {
+			const label = asString(entry.label) ?? '';
+			const optionValue = asString(entry.value) ?? '';
+			return { label, value: optionValue };
+		})
+		.filter((option) => option.label.length > 0 && option.value.length > 0);
+}
+
+function normalizePreferences(value: unknown): ExtensionPreferenceContribution[] {
+	if (!Array.isArray(value)) return [];
+
+	return value
+		.filter(isRecord)
+		.map((entry) => {
+			const id = asString(entry.id) ?? '';
+			const title = asString(entry.title) ?? '';
+			const description = asString(entry.description) ?? undefined;
+			const type = PREFERENCE_TYPES.includes(entry.type as (typeof PREFERENCE_TYPES)[number])
+				? (entry.type as ExtensionPreferenceContribution['type'])
+				: 'textfield';
+			const required = asBoolean(entry.required) ?? false;
+			const placeholder = asString(entry.placeholder) ?? undefined;
+			const defaultValue =
+				typeof entry.default === 'string' || typeof entry.default === 'boolean'
+					? entry.default
+					: undefined;
+			const options = normalizePreferenceOptions(entry.options);
+
+			return {
+				id,
+				title,
+				description,
+				type,
+				required,
+				default: defaultValue,
+				placeholder,
+				...(options.length > 0 ? { options } : {}),
+			};
+		})
+		.filter((preference) => preference.id.length > 0 && preference.title.length > 0);
+}
+
 function validateRelativeMain(main: string): string | null {
 	if (!main) return 'Missing "main" entrypoint.';
 	if (path.isAbsolute(main)) return '"main" must be relative to the extension root.';
@@ -185,6 +235,7 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 			commands: normalizeCommands(input.contributes && isRecord(input.contributes) ? input.contributes.commands : []),
 			docPanels: normalizeDocPanels(input.contributes && isRecord(input.contributes) ? input.contributes.docPanels : []),
 			docPages: normalizeDocPages(input.contributes && isRecord(input.contributes) ? input.contributes.docPages : []),
+			preferences: normalizePreferences(input.contributes && isRecord(input.contributes) ? input.contributes.preferences : []),
 		},
 	};
 
@@ -218,6 +269,7 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 	const commands = manifest.contributes?.commands ?? [];
 	const docPanels = manifest.contributes?.docPanels ?? [];
 	const docPages = manifest.contributes?.docPages ?? [];
+	const preferences = manifest.contributes?.preferences ?? [];
 	const commandIds = new Set<string>();
 	for (const command of commands) {
 		if (!EXTENSION_ID_PATTERN.test(command.id)) {
@@ -262,6 +314,34 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 		docPageIds.add(page.id);
 	}
 
+	const preferenceIds = new Set<string>();
+	for (const preference of preferences) {
+		if (!EXTENSION_ID_PATTERN.test(preference.id)) {
+			errors.push(`Preference "${preference.id}" has an invalid id.`);
+		}
+		if (preferenceIds.has(preference.id)) {
+			errors.push(`Duplicate preference id "${preference.id}".`);
+		}
+		preferenceIds.add(preference.id);
+
+		if (preference.type === 'dropdown' && (!preference.options || preference.options.length === 0)) {
+			errors.push(`Dropdown preference "${preference.id}" must declare at least one option.`);
+		}
+		if (preference.type === 'checkbox' && preference.default !== undefined && typeof preference.default !== 'boolean') {
+			errors.push(`Checkbox preference "${preference.id}" default must be a boolean.`);
+		}
+		if (preference.type !== 'checkbox' && preference.default !== undefined && typeof preference.default !== 'string') {
+			errors.push(`Preference "${preference.id}" default must be a string.`);
+		}
+		if (
+			preference.type === 'dropdown' &&
+			typeof preference.default === 'string' &&
+			!preference.options?.some((option) => option.value === preference.default)
+		) {
+			errors.push(`Dropdown preference "${preference.id}" default must match one of its options.`);
+		}
+	}
+
 	for (const activationEvent of manifest.activationEvents ?? []) {
 		if (isCommandActivationEvent(activationEvent)) {
 			const commandId = activationEvent.slice('onCommand:'.length);
@@ -294,6 +374,6 @@ function createFallbackManifest(): ExtensionManifest {
 		capabilities: [],
 		permissions: [],
 		activationEvents: [],
-		contributes: { commands: [], docPanels: [], docPages: [] },
+		contributes: { commands: [], docPanels: [], docPages: [], preferences: [] },
 	};
 }
