@@ -366,45 +366,6 @@ function PageContent(): ReactElement {
 		});
 	}, []);
 
-	// Mount-time recovery: find any existing task tied to this document.
-	const ready = loaded && editor != null;
-	useEffect(() => {
-		if (!id || !ready) return;
-		if (typeof window.task?.findForDocument !== 'function') return;
-		let cancelled = false;
-
-		(async () => {
-			const lookup = await window.task.findForDocument(id);
-			if (cancelled || !lookup.success || !lookup.data) return;
-			const found = lookup.data;
-			const h = taskHandlersRef.current;
-
-			if (isActiveTaskState(found.state)) {
-				setActiveTaskId(found.taskId);
-				if (typeof window.task.getSnapshot === 'function') {
-					const snap = await window.task.getSnapshot(found.taskId);
-					if (cancelled) return;
-					if (snap.success && snap.data) {
-						h.handleRecovery(snap.data.fullContent, snap.data.metadata);
-						setPhaseLabel(labelForPhase(snap.data.phase));
-					}
-				}
-				return;
-			}
-
-			if (found.state === 'completed' && found.result) {
-				if (isTaskApplied(found.taskId)) return;
-				h.handleRecovery('', found.metadata);
-				h.handleCompleted(found.result.content);
-				markTaskApplied(found.taskId);
-			}
-		})();
-
-		return () => {
-			cancelled = true;
-		};
-	}, [id, ready]);
-
 	const submitAssistantTask = useCallback(
 		async (args: {
 			raw: string;
