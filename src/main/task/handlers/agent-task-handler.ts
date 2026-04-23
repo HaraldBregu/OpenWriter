@@ -75,7 +75,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 	): Promise<AgentCompletedOutput> {
 		const agent = this.agents.get(input.agentType);
 		const startedAt = Date.now();
-		const enrichedInput = this.enrichInput(input.agentType, input.input);
+		const enrichedInput = await this.enrichInput(input.agentType, input.input);
 
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
