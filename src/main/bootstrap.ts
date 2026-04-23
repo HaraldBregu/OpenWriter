@@ -174,6 +174,16 @@ export function bootstrapServices(): BootstrapResult {
 		)
 	);
 
+	taskHandlerRegistry.register(
+		new TextGeneratorV1TaskHandler(
+			agentRegistry,
+			logger,
+			serviceResolver,
+			modelResolver,
+			streamLogger
+		)
+	);
+
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
