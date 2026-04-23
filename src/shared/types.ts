@@ -255,14 +255,12 @@ export interface TaskQueueStatus {
  *     - `completed`: `{ result: unknown, durationMs: number }`
  *     - `error`: `null`
  * - `error`    — error payload; null on success events.
- * - `metadata` — caller-supplied metadata attached at submit time; matches TaskSubmitPayload.metadata.
  */
 export interface TaskEvent {
 	state: TaskState;
 	taskId: string;
 	data: unknown;
 	error: unknown;
-	metadata?: Record<string, unknown>;
 }
 
 /**
