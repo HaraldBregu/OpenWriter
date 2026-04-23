@@ -731,6 +731,36 @@ function isActiveTaskState(state: string): boolean {
 	return state === 'queued' || state === 'started' || state === 'running';
 }
 
+// Tracks which agent task results have already been applied to the editor in
+// this window session. Prevents re-application when the document is remounted
+// and `findForDocument` returns a task that's still within the executor's TTL.
+const APPLIED_TASKS_STORAGE_KEY = 'document.appliedTaskIds';
+
+function readAppliedTaskIds(): Set<string> {
+	try {
+		const raw = window.sessionStorage.getItem(APPLIED_TASKS_STORAGE_KEY);
+		if (!raw) return new Set();
+		const parsed = JSON.parse(raw);
+		return Array.isArray(parsed) ? new Set(parsed) : new Set();
+	} catch {
+		return new Set();
+	}
+}
+
+function isTaskApplied(taskId: string): boolean {
+	return readAppliedTaskIds().has(taskId);
+}
+
+function markTaskApplied(taskId: string): void {
+	try {
+		const set = readAppliedTaskIds();
+		set.add(taskId);
+		window.sessionStorage.setItem(APPLIED_TASKS_STORAGE_KEY, JSON.stringify([...set]));
+	} catch {
+		// sessionStorage unavailable; recovery may re-apply but no other harm.
+	}
+}
+
 function labelForPhase(phase: AgentPhase): string {
 	switch (phase) {
 		case 'thinking':
