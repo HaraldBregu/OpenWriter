@@ -20,6 +20,15 @@ export type {
 	TextWriterSkill,
 	TextWriterSkillSelection,
 } from './text-writer';
+export { TextGeneratorV2Agent } from './text-generator-v2';
+export type {
+	TextGeneratorV2AgentInput,
+	TextGeneratorV2AgentOutput,
+	TextGeneratorV2Intent,
+	TextGeneratorV2IntentClassification,
+	TextGeneratorV2ParsedInput,
+	TextGeneratorV2Target,
+} from './text-generator-v2';
 export {
 	TextGeneratorV1Agent,
 	runEditorAgent,

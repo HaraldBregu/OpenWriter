@@ -34,6 +34,7 @@ import {
 	AssistantAgent,
 	RagAgent,
 	OcrAgent,
+	TextGeneratorV2Agent,
 	TranscriptionAgent,
 	TextWriterAgent,
 } from './agents';
@@ -112,6 +113,7 @@ export function bootstrapServices(): BootstrapResult {
 	const agentRegistry = new AgentRegistry();
 	agentRegistry.register(new AssistantAgent());
 	agentRegistry.register(new TextWriterAgent());
+	agentRegistry.register(new TextGeneratorV2Agent());
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
 	agentRegistry.register(new TranscriptionAgent());

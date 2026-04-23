@@ -33,6 +33,15 @@ export const GPT_5_4_MINI: ModelInfo = {
 	maxOutputTokens: 128000,
 };
 
+export const GPT_5_2: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'gpt-5.2',
+	name: 'GPT-5.2',
+	type: 'multimodal',
+	contextWindow: null,
+	maxOutputTokens: null,
+};
+
 export const GPT_4_1: ModelInfo = {
 	providerId: 'openai',
 	modelId: 'gpt-4.1',
@@ -140,6 +149,7 @@ export const CLAUDE_HAIKU_4_5: ModelInfo = {
 export const AI_MODELS: readonly ModelInfo[] = [
 	GPT_5_4,
 	GPT_5_4_MINI,
+	GPT_5_2,
 	GPT_4_1,
 	O3,
 	O4_MINI,

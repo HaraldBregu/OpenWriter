@@ -32,6 +32,13 @@ const DEFAULTS: StoreSchema = {
 				image: DEFAULT_IMAGE_MODEL_ID,
 			},
 		},
+		{
+			id: 'text-generator-v2',
+			name: 'Text Generator V2',
+			models: {
+				text: 'gpt-5.2',
+			},
+		},
 	],
 	extensionEnabled: {},
 	extensionPreferences: {},
@@ -146,13 +153,7 @@ function normalizeAgents(value: unknown): AgentSettings[] {
 	const normalized = Array.isArray(value)
 		? value.map(normalizeAgentInput).filter((agent): agent is AgentSettings => agent !== null)
 		: [];
-	const assistant = normalized.find((agent) => agent.id === 'assistant');
-
-	if (!assistant) {
-		return DEFAULTS.agents.map(cloneAgent);
-	}
-
-	return normalized.map((agent) =>
+	const next = normalized.map((agent) =>
 		agent.id === 'assistant'
 			? {
 					...agent,
@@ -164,6 +165,14 @@ function normalizeAgents(value: unknown): AgentSettings[] {
 				}
 			: agent
 	);
+
+	for (const fallback of DEFAULTS.agents) {
+		if (!next.some((agent) => agent.id === fallback.id)) {
+			next.push(cloneAgent(fallback));
+		}
+	}
+
+	return next;
 }
 
 export class StoreService {
