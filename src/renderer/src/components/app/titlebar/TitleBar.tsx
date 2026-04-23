@@ -255,19 +255,6 @@ export const TitleBar = React.memo(function TitleBar({
 					className="flex items-center h-full mr-3"
 					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
 				>
-					<button
-						type="button"
-						onClick={() => toggleSidebar('builtin:agentic')}
-						className={sidebarToggleButtonClass(activeSidebar === 'builtin:agentic')}
-						title={t('titleBar.toggleAgenticSidebar')}
-						aria-label={t('titleBar.toggleAgenticSidebar')}
-						aria-pressed={activeSidebar === 'builtin:agentic'}
-					>
-						<Bot
-							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
-							strokeWidth={1.5}
-						/>
-					</button>
 					{extensionPanels.map((panel) => (
 						<button
 							key={panel.id}
