@@ -1,3 +1,10 @@
+import type { TaskEvent } from '../../shared/types';
+
+/**
+ * Emit a TaskEvent to the renderer. `taskId` is stamped by the executor.
+ */
+export type Emit = (event: Omit<TaskEvent, 'taskId'>) => void;
+
 /**
  * Task handler interface for implementing background operations.
  * Uses Strategy pattern to encapsulate task-specific behavior.
@@ -27,7 +34,8 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 	 *
 	 * @param input - Task input data
 	 * @param signal - Abort signal for cancellation
+	 * @param emit - Sink for custom TaskEvents from the handler
 	 * @returns Promise resolving to task output
 	 */
-	execute(input: TInput, signal: AbortSignal): Promise<TOutput>;
+	execute(input: TInput, signal: AbortSignal, emit: Emit): Promise<TOutput>;
 }
