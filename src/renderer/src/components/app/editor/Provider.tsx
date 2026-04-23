@@ -21,7 +21,6 @@ export function Provider({
 	editor,
 	containerRef,
 	onInsertContent,
-	onOpenChat,
 	onAssistantAction,
 	onImageInsert,
 	children,
@@ -55,7 +54,6 @@ export function Provider({
 			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
-			onOpenChat,
 			onAssistantAction,
 		}),
 		[
@@ -65,7 +63,6 @@ export function Provider({
 			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
-			onOpenChat,
 			onAssistantAction,
 		]
 	);
