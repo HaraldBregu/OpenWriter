@@ -178,6 +178,11 @@ export const OCR_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type =
 export const DEFAULT_OCR_MODEL: ModelInfo | null =
 	OCR_MODELS.find((m) => m.modelId === DEFAULT_OCR_MODEL_ID) ?? null;
 
+export const AUDIO_MODELS: readonly ModelInfo[] = AI_MODELS.filter((m) => m.type === 'audio');
+
+export const DEFAULT_TRANSCRIPTION_MODEL: ModelInfo | null =
+	AUDIO_MODELS.find((m) => m.modelId === DEFAULT_TRANSCRIPTION_MODEL_ID) ?? null;
+
 // ---------------------------------------------------------------------------
 // Query helpers
 // ---------------------------------------------------------------------------
