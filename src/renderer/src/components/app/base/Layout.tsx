@@ -476,11 +476,17 @@ function Container({ children }: LayoutProps) {
 							<SidebarMenu>
 								{[
 									{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
-									{ title: t('appLayout.video', 'Video'), icon: Video, items: [] },
-									{ title: t('appLayout.audio', 'Audio'), icon: FileAudio, items: [] },
+									{
+										title: t('appLayout.media', 'Media'),
+										icon: Film,
+										items: [
+											{ title: t('appLayout.video', 'Video') },
+											{ title: t('appLayout.audio', 'Audio') },
+										],
+									},
 									{
 										title: t('appLayout.knowledgeBase'),
-										icon: Database,
+										icon: BookOpen,
 										items: [
 											{ title: t('appLayout.content'), url: '/resources/content' },
 											{ title: t('appLayout.data'), url: '/resources/data' },
