@@ -40,6 +40,24 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 		emit({ state: 'started', data: 'started' });
 		await sleep(STATE_DELAY_MS, signal);
 
+		emit({ state: 'started', data: 'Reasoning...' });
+		await sleep(STATE_DELAY_MS, signal);
+
+		emit({ state: 'started', data: 'Routing request...' });
+		await sleep(STATE_DELAY_MS, signal);
+
+		emit({ state: 'started', data: 'Deciding intent...' });
+		await sleep(STATE_DELAY_MS, signal);
+
+		emit({ state: 'started', data: 'Selecting skill...' });
+		await sleep(STATE_DELAY_MS, signal);
+
+		emit({ state: 'started', data: 'Calling tool...' });
+		await sleep(STATE_DELAY_MS, signal);
+
+		emit({ state: 'started', data: 'Synthesizing answer...' });
+		await sleep(STATE_DELAY_MS, signal);
+
 		emit({ state: 'running', data: 'running' });
 		await sleep(STATE_DELAY_MS, signal);
 
