@@ -471,7 +471,7 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarGroup>
+						<SidebarGroup className="mt-auto">
 							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 							<SidebarMenu>
 								{[
