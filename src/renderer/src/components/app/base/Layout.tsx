@@ -478,8 +478,8 @@ function Container({ children }: LayoutProps) {
 										title: t('appLayout.media', 'Media'),
 										icon: Film,
 										items: [
-											{ title: t('appLayout.video', 'Video') },
-											{ title: t('appLayout.audio', 'Audio') },
+											{ title: t('appLayout.video', 'Video'), comingSoon: true },
+											{ title: t('appLayout.audio', 'Audio'), comingSoon: true },
 										],
 									},
 									{
@@ -507,10 +507,20 @@ function Container({ children }: LayoutProps) {
 													{item.items.map((subItem) => (
 														<SidebarMenuSubItem key={subItem.title}>
 															<SidebarMenuSubButton
-																render={subItem.url ? <Link to={subItem.url} /> : undefined}
+																render={
+																	subItem.url && !subItem.comingSoon ? (
+																		<Link to={subItem.url} />
+																	) : undefined
+																}
 																isActive={subItem.url ? location.pathname === subItem.url : false}
+																aria-disabled={subItem.comingSoon ? true : undefined}
 															>
 																<span>{subItem.title}</span>
+																{subItem.comingSoon && (
+																	<span className="ml-auto text-[10px] uppercase tracking-wide text-muted-foreground">
+																		{t('appLayout.comingSoon', 'Soon')}
+																	</span>
+																)}
 															</SidebarMenuSubButton>
 														</SidebarMenuSubItem>
 													))}
