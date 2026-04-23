@@ -357,15 +357,14 @@ export class TaskExecutor implements Disposable {
 
 			const durationMs = Date.now() - task.startedAt!;
 
-			task.status = 'completed';
+			task.status = 'finished';
 			task.completedAt = Date.now();
 			task.result = result;
 
 			this.send(windowId, 'task:event', {
-				state: 'completed',
+				state: 'finished',
 				taskId,
-				data: { result, durationMs },
-				error: null,
+				data: typeof result === 'string' ? result : JSON.stringify(result),
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
