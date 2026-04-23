@@ -43,6 +43,7 @@ import {
 	DemoTaskHandler,
 	AgentTaskHandler,
 	TranscriptionTaskHandler,
+	TextGeneratorV1TaskHandler,
 	TextGeneratorV2TaskHandler,
 } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
