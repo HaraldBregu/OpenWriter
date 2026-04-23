@@ -378,33 +378,21 @@ export class TaskExecutor implements Disposable {
 			// Task may have been cancelled via cancel()
 			if (!this.activeTasks.has(taskId)) return;
 
+			const message = err instanceof Error ? err.message : String(err);
+			task.status = 'cancelled';
+			task.completedAt = Date.now();
+			task.error = message;
+
+			this.send(windowId, 'task:event', {
+				state: 'cancelled',
+				taskId,
+				data: message,
+			} satisfies TaskEvent);
+
 			if (err instanceof Error && err.name === 'AbortError') {
-				task.status = 'cancelled';
-				task.completedAt = Date.now();
-
-				this.send(windowId, 'task:event', {
-					state: 'cancelled',
-					taskId,
-					data: {},
-					error: null,
-				} satisfies TaskEvent);
-
 				this.eventBus.emit('task:cancelled', { taskId, taskType: type, windowId });
 			} else {
-				const message = err instanceof Error ? err.message : String(err);
 				const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR';
-
-				task.status = 'error';
-				task.completedAt = Date.now();
-				task.error = message;
-
-				this.send(windowId, 'task:event', {
-					state: 'error',
-					taskId,
-					data: null,
-					error: { message, code },
-				} satisfies TaskEvent);
-
 				this.eventBus.emit('task:failed', {
 					taskId,
 					taskType: type,
