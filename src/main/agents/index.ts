@@ -31,6 +31,14 @@ export type {
 } from './rag';
 export { OcrAgent } from './ocr';
 export type { OcrAgentInput, OcrAgentOutput, OcrPage, OcrSourceKind } from './ocr';
+export { TranscriptionAgent } from './transcription';
+export type {
+	TranscriptionAgentInput,
+	TranscriptionAgentOutput,
+	TranscriptionSegment,
+	TranscriptionSourceKind,
+	TranscriptionResponseFormat,
+} from './transcription';
 export {
 	SkillRegistry,
 	SkillError,
