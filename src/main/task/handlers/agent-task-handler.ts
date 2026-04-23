@@ -102,6 +102,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 					if (delta) {
 						tokens += 1;
 						reporter.progress(rampPct(tokens), 'response');
+						process.stdout.write(delta);
 						recordEvent?.({
 							kind: 'delta',
 							at: Date.now(),
