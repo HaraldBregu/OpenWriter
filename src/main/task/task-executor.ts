@@ -331,13 +331,17 @@ export class TaskExecutor implements Disposable {
 			taskId,
 			data: {},
 			error: null,
-			metadata: task.metadata,
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
 
 		try {
 			const handler = this.registry.get(type);
+
+			const emit: Emit = (event) => {
+				if (!this.activeTasks.has(taskId)) return;
+				this.send(windowId, 'task:event', { ...event, taskId } satisfies TaskEvent);
+			};
 
 			const result = await runWithTaskExecutionContext(
 				{
@@ -347,7 +351,7 @@ export class TaskExecutor implements Disposable {
 					windowId,
 					metadata,
 				},
-				() => handler.execute(input, controller.signal)
+				() => handler.execute(input, controller.signal, emit)
 			);
 
 			// Task may have been cancelled during execution
