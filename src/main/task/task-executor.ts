@@ -21,7 +21,7 @@ import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { TaskHandlerRegistry } from './task-handler-registry';
 import type { TaskEvent } from './task-events';
-import type { ProgressReporter, RecordEvent, EmitRaw } from './task-handler';
+import type { ProgressReporter, RecordEvent } from './task-handler';
 import type { AgentEvent } from '../agents/core/agent';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type {

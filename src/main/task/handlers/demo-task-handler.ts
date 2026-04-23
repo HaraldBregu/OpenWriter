@@ -1,4 +1,4 @@
-import type { TaskHandler, ProgressReporter, RecordEvent } from '../task-handler';
+import type { TaskHandler } from '../task-handler';
 import type { LoggerService } from '../../services/logger';
 
 export interface DemoTaskInput {
@@ -9,7 +9,6 @@ export interface DemoTaskOutput {
 	content: string;
 }
 
-const PHASES = ['Reasoning...', 'Checking intent of request...', 'Picking skill...'];
 const PHASE_DELAY_MS = 500;
 const TOKEN_DELAY_MS = 100;
 const LOG_SOURCE = 'DemoTaskHandler';
@@ -45,28 +44,18 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, DemoTaskOutpu
 
 	constructor(private readonly logger?: LoggerService) {}
 
-	async execute(
-		input: DemoTaskInput,
-		signal: AbortSignal,
-		_reporter: ProgressReporter,
-		_metadata?: Record<string, unknown>,
-		recordEvent?: RecordEvent
-	): Promise<DemoTaskOutput> {
+	async execute(input: DemoTaskInput, signal: AbortSignal): Promise<DemoTaskOutput> {
 		const startedAt = Date.now();
 		this.logger?.info(LOG_SOURCE, 'Demo task started', { promptLength: input.prompt.length });
 
 		try {
-			for (const label of PHASES) {
-				await sleep(PHASE_DELAY_MS, signal);
-				recordEvent?.({ kind: 'phase', at: Date.now(), payload: label });
-			}
+			await sleep(PHASE_DELAY_MS, signal);
 
 			const tokens = tokenize(LOREM);
 			let content = '';
 			for (const token of tokens) {
 				await sleep(TOKEN_DELAY_MS, signal);
 				content += token;
-				recordEvent?.({ kind: 'text', at: Date.now(), payload: token });
 			}
 
 			this.logger?.info(LOG_SOURCE, 'Demo task completed', {
