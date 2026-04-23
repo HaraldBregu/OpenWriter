@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { app } from 'electron';
 import type { Disposable, ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
@@ -18,6 +19,7 @@ import {
 	type ExtensionCommandQuery,
 	type ExtensionDocPanelContent,
 	type ExtensionDocPanelContentChangedPayload,
+	type ExtensionDocumentContextSnapshot,
 	type ExtensionDocPanelInfo,
 	type ExtensionDocPanelsChangedPayload,
 	type ExtensionEventType,
@@ -44,6 +46,11 @@ interface ManagedExtensionRecord {
 	activationDeferred: Deferred<void> | null;
 	pendingCommandResults: Map<string, Deferred<ExtensionCommandExecutionResult>>;
 	pendingDocPanelResults: Map<string, Deferred<ExtensionDocPanelContent>>;
+}
+
+interface DocumentContextEntry {
+	documentId: string;
+	context: ExtensionDocumentContextSnapshot;
 }
 
 interface Deferred<T> {
@@ -75,6 +82,7 @@ export interface ExtensionManagerOptions {
 export class ExtensionManager implements Disposable {
 	private readonly records = new Map<string, ManagedExtensionRecord>();
 	private readonly activeDocumentsByWindow = new Map<number, string | null>();
+	private readonly documentContextsByWindow = new Map<number, DocumentContextEntry>();
 	private readonly gateway: ExtensionApiGateway;
 	private initialized = false;
 	private subscriptionsBound = false;
@@ -87,6 +95,8 @@ export class ExtensionManager implements Disposable {
 			windowContextManager: options.windowContextManager,
 			taskExecutor: options.taskExecutor,
 			getActiveDocumentId: (windowId?: number) => this.getActiveDocumentId(windowId),
+			getDocumentContext: (documentId: string, windowId?: number) =>
+				this.getDocumentContext(documentId, windowId),
 		});
 	}
 
@@ -198,6 +208,10 @@ export class ExtensionManager implements Disposable {
 					extensionId: record.manifest.id,
 					extensionName: record.manifest.name,
 					enabled: record.manifest.enabled,
+					iconAssetUri:
+						panel.icon && typeof panel.icon !== 'string'
+							? this.resolveExtensionAssetUri(record.manifest.extensionPath, panel.icon.path)
+							: undefined,
 				}))
 			)
 			.sort((left, right) => {
@@ -249,6 +263,7 @@ export class ExtensionManager implements Disposable {
 					documentId,
 					windowId,
 					reason,
+					documentContext: this.getDocumentContext(documentId, windowId),
 				},
 			},
 		});
@@ -331,6 +346,10 @@ export class ExtensionManager implements Disposable {
 
 	setActiveDocument(windowId: number, documentId: string | null): void {
 		this.activeDocumentsByWindow.set(windowId, documentId);
+		const currentContext = this.documentContextsByWindow.get(windowId);
+		if (!documentId || currentContext?.documentId !== documentId) {
+			this.documentContextsByWindow.delete(windowId);
+		}
 
 		this.broadcastDocPanelsChanged(windowId, documentId);
 
@@ -346,6 +365,34 @@ export class ExtensionManager implements Disposable {
 				reason: 'document-opened',
 			});
 		}
+	}
+
+	setDocumentContext(
+		windowId: number,
+		documentId: string,
+		context: ExtensionDocumentContextSnapshot
+	): void {
+		const previous = this.documentContextsByWindow.get(windowId)?.context;
+		this.documentContextsByWindow.set(windowId, {
+			documentId,
+			context,
+		});
+
+		const changedKeys: Array<'markdown' | 'selection' | 'editorState'> = [];
+		if (!previous || previous.markdown !== context.markdown) {
+			changedKeys.push('markdown');
+		}
+
+		if (JSON.stringify(previous?.selection ?? null) !== JSON.stringify(context.selection)) {
+			changedKeys.push('selection');
+		}
+
+		if (JSON.stringify(previous?.editorState ?? null) !== JSON.stringify(context.editorState)) {
+			changedKeys.push('editorState');
+		}
+
+		if (changedKeys.length === 0) return;
+		this.broadcastDocPanelContentChanged(documentId, windowId, 'context', changedKeys);
 	}
 
 	getUserExtensionsDirectory(): string {
@@ -408,7 +455,7 @@ export class ExtensionManager implements Disposable {
 				});
 			}
 
-			this.broadcastDocPanelContentChanged(payload.document.id, payload.windowId);
+			this.broadcastDocPanelContentChanged(payload.document.id, payload.windowId, 'document');
 		});
 
 		const forwardTaskEvent = (payload: ExtensionTaskEvent): void => {
@@ -834,6 +881,30 @@ export class ExtensionManager implements Disposable {
 		return null;
 	}
 
+	private getDocumentContext(
+		documentId: string,
+		windowId?: number
+	): ExtensionDocumentContextSnapshot | null {
+		if (windowId !== undefined) {
+			const byWindow = this.documentContextsByWindow.get(windowId);
+			if (byWindow?.documentId === documentId) {
+				return byWindow.context;
+			}
+		}
+
+		for (const entry of this.documentContextsByWindow.values()) {
+			if (entry.documentId === documentId) {
+				return entry.context;
+			}
+		}
+
+		return null;
+	}
+
+	private resolveExtensionAssetUri(extensionPath: string, assetPath: string): string {
+		return pathToFileURL(path.join(extensionPath, assetPath)).href;
+	}
+
 	private broadcastRegistryChanged(): void {
 		const payload: ExtensionRegistrySnapshot = {
 			extensions: this.listExtensions(),
@@ -857,10 +928,17 @@ export class ExtensionManager implements Disposable {
 		this.options.eventBus.broadcast(ExtensionChannels.docPanelsChanged, payload);
 	}
 
-	private broadcastDocPanelContentChanged(documentId: string, windowId?: number): void {
+	private broadcastDocPanelContentChanged(
+		documentId: string,
+		windowId?: number,
+		reason?: 'document' | 'context',
+		changedKeys?: Array<'markdown' | 'selection' | 'editorState'>
+	): void {
 		const payload: ExtensionDocPanelContentChangedPayload = {
 			documentId,
 			windowId,
+			reason,
+			changedKeys,
 		};
 		this.options.eventBus.broadcast(ExtensionChannels.docPanelContentChanged, payload);
 	}

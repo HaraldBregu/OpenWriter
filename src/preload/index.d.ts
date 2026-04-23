@@ -64,6 +64,7 @@ import type {
 	ExtensionDocPanelContentChangedPayload,
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
+	ExtensionDocumentContextSnapshot,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -130,6 +131,7 @@ export type {
 	ExtensionDocPanelContentChangedPayload,
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
+	ExtensionDocumentContextSnapshot,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -242,6 +244,10 @@ export interface ExtensionsApi {
 	setEnabled: (extensionId: string, enabled: boolean) => Promise<void>;
 	reload: (extensionId: string) => Promise<void>;
 	setActiveDocument: (documentId: string | null) => Promise<void>;
+	setDocumentContext: (
+		documentId: string,
+		context: ExtensionDocumentContextSnapshot
+	) => Promise<void>;
 	openFolder: () => Promise<void>;
 	onRegistryChanged: (callback: (payload: ExtensionRegistrySnapshot) => void) => () => void;
 	onRuntimeChanged: (callback: (payload: ExtensionRuntimeChangedPayload) => void) => () => void;

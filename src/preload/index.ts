@@ -411,6 +411,8 @@ const extensions: ExtensionsApi = {
 	reload: (extensionId) => typedInvokeUnwrap(ExtensionChannels.reload, extensionId),
 	setActiveDocument: (documentId) =>
 		typedInvokeUnwrap(ExtensionChannels.setActiveDocument, documentId),
+	setDocumentContext: (documentId, context) =>
+		typedInvokeUnwrap(ExtensionChannels.setDocumentContext, documentId, context),
 	openFolder: () => typedInvokeUnwrap(ExtensionChannels.openFolder),
 	onRegistryChanged: (callback) => typedOn(ExtensionChannels.registryChanged, callback),
 	onRuntimeChanged: (callback) => typedOn(ExtensionChannels.runtimeChanged, callback),

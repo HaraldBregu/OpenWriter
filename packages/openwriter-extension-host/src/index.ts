@@ -214,6 +214,7 @@ class ExtensionHostRuntime {
 				documents: {
 					getActive: () => callHost('documents.getActive'),
 					getById: (documentId) => callHost('documents.getById', documentId),
+					getContext: (documentId) => callHost('documents.getContext', documentId),
 					update: (documentId, patch) => callHost('documents.update', documentId, patch),
 				},
 				tasks: {

@@ -57,6 +57,23 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
+function normalizeIcon(value: unknown): ExtensionDocPanelContribution['icon'] | undefined {
+	if (typeof value === 'string') {
+		const icon = asString(value);
+		return icon || undefined;
+	}
+
+	if (!isRecord(value)) return undefined;
+	if (value.type !== 'asset') return undefined;
+
+	const iconPath = asString(value.path);
+	if (!iconPath) return undefined;
+	return {
+		type: 'asset',
+		path: iconPath,
+	};
+}
+
 function normalizeCommands(value: unknown): ExtensionCommandContribution[] {
 	if (!Array.isArray(value)) return [];
 
@@ -82,7 +99,7 @@ function normalizeDocPanels(value: unknown): ExtensionDocPanelContribution[] {
 			const id = asString(entry.id) ?? '';
 			const title = asString(entry.title) ?? '';
 			const description = asString(entry.description) ?? undefined;
-			const icon = asString(entry.icon) ?? undefined;
+			const icon = normalizeIcon(entry.icon);
 			const when: ExtensionDocPanelContribution['when'] = 'document';
 			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
 			return { id, title, description, when, icon, order };
@@ -99,7 +116,7 @@ function normalizeDocPages(value: unknown): ExtensionDocPageContribution[] {
 			const id = asString(entry.id) ?? '';
 			const title = asString(entry.title) ?? '';
 			const description = asString(entry.description) ?? undefined;
-			const icon = asString(entry.icon) ?? undefined;
+			const icon = normalizeIcon(entry.icon);
 			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
 			return { id, title, description, icon, order };
 		})
@@ -110,6 +127,17 @@ function validateRelativeMain(main: string): string | null {
 	if (!main) return 'Missing "main" entrypoint.';
 	if (path.isAbsolute(main)) return '"main" must be relative to the extension root.';
 	if (main.includes('..')) return '"main" cannot escape the extension root.';
+	return null;
+}
+
+function validateRelativeAsset(assetPath: string, label: string): string | null {
+	if (!assetPath) return `${label} icon asset is missing a path.`;
+	if (path.isAbsolute(assetPath)) return `${label} icon asset path must be relative to the extension root.`;
+	if (assetPath.includes('..')) return `${label} icon asset path cannot escape the extension root.`;
+	const extension = path.extname(assetPath).toLowerCase();
+	if (extension !== '.png' && extension !== '.svg') {
+		return `${label} icon asset must be a .png or .svg file.`;
+	}
 	return null;
 }
 
@@ -209,6 +237,10 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 		if (!EXTENSION_ID_PATTERN.test(panel.id)) {
 			errors.push(`Doc panel "${panel.id}" has an invalid id.`);
 		}
+		if (panel.icon && typeof panel.icon !== 'string') {
+			const iconError = validateRelativeAsset(panel.icon.path, `Doc panel "${panel.id}"`);
+			if (iconError) errors.push(iconError);
+		}
 		if (docPanelIds.has(panel.id)) {
 			errors.push(`Duplicate doc panel id "${panel.id}".`);
 		}
@@ -219,6 +251,10 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 	for (const page of docPages) {
 		if (!EXTENSION_ID_PATTERN.test(page.id)) {
 			errors.push(`Doc page "${page.id}" has an invalid id.`);
+		}
+		if (page.icon && typeof page.icon !== 'string') {
+			const iconError = validateRelativeAsset(page.icon.path, `Doc page "${page.id}"`);
+			if (iconError) errors.push(iconError);
 		}
 		if (docPageIds.has(page.id)) {
 			errors.push(`Duplicate doc page id "${page.id}".`);

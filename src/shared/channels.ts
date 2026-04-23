@@ -57,6 +57,7 @@ import type {
 	ExtensionDocPanelContentChangedPayload,
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
+	ExtensionDocumentContextSnapshot,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -221,6 +222,7 @@ export const ExtensionChannels = {
 	setEnabled: 'extensions:set-enabled',
 	reload: 'extensions:reload',
 	setActiveDocument: 'extensions:set-active-document',
+	setDocumentContext: 'extensions:set-document-context',
 	openFolder: 'extensions:open-folder',
 	registryChanged: 'extensions:registry-changed',
 	runtimeChanged: 'extensions:runtime-changed',
@@ -381,6 +383,10 @@ export interface InvokeChannelMap {
 	};
 	[ExtensionChannels.reload]: { args: [extensionId: string]; result: void };
 	[ExtensionChannels.setActiveDocument]: { args: [documentId: string | null]; result: void };
+	[ExtensionChannels.setDocumentContext]: {
+		args: [documentId: string, context: ExtensionDocumentContextSnapshot];
+		result: void;
+	};
 	[ExtensionChannels.openFolder]: { args: []; result: void };
 
 	// ---- Project Workspace (IpcResult-wrapped) ----
