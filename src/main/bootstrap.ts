@@ -21,6 +21,7 @@ import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { ThemeService } from './services/theme-service';
 import { SkillsStoreService } from './services/skills-store-service';
+import { StreamLoggerService } from './services/stream-logger';
 import { FileManager } from './shared/file_manager';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
 import { TaskExecutor } from './task/task-executor';
