@@ -294,16 +294,6 @@ function PageContent(): ReactElement {
 		[editorInsert]
 	);
 
-	const handleRecovery = useCallback(
-		(fullContent: string, metadata: AssistantTaskMetadata) => {
-			editorActions.showLoading();
-			editorActions.disable();
-			editorInsert.begin(metadata.posFrom, metadata.posTo);
-			if (fullContent) editorInsert.appendDelta(fullContent);
-		},
-		[editorInsert, editorActions]
-	);
-
 	const handleCompleted = useCallback(
 		(completedContent: string) => {
 			editorInsert.commitFinal(completedContent);
