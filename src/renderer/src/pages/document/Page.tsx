@@ -28,6 +28,7 @@ import type {
 	AgentPhase,
 	AgentPhasePayload,
 	AssistantTaskMetadata,
+	ExtensionDocumentContextSnapshot,
 	ExtensionDocPanelInfo,
 	TaskEvent,
 } from '../../../../shared/types';
@@ -48,7 +49,7 @@ const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 const AGENT_TYPE = 'writer';
 
 function PageContent(): ReactElement {
-	const { documentId: id } = useDocumentState();
+	const { documentId: id, selection } = useDocumentState();
 	const dispatch = useDocumentDispatch();
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
@@ -59,6 +60,7 @@ function PageContent(): ReactElement {
 	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
 	const [extensionDocPanels, setExtensionDocPanels] = useState<ExtensionDocPanelInfo[]>([]);
+	const [editorContextVersion, setEditorContextVersion] = useState(0);
 
 	const { activeSidebar, setActiveSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
@@ -158,6 +160,50 @@ function PageContent(): ReactElement {
 	useEffect(() => {
 		void loadExtensionDocPanels();
 	}, [loadExtensionDocPanels]);
+
+	useEffect(() => {
+		if (!editor || editor.isDestroyed) return;
+
+		const bump = (): void => {
+			setEditorContextVersion((current) => current + 1);
+		};
+
+		editor.on('selectionUpdate', bump);
+		editor.on('transaction', bump);
+		editor.on('focus', bump);
+		editor.on('blur', bump);
+
+		return () => {
+			editor.off('selectionUpdate', bump);
+			editor.off('transaction', bump);
+			editor.off('focus', bump);
+			editor.off('blur', bump);
+		};
+	}, [editor]);
+
+	const extensionDocumentContext = useMemo<ExtensionDocumentContextSnapshot | null>(() => {
+		if (!id || !editor || editor.isDestroyed) return null;
+		return buildExtensionDocumentContext(id, content, selection, editor);
+	}, [content, editor, editorContextVersion, id, selection]);
+
+	const lastPublishedExtensionContextRef = useRef<string>('');
+	useEffect(() => {
+		if (!id || !extensionDocumentContext) return;
+
+		const serialized = JSON.stringify(extensionDocumentContext);
+		if (serialized === lastPublishedExtensionContextRef.current) {
+			return;
+		}
+
+		const timer = window.setTimeout(() => {
+			lastPublishedExtensionContextRef.current = serialized;
+			void window.extensions.setDocumentContext(id, extensionDocumentContext);
+		}, 120);
+
+		return () => {
+			window.clearTimeout(timer);
+		};
+	}, [extensionDocumentContext, id]);
 
 	useEffect(() => {
 		const unsubscribeRegistry = window.extensions.onRegistryChanged(() => {
@@ -706,6 +752,39 @@ function readCompletedResult(data: unknown): AgentCompletedOutput | null {
 		return null;
 	}
 	return { content, stoppedReason };
+}
+
+function buildExtensionDocumentContext(
+	documentId: string,
+	markdown: string,
+	selection: { from: number; to: number } | null,
+	editor: TiptapEditor
+): ExtensionDocumentContextSnapshot {
+	const selectionSnapshot =
+		selection && selection.from !== selection.to
+			? {
+					from: selection.from,
+					to: selection.to,
+					text: editor.state.doc.textBetween(selection.from, selection.to, '\n\n'),
+				}
+			: null;
+
+	const activeMarks = Array.from(
+		new Set(editor.state.selection.$from.marks().map((mark) => mark.type.name))
+	).sort();
+
+	return {
+		documentId,
+		markdown,
+		selection: selectionSnapshot,
+		editorState: {
+			isFocused: editor.isFocused,
+			isEditable: editor.isEditable,
+			isEmpty: editor.isEmpty,
+			activeNode: editor.state.selection.$from.parent.type.name,
+			activeMarks,
+		},
+	};
 }
 
 export default function Page(): ReactElement {

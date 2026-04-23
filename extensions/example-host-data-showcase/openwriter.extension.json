@@ -24,7 +24,10 @@
 				"title": "Host data",
 				"description": "Shows app, workspace, document, and extension state.",
 				"when": "document",
-				"icon": "HD",
+				"icon": {
+					"type": "asset",
+					"path": "assets/host-data.svg"
+				},
 				"order": 20
 			}
 		],
