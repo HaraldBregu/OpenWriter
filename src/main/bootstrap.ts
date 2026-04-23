@@ -142,7 +142,8 @@ export function bootstrapServices(): BootstrapResult {
 			serviceResolver,
 			storeService,
 			modelResolver,
-			skillsStoreService
+			skillsStoreService,
+			streamLogger
 		)
 	);
 
