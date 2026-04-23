@@ -19,12 +19,14 @@ import {
 	useEditorStreamInsert,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
+import { X } from 'lucide-react';
+import { Badge } from '@/components/ui/Badge';
 import type {
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocPanelInfo,
 	TaskEvent,
+	TaskState,
 } from '../../../../shared/types';
-import { TaskStatusBar } from './components/TaskStatusBar';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
