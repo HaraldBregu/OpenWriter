@@ -475,28 +475,21 @@ function PageContent(): ReactElement {
 			const doc = editor.state.doc;
 			const textBefore = editor.markdown?.serialize(doc.cut(0, from).toJSON()) ?? '';
 			const textAfter = editor.markdown?.serialize(doc.cut(to, doc.content.size).toJSON()) ?? '';
+			const selectedText =
+				from === to ? '' : (editor.markdown?.serialize(doc.cut(from, to).toJSON()) ?? '');
 
-			const composedPrompt = [
-				'Text before cursor:',
+			const raw = buildEditorAgentRaw({
 				textBefore,
-				'',
-				'Instruction:',
-				payload.prompt,
-				'',
-				'Text after cursor:',
+				selectedText,
 				textAfter,
-			].join('\n');
+				prompt: payload.prompt,
+			});
 
 			editorActions.showLoading();
 			editorActions.disable();
 			editorInsert.begin(from, to);
 
-			const submitted = await submitAssistantTask({
-				prompt: composedPrompt,
-				files: payload.files.map((f) => ({ name: f.name, mimeType: f.type || undefined })),
-				posFrom: from,
-				posTo: to,
-			});
+			const submitted = await submitAssistantTask({ raw, posFrom: from, posTo: to });
 
 			if (!submitted) {
 				editorInsert.revert();
