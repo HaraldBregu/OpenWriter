@@ -370,7 +370,6 @@ function PageContent(): ReactElement {
 
 	const handleCancelOrError = useCallback(() => {
 		editorInsert.revert();
-		setPhaseLabel(null);
 		editorActions.hideLoading();
 		editorActions.enable();
 	}, [editorInsert, editorActions]);
