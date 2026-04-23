@@ -759,6 +759,39 @@ function readCompletedResult(data: unknown): AgentCompletedOutput | null {
 	return { content, stoppedReason };
 }
 
+/**
+ * Compose the raw input for the text-generator-v1 editor agent.
+ *
+ * Embeds the selection inline (if any) as `<selected_text>...</selected_text>`
+ * and appends `<prompt>...</prompt>`. The agent's input-parser extracts both
+ * tags and strips them from fullText. Any literal tag occurrences already
+ * present in the document are neutralised so they do not collide with markers.
+ */
+function buildEditorAgentRaw(args: {
+	textBefore: string;
+	selectedText: string;
+	textAfter: string;
+	prompt: string;
+}): string {
+	const before = neutraliseAgentTags(args.textBefore);
+	const after = neutraliseAgentTags(args.textAfter);
+	const selected = neutraliseAgentTags(args.selectedText);
+	const prompt = args.prompt.trim();
+
+	const body = selected
+		? `${before}<selected_text>${selected}</selected_text>${after}`
+		: `${before}${after}`;
+	return `${body}\n\n<prompt>${prompt}</prompt>`;
+}
+
+function neutraliseAgentTags(text: string): string {
+	return text
+		.replace(/<selected_text>/gi, '<selected_text_>')
+		.replace(/<\/selected_text>/gi, '</selected_text_>')
+		.replace(/<prompt>/gi, '<prompt_>')
+		.replace(/<\/prompt>/gi, '</prompt_>');
+}
+
 function buildExtensionDocumentContext(
 	documentId: string,
 	markdown: string,
