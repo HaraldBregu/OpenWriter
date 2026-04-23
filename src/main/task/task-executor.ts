@@ -138,7 +138,6 @@ export class TaskExecutor implements Disposable {
 				taskId,
 				data: {},
 				error: null,
-				metadata: activeTask.metadata,
 			} satisfies TaskEvent);
 
 			this.drainQueue();
