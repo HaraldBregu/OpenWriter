@@ -32,7 +32,9 @@ tokens straight into the document.
 | [IMAGE_GENERATION.md](./IMAGE_GENERATION.md) | Generating images into the page |
 | [MEDIA_INGESTION.md](./MEDIA_INGESTION.md) | Transcription, OCR, resources library |
 | [SETTINGS_AND_PROVIDERS.md](./SETTINGS_AND_PROVIDERS.md) | Providers, models, agents, themes, languages |
-| [EXTENSIONS.md](./EXTENSIONS.md) | Optional third-party panels and commands |
+
+Extension system has its own documentation folder: see
+[../extensions/README.md](../extensions/README.md).
 
 ## Quick Functional Summary
 

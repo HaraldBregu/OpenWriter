@@ -21,6 +21,7 @@ import {
 	type ExtensionDocPanelContentChangedPayload,
 	type ExtensionDocumentContextSnapshot,
 	type ExtensionDocPanelInfo,
+	type ExtensionPreferenceContribution,
 	type ExtensionDocPanelsChangedPayload,
 	type ExtensionEventType,
 	type ExtensionHostToMainMessage,
@@ -220,6 +221,45 @@ export class ExtensionManager implements Disposable {
 			});
 	}
 
+	getPreferences(extensionId: string): {
+		definitions: ExtensionPreferenceContribution[];
+		values: Record<string, unknown>;
+	} {
+		const record = this.getRecord(extensionId);
+		return {
+			definitions: [...record.manifest.preferences],
+			values: this.getResolvedPreferences(record.manifest),
+		};
+	}
+
+	async setPreference(extensionId: string, key: string, value: unknown): Promise<void> {
+		const record = this.getRecord(extensionId);
+		const preference = record.manifest.preferences.find((entry) => entry.id === key);
+		if (!preference) {
+			throw new Error(`Unknown preference "${key}" for extension "${extensionId}".`);
+		}
+
+		if (preference.type === 'checkbox' && typeof value !== 'boolean') {
+			throw new Error(`Preference "${key}" expects a boolean value.`);
+		}
+		if (preference.type !== 'checkbox' && typeof value !== 'string') {
+			throw new Error(`Preference "${key}" expects a string value.`);
+		}
+		if (
+			preference.type === 'dropdown' &&
+			!preference.options?.some((option) => option.value === value)
+		) {
+			throw new Error(`Preference "${key}" expects one of its declared options.`);
+		}
+
+		this.options.store.setExtensionPreference(extensionId, key, value);
+		if (record.state.activated) {
+			await this.reload(extensionId);
+			return;
+		}
+		this.broadcastRegistryChanged();
+	}
+
 	async getDocPanelContent(
 		panelId: string,
 		documentId: string,
@@ -342,6 +382,26 @@ export class ExtensionManager implements Disposable {
 
 		this.broadcastRuntimeChanged(extensionId);
 		this.broadcastDocPanelsChanged();
+	}
+
+	async installFromDirectory(sourcePath: string): Promise<ExtensionRuntimeInfo> {
+		const manifestPath = path.join(sourcePath, 'openwriter.extension.json');
+		if (!fs.existsSync(manifestPath)) {
+			throw new Error('Selected folder does not contain openwriter.extension.json.');
+		}
+
+		const raw = await fsPromises.readFile(manifestPath, 'utf8');
+		const { manifest, errors } = parseExtensionManifest(raw);
+		if (errors.length > 0) {
+			throw new Error(errors.join(' '));
+		}
+
+		const targetPath = path.join(this.getUserExtensionsDirectory(), manifest.id);
+		await fsPromises.rm(targetPath, { recursive: true, force: true });
+		await fsPromises.cp(sourcePath, targetPath, { recursive: true });
+		await this.discover();
+
+		return this.listExtensions().find((extension) => extension.id === manifest.id)!;
 	}
 
 	setActiveDocument(windowId: number, documentId: string | null): void {
@@ -620,6 +680,7 @@ export class ExtensionManager implements Disposable {
 				commands: manifest.contributes?.commands ?? [],
 				docPanels: manifest.contributes?.docPanels ?? [],
 				docPages: manifest.contributes?.docPages ?? [],
+				preferences: manifest.contributes?.preferences ?? [],
 				validationErrors: errors,
 			});
 		}
@@ -903,6 +964,23 @@ export class ExtensionManager implements Disposable {
 
 	private resolveExtensionAssetUri(extensionPath: string, assetPath: string): string {
 		return pathToFileURL(path.join(extensionPath, assetPath)).href;
+	}
+
+	private getResolvedPreferences(extension: ExtensionInfo): Record<string, unknown> {
+		const stored = this.options.store.getExtensionPreferences(extension.id);
+		const values: Record<string, unknown> = {};
+
+		for (const preference of extension.preferences) {
+			if (stored[preference.id] !== undefined) {
+				values[preference.id] = stored[preference.id];
+				continue;
+			}
+			if (preference.default !== undefined) {
+				values[preference.id] = preference.default;
+			}
+		}
+
+		return values;
 	}
 
 	private broadcastRegistryChanged(): void {
