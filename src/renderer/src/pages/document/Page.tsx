@@ -42,6 +42,91 @@ const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 const TASK_TYPE = 'demo';
 
+const CANCELLABLE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
+
+const STATUS_LABELS: Record<TaskState, string> = {
+	queued: 'Queued',
+	started: 'Started',
+	running: 'Running',
+	finished: 'Finished',
+	cancelled: 'Cancelled',
+};
+
+const STATUS_VARIANT: Record<TaskState, 'default' | 'secondary' | 'destructive' | 'outline'> = {
+	queued: 'secondary',
+	started: 'secondary',
+	running: 'default',
+	finished: 'default',
+	cancelled: 'outline',
+};
+
+interface TaskStatusBarProps {
+	readonly taskId: string | null;
+	readonly phaseLabel?: string | null;
+}
+
+function TaskStatusBar({ taskId, phaseLabel }: TaskStatusBarProps): ReactElement | null {
+	const [state, setState] = useState<{ status: TaskState; message: string } | null>(null);
+	const [cancelling, setCancelling] = useState(false);
+
+	const handleCancel = useCallback(() => {
+		if (!taskId || cancelling) return;
+		if (typeof window.task?.cancel !== 'function') return;
+		setCancelling(true);
+		window.task.cancel(taskId).catch(() => {
+			setCancelling(false);
+		});
+	}, [taskId, cancelling]);
+
+	useEffect(() => {
+		setCancelling(false);
+	}, [taskId]);
+
+	useEffect(() => {
+		if (!taskId) {
+			setState(null);
+			return;
+		}
+		if (typeof window.task?.onEvent !== 'function') return;
+
+		setState({ status: 'queued', message: '' });
+
+		return window.task.onEvent((event: TaskEvent) => {
+			if (event.taskId !== taskId) return;
+			setState({ status: event.state, message: event.data });
+		});
+	}, [taskId]);
+
+	if (!state) return null;
+
+	const { status, message } = state;
+	const canCancel = CANCELLABLE_STATES.has(status) && !!taskId;
+	const displayLabel = phaseLabel ?? STATUS_LABELS[status];
+
+	return (
+		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
+			<Badge variant={STATUS_VARIANT[status]} className="shrink-0">
+				{displayLabel}
+			</Badge>
+			<p className="flex-1 min-w-0 truncate text-[11px] text-muted-foreground">{message}</p>
+			{canCancel && (
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon"
+					className="h-7 w-7 shrink-0"
+					onClick={handleCancel}
+					disabled={cancelling}
+					title="Cancel task"
+					aria-label="Cancel task"
+				>
+					<X className="h-3.5 w-3.5" aria-hidden="true" />
+				</Button>
+			)}
+		</div>
+	);
+}
+
 function PageContent(): ReactElement {
 	const { documentId: id, selection } = useDocumentState();
 	const dispatch = useDocumentDispatch();
