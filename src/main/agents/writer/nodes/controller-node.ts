@@ -13,9 +13,11 @@ const SYSTEM_PROMPT = [
 	'You are the controller for a writing agent. Pick the next action.',
 	'Actions:',
 	'- "text": call the text worker to write; provide a concise "instruction".',
-	'- "skill": delegate to a named skill from the catalog; provide "skillName" and "instruction".',
+	'- "skill": delegate to a named skill from the catalog; provide "skillName" (exact match from catalog) and "instruction".',
 	'- "done": the user request is satisfied; no further writing needed.',
-	'Only pick "skill" when a listed skill clearly applies; otherwise pick "text".',
+	'Pick "skill" ONLY when a listed skill\'s description clearly matches the user\'s intent and request.',
+	'If no skill clearly applies, pick "text". Picking a skill that does not match the intent is WORSE than picking "text".',
+	'Never invent a skillName that is not in the catalog. If the catalog is empty, you cannot pick "skill".',
 	'Respond as strict JSON matching the provided schema. Use null for fields not relevant to the chosen action.',
 ].join(' ');
 
