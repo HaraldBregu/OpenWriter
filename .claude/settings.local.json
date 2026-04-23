@@ -145,7 +145,9 @@
       "mcp__plugin_claude-mermaid_mermaid__mermaid_preview",
       "Bash(ulimit -n 4096)",
       "Bash(bash /tmp/check_fns.sh)",
-      "Bash(npm --prefix /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter run typecheck:node)"
+      "Bash(npm --prefix /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter run typecheck:node)",
+      "Bash(sed -n '1060,1075p' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/resources/i18n/en/main.json)",
+      "Bash(sed -n '1060,1075p' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/resources/i18n/it/main.json)"
     ],
     "deny": [
       "Bash(git push --force:*)",
