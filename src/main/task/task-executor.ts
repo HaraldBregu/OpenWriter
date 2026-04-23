@@ -406,7 +406,6 @@ export class TaskExecutor implements Disposable {
 					taskId,
 					data: null,
 					error: { message, code },
-					metadata: task.metadata,
 				} satisfies TaskEvent);
 
 				this.eventBus.emit('task:failed', {
