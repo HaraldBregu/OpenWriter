@@ -150,7 +150,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		});
 	}
 
-	private enrichInput<T>(agentType: string, raw: T): T {
+	private async enrichInput<T>(agentType: string, raw: T): Promise<T> {
 		if (!raw || typeof raw !== 'object') return raw;
 
 		const base = raw as AgentInputRecord;
@@ -161,12 +161,30 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		const providerId = base.providerId?.trim() || model.providerId;
 		const service = this.serviceResolver.resolve({ providerId });
 
-		return {
+		const enriched: AgentInputRecord = {
 			...base,
 			providerId: service.provider.id,
 			apiKey: base.apiKey?.trim() || service.apiKey,
 			modelName: model.modelId,
-		} as unknown as T;
+		};
+
+		if (agentType === WRITER_AGENT_TYPE && !base.skills) {
+			enriched.skills = await this.loadSkillsForWriter();
+		}
+
+		return enriched as unknown as T;
+	}
+
+	private async loadSkillsForWriter(): Promise<Skill[]> {
+		if (!this.skillsStoreService) return [];
+		try {
+			return await this.skillsStoreService.listSkillEntities();
+		} catch (error) {
+			this.logger.warn(LOG_SOURCE, 'Failed to load skills for writer agent; continuing with empty catalog', {
+				error: error instanceof Error ? error.message : String(error),
+			});
+			return [];
+		}
 	}
 }
 
