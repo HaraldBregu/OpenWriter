@@ -12,7 +12,6 @@ interface ProviderProps {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	onInsertContent?: () => void;
-	onOpenChat?: () => void;
 	onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
 	onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
