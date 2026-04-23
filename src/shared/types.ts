@@ -767,7 +767,7 @@ export interface AssistantTaskMetadata {
 
 /** Renderer-facing payload for the `task:submit` input when `type === 'agent'`. */
 export interface AgentTaskSubmitInput {
-	agentType: 'assistant' | 'writer' | 'rag' | 'ocr';
+	agentType: 'assistant' | 'text-writer' | 'rag' | 'ocr';
 	input: {
 		prompt: string;
 		files: { name: string; mimeType?: string }[];
