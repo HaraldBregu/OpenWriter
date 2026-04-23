@@ -34,11 +34,17 @@ import {
 	AssistantAgent,
 	RagAgent,
 	OcrAgent,
+	TextGeneratorV1Agent,
 	TextGeneratorV2Agent,
 	TranscriptionAgent,
 	TextWriterAgent,
 } from './agents';
-import { DemoTaskHandler, AgentTaskHandler, TranscriptionTaskHandler } from './task/handlers';
+import {
+	DemoTaskHandler,
+	AgentTaskHandler,
+	TranscriptionTaskHandler,
+	TextGeneratorV1TaskHandler,
+} from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
 
 // IPC modules
