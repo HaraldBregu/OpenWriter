@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useMemo, useState } from 'react';
 
-export type ActiveSidebar = 'builtin:agentic' | `extension:${string}` | null;
+export type ActiveSidebar = `extension:${string}` | null;
 
 export interface SidebarVisibilityContextValue {
 	activeSidebar: ActiveSidebar;
