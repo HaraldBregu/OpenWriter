@@ -30,7 +30,7 @@ export function ResourcesSection(): ReactElement {
 				/>
 				<CategoryCard
 					icon={Database}
-					labelKey="appLayout.data"
+					labelKey="appLayout.knowledgeBase"
 					descriptionKey="home.dataDescription"
 					accent="bg-secondary text-foreground"
 					onClick={() => navigate('/resources/data')}
