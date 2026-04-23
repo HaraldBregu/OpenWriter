@@ -1,5 +1,4 @@
 import type { TaskPriority, TaskState } from '../../shared/types';
-import type { AgentEvent } from '../agents/core/agent';
 export type { TaskPriority, TaskState };
 
 /**
