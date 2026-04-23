@@ -709,7 +709,6 @@ function PageContent(): ReactElement {
 						collapsible
 						collapsedSize="0%"
 					>
-						{activeSidebar === 'builtin:config' && <InfoPanel onOpenFolder={handleOpenFolder} />}
 						{activeSidebar === 'builtin:agentic' && <Chat />}
 						{activeExtensionPanel && id ? (
 							<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
