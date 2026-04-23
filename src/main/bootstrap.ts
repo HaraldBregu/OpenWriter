@@ -111,7 +111,7 @@ export function bootstrapServices(): BootstrapResult {
 	// dropping a folder under src/main/agents and registering it here.
 	const agentRegistry = new AgentRegistry();
 	agentRegistry.register(new AssistantAgent());
-	agentRegistry.register(new WriterAgent());
+	agentRegistry.register(new TextWriterAgent());
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
 	agentRegistry.register(new TranscriptionAgent());
