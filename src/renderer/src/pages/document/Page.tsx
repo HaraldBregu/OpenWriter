@@ -19,7 +19,6 @@ import {
 	useEditorStreamInsert,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
-import { X } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
 import type {
 	ExtensionDocumentContextSnapshot,
@@ -93,7 +92,10 @@ function TaskStatusBar({ taskId, phaseLabel }: TaskStatusBarProps): ReactElement
 
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.taskId !== taskId) return;
-			setState({ status: event.state, message: event.data });
+
+      			console.log(event);
+      
+      			setState({ status: event.state, message: event.data });
 		});
 	}, [taskId]);
 
@@ -414,13 +416,6 @@ function PageContent(): ReactElement {
 
 	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
 	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
-
-	useEffect(() => {
-		if (typeof window.task?.onEvent !== 'function') return;
-		return window.task.onEvent((event: TaskEvent) => {
-			console.log(event);
-		});
-	}, []);
 
 	const submitAssistantTask = useCallback(
 		async (prompt: string): Promise<boolean> => {
