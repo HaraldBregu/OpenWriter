@@ -145,6 +145,37 @@
 	margin: 0;
 }
 
+.ProseMirror pre {
+	background-color: hsl(var(--muted));
+	color: hsl(var(--foreground));
+	border: 1px solid hsl(var(--border));
+	border-radius: 0.5rem;
+	padding: 0.875rem 1rem;
+	margin: 0.75rem 0;
+	font-family:
+		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+		monospace;
+	font-size: 0.875em;
+	line-height: 1.6;
+	overflow-x: auto;
+	white-space: pre;
+}
+
+.ProseMirror pre code {
+	background: transparent;
+	color: inherit;
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	font-size: inherit;
+	font-family: inherit;
+}
+
+.dark .ProseMirror pre {
+	background-color: hsl(var(--muted) / 0.6);
+	border-color: hsl(var(--border) / 0.6);
+}
+
 @layer base {
 	html {
 		font-size: 15px;

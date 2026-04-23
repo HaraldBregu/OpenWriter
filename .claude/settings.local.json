@@ -144,7 +144,8 @@
       "Bash(echo \"EXIT=$?\")",
       "mcp__plugin_claude-mermaid_mermaid__mermaid_preview",
       "Bash(ulimit -n 4096)",
-      "Bash(bash /tmp/check_fns.sh)"
+      "Bash(bash /tmp/check_fns.sh)",
+      "Bash(npm --prefix /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter run typecheck:node)"
     ],
     "deny": [
       "Bash(git push --force:*)",
