@@ -75,9 +75,6 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 		}
 
 		emit({ state: 'finished', data: result });
-		await sleep(STATE_DELAY_MS, signal);
-
-		emit({ state: 'cancelled', data: 'cancelled' });
 
 		return result;
 	}
