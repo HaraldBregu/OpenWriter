@@ -1,6 +1,7 @@
 import type {
 	ExtensionAppInfo,
 	ExtensionCommandContribution,
+	ExtensionCommandExecutionResult,
 	ExtensionDocPanelContent,
 	ExtensionDocPanelRenderContext,
 	ExtensionDocumentContextSnapshot,
@@ -12,10 +13,18 @@ import type {
 	ExtensionTaskSubmissionResult,
 	ExtensionWorkspaceChangedEvent,
 	ExtensionWorkspaceSnapshot,
-} from '../../openwriter-extension-types/src/index';
+} from '@openwriter/extension-types';
+
+export interface Disposable {
+	dispose(): void;
+}
+
+export interface CommandContext {
+	payload?: unknown;
+}
 
 export interface ExtensionCommandRegistration extends ExtensionCommandContribution {
-	run: (payload?: unknown) => Promise<unknown> | unknown;
+	run: (payload?: unknown, context?: CommandContext) => Promise<unknown> | unknown;
 }
 
 export interface ExtensionHostApi {
@@ -58,6 +67,14 @@ export interface ExtensionEventsApi {
 
 export interface ExtensionCommandsApi {
 	register(command: ExtensionCommandRegistration): () => void;
+	registerCommand(
+		commandId: string,
+		handler: (payload?: unknown, context?: CommandContext) => Promise<unknown> | unknown
+	): Disposable;
+	executeCommand<T = unknown>(
+		commandId: string,
+		payload?: unknown
+	): Promise<ExtensionCommandExecutionResult & { data?: T }>;
 }
 
 export interface ExtensionDocPanelRegistration {
@@ -71,6 +88,27 @@ export interface ExtensionPanelsApi {
 	registerDocPanel(panel: ExtensionDocPanelRegistration): () => void;
 }
 
+export interface DocPanelProvider {
+	render(
+		context: ExtensionDocPanelRenderContext
+	): Promise<ExtensionDocPanelContent> | ExtensionDocPanelContent;
+}
+
+export interface ExtensionWindowApi {
+	registerDocPanelProvider(panelId: string, provider: DocPanelProvider): Disposable;
+}
+
+export interface ExtensionWorkspaceApi {
+	getCurrent(): Promise<ExtensionWorkspaceSnapshot>;
+	getActiveDocument(): Promise<ExtensionDocumentSnapshot | null>;
+	getDocument(documentId: string): Promise<ExtensionDocumentSnapshot>;
+	getDocumentContext(documentId?: string): Promise<ExtensionDocumentContextSnapshot | null>;
+	updateDocument(
+		documentId: string,
+		patch: ExtensionDocumentUpdate
+	): Promise<ExtensionDocumentSnapshot>;
+}
+
 export interface ExtensionLoggerApi {
 	info(message: string, data?: unknown): void;
 	warn(message: string, data?: unknown): void;
@@ -79,7 +117,10 @@ export interface ExtensionLoggerApi {
 
 export interface ExtensionContext {
 	manifest: ExtensionManifest;
+	subscriptions: Disposable[];
 	commands: ExtensionCommandsApi;
+	window: ExtensionWindowApi;
+	workspace: ExtensionWorkspaceApi;
 	panels: ExtensionPanelsApi;
 	events: ExtensionEventsApi;
 	host: ExtensionHostApi;
@@ -96,6 +137,49 @@ export interface ExtensionModule {
 export function defineExtension(module: ExtensionModule): ExtensionModule {
 	return module;
 }
+
+export function createDisposable(dispose: () => void): Disposable {
+	return { dispose };
+}
+
+export function text(text: string, id?: string): ExtensionDocPanelContent['blocks'][number] {
+	return { type: 'text', text, ...(id ? { id } : {}) };
+}
+
+export function markdown(
+	markdown: string,
+	id?: string
+): ExtensionDocPanelContent['blocks'][number] {
+	return { type: 'markdown', markdown, ...(id ? { id } : {}) };
+}
+
+export function notice(
+	description: string,
+	options: {
+		id?: string;
+		title?: string;
+		tone?: 'info' | 'warning' | 'error' | 'success';
+	} = {}
+): ExtensionDocPanelContent['blocks'][number] {
+	return {
+		type: 'notice',
+		description,
+		...(options.id ? { id: options.id } : {}),
+		...(options.title ? { title: options.title } : {}),
+		...(options.tone ? { tone: options.tone } : {}),
+	};
+}
+
+export function docPanel(blocks: ExtensionDocPanelContent['blocks']): ExtensionDocPanelContent {
+	return { blocks };
+}
+
+export const ui = {
+	text,
+	markdown,
+	notice,
+	docPanel,
+};
 
 export type {
 	ExtensionActivationEvent,
@@ -131,4 +215,4 @@ export type {
 	ExtensionTaskSubmissionResult,
 	ExtensionWorkspaceChangedEvent,
 	ExtensionWorkspaceSnapshot,
-} from '../../openwriter-extension-types/src/index';
+} from '@openwriter/extension-types';

@@ -166,12 +166,13 @@ async function validate(extensionDir) {
 }
 
 async function create(name) {
-	const displayName = name
+	const folderName = path.basename(name);
+	const displayName = folderName
 		.split(/[-_]/g)
 		.filter(Boolean)
 		.map((part) => part[0].toUpperCase() + part.slice(1))
 		.join(' ');
-	const id = toId(name);
+	const id = toId(folderName);
 	const targetDir = path.resolve(process.cwd(), name);
 
 	await ensureDir(targetDir);
@@ -226,7 +227,7 @@ async function create(name) {
 					pack: 'create-openwriter-extension pack .',
 				},
 				dependencies: {
-					'@openwriter/extension-sdk': 'workspace:*',
+					'@openwriter/extension-sdk': '^0.1.0',
 				},
 				devDependencies: {
 					typescript: '^5.8.3',
@@ -260,35 +261,39 @@ async function create(name) {
 
 	await writeFile(
 		path.join(targetDir, 'src/index.ts'),
-		`import { defineExtension } from '@openwriter/extension-sdk';
+		`import * as openwriter from '@openwriter/extension-sdk';
 
 interface Preferences {
 \tsignature?: string;
 }
 
-export default defineExtension({
-\tasync activate(ctx) {
-\t\tctx.commands.register({
-\t\t\tid: '${id}.append-note',
-\t\t\ttitle: '${displayName}: Append note',
-\t\t\tdescription: 'Append a configurable marker to the active document.',
-\t\t\tasync run() {
-\t\t\t\tconst active = await ctx.host.documents.getActive();
-\t\t\t\tif (!active) {
-\t\t\t\t\treturn { ok: false, error: 'No active document.' };
-\t\t\t\t}
+export async function activate(context: openwriter.ExtensionContext) {
+\tcontext.subscriptions.push(
+\t\tcontext.commands.registerCommand('${id}.append-note', async () => {
+\t\t\tconst active = await context.workspace.getActiveDocument();
+\t\t\tif (!active) {
+\t\t\t\treturn { ok: false, error: 'No active document.' };
+\t\t\t}
 
-\t\t\t\tconst preferences = await ctx.preferences.get<Preferences>();
-\t\t\t\tconst signature = preferences.signature?.trim() || 'Created by ${displayName}.';
+\t\t\tconst preferences = await context.preferences.get<Preferences>();
+\t\t\tconst signature = preferences.signature?.trim() || 'Created by ${displayName}.';
 
-\t\t\t\tawait ctx.host.documents.update(active.id, {
-\t\t\t\t\tcontent: \`\${active.content}\\n\\n\${signature}\`,
-\t\t\t\t});
+\t\t\tawait context.workspace.updateDocument(active.id, {
+\t\t\t\tcontent: \`\${active.content}\\n\\n\${signature}\`,
+\t\t\t});
 
-\t\t\t\treturn { ok: true };
-\t\t\t},
-\t\t});
-\t},
+\t\t\treturn { ok: true };
+\t\t})
+\t);
+}
+
+export function deactivate() {
+\t// optional cleanup
+}
+
+export default openwriter.defineExtension({
+\tactivate,
+\tdeactivate,
 });
 `
 	);

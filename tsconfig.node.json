@@ -18,6 +18,11 @@
 		"allowSyntheticDefaultImports": true,
 		"sourceMap": true,
 		"removeComments": false,
+		"baseUrl": ".",
+		"paths": {
+			"@openwriter/extension-types": ["packages/openwriter-extension-types/src/index.ts"],
+			"@openwriter/extension-sdk": ["packages/openwriter-extension-sdk/src/index.ts"]
+		},
 		"types": ["./src/types", "electron-vite/node", "node"]
 	},
 	"exclude": ["node_modules"]

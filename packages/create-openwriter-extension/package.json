@@ -1,9 +1,20 @@
 {
 	"name": "@openwriter/create-extension",
 	"version": "0.1.0",
-	"private": true,
+	"description": "Scaffold and validate OpenWriter extensions.",
+	"license": "MIT",
 	"type": "module",
 	"bin": {
 		"create-openwriter-extension": "./bin/create-openwriter-extension.mjs"
+	},
+	"files": [
+		"bin",
+		"package.json"
+	],
+	"engines": {
+		"node": ">=20"
+	},
+	"publishConfig": {
+		"access": "public"
 	}
 }

@@ -1,44 +1,65 @@
-# Repository Guidelines
+# CLAUDE.md
 
-## Project Structure & Module Organization
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
-OpenWriter is an Electron app split by process boundary. Use `src/main` for privileged Node/Electron code such as IPC, workspace services, task management, AI agents, and indexing. Use `src/preload` for the typed `contextBridge` API exposed to the renderer. Put UI code in `src/renderer/src`, organized by `components`, `pages`, `hooks`, `store`, `services`, and `contexts`. Share types and utilities from `src/shared`. Tests live under `tests/unit/main`, `tests/unit/renderer`, and `tests/e2e`. Static assets and i18n files live in `resources/`; design and architecture notes live in `docs/`.
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-## Build, Test, and Development Commands
+## 1. Think Before Coding
 
-Use Yarn and Node 22.
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
 
-- `yarn dev`: start Electron + Vite in development mode.
-- `yarn typecheck`: run both Node and renderer TypeScript checks.
-- `yarn lint`: run ESLint across the repo.
-- `yarn test`: run all Jest unit/integration tests.
-- `yarn test:main` / `yarn test:renderer`: scope tests to one process.
-- `yarn test:coverage`: enforce coverage output and thresholds.
-- `yarn build`: typecheck and build production artifacts into `out/` and `dist/`.
-- `yarn test:e2e`: run Playwright Electron tests; build first with `yarn build`.
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
 
-## Coding Style & Naming Conventions
+## 2. Simplicity First
 
-The codebase is TypeScript-first. Prettier uses tabs, single quotes, semicolons, trailing commas, and a 100-column width. Run `yarn format` or `yarn format:check` before opening a PR. Follow existing naming patterns: React components and classes use `PascalCase`, hooks use `use-*.ts(x)`, helpers and modules use `kebab-case` or descriptive lowercase names, and tests mirror the source name with `.test.ts` or `.test.tsx`. Do not add comments throughout the code; only add comments for the most important or non-obvious logic.
+**Minimum code that solves the problem. Nothing speculative.**
 
-## Testing Guidelines
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
 
-Jest is configured as a multi-project suite: `main` runs in Node, `renderer` runs in jsdom. Playwright covers full Electron flows in `tests/e2e/*.spec.ts`. Maintain the global coverage floor of 50% for branches, functions, lines, and statements. Only add or update tests when the user specifically requests test implementation. When tests are requested, add them beside the matching layer and prefer `render-with-providers.tsx` plus the existing Electron/preload mocks instead of custom bootstrapping.
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-## Commit & Pull Request Guidelines
+## 3. Surgical Changes
 
-Recent history uses short, imperative commit subjects such as `Add ConfigPanel and EditorPanel document page components` and `Remove chats from OutputType`. Keep subjects concise, specific, and capitalized. For pull requests, include a clear summary, note affected layers (`main`, `preload`, `renderer`), link issues when relevant, and attach screenshots or recordings for UI changes. Before requesting review, make sure `yarn lint`, `yarn typecheck`, and `yarn test` pass locally.
+**Touch only what you must. Clean up only your own mess.**
 
-## Configuration & Security
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
 
-Keep secrets in `.env` only and never commit credentials. Treat prompt files under `src/main/agents/**/*.md` and IPC surfaces as sensitive interfaces. If test updates are needed for those changes, only implement them when the user specifically requests tests.
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
 
-## Git
+The test: Every changed line should trace directly to the user's request.
 
-Always:
+## 4. Goal-Driven Execution
 
-- git add .
-- git commit -m "auto: {describe changes}"
-- git push
+**Define success criteria. Loop until verified.**
 
-Do this after every file modification.
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
+
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
+
+---
+
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

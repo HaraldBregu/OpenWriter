@@ -5,10 +5,13 @@
 	"description": "A desktop app with multi prebuilt features",
 	"author": "Harald Bregu <harald.bregu@gmail.com>",
 	"version": "1.0.0",
+	"private": true,
 	"copyright": "© 2026 OpenWriter Project. All rights reserved.",
 	"type": "module",
 	"license": "MIT",
-	"workspaces": ["packages/*"],
+	"workspaces": [
+		"packages/*"
+	],
 	"main": "./out/main/index.js",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development electron-vite dev --inspect",
@@ -20,6 +23,7 @@
 		"typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
 		"typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
 		"typecheck": "yarn typecheck:node && yarn typecheck:web",
+		"build:extension-sdk": "yarn workspace @openwriter/extension-types build && yarn workspace @openwriter/extension-sdk build",
 		"build": "cross-env NODE_ENV=production yarn typecheck && electron-vite build",
 		"build:dev": "cross-env NODE_ENV=development yarn typecheck && electron-vite build --mode development",
 		"build:staging": "cross-env NODE_ENV=staging yarn typecheck && electron-vite build --mode staging",

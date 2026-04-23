@@ -17,12 +17,18 @@ From the repo root:
 yarn create:extension my-extension
 ```
 
+From an external Node.js project, install the npm package directly:
+
+```bash
+npm install @openwriter/extension-sdk
+```
+
 This creates a folder `my-extension/` with:
 
 ```text
 my-extension/
 ├── openwriter.extension.json   # manifest with sensible defaults
-├── package.json                 # uses @openwriter/extension-sdk (workspace)
+├── package.json                 # uses @openwriter/extension-sdk from npm
 ├── tsconfig.json
 └── src/
     └── index.ts                 # default command handler
@@ -47,39 +53,36 @@ Open `openwriter.extension.json` and adjust to taste.
 `src/index.ts`:
 
 ```ts
-import { defineExtension } from '@openwriter/extension-sdk';
+import * as openwriter from '@openwriter/extension-sdk';
 
-export default defineExtension({
-	async activate(ctx) {
-		ctx.commands.register({
-			id: 'my-extension.append-note',
-			title: 'My Extension: Append note',
-			description: 'Append a short marker to the active document.',
-			async run() {
-				const doc = await ctx.host.documents.getActive();
-				if (!doc) throw new Error('No active document.');
+export async function activate(context: openwriter.ExtensionContext) {
+	context.subscriptions.push(
+		context.commands.registerCommand('my-extension.append-note', async () => {
+			const doc = await context.workspace.getActiveDocument();
+			if (!doc) throw new Error('No active document.');
 
-				const preferences = await ctx.preferences.get<{ signature?: string }>();
-				const signature = preferences.signature?.trim() || 'Created by My Extension.';
+			const preferences = await context.preferences.get<{ signature?: string }>();
+			const signature = preferences.signature?.trim() || 'Created by My Extension.';
 
-				await ctx.host.documents.update(doc.id, {
-					content: `${doc.content}\n\n${signature}`,
-				});
+			await context.workspace.updateDocument(doc.id, {
+				content: `${doc.content}\n\n${signature}`,
+			});
 
-				ctx.log.info('Appended marker', { documentId: doc.id });
-				return { ok: true };
-			},
-		});
-	},
+			context.log.info('Appended marker', { documentId: doc.id });
+			return { ok: true };
+		})
+	);
+}
 
-	async deactivate() {
-		// optional cleanup
-	},
-});
+export function deactivate() {
+	// optional cleanup
+}
+
+export default openwriter.defineExtension({ activate, deactivate });
 ```
 
-Types come from the SDK; your editor will surface the `ExtensionContext`
-shape.
+Types and helpers come from the npm SDK; your editor will surface the
+`ExtensionContext` shape and OpenWriter datatypes.
 
 ## 3. Build
 

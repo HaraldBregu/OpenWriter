@@ -31,7 +31,7 @@ class ExtensionHostRuntime {
 	private activated = false;
 	private readonly commandHandlers = new Map<
 		string,
-		(payload?: unknown) => Promise<unknown> | unknown
+		(payload?: unknown, context?: { payload?: unknown }) => Promise<unknown> | unknown
 	>();
 	private readonly docPanelRenderers = new Map<string, ExtensionDocPanelRegistration['render']>();
 	private readonly workspaceListeners = new Set<
@@ -41,6 +41,7 @@ class ExtensionHostRuntime {
 		(event: ExtensionDocumentChangedEvent['document']) => void | Promise<void>
 	>();
 	private readonly taskListeners = new Set<(event: ExtensionTaskEvent) => void | Promise<void>>();
+	private readonly subscriptions: ExtensionContext['subscriptions'] = [];
 	private readonly pendingHostCalls = new Map<string, PendingHostCall>();
 	private readonly invocationContext = new AsyncLocalStorage<
 		ExtensionExecutionContext | undefined
@@ -94,11 +95,22 @@ class ExtensionHostRuntime {
 		this.manifest = manifest;
 
 		const moduleUrl = pathToFileURL(path.join(extensionPath, manifest.main)).href;
-		const loaded = (await import(moduleUrl)) as { default?: ExtensionModule };
-		const extensionModule = loaded.default;
+		const loaded = (await import(moduleUrl)) as {
+			default?: ExtensionModule;
+			activate?: ExtensionModule['activate'];
+			deactivate?: ExtensionModule['deactivate'];
+		};
+		const extensionModule =
+			loaded.default ??
+			(loaded.activate
+				? {
+						activate: loaded.activate,
+						...(loaded.deactivate ? { deactivate: loaded.deactivate } : {}),
+					}
+				: undefined);
 		if (!extensionModule || typeof extensionModule.activate !== 'function') {
 			throw new Error(
-				`Extension "${manifest.id}" does not export a default module with activate().`
+				`Extension "${manifest.id}" does not export activate() or a default module with activate().`
 			);
 		}
 
@@ -132,6 +144,9 @@ class ExtensionHostRuntime {
 
 		if (this.activated && typeof this.module.deactivate === 'function') {
 			await this.module.deactivate();
+		}
+		for (const subscription of this.subscriptions.splice(0)) {
+			subscription.dispose();
 		}
 
 		this.activated = false;
@@ -170,9 +185,31 @@ class ExtensionHostRuntime {
 
 			return (await promise) as ExtensionHostRequestMap[TMethod]['result'];
 		};
+		const dispose = (cleanup: () => void) => ({ dispose: cleanup });
+		const registerCommand: ExtensionContext['commands']['registerCommand'] = (
+			commandId,
+			handler
+		) => {
+			this.commandHandlers.set(commandId, handler);
+			this.send({ kind: 'command.registered', payload: { id: commandId } });
+			return dispose(() => {
+				this.commandHandlers.delete(commandId);
+			});
+		};
+		const registerDocPanelProvider: ExtensionContext['window']['registerDocPanelProvider'] = (
+			panelId,
+			provider
+		) => {
+			this.docPanelRenderers.set(panelId, provider.render);
+			this.send({ kind: 'doc-panel.registered', payload: { id: panelId } });
+			return dispose(() => {
+				this.docPanelRenderers.delete(panelId);
+			});
+		};
 
 		return {
 			manifest: this.manifest,
+			subscriptions: this.subscriptions,
 			commands: {
 				register: (command) => {
 					this.commandHandlers.set(command.id, command.run);
@@ -181,6 +218,22 @@ class ExtensionHostRuntime {
 						this.commandHandlers.delete(command.id);
 					};
 				},
+				registerCommand,
+				executeCommand: (_commandId) =>
+					Promise.resolve({
+						ok: false,
+						error: 'Extension-to-extension command execution is not available in this runtime.',
+					}),
+			},
+			window: {
+				registerDocPanelProvider,
+			},
+			workspace: {
+				getCurrent: () => callHost('workspace.getCurrent'),
+				getActiveDocument: () => callHost('documents.getActive'),
+				getDocument: (documentId) => callHost('documents.getById', documentId),
+				getDocumentContext: (documentId) => callHost('documents.getContext', documentId),
+				updateDocument: (documentId, patch) => callHost('documents.update', documentId, patch),
 			},
 			panels: {
 				registerDocPanel: (panel) => {
@@ -264,7 +317,9 @@ class ExtensionHostRuntime {
 				throw new Error(`Command "${commandId}" is not registered by the extension runtime.`);
 			}
 
-			const data = await this.invocationContext.run(context, async () => handler(payload));
+			const data = await this.invocationContext.run(context, async () =>
+				handler(payload, { payload })
+			);
 			this.send({
 				kind: 'command.result',
 				payload: {
