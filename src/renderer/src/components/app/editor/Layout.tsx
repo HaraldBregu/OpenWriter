@@ -22,7 +22,6 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 			className,
 			editor,
 			onInsertContent,
-			onOpenChat,
 			onAssistantAction,
 			onImageInsert,
 			children,
