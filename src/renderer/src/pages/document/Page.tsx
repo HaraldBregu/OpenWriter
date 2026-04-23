@@ -589,59 +589,6 @@ function PageContent(): ReactElement {
 	);
 }
 
-function isActiveTaskState(state: string): boolean {
-	return state === 'queued' || state === 'started' || state === 'running';
-}
-
-// Tracks which agent task results have already been applied to the editor in
-// this window session. Prevents re-application when the document is remounted
-// and `findForDocument` returns a task that's still within the executor's TTL.
-const APPLIED_TASKS_STORAGE_KEY = 'document.appliedTaskIds';
-
-function readAppliedTaskIds(): Set<string> {
-	try {
-		const raw = window.sessionStorage.getItem(APPLIED_TASKS_STORAGE_KEY);
-		if (!raw) return new Set();
-		const parsed = JSON.parse(raw);
-		return Array.isArray(parsed) ? new Set(parsed) : new Set();
-	} catch {
-		return new Set();
-	}
-}
-
-function isTaskApplied(taskId: string): boolean {
-	return readAppliedTaskIds().has(taskId);
-}
-
-function markTaskApplied(taskId: string): void {
-	try {
-		const set = readAppliedTaskIds();
-		set.add(taskId);
-		window.sessionStorage.setItem(APPLIED_TASKS_STORAGE_KEY, JSON.stringify([...set]));
-	} catch {
-		// sessionStorage unavailable; recovery may re-apply but no other harm.
-	}
-}
-
-function labelForPhase(phase: AgentPhase): string {
-	switch (phase) {
-		case 'thinking':
-			return 'Thinking';
-		case 'writing':
-			return 'Writing';
-		case 'generating-image':
-			return 'Generating image';
-		case 'completed':
-			return 'Done';
-		case 'error':
-			return 'Error';
-		case 'cancelled':
-			return 'Cancelled';
-		default:
-			return 'Queued';
-	}
-}
-
 function readInnerEvent(data: unknown): { kind: string; payload: unknown } | null {
 	if (!data || typeof data !== 'object') return null;
 	const event = (data as { event?: unknown }).event;
@@ -651,49 +598,12 @@ function readInnerEvent(data: unknown): { kind: string; payload: unknown } | nul
 	return { kind, payload };
 }
 
-function readCompletedResult(data: unknown): AgentCompletedOutput | null {
+function readDemoResult(data: unknown): { content: string } | null {
 	if (!data || typeof data !== 'object') return null;
 	const result = (data as { result?: unknown }).result;
 	if (!result || typeof result !== 'object') return null;
-	const { content, stoppedReason } = result as Record<string, unknown>;
-	if (typeof content !== 'string') return null;
-	if (stoppedReason !== 'done' && stoppedReason !== 'max-steps' && stoppedReason !== 'stagnation') {
-		return null;
-	}
-	return { content, stoppedReason };
-}
-
-/**
- * Compose the raw input for the text-generator-v2 editor agent.
- *
- * Embeds the selection inline (if any) as `<selected_text>...</selected_text>`
- * and appends `<prompt>...</prompt>`. The agent's input-parser extracts both
- * tags and strips them from fullText. Any literal tag occurrences already
- * present in the document are neutralised so they do not collide with markers.
- */
-function buildEditorAgentRaw(args: {
-	textBefore: string;
-	selectedText: string;
-	textAfter: string;
-	prompt: string;
-}): string {
-	const before = neutraliseAgentTags(args.textBefore);
-	const after = neutraliseAgentTags(args.textAfter);
-	const selected = neutraliseAgentTags(args.selectedText);
-	const prompt = args.prompt.trim();
-
-	const body = selected
-		? `${before}<selected_text>${selected}</selected_text>${after}`
-		: `${before}${after}`;
-	return `${body}\n\n<prompt>${prompt}</prompt>`;
-}
-
-function neutraliseAgentTags(text: string): string {
-	return text
-		.replace(/<selected_text>/gi, '<selected_text_>')
-		.replace(/<\/selected_text>/gi, '</selected_text_>')
-		.replace(/<prompt>/gi, '<prompt_>')
-		.replace(/<\/prompt>/gi, '</prompt_>');
+	const { content } = result as Record<string, unknown>;
+	return typeof content === 'string' ? { content } : null;
 }
 
 function buildExtensionDocumentContext(
