@@ -21,19 +21,8 @@ import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
 import type { TaskHandlerRegistry } from './task-handler-registry';
 import type { TaskEvent } from './task-events';
-import type { ProgressReporter, RecordEvent } from './task-handler';
-import type { AgentEvent } from '../agents/core/agent';
 import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
-import type {
-	TaskQueueStatus,
-	AgentTaskSnapshot,
-	AgentTaskLookupResult,
-	AgentPhase,
-	AgentPhasePayload,
-	AgentDeltaPayload,
-	AgentCompletedOutput,
-	AssistantTaskMetadata,
-} from '../../shared/types';
+import type { TaskQueueStatus } from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
@@ -167,8 +156,6 @@ export class TaskExecutor implements Disposable {
 		const task = this.activeTasks.get(taskId);
 		if (!task) return false;
 
-		// Cancelling task
-
 		// Abort the controller (signals running task or prevents queued task from starting)
 		task.controller.abort();
 
@@ -220,7 +207,6 @@ export class TaskExecutor implements Disposable {
 			completedAt: task.completedAt,
 			windowId: task.windowId,
 			metadata: task.metadata,
-			events: task.events ? [...task.events] : undefined,
 			controller: undefined as unknown as AbortController,
 		}));
 	}
@@ -253,73 +239,6 @@ export class TaskExecutor implements Disposable {
 		if (entry && entry.expiresAt > Date.now()) return entry.task;
 
 		return undefined;
-	}
-
-	/**
-	 * Rebuild a projection snapshot (phase + fullContent) for an agent task.
-	 * Searches active tasks first, then recently-completed (within TTL).
-	 * Returns `undefined` when the task is unknown or not an agent task.
-	 */
-	getAgentSnapshot(taskId: string): AgentTaskSnapshot | undefined {
-		const task = this.activeTasks.get(taskId) ?? this.completedTasks.get(taskId)?.task;
-		if (!task || task.type !== 'agent') return undefined;
-
-		const metadata = readAssistantMetadata(task.metadata);
-		if (!metadata) return undefined;
-
-		const { phase, fullContent } = projectEvents(task);
-
-		return {
-			taskId: task.taskId,
-			state: task.status,
-			phase: phaseForState(task.status, phase),
-			fullContent,
-			metadata,
-			startedAt: task.startedAt,
-		};
-	}
-
-	/**
-	 * Find the most recent agent task associated with a document ID. Used by
-	 * the renderer on mount to recover from navigation/unmount that happened
-	 * while a task was running or just finished.
-	 */
-	findAgentTaskForDocument(documentId: string): AgentTaskLookupResult | null {
-		type Candidate = { task: ActiveTask; completedAt?: number };
-		let best: Candidate | null = null;
-
-		const consider = (task: ActiveTask, completedAt?: number): void => {
-			if (task.type !== 'agent') return;
-			const metadata = readAssistantMetadata(task.metadata);
-			if (!metadata || metadata.documentId !== documentId) return;
-			if (!best) {
-				best = { task, completedAt };
-				return;
-			}
-			if (isActiveState(task.status) && !isActiveState(best.task.status)) {
-				best = { task, completedAt };
-				return;
-			}
-			const bestTs = best.completedAt ?? best.task.startedAt ?? 0;
-			const currTs = completedAt ?? task.startedAt ?? 0;
-			if (currTs > bestTs) best = { task, completedAt };
-		};
-
-		for (const task of this.activeTasks.values()) consider(task);
-		for (const entry of this.completedTasks.values()) consider(entry.task, entry.task.completedAt);
-
-		if (!best) return null;
-		const candidate = best as Candidate;
-		const metadata = readAssistantMetadata(candidate.task.metadata);
-		if (!metadata) return null;
-
-		return {
-			taskId: candidate.task.taskId,
-			state: candidate.task.status,
-			metadata,
-			result: readCompletedResult(candidate.task.result),
-			completedAt: candidate.task.completedAt,
-		};
 	}
 
 	/**
@@ -385,8 +304,7 @@ export class TaskExecutor implements Disposable {
 	}
 
 	/**
-	 * Execute a single task. Handles lifecycle events, progress reporting,
-	 * timeout, and cleanup.
+	 * Execute a single task. Handles lifecycle events, timeout, and cleanup.
 	 *
 	 * Does NOT throw -- all errors are caught and delivered as events.
 	 */
@@ -406,7 +324,6 @@ export class TaskExecutor implements Disposable {
 		// Set up timeout if specified
 		if (timeoutMs !== undefined) {
 			task.timeoutHandle = setTimeout(() => {
-				// Task log
 				controller.abort();
 			}, timeoutMs);
 		}
@@ -421,39 +338,8 @@ export class TaskExecutor implements Disposable {
 
 		this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
 
-		// Task log
-
 		try {
 			const handler = this.registry.get(type);
-
-			const reporter: ProgressReporter = {
-				progress: (percent, message?, detail?) => {
-					// Don't emit progress if task is already done
-					if (!this.activeTasks.has(taskId)) return;
-
-					this.send(windowId, 'task:event', {
-						state: 'running',
-						taskId,
-						data: { percent, message, detail },
-						error: null,
-						metadata: task.metadata,
-					} satisfies TaskEvent);
-				},
-			};
-
-			const recordEvent: RecordEvent = (event: AgentEvent) => {
-				const current = this.activeTasks.get(taskId);
-				if (!current) return;
-				if (!current.events) current.events = [];
-				current.events.push(event);
-				this.send(windowId, 'task:event', {
-					state: 'running',
-					taskId,
-					data: { event },
-					error: null,
-					metadata: task.metadata,
-				} satisfies TaskEvent);
-			};
 
 			const result = await runWithTaskExecutionContext(
 				{
@@ -463,7 +349,7 @@ export class TaskExecutor implements Disposable {
 					windowId,
 					metadata,
 				},
-				() => handler.execute(input, controller.signal, reporter, metadata, recordEvent)
+				() => handler.execute(input, controller.signal)
 			);
 
 			// Task may have been cancelled during execution
@@ -490,14 +376,11 @@ export class TaskExecutor implements Disposable {
 				durationMs,
 				windowId,
 			});
-
-			// Task log
 		} catch (err) {
 			// Task may have been cancelled via cancel()
 			if (!this.activeTasks.has(taskId)) return;
 
 			if (err instanceof Error && err.name === 'AbortError') {
-				// Task log
 				task.status = 'cancelled';
 				task.completedAt = Date.now();
 
@@ -513,7 +396,6 @@ export class TaskExecutor implements Disposable {
 			} else {
 				const message = err instanceof Error ? err.message : String(err);
 				const code = err instanceof Error ? err.name : 'UNKNOWN_ERROR';
-				// Task error, err)
 
 				task.status = 'error';
 				task.completedAt = Date.now();
@@ -591,69 +473,5 @@ export class TaskExecutor implements Disposable {
 		} else {
 			this.eventBus.broadcast(channel, ...args);
 		}
-	}
-}
-
-// ---- Agent-task helpers ---------------------------------------------------
-
-const ACTIVE_STATES = new Set<ActiveTask['status']>(['queued', 'started', 'running']);
-
-function isActiveState(status: ActiveTask['status']): boolean {
-	return ACTIVE_STATES.has(status);
-}
-
-function readAssistantMetadata(
-	metadata: Record<string, unknown> | undefined
-): AssistantTaskMetadata | null {
-	if (!metadata) return null;
-	const { sessionId, documentId, posFrom, posTo } = metadata;
-	if (
-		typeof sessionId !== 'string' ||
-		typeof documentId !== 'string' ||
-		typeof posFrom !== 'number' ||
-		typeof posTo !== 'number'
-	) {
-		return null;
-	}
-	return { sessionId, documentId, posFrom, posTo };
-}
-
-function readCompletedResult(raw: unknown): AgentCompletedOutput | undefined {
-	if (!raw || typeof raw !== 'object') return undefined;
-	const { content, stoppedReason } = raw as Record<string, unknown>;
-	if (typeof content !== 'string') return undefined;
-	if (stoppedReason !== 'done' && stoppedReason !== 'max-steps' && stoppedReason !== 'stagnation') {
-		return undefined;
-	}
-	return { content, stoppedReason };
-}
-
-function projectEvents(task: ActiveTask): { phase: AgentPhase; fullContent: string } {
-	let phase: AgentPhase = 'thinking';
-	let fullContent = '';
-	for (const event of task.events ?? []) {
-		if (event.kind === 'phase') {
-			const p = (event.payload as AgentPhasePayload)?.phase;
-			if (p) phase = p;
-		} else if (event.kind === 'delta') {
-			const payload = event.payload as AgentDeltaPayload;
-			if (typeof payload?.fullContent === 'string') fullContent = payload.fullContent;
-		}
-	}
-	return { phase, fullContent };
-}
-
-function phaseForState(status: ActiveTask['status'], derived: AgentPhase): AgentPhase {
-	switch (status) {
-		case 'queued':
-			return 'queued';
-		case 'completed':
-			return 'completed';
-		case 'error':
-			return 'error';
-		case 'cancelled':
-			return 'cancelled';
-		default:
-			return derived;
 	}
 }
