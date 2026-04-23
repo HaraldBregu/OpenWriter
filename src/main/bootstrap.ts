@@ -43,7 +43,7 @@ import {
 	DemoTaskHandler,
 	AgentTaskHandler,
 	TranscriptionTaskHandler,
-	TextGeneratorV1TaskHandler,
+	TextGeneratorV2TaskHandler,
 } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
 
@@ -161,6 +161,31 @@ export function bootstrapServices(): BootstrapResult {
 	// payload. Provider/model default to OpenAI + whisper-1 when omitted.
 	taskHandlerRegistry.register(
 		new TranscriptionTaskHandler(agentRegistry, logger, serviceResolver, modelResolver)
+	);
+
+	taskHandlerRegistry.register(
+		new TextGeneratorV2TaskHandler(
+			agentRegistry,
+			logger,
+			serviceResolver,
+			modelResolver,
+			streamLogger
+		)
+	);
+
+	// Dedicated handler for the editor agent. Submit tasks with type:
+	// 'text-generator-v1' and a { raw, skillIds?, skillIdRegistryPath?, ... }
+	// payload. `raw` may embed <selected_text>...</selected_text> and
+	// <prompt>...</prompt> tags. Provider/model default to the configured
+	// text model when omitted.
+	taskHandlerRegistry.register(
+		new TextGeneratorV1TaskHandler(
+			agentRegistry,
+			logger,
+			serviceResolver,
+			modelResolver,
+			streamLogger
+		)
 	);
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle

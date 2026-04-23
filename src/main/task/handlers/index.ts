@@ -17,3 +17,5 @@ export type {
 } from './image-generator-task-handler';
 export { TextGeneratorV1TaskHandler } from './text-generator-v1-task-handler';
 export type { TextGeneratorV1TaskInput } from './text-generator-v1-task-handler';
+export { TextGeneratorV2TaskHandler } from './text-generator-v2-task-handler';
+export type { TextGeneratorV2TaskInput } from './text-generator-v2-task-handler';
