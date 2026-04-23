@@ -340,38 +340,20 @@ function PageContent(): ReactElement {
 				const inner = readInnerEvent(event.data);
 				if (!inner) return;
 				if (inner.kind === 'phase') {
-					const payload = inner.payload as AgentPhasePayload;
-					if (payload?.phase) setPhaseLabel(payload.label);
-				} else if (inner.kind === 'delta') {
-					const payload = inner.payload as AgentDeltaPayload;
-					if (typeof payload?.token === 'string' && typeof payload?.fullContent === 'string') {
-						h.handleDelta(payload.token);
-					}
-				} else if (inner.kind === 'intent') {
-					const payload = inner.payload as { intent?: string; summary?: string } | null;
-					if (payload?.intent) setPhaseLabel(`Intent: ${payload.intent}`);
-				} else if (inner.kind === 'decision') {
-					const payload = inner.payload as { action?: string } | null;
-					if (payload?.action === 'text') setPhaseLabel('Writing…');
-					else if (payload?.action === 'skill') setPhaseLabel('Selecting skill…');
-					else if (payload?.action === 'done') setPhaseLabel('Finishing…');
-				} else if (inner.kind === 'skill:selected') {
-					const payload = inner.payload as { skillName?: string } | null;
-					if (payload?.skillName) setPhaseLabel(`Skill selected: ${payload.skillName}`);
-				} else if (inner.kind === 'skills:selected') {
-					const payload = inner.payload as { names?: string[] } | null;
-					if (Array.isArray(payload?.names) && payload.names.length > 0) {
-						setPhaseLabel(`Skill selected: ${payload.names.join(', ')}`);
-					}
+					const payload = inner.payload as { label?: string } | null;
+					if (typeof payload?.label === 'string') setPhaseLabel(payload.label);
+				} else if (inner.kind === 'text') {
+					const payload = inner.payload as { text?: string } | null;
+					if (typeof payload?.text === 'string') h.handleDelta(payload.text);
 				}
 				return;
 			}
 
 			if (event.state === 'completed') {
-				const result = readCompletedResult(event.data);
+				const result = readDemoResult(event.data);
+				console.log('[demo task] completed', { taskId: event.taskId, result });
 				if (result) {
 					h.handleCompleted(result.content);
-					markTaskApplied(event.taskId);
 				}
 				setActiveTaskId(null);
 				return;
