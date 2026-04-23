@@ -6,7 +6,7 @@ export interface DemoTaskInput {
 }
 
 const STATE_DELAY_MS = 500;
-const TOKEN_DELAY_MS = 80;
+const TOKEN_DELAY_MS = 200;
 const LOG_SOURCE = 'DemoTaskHandler';
 
 const LOREM =
