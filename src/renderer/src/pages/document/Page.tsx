@@ -365,6 +365,17 @@ function PageContent(): ReactElement {
 					if (typeof payload?.token === 'string' && typeof payload?.fullContent === 'string') {
 						h.handleDelta(payload.token);
 					}
+				} else if (inner.kind === 'intent') {
+					const payload = inner.payload as { intent?: string; summary?: string } | null;
+					if (payload?.intent) setPhaseLabel(`Intent: ${payload.intent}`);
+				} else if (inner.kind === 'decision') {
+					const payload = inner.payload as { action?: string } | null;
+					if (payload?.action === 'text') setPhaseLabel('Writing…');
+					else if (payload?.action === 'skill') setPhaseLabel('Selecting skill…');
+					else if (payload?.action === 'done') setPhaseLabel('Finishing…');
+				} else if (inner.kind === 'skill:selected') {
+					const payload = inner.payload as { skillName?: string } | null;
+					if (payload?.skillName) setPhaseLabel(`Skill selected: ${payload.skillName}`);
 				}
 				return;
 			}
