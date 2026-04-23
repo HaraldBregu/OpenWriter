@@ -60,7 +60,7 @@ Individual docs:
 - [Customization](./extensions/CUSTOMIZATION.md) — tokens, data, configuration patterns
 - [Permissions And Security](./extensions/PERMISSIONS_AND_SECURITY.md) — permission model, sandbox, threat model
 - [Building](./extensions/BUILDING.md) — scaffold, code, build, install, debug
-- [Example](./extensions/EXAMPLE.md) — tour of the bundled `example-host-data-showcase`
+- [Example](./extensions/EXAMPLE.md) — tour of the bundled `DemoOpenWriterExtension`
 
 ## Website Content — `web/`
 

@@ -1,0 +1,15 @@
+<svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ow-mark-gradient" x1="14" y1="18" x2="108" y2="112" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0F5D5E"/>
+      <stop offset="0.52" stop-color="#1A7F77"/>
+      <stop offset="1" stop-color="#E3A83A"/>
+    </linearGradient>
+  </defs>
+  <rect x="8" y="8" width="112" height="112" rx="32" fill="#F4EFE4"/>
+  <path d="M29 39C29 32.3726 34.3726 27 41 27H87C93.6274 27 99 32.3726 99 39V89C99 95.6274 93.6274 101 87 101H41C34.3726 101 29 95.6274 29 89V39Z" fill="url(#ow-mark-gradient)"/>
+  <path d="M41 51.5C41 46.8056 44.8056 43 49.5 43H63C75.7025 43 86 53.2975 86 66C86 78.7025 75.7025 89 63 89H49.5C44.8056 89 41 85.1944 41 80.5V51.5Z" fill="#FFF9EE"/>
+  <path d="M56 55H62.5C69.9558 55 76 61.0442 76 68.5C76 75.9558 69.9558 82 62.5 82H56V55Z" fill="#0F5D5E"/>
+  <path d="M52 55L61 68.5L52 82" stroke="#FFF9EE" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="92" cy="39" r="8" fill="#E3A83A"/>
+</svg>

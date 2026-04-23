@@ -151,8 +151,9 @@ app.whenReady().then(async () => {
 	// Serve local files via the local-resource:// protocol so the renderer
 	// can display images stored in document folders regardless of its origin.
 	protocol.handle('local-resource', (request) => {
-		const filePath = decodeURIComponent(new URL(request.url).pathname);
-		return net.fetch(`file://${filePath}`);
+		const fileUrl = new URL(request.url);
+		fileUrl.protocol = 'file:';
+		return net.fetch(fileUrl.toString());
 	});
 
 	// WORKSPACE MODE: Open workspace directly without launcher UI

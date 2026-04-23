@@ -3,8 +3,8 @@
 An extension contributes UI surfaces in two ways:
 
 - **Commands** — named, callable actions.
-- **Doc panels** — declarative UI rendered into the document's right-hand
-  side panel area.
+- **Doc panels** — UI rendered into the document's right-hand side panel
+  area, either as declarative blocks or a sandboxed HTML entry file.
 
 Both are declared statically in the manifest (so the app can show them
 even before activation) and registered dynamically in `activate()` with
@@ -218,9 +218,44 @@ types:
 Every block can have an optional `id` — stable ids help the renderer
 diff between renders and preserve focus.
 
-> The block set is intentionally small. Extensions do not render
-> arbitrary HTML or React. New block types are added to the runtime
-> (types + renderer) so every extension benefits.
+> The block set is intentionally small. New block types are added to the
+> runtime (types + renderer) so every extension benefits.
+
+### HTML Panels
+
+For richer UI, a doc panel can return a built HTML entry file instead of
+`blocks`:
+
+```ts
+ctx.panels.registerDocPanel({
+  id: 'summary-sidebar',
+  async render(context) {
+    return OpenWriter.ui.htmlPage('dist/panel/index.html', {
+      title: 'Summary Dashboard',
+      data: {
+        documentId: context.documentId,
+        reason: context.reason,
+      },
+    });
+  },
+});
+```
+
+OpenWriter loads the `.html` file in a sandboxed iframe. The page stays
+inside the extension folder and does not mount directly into the app's
+React tree.
+
+The message bridge is intentionally small:
+
+- Host → iframe `openwriter.docPanel.init`: latest panel data
+- Iframe → host `openwriter.docPanel.ready`: request the latest init payload
+- Iframe → host `openwriter.docPanel.command`: ask OpenWriter to run an
+  extension command
+- Host → iframe `openwriter.docPanel.commandResult`: command result for
+  the matching request id
+
+That keeps the runtime framework-agnostic. A React, Vue, Svelte, Solid,
+or plain browser bundle can all target the same contract.
 
 ### Buttons As Command Dispatchers
 

@@ -96,17 +96,17 @@ Through `ctx.host.*`:
 ## What Extensions Cannot Do (Today)
 
 - Directly access the renderer's React state, Redux store, or contexts
-- Add arbitrary HTML — the side panel renders a fixed set of
-  declarative **blocks** (text, markdown, key/value, notice, button
-  row)
+- Inject arbitrary HTML into the core React tree — HTML views must be
+  loaded from extension-owned files inside a sandboxed iframe
 - Bypass the gateway to reach `fs`, `electron`, or Node's main
   workspace APIs
 - Modify provider API keys stored by the app
 
-This is deliberate. Giving extensions a declarative UI surface keeps
-them portable, testable, and safe. The block language is intentionally
-small; new block types are added to the core runtime, not shipped by
-individual extensions.
+This is deliberate. OpenWriter supports two panel modes: a small
+declarative block language for lightweight UI, and a sandboxed HTML
+entry for richer interfaces. Extensions still do not mount React
+components directly into the app shell, and new privileged capabilities
+stay behind the gateway.
 
 ## How The User Interacts With An Extension
 
@@ -126,16 +126,18 @@ individual extensions.
 
 ## Example: The Bundled Showcase
 
-`extensions/example-host-data-showcase/` is the canonical reference.
+`extensions/DemoOpenWriterExtension/` is the canonical reference.
 It demonstrates:
 
-- Four commands (refresh snapshot, log snapshot, append note, clear state)
-- One doc panel (`host-data-summary`) rendering a notice + key/value
-  list + button row — all live-updating as the user types
+- Four commands (refresh dashboard, log snapshot, append note, clear state)
+- One doc panel (`demo-openwriter-extension-home`) returning
+  `dist/panel/index.html` with live init data
 - Workspace/document/task event subscriptions
 - Per-extension storage holding observed counts and the last seen
   state
 - A safe document update appending an inspection note
+- Branded SVG assets used by both the panel switcher and the HTML
+  dashboard
 
 Walkthrough: [EXAMPLE.md](./EXAMPLE.md).
 
@@ -145,6 +147,6 @@ Walkthrough: [EXAMPLE.md](./EXAMPLE.md).
 | --- | --- |
 | One extension = one utility process | Fault isolation |
 | All host calls go through the gateway | Permission enforcement |
-| UI is declarative blocks, not raw HTML | Safe composition, no XSS |
+| HTML UI runs in a sandboxed iframe, not the app tree | Safe composition, no XSS |
 | Document writes go through the workspace service | File-mutation queue, atomic writes |
 | Storage is key/value per extension | Simple, namespaced, no contention |

@@ -1,0 +1,61 @@
+{
+	"id": "demo.openwriter.extension",
+	"name": "DemoOpenWriterExtension",
+	"version": "0.2.0",
+	"apiVersion": "1",
+	"main": "dist/index.js",
+	"description": "Demonstrates the OpenWriter SDK, branded extension assets, and a framework-friendly HTML dashboard panel.",
+	"author": "OpenWriter",
+	"defaultEnabled": true,
+	"capabilities": ["commands", "host-data", "host-actions", "events", "doc-panels"],
+	"permissions": ["app.read", "workspace.read", "document.read", "document.write", "task.observe"],
+	"activationEvents": [
+		"onStartup",
+		"onDocumentOpened",
+		"onCommand:demo.openwriter.extension.refresh-dashboard",
+		"onCommand:demo.openwriter.extension.log-snapshot",
+		"onCommand:demo.openwriter.extension.append-note",
+		"onCommand:demo.openwriter.extension.clear-state"
+	],
+	"contributes": {
+		"docPanels": [
+			{
+				"id": "demo-openwriter-extension-home",
+				"title": "OpenWriter Demo",
+				"description": "Renders a branded HTML dashboard backed by extension data and commands.",
+				"when": "document",
+				"icon": {
+					"type": "asset",
+					"path": "assets/demo-openwriter-extension-mark.svg"
+				},
+				"order": 20
+			}
+		],
+		"commands": [
+			{
+				"id": "demo.openwriter.extension.refresh-dashboard",
+				"title": "DemoOpenWriterExtension: Refresh dashboard",
+				"description": "Refresh the dashboard snapshot and persist the latest host state.",
+				"when": "document"
+			},
+			{
+				"id": "demo.openwriter.extension.log-snapshot",
+				"title": "DemoOpenWriterExtension: Log snapshot",
+				"description": "Write the current host snapshot to the extension log.",
+				"when": "document"
+			},
+			{
+				"id": "demo.openwriter.extension.append-note",
+				"title": "DemoOpenWriterExtension: Append note",
+				"description": "Append a branded note to the active document.",
+				"when": "document"
+			},
+			{
+				"id": "demo.openwriter.extension.clear-state",
+				"title": "DemoOpenWriterExtension: Clear state",
+				"description": "Clear the stored demo state so the dashboard resets.",
+				"when": "document"
+			}
+		]
+	}
+}

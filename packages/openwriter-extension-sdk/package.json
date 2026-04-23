@@ -1,7 +1,7 @@
 {
 	"name": "@openwriter/extension-sdk",
 	"version": "0.1.0",
-	"description": "TypeScript SDK for building OpenWriter extensions.",
+	"description": "OpenWriter SDK for building extensions with typed host APIs, doc panels, and framework-backed HTML views.",
 	"license": "MIT",
 	"type": "module",
 	"main": "./dist/index.js",

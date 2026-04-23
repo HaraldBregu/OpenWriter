@@ -53,9 +53,9 @@ Open `openwriter.extension.json` and adjust to taste.
 `src/index.ts`:
 
 ```ts
-import * as openwriter from '@openwriter/extension-sdk';
+import * as OpenWriter from '@openwriter/extension-sdk';
 
-export async function activate(context: openwriter.ExtensionContext) {
+export async function activate(context: OpenWriter.ExtensionContext) {
 	context.subscriptions.push(
 		context.commands.registerCommand('my-extension.append-note', async () => {
 			const doc = await context.workspace.getActiveDocument();
@@ -78,11 +78,36 @@ export function deactivate() {
 	// optional cleanup
 }
 
-export default openwriter.defineExtension({ activate, deactivate });
+export default OpenWriter.defineExtension({ activate, deactivate });
 ```
 
 Types and helpers come from the npm SDK; your editor will surface the
 `ExtensionContext` shape and OpenWriter datatypes.
+
+### HTML Panels And Framework Builds
+
+If your extension needs richer UI than the block renderer, return an
+HTML entry file:
+
+```ts
+context.panels.registerDocPanel({
+	id: 'dashboard',
+	async render(panelContext) {
+		return OpenWriter.ui.htmlPage('dist/panel/index.html', {
+			title: 'My Extension Dashboard',
+			data: {
+				documentId: panelContext.documentId,
+				reason: panelContext.reason,
+			},
+		});
+	},
+});
+```
+
+`dist/panel/index.html` can be emitted by React, Vue, Svelte, Solid, or
+plain browser tooling. OpenWriter mounts it in a sandboxed iframe,
+pushes init data with `window.postMessage`, and forwards command
+requests back to the extension runtime.
 
 ## 3. Build
 
@@ -113,6 +138,8 @@ pass `--to <dir>` to override the destination.
 - Bundling is optional. A single `dist/index.js` is fine; external
   modules inside `node_modules/` are resolved relative to the
   extension folder.
+- HTML panel assets should stay inside the extension folder and be
+  referenced by relative paths from the built `.html` entry.
 - Keep the output readable. Users should be able to audit
   `dist/index.js` before installing.
 

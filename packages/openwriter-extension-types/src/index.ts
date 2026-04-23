@@ -240,9 +240,22 @@ export type ExtensionDocPanelBlock =
 	| ExtensionDocPanelNoticeBlock
 	| ExtensionDocPanelButtonRowBlock;
 
-export interface ExtensionDocPanelContent {
+export interface ExtensionDocPanelBlocksContent {
+	kind?: 'blocks';
 	blocks: ExtensionDocPanelBlock[];
 }
+
+export interface ExtensionDocPanelHtmlContent {
+	kind: 'html';
+	entryPath: string;
+	title?: string;
+	data?: unknown;
+	sourceUri?: string;
+}
+
+export type ExtensionDocPanelContent =
+	| ExtensionDocPanelBlocksContent
+	| ExtensionDocPanelHtmlContent;
 
 export interface ExtensionDocPanelRenderContext {
 	panelId: string;
@@ -296,6 +309,46 @@ export interface ExtensionCommandExecutionResult {
 	data?: unknown;
 	error?: string;
 }
+
+export interface ExtensionDocPanelInitPayload {
+	panelId: string;
+	documentId: string;
+	data?: unknown;
+}
+
+export interface ExtensionDocPanelReadyMessage {
+	type: 'openwriter.docPanel.ready';
+}
+
+export interface ExtensionDocPanelInitMessage {
+	type: 'openwriter.docPanel.init';
+	payload: ExtensionDocPanelInitPayload;
+}
+
+export interface ExtensionDocPanelCommandMessage {
+	type: 'openwriter.docPanel.command';
+	payload: {
+		requestId: string;
+		commandId: string;
+		commandPayload?: unknown;
+	};
+}
+
+export interface ExtensionDocPanelCommandResultMessage {
+	type: 'openwriter.docPanel.commandResult';
+	payload: {
+		requestId: string;
+		result: ExtensionCommandExecutionResult;
+	};
+}
+
+export type ExtensionDocPanelClientMessage =
+	| ExtensionDocPanelReadyMessage
+	| ExtensionDocPanelCommandMessage;
+
+export type ExtensionDocPanelHostMessage =
+	| ExtensionDocPanelInitMessage
+	| ExtensionDocPanelCommandResultMessage;
 
 export interface ExtensionStorageEntry {
 	key: string;
@@ -554,6 +607,12 @@ export function isCommandActivationEvent(
 
 export function commandActivationEvent(commandId: string): `onCommand:${string}` {
 	return `onCommand:${commandId}`;
+}
+
+export function isExtensionDocPanelHtmlContent(
+	content: ExtensionDocPanelContent
+): content is ExtensionDocPanelHtmlContent {
+	return content.kind === 'html';
 }
 
 export function extensionDocPanelId(extensionId: string, panelId: string): string {

@@ -19,6 +19,7 @@ import {
 	type ExtensionCommandQuery,
 	type ExtensionDocPanelContent,
 	type ExtensionDocPanelContentChangedPayload,
+	type ExtensionDocPanelHtmlContent,
 	type ExtensionDocumentContextSnapshot,
 	type ExtensionDocPanelInfo,
 	type ExtensionPreferenceContribution,
@@ -35,6 +36,7 @@ import {
 	type ExtensionExecutionContext,
 	type ExtensionDocPanelRenderReason,
 	extensionDocPanelId,
+	isExtensionDocPanelHtmlContent,
 	parseExtensionDocPanelId,
 } from '../../../packages/openwriter-extension-types/src/index';
 import { ExtensionChannels } from '../../shared/channels';
@@ -857,7 +859,17 @@ export class ExtensionManager implements Disposable {
 				const pending = record.pendingDocPanelResults.get(message.payload.requestId);
 				if (!pending) break;
 				record.pendingDocPanelResults.delete(message.payload.requestId);
-				pending.resolve(message.payload.result);
+				try {
+					pending.resolve(
+						this.resolveDocPanelContent(record.manifest.extensionPath, message.payload.result)
+					);
+				} catch (error) {
+					pending.reject(
+						error instanceof Error
+							? error
+							: new Error('Failed to resolve extension doc panel content.')
+					);
+				}
 				break;
 			}
 			case 'host.call': {
@@ -977,7 +989,59 @@ export class ExtensionManager implements Disposable {
 	}
 
 	private resolveExtensionAssetUri(extensionPath: string, assetPath: string): string {
-		return pathToFileURL(path.join(extensionPath, assetPath)).href;
+		return this.toLocalResourceUri(path.resolve(extensionPath, assetPath));
+	}
+
+	private resolveDocPanelContent(
+		extensionPath: string,
+		content: ExtensionDocPanelContent
+	): ExtensionDocPanelContent {
+		if (!isExtensionDocPanelHtmlContent(content)) {
+			return content;
+		}
+
+		return {
+			...content,
+			sourceUri: this.resolveExtensionHtmlEntryUri(extensionPath, content),
+		};
+	}
+
+	private resolveExtensionHtmlEntryUri(
+		extensionPath: string,
+		content: ExtensionDocPanelHtmlContent
+	): string {
+		const entryPath = content.entryPath.trim();
+		if (!entryPath) {
+			throw new Error('HTML doc panels must declare a non-empty entryPath.');
+		}
+		if (path.isAbsolute(entryPath)) {
+			throw new Error('HTML doc panel entryPath must be relative to the extension root.');
+		}
+
+		const resolvedExtensionPath = path.resolve(extensionPath);
+		const resolvedEntryPath = path.resolve(extensionPath, entryPath);
+		const relativePath = path.relative(resolvedExtensionPath, resolvedEntryPath);
+		if (
+			relativePath.length === 0 ||
+			relativePath.startsWith('..') ||
+			path.isAbsolute(relativePath)
+		) {
+			throw new Error('HTML doc panel entryPath cannot escape the extension root.');
+		}
+
+		const extension = path.extname(resolvedEntryPath).toLowerCase();
+		if (extension !== '.html' && extension !== '.htm') {
+			throw new Error('HTML doc panels must point to a .html or .htm entry file.');
+		}
+		if (!fs.existsSync(resolvedEntryPath)) {
+			throw new Error(`HTML doc panel entry "${content.entryPath}" was not found.`);
+		}
+
+		return this.toLocalResourceUri(resolvedEntryPath);
+	}
+
+	private toLocalResourceUri(filePath: string): string {
+		return pathToFileURL(path.resolve(filePath)).href.replace(/^file:/, 'local-resource:');
 	}
 
 	private getResolvedPreferences(extension: ExtensionInfo): Record<string, unknown> {

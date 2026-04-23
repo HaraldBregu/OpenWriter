@@ -261,13 +261,13 @@ async function create(name) {
 
 	await writeFile(
 		path.join(targetDir, 'src/index.ts'),
-		`import * as openwriter from '@openwriter/extension-sdk';
+		`import * as OpenWriter from '@openwriter/extension-sdk';
 
 interface Preferences {
 \tsignature?: string;
 }
 
-export async function activate(context: openwriter.ExtensionContext) {
+export async function activate(context: OpenWriter.ExtensionContext) {
 \tcontext.subscriptions.push(
 \t\tcontext.commands.registerCommand('${id}.append-note', async () => {
 \t\t\tconst active = await context.workspace.getActiveDocument();
@@ -291,7 +291,7 @@ export function deactivate() {
 \t// optional cleanup
 }
 
-export default openwriter.defineExtension({
+export default OpenWriter.defineExtension({
 \tactivate,
 \tdeactivate,
 });

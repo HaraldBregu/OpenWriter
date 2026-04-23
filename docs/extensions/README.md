@@ -20,8 +20,8 @@ through a typed host API.
 - Read **app**, **workspace**, and **document** data — including live
   markdown, selection, editor state
 - **Modify** the active document (title and content)
-- **Contribute UI** into the document side panel using a declarative
-  block language (text, markdown, key/value, notices, button rows)
+- **Contribute UI** into the document side panel using declarative
+  blocks or a sandboxed HTML entry file built with any framework
 - **Register commands** that appear in the command surface and can be
   invoked from UI buttons, keyboard shortcuts, or other code
 - Subscribe to **workspace**, **document**, and **task** events in
@@ -47,7 +47,7 @@ See [OVERVIEW.md](./OVERVIEW.md) for a guided tour.
 | [CUSTOMIZATION.md](./CUSTOMIZATION.md)                       | Tokens, data, configuration — how users tailor an extension     |
 | [PERMISSIONS_AND_SECURITY.md](./PERMISSIONS_AND_SECURITY.md) | Permissions, sandbox, gateway, threat model                     |
 | [BUILDING.md](./BUILDING.md)                                 | Authoring walkthrough: scaffold, code, build, install           |
-| [EXAMPLE.md](./EXAMPLE.md)                                   | Tour of the bundled `example-host-data-showcase`                |
+| [EXAMPLE.md](./EXAMPLE.md)                                   | Tour of the bundled `DemoOpenWriterExtension`                   |
 
 ## Source Map
 
@@ -61,7 +61,7 @@ Extension runtime and SDK live in two places in the monorepo:
 | `packages/openwriter-extension-host`     | The in-process runtime inside the utility process          |
 | `packages/create-openwriter-extension`   | Scaffolder CLI (`yarn create:extension`)                   |
 | `src/main/extensions/`                   | Main-process side: manager, gateway, host launcher, IPC    |
-| `extensions/example-host-data-showcase/` | Bundled reference extension                                |
+| `extensions/DemoOpenWriterExtension/` | Bundled reference extension                                     |
 
 ## Quick Start
 
@@ -76,9 +76,9 @@ npm run build
 Minimal extension (`src/index.ts`):
 
 ```ts
-import * as openwriter from '@openwriter/extension-sdk';
+import * as OpenWriter from '@openwriter/extension-sdk';
 
-export async function activate(context: openwriter.ExtensionContext) {
+export async function activate(context: OpenWriter.ExtensionContext) {
 	context.subscriptions.push(
 		context.commands.registerCommand('my-extension.say-hi', async () => {
 			const doc = await context.workspace.getActiveDocument();
@@ -90,7 +90,7 @@ export async function activate(context: openwriter.ExtensionContext) {
 	);
 }
 
-export default openwriter.defineExtension({ activate });
+export default OpenWriter.defineExtension({ activate });
 ```
 
 ## Stability

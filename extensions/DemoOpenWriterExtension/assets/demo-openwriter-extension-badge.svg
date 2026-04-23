@@ -1,0 +1,19 @@
+<svg width="320" height="192" viewBox="0 0 320 192" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ow-badge-surface" x1="28" y1="18" x2="274" y2="174" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0E3B40"/>
+      <stop offset="0.48" stop-color="#156E68"/>
+      <stop offset="1" stop-color="#E3A83A"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="192" rx="32" fill="#F4EFE4"/>
+  <rect x="18" y="18" width="284" height="156" rx="28" fill="url(#ow-badge-surface)"/>
+  <circle cx="256" cy="58" r="18" fill="#F4EFE4" fill-opacity="0.2"/>
+  <circle cx="274" cy="40" r="10" fill="#E3A83A"/>
+  <path d="M66 69C66 57.402 75.402 48 87 48H122C153.48 48 179 73.5198 179 105C179 136.48 153.48 162 122 162H87C75.402 162 66 152.598 66 141V69Z" fill="#FFF9EE"/>
+  <path d="M103 77H119.5C136.345 77 150 90.6553 150 107.5C150 124.345 136.345 138 119.5 138H103V77Z" fill="#0E3B40"/>
+  <path d="M94 77L114 107.5L94 138" stroke="#FFF9EE" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M204 79H246" stroke="#FFF9EE" stroke-width="10" stroke-linecap="round"/>
+  <path d="M204 105H262" stroke="#FFF9EE" stroke-width="10" stroke-linecap="round"/>
+  <path d="M204 131H234" stroke="#FFF9EE" stroke-width="10" stroke-linecap="round"/>
+</svg>

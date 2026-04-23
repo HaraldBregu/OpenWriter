@@ -1,0 +1,15 @@
+{
+	"name": "demo-openwriter-extension",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "tsc -p tsconfig.json",
+		"validate": "create-openwriter-extension validate ."
+	},
+	"dependencies": {
+		"@openwriter/extension-sdk": "^0.1.0"
+	},
+	"devDependencies": {
+		"typescript": "^5.8.3"
+	}
+}

@@ -2,7 +2,10 @@ import type {
 	ExtensionAppInfo,
 	ExtensionCommandContribution,
 	ExtensionCommandExecutionResult,
+	ExtensionDocPanelBlock,
+	ExtensionDocPanelBlocksContent,
 	ExtensionDocPanelContent,
+	ExtensionDocPanelHtmlContent,
 	ExtensionDocPanelRenderContext,
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocumentSnapshot,
@@ -142,14 +145,11 @@ export function createDisposable(dispose: () => void): Disposable {
 	return { dispose };
 }
 
-export function text(text: string, id?: string): ExtensionDocPanelContent['blocks'][number] {
+export function text(text: string, id?: string): ExtensionDocPanelBlock {
 	return { type: 'text', text, ...(id ? { id } : {}) };
 }
 
-export function markdown(
-	markdown: string,
-	id?: string
-): ExtensionDocPanelContent['blocks'][number] {
+export function markdown(markdown: string, id?: string): ExtensionDocPanelBlock {
 	return { type: 'markdown', markdown, ...(id ? { id } : {}) };
 }
 
@@ -160,7 +160,7 @@ export function notice(
 		title?: string;
 		tone?: 'info' | 'warning' | 'error' | 'success';
 	} = {}
-): ExtensionDocPanelContent['blocks'][number] {
+): ExtensionDocPanelBlock {
 	return {
 		type: 'notice',
 		description,
@@ -170,8 +170,23 @@ export function notice(
 	};
 }
 
-export function docPanel(blocks: ExtensionDocPanelContent['blocks']): ExtensionDocPanelContent {
+export function docPanel(blocks: ExtensionDocPanelBlock[]): ExtensionDocPanelBlocksContent {
 	return { blocks };
+}
+
+export function htmlPage(
+	entryPath: string,
+	options: {
+		title?: string;
+		data?: unknown;
+	} = {}
+): ExtensionDocPanelHtmlContent {
+	return {
+		kind: 'html',
+		entryPath,
+		...(options.title ? { title: options.title } : {}),
+		...(options.data !== undefined ? { data: options.data } : {}),
+	};
 }
 
 export const ui = {
@@ -179,6 +194,7 @@ export const ui = {
 	markdown,
 	notice,
 	docPanel,
+	htmlPage,
 };
 
 export type {
@@ -189,9 +205,14 @@ export type {
 	ExtensionCommandInfo,
 	ExtensionDocPanelBlock,
 	ExtensionDocPanelButtonAction,
+	ExtensionDocPanelBlocksContent,
+	ExtensionDocPanelClientMessage,
 	ExtensionDocPanelContent,
 	ExtensionDocPanelContribution,
+	ExtensionDocPanelHostMessage,
+	ExtensionDocPanelHtmlContent,
 	ExtensionDocPanelInfo,
+	ExtensionDocPanelInitPayload,
 	ExtensionDocPanelKeyValueItem,
 	ExtensionDocPanelNoticeTone,
 	ExtensionDocPanelRenderContext,

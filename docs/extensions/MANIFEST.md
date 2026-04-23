@@ -23,12 +23,12 @@ contributions. A working extension typically looks like:
 
 ```json
 {
-	"id": "example.host-data-showcase",
-	"name": "Host Data Showcase",
-	"version": "0.1.0",
+	"id": "demo.openwriter.extension",
+	"name": "DemoOpenWriterExtension",
+	"version": "0.2.0",
 	"apiVersion": "1",
 	"main": "dist/index.js",
-	"description": "Demonstrates host data access and doc panels.",
+	"description": "Demonstrates the OpenWriter SDK, branded assets, and an HTML dashboard panel.",
 	"author": "OpenWriter",
 	"defaultEnabled": true,
 	"capabilities": ["commands", "host-data", "host-actions", "events", "doc-panels"],
@@ -36,24 +36,24 @@ contributions. A working extension typically looks like:
 	"activationEvents": [
 		"onStartup",
 		"onDocumentOpened",
-		"onCommand:example.host-data-showcase.refresh-snapshot"
+		"onCommand:demo.openwriter.extension.refresh-dashboard"
 	],
 	"contributes": {
 		"docPanels": [
 			{
-				"id": "host-data-summary",
-				"title": "Host data",
-				"description": "Shows app, workspace, document state.",
+				"id": "demo-openwriter-extension-home",
+				"title": "OpenWriter Demo",
+				"description": "Renders a branded HTML dashboard backed by extension data.",
 				"when": "document",
-				"icon": { "type": "asset", "path": "assets/host-data.svg" },
+				"icon": { "type": "asset", "path": "assets/demo-openwriter-extension-mark.svg" },
 				"order": 20
 			}
 		],
 		"commands": [
 			{
-				"id": "example.host-data-showcase.refresh-snapshot",
-				"title": "Refresh snapshot",
-				"description": "Read host state and persist latest snapshot.",
+				"id": "demo.openwriter.extension.refresh-dashboard",
+				"title": "Refresh dashboard",
+				"description": "Read host state and persist the latest dashboard snapshot.",
 				"when": "document"
 			}
 		],
@@ -141,6 +141,10 @@ Each entry of `contributes.docPanels`:
 | `when`        |    no    | Currently forced to `"document"`                                       |
 | `icon`        |    no    | Either a string (name) or `{ type: "asset", path: "assets/icon.svg" }` |
 | `order`       |    no    | Number — lower renders earlier                                         |
+
+The manifest only declares the slot and icon. At runtime the panel's
+`render()` function can return block content or `OpenWriter.ui.htmlPage(...)`
+to mount a built HTML entry file.
 
 ### Contributions — Doc Pages
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import {
 	AlertCircle,
@@ -13,7 +13,10 @@ import type {
 	ExtensionCommandExecutionResult,
 	ExtensionDocPanelBlock,
 	ExtensionDocPanelButtonAction,
+	ExtensionDocPanelClientMessage,
 	ExtensionDocPanelContent,
+	ExtensionDocPanelHostMessage,
+	ExtensionDocPanelHtmlContent,
 } from '@shared/types';
 
 interface ExtensionPanelProps {
@@ -53,6 +56,12 @@ function NoticeIcon({
 		default:
 			return <Info className="mt-0.5 size-4 shrink-0" />;
 	}
+}
+
+function isHtmlContent(
+	content: ExtensionDocPanelContent | null
+): content is ExtensionDocPanelHtmlContent {
+	return content?.kind === 'html';
 }
 
 interface BlockRendererProps {
@@ -174,11 +183,13 @@ export default function ExtensionPanel({
 	panelId,
 	documentId,
 }: ExtensionPanelProps): React.ReactElement {
+	const iframeRef = useRef<HTMLIFrameElement | null>(null);
 	const [content, setContent] = useState<ExtensionDocPanelContent | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 	const [pendingActionId, setPendingActionId] = useState<string | null>(null);
 	const [actionError, setActionError] = useState<string | null>(null);
+	const [iframeLoaded, setIframeLoaded] = useState(false);
 
 	const loadContent = useCallback(
 		async (mode: 'open' | 'refresh' = 'open') => {
@@ -207,9 +218,53 @@ export default function ExtensionPanel({
 		[documentId, panelId]
 	);
 
+	const executeDocPanelCommand = useCallback(
+		async (commandId: string, payload?: unknown): Promise<ExtensionCommandExecutionResult> => {
+			try {
+				const result = await window.extensions.executeDocPanelAction(commandId, payload);
+				if (result.ok) {
+					await loadContent('refresh');
+				}
+				return result;
+			} catch (nextError) {
+				return {
+					ok: false,
+					error: extractErrorMessage(nextError),
+				};
+			}
+		},
+		[loadContent]
+	);
+
+	const postHostMessage = useCallback((message: ExtensionDocPanelHostMessage): void => {
+		iframeRef.current?.contentWindow?.postMessage(message, '*');
+	}, []);
+
+	const htmlContent = isHtmlContent(content) ? content : null;
+	const blockContent = content && !isHtmlContent(content) ? content : null;
+	const blocks = blockContent?.blocks ?? [];
+
+	const sendHtmlInit = useCallback(() => {
+		if (!htmlContent || !iframeLoaded) return;
+
+		postHostMessage({
+			type: 'openwriter.docPanel.init',
+			payload: {
+				panelId,
+				documentId,
+				data: htmlContent.data,
+			},
+		});
+	}, [documentId, htmlContent, iframeLoaded, panelId, postHostMessage]);
+
 	useEffect(() => {
 		void loadContent('open');
 	}, [loadContent]);
+
+	useEffect(() => {
+		setPendingActionId(null);
+		setActionError(null);
+	}, [documentId, panelId]);
 
 	useEffect(() => {
 		const unsubscribe = window.extensions.onDocPanelContentChanged((payload) => {
@@ -220,43 +275,122 @@ export default function ExtensionPanel({
 		return unsubscribe;
 	}, [documentId, loadContent]);
 
-	const runAction = useCallback(async (action: ExtensionDocPanelButtonAction) => {
-		setPendingActionId(action.id);
-		setActionError(null);
-		try {
-			const result: ExtensionCommandExecutionResult = await window.extensions.executeDocPanelAction(
-				action.commandId,
-				action.payload
-			);
+	useEffect(() => {
+		if (!htmlContent) {
+			setIframeLoaded(false);
+		}
+	}, [htmlContent]);
+
+	useEffect(() => {
+		setIframeLoaded(false);
+	}, [htmlContent?.sourceUri]);
+
+	useEffect(() => {
+		sendHtmlInit();
+	}, [sendHtmlInit]);
+
+	useEffect(() => {
+		if (!htmlContent) return;
+
+		const handleMessage = (event: MessageEvent<ExtensionDocPanelClientMessage>): void => {
+			if (event.source !== iframeRef.current?.contentWindow) return;
+
+			const message = event.data;
+			if (
+				!message ||
+				typeof message !== 'object' ||
+				!('type' in message) ||
+				typeof message.type !== 'string'
+			) {
+				return;
+			}
+
+			if (message.type === 'openwriter.docPanel.ready') {
+				setIframeLoaded(true);
+				return;
+			}
+
+			if (message.type !== 'openwriter.docPanel.command') {
+				return;
+			}
+
+			void (async () => {
+				const result = await executeDocPanelCommand(
+					message.payload.commandId,
+					message.payload.commandPayload
+				);
+				postHostMessage({
+					type: 'openwriter.docPanel.commandResult',
+					payload: {
+						requestId: message.payload.requestId,
+						result,
+					},
+				});
+			})();
+		};
+
+		window.addEventListener('message', handleMessage as EventListener);
+		return () => {
+			window.removeEventListener('message', handleMessage as EventListener);
+		};
+	}, [executeDocPanelCommand, htmlContent, postHostMessage]);
+
+	const runAction = useCallback(
+		async (action: ExtensionDocPanelButtonAction) => {
+			setPendingActionId(action.id);
+			setActionError(null);
+
+			const result = await executeDocPanelCommand(action.commandId, action.payload);
 			if (!result.ok) {
 				setActionError(result.error || 'The panel action failed.');
 			}
-		} catch (nextError) {
-			setActionError(extractErrorMessage(nextError));
-		} finally {
-			setPendingActionId(null);
-		}
-	}, []);
 
-	const blocks = useMemo(() => content?.blocks ?? [], [content]);
+			setPendingActionId(null);
+		},
+		[executeDocPanelCommand]
+	);
 
 	return (
-		<Card className="flex h-full w-full flex-col border-none rounded-none bg-card/55 dark:bg-background p-0! gap-0! ring-0 border-l border-border/70">
-			<CardContent className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+		<Card className="flex h-full w-full flex-col rounded-none border-none border-l border-border/70 bg-card/55 p-0! ring-0 gap-0! dark:bg-background">
+			<CardContent
+				className={
+					htmlContent
+						? 'min-h-0 flex-1 overflow-hidden p-0'
+						: 'min-h-0 flex-1 overflow-y-auto px-4 py-4'
+				}
+			>
 				{loading ? (
-					<div className="flex items-center gap-2 text-sm text-muted-foreground">
+					<div className="flex items-center gap-2 px-4 py-4 text-sm text-muted-foreground">
 						<LoaderCircle className="size-4 animate-spin" />
 						<span>Loading panel…</span>
 					</div>
 				) : error ? (
-					<div className={toneClasses('error')}>
+					<div className={`${toneClasses('error')} m-4`}>
 						<div className="flex gap-2 rounded-lg border px-3 py-2 text-sm">
 							<AlertCircle className="mt-0.5 size-4 shrink-0" />
 							<span>{error}</span>
 						</div>
 					</div>
+				) : htmlContent ? (
+					htmlContent.sourceUri ? (
+						<iframe
+							ref={iframeRef}
+							key={htmlContent.sourceUri}
+							src={htmlContent.sourceUri}
+							title={htmlContent.title ?? 'Extension panel'}
+							sandbox="allow-forms allow-same-origin allow-scripts"
+							className="h-full w-full border-0 bg-transparent"
+							onLoad={() => setIframeLoaded(true)}
+						/>
+					) : (
+						<div className="px-4 py-4">
+							<EmptyState message="This HTML panel did not provide a valid source URI." />
+						</div>
+					)
 				) : blocks.length === 0 ? (
-					<EmptyState message="This panel returned no content." />
+					<div className="px-4 py-4">
+						<EmptyState message="This panel returned no content." />
+					</div>
 				) : (
 					<BlockRenderer
 						blocks={blocks}
