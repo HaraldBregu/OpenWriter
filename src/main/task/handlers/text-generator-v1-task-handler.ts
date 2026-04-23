@@ -132,7 +132,10 @@ export class TextGeneratorV1TaskHandler
 
 		try {
 			const output = await agent.execute(agentInput, ctx);
-			const content = output.finalDocument;
+			// Return the direct model output, not the merged full document.
+			// The editor UX (editorInsert.commitFinal) replaces the selection
+			// range with this content — the merged document would duplicate text.
+			const content = output.rawResult;
 			reporter.progress(100, 'done');
 
 			this.logger.info(LOG_SOURCE, `[${AGENT_TYPE}] task completed`, {
@@ -143,6 +146,7 @@ export class TextGeneratorV1TaskHandler
 				skillIds: output.selectedSkillIds.length,
 				tokens,
 				contentLength: content.length,
+				finalDocumentLength: output.finalDocument.length,
 			});
 
 			if (taskId) {
