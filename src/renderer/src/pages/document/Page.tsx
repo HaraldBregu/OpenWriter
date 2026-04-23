@@ -19,7 +19,6 @@ import {
 	useEditorStreamInsert,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
-import { Badge } from '@/components/ui/Badge';
 import type {
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocPanelInfo,
