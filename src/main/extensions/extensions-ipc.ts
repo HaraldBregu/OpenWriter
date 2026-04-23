@@ -1,4 +1,4 @@
-import { BrowserWindow, ipcMain, shell } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
 import type { IpcModule } from '../ipc/ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
@@ -66,6 +66,36 @@ export class ExtensionsIpc implements IpcModule {
 				const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
 				return manager.getDocPanelContent(panelId, documentId, windowId, 'refresh');
 			}, ExtensionChannels.refreshDocPanel)
+		);
+
+		ipcMain.handle(
+			ExtensionChannels.getPreferences,
+			wrapSimpleHandler(
+				(extensionId: string) => manager.getPreferences(extensionId),
+				ExtensionChannels.getPreferences
+			)
+		);
+
+		ipcMain.handle(
+			ExtensionChannels.setPreference,
+			wrapSimpleHandler(
+				(extensionId: string, key: string, value: unknown) =>
+					manager.setPreference(extensionId, key, value),
+				ExtensionChannels.setPreference
+			)
+		);
+
+		ipcMain.handle(
+			ExtensionChannels.installLocal,
+			wrapIpcHandler(async (event) => {
+				const window = BrowserWindow.fromWebContents(event.sender) ?? undefined;
+				const result = await dialog.showOpenDialog(window, {
+					title: 'Install OpenWriter Extension',
+					properties: ['openDirectory'],
+				});
+				if (result.canceled || result.filePaths.length === 0) return null;
+				return manager.installFromDirectory(result.filePaths[0]);
+			}, ExtensionChannels.installLocal)
 		);
 
 		ipcMain.handle(

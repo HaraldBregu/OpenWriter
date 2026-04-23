@@ -58,6 +58,7 @@ import type {
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
 	ExtensionDocumentContextSnapshot,
+	ExtensionPreferenceContribution,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -383,7 +384,7 @@ export interface InvokeChannelMap {
 	[ExtensionChannels.getPreferences]: {
 		args: [extensionId: string];
 		result: {
-			definitions: import('../../packages/openwriter-extension-types/src/index').ExtensionPreferenceContribution[];
+			definitions: ExtensionPreferenceContribution[];
 			values: Record<string, unknown>;
 		};
 	};
