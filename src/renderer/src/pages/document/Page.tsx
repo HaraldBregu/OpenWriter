@@ -330,8 +330,6 @@ function PageContent(): ReactElement {
 
 	const editorActions = useEditor(editorRef);
 
-	const [phaseLabel, setPhaseLabel] = useState<string | null>(null);
-
 	const editorInsert = useEditorStreamInsert();
 
 	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
