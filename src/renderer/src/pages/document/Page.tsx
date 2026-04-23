@@ -20,11 +20,6 @@ import {
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import type {
-	AgentCompletedOutput,
-	AgentDeltaPayload,
-	AgentPhase,
-	AgentPhasePayload,
-	AssistantTaskMetadata,
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocPanelInfo,
 	TaskEvent,
