@@ -87,6 +87,30 @@ export interface ExtensionDocPageContribution {
 	order?: number;
 }
 
+export type ExtensionPreferenceType =
+	| 'textfield'
+	| 'password'
+	| 'checkbox'
+	| 'dropdown'
+	| 'file'
+	| 'directory';
+
+export interface ExtensionPreferenceOption {
+	label: string;
+	value: string;
+}
+
+export interface ExtensionPreferenceContribution {
+	id: string;
+	title: string;
+	description?: string;
+	type: ExtensionPreferenceType;
+	required?: boolean;
+	default?: string | boolean;
+	placeholder?: string;
+	options?: ExtensionPreferenceOption[];
+}
+
 export interface ExtensionManifest {
 	id: string;
 	name: string;
@@ -103,6 +127,7 @@ export interface ExtensionManifest {
 		commands?: ExtensionCommandContribution[];
 		docPanels?: ExtensionDocPanelContribution[];
 		docPages?: ExtensionDocPageContribution[];
+		preferences?: ExtensionPreferenceContribution[];
 	};
 }
 
@@ -328,6 +353,11 @@ export interface ExtensionHostRequestMap {
 		result: void;
 		permission: null;
 	};
+	'preferences.get': {
+		args: [];
+		result: Record<string, unknown>;
+		permission: null;
+	};
 }
 
 export type ExtensionEventType = 'workspace.changed' | 'document.changed' | 'task.event';
@@ -367,6 +397,7 @@ export interface ExtensionInfo {
 	commands: ExtensionCommandContribution[];
 	docPanels: ExtensionDocPanelContribution[];
 	docPages: ExtensionDocPageContribution[];
+	preferences: ExtensionPreferenceContribution[];
 	validationErrors: string[];
 }
 
