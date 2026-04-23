@@ -87,6 +87,16 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 
 		reporter.progress(0, 'reasoning');
 
+		const taskId = getTaskExecutionContext()?.taskId;
+		const streamType = resolveStreamType(input.agentType);
+		if (taskId) {
+			this.streamLogger?.open(taskId, {
+				streamType,
+				agentType: input.agentType,
+				metadata,
+			});
+		}
+
 		const ctx: AgentContext = {
 			signal,
 			logger: this.logger,
@@ -102,15 +112,18 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 						fullContent += delta;
 						reporter.progress(rampPct(tokens), 'response');
 						process.stdout.write(delta);
-						recordEvent?.({
+						const deltaEvent: AgentEvent = {
 							kind: 'delta',
 							at: Date.now(),
 							payload: { token: delta, fullContent },
-						});
+						};
+						if (taskId) this.streamLogger?.logEvent(taskId, deltaEvent);
+						recordEvent?.(deltaEvent);
 						return;
 					}
 				}
 
+				if (taskId) this.streamLogger?.logEvent(taskId, event);
 				recordEvent?.(event);
 			},
 		};
@@ -126,6 +139,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 				contentLength: content.length,
 				stoppedReason,
 			});
+			if (taskId) {
+				this.streamLogger?.close(taskId, {
+					status: 'completed',
+					stoppedReason,
+					tokens,
+					contentLength: content.length,
+				});
+			}
 			return { content, stoppedReason };
 		} catch (error) {
 			const err = error instanceof Error ? error : new Error(String(error));
@@ -135,6 +156,14 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 				error: err.message,
 				name: err.name,
 			});
+			if (taskId) {
+				this.streamLogger?.close(taskId, {
+					status: err.name === 'AbortError' ? 'cancelled' : 'error',
+					error: err.message,
+					tokens,
+					contentLength: fullContent.length,
+				});
+			}
 			throw error;
 		}
 	}
