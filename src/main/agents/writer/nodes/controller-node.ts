@@ -64,8 +64,11 @@ function buildContext(ctx: ControllerContext): string {
 	const lines = [
 		`User request: ${ctx.input.prompt}`,
 		`Classified intent: ${ctx.intent.intent} (${ctx.intent.summary})`,
-		`Skills available: ${renderSkills(ctx.input.skills)}`,
-		`History so far:`,
+		'',
+		'Skill catalog (cross-reference each skill\'s description against the classified intent and user request):',
+		...renderSkillCatalog(ctx.input.skills),
+		'',
+		'History so far:',
 	];
 	if (ctx.history.length === 0) {
 		lines.push('  (none)');
@@ -76,7 +79,7 @@ function buildContext(ctx: ControllerContext): string {
 	return lines.join('\n');
 }
 
-function renderSkills(skills?: WriterSkill[]): string {
-	if (!skills || skills.length === 0) return 'none';
-	return skills.map((s) => `"${s.name}" — ${s.description}`).join('; ');
+function renderSkillCatalog(skills?: WriterSkill[]): string[] {
+	if (!skills || skills.length === 0) return ['  (no skills available — do not pick action "skill")'];
+	return skills.map((s, i) => `  ${i + 1}. ${s.name} — ${s.description}`);
 }
