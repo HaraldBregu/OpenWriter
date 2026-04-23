@@ -485,7 +485,7 @@ function Container({ children }: LayoutProps) {
 											icon: Database,
 											items: [
 												{ title: t('appLayout.content'), url: '/resources/content' },
-												{ title: t('appLayout.data') },
+												{ title: t('appLayout.database', 'Database') },
 											],
 										},
 									].map((item) => (
