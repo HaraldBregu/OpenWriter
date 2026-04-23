@@ -15,3 +15,5 @@ export type {
 	ImageQuality,
 	ImageStyle,
 } from './image-generator-task-handler';
+export { TextGeneratorV1TaskHandler } from './text-generator-v1-task-handler';
+export type { TextGeneratorV1TaskInput } from './text-generator-v1-task-handler';
