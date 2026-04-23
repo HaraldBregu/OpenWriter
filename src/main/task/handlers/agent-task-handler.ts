@@ -31,8 +31,11 @@ interface AgentInputRecord {
 	providerId?: string;
 	apiKey?: string;
 	modelName?: string;
+	skills?: Skill[];
 	[key: string]: unknown;
 }
+
+const WRITER_AGENT_TYPE = 'writer';
 
 interface AgentRunOutput {
 	content?: unknown;
