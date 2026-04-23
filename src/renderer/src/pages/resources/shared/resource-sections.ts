@@ -46,7 +46,7 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 	data: {
 		id: 'data',
 		route: '/resources/data',
-		titleKey: 'appLayout.data',
+		titleKey: 'appLayout.knowledgeBase',
 		emptyKey: 'resources.data.empty',
 		loadingKey: 'resources.data.loading',
 		uploadKey: 'resources.data.upload',
