@@ -28,7 +28,7 @@ import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 const pluginKey = new PluginKey('bubbleMenu');
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
-	const { editor, onOpenChat, onAssistantAction } = useEditor();
+	const { editor, onAssistantAction } = useEditor();
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
