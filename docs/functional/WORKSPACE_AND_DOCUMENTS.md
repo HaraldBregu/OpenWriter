@@ -21,9 +21,9 @@ sub-folders exist:
 ```
 
 Only one workspace is active per window. Opening a second workspace opens
-a second window with its own set of workspace-scoped services. State
-never leaks between windows (see [../ARCHITECTURE.md](../ARCHITECTURE.md)
-for the per-window scoping model).
+a second window with its own set of workspace-scoped services — workspace
+state is created fresh by `WindowContextManager`
+(`src/main/core/window-context.ts`) so state never leaks between windows.
 
 ## Recent Workspaces
 
