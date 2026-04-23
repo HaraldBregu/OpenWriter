@@ -425,8 +425,10 @@ function PageContent(): ReactElement {
 			}
 
 			if (found.state === 'completed' && found.result) {
+				if (isTaskApplied(found.taskId)) return;
 				h.handleRecovery('', found.metadata);
 				h.handleCompleted(found.result.content);
+				markTaskApplied(found.taskId);
 			}
 		})();
 

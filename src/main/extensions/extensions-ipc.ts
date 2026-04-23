@@ -1,4 +1,4 @@
-import { BrowserWindow, dialog, ipcMain, shell } from 'electron';
+import { BrowserWindow, dialog, ipcMain, shell, type OpenDialogOptions } from 'electron';
 import type { IpcModule } from '../ipc/ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
@@ -89,7 +89,7 @@ export class ExtensionsIpc implements IpcModule {
 			ExtensionChannels.installLocal,
 			wrapIpcHandler(async (event) => {
 				const window = BrowserWindow.fromWebContents(event.sender) ?? undefined;
-				const options = {
+				const options: OpenDialogOptions = {
 					title: 'Install OpenWriter Extension',
 					properties: ['openDirectory'],
 				};
