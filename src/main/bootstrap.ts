@@ -86,6 +86,9 @@ export function bootstrapServices(): BootstrapResult {
 	// Skills management service (user-installed skills under userData/skills/)
 	container.register('skillsStoreService', new SkillsStoreService(logger));
 
+	// Per-task agent stream logger (userData/stream-logs/<taskId>.jsonl)
+	const streamLogger = container.register('streamLogger', new StreamLoggerService(logger));
+
 	// Create WindowFactory with logger access
 	const windowFactory = new WindowFactory(logger);
 	container.register('windowFactory', windowFactory);
