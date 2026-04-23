@@ -6,17 +6,14 @@ import type { StoreService } from '../../services/store';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
 import type { AgentCompletedOutput } from '../../../shared/types';
-import { AgentStreamProjection } from './agent-stream-projection';
-import { AgentPhaseMapper } from './agent-phase-mapper';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
  *
  * Enriches the incoming payload with `{ providerId, apiKey, modelName }`
  * resolved from store settings, then dispatches to the registered agent.
- * Streaming tokens flow through `recordEvent` as:
- *   - `phase` ({ phase, label }) — status-bar display.
- *   - `delta` ({ token, fullContent }) — live editor insertion.
+ * Streaming tokens flow through `recordEvent` as `delta` events
+ * ({ token, fullContent }) for live editor insertion.
  */
 
 export interface AgentTaskInput<TAgentInput = unknown> {
