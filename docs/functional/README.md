@@ -3,8 +3,8 @@
 Functional (product-level) docs for OpenWriter. Describes **what the app does
 for the user**, not how the code is wired.
 
-For architecture, IPC, and runtime wiring, see [../ARCHITECTURE.md](../ARCHITECTURE.md)
-and [../AGENT_STREAMING.md](../AGENT_STREAMING.md).
+Each doc is self-contained; code-level references point to the source files
+under `src/` so readers can drop from "what" into "how" when they want.
 
 ## What OpenWriter Is
 
