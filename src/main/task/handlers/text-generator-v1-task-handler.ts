@@ -176,6 +176,9 @@ export class TextGeneratorV1TaskHandler
 	}
 
 	private buildAgentInput(input: TextGeneratorV1TaskInput): TextGeneratorV1AgentInput {
+		// Model is resolved ONLY to discover providerId + apiKey. The agent's own
+		// default (`gpt-5.2`) applies when the caller does not pass `modelName`,
+		// because shell+skills require a reasoning-class model.
 		const modelId = input.modelName?.trim() || DEFAULT_TEXT_MODEL_ID;
 		const model = this.modelResolver.resolve({ modelId });
 		const providerId = input.providerId?.trim() || model.providerId;
@@ -185,8 +188,8 @@ export class TextGeneratorV1TaskHandler
 			raw: input.raw,
 			providerId: service.provider.id,
 			apiKey: input.apiKey?.trim() || service.apiKey,
-			modelName: model.modelId,
 			stream: input.stream ?? true,
+			...(input.modelName?.trim() ? { modelName: input.modelName.trim() } : {}),
 			...(input.skillIds && Object.keys(input.skillIds).length > 0
 				? { skillIds: input.skillIds }
 				: {}),
