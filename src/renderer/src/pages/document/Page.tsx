@@ -437,8 +437,7 @@ function PageContent(): ReactElement {
 
 	const submitAssistantTask = useCallback(
 		async (args: {
-			prompt: string;
-			files: { name: string; mimeType?: string }[];
+			raw: string;
 			posFrom: number;
 			posTo: number;
 		}): Promise<boolean> => {
@@ -456,14 +455,8 @@ function PageContent(): ReactElement {
 			};
 
 			const result = await window.task.submit({
-				type: 'agent',
-				input: {
-					agentType: AGENT_TYPE,
-					input: {
-						prompt: args.prompt,
-						files: args.files.map((f) => ({ name: f.name, mimeType: f.mimeType })),
-					},
-				},
+				type: TASK_TYPE,
+				input: { raw: args.raw },
 				metadata: metadata as unknown as Record<string, unknown>,
 			});
 
