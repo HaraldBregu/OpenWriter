@@ -508,7 +508,12 @@ function Container({ children }: LayoutProps) {
 													<SidebarMenuSub>
 														{item.items.map((subItem) => (
 															<SidebarMenuSubItem key={subItem.title}>
-																<SidebarMenuSubButton>
+																<SidebarMenuSubButton
+																	render={subItem.url ? <Link to={subItem.url} /> : undefined}
+																	isActive={
+																		subItem.url ? location.pathname === subItem.url : false
+																	}
+																>
 																	<span>{subItem.title}</span>
 																</SidebarMenuSubButton>
 															</SidebarMenuSubItem>
