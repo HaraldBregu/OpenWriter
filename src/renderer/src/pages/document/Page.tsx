@@ -40,21 +40,7 @@ const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 const TASK_TYPE = 'demo';
 
-const STATUS_LABELS: Record<TaskState, string> = {
-	queued: 'Queued',
-	started: 'Started',
-	running: 'Running',
-	finished: 'Finished',
-	cancelled: 'Cancelled',
-};
-
-const STATUS_VARIANT: Record<TaskState, 'default' | 'secondary' | 'destructive' | 'outline'> = {
-	queued: 'secondary',
-	started: 'secondary',
-	running: 'default',
-	finished: 'default',
-	cancelled: 'outline',
-};
+const ACTIVE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
 
 interface TaskStatusBarProps {
 	readonly taskId: string | null;
@@ -81,12 +67,13 @@ function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | null {
 	if (!state) return null;
 
 	const { status, message } = state;
+	const active = ACTIVE_STATES.has(status);
 
 	return (
 		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
-			<Badge variant={STATUS_VARIANT[status]} className="shrink-0">
-				{STATUS_LABELS[status]}
-			</Badge>
+			{active && (
+				<Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" aria-hidden="true" />
+			)}
 			<p className="flex-1 min-w-0 truncate text-[11px] text-muted-foreground">{message}</p>
 		</div>
 	);
