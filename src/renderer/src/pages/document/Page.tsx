@@ -619,11 +619,6 @@ function PageContent(): ReactElement {
 		});
 	}, [setActiveSidebar]);
 
-	const handleOpenFolder = useCallback(() => {
-		if (!id) return;
-		window.workspace.openDocumentFolder(id);
-	}, [id]);
-
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
 		[activeSidebar, extensionDocPanels]
@@ -631,9 +626,9 @@ function PageContent(): ReactElement {
 
 	useEffect(() => {
 		if (!activeSidebar) return;
-		if (activeSidebar === 'builtin:agentic' || activeSidebar === 'builtin:config') return;
+		if (activeSidebar === 'builtin:agentic') return;
 		if (extensionDocPanels.some((panel) => panel.id === activeSidebar)) return;
-		setActiveSidebar('builtin:config');
+		setActiveSidebar(null);
 	}, [activeSidebar, extensionDocPanels, setActiveSidebar]);
 
 	return (
