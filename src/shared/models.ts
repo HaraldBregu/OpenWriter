@@ -167,7 +167,7 @@ export const AI_MODELS: readonly ModelInfo[] = [
 // Default model IDs
 // ---------------------------------------------------------------------------
 
-export const DEFAULT_TEXT_MODEL_ID = GPT_4_1.modelId;
+export const DEFAULT_TEXT_MODEL_ID = GPT_5_4_MINI.modelId;
 export const DEFAULT_EMBEDDING_MODEL_ID = TEXT_EMBEDDING_3_SMALL.modelId;
 export const DEFAULT_IMAGE_MODEL_ID = GPT_IMAGE_1.modelId;
 export const DEFAULT_OCR_MODEL_ID = '';
