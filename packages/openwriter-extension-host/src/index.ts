@@ -9,7 +9,6 @@ import type {
 } from '../../openwriter-extension-sdk/src/index';
 import type {
 	ExtensionDocumentChangedEvent,
-	ExtensionDocPanelContent,
 	ExtensionDocPanelRenderContext,
 	ExtensionEventPayloadMap,
 	ExtensionExecutionContext,

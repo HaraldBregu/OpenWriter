@@ -2,7 +2,6 @@ import type {
 	ExtensionAppInfo,
 	ExtensionCommandContribution,
 	ExtensionDocPanelContent,
-	ExtensionDocPanelInfo,
 	ExtensionDocPanelRenderContext,
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocumentSnapshot,

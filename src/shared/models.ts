@@ -78,6 +78,33 @@ export const TEXT_EMBEDDING_3_SMALL: ModelInfo = {
 	maxOutputTokens: null,
 };
 
+export const WHISPER_1: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'whisper-1',
+	name: 'Whisper v1',
+	type: 'audio',
+	contextWindow: null,
+	maxOutputTokens: null,
+};
+
+export const GPT_4O_TRANSCRIBE: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'gpt-4o-transcribe',
+	name: 'GPT-4o Transcribe',
+	type: 'audio',
+	contextWindow: null,
+	maxOutputTokens: null,
+};
+
+export const GPT_4O_MINI_TRANSCRIBE: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'gpt-4o-mini-transcribe',
+	name: 'GPT-4o Mini Transcribe',
+	type: 'audio',
+	contextWindow: null,
+	maxOutputTokens: null,
+};
+
 // Anthropic
 export const CLAUDE_OPUS_4_6: ModelInfo = {
 	providerId: 'anthropic',

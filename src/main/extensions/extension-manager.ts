@@ -247,7 +247,7 @@ export class ExtensionManager implements Disposable {
 			documentId,
 			reason: `doc-panel:${resolved.panelId}:${reason}`,
 		};
-		await this.ensureActivated(record, context.reason, context);
+		await this.ensureActivated(record, context.reason ?? `doc-panel:${resolved.panelId}:${reason}`, context);
 
 		const requestId = randomUUID();
 		const deferred = createDeferred<ExtensionDocPanelContent>();
