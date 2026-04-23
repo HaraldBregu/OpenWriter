@@ -526,7 +526,19 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
-							<TaskStatusBar taskId={activeTaskId} />
+							{taskStatus && (
+								<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
+									{ACTIVE_STATES.has(taskStatus.status) && (
+										<Loader2
+											className="h-4 w-4 shrink-0 animate-spin text-muted-foreground"
+											aria-hidden="true"
+										/>
+									)}
+									<p className="flex-1 min-w-0 truncate text-[11px] text-muted-foreground">
+										{taskStatus.message}
+									</p>
+								</div>
+							)}
 							<div className="flex min-h-0 flex-1 flex-col">
 								{loaded && (
 									<Editor
