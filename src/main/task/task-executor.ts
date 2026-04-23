@@ -137,8 +137,7 @@ export class TaskExecutor implements Disposable {
 			this.send(windowId, 'task:event', {
 				state: 'queued',
 				taskId,
-				data: {},
-				error: null,
+				data: '',
 			} satisfies TaskEvent);
 
 			this.drainQueue();
