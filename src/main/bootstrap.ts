@@ -142,6 +142,13 @@ export function bootstrapServices(): BootstrapResult {
 		)
 	);
 
+	// Dedicated handler for audio/video → text. Submit tasks with type:
+	// 'transcription' and a { filePath | base64+fileName+mimeType, ... }
+	// payload. Provider/model default to OpenAI + whisper-1 when omitted.
+	taskHandlerRegistry.register(
+		new TranscriptionTaskHandler(agentRegistry, logger, serviceResolver, modelResolver)
+	);
+
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
