@@ -1064,7 +1064,7 @@
 		"video": "Video",
 		"audio": "Audio",
 		"files": "Files",
-		"data": "Knowledge base",
+		"knowledgeBase": "Knowledge base",
 		"database": "Database",
 		"integrations": "Integrations",
 		"socialMedia": "Social media",
