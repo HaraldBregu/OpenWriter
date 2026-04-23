@@ -39,7 +39,6 @@ import {
 	SidebarMenuItem,
 	SidebarProvider,
 	SidebarHeader,
-	SidebarSeparator,
 	useSidebar,
 	Sidebar,
 } from '@/components/ui/Sidebar';
