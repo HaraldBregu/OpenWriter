@@ -10,11 +10,11 @@ Parser: `packages/openwriter-extension-manifest/src/index.ts`.
 
 ```json
 {
-  "id": "example.hello",
-  "name": "Hello",
-  "version": "0.1.0",
-  "apiVersion": "1",
-  "main": "dist/index.js"
+	"id": "example.hello",
+	"name": "Hello",
+	"version": "0.1.0",
+	"apiVersion": "1",
+	"main": "dist/index.js"
 }
 ```
 
@@ -23,41 +23,50 @@ contributions. A working extension typically looks like:
 
 ```json
 {
-  "id": "example.host-data-showcase",
-  "name": "Host Data Showcase",
-  "version": "0.1.0",
-  "apiVersion": "1",
-  "main": "dist/index.js",
-  "description": "Demonstrates host data access and doc panels.",
-  "author": "OpenWriter",
-  "defaultEnabled": true,
-  "capabilities": ["commands", "host-data", "host-actions", "events", "doc-panels"],
-  "permissions": ["app.read", "workspace.read", "document.read", "document.write", "task.observe"],
-  "activationEvents": [
-    "onStartup",
-    "onDocumentOpened",
-    "onCommand:example.host-data-showcase.refresh-snapshot"
-  ],
-  "contributes": {
-    "docPanels": [
-      {
-        "id": "host-data-summary",
-        "title": "Host data",
-        "description": "Shows app, workspace, document state.",
-        "when": "document",
-        "icon": { "type": "asset", "path": "assets/host-data.svg" },
-        "order": 20
-      }
-    ],
-    "commands": [
-      {
-        "id": "example.host-data-showcase.refresh-snapshot",
-        "title": "Refresh snapshot",
-        "description": "Read host state and persist latest snapshot.",
-        "when": "document"
-      }
-    ]
-  }
+	"id": "example.host-data-showcase",
+	"name": "Host Data Showcase",
+	"version": "0.1.0",
+	"apiVersion": "1",
+	"main": "dist/index.js",
+	"description": "Demonstrates host data access and doc panels.",
+	"author": "OpenWriter",
+	"defaultEnabled": true,
+	"capabilities": ["commands", "host-data", "host-actions", "events", "doc-panels"],
+	"permissions": ["app.read", "workspace.read", "document.read", "document.write", "task.observe"],
+	"activationEvents": [
+		"onStartup",
+		"onDocumentOpened",
+		"onCommand:example.host-data-showcase.refresh-snapshot"
+	],
+	"contributes": {
+		"docPanels": [
+			{
+				"id": "host-data-summary",
+				"title": "Host data",
+				"description": "Shows app, workspace, document state.",
+				"when": "document",
+				"icon": { "type": "asset", "path": "assets/host-data.svg" },
+				"order": 20
+			}
+		],
+		"commands": [
+			{
+				"id": "example.host-data-showcase.refresh-snapshot",
+				"title": "Refresh snapshot",
+				"description": "Read host state and persist latest snapshot.",
+				"when": "document"
+			}
+		],
+		"preferences": [
+			{
+				"id": "api-token",
+				"title": "API Token",
+				"description": "Token used by the extension integration.",
+				"type": "password",
+				"required": true
+			}
+		]
+	}
 }
 ```
 
@@ -65,22 +74,22 @@ contributions. A working extension typically looks like:
 
 ### Identity
 
-| Field | Required | Notes |
-| --- | :-: | --- |
-| `id` | yes | Globally unique. Pattern: `^[a-z0-9]+(?:[._-][a-z0-9]+)*$` |
-| `name` | yes | Human-readable label shown in Settings |
-| `version` | yes | SemVer: `MAJOR.MINOR.PATCH[-prerelease]` |
-| `apiVersion` | yes | Must equal the runtime's `OPENWRITER_EXTENSION_API_VERSION` (currently `"1"`) |
-| `main` | yes | Relative path to the compiled ESM entry module (e.g. `dist/index.js`) |
-| `description` | no | Free-form |
-| `author` | no | Free-form |
+| Field         | Required | Notes                                                                         |
+| ------------- | :------: | ----------------------------------------------------------------------------- |
+| `id`          |   yes    | Globally unique. Pattern: `^[a-z0-9]+(?:[._-][a-z0-9]+)*$`                    |
+| `name`        |   yes    | Human-readable label shown in Settings                                        |
+| `version`     |   yes    | SemVer: `MAJOR.MINOR.PATCH[-prerelease]`                                      |
+| `apiVersion`  |   yes    | Must equal the runtime's `OPENWRITER_EXTENSION_API_VERSION` (currently `"1"`) |
+| `main`        |   yes    | Relative path to the compiled ESM entry module (e.g. `dist/index.js`)         |
+| `description` |    no    | Free-form                                                                     |
+| `author`      |    no    | Free-form                                                                     |
 
 ### Activation
 
-| Field | Default | Notes |
-| --- | :-: | --- |
-| `defaultEnabled` | `false` | When `true`, first-time users get the extension enabled by default. Enable/disable state is then remembered |
-| `activationEvents` | `[]` | See table below |
+| Field              | Default | Notes                                                                                                       |
+| ------------------ | :-----: | ----------------------------------------------------------------------------------------------------------- |
+| `defaultEnabled`   | `false` | When `true`, first-time users get the extension enabled by default. Enable/disable state is then remembered |
+| `activationEvents` |  `[]`   | See table below                                                                                             |
 
 ### Capabilities
 
@@ -113,38 +122,58 @@ full mapping of host methods to required permissions.
 
 Each entry of `contributes.commands`:
 
-| Field | Required | Notes |
-| --- | :-: | --- |
-| `id` | yes | Fully qualified (recommend `<extensionId>.<verb>`) |
-| `title` | yes | Shown to the user |
-| `description` | no | Shown alongside title |
-| `when` | no | `"always"` (default) or `"document"` (only when a document is open) |
+| Field         | Required | Notes                                                               |
+| ------------- | :------: | ------------------------------------------------------------------- |
+| `id`          |   yes    | Fully qualified (recommend `<extensionId>.<verb>`)                  |
+| `title`       |   yes    | Shown to the user                                                   |
+| `description` |    no    | Shown alongside title                                               |
+| `when`        |    no    | `"always"` (default) or `"document"` (only when a document is open) |
 
 ### Contributions — Doc Panels
 
 Each entry of `contributes.docPanels`:
 
-| Field | Required | Notes |
-| --- | :-: | --- |
-| `id` | yes | Unique within the extension |
-| `title` | yes | Shown as the panel title |
-| `description` | no | Subtitle |
-| `when` | no | Currently forced to `"document"` |
-| `icon` | no | Either a string (name) or `{ type: "asset", path: "assets/icon.svg" }` |
-| `order` | no | Number — lower renders earlier |
+| Field         | Required | Notes                                                                  |
+| ------------- | :------: | ---------------------------------------------------------------------- |
+| `id`          |   yes    | Unique within the extension                                            |
+| `title`       |   yes    | Shown as the panel title                                               |
+| `description` |    no    | Subtitle                                                               |
+| `when`        |    no    | Currently forced to `"document"`                                       |
+| `icon`        |    no    | Either a string (name) or `{ type: "asset", path: "assets/icon.svg" }` |
+| `order`       |    no    | Number — lower renders earlier                                         |
 
 ### Contributions — Doc Pages
 
 `contributes.docPages` is reserved; full-page extension views are not
 yet rendered by the renderer.
 
+### Contributions — Preferences
+
+`contributes.preferences` declares user-editable configuration shown in
+Settings → Extensions. Extensions read resolved values with
+`ctx.preferences.get<T>()`.
+
+| Field         |   Required   | Notes                                                                   |
+| ------------- | :----------: | ----------------------------------------------------------------------- |
+| `id`          |     yes      | Unique within the extension                                             |
+| `title`       |     yes      | Human-readable label                                                    |
+| `description` |      no      | Helper text shown below the label                                       |
+| `type`        |     yes      | `textfield`, `password`, `checkbox`, `dropdown`, `file`, or `directory` |
+| `required`    |      no      | Signals that the extension needs a value to work correctly              |
+| `default`     |      no      | String for most fields, boolean for `checkbox`                          |
+| `placeholder` |      no      | Input placeholder for text-like fields                                  |
+| `options`     | for dropdown | Array of `{ "label": string, "value": string }`                         |
+
+Use `password` for API tokens or secrets. Values are stored in the
+app's per-user settings, not in the extension source folder.
+
 ### Activation Events
 
-| Event | Fires when |
-| --- | --- |
-| `onStartup` | App finishes bootstrap |
-| `onWorkspaceOpened` | The user opens a workspace |
-| `onDocumentOpened` | A document page mounts |
+| Event                   | Fires when                                                                               |
+| ----------------------- | ---------------------------------------------------------------------------------------- |
+| `onStartup`             | App finishes bootstrap                                                                   |
+| `onWorkspaceOpened`     | The user opens a workspace                                                               |
+| `onDocumentOpened`      | A document page mounts                                                                   |
 | `onCommand:<commandId>` | A specific command is invoked (lazy activation — the extension isn't started until then) |
 
 An extension activates the first time any of its events fires and stays
@@ -164,6 +193,8 @@ Common errors:
 - `apiVersion` mismatch
 - Unknown capability or permission entry
 - Command or doc-panel missing required fields
+- Dropdown preference without options, invalid preference defaults, or
+  duplicate preference ids
 
 ## Icon Resolution
 

@@ -92,8 +92,12 @@ and forward compatibility:
 import { defineExtension } from '@openwriter/extension-sdk';
 
 export default defineExtension({
-  async activate(ctx) { /* ... */ },
-  async deactivate() { /* ... */ },
+	async activate(ctx) {
+		/* ... */
+	},
+	async deactivate() {
+		/* ... */
+	},
 });
 ```
 
@@ -104,13 +108,14 @@ fires for the first time. The context passed in is:
 
 ```ts
 interface ExtensionContext {
-  manifest: ExtensionManifest;
-  commands: ExtensionCommandsApi;     // register commands
-  panels: ExtensionPanelsApi;         // register doc panels
-  events: ExtensionEventsApi;         // subscribe to events
-  host: ExtensionHostApi;             // read/write via gateway
-  storage: ExtensionStorageApi;       // extension-local kv store
-  log: ExtensionLoggerApi;            // structured log → main process
+	manifest: ExtensionManifest;
+	commands: ExtensionCommandsApi; // register commands
+	panels: ExtensionPanelsApi; // register doc panels
+	events: ExtensionEventsApi; // subscribe to events
+	host: ExtensionHostApi; // read/write via gateway
+	storage: ExtensionStorageApi; // extension-local kv store
+	preferences: ExtensionPreferencesApi; // user-configured manifest preferences
+	log: ExtensionLoggerApi; // structured log → main process
 }
 ```
 
@@ -119,7 +124,7 @@ Inside `activate`, an extension typically:
 1. Subscribes to the events it cares about.
 2. Registers the commands it declared in `contributes.commands`.
 3. Registers the doc panels it declared in `contributes.docPanels`.
-4. Optionally reads persisted storage to restore state.
+4. Optionally reads preferences and persisted storage to restore state.
 
 Activation runs once. Subsequent activation triggers are no-ops.
 
@@ -144,10 +149,10 @@ Host calls travel the other way:
 When the side panel is on screen, the runtime triggers `render` with
 one of:
 
-| `reason` | When |
-| --- | --- |
-| `open` | The panel was just shown |
-| `refresh` | An explicit refresh (user or code) |
+| `reason`           | When                                                        |
+| ------------------ | ----------------------------------------------------------- |
+| `open`             | The panel was just shown                                    |
+| `refresh`          | An explicit refresh (user or code)                          |
 | `document-changed` | Live context changed — selection, markdown, or editor state |
 
 Renders carry an `ExtensionDocPanelRenderContext`:

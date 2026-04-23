@@ -93,6 +93,7 @@ export class ExtensionManager implements Disposable {
 			container: options.container,
 			eventBus: options.eventBus,
 			logger: options.logger,
+			store: options.store,
 			windowContextManager: options.windowContextManager,
 			taskExecutor: options.taskExecutor,
 			getActiveDocumentId: (windowId?: number) => this.getActiveDocumentId(windowId),
@@ -114,7 +115,9 @@ export class ExtensionManager implements Disposable {
 		const discovered = new Map<string, ExtensionInfo>();
 		for (const source of ['bundled', 'user'] as const) {
 			const directory =
-				source === 'bundled' ? this.getBundledExtensionsDirectory() : this.getUserExtensionsDirectory();
+				source === 'bundled'
+					? this.getBundledExtensionsDirectory()
+					: this.getUserExtensionsDirectory();
 			const extensions = await this.readExtensionsFromDirectory(directory, source);
 			for (const extension of extensions) {
 				discovered.set(extension.id, extension);
@@ -287,7 +290,11 @@ export class ExtensionManager implements Disposable {
 			documentId,
 			reason: `doc-panel:${resolved.panelId}:${reason}`,
 		};
-		await this.ensureActivated(record, context.reason ?? `doc-panel:${resolved.panelId}:${reason}`, context);
+		await this.ensureActivated(
+			record,
+			context.reason ?? `doc-panel:${resolved.panelId}:${reason}`,
+			context
+		);
 
 		const requestId = randomUUID();
 		const deferred = createDeferred<ExtensionDocPanelContent>();
@@ -401,7 +408,11 @@ export class ExtensionManager implements Disposable {
 		await fsPromises.cp(sourcePath, targetPath, { recursive: true });
 		await this.discover();
 
-		return this.listExtensions().find((extension) => extension.id === manifest.id)!;
+		const installed = this.listExtensions().find((extension) => extension.id === manifest.id);
+		if (!installed) {
+			throw new Error(`Extension "${manifest.id}" was copied but not discovered.`);
+		}
+		return installed;
 	}
 
 	setActiveDocument(windowId: number, documentId: string | null): void {
@@ -820,7 +831,10 @@ export class ExtensionManager implements Disposable {
 				break;
 			case 'command.registered':
 				if (!record.state.registeredCommands.includes(message.payload.id)) {
-					record.state.registeredCommands = [...record.state.registeredCommands, message.payload.id];
+					record.state.registeredCommands = [
+						...record.state.registeredCommands,
+						message.payload.id,
+					];
 					this.broadcastRuntimeChanged(record.manifest.id);
 				}
 				break;

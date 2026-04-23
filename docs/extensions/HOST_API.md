@@ -5,6 +5,7 @@ call is mediated by `ExtensionApiGateway` in the main process; every
 call requires a permission declared in the manifest.
 
 Source of truth:
+
 - SDK shape: `packages/openwriter-extension-sdk/src/index.ts`
 - Wire contracts: `packages/openwriter-extension-types/src/index.ts`
   (see `ExtensionHostRequestMap`)
@@ -44,10 +45,10 @@ Returns a snapshot of the current workspace.
 
 ```ts
 interface ExtensionWorkspaceSnapshot {
-  currentPath: string | null;
-  projectName: string | null;
-  windowId?: number;
-  documentId?: string | null; // active doc if any
+	currentPath: string | null;
+	projectName: string | null;
+	windowId?: number;
+	documentId?: string | null; // active doc if any
 }
 ```
 
@@ -58,11 +59,11 @@ no document is active.
 
 ```ts
 interface ExtensionDocumentSnapshot {
-  id: string;
-  title: string;
-  content: string; // full markdown body
-  path: string;    // absolute folder path
-  windowId?: number;
+	id: string;
+	title: string;
+	content: string; // full markdown body
+	path: string; // absolute folder path
+	windowId?: number;
 }
 ```
 
@@ -78,16 +79,16 @@ render:
 
 ```ts
 interface ExtensionDocumentContextSnapshot {
-  documentId: string;
-  markdown: string;
-  selection: { from: number; to: number; text: string } | null;
-  editorState: {
-    isFocused: boolean;
-    isEditable: boolean;
-    isEmpty: boolean;
-    activeNode: string | null;
-    activeMarks: string[];
-  };
+	documentId: string;
+	markdown: string;
+	selection: { from: number; to: number; text: string } | null;
+	editorState: {
+		isFocused: boolean;
+		isEditable: boolean;
+		isEmpty: boolean;
+		activeNode: string | null;
+		activeMarks: string[];
+	};
 }
 ```
 
@@ -104,8 +105,8 @@ Safely update a document's title or content (or both).
 
 ```ts
 type ExtensionDocumentUpdate = {
-  title?: string;
-  content?: string;
+	title?: string;
+	content?: string;
 };
 ```
 
@@ -122,7 +123,7 @@ Behavior:
 const doc = await ctx.host.documents.getActive();
 if (!doc) return;
 await ctx.host.documents.update(doc.id, {
-  content: `${doc.content}\n\n## New section\n\nbody`,
+	content: `${doc.content}\n\n## New section\n\nbody`,
 });
 ```
 
@@ -148,25 +149,27 @@ uses for agent runs, transcription, OCR, and indexing.
 
 ```ts
 interface ExtensionTaskSubmission {
-  type: string; // e.g. "agent" or "transcription"
-  input: unknown;
-  options?: { priority?: 'low' | 'normal' | 'high'; timeoutMs?: number };
-  metadata?: Record<string, unknown>;
+	type: string; // e.g. "agent" or "transcription"
+	input: unknown;
+	options?: { priority?: 'low' | 'normal' | 'high'; timeoutMs?: number };
+	metadata?: Record<string, unknown>;
 }
 
-interface ExtensionTaskSubmissionResult { taskId: string; }
+interface ExtensionTaskSubmissionResult {
+	taskId: string;
+}
 ```
 
 ### Submitting A Writer Agent Run
 
 ```ts
 const result = await ctx.host.tasks.submit({
-  type: 'agent',
-  input: {
-    agentType: 'writer',
-    input: { prompt: 'Summarize the current document in three bullets.' },
-  },
-  metadata: { source: 'my-extension' },
+	type: 'agent',
+	input: {
+		agentType: 'writer',
+		input: { prompt: 'Summarize the current document in three bullets.' },
+	},
+	metadata: { source: 'my-extension' },
 });
 
 console.log('submitted task', result.taskId);
@@ -184,8 +187,10 @@ task events:
 
 ```ts
 ctx.events.onTaskEvent((event) => {
-  if (event.taskId !== result.taskId) return;
-  if (event.state === 'completed') { /* ... */ }
+	if (event.taskId !== result.taskId) return;
+	if (event.state === 'completed') {
+		/* ... */
+	}
 });
 ```
 
@@ -206,6 +211,7 @@ tasks.submit            →  task.submit
 storage.get             →  (none — per-extension namespace)
 storage.set             →  (none — per-extension namespace)
 storage.delete          →  (none — per-extension namespace)
+preferences.get         →  (none — own manifest preferences only)
 ```
 
 Missing a required permission throws synchronously, before any side

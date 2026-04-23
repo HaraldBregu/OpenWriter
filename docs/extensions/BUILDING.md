@@ -33,11 +33,12 @@ The generated manifest declares:
 - `id` / `name` / `version` derived from the folder name
 - `apiVersion: "1"` and `main: "dist/index.js"`
 - `defaultEnabled: true`
-- `capabilities: ["commands", "host-data", "host-actions"]`
+- `capabilities: ["commands", "host-data", "host-actions", "doc-panels"]`
 - read + write permissions for app, workspace, and document (see
   [MANIFEST.md](./MANIFEST.md) for the canonical list)
 - one sample command `my-extension.append-note` tied to an
   `onCommand` activation event
+- one sample preference read through `ctx.preferences.get()`
 
 Open `openwriter.extension.json` and adjust to taste.
 
@@ -49,28 +50,31 @@ Open `openwriter.extension.json` and adjust to taste.
 import { defineExtension } from '@openwriter/extension-sdk';
 
 export default defineExtension({
-  async activate(ctx) {
-    ctx.commands.register({
-      id: 'my-extension.append-note',
-      title: 'My Extension: Append note',
-      description: 'Append a short marker to the active document.',
-      async run() {
-        const doc = await ctx.host.documents.getActive();
-        if (!doc) throw new Error('No active document.');
+	async activate(ctx) {
+		ctx.commands.register({
+			id: 'my-extension.append-note',
+			title: 'My Extension: Append note',
+			description: 'Append a short marker to the active document.',
+			async run() {
+				const doc = await ctx.host.documents.getActive();
+				if (!doc) throw new Error('No active document.');
 
-        await ctx.host.documents.update(doc.id, {
-          content: `${doc.content}\n\n<!-- marker @ ${new Date().toISOString()} -->`,
-        });
+				const preferences = await ctx.preferences.get<{ signature?: string }>();
+				const signature = preferences.signature?.trim() || 'Created by My Extension.';
 
-        ctx.log.info('Appended marker', { documentId: doc.id });
-        return { ok: true };
-      },
-    });
-  },
+				await ctx.host.documents.update(doc.id, {
+					content: `${doc.content}\n\n${signature}`,
+				});
 
-  async deactivate() {
-    // optional cleanup
-  },
+				ctx.log.info('Appended marker', { documentId: doc.id });
+				return { ok: true };
+			},
+		});
+	},
+
+	async deactivate() {
+		// optional cleanup
+	},
 });
 ```
 
@@ -86,7 +90,18 @@ yarn build
 ```
 
 `yarn build` runs `tsc -p tsconfig.json` and emits `dist/index.js`. The
-manifest's `main` must match that path.
+manifest's `main` must match that path. The SDK CLI also provides:
+
+```bash
+create-openwriter-extension validate .
+create-openwriter-extension dev .
+create-openwriter-extension pack .
+create-openwriter-extension install-local .
+```
+
+`dev` builds and validates. `install-local` copies the folder into the
+OpenWriter user extensions directory; set `OPENWRITER_EXTENSIONS_DIR` or
+pass `--to <dir>` to override the destination.
 
 ### Build Tips
 
@@ -104,15 +119,9 @@ Two ways:
 
 ### Local Development
 
-Point the app at your source folder while you iterate:
-
-```bash
-# Symlink your extension into the bundled extensions/ directory
-ln -s /absolute/path/to/my-extension \
-      /absolute/path/to/OpenWriter/extensions/my-extension
-```
-
-Restart the app. The extension appears in Settings → Extensions.
+Run `create-openwriter-extension install-local .` or use Settings →
+Extensions → Install Local Extension to copy a development folder into
+the user extension directory. Then reload the extension from Settings.
 
 ### Install For Users
 
@@ -171,13 +180,13 @@ silently stops working.
 
 ### Common Failure Modes
 
-| Symptom | Cause |
-| --- | --- |
-| Extension shows as `invalid` | Manifest parser errors — check `id` regex, `version` SemVer, `apiVersion` must be `"1"` |
-| "Extension <id> does not export a default module" | `dist/index.js` is CJS, or doesn't `export default` an `ExtensionModule` |
-| Host call rejects with permission error | Missing entry in manifest permissions |
-| Command doesn't appear | Manifest doesn't list it in `contributes.commands` |
-| Doc panel doesn't render | `render()` threw — check the logs for the extension id |
+| Symptom                                           | Cause                                                                                   |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Extension shows as `invalid`                      | Manifest parser errors — check `id` regex, `version` SemVer, `apiVersion` must be `"1"` |
+| "Extension <id> does not export a default module" | `dist/index.js` is CJS, or doesn't `export default` an `ExtensionModule`                |
+| Host call rejects with permission error           | Missing entry in manifest permissions                                                   |
+| Command doesn't appear                            | Manifest doesn't list it in `contributes.commands`                                      |
+| Doc panel doesn't render                          | `render()` threw — check the logs for the extension id                                  |
 
 ### Manual Testing Checklist
 
@@ -195,6 +204,7 @@ Before publishing:
 
 There is no marketplace yet. Distribution options:
 
+- `create-openwriter-extension pack .` to produce a `.tgz` archive.
 - Zip the extension folder, share it, users extract into their
   user extensions directory.
 - Host on a git repo; users clone and `yarn build`.

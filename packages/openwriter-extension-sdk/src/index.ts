@@ -42,9 +42,17 @@ export interface ExtensionStorageApi {
 	delete(key: string): Promise<void>;
 }
 
+export interface ExtensionPreferencesApi {
+	get<T extends Record<string, unknown> = Record<string, unknown>>(): Promise<T>;
+}
+
 export interface ExtensionEventsApi {
-	onWorkspaceChanged(listener: (event: ExtensionWorkspaceChangedEvent) => void | Promise<void>): () => void;
-	onDocumentChanged(listener: (event: ExtensionDocumentSnapshot) => void | Promise<void>): () => void;
+	onWorkspaceChanged(
+		listener: (event: ExtensionWorkspaceChangedEvent) => void | Promise<void>
+	): () => void;
+	onDocumentChanged(
+		listener: (event: ExtensionDocumentSnapshot) => void | Promise<void>
+	): () => void;
 	onTaskEvent(listener: (event: ExtensionTaskEvent) => void | Promise<void>): () => void;
 }
 
@@ -76,6 +84,7 @@ export interface ExtensionContext {
 	events: ExtensionEventsApi;
 	host: ExtensionHostApi;
 	storage: ExtensionStorageApi;
+	preferences: ExtensionPreferencesApi;
 	log: ExtensionLoggerApi;
 }
 
@@ -112,6 +121,9 @@ export type {
 	ExtensionInfo,
 	ExtensionManifest,
 	ExtensionPermission,
+	ExtensionPreferenceContribution,
+	ExtensionPreferenceOption,
+	ExtensionPreferenceType,
 	ExtensionRuntimeState,
 	ExtensionSource,
 	ExtensionTaskEvent,

@@ -320,11 +320,12 @@ function PageContent(): ReactElement {
 			editorActions.hideLoading();
 			editorActions.enable();
 			editorActions.clearPromptInput();
-			if (!id) return;
-			setContent(completedContent);
-			dispatch({ type: 'CONTENT_CHANGED', value: completedContent });
+			if (!id || !editor || editor.isDestroyed) return;
+			const fullMarkdown = editor.getMarkdown();
+			setContent(fullMarkdown);
+			dispatch({ type: 'CONTENT_CHANGED', value: fullMarkdown });
 			debouncedContentSave.cancel();
-			window.workspace.updateDocument(id, { content: completedContent }).catch(() => {
+			window.workspace.updateDocument(id, { content: fullMarkdown }).catch(() => {
 				// document may have been deleted mid-run; ignore
 			});
 			requestAnimationFrame(() => {
@@ -333,7 +334,7 @@ function PageContent(): ReactElement {
 				});
 			});
 		},
-		[editorInsert, editorActions, id, dispatch, debouncedContentSave]
+		[editorInsert, editorActions, id, dispatch, debouncedContentSave, editor]
 	);
 
 	const handleCancelOrError = useCallback(() => {

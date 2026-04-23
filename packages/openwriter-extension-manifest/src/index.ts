@@ -23,7 +23,14 @@ export interface ParsedExtensionManifest {
 
 const SEMVER_PATTERN = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$/;
 const EXTENSION_ID_PATTERN = /^[a-z0-9]+(?:[._-][a-z0-9]+)*$/;
-const PREFERENCE_TYPES = ['textfield', 'password', 'checkbox', 'dropdown', 'file', 'directory'] as const;
+const PREFERENCE_TYPES = [
+	'textfield',
+	'password',
+	'checkbox',
+	'dropdown',
+	'file',
+	'directory',
+] as const;
 
 function asString(value: unknown): string | null {
 	return typeof value === 'string' ? value.trim() : null;
@@ -104,7 +111,8 @@ function normalizeDocPanels(value: unknown): ExtensionDocPanelContribution[] {
 			const description = asString(entry.description) ?? undefined;
 			const icon = normalizeIcon(entry.icon);
 			const when: ExtensionDocPanelContribution['when'] = 'document';
-			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
+			const order =
+				typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
 			return { id, title, description, when, icon, order };
 		})
 		.filter((panel) => panel.id.length > 0 && panel.title.length > 0);
@@ -120,7 +128,8 @@ function normalizeDocPages(value: unknown): ExtensionDocPageContribution[] {
 			const title = asString(entry.title) ?? '';
 			const description = asString(entry.description) ?? undefined;
 			const icon = normalizeIcon(entry.icon);
-			const order = typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
+			const order =
+				typeof entry.order === 'number' && Number.isFinite(entry.order) ? entry.order : undefined;
 			return { id, title, description, icon, order };
 		})
 		.filter((page) => page.id.length > 0 && page.title.length > 0);
@@ -182,7 +191,8 @@ function validateRelativeMain(main: string): string | null {
 
 function validateRelativeAsset(assetPath: string, label: string): string | null {
 	if (!assetPath) return `${label} icon asset is missing a path.`;
-	if (path.isAbsolute(assetPath)) return `${label} icon asset path must be relative to the extension root.`;
+	if (path.isAbsolute(assetPath))
+		return `${label} icon asset path must be relative to the extension root.`;
 	if (assetPath.includes('..')) return `${label} icon asset path cannot escape the extension root.`;
 	const extension = path.extname(assetPath).toLowerCase();
 	if (extension !== '.png' && extension !== '.svg') {
@@ -203,7 +213,9 @@ export function parseExtensionManifest(raw: string): ParsedExtensionManifest {
 		return {
 			manifest: createFallbackManifest(),
 			errors: [
-				error instanceof Error ? `Invalid manifest JSON: ${error.message}` : 'Invalid manifest JSON.',
+				error instanceof Error
+					? `Invalid manifest JSON: ${error.message}`
+					: 'Invalid manifest JSON.',
 			],
 		};
 	}
@@ -230,12 +242,22 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 		defaultEnabled: asBoolean(input.defaultEnabled) ?? true,
 		capabilities: uniqueStrings(asArray(input.capabilities, isCapability)) as ExtensionCapability[],
 		permissions: uniqueStrings(asArray(input.permissions, isPermission)) as ExtensionPermission[],
-		activationEvents: uniqueStrings(asArray(input.activationEvents, isActivationEvent)) as ExtensionActivationEvent[],
+		activationEvents: uniqueStrings(
+			asArray(input.activationEvents, isActivationEvent)
+		) as ExtensionActivationEvent[],
 		contributes: {
-			commands: normalizeCommands(input.contributes && isRecord(input.contributes) ? input.contributes.commands : []),
-			docPanels: normalizeDocPanels(input.contributes && isRecord(input.contributes) ? input.contributes.docPanels : []),
-			docPages: normalizeDocPages(input.contributes && isRecord(input.contributes) ? input.contributes.docPages : []),
-			preferences: normalizePreferences(input.contributes && isRecord(input.contributes) ? input.contributes.preferences : []),
+			commands: normalizeCommands(
+				input.contributes && isRecord(input.contributes) ? input.contributes.commands : []
+			),
+			docPanels: normalizeDocPanels(
+				input.contributes && isRecord(input.contributes) ? input.contributes.docPanels : []
+			),
+			docPages: normalizeDocPages(
+				input.contributes && isRecord(input.contributes) ? input.contributes.docPages : []
+			),
+			preferences: normalizePreferences(
+				input.contributes && isRecord(input.contributes) ? input.contributes.preferences : []
+			),
 		},
 	};
 
@@ -324,13 +346,24 @@ export function validateExtensionManifest(input: unknown): ParsedExtensionManife
 		}
 		preferenceIds.add(preference.id);
 
-		if (preference.type === 'dropdown' && (!preference.options || preference.options.length === 0)) {
+		if (
+			preference.type === 'dropdown' &&
+			(!preference.options || preference.options.length === 0)
+		) {
 			errors.push(`Dropdown preference "${preference.id}" must declare at least one option.`);
 		}
-		if (preference.type === 'checkbox' && preference.default !== undefined && typeof preference.default !== 'boolean') {
+		if (
+			preference.type === 'checkbox' &&
+			preference.default !== undefined &&
+			typeof preference.default !== 'boolean'
+		) {
 			errors.push(`Checkbox preference "${preference.id}" default must be a boolean.`);
 		}
-		if (preference.type !== 'checkbox' && preference.default !== undefined && typeof preference.default !== 'string') {
+		if (
+			preference.type !== 'checkbox' &&
+			preference.default !== undefined &&
+			typeof preference.default !== 'string'
+		) {
 			errors.push(`Preference "${preference.id}" default must be a string.`);
 		}
 		if (

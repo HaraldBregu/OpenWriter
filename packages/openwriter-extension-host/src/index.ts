@@ -29,11 +29,11 @@ class ExtensionHostRuntime {
 	private manifest: ExtensionManifest | null = null;
 	private module: ExtensionModule | null = null;
 	private activated = false;
-	private readonly commandHandlers = new Map<string, (payload?: unknown) => Promise<unknown> | unknown>();
-	private readonly docPanelRenderers = new Map<
+	private readonly commandHandlers = new Map<
 		string,
-		ExtensionDocPanelRegistration['render']
+		(payload?: unknown) => Promise<unknown> | unknown
 	>();
+	private readonly docPanelRenderers = new Map<string, ExtensionDocPanelRegistration['render']>();
 	private readonly workspaceListeners = new Set<
 		(event: ExtensionWorkspaceChangedEvent) => void | Promise<void>
 	>();
@@ -42,7 +42,9 @@ class ExtensionHostRuntime {
 	>();
 	private readonly taskListeners = new Set<(event: ExtensionTaskEvent) => void | Promise<void>>();
 	private readonly pendingHostCalls = new Map<string, PendingHostCall>();
-	private readonly invocationContext = new AsyncLocalStorage<ExtensionExecutionContext | undefined>();
+	private readonly invocationContext = new AsyncLocalStorage<
+		ExtensionExecutionContext | undefined
+	>();
 
 	async handleMessage(message: MainToExtensionHostMessage): Promise<void> {
 		switch (message.kind) {
@@ -71,7 +73,11 @@ class ExtensionHostRuntime {
 				);
 				break;
 			case 'event.dispatch':
-				await this.dispatchEvent(message.payload.eventType, message.payload.payload, message.payload.context);
+				await this.dispatchEvent(
+					message.payload.eventType,
+					message.payload.payload,
+					message.payload.context
+				);
 				break;
 			case 'host.result':
 				this.resolveHostCall(
@@ -91,7 +97,9 @@ class ExtensionHostRuntime {
 		const loaded = (await import(moduleUrl)) as { default?: ExtensionModule };
 		const extensionModule = loaded.default;
 		if (!extensionModule || typeof extensionModule.activate !== 'function') {
-			throw new Error(`Extension "${manifest.id}" does not export a default module with activate().`);
+			throw new Error(
+				`Extension "${manifest.id}" does not export a default module with activate().`
+			);
 		}
 
 		this.module = extensionModule;
@@ -228,6 +236,10 @@ class ExtensionHostRuntime {
 				},
 				delete: (key: string) => callHost('storage.delete', key),
 			},
+			preferences: {
+				get: <T extends Record<string, unknown> = Record<string, unknown>>() =>
+					callHost('preferences.get') as Promise<T>,
+			},
 			log: {
 				info: (message, data) => this.log('info', message, data),
 				warn: (message, data) => this.log('warn', message, data),
@@ -326,9 +338,9 @@ class ExtensionHostRuntime {
 		for (const listener of listeners) {
 			await this.invocationContext.run(context, async () => {
 				if (eventType === 'document.changed') {
-					await (listener as (event: ExtensionDocumentChangedEvent['document']) => void | Promise<void>)(
-						(payload as ExtensionDocumentChangedEvent).document
-					);
+					await (
+						listener as (event: ExtensionDocumentChangedEvent['document']) => void | Promise<void>
+					)((payload as ExtensionDocumentChangedEvent).document);
 					return;
 				}
 				await (listener as (event: ExtensionEventPayloadMap[TType]) => void | Promise<void>)(

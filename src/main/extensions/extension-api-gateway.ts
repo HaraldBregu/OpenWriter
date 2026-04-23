@@ -5,13 +5,12 @@ import path from 'node:path';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
 import type { LoggerService } from '../services/logger';
+import type { StoreService } from '../services/store';
 import type { TaskExecutor } from '../task/task-executor';
 import type { WindowContextManager } from '../core/window-context';
 import type { Workspace } from '../workspace';
 import { WorkspaceChannels } from '../../shared/channels';
-import type {
-	DocumentConfig,
-} from '../../shared/types';
+import type { DocumentConfig } from '../../shared/types';
 import type {
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocumentSnapshot,
@@ -45,6 +44,7 @@ export interface ExtensionApiGatewayOptions {
 	container: ServiceContainer;
 	eventBus: EventBus;
 	logger: LoggerService;
+	store: StoreService;
 	windowContextManager: WindowContextManager;
 	taskExecutor: TaskExecutor;
 	getActiveDocumentId: (windowId?: number) => string | null;
@@ -73,32 +73,57 @@ export class ExtensionApiGateway {
 					platform: process.platform,
 				} as ExtensionHostRequestMap[TMethod]['result'];
 			case 'workspace.getCurrent':
-				return (await this.getWorkspaceSnapshot(context)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.getWorkspaceSnapshot(
+					context
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			case 'documents.getActive':
-				return (await this.getActiveDocument(context)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.getActiveDocument(
+					context
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			case 'documents.getById': {
 				const [documentId] = args as ExtensionHostRequestMap['documents.getById']['args'];
-				return (await this.readDocument(documentId, context)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.readDocument(
+					documentId,
+					context
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'documents.getContext': {
 				const [documentId] = args as ExtensionHostRequestMap['documents.getContext']['args'];
-				return this.getDocumentContext(documentId, context) as ExtensionHostRequestMap[TMethod]['result'];
+				return this.getDocumentContext(
+					documentId,
+					context
+				) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'documents.update': {
 				const [documentId, patch] = args as ExtensionHostRequestMap['documents.update']['args'];
-				return (await this.updateDocument(documentId, patch, context)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.updateDocument(
+					documentId,
+					patch,
+					context
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'tasks.submit': {
 				const [submission] = args as ExtensionHostRequestMap['tasks.submit']['args'];
-				return this.submitTask(extension.id, submission, context) as ExtensionHostRequestMap[TMethod]['result'];
+				return this.submitTask(
+					extension.id,
+					submission,
+					context
+				) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'storage.get': {
 				const [key] = args as ExtensionHostRequestMap['storage.get']['args'];
-				return (await this.getStorageValue(extension.id, key)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.getStorageValue(
+					extension.id,
+					key
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'storage.set': {
 				const [key, value] = args as ExtensionHostRequestMap['storage.set']['args'];
-				return (await this.setStorageValue(extension.id, key, value)) as ExtensionHostRequestMap[TMethod]['result'];
+				return (await this.setStorageValue(
+					extension.id,
+					key,
+					value
+				)) as ExtensionHostRequestMap[TMethod]['result'];
 			}
 			case 'storage.delete': {
 				const [key] = args as ExtensionHostRequestMap['storage.delete']['args'];
@@ -185,7 +210,8 @@ export class ExtensionApiGateway {
 		context?: ExtensionExecutionContext
 	): ExtensionDocumentContextSnapshot | null {
 		const { windowId } = this.resolveWorkspaceManager(context);
-		const resolvedDocumentId = documentId ?? context?.documentId ?? this.options.getActiveDocumentId(windowId);
+		const resolvedDocumentId =
+			documentId ?? context?.documentId ?? this.options.getActiveDocumentId(windowId);
 		if (!resolvedDocumentId) return null;
 		return this.options.getDocumentContext(resolvedDocumentId, windowId);
 	}
@@ -277,7 +303,11 @@ export class ExtensionApiGateway {
 	private async writeStorage(extensionId: string, data: Record<string, unknown>): Promise<void> {
 		const dirPath = this.getStorageDir(extensionId);
 		await fsPromises.mkdir(dirPath, { recursive: true });
-		await fsPromises.writeFile(this.getStorageFile(extensionId), JSON.stringify(data, null, 2), 'utf8');
+		await fsPromises.writeFile(
+			this.getStorageFile(extensionId),
+			JSON.stringify(data, null, 2),
+			'utf8'
+		);
 	}
 
 	private async getStorageValue(extensionId: string, key: string): Promise<unknown | null> {

@@ -89,12 +89,17 @@ export class ExtensionsIpc implements IpcModule {
 			ExtensionChannels.installLocal,
 			wrapIpcHandler(async (event) => {
 				const window = BrowserWindow.fromWebContents(event.sender) ?? undefined;
-				const result = await dialog.showOpenDialog(window, {
+				const options = {
 					title: 'Install OpenWriter Extension',
 					properties: ['openDirectory'],
-				});
+				};
+				const result = window
+					? await dialog.showOpenDialog(window, options)
+					: await dialog.showOpenDialog(options);
 				if (result.canceled || result.filePaths.length === 0) return null;
-				return manager.installFromDirectory(result.filePaths[0]);
+				const sourcePath = result.filePaths[0];
+				if (!sourcePath) return null;
+				return manager.installFromDirectory(sourcePath);
 			}, ExtensionChannels.installLocal)
 		);
 
@@ -108,7 +113,10 @@ export class ExtensionsIpc implements IpcModule {
 
 		ipcMain.handle(
 			ExtensionChannels.reload,
-			wrapSimpleHandler((extensionId: string) => manager.reload(extensionId), ExtensionChannels.reload)
+			wrapSimpleHandler(
+				(extensionId: string) => manager.reload(extensionId),
+				ExtensionChannels.reload
+			)
 		);
 
 		ipcMain.handle(

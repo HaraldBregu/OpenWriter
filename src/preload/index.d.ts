@@ -65,6 +65,7 @@ import type {
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
 	ExtensionDocumentContextSnapshot,
+	ExtensionPreferenceContribution,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -132,6 +133,7 @@ export type {
 	ExtensionDocPanelInfo,
 	ExtensionDocPanelsChangedPayload,
 	ExtensionDocumentContextSnapshot,
+	ExtensionPreferenceContribution,
 	ExtensionRegistrySnapshot,
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
@@ -233,6 +235,12 @@ export interface ExtensionsApi {
 	getDocPanels: (documentId: string) => Promise<ExtensionDocPanelInfo[]>;
 	getDocPanelContent: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
 	refreshDocPanel: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
+	getPreferences: (extensionId: string) => Promise<{
+		definitions: ExtensionPreferenceContribution[];
+		values: Record<string, unknown>;
+	}>;
+	setPreference: (extensionId: string, key: string, value: unknown) => Promise<void>;
+	installLocal: () => Promise<ExtensionRuntimeInfo | null>;
 	executeCommand: (
 		commandId: string,
 		payload?: unknown

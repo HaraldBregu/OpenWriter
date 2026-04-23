@@ -402,6 +402,10 @@ const extensions: ExtensionsApi = {
 		typedInvokeUnwrap(ExtensionChannels.getDocPanelContent, panelId, documentId),
 	refreshDocPanel: (panelId, documentId) =>
 		typedInvokeUnwrap(ExtensionChannels.refreshDocPanel, panelId, documentId),
+	getPreferences: (extensionId) => typedInvokeUnwrap(ExtensionChannels.getPreferences, extensionId),
+	setPreference: (extensionId, key, value) =>
+		typedInvokeUnwrap(ExtensionChannels.setPreference, extensionId, key, value),
+	installLocal: () => typedInvokeUnwrap(ExtensionChannels.installLocal),
 	executeCommand: (commandId, payload) =>
 		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
 	executeDocPanelAction: (commandId, payload) =>
