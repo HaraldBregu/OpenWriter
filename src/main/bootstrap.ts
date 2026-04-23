@@ -134,50 +134,6 @@ export function bootstrapServices(): BootstrapResult {
 		})
 	);
 
-	// Bridge task system -> agent registry. Submit tasks with type: 'agent'
-	// and an { agentType, input } payload to dispatch any registered agent.
-	// The handler enriches the payload with apiKey, providerId, modelName
-	// and — for the writer agent — the available skills catalog.
-	const skillsStoreService = container.get<SkillsStoreService>('skillsStoreService');
-	taskHandlerRegistry.register(
-		new AgentTaskHandler(
-			agentRegistry,
-			logger,
-			serviceResolver,
-			storeService,
-			modelResolver,
-			skillsStoreService,
-			streamLogger
-		)
-	);
-
-	// Dedicated handler for audio/video → text. Submit tasks with type:
-	// 'transcription' and a { filePath | base64+fileName+mimeType, ... }
-	// payload. Provider/model default to OpenAI + whisper-1 when omitted.
-	taskHandlerRegistry.register(
-		new TranscriptionTaskHandler(agentRegistry, logger, serviceResolver, modelResolver)
-	);
-
-	taskHandlerRegistry.register(
-		new TextGeneratorV2TaskHandler(
-			agentRegistry,
-			logger,
-			serviceResolver,
-			modelResolver,
-			streamLogger
-		)
-	);
-
-	taskHandlerRegistry.register(
-		new TextGeneratorV1TaskHandler(
-			agentRegistry,
-			logger,
-			serviceResolver,
-			modelResolver,
-			streamLogger
-		)
-	);
-
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
