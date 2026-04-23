@@ -206,12 +206,12 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 		return enriched as unknown as T;
 	}
 
-	private async loadSkillsForWriter(): Promise<Skill[]> {
+	private async loadSkillsForTextWriter(): Promise<Skill[]> {
 		if (!this.skillsStoreService) return [];
 		try {
 			return await this.skillsStoreService.listSkillEntities();
 		} catch (error) {
-			this.logger.warn(LOG_SOURCE, 'Failed to load skills for writer agent; continuing with empty catalog', {
+			this.logger.warn(LOG_SOURCE, 'Failed to load skills for text-writer agent; continuing with empty catalog', {
 				error: error instanceof Error ? error.message : String(error),
 			});
 			return [];
