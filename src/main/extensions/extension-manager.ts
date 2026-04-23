@@ -89,6 +89,7 @@ export class ExtensionManager implements Disposable {
 	private readonly gateway: ExtensionApiGateway;
 	private initialized = false;
 	private subscriptionsBound = false;
+	private destroyed = false;
 
 	constructor(private readonly options: ExtensionManagerOptions) {
 		this.gateway = new ExtensionApiGateway({
@@ -479,6 +480,8 @@ export class ExtensionManager implements Disposable {
 	}
 
 	destroy(): void {
+		if (this.destroyed) return;
+		this.destroyed = true;
 		for (const record of this.records.values()) {
 			this.stopRecord(record);
 		}
@@ -748,6 +751,9 @@ export class ExtensionManager implements Disposable {
 				void this.handleHostMessage(record, message);
 			},
 			onExit: (code) => {
+				if (this.destroyed || record.host !== host) {
+					return;
+				}
 				record.host = null;
 				record.state.status = code === 0 ? 'stopped' : 'crashed';
 				record.state.activated = false;
@@ -1069,9 +1075,16 @@ export class ExtensionManager implements Disposable {
 	}
 
 	private broadcastRuntimeChanged(extensionId: string): void {
+		if (this.destroyed) return;
+		const record = this.records.get(extensionId);
+		if (!record) return;
 		const payload: ExtensionRuntimeChangedPayload = {
 			extensionId,
-			state: this.getRuntimeState(extensionId),
+			state: {
+				...record.state,
+				registeredCommands: [...record.state.registeredCommands],
+				registeredDocPanels: [...record.state.registeredDocPanels],
+			},
 		};
 		this.options.eventBus.broadcast(ExtensionChannels.runtimeChanged, payload);
 	}

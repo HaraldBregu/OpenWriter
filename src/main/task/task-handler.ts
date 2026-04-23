@@ -25,6 +25,13 @@ export interface ProgressReporter {
 export type RecordEvent = (event: AgentEvent) => void;
 
 /**
+ * Raw emitter. Writes the supplied value verbatim to `TaskEvent.data` on a
+ * `running` event — no wrapping. Use when the handler wants full control of
+ * the renderer-visible payload shape (e.g. emit plain strings).
+ */
+export type EmitRaw = (data: unknown) => void;
+
+/**
  * Task handler interface for implementing background operations.
  * Uses Strategy pattern to encapsulate task-specific behavior.
  *
