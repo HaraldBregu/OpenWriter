@@ -89,7 +89,7 @@ export function bootstrapServices(): BootstrapResult {
 	container.register('skillsStoreService', new SkillsStoreService(logger));
 
 	// Per-task agent stream logger (userData/stream-logs/<taskId>.jsonl)
-	const streamLogger = container.register('streamLogger', new StreamLoggerService(logger));
+	container.register('streamLogger', new StreamLoggerService(logger));
 
 	// Create WindowFactory with logger access
 	const windowFactory = new WindowFactory(logger);
