@@ -268,19 +268,6 @@ export const TitleBar = React.memo(function TitleBar({
 							strokeWidth={1.5}
 						/>
 					</button>
-					<button
-						type="button"
-						onClick={() => toggleSidebar('builtin:config')}
-						className={sidebarToggleButtonClass(activeSidebar === 'builtin:config')}
-						title={t('titleBar.toggleSidebar')}
-						aria-label={t('titleBar.toggleSidebar')}
-						aria-pressed={activeSidebar === 'builtin:config'}
-					>
-						<Info
-							className={isMac ? 'h-[16px] w-[16px]' : 'h-[18px] w-[18px]'}
-							strokeWidth={1.5}
-						/>
-					</button>
 					{extensionPanels.map((panel) => (
 						<button
 							key={panel.id}
