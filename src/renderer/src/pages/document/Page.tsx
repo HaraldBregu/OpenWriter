@@ -610,14 +610,6 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
-	const handleOpenChat = useCallback(() => {
-		setActiveSidebar('builtin:agentic');
-		requestAnimationFrame(() => {
-			const el = document.querySelector<HTMLTextAreaElement>('[data-chat-input]');
-			el?.focus();
-		});
-	}, [setActiveSidebar]);
-
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
 		[activeSidebar, extensionDocPanels]
@@ -625,7 +617,6 @@ function PageContent(): ReactElement {
 
 	useEffect(() => {
 		if (!activeSidebar) return;
-		if (activeSidebar === 'builtin:agentic') return;
 		if (extensionDocPanels.some((panel) => panel.id === activeSidebar)) return;
 		setActiveSidebar(null);
 	}, [activeSidebar, extensionDocPanels, setActiveSidebar]);
