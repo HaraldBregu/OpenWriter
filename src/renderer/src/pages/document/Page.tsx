@@ -698,7 +698,6 @@ function PageContent(): ReactElement {
 						collapsible
 						collapsedSize="0%"
 					>
-						{activeSidebar === 'builtin:agentic' && <Chat />}
 						{activeExtensionPanel && id ? (
 							<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
 						) : null}
