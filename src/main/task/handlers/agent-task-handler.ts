@@ -73,9 +73,8 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 
 		this.logTaskStart(input.agentType, enrichedInput, metadata);
 
-		const projection = new AgentStreamProjection();
-		const phaseMapper = new AgentPhaseMapper();
 		let tokens = 0;
+		let fullContent = '';
 
 		reporter.progress(0, 'reasoning');
 
@@ -87,23 +86,17 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 				reporter.progress(percent, message);
 			},
 			onEvent: (event: AgentEvent) => {
-				projection.apply(event);
-
-				const phase = phaseMapper.map(event);
-				if (phase) {
-					recordEvent?.({ kind: 'phase', at: Date.now(), payload: phase });
-				}
-
 				if (event.kind === 'text') {
 					const delta = extractTextDelta(event.payload);
 					if (delta) {
 						tokens += 1;
+						fullContent += delta;
 						reporter.progress(rampPct(tokens), 'response');
 						process.stdout.write(delta);
 						recordEvent?.({
 							kind: 'delta',
 							at: Date.now(),
-							payload: { token: delta, fullContent: projection.fullContent },
+							payload: { token: delta, fullContent },
 						});
 						return;
 					}
@@ -115,8 +108,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 
 		try {
 			const raw = (await agent.execute(enrichedInput, ctx)) as AgentRunOutput;
-			const content =
-				typeof raw?.content === 'string' ? raw.content : projection.fullContent;
+			const content = typeof raw?.content === 'string' ? raw.content : fullContent;
 			const stoppedReason = resolveStoppedReason(raw?.stoppedReason);
 			reporter.progress(100, 'done');
 			this.logger.info(LOG_SOURCE, `[${input.agentType}] completed`, {
