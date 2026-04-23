@@ -476,11 +476,18 @@ function Container({ children }: LayoutProps) {
 								<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
 								<SidebarMenu>
 									{[
-										{ title: t('appLayout.images', 'Images'), icon: FileImage },
-										{ title: t('appLayout.video', 'Video'), icon: Video },
-										{ title: t('appLayout.audio', 'Audio'), icon: FileAudio },
-										{ title: t('appLayout.content'), icon: FileText },
-										{ title: t('appLayout.data'), icon: Database },
+										{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
+										{ title: t('appLayout.video', 'Video'), icon: Video, items: [] },
+										{ title: t('appLayout.audio', 'Audio'), icon: FileAudio, items: [] },
+										{ title: t('appLayout.content'), icon: FileText, items: [] },
+										{
+											title: t('appLayout.data'),
+											icon: Database,
+											items: [
+												{ title: t('appLayout.content') },
+												{ title: t('appLayout.data') },
+											],
+										},
 									].map((item) => (
 										<Collapsible
 											key={item.title}
@@ -498,7 +505,15 @@ function Container({ children }: LayoutProps) {
 													}
 												/>
 												<CollapsibleContent>
-													<SidebarMenuSub />
+													<SidebarMenuSub>
+														{item.items.map((subItem) => (
+															<SidebarMenuSubItem key={subItem.title}>
+																<SidebarMenuSubButton>
+																	<span>{subItem.title}</span>
+																</SidebarMenuSubButton>
+															</SidebarMenuSubItem>
+														))}
+													</SidebarMenuSub>
 												</CollapsibleContent>
 											</SidebarMenuItem>
 										</Collapsible>
