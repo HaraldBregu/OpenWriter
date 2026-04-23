@@ -68,7 +68,6 @@ import {
 	Trash2,
 	FileAudio,
 	FileImage,
-	FileText,
 	Video,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
