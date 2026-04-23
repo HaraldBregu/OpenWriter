@@ -287,6 +287,25 @@ function PageContent(): ReactElement {
 
 	const assistantIsRunning = activeTaskId !== null;
 
+	const [taskStatus, setTaskStatus] = useState<{ status: TaskState; message: string } | null>(
+		null
+	);
+
+	useEffect(() => {
+		if (!activeTaskId) {
+			setTaskStatus(null);
+			return;
+		}
+		if (typeof window.task?.onEvent !== 'function') return;
+
+		setTaskStatus({ status: 'queued', message: '' });
+
+		return window.task.onEvent((event: TaskEvent) => {
+			if (event.taskId !== activeTaskId) return;
+			setTaskStatus({ status: event.state, message: event.data });
+		});
+	}, [activeTaskId]);
+
 	const handleDelta = useCallback(
 		(token: string) => {
 			editorInsert.appendDelta(token);
