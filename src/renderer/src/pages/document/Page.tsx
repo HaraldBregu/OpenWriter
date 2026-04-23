@@ -367,28 +367,13 @@ function PageContent(): ReactElement {
 	}, []);
 
 	const submitAssistantTask = useCallback(
-		async (args: {
-			raw: string;
-			posFrom: number;
-			posTo: number;
-		}): Promise<boolean> => {
+		async (prompt: string): Promise<boolean> => {
 			if (!id || activeTaskIdRef.current) return false;
 			if (typeof window.task?.submit !== 'function') return false;
 
-			const sessionId = sessionIdRef.current ?? uuidv7();
-			sessionIdRef.current = sessionId;
-
-			const metadata: AssistantTaskMetadata = {
-				sessionId,
-				documentId: id,
-				posFrom: args.posFrom,
-				posTo: args.posTo,
-			};
-
 			const result = await window.task.submit({
 				type: TASK_TYPE,
-				input: { raw: args.raw },
-				metadata: metadata as unknown as Record<string, unknown>,
+				input: { prompt },
 			});
 
 			if (!result.success) return false;
