@@ -233,3 +233,13 @@ function resolveStoppedReason(raw: unknown): AgentCompletedOutput['stoppedReason
 	if (raw === 'done' || raw === 'max-steps' || raw === 'stagnation') return raw;
 	return 'done';
 }
+
+function resolveStreamType(agentType: string): StreamType {
+	switch (agentType) {
+		case 'image':
+		case 'image-generation':
+			return 'image-generation';
+		default:
+			return 'text-generation';
+	}
+}
