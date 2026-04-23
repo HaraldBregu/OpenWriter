@@ -158,6 +158,7 @@ export const DEFAULT_TEXT_MODEL_ID = GPT_4_1.modelId;
 export const DEFAULT_EMBEDDING_MODEL_ID = TEXT_EMBEDDING_3_SMALL.modelId;
 export const DEFAULT_IMAGE_MODEL_ID = GPT_IMAGE_1.modelId;
 export const DEFAULT_OCR_MODEL_ID = '';
+export const DEFAULT_TRANSCRIPTION_MODEL_ID = WHISPER_1.modelId;
 
 // ---------------------------------------------------------------------------
 // Pre-filtered model collections
