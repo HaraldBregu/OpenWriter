@@ -42,43 +42,6 @@ const TASK_TYPE = 'demo';
 
 const ACTIVE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
 
-interface TaskStatusBarProps {
-	readonly taskId: string | null;
-}
-
-function TaskStatusBar({ taskId }: TaskStatusBarProps): ReactElement | null {
-	const [state, setState] = useState<{ status: TaskState; message: string } | null>(null);
-
-	useEffect(() => {
-		if (!taskId) {
-			setState(null);
-			return;
-		}
-		if (typeof window.task?.onEvent !== 'function') return;
-
-		setState({ status: 'queued', message: '' });
-
-		return window.task.onEvent((event: TaskEvent) => {
-			if (event.taskId !== taskId) return;
-			setState({ status: event.state, message: event.data });
-		});
-	}, [taskId]);
-
-	if (!state) return null;
-
-	const { status, message } = state;
-	const active = ACTIVE_STATES.has(status);
-
-	return (
-		<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
-			{active && (
-				<Loader2 className="h-4 w-4 shrink-0 animate-spin text-muted-foreground" aria-hidden="true" />
-			)}
-			<p className="flex-1 min-w-0 truncate text-[11px] text-muted-foreground">{message}</p>
-		</div>
-	);
-}
-
 function PageContent(): ReactElement {
 	const { documentId: id, selection } = useDocumentState();
 	const dispatch = useDocumentDispatch();
