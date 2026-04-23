@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
 
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
