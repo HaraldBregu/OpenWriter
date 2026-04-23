@@ -6,8 +6,10 @@ import type { StoreService } from '../../services/store';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
 import type { SkillsStoreService } from '../../services/skills-store-service';
+import type { StreamLoggerService, StreamType } from '../../services/stream-logger';
 import type { Skill } from '../../agents/skills';
 import type { AgentCompletedOutput } from '../../../shared/types';
+import { getTaskExecutionContext } from '../task-execution-context';
 
 /**
  * AgentTaskHandler — bridges the task system to the agent registry.
