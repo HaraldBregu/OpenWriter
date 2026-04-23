@@ -558,23 +558,6 @@ function PageContent(): ReactElement {
 	);
 }
 
-function readInnerEvent(data: unknown): { kind: string; payload: unknown } | null {
-	if (!data || typeof data !== 'object') return null;
-	const event = (data as { event?: unknown }).event;
-	if (!event || typeof event !== 'object') return null;
-	const { kind, payload } = event as { kind?: unknown; payload?: unknown };
-	if (typeof kind !== 'string') return null;
-	return { kind, payload };
-}
-
-function readDemoResult(data: unknown): { content: string } | null {
-	if (!data || typeof data !== 'object') return null;
-	const result = (data as { result?: unknown }).result;
-	if (!result || typeof result !== 'object') return null;
-	const { content } = result as Record<string, unknown>;
-	return typeof content === 'string' ? { content } : null;
-}
-
 function buildExtensionDocumentContext(
 	documentId: string,
 	markdown: string,
