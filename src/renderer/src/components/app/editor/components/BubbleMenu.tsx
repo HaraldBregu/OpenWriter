@@ -89,16 +89,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 					<Strikethrough className="h-3.5 w-3.5" />
 				</Button>
 
-				<Button
-					variant="ghost"
-					size="icon"
-					aria-label="Open chat"
-					className="ml-auto"
-					onClick={() => onOpenChat?.()}
-				>
-					<MessageSquare className="h-3.5 w-3.5" />
-				</Button>
-
 				<Popover>
 					<PopoverTrigger
 						openOnHover
