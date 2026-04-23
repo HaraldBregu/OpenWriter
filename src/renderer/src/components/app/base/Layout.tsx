@@ -470,71 +470,91 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarGroup>
-							<SidebarSeparator className="my-2" />
-							<SidebarGroupContent>
-								<SidebarMenu className="gap-1">
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/resources/files?type=image" />}
-											className="h-9 px-3"
-											isActive={
-												location.pathname === '/resources/files' && location.search === '?type=image'
-											}
-										>
-											<FileImage className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.images', 'Images')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											className="h-9 px-3"
-											disabled
-											tooltip={t('appLayout.comingSoon', 'Coming soon')}
-										>
-											<Video className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.video', 'Video')}</span>
-											<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
-												{t('appLayout.comingSoon', 'Coming soon')}
-											</SidebarMenuBadge>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											className="h-9 px-3"
-											disabled
-											tooltip={t('appLayout.comingSoon', 'Coming soon')}
-										>
-											<FileAudio className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.audio', 'Audio')}</span>
-											<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
-												{t('appLayout.comingSoon', 'Coming soon')}
-											</SidebarMenuBadge>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/resources/content" />}
-											className="h-9 px-3"
-											isActive={location.pathname === '/resources/content'}
-										>
-											<FileText className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.content')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
-											render={<Link to="/resources/data" />}
-											className="h-9 px-3"
-											isActive={location.pathname === '/resources/data'}
-										>
-											<Database className="h-5 w-5 shrink-0" />
-											<span className="flex-1 truncate">{t('appLayout.data')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-								</SidebarMenu>
-							</SidebarGroupContent>
-						</SidebarGroup>
+						{open && (
+							<Collapsible defaultOpen className="py-0">
+								<SidebarGroup className="py-0">
+									<SidebarGroupLabel
+										render={
+											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										}
+									>
+										{t('appLayout.resources', 'Resources')}
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
+									</SidebarGroupLabel>
+									<CollapsibleContent>
+										<SidebarGroupContent>
+											<SidebarMenu className="gap-1">
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/resources/files?type=image" />}
+														className="h-9 px-3"
+														isActive={
+															location.pathname === '/resources/files' &&
+															location.search === '?type=image'
+														}
+													>
+														<FileImage className="h-5 w-5 shrink-0" />
+														<span className="flex-1 truncate">
+															{t('appLayout.images', 'Images')}
+														</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														className="h-9 px-3"
+														disabled
+														tooltip={t('appLayout.comingSoon', 'Coming soon')}
+													>
+														<Video className="h-5 w-5 shrink-0" />
+														<span className="flex-1 truncate">
+															{t('appLayout.video', 'Video')}
+														</span>
+														<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
+															{t('appLayout.comingSoon', 'Coming soon')}
+														</SidebarMenuBadge>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														className="h-9 px-3"
+														disabled
+														tooltip={t('appLayout.comingSoon', 'Coming soon')}
+													>
+														<FileAudio className="h-5 w-5 shrink-0" />
+														<span className="flex-1 truncate">
+															{t('appLayout.audio', 'Audio')}
+														</span>
+														<SidebarMenuBadge className="right-3 min-w-fit rounded-full border border-border/70 px-2 text-[10px] uppercase tracking-normal text-muted-foreground">
+															{t('appLayout.comingSoon', 'Coming soon')}
+														</SidebarMenuBadge>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/resources/content" />}
+														className="h-9 px-3"
+														isActive={location.pathname === '/resources/content'}
+													>
+														<FileText className="h-5 w-5 shrink-0" />
+														<span className="flex-1 truncate">{t('appLayout.content')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/resources/data" />}
+														className="h-9 px-3"
+														isActive={location.pathname === '/resources/data'}
+													>
+														<Database className="h-5 w-5 shrink-0" />
+														<span className="flex-1 truncate">{t('appLayout.data')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</SidebarMenu>
+										</SidebarGroupContent>
+									</CollapsibleContent>
+								</SidebarGroup>
+							</Collapsible>
+						)}
 
 					</SidebarContent>
 
