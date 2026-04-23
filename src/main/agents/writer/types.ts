@@ -1,3 +1,5 @@
+import type { Skill } from '../skills';
+
 export type WriterIntent =
 	| 'write-new'
 	| 'continue'
@@ -20,11 +22,7 @@ export interface WriterDecision {
 	reasoning: string | null;
 }
 
-export interface WriterSkill {
-	name: string;
-	description: string;
-	instructions: string;
-}
+export type WriterSkill = Skill;
 
 export interface WriterAgentInput {
 	prompt: string;

@@ -86,6 +86,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, AgentComple
 				reporter.progress(percent, message);
 			},
 			onEvent: (event: AgentEvent) => {
+				console.log(event)
 				if (event.kind === 'text') {
 					const delta = extractTextDelta(event.payload);
 					if (delta) {
