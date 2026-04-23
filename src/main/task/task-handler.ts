@@ -70,6 +70,7 @@ export interface TaskHandler<TInput = unknown, TOutput = unknown> {
 		signal: AbortSignal,
 		reporter: ProgressReporter,
 		metadata?: Record<string, unknown>,
-		recordEvent?: RecordEvent
+		recordEvent?: RecordEvent,
+		emit?: EmitRaw
 	): Promise<TOutput>;
 }
