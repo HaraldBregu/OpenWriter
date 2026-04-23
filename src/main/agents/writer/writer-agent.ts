@@ -64,10 +64,23 @@ export class WriterAgent extends BaseAgent<WriterAgentInput, WriterAgentOutput> 
 			}
 
 			const instruction = decision.instruction?.trim() || input.prompt;
-			const skill =
-				decision.action === 'skill'
-					? resolveSkill(input.skills, decision.skillName)
-					: undefined;
+			let skill: WriterSkill | undefined;
+			if (decision.action === 'skill') {
+				skill = resolveSkill(input.skills, decision.skillName);
+				if (!skill) {
+					ctx.logger.warn(
+						'WriterAgent',
+						`Controller picked action:"skill" but skillName="${decision.skillName}" is not in catalog; falling back to action:"text"`,
+						{ available: (input.skills ?? []).map((s) => s.name) }
+					);
+				} else {
+					ctx.onEvent?.({
+						kind: 'skill:selected',
+						at: Date.now(),
+						payload: { skillName: skill.name, instruction },
+					});
+				}
+			}
 
 			this.ensureNotAborted(ctx.signal);
 			const segment = await textNode.write(
