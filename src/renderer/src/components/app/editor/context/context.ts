@@ -17,7 +17,6 @@ export interface EditorContextValue {
 	setHoveredBlock: (block: HoveredBlock | null) => void;
 	setImageDialogOpen: (open: boolean) => void;
 	onInsertContent?: () => void;
-	onOpenChat?: () => void;
 	onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
 }
 
