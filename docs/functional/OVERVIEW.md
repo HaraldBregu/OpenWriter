@@ -91,10 +91,16 @@ a content-only change.
 The functional surface is deliberately small. Under the hood, the app runs:
 
 - an Electron main process with workspace, file, and task services
-- a React + Tiptap renderer
-- a registry of agents (writer, assistant, RAG, OCR, transcription)
-- a registry of skills (user-authored workflows)
+  (`src/main/`)
+- a React + Tiptap renderer (`src/renderer/`)
+- a registry of agents (writer, assistant, RAG, OCR, transcription) under
+  `src/main/agents/`
+- a registry of skills (user-authored workflows) under
+  `src/main/agents/skills/`
 - a tool layer (read, write, edit, bash, grep, find, ls, generate_image)
-- a task executor with priority queuing and event streaming
+  under `src/main/agents/tools/`
+- a task executor with priority queuing and event streaming under
+  `src/main/task/`
 
-For those details see [../ARCHITECTURE.md](../ARCHITECTURE.md).
+The functional docs in this folder reference those paths when precision
+matters.
