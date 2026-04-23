@@ -67,9 +67,7 @@ import {
 	MoreHorizontal,
 	Pencil,
 	Trash2,
-	FileAudio,
 	FileImage,
-	Video,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { CommandModalProvider, useCommandModal } from '../command-modals';
