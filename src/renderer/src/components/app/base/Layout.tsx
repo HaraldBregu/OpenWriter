@@ -471,62 +471,52 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						{open && (
-							<SidebarGroup>
-								<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
-								<SidebarMenu>
-									{[
-										{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
-										{ title: t('appLayout.video', 'Video'), icon: Video, items: [] },
-										{ title: t('appLayout.audio', 'Audio'), icon: FileAudio, items: [] },
-										{ title: t('appLayout.content'), icon: FileText, items: [] },
-										{
-											title: t('appLayout.data'),
-											icon: Database,
-											items: [
-												{ title: t('appLayout.content'), url: '/resources/content' },
-												{ title: t('appLayout.database', 'Database') },
-											],
-										},
-									].map((item) => (
-										<Collapsible
-											key={item.title}
-											defaultOpen={false}
-											className="group/collapsible"
-										>
-											<SidebarMenuItem>
-												<CollapsibleTrigger
-													render={
-														<SidebarMenuButton tooltip={item.title}>
-															<item.icon />
-															<span>{item.title}</span>
-															<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
-														</SidebarMenuButton>
-													}
-												/>
-												<CollapsibleContent>
-													<SidebarMenuSub>
-														{item.items.map((subItem) => (
-															<SidebarMenuSubItem key={subItem.title}>
-																<SidebarMenuSubButton
-																	render={subItem.url ? <Link to={subItem.url} /> : undefined}
-																	isActive={
-																		subItem.url ? location.pathname === subItem.url : false
-																	}
-																>
-																	<span>{subItem.title}</span>
-																</SidebarMenuSubButton>
-															</SidebarMenuSubItem>
-														))}
-													</SidebarMenuSub>
-												</CollapsibleContent>
-											</SidebarMenuItem>
-										</Collapsible>
-									))}
-								</SidebarMenu>
-							</SidebarGroup>
-						)}
-
+						<SidebarGroup>
+							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
+							<SidebarMenu>
+								{[
+									{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
+									{ title: t('appLayout.video', 'Video'), icon: Video, items: [] },
+									{ title: t('appLayout.audio', 'Audio'), icon: FileAudio, items: [] },
+									{
+										title: t('appLayout.knowledgeBase'),
+										icon: Database,
+										items: [
+											{ title: t('appLayout.content'), url: '/resources/content' },
+											{ title: t('appLayout.database'), url: '/resources/data' },
+										],
+									},
+								].map((item) => (
+									<Collapsible key={item.title} defaultOpen={false} className="group/collapsible">
+										<SidebarMenuItem>
+											<CollapsibleTrigger
+												render={
+													<SidebarMenuButton tooltip={item.title}>
+														<item.icon />
+														<span>{item.title}</span>
+														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
+													</SidebarMenuButton>
+												}
+											/>
+											<CollapsibleContent>
+												<SidebarMenuSub>
+													{item.items.map((subItem) => (
+														<SidebarMenuSubItem key={subItem.title}>
+															<SidebarMenuSubButton
+																render={subItem.url ? <Link to={subItem.url} /> : undefined}
+																isActive={subItem.url ? location.pathname === subItem.url : false}
+															>
+																<span>{subItem.title}</span>
+															</SidebarMenuSubButton>
+														</SidebarMenuSubItem>
+													))}
+												</SidebarMenuSub>
+											</CollapsibleContent>
+										</SidebarMenuItem>
+									</Collapsible>
+								))}
+							</SidebarMenu>
+						</SidebarGroup>
 					</SidebarContent>
 
 					<SidebarFooter className="border-t p-2">
