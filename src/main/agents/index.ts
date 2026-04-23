@@ -20,6 +20,22 @@ export type {
 	TextWriterSkill,
 	TextWriterSkillSelection,
 } from './text-writer';
+export {
+	TextGeneratorV1Agent,
+	runEditorAgent,
+	SkillIdRegistry as TextGeneratorV1SkillIdRegistry,
+} from './text-generator-v1';
+export type {
+	TextGeneratorV1AgentInput,
+	TextGeneratorV1AgentOutput,
+	TextGeneratorV1Context,
+	TextGeneratorV1Intent,
+	TextGeneratorV1IntentClassification,
+	TextGeneratorV1ParsedInput,
+	TextGeneratorV1SkillIdEntry,
+	TextGeneratorV1Target,
+	TextGeneratorV1ExecutionOutput,
+} from './text-generator-v1';
 export { RagAgent, InMemoryVectorStore, splitText } from './rag';
 export type {
 	RagAgentInput,
