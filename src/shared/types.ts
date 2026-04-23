@@ -244,23 +244,16 @@ export interface TaskQueueStatus {
 }
 
 /**
- * Flat task event shape — every variant has the same fields.
+ * Flat task event shape.
  *
- * - `state`    — discriminant identifying the lifecycle stage.
- * - `taskId`   — unique identifier of the task this event belongs to.
- * - `data`     — success payload, shape varies per `state`:
- *     - `queued` / `started` / `cancelled`: `{}`
- *     - `running` (progress): `{ percent: number, message?: string, detail?: unknown }`
- *     - `running` (typed event): `{ event: { kind: string, at: number, payload: unknown } }`
- *     - `completed`: `{ result: unknown, durationMs: number }`
- *     - `error`: `null`
- * - `error`    — error payload; null on success events.
+ * - `state`  — lifecycle stage.
+ * - `taskId` — unique identifier of the task.
+ * - `data`   — stringified payload for this state.
  */
 export interface TaskEvent {
 	state: TaskState;
 	taskId: string;
-	data: unknown;
-	error: unknown;
+	data: string;
 }
 
 /**
