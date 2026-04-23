@@ -48,6 +48,6 @@ tokens straight into the document.
 
 ## Scope
 
-These docs cover the current shipping surface of the app. Experimental or
-partially implemented patterns are noted in
-[../AGENTIC_DESIGN_PATTERNS.md](../AGENTIC_DESIGN_PATTERNS.md).
+These docs cover the current shipping surface of the app. Partially
+implemented or experimental behavior is flagged inline inside the relevant
+doc (typically in a "Limits" or "Known limits" section).
