@@ -328,41 +328,10 @@ function PageContent(): ReactElement {
 	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
 	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
 
-	// Subscribe once to task events; route to the active task via refs.
 	useEffect(() => {
 		if (typeof window.task?.onEvent !== 'function') return;
 		return window.task.onEvent((event: TaskEvent) => {
-			const currentId = activeTaskIdRef.current;
-			if (!currentId || event.taskId !== currentId) return;
-			const h = taskHandlersRef.current;
-
-			if (event.state === 'running') {
-				const inner = readInnerEvent(event.data);
-				if (!inner) return;
-				if (inner.kind === 'phase') {
-					const payload = inner.payload as { label?: string } | null;
-					if (typeof payload?.label === 'string') setPhaseLabel(payload.label);
-				} else if (inner.kind === 'text') {
-					const payload = inner.payload as { text?: string } | null;
-					if (typeof payload?.text === 'string') h.handleDelta(payload.text);
-				}
-				return;
-			}
-
-			if (event.state === 'completed') {
-				const result = readDemoResult(event.data);
-				console.log('[demo task] completed', { taskId: event.taskId, result });
-				if (result) {
-					h.handleCompleted(result.content);
-				}
-				setActiveTaskId(null);
-				return;
-			}
-
-			if (event.state === 'cancelled' || event.state === 'error') {
-				h.handleCancelOrError();
-				setActiveTaskId(null);
-			}
+			console.log(event);
 		});
 	}, []);
 
