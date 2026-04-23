@@ -348,7 +348,6 @@ function PageContent(): ReactElement {
 	const handleCompleted = useCallback(
 		(completedContent: string) => {
 			editorInsert.commitFinal(completedContent);
-			setPhaseLabel(null);
 			editorActions.hideLoading();
 			editorActions.enable();
 			editorActions.clearPromptInput();
