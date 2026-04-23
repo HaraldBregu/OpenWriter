@@ -66,10 +66,14 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 		emit({ state: 'started', data: 'Synthesizing answer...' });
 		await sleep(STATE_DELAY_MS, signal);
 
-		emit({ state: 'running', data: 'running' });
-		await sleep(STATE_DELAY_MS, signal);
+		const tokens = tokenize(LOREM);
+		let result = '';
+		for (const token of tokens) {
+			await sleep(TOKEN_DELAY_MS, signal);
+			result += token;
+			emit({ state: 'running', data: token });
+		}
 
-		const result = `demo: ${input.prompt}`;
 		emit({ state: 'finished', data: result });
 		await sleep(STATE_DELAY_MS, signal);
 
