@@ -44,7 +44,7 @@ import { PromptSubmitPayload } from '@shared/index';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
-const TASK_TYPE = 'text-generator-v1';
+const TASK_TYPE = 'text-generator-v2';
 
 function PageContent(): ReactElement {
 	const { documentId: id, selection } = useDocumentState();
@@ -375,6 +375,11 @@ function PageContent(): ReactElement {
 				} else if (inner.kind === 'skill:selected') {
 					const payload = inner.payload as { skillName?: string } | null;
 					if (payload?.skillName) setPhaseLabel(`Skill selected: ${payload.skillName}`);
+				} else if (inner.kind === 'skills:selected') {
+					const payload = inner.payload as { names?: string[] } | null;
+					if (Array.isArray(payload?.names) && payload.names.length > 0) {
+						setPhaseLabel(`Skill selected: ${payload.names.join(', ')}`);
+					}
 				}
 				return;
 			}
@@ -760,7 +765,7 @@ function readCompletedResult(data: unknown): AgentCompletedOutput | null {
 }
 
 /**
- * Compose the raw input for the text-generator-v1 editor agent.
+ * Compose the raw input for the text-generator-v2 editor agent.
  *
  * Embeds the selection inline (if any) as `<selected_text>...</selected_text>`
  * and appends `<prompt>...</prompt>`. The agent's input-parser extracts both
