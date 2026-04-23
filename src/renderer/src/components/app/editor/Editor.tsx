@@ -582,7 +582,6 @@ const Editor = React.memo(
 					ref={rootRef}
 					editor={editor}
 					onInsertContent={onInsertContent}
-					onOpenChat={onOpenChat}
 					onAssistantAction={onAssistantAction}
 					onImageInsert={handleImageInsert}
 				>
