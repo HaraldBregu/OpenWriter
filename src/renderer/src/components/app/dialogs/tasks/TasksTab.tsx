@@ -11,8 +11,7 @@ const MAX_EVENT_HISTORY = 50;
 const EMPTY_STATS: QueueStats = {
 	queued: 0,
 	running: 0,
-	completed: 0,
-	error: 0,
+	finished: 0,
 	cancelled: 0,
 };
 
