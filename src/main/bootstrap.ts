@@ -99,14 +99,12 @@ export function bootstrapServices(): BootstrapResult {
 	const windowContextManager = new WindowContextManager(container, eventBus);
 	container.register('windowContextManager', windowContextManager);
 
-	// Task system -- handler registry + executor
-	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
-	taskHandlerRegistry.register(new DemoTaskHandler(logger));
+	// Resolvers for provider credentials and model catalogue. Needed by the
+	// agent-task bridge handler before the task registry is finalised.
 	const serviceResolver = new ServiceResolver(storeService);
 	const modelResolver = new ModelResolver();
 	container.register('serviceResolver', serviceResolver);
 	container.register('modelResolver', modelResolver);
-	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
 	// Agent registry -- feature agents (assistant, rag, ocr).
 	// Each agent is a strategy object registered by type; add new agents by
@@ -120,6 +118,14 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new OcrAgent());
 	agentRegistry.register(new TranscriptionAgent());
 	container.register('agentRegistry', agentRegistry);
+
+	// Task system -- handler registry + executor
+	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
+	taskHandlerRegistry.register(new DemoTaskHandler(logger));
+	taskHandlerRegistry.register(
+		new AgentTaskHandler(agentRegistry, serviceResolver, modelResolver, logger)
+	);
+	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
 	container.register(
 		'extensionManager',
