@@ -57,6 +57,16 @@ export const PromptExtension = Node.create<PromptOptions>({
 					'data-agent-id': attributes.agentId as AgentId,
 				}),
 			},
+			statusBarVisible: {
+				default: false,
+				parseHTML: () => false,
+				renderHTML: () => ({}),
+			},
+			statusBarMessage: {
+				default: '',
+				parseHTML: () => '',
+				renderHTML: () => ({}),
+			},
 		};
 	},
 
