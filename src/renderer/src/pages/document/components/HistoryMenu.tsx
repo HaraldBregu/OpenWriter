@@ -5,6 +5,7 @@ import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import type { HistoryEntry } from '../services/history-service';
@@ -13,6 +14,7 @@ interface HistoryMenuProps {
 	readonly entries: HistoryEntry[];
 	readonly currentEntryId: string | null;
 	readonly onRestoreEntry: (id: string) => void;
+	readonly onReturnToLive: () => void;
 }
 
 const DATE_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -26,8 +28,14 @@ function formatSavedAt(isoString: string): string {
 	return new Intl.DateTimeFormat(undefined, DATE_FORMAT_OPTIONS).format(new Date(isoString));
 }
 
-const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRestoreEntry }) => {
+const HistoryMenu: React.FC<HistoryMenuProps> = ({
+	entries,
+	currentEntryId,
+	onRestoreEntry,
+	onReturnToLive,
+}) => {
 	const reversedEntries = useMemo(() => [...entries].reverse(), [entries]);
+	const onLive = currentEntryId === null;
 
 	return (
 		<DropdownMenu>
@@ -40,6 +48,20 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({ entries, currentEntryId, onRe
 			/>
 			<DropdownMenuContent align="end" className="w-64">
 				<div className="max-h-72 overflow-y-auto">
+					<DropdownMenuItem
+						onClick={() => {
+							if (!onLive) onReturnToLive();
+						}}
+						className={onLive ? 'font-semibold' : undefined}
+					>
+						<div className="flex items-center justify-between w-full gap-2 min-w-0">
+							<span className="truncate">Current version</span>
+							{onLive && (
+								<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
+							)}
+						</div>
+					</DropdownMenuItem>
+					<DropdownMenuSeparator />
 					{reversedEntries.length === 0 ? (
 						<p className="px-2 py-3 text-sm text-muted-foreground text-center">No history yet</p>
 					) : (

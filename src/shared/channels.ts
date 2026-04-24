@@ -171,6 +171,7 @@ export const AppChannels = {
 	setLanguage: 'set-language',
 	contextMenu: 'context-menu',
 	contextMenuEditable: 'context-menu-editable',
+	showContextMenu: 'context-menu:show',
 	changeLanguage: 'change-language',
 	changeTheme: 'change-theme',
 	fileOpened: 'file-opened',
