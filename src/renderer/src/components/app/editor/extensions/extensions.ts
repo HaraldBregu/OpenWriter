@@ -29,8 +29,6 @@ import { ImagePlaceholderExtension } from './image-placeholder-extension';
 export interface ExtensionHandlers {
 	onPromptSubmit: (payload: PromptSubmitPayload) => void;
 	onImageInsert: ImageInsertHandler;
-	onUndo: () => void;
-	onRedo: () => void;
 }
 
 export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
@@ -39,7 +37,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Text,
 		Paragraph,
 		Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
-		HistoryKeyboardExtension.configure({ onUndo: handlers.onUndo, onRedo: handlers.onRedo }),
+		History.configure({ depth: 100, newGroupDelay: 500 }),
 		Bold,
 		Italic,
 		Underline,

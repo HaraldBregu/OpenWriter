@@ -33,6 +33,7 @@ import type {
 	SaveOutputInput,
 	SaveOutputResult,
 	WritingContextMenuAction,
+	ContextMenuDescriptor,
 	AgentStreamEvent,
 	AgentDefinitionInfo,
 	FsReadFileParams,
