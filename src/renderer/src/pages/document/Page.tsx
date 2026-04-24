@@ -310,6 +310,7 @@ function PageContent(): ReactElement {
 			setPreexistingTaskActive(false);
 			setDocumentTaskState(null);
 			setPreexistingTaskId(null);
+			setPreexistingTaskContent(null);
 			return;
 		}
 		if (typeof window.task?.list !== 'function') return;
@@ -319,6 +320,7 @@ function PageContent(): ReactElement {
 		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
 		setPreexistingTaskId(null);
+		setPreexistingTaskContent(null);
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
