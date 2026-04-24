@@ -29,6 +29,7 @@ import type {
 	SaveOutputInput,
 	SaveOutputResult,
 	WritingContextMenuAction,
+	ContextMenuDescriptor,
 	FsReadFileParams,
 	FsWriteFileParams,
 	FsCreateFolderParams,
