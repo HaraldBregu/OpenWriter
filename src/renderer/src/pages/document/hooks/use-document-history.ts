@@ -125,6 +125,7 @@ export function useDocumentHistory({
 				async () => {
 					if (!docPath || isRestoringRef.current) return;
 					const { content: c, title: t } = stateRef.current;
+					if (c.trim() === '') return;
 					const last = lastSnapshotRef.current;
 					if (last && last.content === c && last.title === t) return;
 					try {
