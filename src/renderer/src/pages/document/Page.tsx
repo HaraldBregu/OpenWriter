@@ -620,6 +620,7 @@ function PageContent(): ReactElement {
 									/>
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
+								<PageHeaderDescription>Dummy description</PageHeaderDescription>
 							</PageHeader>
 
 
