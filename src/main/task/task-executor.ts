@@ -433,17 +433,7 @@ export class TaskExecutor implements Disposable {
 		}
 	}
 
-	/** Evict completed tasks whose TTL has expired. */
-	private gcCompletedTasks(): void {
-		const now = Date.now();
-		for (const [taskId, entry] of this.completedTasks) {
-			if (entry.expiresAt <= now) {
-				this.completedTasks.delete(taskId);
-			}
-		}
-	}
-
-	/**
+/**
 	 * Sort queue by priority (high first), then by FIFO within same priority.
 	 */
 	private sortQueue(): void {
