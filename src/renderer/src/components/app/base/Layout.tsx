@@ -741,6 +741,18 @@ function Container({ children }: LayoutProps) {
 
 				<SidebarPageInset>{children}</SidebarPageInset>
 			</SidebarPageContainer>
+
+			<DeleteConfirmDialog
+				open={pendingDelete !== null}
+				onOpenChange={handleDeleteDialogOpenChange}
+				title={t('sidebar.deleteDocumentTitle', 'Delete document?')}
+				description={t('sidebar.deleteDocumentDescription', {
+					defaultValue:
+						'"{{title}}" will be permanently removed from this workspace. This action cannot be undone.',
+					title: pendingDelete?.title || t('sidebar.untitledWriting'),
+				})}
+				onConfirm={handleConfirmDelete}
+			/>
 		</>
 	);
 }
