@@ -246,14 +246,16 @@ export interface TaskQueueStatus {
 /**
  * Flat task event shape.
  *
- * - `state`  — lifecycle stage.
- * - `taskId` — unique identifier of the task.
- * - `data`   — stringified payload for this state.
+ * - `state`    — lifecycle stage.
+ * - `taskId`   — unique identifier of the task.
+ * - `data`     — stringified payload for this state.
+ * - `metadata` — caller-supplied metadata captured at submission time.
  */
 export interface TaskEvent {
 	state: TaskState;
 	taskId: string;
 	data: string;
+	metadata: Record<string, unknown>;
 }
 
 /**
@@ -264,7 +266,6 @@ export interface TaskAction<TInput = unknown> {
 	type: string;
 	input: TInput;
 	metadata?: Record<string, unknown>;
-	options?: TaskSubmitOptions;
 }
 
 /**
