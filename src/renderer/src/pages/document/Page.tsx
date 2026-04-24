@@ -541,7 +541,7 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
-							{p && (
+							{taskStatus && (
 								<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
 									{ACTIVE_STATES.has(taskStatus.status) && (
 										<Loader2
