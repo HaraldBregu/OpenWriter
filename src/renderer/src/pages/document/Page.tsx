@@ -327,7 +327,7 @@ function PageContent(): ReactElement {
 			setContent(fullMarkdown);
 			dispatch({ type: 'CONTENT_CHANGED', value: fullMarkdown });
 			debouncedContentSave.cancel();
-			window.workspace.updateDocument(id, { content: fullMarkdown });
+			window.workspace.updateDocumentContent(id, fullMarkdown);
 		},
 		[editorInsert, editorActions, id, dispatch, debouncedContentSave, editor]
 	);
