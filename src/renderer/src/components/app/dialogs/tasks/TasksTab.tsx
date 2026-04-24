@@ -97,14 +97,6 @@ function applyEvent(task: TrackedTask, event: TaskEvent): TrackedTask {
 				},
 			};
 		}
-		case 'completed':
-			return {
-				...base,
-				status: 'completed',
-				progress: { percent: 100 },
-				result: dataField<unknown>(event.data, 'result'),
-				durationMs: dataField<number>(event.data, 'durationMs'),
-			};
 		case 'finished':
 			return {
 				...base,
@@ -113,18 +105,8 @@ function applyEvent(task: TrackedTask, event: TaskEvent): TrackedTask {
 				result: dataField<unknown>(event.data, 'result') ?? event.data,
 				durationMs: dataField<number>(event.data, 'durationMs'),
 			};
-		case 'error': {
-			const payload = event.error;
-			const message =
-				typeof payload === 'object' && payload !== null && 'message' in payload
-					? String((payload as { message: unknown }).message)
-					: typeof payload === 'string'
-						? payload
-						: undefined;
-			return { ...base, status: 'error', error: message };
-		}
 		case 'cancelled':
-			return { ...base, status: 'cancelled' };
+			return { ...base, status: 'cancelled', error: event.data || undefined };
 		default:
 			return base;
 	}
