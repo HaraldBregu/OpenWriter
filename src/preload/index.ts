@@ -312,10 +312,10 @@ const workspace: WorkspaceApi = {
 	// -------------------------------------------------------------------------
 	getDocumentContent: (documentId: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.getDocumentContent, documentId),
-	updateDocument: (
-		documentId: string,
-		patch: { config?: Partial<DocumentConfig>; content?: string }
-	) => typedInvokeUnwrap(WorkspaceChannels.updateDocument, documentId, patch),
+	updateDocumentContent: (documentId: string, content: string) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateDocumentContent, documentId, content),
+	updateDocumentConfig: (documentId: string, config: Partial<DocumentConfig>) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateDocumentConfig, documentId, config),
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
