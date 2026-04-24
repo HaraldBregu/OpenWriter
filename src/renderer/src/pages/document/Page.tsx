@@ -278,6 +278,8 @@ function PageContent(): ReactElement {
 	}, [debouncedMetadataSave, debouncedContentSave]);
 
 	const editorActions = useEditor(editorRef);
+	const editorActionsRef = useRef(editorActions);
+	editorActionsRef.current = editorActions;
 
 	const editorInsert = useEditorStreamInsert();
 
