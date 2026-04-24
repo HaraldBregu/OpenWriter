@@ -574,7 +574,7 @@ function PageContent(): ReactElement {
 			<PageBody>
 				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 					<ResizablePanel defaultSize="70%" minSize="40%">
-						<div className="relative flex h-full flex-col">
+						<div className="flex h-full flex-col">
 							<PageHeader>
 								<PageHeaderTitle>
 									<Input
@@ -615,9 +615,12 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
-							<div className="absolute left-0 right-0 top-[41px] z-10 flex items-center border-b bg-background px-6 py-2">
+
+							<div className="absolute left-0 right-0 top-[44px] z-10 flex items-center border-b bg-background px-6 py-2">
 								<h2 className="text-sm font-medium">Dummy Subheader Title</h2>
 							</div>
+
+
 							<div className="flex min-h-0 flex-1 flex-col">
 								{loaded && (
 									<Editor
@@ -666,10 +669,10 @@ function buildExtensionDocumentContext(
 	const selectionSnapshot =
 		selection && selection.from !== selection.to
 			? {
-					from: selection.from,
-					to: selection.to,
-					text: editor.state.doc.textBetween(selection.from, selection.to, '\n\n'),
-				}
+				from: selection.from,
+				to: selection.to,
+				text: editor.state.doc.textBetween(selection.from, selection.to, '\n\n'),
+			}
 			: null;
 
 	const activeMarks = Array.from(
