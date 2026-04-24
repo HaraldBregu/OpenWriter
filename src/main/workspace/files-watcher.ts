@@ -80,6 +80,9 @@ export class FilesWatcherService implements Disposable {
 		this.logger?.info(FilesWatcherService.LOG_SOURCE, `Starting to watch: ${filesDir}`);
 
 		try {
+			// Use native fsevents on macOS; only fall back to polling where
+			// native watchers are unreliable (e.g. network mounts on Linux).
+			const usePolling = process.platform === 'linux';
 			this.watcher = chokidar.watch(filesDir, {
 				ignoreInitial: true,
 				persistent: true,
@@ -87,7 +90,7 @@ export class FilesWatcherService implements Disposable {
 					stabilityThreshold: 200,
 					pollInterval: 50,
 				},
-				usePolling: true,
+				usePolling,
 				interval: 500,
 				depth: 0,
 				alwaysStat: false,
