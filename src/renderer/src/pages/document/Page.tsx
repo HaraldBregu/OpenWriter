@@ -671,6 +671,18 @@ function PageContent(): ReactElement {
 											{documentTaskState}
 										</span>
 									)}
+									<Button
+										variant="ghost"
+										size="sm"
+										title="Cancel task"
+										aria-label="Cancel task"
+										onClick={handleCancelPreexistingTask}
+										disabled={!preexistingTaskId}
+										className="h-6 px-2 text-xs"
+									>
+										<X className="size-3.5" aria-hidden="true" />
+										Cancel
+									</Button>
 								</PageHeaderDescription>
 							)}
 						</PageHeader>
