@@ -43,6 +43,12 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
+				<div
+					role="status"
+					className="w-full rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+				>
+					{t('assistantNode.status', 'Ready')}
+				</div>
 				<Card className="w-full my-2">
 					<PromptHeader />
 					<CardContent>
