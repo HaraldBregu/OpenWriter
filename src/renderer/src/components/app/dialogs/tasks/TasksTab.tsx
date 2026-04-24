@@ -60,7 +60,7 @@ function createFromEvent(event: TaskEvent): TrackedTask {
 function appendEvent(task: TrackedTask, event: TaskEvent): TaskEventRecord[] {
 	const record: TaskEventRecord = {
 		state: event.state,
-		data: { taskId: event.taskId, data: event.data, error: event.error, metadata: event.metadata },
+		data: { taskId: event.taskId, data: event.data, metadata: event.metadata },
 		receivedAt: Date.now(),
 	};
 	const base =
