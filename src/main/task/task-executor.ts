@@ -50,11 +50,10 @@ interface QueuedTask {
 
 export class TaskExecutor implements Disposable {
 	private activeTasks = new Map<string, ActiveTask>();
-	/** Completed/errored/cancelled tasks retained for result retrieval until TTL expires. */
-	private completedTasks = new Map<string, { task: ActiveTask; expiresAt: number }>();
+	/** Finished/cancelled tasks retained indefinitely for result retrieval and listing. */
+	private completedTasks = new Map<string, { task: ActiveTask }>();
 	private queue: QueuedTask[] = [];
 	private runningCount = 0;
-	private gcHandle: NodeJS.Timeout | null = null;
 
 	constructor(
 		private readonly registry: TaskHandlerRegistry,
