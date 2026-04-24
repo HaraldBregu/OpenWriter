@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/Button';
 import {
 	Popover,
 	PopoverContent,
+	PopoverHeader,
+	PopoverTitle,
 	PopoverTrigger,
 } from '@/components/ui/Popover';
 import type { HistoryEntry } from '../services/history-service';
