@@ -29,7 +29,13 @@ import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
 import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
-import { PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
+import {
+	PageContainer,
+	PageHeader,
+	PageHeaderItems,
+	PageHeaderTitle,
+	PageHeaderDescription,
+} from '@/components/app';
 import { PageBody } from '@/components/app/base/page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import type { AssistantAction } from '@/components/app/editor/context/context';
