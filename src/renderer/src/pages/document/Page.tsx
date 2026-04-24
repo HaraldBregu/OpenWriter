@@ -714,7 +714,7 @@ function PageContent(): ReactElement {
 										title="Insert"
 										aria-label="Insert"
 										onClick={handleInsertTaskContent}
-										disabled={!preexistingTaskContent}
+										disabled={documentTaskState !== 'finished' || !preexistingTaskContent}
 									>
 										<Plus aria-hidden="true" />
 										Insert
