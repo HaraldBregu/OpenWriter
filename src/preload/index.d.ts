@@ -343,6 +343,14 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	/** Get the combined config for a document (metadata + model overrides). */
 	getDocumentConfig: (documentId: string) => Promise<DocumentConfig>;
+	/**
+	 * Merge a partial config into the document's config.json. Broadcasts a
+	 * config-changed event.
+	 */
+	updateDocumentConfig: (
+		documentId: string,
+		config: Partial<DocumentConfig>
+	) => Promise<void>;
 	/** Subscribe to config changes for a specific document. */
 	onDocumentConfigChanges: (
 		documentId: string,
@@ -354,14 +362,6 @@ export interface WorkspaceApi {
 	getDocumentContent: (documentId: string) => Promise<string>;
 	/** Write a document's content to disk. */
 	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
-	/**
-	 * Merge a partial config into the document's config.json. Broadcasts a
-	 * config-changed event.
-	 */
-	updateDocumentConfig: (
-		documentId: string,
-		config: Partial<DocumentConfig>
-	) => Promise<void>;
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
 	// -------------------------------------------------------------------------
