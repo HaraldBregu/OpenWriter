@@ -31,6 +31,7 @@ export interface ContextValue {
 	deleteNode: () => void;
 	resizeTextarea: () => void;
 	setStatusBarVisible: (visible: boolean) => void;
+	setStatusBarMessage: (message: string) => void;
 }
 
 export const Context = createContext<ContextValue | null>(null);
