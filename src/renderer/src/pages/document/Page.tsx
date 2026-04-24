@@ -574,7 +574,7 @@ function PageContent(): ReactElement {
 			<PageBody>
 				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
 					<ResizablePanel defaultSize="70%" minSize="40%">
-						<div className="flex h-full flex-col">
+						<div className="relative flex h-full flex-col">
 							<PageHeader>
 								<PageHeaderTitle>
 									<Input
