@@ -49,7 +49,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, string> {
 			prompt: input.prompt,
 			providerId: service.provider.id,
 			apiKey: service.apiKey,
-			modelName: model.modelName,
+			modelName: model.modelId,
 			temperature: input.temperature,
 			maxTokens: input.maxTokens,
 		};
