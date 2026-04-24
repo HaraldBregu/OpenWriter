@@ -624,16 +624,12 @@ function PageContent(): ReactElement {
 		setPreexistingTaskContent(null);
 	}, [id]);
 
-	const handleInsertTaskContent = useCallback(() => {
+	const handleInsertTaskContent = useCallback(async () => {
 		if (!preexistingTaskContent) return;
 		if (!editor || editor.isDestroyed) return;
 		editor.chain().focus().insertContent(preexistingTaskContent).run();
-		setDocumentHasActiveTask(false);
-		setPreexistingTaskActive(false);
-		setDocumentTaskState(null);
-		setPreexistingTaskId(null);
-		setPreexistingTaskContent(null);
-	}, [preexistingTaskContent, editor]);
+		await handleCancelPreexistingTask();
+	}, [preexistingTaskContent, editor, handleCancelPreexistingTask]);
 
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
