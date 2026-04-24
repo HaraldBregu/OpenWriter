@@ -350,7 +350,7 @@ function PageContent(): ReactElement {
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
-				metadata: {},
+				metadata: { documentId: id },
 			});
 
 			if (!result.success) return false;
