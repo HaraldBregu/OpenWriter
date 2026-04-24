@@ -347,20 +347,22 @@ function PageContent(): ReactElement {
 				if (preexistingTaskActiveRef.current) {
 					setDocumentTaskState(event.state);
 				}
-			} else if (event.state === 'finished' || event.state === 'cancelled') {
+			} else if (event.state === 'cancelled') {
+				setDocumentHasActiveTask(false);
+				setPreexistingTaskActive(false);
+				setDocumentTaskState(null);
+				setPreexistingTaskId(null);
+			} else if (event.state === 'finished') {
+				if (preexistingTaskActiveRef.current) {
+					setDocumentTaskState('finished');
+				}
 				if (typeof window.task?.list !== 'function') {
 					setDocumentHasActiveTask(false);
-					setPreexistingTaskActive(false);
-					setDocumentTaskState(null);
-					setPreexistingTaskId(null);
 					return;
 				}
 				window.task.list().then((res) => {
 					if (!res.success) {
 						setDocumentHasActiveTask(false);
-						setPreexistingTaskActive(false);
-						setDocumentTaskState(null);
-						setPreexistingTaskId(null);
 						return;
 					}
 					const stillActiveTask = res.data.find(
@@ -369,14 +371,6 @@ function PageContent(): ReactElement {
 							(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 					);
 					setDocumentHasActiveTask(!!stillActiveTask);
-					if (!stillActiveTask) {
-						setPreexistingTaskActive(false);
-						setDocumentTaskState(null);
-						setPreexistingTaskId(null);
-					} else if (preexistingTaskActiveRef.current) {
-						setDocumentTaskState(stillActiveTask.status);
-						setPreexistingTaskId(stillActiveTask.taskId);
-					}
 				});
 			}
 		});
