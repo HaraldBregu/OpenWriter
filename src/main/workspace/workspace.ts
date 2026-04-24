@@ -201,40 +201,51 @@ export class Workspace implements Disposable {
 	}
 
 	/**
-	 * Update a document's config and/or content in a single call.
-	 * Bumps `updatedAt` when either field is provided; skips the config write
-	 * only when neither `config` nor `content` was given and config.json is missing.
+	 * Write a document's content to disk and bump `updatedAt` in config.json
+	 * (if it already exists).
 	 */
-	async updateDocument(
-		documentId: string,
-		patch: { config?: Partial<DocumentConfig>; content?: string }
-	): Promise<void> {
+	async updateDocumentContent(documentId: string, content: string): Promise<void> {
 		const docPath = this.getDocumentFolderPath(documentId);
 		const contentFilePath = path.join(docPath, 'content.md');
 		const configFilePath = path.join(docPath, 'config.json');
 		const manager = this.buildFileManager();
 
-		if (patch.content !== undefined) {
-			await fsPromises.writeFile(contentFilePath, patch.content, 'utf-8');
-		}
+		await fsPromises.writeFile(contentFilePath, content, 'utf-8');
 
 		let existing: Record<string, unknown> = {};
-		let hasExisting = false;
 		try {
 			const raw = await fsPromises.readFile(configFilePath, 'utf-8');
 			existing = JSON.parse(raw) as Record<string, unknown>;
-			hasExisting = true;
 		} catch {
-			// config.json not present yet
+			return;
 		}
 
-		if (patch.config?.title !== undefined) {
-			existing.title = patch.config.title;
+		existing.updatedAt = new Date().toISOString();
+		await manager.writeFile(configFilePath, JSON.stringify(existing, null, 2));
+	}
+
+	/**
+	 * Merge a partial config into the document's config.json and bump `updatedAt`.
+	 */
+	async updateDocumentConfig(
+		documentId: string,
+		config: Partial<DocumentConfig>
+	): Promise<void> {
+		const docPath = this.getDocumentFolderPath(documentId);
+		const configFilePath = path.join(docPath, 'config.json');
+		const manager = this.buildFileManager();
+
+		let existing: Record<string, unknown> = {};
+		try {
+			const raw = await fsPromises.readFile(configFilePath, 'utf-8');
+			existing = JSON.parse(raw) as Record<string, unknown>;
+		} catch {
+			// config.json not present yet — we'll create it below
 		}
 
-		const shouldWriteConfig =
-			patch.config !== undefined || (patch.content !== undefined && hasExisting);
-		if (!shouldWriteConfig) return;
+		if (config.title !== undefined) {
+			existing.title = config.title;
+		}
 
 		existing.updatedAt = new Date().toISOString();
 		await manager.writeFile(configFilePath, JSON.stringify(existing, null, 2));
