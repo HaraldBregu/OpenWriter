@@ -29,13 +29,9 @@ export const STATUS_CONFIG: Record<TaskState, { label: string; className: string
 		label: 'Running',
 		className: 'border border-info/20 bg-info/12 text-info',
 	},
-	completed: {
-		label: 'Completed',
+	finished: {
+		label: 'Finished',
 		className: 'border border-success/20 bg-success/12 text-success',
-	},
-	error: {
-		label: 'Error',
-		className: 'border border-destructive/20 bg-destructive/12 text-destructive',
 	},
 	cancelled: {
 		label: 'Cancelled',
