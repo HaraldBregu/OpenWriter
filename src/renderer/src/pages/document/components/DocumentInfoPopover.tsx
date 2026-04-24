@@ -142,7 +142,7 @@ export default function DocumentInfoPopover({
 					}
 				/>
 				<PopoverContent align="end" className="w-64 p-0">
-					<PopoverHeader className="p-4 pb-3">
+					<PopoverHeader className="p-4">
 						<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
 					</PopoverHeader>
 					<div className="border-t p-2">
