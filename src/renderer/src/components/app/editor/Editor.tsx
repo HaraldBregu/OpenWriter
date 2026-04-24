@@ -429,6 +429,22 @@ const Editor = React.memo(
 						});
 						editor.view.dispatch(tr);
 					},
+					setPromptStatusBar({ visible, message }) {
+						if (!editor || editor.isDestroyed) return;
+						const { doc, tr } = editor.state;
+						doc.descendants((node, pos) => {
+							if (node.type.name === 'contentGenerator') {
+								tr.setNodeMarkup(pos, undefined, {
+									...node.attrs,
+									statusBarVisible: visible,
+									statusBarMessage: message ?? node.attrs.statusBarMessage,
+								});
+								return false;
+							}
+							return true;
+						});
+						editor.view.dispatch(tr);
+					},
 					clearPromptInput() {
 						if (!editor || editor.isDestroyed) return;
 						const { doc, tr } = editor.state;
