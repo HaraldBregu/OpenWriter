@@ -37,11 +37,16 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			selectedTextModel:
 				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0],
 			selection: '',
+			statusBarVisible: true,
 		})
 	);
 
 	const setSelection = useCallback((value: string) => {
 		dispatch({ type: 'SET_SELECTION', payload: value });
+	}, []);
+
+	const setStatusBarVisible = useCallback((visible: boolean) => {
+		dispatch({ type: 'SET_STATUS_BAR_VISIBLE', payload: visible });
 	}, []);
 
 	const nodePrompt = (node.attrs.prompt as string) ?? '';
