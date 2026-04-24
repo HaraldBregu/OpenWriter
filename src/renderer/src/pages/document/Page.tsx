@@ -342,9 +342,7 @@ function PageContent(): ReactElement {
 			setPreexistingTaskActive(!!displayTask);
 			setDocumentTaskState(displayTask?.status ?? null);
 			setPreexistingTaskId(displayTask?.taskId ?? null);
-			setPreexistingTaskContent(
-				finishedTask && typeof finishedTask.result === 'string' ? finishedTask.result : null
-			);
+			setPreexistingTaskContent(finishedTask?.data ?? null);
 		});
 
 		return () => {
