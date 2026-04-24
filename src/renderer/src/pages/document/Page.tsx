@@ -287,7 +287,63 @@ function PageContent(): ReactElement {
 	const activeTaskIdRef = useRef<string | null>(null);
 	activeTaskIdRef.current = activeTaskId;
 
-	const assistantIsRunning = activeTaskId !== null;
+	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
+
+	const assistantIsRunning = activeTaskId !== null || documentHasActiveTask;
+
+	useEffect(() => {
+		if (!id) {
+			setDocumentHasActiveTask(false);
+			return;
+		}
+		if (typeof window.task?.list !== 'function') return;
+
+		let cancelled = false;
+		setDocumentHasActiveTask(false);
+
+		window.task.list().then((res) => {
+			if (cancelled || !res.success) return;
+			const active = res.data.some(
+				(t) =>
+					t.metadata?.documentId === id &&
+					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
+			);
+			setDocumentHasActiveTask(active);
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [id]);
+
+	useEffect(() => {
+		if (!id) return;
+		if (typeof window.task?.onEvent !== 'function') return;
+
+		return window.task.onEvent((event: TaskEvent) => {
+			if (event.metadata.documentId !== id) return;
+			if (event.state === 'queued' || event.state === 'started' || event.state === 'running') {
+				setDocumentHasActiveTask(true);
+			} else if (event.state === 'finished' || event.state === 'cancelled') {
+				if (typeof window.task?.list !== 'function') {
+					setDocumentHasActiveTask(false);
+					return;
+				}
+				window.task.list().then((res) => {
+					if (!res.success) {
+						setDocumentHasActiveTask(false);
+						return;
+					}
+					const stillActive = res.data.some(
+						(t) =>
+							t.metadata?.documentId === id &&
+							(t.status === 'queued' || t.status === 'started' || t.status === 'running')
+					);
+					setDocumentHasActiveTask(stillActive);
+				});
+			}
+		});
+	}, [id]);
 
 	useEffect(() => {
 		if (!id || !activeTaskId) return;
