@@ -300,7 +300,8 @@ function PageContent(): ReactElement {
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
-	const assistantIsRunning = activeTaskId !== null || documentHasActiveTask;
+	const assistantIsRunning =
+		activeTaskId !== null || documentHasActiveTask || preexistingTaskActive;
 
 	useEffect(() => {
 		if (!id) {
