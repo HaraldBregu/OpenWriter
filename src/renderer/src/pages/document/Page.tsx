@@ -537,6 +537,7 @@ function PageContent(): ReactElement {
 										entries={historyEntries}
 										currentEntryId={currentHistoryEntryId}
 										onRestoreEntry={handleRestoreHistoryEntry}
+										onReturnToLive={handleReturnToLive}
 									/>
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
