@@ -57,19 +57,19 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 			/>
 			<PopoverContent align="end" className="w-64 p-0">
 				<div className="max-h-72 overflow-y-auto p-1">
-					<button
-						type="button"
+					<Button
+						variant="ghost"
+						size="sm"
 						onClick={handleReturnToLive}
 						className={
-							'flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent disabled:pointer-events-none ' +
-							(onLive ? 'font-semibold' : '')
+							'w-full justify-between ' + (onLive ? 'font-semibold' : 'font-normal')
 						}
 					>
 						<span className="truncate">Current version</span>
 						{onLive && (
 							<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
 						)}
-					</button>
+					</Button>
 					<div className="my-1 h-px bg-border" />
 					{reversedEntries.length === 0 ? (
 						<p className="px-2 py-3 text-sm text-muted-foreground text-center">No history yet</p>
@@ -77,13 +77,14 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 						reversedEntries.map((entry) => {
 							const isCurrent = entry.id === currentEntryId;
 							return (
-								<button
+								<Button
 									key={entry.id}
-									type="button"
+									variant="ghost"
+									size="sm"
 									onClick={() => handleRestore(entry.id)}
 									className={
-										'flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent ' +
-										(isCurrent ? 'font-semibold' : '')
+										'h-auto w-full justify-between py-1.5 ' +
+										(isCurrent ? 'font-semibold' : 'font-normal')
 									}
 								>
 									<div className="flex min-w-0 flex-col text-left">
@@ -95,7 +96,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 									{isCurrent && (
 										<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
 									)}
-								</button>
+								</Button>
 							);
 						})
 					)}
