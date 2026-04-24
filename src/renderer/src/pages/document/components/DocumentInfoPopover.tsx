@@ -149,46 +149,28 @@ export default function DocumentInfoPopover({
 						</Button>
 					</PopoverHeader>
 					<div className="border-t p-2">
-						<ItemGroup>
-							<Item
-								size="xs"
-								render={
-									<button
-										type="button"
-										onClick={handleExport}
-										disabled={!documentId}
-										className="w-full cursor-pointer text-left hover:bg-accent disabled:pointer-events-none disabled:opacity-60"
-									/>
-								}
-							>
-								<ItemMedia variant="icon">
-									<Download className="text-muted-foreground" aria-hidden="true" />
-								</ItemMedia>
-								<ItemContent>
-									<ItemTitle>{t('configSidebar.export', 'Export')}</ItemTitle>
-								</ItemContent>
-							</Item>
-							<Item
-								size="xs"
-								render={
-									<button
-										type="button"
-										onClick={() => setConfirmDeleteOpen(true)}
-										disabled={!documentId || isDeleting}
-										className="w-full cursor-pointer text-left text-destructive hover:bg-destructive/10 disabled:pointer-events-none disabled:opacity-60"
-									/>
-								}
-							>
-								<ItemMedia variant="icon">
-									<Trash2 aria-hidden="true" />
-								</ItemMedia>
-								<ItemContent>
-									<ItemTitle>
-										{t('configSidebar.deletePermanently', 'Delete permanently')}
-									</ItemTitle>
-								</ItemContent>
-							</Item>
-						</ItemGroup>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={handleExport}
+							disabled={!documentId}
+							className="w-full justify-start font-normal"
+						>
+							<Download className="text-muted-foreground" aria-hidden="true" />
+							<span className="truncate">{t('configSidebar.export', 'Export')}</span>
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							onClick={() => setConfirmDeleteOpen(true)}
+							disabled={!documentId || isDeleting}
+							className="w-full justify-start font-normal text-destructive hover:bg-destructive/10 hover:text-destructive"
+						>
+							<Trash2 aria-hidden="true" />
+							<span className="truncate">
+								{t('configSidebar.deletePermanently', 'Delete permanently')}
+							</span>
+						</Button>
 					</div>
 				</PopoverContent>
 			</Popover>
