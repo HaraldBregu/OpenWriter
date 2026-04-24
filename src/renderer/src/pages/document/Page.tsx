@@ -305,7 +305,7 @@ function PageContent(): ReactElement {
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.taskId !== activeTaskId) return;
 			setTaskStatus({ status: event.state, message: event.data });
-			editorActions.showPromptStatusBar(event.data);
+			editorActionsRef.current.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
 				handlers.handleDelta(event.data);
