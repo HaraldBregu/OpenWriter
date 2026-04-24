@@ -1,9 +1,10 @@
 import type { TaskEvent } from '../../shared/types';
 
 /**
- * Emit a TaskEvent to the renderer. `taskId` is stamped by the executor.
+ * Emit a TaskEvent to the renderer. `taskId` and `metadata` are stamped
+ * by the executor from the active task descriptor.
  */
-export type Emit = (event: Omit<TaskEvent, 'taskId'>) => void;
+export type Emit = (event: Omit<TaskEvent, 'taskId' | 'metadata'>) => void;
 
 /**
  * Task handler interface for implementing background operations.
