@@ -615,6 +615,9 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
+							<PageSubHeader>
+								<h2 className="text-sm font-medium">Dummy Subheader Title</h2>
+							</PageSubHeader>
 							<div className="flex min-h-0 flex-1 flex-col">
 								{loaded && (
 									<Editor
