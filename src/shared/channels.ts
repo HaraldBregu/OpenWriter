@@ -327,6 +327,14 @@ export interface InvokeChannelMap {
 		result: void;
 	};
 
+	// ---- App — generic custom context menu (raw invoke) ----
+	// Renderer sends an ordered list of descriptors; main pops a native menu
+	// and resolves with the clicked item's id, or `null` if dismissed.
+	[AppChannels.showContextMenu]: {
+		args: [items: ContextMenuDescriptor[]];
+		result: string | null;
+	};
+
 	// ---- FileSystem (IpcResult-wrapped) ----
 	[WorkspaceChannels.fsReadFile]: { args: [params: FsReadFileParams]; result: string };
 	[WorkspaceChannels.fsReadFileBinary]: { args: [filePath: string]; result: string };
