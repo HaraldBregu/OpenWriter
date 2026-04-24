@@ -133,7 +133,7 @@ export function KnowledgeBaseDialog({
 		});
 
 		if (!res.success) {
-			setTaskStatus('error');
+			setTaskStatus('cancelled');
 			setError(res.error.message);
 			return;
 		}
