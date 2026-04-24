@@ -27,7 +27,6 @@ import type { TaskQueueStatus } from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
 
 /** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
-const COMPLETED_TASK_TTL_MS = 5 * 60 * 1_000; // 5 minutes
 
 /** Priority ordering for queue sorting (higher number = higher priority). */
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
