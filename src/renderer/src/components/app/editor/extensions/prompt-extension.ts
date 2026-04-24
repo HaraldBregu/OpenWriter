@@ -57,6 +57,11 @@ export const PromptExtension = Node.create<PromptOptions>({
 					'data-agent-id': attributes.agentId as AgentId,
 				}),
 			},
+			files: {
+				default: [] as File[],
+				parseHTML: () => [] as File[],
+				renderHTML: () => ({}),
+			},
 			statusBarVisible: {
 				default: false,
 				parseHTML: () => false,
