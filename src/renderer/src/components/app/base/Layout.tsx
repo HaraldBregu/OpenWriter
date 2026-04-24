@@ -70,6 +70,7 @@ import {
 	FileImage,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
+import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
 import { CommandModalProvider, useCommandModal } from '../command-modals';
 import { useThemeMode } from '@/hooks/use-theme-mode';
 import { useAppActions } from '@/hooks/use-app-actions';
