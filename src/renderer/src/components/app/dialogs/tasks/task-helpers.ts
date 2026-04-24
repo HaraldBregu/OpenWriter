@@ -19,6 +19,6 @@ export async function submitDemoTask(variant: DemoVariant): Promise<void> {
 	await window.task.submit({
 		type: 'demo',
 		input: { variant },
-		options: { priority: 'normal' },
+		metadata: {},
 	});
 }
