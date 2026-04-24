@@ -264,10 +264,6 @@ export class TaskExecutor implements Disposable {
 	 */
 	destroy(): void {
 		this.logger?.info('TaskExecutor', `Destroying, aborting ${this.activeTasks.size} task(s)`);
-		if (this.gcHandle) {
-			clearInterval(this.gcHandle);
-			this.gcHandle = null;
-		}
 		for (const task of this.activeTasks.values()) {
 			task.controller.abort();
 			if (task.timeoutHandle) {
