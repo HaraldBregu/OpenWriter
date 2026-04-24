@@ -45,11 +45,11 @@ function PromptContainer(): React.JSX.Element {
 			>
 				<div
 					role="status"
-					className="w-full rounded-md border border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+					className="w-full rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
 				>
 					{t('assistantNode.status', 'Ready')}
 				</div>
-				<Card className="w-full my-2">
+				<Card className="w-full mb-2 rounded-t-none border-t-0">
 					<PromptHeader />
 					<CardContent>
 						<Textarea
