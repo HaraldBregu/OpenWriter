@@ -105,22 +105,15 @@ export function KnowledgeBaseDialog({
 				}
 				return;
 			}
-			if (event.state === 'completed') {
+			if (event.state === 'finished') {
 				setResult(dataField<NbTaskOutput>(event.data, 'result'));
 				setProgress({ percent: 100 });
 				return;
 			}
-			if (event.state === 'error') {
-				const errorPayload = event.error;
+			if (event.state === 'cancelled') {
 				const errorMessage =
-					typeof errorPayload === 'object' &&
-					errorPayload !== null &&
-					'message' in errorPayload
-						? String((errorPayload as { message: unknown }).message)
-						: typeof errorPayload === 'string'
-							? errorPayload
-							: undefined;
-				setError(errorMessage);
+					typeof event.data === 'string' && event.data.length > 0 ? event.data : undefined;
+				if (errorMessage) setError(errorMessage);
 			}
 		});
 	}, [taskId]);
