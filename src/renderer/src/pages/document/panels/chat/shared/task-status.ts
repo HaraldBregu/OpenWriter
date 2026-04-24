@@ -8,10 +8,8 @@ export function mapTaskStatusToChatStatus(status: TaskState): ChatMessageStatus 
 			return 'queued';
 		case 'running':
 			return 'running';
-		case 'completed':
+		case 'finished':
 			return 'completed';
-		case 'error':
-			return 'error';
 		case 'cancelled':
 			return 'cancelled';
 		default:
