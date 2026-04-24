@@ -32,6 +32,7 @@ import {
 	bootstrapIpcModules,
 	setupAppLifecycle,
 	setupEventLogging,
+	setupProcessSafetyNet,
 	cleanup,
 } from './bootstrap';
 import { TSRCT_EXT } from './constants';
