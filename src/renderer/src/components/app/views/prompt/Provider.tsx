@@ -95,6 +95,8 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			state,
 			loading,
 			enable,
+			statusBarVisible,
+			statusBarMessage,
 			agentId: state.agentId,
 			isImage,
 			activeModel,
@@ -105,13 +107,13 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			...actions,
 			setSelection,
 			resizeTextarea,
-			setStatusBarVisible,
-			setStatusBarMessage,
 		}),
 		[
 			state,
 			loading,
 			enable,
+			statusBarVisible,
+			statusBarMessage,
 			isImage,
 			activeModel,
 			isSubmitDisabled,
@@ -119,8 +121,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			actions,
 			setSelection,
 			resizeTextarea,
-			setStatusBarVisible,
-			setStatusBarMessage,
 		]
 	);
 
