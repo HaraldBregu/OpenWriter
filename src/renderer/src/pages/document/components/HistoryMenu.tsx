@@ -90,7 +90,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 										<span className="text-xs text-muted-foreground shrink-0">
 											{formatSavedAt(entry.savedAt)}
 										</span>
-										<span className="truncate">{entry.title}</span>
+										<span className="truncate">{entry.title.trim() || 'Untitled'}</span>
 									</div>
 									{isCurrent && (
 										<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
