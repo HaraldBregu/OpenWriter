@@ -325,10 +325,16 @@ function PageContent(): ReactElement {
 					t.metadata?.documentId === id &&
 					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 			);
+			const finishedTask = activeTask
+				? undefined
+				: res.data.find(
+						(t) => t.metadata?.documentId === id && t.status === 'finished'
+					);
+			const displayTask = activeTask ?? finishedTask;
 			setDocumentHasActiveTask(!!activeTask);
-			setPreexistingTaskActive(!!activeTask);
-			setDocumentTaskState(activeTask?.status ?? null);
-			setPreexistingTaskId(activeTask?.taskId ?? null);
+			setPreexistingTaskActive(!!displayTask);
+			setDocumentTaskState(displayTask?.status ?? null);
+			setPreexistingTaskId(displayTask?.taskId ?? null);
 		});
 
 		return () => {
