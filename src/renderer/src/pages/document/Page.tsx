@@ -341,11 +341,6 @@ function PageContent(): ReactElement {
 			window.workspace.updateDocument(id, { content: fullMarkdown }).catch(() => {
 				// document may have been deleted mid-run; ignore
 			});
-			requestAnimationFrame(() => {
-				requestAnimationFrame(() => {
-					editorActions.insertPromptView();
-				});
-			});
 		},
 		[editorInsert, editorActions, id, dispatch, debouncedContentSave, editor]
 	);
