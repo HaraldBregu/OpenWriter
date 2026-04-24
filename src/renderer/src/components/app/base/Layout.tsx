@@ -197,6 +197,44 @@ function Container({ children }: LayoutProps) {
 		onCreated: handleDocumentCreated,
 	});
 
+	// -------------------------------------------------------------------------
+	// Document deletion — Backspace on focused item or dropdown "Delete" action
+	// -------------------------------------------------------------------------
+	const [pendingDelete, setPendingDelete] = useState<{ id: string; title: string } | null>(null);
+
+	const requestDeleteDocument = useCallback((doc: { id: string; title: string }) => {
+		setPendingDelete(doc);
+	}, []);
+
+	const handleDocumentKeyDown = useCallback(
+		(event: React.KeyboardEvent, doc: { id: string; title: string }) => {
+			if (event.key === 'Backspace' || event.key === 'Delete') {
+				event.preventDefault();
+				event.stopPropagation();
+				requestDeleteDocument(doc);
+			}
+		},
+		[requestDeleteDocument]
+	);
+
+	const handleConfirmDelete = useCallback(async () => {
+		if (!pendingDelete) return;
+		const { id } = pendingDelete;
+		setPendingDelete(null);
+		try {
+			await window.workspace.deleteDocument(id);
+		} finally {
+			dispatch(documentRemoved(id));
+			if (location.pathname === `/content/${id}`) {
+				navigate('/home', { replace: true });
+			}
+		}
+	}, [pendingDelete, dispatch, location.pathname, navigate]);
+
+	const handleDeleteDialogOpenChange = useCallback((open: boolean) => {
+		if (!open) setPendingDelete(null);
+	}, []);
+
 	useEffect(() => {
 		if (typeof window.app?.onShortcut !== 'function') return;
 		return window.app.onShortcut((id) => {
