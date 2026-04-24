@@ -9,6 +9,8 @@ export interface ContextValue {
 	state: State;
 	loading: boolean;
 	enable: boolean;
+	statusBarVisible: boolean;
+	statusBarMessage: string;
 	agentId: AgentId;
 	isImage: boolean;
 	activeModel: ModelInfo;
