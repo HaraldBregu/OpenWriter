@@ -26,8 +26,6 @@ import type { ActiveTask, TaskOptions, TaskPriority } from './task-descriptor';
 import type { TaskQueueStatus } from '../../shared/types';
 import { runWithTaskExecutionContext } from './task-execution-context';
 
-/** How long (ms) to retain completed/errored/cancelled tasks for result retrieval. */
-
 /** Priority ordering for queue sorting (higher number = higher priority). */
 const PRIORITY_WEIGHT: Record<TaskPriority, number> = {
 	high: 3,
