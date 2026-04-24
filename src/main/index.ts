@@ -235,10 +235,42 @@ app.whenReady().then(async () => {
 
 		logger.info('App', `Workspace process ready with PID: ${process.pid}`);
 
-		// Handle window close: quit app when workspace window closes
+		// Track whether the workspace window is closing due to user action vs.
+		// renderer crash. `close` fires only on user close; `render-process-gone`
+		// fires on crash and is followed by `closed` without a prior `close`.
+		let userClose = false;
+		workspaceWindow.on('close', () => {
+			userClose = true;
+		});
+
+		workspaceWindow.webContents.on('render-process-gone', (_event, details) => {
+			logger.error('App', 'Workspace renderer gone; attempting reload instead of quit', {
+				reason: details.reason,
+				exitCode: details.exitCode,
+			});
+			if (!workspaceWindow.isDestroyed()) {
+				try {
+					workspaceWindow.webContents.reload();
+					return;
+				} catch (err) {
+					logger.error(
+						'App',
+						`Reload failed: ${err instanceof Error ? err.message : String(err)}`
+					);
+				}
+			}
+		});
+
 		workspaceWindow.on('closed', () => {
-			logger.info('App', 'Workspace window closed, quitting process');
-			app.quit();
+			if (userClose || appState.isQuitting) {
+				logger.info('App', 'Workspace window closed by user, quitting process');
+				app.quit();
+			} else {
+				logger.warn(
+					'App',
+					'Workspace window closed without user action (likely crash); keeping process alive for diagnosis'
+				);
+			}
 		});
 
 		return;
