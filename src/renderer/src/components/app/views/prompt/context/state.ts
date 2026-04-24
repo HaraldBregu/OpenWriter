@@ -11,6 +11,4 @@ export interface State {
 	selectedImageModel: ModelInfo;
 	selectedTextModel: ModelInfo;
 	selection: string;
-	statusBarVisible: boolean;
-	statusBarMessage: string;
 }
