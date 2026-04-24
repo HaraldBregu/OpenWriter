@@ -69,7 +69,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, string> {
 		const agent = this.agents.get<AssistantAgentInput, AssistantAgentOutput>(ASSISTANT_AGENT_TYPE);
 		const output = await agent.execute(agentInput, ctx);
 
-		this.logger?.info(LOG_SOURCE, 'Agent task finished', {
+		this.logger.info(LOG_SOURCE, 'Agent task finished', {
 			agent: ASSISTANT_AGENT_TYPE,
 			chars: output.content.length,
 		});
