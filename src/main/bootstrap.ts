@@ -183,32 +183,46 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
  * Install process-level handlers to catch silent exits.
  * Logs uncaught exceptions, unhandled rejections, and exit with a stack trace
  * so we can tell a real crash from an intentional quit.
+ *
+ * Idempotent: call once early with no logger, call again after logger exists
+ * to attach it — handlers are only registered on the first call.
  */
+let safetyNetLogger: LoggerService | null = null;
+let safetyNetInstalled = false;
+
 export function setupProcessSafetyNet(logger?: LoggerService): void {
+	if (logger) {
+		safetyNetLogger = logger;
+	}
+	if (safetyNetInstalled) {
+		return;
+	}
+	safetyNetInstalled = true;
+
 	process.on('uncaughtException', (error, origin) => {
 		const message = error instanceof Error ? error.stack || error.message : String(error);
-		logger?.error('Process', `uncaughtException (${origin})`, { error: message });
+		safetyNetLogger?.error('Process', `uncaughtException (${origin})`, { error: message });
 		// eslint-disable-next-line no-console
 		console.error(`[uncaughtException:${origin}]`, message);
 	});
 
 	process.on('unhandledRejection', (reason) => {
 		const message = reason instanceof Error ? reason.stack || reason.message : String(reason);
-		logger?.error('Process', 'unhandledRejection', { reason: message });
+		safetyNetLogger?.error('Process', 'unhandledRejection', { reason: message });
 		// eslint-disable-next-line no-console
 		console.error('[unhandledRejection]', message);
 	});
 
 	process.on('exit', (code) => {
 		const stack = new Error('exit trace').stack;
-		logger?.warn('Process', `process.exit(${code})`, { stack });
+		safetyNetLogger?.warn('Process', `process.exit(${code})`, { stack });
 		// eslint-disable-next-line no-console
 		console.error(`[process.exit] code=${code}`, stack);
 	});
 
 	for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
 		process.on(signal, () => {
-			logger?.warn('Process', `Received ${signal}`);
+			safetyNetLogger?.warn('Process', `Received ${signal}`);
 			// eslint-disable-next-line no-console
 			console.error(`[signal] ${signal}`);
 		});
