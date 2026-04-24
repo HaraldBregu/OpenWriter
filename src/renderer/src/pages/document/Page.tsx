@@ -303,6 +303,7 @@ function PageContent(): ReactElement {
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.taskId !== activeTaskId) return;
 			setTaskStatus({ status: event.state, message: event.data });
+			editorActions.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
 				handlers.handleDelta(event.data);
@@ -540,7 +541,7 @@ function PageContent(): ReactElement {
 									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 								</PageHeaderItems>
 							</PageHeader>
-							{taskStatus && (
+							{p && (
 								<div className="flex items-center gap-3 border-b px-6 py-2 bg-muted/20">
 									{ACTIVE_STATES.has(taskStatus.status) && (
 										<Loader2
