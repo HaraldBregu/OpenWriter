@@ -209,7 +209,7 @@ const Chat: React.FC = () => {
 						},
 					});
 					break;
-				case 'completed': {
+				case 'finished': {
 					const output = snapshot.result as { content?: string } | undefined;
 					dispatch({
 						type: 'CHAT_MESSAGE_UPDATED',
@@ -228,29 +228,16 @@ const Chat: React.FC = () => {
 					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
 					break;
 				}
-				case 'error':
-					dispatch({
-						type: 'CHAT_MESSAGE_UPDATED',
-						id: activeMessageId,
-						patch: {
-							content:
-								snapshot.error || t('agenticPanel.error', 'The assistant failed to respond.'),
-							taskId: activeTaskId,
-							status: 'error',
-						},
-					});
-					lastRecordedTaskStateRef.current = null;
-					dispatch({ type: 'CHAT_ACTIVE_TASK_SET', taskId: null });
-					dispatch({ type: 'CHAT_ACTIVE_MESSAGE_SET', messageId: null });
-					break;
 				case 'cancelled':
 					dispatch({
 						type: 'CHAT_MESSAGE_UPDATED',
 						id: activeMessageId,
 						patch: {
-							content: t('agenticPanel.cancelled', 'The assistant request was cancelled.'),
+							content:
+								snapshot.error ||
+								t('agenticPanel.cancelled', 'The assistant request was cancelled.'),
 							taskId: activeTaskId,
-							status: 'cancelled',
+							status: snapshot.error ? 'error' : 'cancelled',
 						},
 					});
 					lastRecordedTaskStateRef.current = null;
