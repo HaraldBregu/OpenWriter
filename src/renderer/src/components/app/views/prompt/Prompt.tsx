@@ -69,11 +69,7 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<PromptStatusBar
-					visible={state.statusBarVisible}
-					message="Status message"
-					onClose={() => setStatusBarVisible(false)}
-				/>
+				<PromptStatusBar />
 				<Card className="w-full mb-2">
 					<PromptHeader />
 					<CardContent>
