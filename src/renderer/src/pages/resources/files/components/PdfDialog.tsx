@@ -329,6 +329,7 @@ export function PdfDialog(): ReactElement | null {
 															modelId: selectedModel,
 															inputType: 'url',
 														},
+														metadata: {},
 													});
 													if (!result.success) {
 														console.error('[PdfDialog] OCR submit failed:', result.error.message);
