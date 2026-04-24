@@ -650,7 +650,11 @@ function PageContent(): ReactElement {
 							</PageHeaderTitle>
 							{preexistingTaskActive && (
 								<PageHeaderDescription>
-									<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+									{documentTaskState === 'finished' ? (
+										<Check className="size-4" aria-hidden="true" />
+									) : (
+										<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+									)}
 									<span>
 										{documentTaskState === 'queued'
 											? 'Task queued, waiting to start…'
@@ -658,7 +662,9 @@ function PageContent(): ReactElement {
 												? 'Task started, preparing…'
 												: documentTaskState === 'running'
 													? 'Task running, generating content…'
-													: 'Task in progress…'}
+													: documentTaskState === 'finished'
+														? 'Task finished.'
+														: 'Task in progress…'}
 									</span>
 									{documentTaskState && (
 										<span className="text-xs uppercase tracking-wide opacity-70">
@@ -671,8 +677,8 @@ function PageContent(): ReactElement {
 										title="Cancel task"
 										aria-label="Cancel task"
 										onClick={handleCancelPreexistingTask}
-										disabled={!preexistingTaskId}
-										className="h-6 px-2 text-xs"
+										disabled={!preexistingTaskId || documentTaskState === 'finished'}
+										className="ml-auto h-6 px-2 text-xs"
 									>
 										<X className="size-3.5" aria-hidden="true" />
 										Cancel
