@@ -63,7 +63,7 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 						<PopoverTitle className="truncate">Version history</PopoverTitle>
 					</div>
 				</PopoverHeader>
-				<div className="border-t p-2">
+				<div className="border-t">
 					<div className="max-h-72 overflow-y-auto">
 						<Button
 							variant="ghost"
