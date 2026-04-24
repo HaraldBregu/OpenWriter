@@ -51,7 +51,6 @@ function PromptContainer(): React.JSX.Element {
 		handlePromptChange,
 		handleFilesChange,
 		resizeTextarea,
-		setStatusBarVisible,
 	} = usePrompt();
 
 	const inputLabel = t('assistantNode.textTitle', 'Generate text');
