@@ -643,7 +643,20 @@ function PageContent(): ReactElement {
 							{preexistingTaskActive && (
 								<PageHeaderDescription>
 									<Loader2 className="size-4 animate-spin" aria-hidden="true" />
-									<span>{documentTaskState ?? 'running'}</span>
+									<span>
+										{documentTaskState === 'queued'
+											? 'Task queued, waiting to start…'
+											: documentTaskState === 'started'
+												? 'Task started, preparing…'
+												: documentTaskState === 'running'
+													? 'Task running, generating content…'
+													: 'Task in progress…'}
+									</span>
+									{documentTaskState && (
+										<span className="text-xs uppercase tracking-wide opacity-70">
+											{documentTaskState}
+										</span>
+									)}
 								</PageHeaderDescription>
 							)}
 						</PageHeader>
