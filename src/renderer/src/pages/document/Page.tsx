@@ -557,8 +557,6 @@ function PageContent(): ReactElement {
 										onAssistantAction={handleAssistantAction}
 										documentId={id}
 										onEditorReady={handleEditorReady}
-										onUndo={handleUndo}
-										onRedo={handleRedo}
 									/>
 								)}
 							</div>

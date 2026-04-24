@@ -217,6 +217,22 @@ function Container({ children }: LayoutProps) {
 		[requestDeleteDocument]
 	);
 
+	const handleDocumentContextMenu = useCallback(
+		async (event: React.MouseEvent, doc: { id: string; title: string }) => {
+			event.preventDefault();
+			event.stopPropagation();
+			const action = await window.app.showContextMenu([
+				{ id: 'rename', label: t('menu.rename', 'Rename') },
+				{ type: 'separator' },
+				{ id: 'delete', label: t('menu.delete', 'Delete'), destructive: true },
+			]);
+			if (action === 'delete') {
+				requestDeleteDocument(doc);
+			}
+		},
+		[requestDeleteDocument, t]
+	);
+
 	const handleConfirmDelete = useCallback(async () => {
 		if (!pendingDelete) return;
 		const { id } = pendingDelete;
