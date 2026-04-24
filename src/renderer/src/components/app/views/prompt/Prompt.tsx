@@ -14,8 +14,8 @@ import { useTranslation } from 'react-i18next';
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
 function PromptStatusBar(): React.JSX.Element | null {
-	const { state, setStatusBarVisible } = usePrompt();
-	if (!state.statusBarVisible) return null;
+	const { statusBarVisible, statusBarMessage } = usePrompt();
+	if (!statusBarVisible) return null;
 	return (
 		<div className="mt-2 w-full">
 			<div
@@ -23,17 +23,7 @@ function PromptStatusBar(): React.JSX.Element | null {
 				className="flex items-center gap-2 rounded-t-md px-3 py-1.5 text-xs text-muted-foreground"
 			>
 				<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-				<span>{state.statusBarMessage}</span>
-				<Button
-					type="button"
-					variant="ghost"
-					size="icon-xs"
-					className="ml-auto h-5 w-5"
-					onClick={() => setStatusBarVisible(false)}
-					aria-label="Close"
-				>
-					<X className="h-3 w-3" />
-				</Button>
+				<span>{statusBarMessage}</span>
 			</div>
 		</div>
 	);
