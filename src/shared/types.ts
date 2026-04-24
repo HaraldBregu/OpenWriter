@@ -505,6 +505,28 @@ export interface WritingContextMenuAction {
 	writingId: string;
 }
 
+/**
+ * Descriptor for a single entry in a native context menu shown from the renderer.
+ * The main process builds an Electron `Menu` from an ordered array of these and
+ * resolves the invocation with the `id` of the clicked item (or `null` if the
+ * menu was dismissed without a selection).
+ */
+export type ContextMenuDescriptor =
+	| { type: 'separator' }
+	| {
+			type?: 'item';
+			/** Stable id returned to the renderer when this item is clicked. */
+			id: string;
+			/** Visible label. */
+			label: string;
+			/** Optional accelerator, e.g. 'CmdOrCtrl+Backspace'. */
+			accelerator?: string;
+			/** Defaults to true. */
+			enabled?: boolean;
+			/** Renders the item in a destructive style where the platform supports it. */
+			destructive?: boolean;
+	  };
+
 // ---- Common ---------------------------------------------------------------
 
 export interface WatcherError {

@@ -4,6 +4,7 @@ import {
 	saveHistorySnapshot,
 	listHistoryEntries,
 	loadHistoryEntry,
+	readLatestHistoryEntry,
 	MAX_HISTORY_ENTRIES,
 	isHistoryEntryFilePath,
 	type HistoryEntry,
@@ -25,11 +26,8 @@ interface UseDocumentHistoryOptions {
 interface UseDocumentHistoryReturn {
 	entries: HistoryEntry[];
 	currentEntryId: string | null;
-	canUndo: boolean;
-	canRedo: boolean;
-	undo: () => Promise<void>;
-	redo: () => Promise<void>;
 	restoreEntry: (id: string) => Promise<void>;
+	returnToLive: () => void;
 }
 
 export function useDocumentHistory({
@@ -43,7 +41,7 @@ export function useDocumentHistory({
 	const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
 	const [docPath, setDocPath] = useState<string | null>(null);
 	const isRestoringRef = useRef(false);
-	const liveDraftRef = useRef<{ content: string; title: string } | null>(null);
+	const lastSnapshotRef = useRef<{ content: string; title: string } | null>(null);
 
 	const stateRef = useRef({ content, title });
 	stateRef.current = { content, title };
@@ -81,14 +79,20 @@ export function useDocumentHistory({
 			.catch(() => setDocPath(null));
 	}, [documentId]);
 
-	// Load history entries when docPath becomes available
+	// Load history entries + seed dedup ref when docPath becomes available
 	useEffect(() => {
 		if (!docPath) {
 			setEntries([]);
 			setCurrentEntryId(null);
+			lastSnapshotRef.current = null;
 			return;
 		}
 		void reloadEntries();
+		void readLatestHistoryEntry(docPath).then((latest) => {
+			lastSnapshotRef.current = latest
+				? { content: latest.content, title: latest.title }
+				: null;
+		});
 	}, [docPath, reloadEntries]);
 
 	useEffect(() => {
@@ -106,14 +110,12 @@ export function useDocumentHistory({
 	// Reset pointer when document changes
 	useEffect(() => {
 		setCurrentEntryId(null);
-		liveDraftRef.current = null;
 	}, [documentId]);
 
 	// User edits while browsing history should return to the live document state.
 	useEffect(() => {
 		if (!loaded || isRestoringRef.current || currentEntryId === null) return;
 		setCurrentEntryId(null);
-		liveDraftRef.current = null;
 	}, [content, title, loaded, currentEntryId]);
 
 	// Debounced snapshot creator
@@ -123,8 +125,11 @@ export function useDocumentHistory({
 				async () => {
 					if (!docPath || isRestoringRef.current) return;
 					const { content: c, title: t } = stateRef.current;
+					const last = lastSnapshotRef.current;
+					if (last && last.content === c && last.title === t) return;
 					try {
 						const entry = await saveHistorySnapshot(docPath, c, t);
+						lastSnapshotRef.current = { content: c, title: t };
 						setEntries((prev) => {
 							const without = prev.filter((e) => e.id !== entry.id);
 							return [...without, entry].slice(-MAX_HISTORY_ENTRIES);
@@ -156,79 +161,13 @@ export function useDocumentHistory({
 		[debouncedSnapshot]
 	);
 
-	const currentIndex = currentEntryId ? entries.findIndex((e) => e.id === currentEntryId) : -1;
-	const hasHistorySelection = currentEntryId !== null && currentIndex >= 0;
-
-	const canUndo = entries.length > 0 && (!hasHistorySelection || currentIndex > 0);
-	const canRedo =
-		hasHistorySelection && (currentIndex < entries.length - 1 || liveDraftRef.current !== null);
-
-	const undo = useCallback(async () => {
-		if (!docPath || entries.length === 0) return;
-
-		if (currentEntryId === null) {
-			liveDraftRef.current = { ...stateRef.current };
-		}
-
-		const targetIndex = hasHistorySelection ? currentIndex - 1 : entries.length - 1;
-		if (targetIndex < 0) return;
-
-		const target = entries[targetIndex];
-		if (!target) return;
-
-		isRestoringRef.current = true;
-		try {
-			const data = await loadHistoryEntry(docPath, target.id);
-			setCurrentEntryId(target.id);
-			onRestore(data.content, data.title);
-		} catch {
-			// ignore
-		} finally {
-			setTimeout(() => {
-				isRestoringRef.current = false;
-			}, RESTORE_COOLDOWN_MS);
-		}
-	}, [docPath, entries, currentEntryId, currentIndex, hasHistorySelection, onRestore]);
-
-	const redo = useCallback(async () => {
-		if (!docPath || !hasHistorySelection) return;
-
-		const targetIndex = currentIndex + 1;
-		if (targetIndex >= entries.length) {
-			const liveDraft = liveDraftRef.current;
-			if (!liveDraft) return;
-
-			liveDraftRef.current = null;
-			isRestoringRef.current = true;
-			setCurrentEntryId(null);
-			onRestore(liveDraft.content, liveDraft.title);
-			return;
-		}
-
-		const target = entries[targetIndex];
-		if (!target) return;
-
-		isRestoringRef.current = true;
-		try {
-			const data = await loadHistoryEntry(docPath, target.id);
-			setCurrentEntryId(target.id);
-			onRestore(data.content, data.title);
-		} catch {
-			// ignore
-		} finally {
-			setTimeout(() => {
-				isRestoringRef.current = false;
-			}, RESTORE_COOLDOWN_MS);
-		}
-	}, [docPath, entries, currentIndex, hasHistorySelection, onRestore]);
-
 	const restoreEntry = useCallback(
 		async (id: string) => {
 			if (!docPath) return;
 
-			if (currentEntryId === null) {
-				liveDraftRef.current = { ...stateRef.current };
-			}
+			// Persist the current live state first so the user can come back to it
+			// via the "Current version" row without losing unsaved edits.
+			debouncedSnapshot.flush();
 
 			isRestoringRef.current = true;
 			try {
@@ -243,16 +182,25 @@ export function useDocumentHistory({
 				}, RESTORE_COOLDOWN_MS);
 			}
 		},
-		[currentEntryId, docPath, onRestore]
+		[docPath, onRestore, debouncedSnapshot]
 	);
+
+	const returnToLive = useCallback(() => {
+		if (currentEntryId === null) return;
+		const latestEntry = entries[entries.length - 1];
+		if (!latestEntry) {
+			setCurrentEntryId(null);
+			return;
+		}
+		void restoreEntry(latestEntry.id).then(() => {
+			setCurrentEntryId(null);
+		});
+	}, [currentEntryId, entries, restoreEntry]);
 
 	return {
 		entries,
 		currentEntryId,
-		canUndo,
-		canRedo,
-		undo,
-		redo,
 		restoreEntry,
+		returnToLive,
 	};
 }
