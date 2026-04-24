@@ -382,6 +382,7 @@ function PageContent(): ReactElement {
 
 			editorActions.showLoading();
 			editorActions.disable();
+			editorActions.showPromptStatusBar('Working on your prompt...');
 			editorInsert.begin(from, to);
 
 			const submitted = await submitAssistantTask(payload.prompt);
@@ -390,6 +391,7 @@ function PageContent(): ReactElement {
 				editorInsert.revert();
 				editorActions.hideLoading();
 				editorActions.enable();
+				editorActions.hidePromptStatusBar();
 			}
 		},
 		[submitAssistantTask, assistantIsRunning, editorActions, editorInsert, id]
