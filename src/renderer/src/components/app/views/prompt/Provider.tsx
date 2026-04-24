@@ -108,6 +108,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			...actions,
 			setSelection,
 			resizeTextarea,
+			setStatusBarVisible,
 		}),
 		[
 			state,
@@ -120,6 +121,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			actions,
 			setSelection,
 			resizeTextarea,
+			setStatusBarVisible,
 		]
 	);
 
