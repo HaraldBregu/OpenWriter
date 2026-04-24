@@ -242,7 +242,6 @@ function PageContent(): ReactElement {
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
 					const { title: currentTitle } = stateRef.current;
-					console.log('Saving metadata', { title: currentTitle });
 					window.workspace.updateDocumentConfig(id, { title: currentTitle });
 				},
 				METADATA_SAVE_DEBOUNCE_MS,
@@ -256,7 +255,6 @@ function PageContent(): ReactElement {
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
-										console.log('Saving content');
 					window.workspace.updateDocumentContent(id, contentRef.current);
 				},
 				CONTENT_SAVE_DEBOUNCE_MS,
