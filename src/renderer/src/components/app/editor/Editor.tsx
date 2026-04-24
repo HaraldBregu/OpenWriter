@@ -135,8 +135,6 @@ const Editor = React.memo(
 						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload, payload.editor),
 						onImageInsert: (file, insertAtPos) =>
 							handleImageFileInsertRef.current(file, insertAtPos),
-						onUndo: () => onUndoRef.current?.(),
-						onRedo: () => onRedoRef.current?.(),
 					}),
 				[]
 			);

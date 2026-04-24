@@ -11,6 +11,7 @@ import {
 import type { AppApi, ExtensionsApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type {
 	AgentSettings,
+	ContextMenuDescriptor,
 	Service,
 	ThemeMode,
 	WorkspaceInfo,
