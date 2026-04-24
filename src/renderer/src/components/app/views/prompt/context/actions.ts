@@ -12,6 +12,4 @@ export type Action =
 	| { type: 'SET_DRAG_OVER'; payload: boolean }
 	| { type: 'SET_IMAGE_MODEL'; payload: ModelInfo }
 	| { type: 'SET_TEXT_MODEL'; payload: ModelInfo }
-	| { type: 'SET_SELECTION'; payload: string }
-	| { type: 'SET_STATUS_BAR_VISIBLE'; payload: boolean }
-	| { type: 'SET_STATUS_BAR_MESSAGE'; payload: string };
+	| { type: 'SET_SELECTION'; payload: string };
