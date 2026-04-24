@@ -2,7 +2,7 @@ import type { TaskState, TaskPriority } from '../../../../../../shared/types';
 
 export interface TaskEventRecord {
 	state: TaskState;
-	data: { taskId: string; data: unknown; error: unknown; metadata: unknown };
+	data: { taskId: string; data: unknown; metadata: unknown };
 	receivedAt: number;
 }
 
