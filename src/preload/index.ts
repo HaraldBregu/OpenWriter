@@ -20,6 +20,33 @@ import type {
 import type { ShortcutId } from '../shared/shortcuts';
 
 // ---------------------------------------------------------------------------
+// window.win — Window controls
+// ---------------------------------------------------------------------------
+const win: WindowApi = {
+	minimize: (): void => {
+		typedSend(WindowChannels.minimize);
+	},
+	maximize: (): void => {
+		typedSend(WindowChannels.maximize);
+	},
+	close: (): void => {
+		typedSend(WindowChannels.close);
+	},
+	isMaximized: (): Promise<boolean> => {
+		return typedInvokeUnwrap(WindowChannels.isMaximized);
+	},
+	isFullScreen: (): Promise<boolean> => {
+		return typedInvokeUnwrap(WindowChannels.isFullScreen);
+	},
+	onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
+		return typedOn(WindowChannels.maximizeChange, callback);
+	},
+	onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
+		return typedOn(WindowChannels.fullScreenChange, callback);
+	},
+} satisfies WindowApi;
+
+// ---------------------------------------------------------------------------
 // window.app — General application utilities + persisted AI model settings
 // ---------------------------------------------------------------------------
 const app: AppApi = {
@@ -118,33 +145,6 @@ const app: AppApi = {
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
-// window.win — Window controls
-// ---------------------------------------------------------------------------
-const win: WindowApi = {
-	minimize: (): void => {
-		typedSend(WindowChannels.minimize);
-	},
-	maximize: (): void => {
-		typedSend(WindowChannels.maximize);
-	},
-	close: (): void => {
-		typedSend(WindowChannels.close);
-	},
-	isMaximized: (): Promise<boolean> => {
-		return typedInvokeUnwrap(WindowChannels.isMaximized);
-	},
-	isFullScreen: (): Promise<boolean> => {
-		return typedInvokeUnwrap(WindowChannels.isFullScreen);
-	},
-	onMaximizeChange: (callback: (isMaximized: boolean) => void): (() => void) => {
-		return typedOn(WindowChannels.maximizeChange, callback);
-	},
-	onFullScreenChange: (callback: (isFullScreen: boolean) => void): (() => void) => {
-		return typedOn(WindowChannels.fullScreenChange, callback);
-	},
-} satisfies WindowApi;
-
-// ---------------------------------------------------------------------------
 // window.workspace — Workspace folder selection, documents, directories, output
 // ---------------------------------------------------------------------------
 const workspace: WorkspaceApi = {
@@ -193,7 +193,7 @@ const workspace: WorkspaceApi = {
 		Promise.reject(new Error('resources API removed from main process')),
 	deleteDocument: (): Promise<never> =>
 		Promise.reject(new Error('resources API removed from main process')),
-	onDocumentFileChange: (): (() => void) => () => {},
+	onDocumentFileChange: (): (() => void) => () => { },
 	// -------------------------------------------------------------------------
 	// Indexing info
 	// -------------------------------------------------------------------------

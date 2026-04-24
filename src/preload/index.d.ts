@@ -145,6 +145,17 @@ export type { ShortcutId } from '../shared/shortcuts';
 // API namespace interfaces
 // ---------------------------------------------------------------------------
 
+/** Window controls (minimize / maximize / close / fullscreen) */
+export interface WindowApi {
+	minimize: () => void;
+	maximize: () => void;
+	close: () => void;
+	isMaximized: () => Promise<boolean>;
+	isFullScreen: () => Promise<boolean>;
+	onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void;
+	onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void;
+}
+
 /** General application utilities — also includes all persisted AI model settings (store) methods. */
 export interface AppApi {
 	playSound: () => void;
@@ -220,17 +231,6 @@ export interface AppApi {
 	onOpenLogsDialog: (callback: () => void) => () => void;
 	/** Subscribe to open-redux-dialog events emitted from the Developer menu. */
 	onOpenReduxDialog: (callback: () => void) => () => void;
-}
-
-/** Window controls (minimize / maximize / close / fullscreen) */
-export interface WindowApi {
-	minimize: () => void;
-	maximize: () => void;
-	close: () => void;
-	isMaximized: () => Promise<boolean>;
-	isFullScreen: () => Promise<boolean>;
-	onMaximizeChange: (callback: (isMaximized: boolean) => void) => () => void;
-	onFullScreenChange: (callback: (isFullScreen: boolean) => void) => () => void;
 }
 
 export interface ExtensionsApi {
@@ -445,9 +445,9 @@ export interface TaskApi {
 
 declare global {
 	interface Window {
-		app: AppApi;
 		/** Optional: not present in all window types */
 		win?: WindowApi;
+		app: AppApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
 		extensions: ExtensionsApi;
