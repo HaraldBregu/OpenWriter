@@ -497,6 +497,9 @@ function Container({ children }: LayoutProps) {
 															onKeyDown={(event) =>
 																handleDocumentKeyDown(event, { id: w.id, title: w.title })
 															}
+															onContextMenu={(event) =>
+																handleDocumentContextMenu(event, { id: w.id, title: w.title })
+															}
 														>
 															<span className="flex-1 truncate">
 																{w.title || t('sidebar.untitledWriting')}
