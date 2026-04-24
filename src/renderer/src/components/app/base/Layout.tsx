@@ -471,6 +471,9 @@ function Container({ children }: LayoutProps) {
 															render={<Link to={`/content/${w.id}`} />}
 															className="h-9 px-3"
 															isActive={location.pathname === `/content/${w.id}`}
+															onKeyDown={(event) =>
+																handleDocumentKeyDown(event, { id: w.id, title: w.title })
+															}
 														>
 															<span className="flex-1 truncate">
 																{w.title || t('sidebar.untitledWriting')}
@@ -493,7 +496,12 @@ function Container({ children }: LayoutProps) {
 																	<span>{t('menu.rename', 'Rename')}</span>
 																</DropdownMenuItem>
 																<DropdownMenuSeparator />
-																<DropdownMenuItem variant="destructive">
+																<DropdownMenuItem
+																	variant="destructive"
+																	onClick={() =>
+																		requestDeleteDocument({ id: w.id, title: w.title })
+																	}
+																>
 																	<Trash2 />
 																	<span>{t('menu.delete', 'Delete')}</span>
 																</DropdownMenuItem>
