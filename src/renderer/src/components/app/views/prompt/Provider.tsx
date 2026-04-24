@@ -32,7 +32,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		(): State => ({
 			prompt: (node.attrs.prompt as string) ?? '',
 			agentId: initialAgentId,
-			files: [],
+			files: (node.attrs.files as File[] | null) ?? [],
 			previewUrls: [],
 			isDragOver: false,
 			selectedImageModel: IMAGE_MODELS[0],
@@ -41,6 +41,13 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			selection: '',
 		})
 	);
+
+	const nodeFiles = (node.attrs.files as File[] | null) ?? null;
+	useEffect(() => {
+		if (nodeFiles !== state.files) {
+			updateAttributes({ files: state.files });
+		}
+	}, [state.files, nodeFiles, updateAttributes]);
 
 	const setSelection = useCallback((value: string) => {
 		dispatch({ type: 'SET_SELECTION', payload: value });
