@@ -286,22 +286,12 @@ function PageContent(): ReactElement {
 
 	const assistantIsRunning = activeTaskId !== null;
 
-	const [taskStatus, setTaskStatus] = useState<{ status: TaskState; message: string } | null>(
-		null
-	);
-
 	useEffect(() => {
-		if (!activeTaskId) {
-			setTaskStatus(null);
-			return;
-		}
+		if (!activeTaskId) return;
 		if (typeof window.task?.onEvent !== 'function') return;
-
-		setTaskStatus({ status: 'queued', message: '' });
 
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.taskId !== activeTaskId) return;
-			setTaskStatus({ status: event.state, message: event.data });
 			editorActionsRef.current.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
