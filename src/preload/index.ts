@@ -32,8 +32,8 @@ const app: AppApi = {
 	setLanguage: (language: string): void => {
 		typedSend(AppChannels.setLanguage, language);
 	},
-	showContextMenu: (): void => {
-		typedSend(AppChannels.contextMenu);
+	showContextMenu: (items: ContextMenuDescriptor[]): Promise<string | null> => {
+		return typedInvoke(AppChannels.showContextMenu, items);
 	},
 	showContextMenuEditable: (): void => {
 		typedSend(AppChannels.contextMenuEditable);
