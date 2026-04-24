@@ -328,6 +328,7 @@ function PageContent(): ReactElement {
 			editorInsert.commitFinal(completedContent);
 			editorActions.hideLoading();
 			editorActions.enable();
+			editorActions.hidePromptStatusBar();
 			editorActions.clearPromptInput();
 			if (!id || !editor || editor.isDestroyed) return;
 			const fullMarkdown = editor.getMarkdown();
