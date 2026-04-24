@@ -596,22 +596,22 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
-		if (documentTaskState === 'finished' || !preexistingTaskId) {
-			setDocumentHasActiveTask(false);
-			setPreexistingTaskActive(false);
-			setDocumentTaskState(null);
-			setPreexistingTaskId(null);
-			return;
-		}
+		if (!id) return;
+		if (typeof window.task?.list !== 'function') return;
 		if (typeof window.task?.cancel !== 'function') return;
-		const result = await window.task.cancel(preexistingTaskId);
-		if (!result.success || !result.data) {
-			setDocumentHasActiveTask(false);
-			setPreexistingTaskActive(false);
-			setDocumentTaskState(null);
-			setPreexistingTaskId(null);
+
+		const listRes = await window.task.list();
+		const task = listRes.success
+			? listRes.data.find((t) => t.metadata?.documentId === id)
+			: undefined;
+		if (task) {
+			await window.task.cancel(task.taskId);
 		}
-	}, [preexistingTaskId, documentTaskState]);
+		setDocumentHasActiveTask(false);
+		setPreexistingTaskActive(false);
+		setDocumentTaskState(null);
+		setPreexistingTaskId(null);
+	}, [id]);
 
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
