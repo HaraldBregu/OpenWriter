@@ -287,11 +287,11 @@ function PageContent(): ReactElement {
 	const assistantIsRunning = activeTaskId !== null;
 
 	useEffect(() => {
-		if (!activeTaskId) return;
+		if (!id || !activeTaskId) return;
 		if (typeof window.task?.onEvent !== 'function') return;
 
 		return window.task.onEvent((event: TaskEvent) => {
-			if (event.taskId !== activeTaskId) return;
+			if (event.metadata.documentId !== id) return;
 			editorActionsRef.current.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
@@ -304,7 +304,7 @@ function PageContent(): ReactElement {
 				setActiveTaskId(null);
 			}
 		});
-	}, [activeTaskId]);
+	}, [activeTaskId, id]);
 
 	const handleDelta = useCallback(
 		(token: string) => {
