@@ -14,6 +14,8 @@ export interface EditorActions {
 		text: string,
 		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
 	) => void;
+	showPromptStatusBar: (message?: string) => void;
+	hidePromptStatusBar: () => void;
 }
 
 export function useEditor(editorRef: RefObject<EditorElement | null>): EditorActions {
