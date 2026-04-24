@@ -595,6 +595,12 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
+	const handleCancelPreexistingTask = useCallback(async () => {
+		if (!preexistingTaskId) return;
+		if (typeof window.task?.cancel !== 'function') return;
+		await window.task.cancel(preexistingTaskId);
+	}, [preexistingTaskId]);
+
 	const activeExtensionPanel = useMemo(
 		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
 		[activeSidebar, extensionDocPanels]
