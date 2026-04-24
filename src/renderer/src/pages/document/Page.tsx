@@ -255,6 +255,7 @@ function PageContent(): ReactElement {
 			debounce(
 				() => {
 					if (!id || !loadedRef.current || documentDeletedRef.current) return;
+					console.log('Saving document content');
 					window.workspace.updateDocumentContent(id, contentRef.current);
 				},
 				CONTENT_SAVE_DEBOUNCE_MS,
@@ -267,7 +268,9 @@ function PageContent(): ReactElement {
 		return () => {
 			if (!documentDeletedRef.current) {
 				debouncedMetadataSave.flush();
-				debouncedContentSave.flush();
+				if (!activeTaskIdRef.current) {
+					debouncedContentSave.flush();
+				}
 			}
 			debouncedMetadataSave.cancel();
 			debouncedContentSave.cancel();
@@ -292,6 +295,8 @@ function PageContent(): ReactElement {
 
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.metadata.documentId !== id) return;
+
+			console.log('Received task event', event);
 			editorActionsRef.current.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
