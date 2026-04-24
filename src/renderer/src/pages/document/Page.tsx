@@ -39,8 +39,6 @@ const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 const TASK_TYPE = 'demo';
 
-const ACTIVE_STATES: ReadonlySet<TaskState> = new Set(['queued', 'started', 'running']);
-
 function PageContent(): ReactElement {
 	const { documentId: id, selection } = useDocumentState();
 	const dispatch = useDocumentDispatch();
