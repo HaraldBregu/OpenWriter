@@ -640,7 +640,7 @@ function PageContent(): ReactElement {
 								/>
 								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 							</PageHeaderTitle>
-							{assistantIsRunning && (
+							{preexistingTaskActive && (
 								<PageHeaderDescription>
 									<Loader2 className="size-4 animate-spin" aria-hidden="true" />
 									<span>{documentTaskState ?? 'running'}</span>
