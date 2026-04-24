@@ -223,12 +223,12 @@ export function TasksTab() {
 							{t('debug.queued')}
 						</span>
 						<span>
-							<span className="font-medium text-foreground">{queueStats.completed}</span>{' '}
+							<span className="font-medium text-foreground">{queueStats.finished}</span>{' '}
 							{t('debug.completed')}
 						</span>
-						{queueStats.error > 0 && (
+						{queueStats.cancelled > 0 && (
 							<span className="text-destructive">
-								<span className="font-medium">{queueStats.error}</span> {t('debug.errors')}
+								<span className="font-medium">{queueStats.cancelled}</span> {t('debug.errors')}
 							</span>
 						)}
 					</div>
