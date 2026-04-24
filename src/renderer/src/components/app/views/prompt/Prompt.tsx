@@ -43,12 +43,13 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<div className="mt-2 px-2">
+				<div className="mt-2 px-4 w-full">
 					<div
 						role="status"
-						className="rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+						className="flex items-center gap-2 rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
 					>
-						{t('assistantNode.status', 'Ready')}
+						<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+						<span>{t('assistantNode.status', 'Ready')}</span>
 					</div>
 				</div>
 				<Card className="w-full mb-2">
