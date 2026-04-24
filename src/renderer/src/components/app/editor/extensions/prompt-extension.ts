@@ -105,16 +105,16 @@ export const PromptExtension = Node.create<PromptOptions>({
 				if ($from.pos !== $from.start()) return false;
 
 				type ExistingNode = { pos: number; size: number; attrs: Record<string, unknown> };
-				let existing: ExistingNode | null = null;
+				const ref: { value: ExistingNode | null } = { value: null };
 				ed.state.doc.descendants((node, pos) => {
 					if (node.type.name === 'contentGenerator') {
-						existing = { pos, size: node.nodeSize, attrs: { ...node.attrs } };
+						ref.value = { pos, size: node.nodeSize, attrs: { ...node.attrs } };
 						return false;
 					}
 					return true;
 				});
 
-				const found: ExistingNode | null = existing;
+				const found = ref.value;
 				if (!found) {
 					return ed.commands.insertPromptView();
 				}
