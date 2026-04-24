@@ -439,8 +439,12 @@ export interface InvokeChannelMap {
 		args: [documentId: string];
 		result: string;
 	};
-	[WorkspaceChannels.updateDocument]: {
-		args: [documentId: string, patch: { config?: Partial<DocumentConfig>; content?: string }];
+	[WorkspaceChannels.updateDocumentContent]: {
+		args: [documentId: string, content: string];
+		result: void;
+	};
+	[WorkspaceChannels.updateDocumentConfig]: {
+		args: [documentId: string, config: Partial<DocumentConfig>];
 		result: void;
 	};
 
