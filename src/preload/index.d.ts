@@ -352,13 +352,15 @@ export interface WorkspaceApi {
 	// Document content
 	// -------------------------------------------------------------------------
 	getDocumentContent: (documentId: string) => Promise<string>;
+	/** Write a document's content to disk. */
+	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
 	/**
-	 * Update a document's config and/or content in a single call.
-	 * Broadcasts a config-changed event when `patch.config` is provided.
+	 * Merge a partial config into the document's config.json. Broadcasts a
+	 * config-changed event.
 	 */
-	updateDocument: (
+	updateDocumentConfig: (
 		documentId: string,
-		patch: { config?: Partial<DocumentConfig>; content?: string }
+		config: Partial<DocumentConfig>
 	) => Promise<void>;
 	// -------------------------------------------------------------------------
 	// Contents (workspace/contents/)
