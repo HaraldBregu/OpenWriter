@@ -331,6 +331,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsWriteFile]: { args: [params: FsWriteFileParams]; result: void };
 	[WorkspaceChannels.fsCreateFolder]: { args: [params: FsCreateFolderParams]; result: void };
 	[WorkspaceChannels.fsDeleteFolder]: { args: [params: FsDeleteFolderParams]; result: void };
+	[WorkspaceChannels.fsDeleteFile]: { args: [params: FsDeleteFileParams]; result: void };
 	[WorkspaceChannels.fsRename]: { args: [params: FsRenameParams]; result: FsRenameResult };
 	[WorkspaceChannels.fsListDir]: { args: [params: FsListDirParams]; result: FsListDirEntry[] };
 
