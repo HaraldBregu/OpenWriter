@@ -33,6 +33,7 @@ import type {
 	FsWriteFileParams,
 	FsCreateFolderParams,
 	FsDeleteFolderParams,
+	FsDeleteFileParams,
 	FsRenameParams,
 	FsRenameResult,
 	FsListDirParams,
