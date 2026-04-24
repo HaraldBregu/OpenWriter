@@ -2,6 +2,8 @@ import React from 'react';
 import { Zap, Clock, Radio, AlertTriangle } from 'lucide-react';
 import type { TaskState } from '../../../../../../shared/types';
 
+type TrackedStatus = TaskState | 'error';
+
 export type DemoVariant = 'fast' | 'slow' | 'streaming' | 'error';
 
 export const DEMO_VARIANTS: {

@@ -32,7 +32,6 @@ import Layout from './Layout';
 import {
 	PageContainer,
 	PageHeader,
-	PageHeaderItems,
 	PageHeaderTitle,
 	PageHeaderDescription,
 } from '@/components/app';
@@ -296,7 +295,6 @@ function PageContent(): ReactElement {
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
-	const [preexistingTaskId, setPreexistingTaskId] = useState<string | null>(null);
 	const [preexistingTaskContent, setPreexistingTaskContent] = useState<string | null>(null);
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
@@ -309,7 +307,6 @@ function PageContent(): ReactElement {
 			setDocumentHasActiveTask(false);
 			setPreexistingTaskActive(false);
 			setDocumentTaskState(null);
-			setPreexistingTaskId(null);
 			setPreexistingTaskContent(null);
 			return;
 		}
@@ -319,7 +316,6 @@ function PageContent(): ReactElement {
 		setDocumentHasActiveTask(false);
 		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
-		setPreexistingTaskId(null);
 		setPreexistingTaskContent(null);
 
 		window.task.list().then((res) => {
@@ -341,7 +337,6 @@ function PageContent(): ReactElement {
 			setDocumentHasActiveTask(!!activeTask);
 			setPreexistingTaskActive(!!displayTask);
 			setDocumentTaskState(displayTask?.status ?? null);
-			setPreexistingTaskId(displayTask?.taskId ?? null);
 			setPreexistingTaskContent(finishedTask?.data ?? null);
 		});
 
@@ -620,7 +615,6 @@ function PageContent(): ReactElement {
 		setDocumentHasActiveTask(false);
 		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
-		setPreexistingTaskId(null);
 		setPreexistingTaskContent(null);
 	}, [id]);
 
