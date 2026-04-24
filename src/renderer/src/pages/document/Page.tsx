@@ -690,6 +690,14 @@ function PageContent(): ReactElement {
 										</span>
 									)}
 									<Button
+										title="Insert"
+										aria-label="Insert"
+										onClick={handleInsertContent}
+									>
+										<Plus aria-hidden="true" />
+										Insert
+									</Button>
+									<Button
 										title="Cancel task"
 										aria-label="Cancel task"
 										onClick={handleCancelPreexistingTask}
