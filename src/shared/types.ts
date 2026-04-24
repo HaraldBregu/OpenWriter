@@ -265,7 +265,7 @@ export interface TaskEvent {
 export interface TaskAction<TInput = unknown> {
 	type: string;
 	input: TInput;
-	metadata?: Record<string, unknown>;
+	metadata: Record<string, unknown>;
 }
 
 /**
