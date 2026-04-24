@@ -373,6 +373,7 @@ export class TaskExecutor implements Disposable {
 				state: 'finished',
 				taskId,
 				data: typeof result === 'string' ? result : JSON.stringify(result),
+				metadata: task.metadata ?? {},
 			} satisfies TaskEvent);
 
 			this.eventBus.emit('task:completed', {
