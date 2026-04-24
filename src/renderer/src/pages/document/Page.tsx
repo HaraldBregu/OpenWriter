@@ -2,7 +2,7 @@ import { useState, useCallback, useMemo, useEffect, useRef, type ReactElement } 
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
-import { Undo2, Redo2 } from 'lucide-react';
+import { Undo2, Redo2, Loader2 } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
@@ -577,87 +577,82 @@ function PageContent(): ReactElement {
 
 	return (
 		<PageContainer>
-			<PageBody>
-				<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-					<ResizablePanel defaultSize="70%" minSize="40%">
-						<div className="flex h-full flex-col">
-							<PageHeader>
-								<PageHeaderTitle>
-									<Input
-										type="text"
-										value={title}
-										onChange={(e) => handleTitleChange(e.target.value)}
-										placeholder={t('writing.titlePlaceholder')}
-										className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
-									/>
-									<Button
-										variant="ghost"
-										size="icon"
-										title="Undo"
-										aria-label="Undo"
-										onClick={handleUndo}
-										disabled={!canUndo}
-									>
-										<Undo2 aria-hidden="true" />
-									</Button>
-									<Button
-										variant="ghost"
-										size="icon"
-										title="Redo"
-										aria-label="Redo"
-										onClick={handleRedo}
-										disabled={!canRedo}
-									>
-										<Redo2 aria-hidden="true" />
-									</Button>
-									<HistoryMenu
-										entries={historyEntries}
-										currentEntryId={currentHistoryEntryId}
-										onRestoreEntry={handleRestoreHistoryEntry}
-										onReturnToLive={handleReturnToLive}
-									/>
-									<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
-								</PageHeaderTitle>
-								<PageHeaderDescription>Dummy description</PageHeaderDescription>
-
-							</PageHeader>
-
-
-							<div className="flex min-h-0 flex-1 flex-col">
-								{loaded && (
-									<Editor
-										key={id}
-										disabled={assistantIsRunning}
-										ref={editorRef}
-										value={content}
-										externalValueVersion={contentVersion}
-										onChange={handleContentChange}
-										onSelectionChange={handleSelectionChange}
-										onPromptSubmit={handlePromptSubmit}
-										onInsertContent={handleInsertContent}
-										onAssistantAction={handleAssistantAction}
-										documentId={id}
-										onEditorReady={handleEditorReady}
-									/>
-								)}
-							</div>
+			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
+				<ResizablePanel defaultSize="70%" minSize="40%">
+					<div className="flex h-full flex-col">
+						<PageHeader>
+							<PageHeaderTitle>
+								<Input
+									type="text"
+									value={title}
+									onChange={(e) => handleTitleChange(e.target.value)}
+									placeholder={t('writing.titlePlaceholder')}
+									className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+								/>
+								<Button
+									variant="ghost"
+									size="icon"
+									title="Undo"
+									aria-label="Undo"
+									onClick={handleUndo}
+									disabled={!canUndo}
+								>
+									<Undo2 aria-hidden="true" />
+								</Button>
+								<Button
+									variant="ghost"
+									size="icon"
+									title="Redo"
+									aria-label="Redo"
+									onClick={handleRedo}
+									disabled={!canRedo}
+								>
+									<Redo2 aria-hidden="true" />
+								</Button>
+								<HistoryMenu
+									entries={historyEntries}
+									currentEntryId={currentHistoryEntryId}
+									onRestoreEntry={handleRestoreHistoryEntry}
+									onReturnToLive={handleReturnToLive}
+								/>
+								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
+							</PageHeaderTitle>
+							<PageHeaderDescription>Dummy description</PageHeaderDescription>
+						</PageHeader>
+						<div className="flex min-h-0 flex-1 flex-col">
+							{loaded && (
+								<Editor
+									key={id}
+									disabled={assistantIsRunning}
+									ref={editorRef}
+									value={content}
+									externalValueVersion={contentVersion}
+									onChange={handleContentChange}
+									onSelectionChange={handleSelectionChange}
+									onPromptSubmit={handlePromptSubmit}
+									onInsertContent={handleInsertContent}
+									onAssistantAction={handleAssistantAction}
+									documentId={id}
+									onEditorReady={handleEditorReady}
+								/>
+							)}
 						</div>
-					</ResizablePanel>
-					{activeSidebar && <ResizableHandle />}
-					<ResizablePanel
-						panelRef={sidebarPanelRef}
-						defaultSize="30%"
-						minSize="30%"
-						maxSize="50%"
-						collapsible
-						collapsedSize="0%"
-					>
-						{activeExtensionPanel && id ? (
-							<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
-						) : null}
-					</ResizablePanel>
-				</ResizablePanelGroup>
-			</PageBody>
+					</div>
+				</ResizablePanel>
+				{activeSidebar && <ResizableHandle />}
+				<ResizablePanel
+					panelRef={sidebarPanelRef}
+					defaultSize="30%"
+					minSize="30%"
+					maxSize="50%"
+					collapsible
+					collapsedSize="0%"
+				>
+					{activeExtensionPanel && id ? (
+						<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
+					) : null}
+				</ResizablePanel>
+			</ResizablePanelGroup>
 		</PageContainer>
 	);
 }
