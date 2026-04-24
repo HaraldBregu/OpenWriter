@@ -142,21 +142,21 @@ export default function DocumentInfoPopover({
 					}
 				/>
 				<PopoverContent align="end" className="w-64 p-0">
-					<PopoverHeader className="flex flex-row items-start justify-between gap-3 p-4 pb-3">
-						<div className="flex min-w-0 flex-1 flex-col gap-1">
-							<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
-						</div>
+					<PopoverHeader className="p-4 pb-3">
+						<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
+					</PopoverHeader>
+					<div className="border-t p-2">
 						<Button
 							variant="ghost"
-							size="icon-sm"
+							size="lg"
 							onClick={handleOpenFolder}
 							disabled={!documentId}
-							title={t('configSidebar.openFolder', 'Open folder')}
-							aria-label={t('configSidebar.openFolder', 'Open folder')}
+							className="w-full justify-start font-normal"
 						>
-							<FolderOpen aria-hidden="true" />
+							<FolderOpen className="text-muted-foreground" aria-hidden="true" />
+							<span className="truncate">{t('configSidebar.openFolder', 'Open folder')}</span>
 						</Button>
-					</PopoverHeader>
+					</div>
 					{(createdAtLabel || lastUpdatedLabel) && (
 						<div className="border-t p-2">
 							{createdAtLabel && (
