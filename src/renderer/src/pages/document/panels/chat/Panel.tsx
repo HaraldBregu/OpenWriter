@@ -39,25 +39,19 @@ function applyTaskEventToSnapshot(prev: TaskSnapshot, event: TaskEvent): TaskSna
 			}
 			return { ...prev, status: 'running', metadata };
 		}
-		case 'completed':
+		case 'finished':
 			return {
 				...prev,
-				status: 'completed',
+				status: 'finished',
 				result: dataField<unknown>(event.data, 'result'),
 				metadata,
 			};
-		case 'error': {
-			const errorPayload = event.error;
-			const errorMessage =
-				typeof errorPayload === 'object' && errorPayload !== null && 'message' in errorPayload
-					? String((errorPayload as { message: unknown }).message)
-					: typeof errorPayload === 'string'
-						? errorPayload
-						: undefined;
-			return { ...prev, status: 'error', error: errorMessage, metadata };
+		case 'cancelled': {
+			const errorMessage = typeof event.data === 'string' && event.data.length > 0
+				? event.data
+				: undefined;
+			return { ...prev, status: 'cancelled', error: errorMessage, metadata };
 		}
-		case 'cancelled':
-			return { ...prev, status: 'cancelled', metadata };
 		default:
 			return prev;
 	}
