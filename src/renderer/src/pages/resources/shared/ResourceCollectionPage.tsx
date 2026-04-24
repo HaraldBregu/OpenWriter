@@ -129,6 +129,7 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 			input: {
 				workspacePath,
 			},
+			metadata: {},
 		});
 		if (res.success) {
 			setIndexingTaskId(res.data.taskId);
