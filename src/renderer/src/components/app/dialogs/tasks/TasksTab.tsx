@@ -106,6 +106,14 @@ function applyEvent(task: TrackedTask, event: TaskEvent): TrackedTask {
 				result: dataField<unknown>(event.data, 'result'),
 				durationMs: dataField<number>(event.data, 'durationMs'),
 			};
+		case 'finished':
+			return {
+				...base,
+				status: 'finished',
+				progress: { percent: 100 },
+				result: dataField<unknown>(event.data, 'result') ?? event.data,
+				durationMs: dataField<number>(event.data, 'durationMs'),
+			};
 		case 'error': {
 			const payload = event.error;
 			const message =
