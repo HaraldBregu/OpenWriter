@@ -1,5 +1,5 @@
 export const HISTORY_DIR_NAME = 'history';
-export const MAX_HISTORY_ENTRIES = 12;
+export const MAX_HISTORY_ENTRIES = 30;
 
 export interface HistoryEntry {
 	id: string;
@@ -30,6 +30,18 @@ export function isHistoryEntryFilePath(filePath: string): boolean {
 	return filePath.replaceAll('\\', '/').includes(`/${HISTORY_DIR_NAME}/`);
 }
 
+async function listHistoryJsonFileNames(dir: string): Promise<string[]> {
+	try {
+		const files = await window.workspace.listDir({ dirPath: dir });
+		return files
+			.filter((f) => !f.isDirectory && f.name.endsWith('.json'))
+			.map((f) => f.name)
+			.sort((a, b) => a.localeCompare(b));
+	} catch {
+		return [];
+	}
+}
+
 export async function saveHistorySnapshot(
 	docPath: string,
 	content: string,
@@ -46,27 +58,28 @@ export async function saveHistorySnapshot(
 		content: JSON.stringify(data),
 	});
 
+	const names = await listHistoryJsonFileNames(dir);
+	const surplus = names.length - MAX_HISTORY_ENTRIES;
+	if (surplus > 0) {
+		const toDelete = names.slice(0, surplus);
+		await Promise.all(
+			toDelete.map((name) =>
+				window.workspace.deleteFile({ filePath: `${dir}/${name}` }).catch(() => undefined)
+			)
+		);
+	}
+
 	return { id, title, savedAt };
 }
 
 export async function listHistoryEntries(docPath: string): Promise<HistoryEntry[]> {
 	const dir = historyDir(docPath);
-	let files: { name: string; isDirectory: boolean }[];
-	try {
-		files = await window.workspace.listDir({ dirPath: dir });
-	} catch {
-		return [];
-	}
-
-	const jsonFiles = files
-		.filter((f) => !f.isDirectory && f.name.endsWith('.json'))
-		.sort((a, b) => a.name.localeCompare(b.name))
-		.slice(-MAX_HISTORY_ENTRIES);
+	const names = (await listHistoryJsonFileNames(dir)).slice(-MAX_HISTORY_ENTRIES);
 
 	const entries: HistoryEntry[] = [];
-	for (const file of jsonFiles) {
+	for (const name of names) {
 		try {
-			const raw = await window.workspace.readFile({ filePath: `${dir}/${file.name}` });
+			const raw = await window.workspace.readFile({ filePath: `${dir}/${name}` });
 			const data = JSON.parse(raw) as HistoryEntryFile;
 			entries.push({ id: data.id, title: data.title, savedAt: data.savedAt });
 		} catch {
@@ -84,4 +97,20 @@ export async function loadHistoryEntry(
 	const raw = await window.workspace.readFile({ filePath });
 	const data = JSON.parse(raw) as HistoryEntryFile;
 	return { content: data.content, title: data.title };
+}
+
+export async function readLatestHistoryEntry(
+	docPath: string
+): Promise<{ id: string; content: string; title: string } | null> {
+	const dir = historyDir(docPath);
+	const names = await listHistoryJsonFileNames(dir);
+	const latest = names[names.length - 1];
+	if (!latest) return null;
+	try {
+		const raw = await window.workspace.readFile({ filePath: `${dir}/${latest}` });
+		const data = JSON.parse(raw) as HistoryEntryFile;
+		return { id: data.id, content: data.content, title: data.title };
+	} catch {
+		return null;
+	}
 }
