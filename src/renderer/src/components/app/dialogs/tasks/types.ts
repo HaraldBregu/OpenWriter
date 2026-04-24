@@ -22,7 +22,6 @@ export interface TrackedTask {
 export interface QueueStats {
 	queued: number;
 	running: number;
-	completed: number;
-	error: number;
+	finished: number;
 	cancelled: number;
 }
