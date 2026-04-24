@@ -41,9 +41,14 @@ import { TSRCT_EXT } from './constants';
 const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode();
 const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs();
 
+// Install process-level safety net BEFORE anything else so we can see silent exits.
+setupProcessSafetyNet();
+
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
 const { container, eventBus, appState, windowFactory, logger, windowContextManager } =
 	bootstrapServices();
+// Re-bind safety net with the real logger now that it exists.
+setupProcessSafetyNet(logger);
 logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`);
 if (isWorkspaceMode && workspacePath) {
 	logger.info('Main', `Workspace path: ${workspacePath}`);
