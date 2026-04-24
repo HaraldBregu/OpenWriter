@@ -19,7 +19,7 @@ import {
 	openWorkspacePicker,
 	selectWorkspace,
 } from '../../../store/workspace/actions';
-import { selectAllDocuments, documentAdded, documentRemoved } from '../../../store/workspace';
+import { selectAllDocuments, documentAdded } from '../../../store/workspace';
 import { TitleBar } from '../titlebar/TitleBar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible';
 import { Button } from '@/components/ui/Button';
