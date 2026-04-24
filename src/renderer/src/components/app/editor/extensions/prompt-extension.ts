@@ -104,7 +104,31 @@ export const PromptExtension = Node.create<PromptOptions>({
 				if ($from.parent.content.size !== 0) return false;
 				if ($from.pos !== $from.start()) return false;
 
-				return ed.commands.insertPromptView();
+				let existing: { pos: number; size: number; attrs: Record<string, unknown> } | null =
+					null;
+				ed.state.doc.descendants((node, pos) => {
+					if (node.type.name === 'contentGenerator') {
+						existing = { pos, size: node.nodeSize, attrs: { ...node.attrs } };
+						return false;
+					}
+					return true;
+				});
+
+				if (!existing) {
+					return ed.commands.insertPromptView();
+				}
+
+				const preservedAttrs = {
+					prompt: existing.attrs.prompt,
+					agentId: existing.attrs.agentId,
+					files: existing.attrs.files,
+				};
+
+				return ed
+					.chain()
+					.deleteRange({ from: existing.pos, to: existing.pos + existing.size })
+					.insertContent({ type: 'contentGenerator', attrs: preservedAttrs })
+					.run();
 			},
 			'Mod-/': ({ editor: ed }) => {
 				return ed.commands.insertPromptView();
