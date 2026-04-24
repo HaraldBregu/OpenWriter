@@ -72,8 +72,6 @@ import type {
 	ExtensionRuntimeChangedPayload,
 	ExtensionRuntimeInfo,
 	ExtensionRuntimeState,
-	AgentTaskSnapshot,
-	AgentTaskLookupResult,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
