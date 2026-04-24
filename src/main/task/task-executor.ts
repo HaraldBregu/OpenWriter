@@ -396,6 +396,7 @@ export class TaskExecutor implements Disposable {
 				state: 'cancelled',
 				taskId,
 				data: message,
+				metadata: task.metadata ?? {},
 			} satisfies TaskEvent);
 
 			if (err instanceof Error && err.name === 'AbortError') {
