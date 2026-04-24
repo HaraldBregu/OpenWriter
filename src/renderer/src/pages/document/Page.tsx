@@ -324,6 +324,9 @@ function PageContent(): ReactElement {
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
+
+			console.log(res)
+
 			const activeTask = res.data.find(
 				(t) =>
 					t.metadata?.documentId === id &&
