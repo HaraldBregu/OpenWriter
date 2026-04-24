@@ -347,6 +347,12 @@ export class Workspace implements Disposable {
 		});
 	}
 
+	async deleteFile(params: FsDeleteFileParams): Promise<void> {
+		this.validateFsParams(params, ['filePath']);
+		const manager = this.buildFileManager();
+		await manager.deleteFile(params.filePath);
+	}
+
 	async rename(params: FsRenameParams): Promise<FsRenameResult> {
 		this.validateFsParams(params, ['oldPath', 'newPath']);
 		const manager = this.buildFileManager();
