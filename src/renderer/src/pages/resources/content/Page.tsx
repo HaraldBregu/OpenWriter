@@ -144,6 +144,7 @@ function PageContent(): ReactElement {
 				modelId,
 				inputType: 'url',
 			},
+			metadata: {},
 		});
 		if (!result.success) {
 			console.error('[ContentPage] OCR submit failed:', result.error.message);
