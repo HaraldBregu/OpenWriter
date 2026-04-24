@@ -352,6 +352,7 @@ function PageContent(): ReactElement {
 					setDocumentHasActiveTask(false);
 					setPreexistingTaskActive(false);
 					setDocumentTaskState(null);
+					setPreexistingTaskId(null);
 					return;
 				}
 				window.task.list().then((res) => {
@@ -359,6 +360,7 @@ function PageContent(): ReactElement {
 						setDocumentHasActiveTask(false);
 						setPreexistingTaskActive(false);
 						setDocumentTaskState(null);
+						setPreexistingTaskId(null);
 						return;
 					}
 					const stillActiveTask = res.data.find(
@@ -370,8 +372,10 @@ function PageContent(): ReactElement {
 					if (!stillActiveTask) {
 						setPreexistingTaskActive(false);
 						setDocumentTaskState(null);
+						setPreexistingTaskId(null);
 					} else if (preexistingTaskActiveRef.current) {
 						setDocumentTaskState(stillActiveTask.status);
+						setPreexistingTaskId(stillActiveTask.taskId);
 					}
 				});
 			}
