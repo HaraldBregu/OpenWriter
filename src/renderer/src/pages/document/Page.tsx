@@ -405,11 +405,8 @@ function PageContent(): ReactElement {
 	const {
 		entries: historyEntries,
 		currentEntryId: currentHistoryEntryId,
-		canUndo,
-		canRedo,
-		undo: handleUndo,
-		redo: handleRedo,
 		restoreEntry: handleRestoreHistoryEntry,
+		returnToLive: handleReturnToLive,
 	} = useDocumentHistory({
 		documentId: id,
 		content,
@@ -417,6 +414,17 @@ function PageContent(): ReactElement {
 		loaded,
 		onRestore: handleHistoryRestore,
 	});
+
+	const handleUndo = useCallback(() => {
+		editor?.chain().focus().undo().run();
+	}, [editor]);
+
+	const handleRedo = useCallback(() => {
+		editor?.chain().focus().redo().run();
+	}, [editor]);
+
+	const canUndo = editor?.can().undo() ?? false;
+	const canRedo = editor?.can().redo() ?? false;
 
 	const handleTitleChange = useCallback(
 		(value: string) => {

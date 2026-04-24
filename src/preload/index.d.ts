@@ -154,7 +154,12 @@ export interface AppApi {
 	playSound: () => void;
 	setTheme: (theme: ThemeMode) => void;
 	setLanguage: (language: string) => void;
-	showContextMenu: () => void;
+	/**
+	 * Show a native context menu built from the supplied descriptors.
+	 * Resolves with the `id` of the clicked item, or `null` if the menu was
+	 * dismissed without a selection. One entry point, any menu shape.
+	 */
+	showContextMenu: (items: ContextMenuDescriptor[]) => Promise<string | null>;
 	showContextMenuEditable: () => void;
 	onLanguageChange: (callback: (lng: string) => void) => () => void;
 	onThemeChange: (callback: (theme: ThemeMode) => void) => () => void;
