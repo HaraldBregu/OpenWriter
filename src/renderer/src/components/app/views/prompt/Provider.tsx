@@ -38,6 +38,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0],
 			selection: '',
 			statusBarVisible: true,
+			statusBarMessage: 'Status message',
 		})
 	);
 
@@ -47,6 +48,10 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 
 	const setStatusBarVisible = useCallback((visible: boolean) => {
 		dispatch({ type: 'SET_STATUS_BAR_VISIBLE', payload: visible });
+	}, []);
+
+	const setStatusBarMessage = useCallback((message: string) => {
+		dispatch({ type: 'SET_STATUS_BAR_MESSAGE', payload: message });
 	}, []);
 
 	const nodePrompt = (node.attrs.prompt as string) ?? '';
