@@ -294,13 +294,17 @@ function PageContent(): ReactElement {
 	activeTaskIdRef.current = activeTaskId;
 
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
+	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
+	const preexistingTaskActiveRef = useRef(false);
+	preexistingTaskActiveRef.current = preexistingTaskActive;
 
 	const assistantIsRunning = activeTaskId !== null || documentHasActiveTask;
 
 	useEffect(() => {
 		if (!id) {
 			setDocumentHasActiveTask(false);
+			setPreexistingTaskActive(false);
 			setDocumentTaskState(null);
 			return;
 		}
@@ -308,6 +312,7 @@ function PageContent(): ReactElement {
 
 		let cancelled = false;
 		setDocumentHasActiveTask(false);
+		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
 
 		window.task.list().then((res) => {
@@ -318,6 +323,7 @@ function PageContent(): ReactElement {
 					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 			);
 			setDocumentHasActiveTask(!!activeTask);
+			setPreexistingTaskActive(!!activeTask);
 			setDocumentTaskState(activeTask?.status ?? null);
 		});
 
@@ -334,16 +340,20 @@ function PageContent(): ReactElement {
 			if (event.metadata.documentId !== id) return;
 			if (event.state === 'queued' || event.state === 'started' || event.state === 'running') {
 				setDocumentHasActiveTask(true);
-				setDocumentTaskState(event.state);
+				if (preexistingTaskActiveRef.current) {
+					setDocumentTaskState(event.state);
+				}
 			} else if (event.state === 'finished' || event.state === 'cancelled') {
 				if (typeof window.task?.list !== 'function') {
 					setDocumentHasActiveTask(false);
+					setPreexistingTaskActive(false);
 					setDocumentTaskState(null);
 					return;
 				}
 				window.task.list().then((res) => {
 					if (!res.success) {
 						setDocumentHasActiveTask(false);
+						setPreexistingTaskActive(false);
 						setDocumentTaskState(null);
 						return;
 					}
@@ -353,7 +363,12 @@ function PageContent(): ReactElement {
 							(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 					);
 					setDocumentHasActiveTask(!!stillActiveTask);
-					setDocumentTaskState(stillActiveTask?.status ?? null);
+					if (!stillActiveTask) {
+						setPreexistingTaskActive(false);
+						setDocumentTaskState(null);
+					} else if (preexistingTaskActiveRef.current) {
+						setDocumentTaskState(stillActiveTask.status);
+					}
 				});
 			}
 		});
@@ -626,7 +641,7 @@ function PageContent(): ReactElement {
 								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 							</PageHeaderTitle>
 							{assistantIsRunning && (
-								<PageHeaderDescription className="flex items-center gap-2">
+								<PageHeaderDescription>
 									<Loader2 className="size-4 animate-spin" aria-hidden="true" />
 									<span>{documentTaskState ?? 'running'}</span>
 								</PageHeaderDescription>

@@ -97,7 +97,7 @@ export const PageHeaderDescription = memo(function PageHeaderDescription({
 	className,
 }: PageHeaderDescriptionProps): React.ReactElement {
 	return (
-		<p className={cn('text-sm text-muted-foreground', className)}>{children}</p>
+		<p className={cn('text-sm text-muted-foreground flex items-center gap-2', className)}>{children}</p>
 	);
 });
 
