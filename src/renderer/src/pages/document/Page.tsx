@@ -363,7 +363,17 @@ function PageContent(): ReactElement {
 		async (payload: PromptSubmitPayload, editor: TiptapEditor) => {
 			if (!id || assistantIsRunning) return;
 
-			const { from, to } = editor.state.selection;
+			let promptPos: number | null = null;
+			editor.state.doc.descendants((node, pos) => {
+				if (node.type.name === 'contentGenerator') {
+					promptPos = pos;
+					return false;
+				}
+				return true;
+			});
+
+			const from = promptPos ?? editor.state.selection.from;
+			const to = promptPos ?? editor.state.selection.to;
 
 			editorActions.showLoading();
 			editorActions.disable();
