@@ -23,7 +23,6 @@ import type {
 	ExtensionDocumentContextSnapshot,
 	ExtensionDocPanelInfo,
 	TaskEvent,
-	TaskState,
 } from '../../../../shared/types';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
