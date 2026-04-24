@@ -691,6 +691,9 @@ export class OutputFilesService implements Disposable {
 		this.logger?.info('OutputFilesService', `Starting to watch: ${outputDir}`);
 
 		try {
+			// Use native fsevents on macOS; only fall back to polling where
+			// native watchers are unreliable (e.g. network mounts on Linux).
+			const usePolling = process.platform === 'linux';
 			this.watcher = chokidar.watch(outputDir, {
 				ignoreInitial: true,
 				persistent: true,
@@ -698,7 +701,7 @@ export class OutputFilesService implements Disposable {
 					stabilityThreshold: 200,
 					pollInterval: 50,
 				},
-				usePolling: true,
+				usePolling,
 				interval: 500,
 				// depth=2 covers documents/ -> <uuid>/ -> <file>
 				depth: 2,
