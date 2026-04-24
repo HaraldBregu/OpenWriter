@@ -81,10 +81,16 @@ export default function DocumentInfoPopover({
 	}, [documentId, open]);
 
 	const lastUpdatedLabel = useMemo(() => {
-		const iso = documentConfig?.updatedAt ?? documentConfig?.createdAt;
+		const iso = documentConfig?.updatedAt;
 		if (!iso) return null;
 		return formatDate(iso, i18n.language);
-	}, [documentConfig?.updatedAt, documentConfig?.createdAt, i18n.language]);
+	}, [documentConfig?.updatedAt, i18n.language]);
+
+	const createdAtLabel = useMemo(() => {
+		const iso = documentConfig?.createdAt;
+		if (!iso) return null;
+		return formatDate(iso, i18n.language);
+	}, [documentConfig?.createdAt, i18n.language]);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
