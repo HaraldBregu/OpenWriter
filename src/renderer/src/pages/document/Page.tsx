@@ -351,6 +351,7 @@ function PageContent(): ReactElement {
 		editorInsert.revert();
 		editorActions.hideLoading();
 		editorActions.enable();
+		editorActions.hidePromptStatusBar();
 	}, [editorInsert, editorActions]);
 
 	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
