@@ -600,6 +600,14 @@ export interface FsDeleteFolderParams {
 }
 
 /**
+ * Payload for fs:delete-file.
+ */
+export interface FsDeleteFileParams {
+	/** Absolute path of the file to delete. */
+	filePath: string;
+}
+
+/**
  * Payload for fs:rename.
  */
 export interface FsRenameParams {
