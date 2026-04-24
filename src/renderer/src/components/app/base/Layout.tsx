@@ -223,9 +223,10 @@ function Container({ children }: LayoutProps) {
 		setPendingDelete(null);
 		await window.workspace.deleteOutput({ type: 'documents', id });
 		if (location.pathname === `/content/${id}`) {
-			navigate('/home', { replace: true });
+			const nextDocument = documents.find((doc) => doc.id !== id);
+			navigate(nextDocument ? `/content/${nextDocument.id}` : '/home', { replace: true });
 		}
-	}, [pendingDelete, location.pathname, navigate]);
+	}, [pendingDelete, documents, location.pathname, navigate]);
 
 	const handleDeleteDialogOpenChange = useCallback((open: boolean) => {
 		if (!open) setPendingDelete(null);
