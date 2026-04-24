@@ -21,7 +21,12 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
 		windowId: t.windowId,
 		error: t.error,
 		metadata: t.metadata,
-		result: t.result,
+		data:
+			typeof t.result === 'string'
+				? t.result
+				: t.result !== undefined
+					? JSON.stringify(t.result)
+					: undefined,
 	};
 }
 
