@@ -625,10 +625,12 @@ function PageContent(): ReactElement {
 								/>
 								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 							</PageHeaderTitle>
-							<PageHeaderDescription className="flex items-center justify-between gap-2">
-								<Loader2 className="size-4 animate-spin" aria-hidden="true" />
-								<span>{assistantIsRunning ? 'Running…' : 'Idle'}</span>
-							</PageHeaderDescription>
+							{assistantIsRunning && (
+								<PageHeaderDescription className="flex items-center gap-2">
+									<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+									<span>{documentTaskState ?? 'running'}</span>
+								</PageHeaderDescription>
+							)}
 						</PageHeader>
 						<PageBody>
 							{loaded && (
