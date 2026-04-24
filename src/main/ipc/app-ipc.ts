@@ -17,6 +17,7 @@ import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
 import type {
 	AgentSettings,
+	ContextMenuDescriptor,
 	Service,
 	ThemeMode,
 	WritingContextMenuAction,

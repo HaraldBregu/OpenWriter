@@ -106,8 +106,6 @@ const Editor = React.memo(
 				onAssistantAction,
 				documentId,
 				onEditorReady,
-				onUndo,
-				onRedo,
 			},
 			ref
 		) => {
