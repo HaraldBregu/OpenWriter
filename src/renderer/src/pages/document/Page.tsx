@@ -617,7 +617,10 @@ function PageContent(): ReactElement {
 								/>
 								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
 							</PageHeaderTitle>
-							<PageHeaderDescription>Dummy description</PageHeaderDescription>
+							<PageHeaderDescription className="flex items-center justify-between gap-2">
+								<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+								<span>{assistantIsRunning ? 'Running…' : 'Idle'}</span>
+							</PageHeaderDescription>
 						</PageHeader>
 						<div className="flex min-h-0 flex-1 flex-col">
 							{loaded && (
