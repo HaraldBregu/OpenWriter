@@ -84,8 +84,8 @@ export function KnowledgeBaseDialog({
 
 	const isRunning =
 		taskStatus === 'queued' || taskStatus === 'started' || taskStatus === 'running';
-	const isCompleted = taskStatus === 'completed';
-	const isError = taskStatus === 'error';
+	const isCompleted = taskStatus === 'finished' && !error;
+	const isError = taskStatus === 'cancelled' && !!error;
 	const progressMessage = progress.message;
 
 	useEffect(() => {
