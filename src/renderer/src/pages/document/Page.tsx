@@ -362,9 +362,11 @@ function PageContent(): ReactElement {
 				setPreexistingTaskActive(false);
 				setDocumentTaskState(null);
 				setPreexistingTaskId(null);
+				setPreexistingTaskContent(null);
 			} else if (event.state === 'finished') {
 				if (preexistingTaskActiveRef.current) {
 					setDocumentTaskState('finished');
+					setPreexistingTaskContent(event.data);
 				}
 				if (typeof window.task?.list !== 'function') {
 					setDocumentHasActiveTask(false);
