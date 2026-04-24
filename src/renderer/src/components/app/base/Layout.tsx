@@ -223,7 +223,6 @@ function Container({ children }: LayoutProps) {
 			event.stopPropagation();
 			const action = await window.app.showContextMenu([
 				{ id: 'rename', label: t('menu.rename', 'Rename') },
-				{ type: 'separator' },
 				{ id: 'delete', label: t('menu.delete', 'Delete'), destructive: true },
 			]);
 			if (action === 'delete') {
