@@ -360,7 +360,6 @@ function PageContent(): ReactElement {
 				setDocumentHasActiveTask(false);
 				setPreexistingTaskActive(false);
 				setDocumentTaskState(null);
-				setPreexistingTaskId(null);
 				setPreexistingTaskContent(null);
 			} else if (event.state === 'finished') {
 				if (preexistingTaskActiveRef.current) {
