@@ -1,16 +1,22 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Info, Download, Trash2, FolderOpen } from 'lucide-react';
+import { Info, Download, Trash2, FolderOpen, Clock, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	Popover,
 	PopoverContent,
-	PopoverDescription,
 	PopoverHeader,
 	PopoverTitle,
 	PopoverTrigger,
 } from '@/components/ui/Popover';
+import {
+	Item,
+	ItemContent,
+	ItemDescription,
+	ItemMedia,
+	ItemTitle,
+} from '@/components/ui/Item';
 import {
 	AlertDialog,
 	AlertDialogAction,
@@ -151,7 +157,7 @@ export default function DocumentInfoPopover({
 					<div className="border-t p-2">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="lg"
 							onClick={handleExport}
 							disabled={!documentId}
 							className="w-full justify-start font-normal"
@@ -161,7 +167,7 @@ export default function DocumentInfoPopover({
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="lg"
 							onClick={() => setConfirmDeleteOpen(true)}
 							disabled={!documentId || isDeleting}
 							className="w-full justify-start font-normal text-destructive hover:bg-destructive/10 hover:text-destructive"
