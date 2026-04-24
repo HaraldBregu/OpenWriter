@@ -307,6 +307,7 @@ function PageContent(): ReactElement {
 			setDocumentHasActiveTask(false);
 			setPreexistingTaskActive(false);
 			setDocumentTaskState(null);
+			setPreexistingTaskId(null);
 			return;
 		}
 		if (typeof window.task?.list !== 'function') return;
@@ -315,6 +316,7 @@ function PageContent(): ReactElement {
 		setDocumentHasActiveTask(false);
 		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
+		setPreexistingTaskId(null);
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
@@ -326,6 +328,7 @@ function PageContent(): ReactElement {
 			setDocumentHasActiveTask(!!activeTask);
 			setPreexistingTaskActive(!!activeTask);
 			setDocumentTaskState(activeTask?.status ?? null);
+			setPreexistingTaskId(activeTask?.taskId ?? null);
 		});
 
 		return () => {
