@@ -3,6 +3,7 @@ export {
 	PageHeader,
 	PageHeaderTitle,
 	PageHeaderItems,
+	PageHeaderDescription,
 	PageSubHeader,
 	PageBody,
 	PageSidebar,
