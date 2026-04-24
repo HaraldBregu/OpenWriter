@@ -104,6 +104,7 @@ export type {
 	SaveOutputInput,
 	SaveOutputResult,
 	WritingContextMenuAction,
+	ContextMenuDescriptor,
 	AgentStreamEvent,
 	AgentDefinitionInfo,
 	AgentTaskSnapshot,
