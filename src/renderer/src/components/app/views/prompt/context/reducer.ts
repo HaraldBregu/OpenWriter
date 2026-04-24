@@ -27,5 +27,7 @@ export function contentGeneratorReducer(state: State, action: Action): State {
 			return { ...state, selectedTextModel: action.payload };
 		case 'SET_SELECTION':
 			return { ...state, selection: action.payload };
+		case 'SET_STATUS_BAR_VISIBLE':
+			return { ...state, statusBarVisible: action.payload };
 	}
 }
