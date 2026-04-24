@@ -5,6 +5,7 @@ export {
 	PageHeader,
 	PageHeaderItems,
 	PageHeaderTitle,
+	PageHeaderDescription,
 	PageSidebar,
 	PageSidebarInset,
 } from './base/page';
