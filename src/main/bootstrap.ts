@@ -179,6 +179,42 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
  * Setup app lifecycle handlers using AppState.
  * Replaces the unsafe (app as { isQuitting?: boolean }).isQuitting pattern.
  */
+/**
+ * Install process-level handlers to catch silent exits.
+ * Logs uncaught exceptions, unhandled rejections, and exit with a stack trace
+ * so we can tell a real crash from an intentional quit.
+ */
+export function setupProcessSafetyNet(logger?: LoggerService): void {
+	process.on('uncaughtException', (error, origin) => {
+		const message = error instanceof Error ? error.stack || error.message : String(error);
+		logger?.error('Process', `uncaughtException (${origin})`, { error: message });
+		// eslint-disable-next-line no-console
+		console.error(`[uncaughtException:${origin}]`, message);
+	});
+
+	process.on('unhandledRejection', (reason) => {
+		const message = reason instanceof Error ? reason.stack || reason.message : String(reason);
+		logger?.error('Process', 'unhandledRejection', { reason: message });
+		// eslint-disable-next-line no-console
+		console.error('[unhandledRejection]', message);
+	});
+
+	process.on('exit', (code) => {
+		const stack = new Error('exit trace').stack;
+		logger?.warn('Process', `process.exit(${code})`, { stack });
+		// eslint-disable-next-line no-console
+		console.error(`[process.exit] code=${code}`, stack);
+	});
+
+	for (const signal of ['SIGINT', 'SIGTERM', 'SIGHUP'] as const) {
+		process.on(signal, () => {
+			logger?.warn('Process', `Received ${signal}`);
+			// eslint-disable-next-line no-console
+			console.error(`[signal] ${signal}`);
+		});
+	}
+}
+
 export function setupAppLifecycle(appState: AppState, logger?: LoggerService): void {
 	app.on('before-quit', () => {
 		appState.setQuitting();
