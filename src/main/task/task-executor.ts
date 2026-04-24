@@ -235,7 +235,7 @@ export class TaskExecutor implements Disposable {
 		if (active) return active;
 
 		const entry = this.completedTasks.get(taskId);
-		if (entry && entry.expiresAt > Date.now()) return entry.task;
+		if (entry) return entry.task;
 
 		return undefined;
 	}
