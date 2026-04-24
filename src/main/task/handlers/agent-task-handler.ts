@@ -56,7 +56,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, string> {
 
 		const ctx: AgentContext = {
 			signal,
-			logger: this.logger as LoggerService,
+			logger: this.logger,
 			onEvent: (event) => {
 				if (event.kind !== 'text') return;
 				const payload = event.payload as { text?: unknown } | null;

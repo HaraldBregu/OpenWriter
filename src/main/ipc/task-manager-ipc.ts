@@ -57,7 +57,6 @@ export class TaskManagerIpc implements IpcModule {
 				windowId: senderWindow?.id,
 				metadata: action.metadata,
 			};
-			void options;
 
 			const taskId = await executor.submit(action.type, action.input, options);
 			return { taskId };
