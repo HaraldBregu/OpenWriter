@@ -145,9 +145,6 @@ export default function DocumentInfoPopover({
 					<PopoverHeader className="flex flex-row items-start justify-between gap-3 p-4 pb-3">
 						<div className="flex min-w-0 flex-1 flex-col gap-1">
 							<PopoverTitle className="truncate">{displayTitle}</PopoverTitle>
-							{lastUpdatedLabel && (
-								<PopoverDescription>{lastUpdatedLabel}</PopoverDescription>
-							)}
 						</div>
 						<Button
 							variant="ghost"
@@ -160,6 +157,32 @@ export default function DocumentInfoPopover({
 							<FolderOpen aria-hidden="true" />
 						</Button>
 					</PopoverHeader>
+					{(createdAtLabel || lastUpdatedLabel) && (
+						<div className="border-t p-2">
+							{createdAtLabel && (
+								<Item size="xs">
+									<ItemMedia variant="icon">
+										<CalendarDays className="text-muted-foreground" aria-hidden="true" />
+									</ItemMedia>
+									<ItemContent>
+										<ItemTitle>{t('configSidebar.created', 'Created')}</ItemTitle>
+										<ItemDescription>{createdAtLabel}</ItemDescription>
+									</ItemContent>
+								</Item>
+							)}
+							{lastUpdatedLabel && (
+								<Item size="xs">
+									<ItemMedia variant="icon">
+										<Clock className="text-muted-foreground" aria-hidden="true" />
+									</ItemMedia>
+									<ItemContent>
+										<ItemTitle>{t('configSidebar.lastUpdated', 'Last updated')}</ItemTitle>
+										<ItemDescription>{lastUpdatedLabel}</ItemDescription>
+									</ItemContent>
+								</Item>
+							)}
+						</div>
+					)}
 					<div className="border-t p-2">
 						<Button
 							variant="ghost"
