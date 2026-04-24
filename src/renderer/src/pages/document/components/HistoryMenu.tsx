@@ -58,6 +58,9 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 				}
 			/>
 			<PopoverContent align="end" className="w-64 p-0">
+				<PopoverHeader className="border-b px-3 py-2">
+					<PopoverTitle>Version history</PopoverTitle>
+				</PopoverHeader>
 				<div className="max-h-72 overflow-y-auto p-1">
 					<Button
 						variant="ghost"
