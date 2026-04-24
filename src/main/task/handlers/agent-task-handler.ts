@@ -29,7 +29,7 @@ export class AgentTaskHandler implements TaskHandler<AgentTaskInput, string> {
 		private readonly agents: AgentRegistry,
 		private readonly services: ServiceResolver,
 		private readonly models: ModelResolver,
-		private readonly logger?: LoggerService
+		private readonly logger: LoggerService
 	) {}
 
 	validate(input: AgentTaskInput): void {
