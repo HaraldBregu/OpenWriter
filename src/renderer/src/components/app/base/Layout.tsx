@@ -224,7 +224,17 @@ function Container({ children }: LayoutProps) {
 		await window.workspace.deleteOutput({ type: 'documents', id });
 		if (location.pathname === `/content/${id}`) {
 			const nextDocument = documents.find((doc) => doc.id !== id);
-			navigate(nextDocument ? `/content/${nextDocument.id}` : '/home', { replace: true });
+			if (nextDocument) {
+				navigate(`/content/${nextDocument.id}`, { replace: true });
+				requestAnimationFrame(() => {
+					const target = document.querySelector<HTMLAnchorElement>(
+						`a[href="/content/${nextDocument.id}"]`
+					);
+					target?.focus();
+				});
+			} else {
+				navigate('/home', { replace: true });
+			}
 		}
 	}, [pendingDelete, documents, location.pathname, navigate]);
 
