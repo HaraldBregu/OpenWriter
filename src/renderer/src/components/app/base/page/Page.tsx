@@ -45,7 +45,7 @@ export const PageHeader = memo(function PageHeader({
 	return (
 		<div
 			className={cn(
-				'flex shrink-0 items-center justify-between border-b px-6 py-2 gap-4',
+				'flex shrink-0 flex-col border-b px-6 py-2 gap-1',
 				className
 			)}
 			style={
