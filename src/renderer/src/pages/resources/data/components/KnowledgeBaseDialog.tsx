@@ -136,6 +136,7 @@ export function KnowledgeBaseDialog({
 		const res = await window.task.submit({
 			type: 'build-knowledge-base',
 			input,
+			metadata: {},
 		});
 
 		if (!res.success) {
