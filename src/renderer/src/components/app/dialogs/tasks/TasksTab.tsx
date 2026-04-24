@@ -130,7 +130,7 @@ function reducer(state: TrackedTask[], action: Action): TrackedTask[] {
 						durationMs: info.durationMs ?? current.durationMs,
 						error: info.error ?? current.error,
 						metadata: info.metadata ?? current.metadata,
-						progress: info.status === 'completed' ? { percent: 100 } : current.progress,
+						progress: info.status === 'finished' ? { percent: 100 } : current.progress,
 					};
 					next = [...next.slice(0, index), merged, ...next.slice(index + 1)];
 				}
