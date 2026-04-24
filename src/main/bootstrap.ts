@@ -258,7 +258,10 @@ export function setupProcessSafetyNet(logger?: LoggerService): void {
 		});
 	}
 
-	app.on('before-quit', () => writeCrashLine('[app:before-quit]'));
+	app.on('before-quit', () => {
+		const stack = new Error('before-quit trace').stack;
+		writeCrashLine(`[app:before-quit] ${stack}`);
+	});
 	app.on('will-quit', () => writeCrashLine('[app:will-quit]'));
 	app.on('quit', (_e, code) => writeCrashLine(`[app:quit] code=${code}`));
 	app.on('render-process-gone', (_e, _wc, details) => {
