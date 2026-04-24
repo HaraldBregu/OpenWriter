@@ -18,6 +18,8 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 
 	const loading = node.attrs.loading as boolean;
 	const enable = node.attrs.enable as boolean;
+	const statusBarVisible = (node.attrs.statusBarVisible as boolean) ?? false;
+	const statusBarMessage = (node.attrs.statusBarMessage as string) ?? '';
 	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'text';
 	const options = extension.options as PromptOptions;
 
