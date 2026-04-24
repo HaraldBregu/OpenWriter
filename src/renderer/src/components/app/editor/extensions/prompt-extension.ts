@@ -104,8 +104,8 @@ export const PromptExtension = Node.create<PromptOptions>({
 				if ($from.parent.content.size !== 0) return false;
 				if ($from.pos !== $from.start()) return false;
 
-				let existing: { pos: number; size: number; attrs: Record<string, unknown> } | null =
-					null;
+				type ExistingNode = { pos: number; size: number; attrs: Record<string, unknown> };
+				let existing: ExistingNode | null = null;
 				ed.state.doc.descendants((node, pos) => {
 					if (node.type.name === 'contentGenerator') {
 						existing = { pos, size: node.nodeSize, attrs: { ...node.attrs } };
@@ -114,19 +114,20 @@ export const PromptExtension = Node.create<PromptOptions>({
 					return true;
 				});
 
-				if (!existing) {
+				const found: ExistingNode | null = existing;
+				if (!found) {
 					return ed.commands.insertPromptView();
 				}
 
 				const preservedAttrs = {
-					prompt: existing.attrs.prompt,
-					agentId: existing.attrs.agentId,
-					files: existing.attrs.files,
+					prompt: found.attrs.prompt,
+					agentId: found.attrs.agentId,
+					files: found.attrs.files,
 				};
 
 				return ed
 					.chain()
-					.deleteRange({ from: existing.pos, to: existing.pos + existing.size })
+					.deleteRange({ from: found.pos, to: found.pos + found.size })
 					.insertContent({ type: 'contentGenerator', attrs: preservedAttrs })
 					.run();
 			},
