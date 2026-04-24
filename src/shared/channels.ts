@@ -121,7 +121,7 @@ export const WorkspaceChannels = {
 	getDocumentConfig: 'workspace:get-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
 	getDocumentContent: 'workspace:get-document-content',
-	updateDocument: 'workspace:update-document',
+	updateDocumentContent: 'workspace:update-document-content',
 	updateDocumentConfig: 'workspace:update-document-config',
 	// Contents (workspace/contents/)
 	getContents: 'contents:get-all',
