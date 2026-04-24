@@ -409,6 +409,8 @@ export interface WorkspaceApi {
 	createFolder: (params: FsCreateFolderParams) => Promise<void>;
 	/** Delete a directory within allowed roots. */
 	deleteFolder: (params: FsDeleteFolderParams) => Promise<void>;
+	/** Delete a single file within allowed roots. */
+	deleteFile: (params: FsDeleteFileParams) => Promise<void>;
 	/**
 	 * Rename or move a file or directory within allowed directories.
 	 * Throws by default if the destination already exists.
