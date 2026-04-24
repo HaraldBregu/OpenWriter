@@ -146,7 +146,21 @@ export class TaskExecutor implements Disposable {
 	 */
 	cancel(taskId: string): boolean {
 		const task = this.activeTasks.get(taskId);
-		if (!task) return false;
+		if (!task) {
+			// Already in completedTasks — drop it so it disappears from listTasks().
+			const completed = this.completedTasks.get(taskId);
+			if (completed) {
+				this.completedTasks.delete(taskId);
+				this.send(completed.task.windowId, 'task:event', {
+					state: 'cancelled',
+					taskId,
+					data: '',
+					metadata: completed.task.metadata ?? {},
+				} satisfies TaskEvent);
+				return true;
+			}
+			return false;
+		}
 
 		// Abort the controller (signals running task or prevents queued task from starting)
 		task.controller.abort();
