@@ -436,10 +436,6 @@ export interface TaskApi {
 	cancel: (taskId: string) => Promise<IpcResult<boolean>>;
 	list: () => Promise<IpcResult<TaskInfo[]>>;
 	onEvent: (callback: (event: TaskEvent) => void) => () => void;
-	/** Rebuild an in-flight agent task's projection (phase + fullContent) for page-refresh recovery. */
-	getSnapshot: (taskId: string) => Promise<IpcResult<AgentTaskSnapshot | null>>;
-	/** Find the most recent agent task (active or recently completed) tied to this document. */
-	findForDocument: (documentId: string) => Promise<IpcResult<AgentTaskLookupResult | null>>;
 }
 
 // ---------------------------------------------------------------------------
