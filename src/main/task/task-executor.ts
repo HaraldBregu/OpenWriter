@@ -411,10 +411,9 @@ export class TaskExecutor implements Disposable {
 				task.timeoutHandle = undefined;
 			}
 
-			// Move to completed store for TTL-based result retrieval
+			// Move to completed store for result retrieval and listing
 			this.completedTasks.set(taskId, {
 				task: { ...task, controller: undefined as unknown as AbortController },
-				expiresAt: Date.now() + COMPLETED_TASK_TTL_MS,
 			});
 
 			this.activeTasks.delete(taskId);
