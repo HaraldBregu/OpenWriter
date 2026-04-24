@@ -63,7 +63,8 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 			markedOptions: { gfm: true },
 		}),
 		Placeholder.configure({
-			placeholder: ({ node }) => {
+			placeholder: ({ editor, node }) => {
+				if (!editor.isFocused) return '';
 				if (node.type.name === 'paragraph') {
 					return 'Type `space` for AI or `/` for commands';
 				}

@@ -19,7 +19,7 @@ function PromptStatusBar(): React.JSX.Element | null {
 	return (
 		<div className="mt-2 w-full">
 			<div
-				role="status"
+				role='alert'
 				className="flex items-center gap-2 rounded-t-md px-3 py-1.5 text-xs text-muted-foreground"
 			>
 				<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
