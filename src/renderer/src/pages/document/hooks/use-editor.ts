@@ -61,6 +61,17 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 		[editorRef]
 	);
 
+	const showPromptStatusBar = useCallback<EditorActions['showPromptStatusBar']>(
+		(message) => {
+			editorRef.current?.setPromptStatusBar({ visible: true, message });
+		},
+		[editorRef]
+	);
+
+	const hidePromptStatusBar = useCallback(() => {
+		editorRef.current?.setPromptStatusBar({ visible: false });
+	}, [editorRef]);
+
 	return useMemo(
 		() => ({
 			showLoading,
@@ -72,6 +83,8 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			insertPromptView,
 			insertText,
 			insertMarkdownText,
+			showPromptStatusBar,
+			hidePromptStatusBar,
 		}),
 		[
 			showLoading,
@@ -83,6 +96,8 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			insertPromptView,
 			insertText,
 			insertMarkdownText,
+			showPromptStatusBar,
+			hidePromptStatusBar,
 		]
 	);
 }
