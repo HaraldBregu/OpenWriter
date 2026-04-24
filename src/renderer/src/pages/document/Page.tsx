@@ -596,9 +596,13 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
-		if (!preexistingTaskId) return;
-		if (typeof window.task?.cancel !== 'function') return;
-		await window.task.cancel(preexistingTaskId);
+		if (preexistingTaskId && typeof window.task?.cancel === 'function') {
+			await window.task.cancel(preexistingTaskId);
+		}
+		setDocumentHasActiveTask(false);
+		setPreexistingTaskActive(false);
+		setDocumentTaskState(null);
+		setPreexistingTaskId(null);
 	}, [preexistingTaskId]);
 
 	const activeExtensionPanel = useMemo(
