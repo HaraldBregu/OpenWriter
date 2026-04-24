@@ -294,27 +294,31 @@ function PageContent(): ReactElement {
 	activeTaskIdRef.current = activeTaskId;
 
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
+	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
 
 	const assistantIsRunning = activeTaskId !== null || documentHasActiveTask;
 
 	useEffect(() => {
 		if (!id) {
 			setDocumentHasActiveTask(false);
+			setDocumentTaskState(null);
 			return;
 		}
 		if (typeof window.task?.list !== 'function') return;
 
 		let cancelled = false;
 		setDocumentHasActiveTask(false);
+		setDocumentTaskState(null);
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
-			const active = res.data.some(
+			const activeTask = res.data.find(
 				(t) =>
 					t.metadata?.documentId === id &&
 					(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 			);
-			setDocumentHasActiveTask(active);
+			setDocumentHasActiveTask(!!activeTask);
+			setDocumentTaskState(activeTask?.status ?? null);
 		});
 
 		return () => {
@@ -330,22 +334,26 @@ function PageContent(): ReactElement {
 			if (event.metadata.documentId !== id) return;
 			if (event.state === 'queued' || event.state === 'started' || event.state === 'running') {
 				setDocumentHasActiveTask(true);
+				setDocumentTaskState(event.state);
 			} else if (event.state === 'finished' || event.state === 'cancelled') {
 				if (typeof window.task?.list !== 'function') {
 					setDocumentHasActiveTask(false);
+					setDocumentTaskState(null);
 					return;
 				}
 				window.task.list().then((res) => {
 					if (!res.success) {
 						setDocumentHasActiveTask(false);
+						setDocumentTaskState(null);
 						return;
 					}
-					const stillActive = res.data.some(
+					const stillActiveTask = res.data.find(
 						(t) =>
 							t.metadata?.documentId === id &&
 							(t.status === 'queued' || t.status === 'started' || t.status === 'running')
 					);
-					setDocumentHasActiveTask(stillActive);
+					setDocumentHasActiveTask(!!stillActiveTask);
+					setDocumentTaskState(stillActiveTask?.status ?? null);
 				});
 			}
 		});
@@ -622,7 +630,7 @@ function PageContent(): ReactElement {
 								<span>{assistantIsRunning ? 'Running…' : 'Idle'}</span>
 							</PageHeaderDescription>
 						</PageHeader>
-						<div className="flex min-h-0 flex-1 flex-col">
+						<PageBody>
 							{loaded && (
 								<Editor
 									key={id}
@@ -639,7 +647,7 @@ function PageContent(): ReactElement {
 									onEditorReady={handleEditorReady}
 								/>
 							)}
-						</div>
+						</PageBody>
 					</div>
 				</ResizablePanel>
 				{activeSidebar && <ResizableHandle />}
