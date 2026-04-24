@@ -194,10 +194,10 @@ export class TaskExecutor implements Disposable {
 	}
 
 	/**
-	 * Return a snapshot of all active tasks (queued + running).
+	 * Return a snapshot of all tasks (queued + running + finished + cancelled).
 	 */
 	listTasks(): ActiveTask[] {
-		return Array.from(this.activeTasks.values()).map((task) => ({
+		const toSnapshot = (task: ActiveTask): ActiveTask => ({
 			taskId: task.taskId,
 			type: task.type,
 			status: task.status,
@@ -207,7 +207,11 @@ export class TaskExecutor implements Disposable {
 			windowId: task.windowId,
 			metadata: task.metadata,
 			controller: undefined as unknown as AbortController,
-		}));
+		});
+		return [
+			...Array.from(this.activeTasks.values()).map(toSnapshot),
+			...Array.from(this.completedTasks.values()).map((entry) => toSnapshot(entry.task)),
+		];
 	}
 
 	/**
