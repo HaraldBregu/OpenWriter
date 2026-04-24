@@ -21,6 +21,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
 		windowId: t.windowId,
 		error: t.error,
 		metadata: t.metadata,
+		result: t.result,
 	};
 }
 
