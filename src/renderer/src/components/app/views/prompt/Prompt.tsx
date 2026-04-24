@@ -7,7 +7,7 @@ import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/
 import { usePrompt } from './hooks';
 import { Provider } from './Provider';
 import { PromptHeader } from './PromptHeader';
-import { Paperclip, LoaderCircle, SendHorizontal } from 'lucide-react';
+import { Paperclip, LoaderCircle, SendHorizontal, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 
@@ -43,10 +43,10 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<div className="mt-2 px-4 w-full">
+				<div className="mt-2 w-full">
 					<div
 						role="status"
-						className="flex items-center gap-2 rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
+						className="flex items-center gap-2 rounded-t-md  px-3 py-1.5 text-xs text-muted-foreground"
 					>
 						<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
 						<span>{t('assistantNode.status', 'Ready')}</span>
