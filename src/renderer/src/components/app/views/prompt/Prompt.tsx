@@ -45,7 +45,7 @@ function PromptContainer(): React.JSX.Element {
 			>
 				<div
 					role="status"
-					className="rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 mx-10 text-xs text-muted-foreground"
+					className="w-full rounded-t-md border-t border-x border-border/60 bg-muted/40 px-3 py-1.5 text-xs text-muted-foreground"
 				>
 					{t('assistantNode.status', 'Ready')}
 				</div>
