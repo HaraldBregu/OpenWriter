@@ -685,7 +685,6 @@ function PageContent(): ReactElement {
 										title="Cancel task"
 										aria-label="Cancel task"
 										onClick={handleCancelPreexistingTask}
-										disabled={!preexistingTaskId || documentTaskState === 'finished'}
 									>
 										<X aria-hidden="true" />
 										Cancel
