@@ -33,7 +33,7 @@ function createFromInfo(info: TaskInfo): TrackedTask {
 		type: info.type,
 		status: info.status,
 		priority: info.priority,
-		progress: { percent: info.status === 'completed' ? 100 : 0 },
+		progress: { percent: info.status === 'finished' ? 100 : 0 },
 		durationMs: info.durationMs,
 		error: info.error,
 		metadata: info.metadata,
