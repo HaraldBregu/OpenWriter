@@ -331,6 +331,7 @@ export class TaskExecutor implements Disposable {
 			state: 'started',
 			taskId,
 			data: '',
+			metadata: metadata ?? {},
 		} satisfies TaskEvent);
 
 		this.eventBus.emit('task:started', { taskId, taskType: type, windowId });
@@ -339,8 +340,13 @@ export class TaskExecutor implements Disposable {
 			const handler = this.registry.get(type);
 
 			const emit: Emit = (event) => {
-				if (!this.activeTasks.has(taskId)) return;
-				this.send(windowId, 'task:event', { ...event, taskId } satisfies TaskEvent);
+				const current = this.activeTasks.get(taskId);
+				if (!current) return;
+				this.send(windowId, 'task:event', {
+					...event,
+					taskId,
+					metadata: current.metadata ?? {},
+				} satisfies TaskEvent);
 			};
 
 			const result = await runWithTaskExecutionContext(

@@ -39,7 +39,7 @@ import {
 	TranscriptionAgent,
 	TextWriterAgent,
 } from './agents';
-import { DemoTaskHandler } from './task/handlers';
+import { DemoTaskHandler, AgentTaskHandler } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
 
 // IPC modules
