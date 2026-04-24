@@ -39,7 +39,6 @@ export function TaskDataDialog({ task, open, onOpenChange }: TaskDataDialogProps
 								state: ev.state,
 								taskId: ev.data.taskId,
 								data: ev.data.data,
-								error: ev.data.error,
 								metadata: ev.data.metadata,
 							};
 							return (
