@@ -13,6 +13,37 @@ import { useTranslation } from 'react-i18next';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
+interface PromptStatusBarProps {
+	visible: boolean;
+	message: string;
+	onClose?: () => void;
+}
+
+function PromptStatusBar({ visible, message, onClose }: PromptStatusBarProps): React.JSX.Element | null {
+	if (!visible) return null;
+	return (
+		<div className="mt-2 w-full">
+			<div
+				role="status"
+				className="flex items-center gap-2 rounded-t-md px-3 py-1.5 text-xs text-muted-foreground"
+			>
+				<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+				<span>{message}</span>
+				<Button
+					type="button"
+					variant="ghost"
+					size="icon-xs"
+					className="ml-auto h-5 w-5"
+					onClick={onClose}
+					aria-label="Close"
+				>
+					<X className="h-3 w-3" />
+				</Button>
+			</div>
+		</div>
+	);
+}
+
 function PromptContainer(): React.JSX.Element {
 	const { t } = useTranslation();
 	const {
