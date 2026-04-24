@@ -221,15 +221,11 @@ function Container({ children }: LayoutProps) {
 		if (!pendingDelete) return;
 		const { id } = pendingDelete;
 		setPendingDelete(null);
-		try {
-			await window.workspace.deleteDocument(id);
-		} finally {
-			dispatch(documentRemoved(id));
-			if (location.pathname === `/content/${id}`) {
-				navigate('/home', { replace: true });
-			}
+		await window.workspace.deleteOutput({ type: 'documents', id });
+		if (location.pathname === `/content/${id}`) {
+			navigate('/home', { replace: true });
 		}
-	}, [pendingDelete, dispatch, location.pathname, navigate]);
+	}, [pendingDelete, location.pathname, navigate]);
 
 	const handleDeleteDialogOpenChange = useCallback((open: boolean) => {
 		if (!open) setPendingDelete(null);
