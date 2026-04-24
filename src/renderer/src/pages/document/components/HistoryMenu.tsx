@@ -1,13 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { History, Check } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/DropdownMenu';
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/Popover';
 import type { HistoryEntry } from '../services/history-service';
 
 interface HistoryMenuProps {
@@ -34,63 +32,76 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 	onRestoreEntry,
 	onReturnToLive,
 }) => {
+	const [open, setOpen] = useState(false);
 	const reversedEntries = useMemo(() => [...entries].reverse(), [entries]);
 	const onLive = currentEntryId === null;
 
+	const handleReturnToLive = (): void => {
+		if (!onLive) onReturnToLive();
+		setOpen(false);
+	};
+
+	const handleRestore = (id: string): void => {
+		onRestoreEntry(id);
+		setOpen(false);
+	};
+
 	return (
-		<DropdownMenu>
-			<DropdownMenuTrigger
+		<Popover open={open} onOpenChange={setOpen}>
+			<PopoverTrigger
 				render={
 					<Button variant="ghost" size="icon" title="Version history" aria-label="Version history">
 						<History aria-hidden="true" />
 					</Button>
 				}
 			/>
-			<DropdownMenuContent align="end" className="w-64">
-				<div className="max-h-72 overflow-y-auto">
-					<DropdownMenuItem
-						onClick={() => {
-							if (!onLive) onReturnToLive();
-						}}
-						className={onLive ? 'font-semibold' : undefined}
+			<PopoverContent align="end" className="w-64 p-0">
+				<div className="max-h-72 overflow-y-auto p-1">
+					<button
+						type="button"
+						onClick={handleReturnToLive}
+						className={
+							'flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent disabled:pointer-events-none ' +
+							(onLive ? 'font-semibold' : '')
+						}
 					>
-						<div className="flex items-center justify-between w-full gap-2 min-w-0">
-							<span className="truncate">Current version</span>
-							{onLive && (
-								<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
-							)}
-						</div>
-					</DropdownMenuItem>
-					<DropdownMenuSeparator />
+						<span className="truncate">Current version</span>
+						{onLive && (
+							<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
+						)}
+					</button>
+					<div className="my-1 h-px bg-border" />
 					{reversedEntries.length === 0 ? (
 						<p className="px-2 py-3 text-sm text-muted-foreground text-center">No history yet</p>
 					) : (
 						reversedEntries.map((entry) => {
 							const isCurrent = entry.id === currentEntryId;
 							return (
-								<DropdownMenuItem
+								<button
 									key={entry.id}
-									onClick={() => onRestoreEntry(entry.id)}
-									className={isCurrent ? 'font-semibold' : undefined}
+									type="button"
+									onClick={() => handleRestore(entry.id)}
+									className={
+										'flex w-full items-center justify-between gap-2 rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-accent ' +
+										(isCurrent ? 'font-semibold' : '')
+									}
 								>
-									<div className="flex items-center justify-between w-full gap-2 min-w-0">
-										<div className="flex flex-col min-w-0">
-											<span className="text-xs text-muted-foreground shrink-0">
-												{formatSavedAt(entry.savedAt)}
-											</span>
-											<span className="truncate">{entry.title}</span>
-										</div>
-										{isCurrent && (
-											<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
-										)}
+									<div className="flex min-w-0 flex-col text-left">
+										<span className="text-xs text-muted-foreground shrink-0">
+											{formatSavedAt(entry.savedAt)}
+										</span>
+										<span className="truncate">{entry.title}</span>
 									</div>
-								</DropdownMenuItem>
+									{isCurrent && (
+										<Check className="h-3.5 w-3.5 shrink-0 text-foreground" aria-hidden="true" />
+									)}
+								</button>
 							);
 						})
 					)}
 				</div>
-			</DropdownMenuContent>
-		</DropdownMenu>
+			</PopoverContent>
+		</Popover>
 	);
 };
 
