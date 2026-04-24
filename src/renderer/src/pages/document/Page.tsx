@@ -296,6 +296,7 @@ function PageContent(): ReactElement {
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
+	const [preexistingTaskId, setPreexistingTaskId] = useState<string | null>(null);
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
