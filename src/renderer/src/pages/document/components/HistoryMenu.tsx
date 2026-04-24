@@ -61,7 +61,6 @@ const HistoryMenu: React.FC<HistoryMenuProps> = ({
 				<PopoverHeader className="flex flex-row items-start justify-between gap-3 p-4 pb-3">
 					<div className="flex min-w-0 flex-1 flex-col gap-1">
 						<PopoverTitle className="truncate">Version history</PopoverTitle>
-						<PopoverDescription>{entries.length} snapshots</PopoverDescription>
 					</div>
 				</PopoverHeader>
 				<div className="border-t p-2">
