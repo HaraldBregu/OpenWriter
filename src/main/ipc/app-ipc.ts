@@ -134,6 +134,43 @@ export class AppIpc implements IpcModule {
 			editMenu.popup({ window: win });
 		});
 
+		// Generic custom context menu — renderer provides descriptors, resolves
+		// with the clicked item id (or null if dismissed). One handler, any menu.
+		ipcMain.handle(
+			AppChannels.showContextMenu,
+			(event, items: ContextMenuDescriptor[]) =>
+				new Promise<string | null>((resolve) => {
+					const win = BrowserWindow.fromWebContents(event.sender);
+					if (!win) {
+						resolve(null);
+						return;
+					}
+
+					let selectedId: string | null = null;
+
+					const template: Electron.MenuItemConstructorOptions[] = items.map((item) => {
+						if (item.type === 'separator') {
+							return { type: 'separator' };
+						}
+						return {
+							label: item.label,
+							accelerator: item.accelerator,
+							enabled: item.enabled ?? true,
+							click: () => {
+								selectedId = item.id;
+							},
+						};
+					});
+
+					const menu = Menu.buildFromTemplate(template);
+					menu.once('menu-will-close', () => {
+						// Defer: click handlers fire after `menu-will-close` on some platforms.
+						setImmediate(() => resolve(selectedId));
+					});
+					menu.popup({ window: win });
+				})
+		);
+
 		// Writing context menu — invoked by the renderer; sends action events back
 		ipcMain.handle(
 			AppChannels.showWritingContextMenu,
