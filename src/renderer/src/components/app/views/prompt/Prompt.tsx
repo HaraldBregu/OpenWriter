@@ -74,15 +74,7 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
-				<div className="mt-2 w-full">
-					<div
-						role="status"
-						className="flex items-center gap-2 rounded-t-md  px-3 py-1.5 text-xs text-muted-foreground"
-					>
-						<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
-						<span>{t('assistantNode.status', 'Ready')}</span>
-					</div>
-				</div>
+				<PromptStatusBar visible message={t('assistantNode.status', 'Ready')} />
 				<Card className="w-full mb-2">
 					<PromptHeader />
 					<CardContent>
