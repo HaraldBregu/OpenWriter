@@ -450,14 +450,14 @@ function PageContent(): ReactElement {
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
-				metadata: { documentId: id },
+				metadata: { documentId: id, selection },
 			});
 
 			if (!result.success) return false;
 			setActiveTaskId(result.data.taskId);
 			return true;
 		},
-		[id]
+		[id, selection]
 	);
 
 	const handlePromptSubmit = useCallback(
