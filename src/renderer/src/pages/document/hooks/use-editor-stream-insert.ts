@@ -8,10 +8,8 @@ interface InsertSession {
 	origin: number;
 	insertedLength: number;
 	buffer: string;
-	pendingTimer: number | null;
+	pendingFrame: number | null;
 }
-
-const STREAM_RENDER_DEBOUNCE_MS = 120;
 
 function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
 	let node = el?.parentElement ?? null;
@@ -117,20 +115,20 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 	const cancelPendingFrame = useCallback((): void => {
 		const session = sessionRef.current;
-		if (session?.pendingTimer != null) {
-			window.clearTimeout(session.pendingTimer);
-			session.pendingTimer = null;
+		if (session?.pendingFrame != null) {
+			cancelAnimationFrame(session.pendingFrame);
+			session.pendingFrame = null;
 		}
 	}, []);
 
 	const scheduleRender = useCallback((): void => {
 		const session = sessionRef.current;
-		if (!session || session.pendingTimer != null) return;
-		session.pendingTimer = window.setTimeout(() => {
+		if (!session || session.pendingFrame != null) return;
+		session.pendingFrame = requestAnimationFrame(() => {
 			if (sessionRef.current !== session) return;
-			session.pendingTimer = null;
+			session.pendingFrame = null;
 			renderBuffer();
-		}, STREAM_RENDER_DEBOUNCE_MS);
+		});
 	}, [renderBuffer]);
 
 	const begin = useCallback(
@@ -147,7 +145,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 				origin: from,
 				insertedLength: 0,
 				buffer: '',
-				pendingTimer: null,
+				pendingFrame: null,
 			};
 		},
 		[editor, clampPos, cancelPendingFrame]

@@ -24,7 +24,6 @@ import {
 	PageHeader,
 	PageHeaderItems,
 	PageHeaderTitle,
-	PageSubHeader,
 } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import Layout from './Layout';
@@ -164,7 +163,7 @@ function PageContent(): ReactElement {
 					</Button>
 				</PageHeaderItems>
 			</PageHeader>
-			<PageSubHeader>
+			<PageHeader>
 				<ButtonGroup className="min-w-0 flex-1">
 					<InputGroup>
 						<InputGroupAddon>
@@ -224,7 +223,7 @@ function PageContent(): ReactElement {
 						<Grid3x3 className="h-4 w-4" />
 					</Button>
 				</ButtonGroup>
-			</PageSubHeader>
+			</PageHeader>
 			<PageBody>
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">

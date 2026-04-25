@@ -164,23 +164,15 @@ function PageContent(): ReactElement {
 		const bump = (): void => {
 			setEditorContextVersion((current) => current + 1);
 		};
-		const bumpOnTransaction = ({
-			transaction,
-		}: {
-			transaction: { getMeta: (key: string) => unknown };
-		}): void => {
-			if (transaction.getMeta('preventEditorUpdate')) return;
-			bump();
-		};
 
 		editor.on('selectionUpdate', bump);
-		editor.on('transaction', bumpOnTransaction);
+		editor.on('transaction', bump);
 		editor.on('focus', bump);
 		editor.on('blur', bump);
 
 		return () => {
 			editor.off('selectionUpdate', bump);
-			editor.off('transaction', bumpOnTransaction);
+			editor.off('transaction', bump);
 			editor.off('focus', bump);
 			editor.off('blur', bump);
 		};
@@ -545,14 +537,7 @@ function PageContent(): ReactElement {
 	const [, forceRender] = useState(0);
 	useEffect(() => {
 		if (!editor) return;
-		const bump = ({
-			transaction,
-		}: {
-			transaction: { getMeta: (key: string) => unknown };
-		}): void => {
-			if (transaction.getMeta('preventEditorUpdate')) return;
-			forceRender((n) => (n + 1) % 1_000_000);
-		};
+		const bump = (): void => forceRender((n) => (n + 1) % 1_000_000);
 		editor.on('transaction', bump);
 		return () => {
 			editor.off('transaction', bump);

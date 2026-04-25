@@ -101,22 +101,6 @@ export const PageHeaderDescription = memo(function PageHeaderDescription({
 	);
 });
 
-interface PageSubHeaderProps {
-	readonly children: ReactNode;
-	readonly className?: string;
-}
-
-export const PageSubHeader = memo(function PageSubHeader({
-	children,
-	className,
-}: PageSubHeaderProps): React.ReactElement {
-	return (
-		<div className={cn('flex shrink-0 items-center gap-4 border-b px-6 py-4', className)}>
-			{children}
-		</div>
-	);
-});
-
 interface PageBodyProps {
 	readonly children: ReactNode;
 	readonly className?: string;
@@ -127,7 +111,7 @@ export const PageBody = memo(function PageBody({
 	className,
 }: PageBodyProps): React.ReactElement {
 	return (
-		<div className={cn('flex min-h-0 flex-1 flex-col overflow-y-auto', className)}>{children}</div>
+		<div className={cn('flex min-h-0 flex-1 flex-col px-6 py-2 overflow-y-auto', className)}>{children}</div>
 	);
 });
 

@@ -15,7 +15,6 @@ import {
 	PageContainer,
 	PageHeader,
 	PageHeaderTitle,
-	PageSubHeader,
 } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
@@ -189,7 +188,7 @@ function PageContent(): ReactElement {
 					</DropdownMenu>
 				</PageHeaderTitle>
 			</PageHeader>
-			<PageSubHeader>
+			<PageHeader>
 				<ButtonGroup className="min-w-0 flex-1">
 					<InputGroup>
 						<InputGroupAddon>
@@ -204,7 +203,7 @@ function PageContent(): ReactElement {
 						/>
 					</InputGroup>
 				</ButtonGroup>
-			</PageSubHeader>
+			</PageHeader>
 			<PageBody>
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">
