@@ -96,8 +96,8 @@ function readFileAsDataUri(file: File): Promise<string> {
 function Content(): React.JSX.Element {
 	return (
 		<>
-			<BlockControls />
-			<BlockActions />
+			{/* <BlockControls />
+			<BlockActions /> */}
 			<BubbleMenu />
 			<OptionMenu />
 		</>
