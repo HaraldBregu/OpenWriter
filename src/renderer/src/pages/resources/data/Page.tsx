@@ -33,20 +33,30 @@ function PageContent(): ReactElement {
 		<PageContainer>
 			<PageHeader>
 				<PageHeaderTitle>
-					<Database className="h-4 w-4" />
+					<Database className="h-4 w-4" aria-hidden="true" />
 					Knowledge Base
-				</PageHeaderTitle>
-				<PageHeaderItems>
-					<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
-						<FolderOpen />
+					<Button
+						variant="ghost"
+						size="icon"
+						title="Open folder"
+						aria-label="Open folder"
+						onClick={handleOpenResourcesFolder}
+					>
+						<FolderOpen aria-hidden="true" />
 					</Button>
 					{knowledgeBases.length > 0 && (
-						<Button size="lg" onClick={() => setKbDialogOpen(true)} disabled={uploading}>
-							<Plus />
-							New
+						<Button
+							variant="ghost"
+							size="icon"
+							title="New knowledge base"
+							aria-label="New knowledge base"
+							onClick={() => setKbDialogOpen(true)}
+							disabled={uploading}
+						>
+							<Plus aria-hidden="true" />
 						</Button>
 					)}
-				</PageHeaderItems>
+				</PageHeaderTitle>
 			</PageHeader>
 			<DataIndexingBar />
 			<PageBody>
