@@ -344,7 +344,7 @@ function PageContent(): ReactElement {
 			setPreexistingTaskActive(!!displayTask);
 			setDocumentTaskState(displayTask?.status ?? null);
 			setPreexistingTaskContent(finishedTask?.data ?? null);
-			setPreexistingTaskSelection(displayTask?.metadata?.selection ?? null);
+			setPreexistingTaskSelection(extractTaskSelection(displayTask?.metadata?.selection));
 		});
 
 		return () => {
