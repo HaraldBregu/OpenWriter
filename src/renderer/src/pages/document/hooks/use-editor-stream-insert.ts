@@ -63,12 +63,21 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
 		const prevScrollTop = scrollEl?.scrollTop ?? 0;
-		let caretWasVisible = true;
+		let anchorWasVisible = true;
 		if (scrollEl) {
 			try {
-				const oldCoords = editor.view.coordsAtPos(to);
-				const rect = scrollEl.getBoundingClientRect();
-				caretWasVisible = oldCoords.bottom > rect.top && oldCoords.top < rect.bottom;
+				const containerRect = scrollEl.getBoundingClientRect();
+				const promptEl = editor.view.dom.querySelector<HTMLElement>(
+					'[data-type="content-generator"]'
+				);
+				if (promptEl) {
+					const r = promptEl.getBoundingClientRect();
+					anchorWasVisible = r.bottom > containerRect.top && r.top < containerRect.bottom;
+				} else {
+					const oldCoords = editor.view.coordsAtPos(to);
+					anchorWasVisible =
+						oldCoords.bottom > containerRect.top && oldCoords.top < containerRect.bottom;
+				}
 			} catch {
 				// Assume visible if we can't measure.
 			}
