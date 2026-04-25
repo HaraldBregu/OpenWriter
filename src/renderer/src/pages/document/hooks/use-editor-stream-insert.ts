@@ -11,6 +11,22 @@ interface InsertSession {
 	pendingFrame: number | null;
 }
 
+function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
+	let node = el?.parentElement ?? null;
+	while (node) {
+		const style = getComputedStyle(node);
+		const overflowY = style.overflowY;
+		if (
+			(overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+			node.scrollHeight > node.clientHeight
+		) {
+			return node;
+		}
+		node = node.parentElement;
+	}
+	return null;
+}
+
 export interface EditorStreamInsert {
 	begin: (posFrom: number, posTo: number) => void;
 	appendDelta: (token: string) => void;
