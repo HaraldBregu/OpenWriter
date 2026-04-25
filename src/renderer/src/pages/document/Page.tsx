@@ -752,7 +752,7 @@ function PageContent(): ReactElement {
 								</PageHeaderDescription>
 							)}
 						</PageHeader>
-						<PageBody>
+						<PageBody className="p-0">
 							{loaded && (
 								<Editor
 									key={id}
