@@ -389,7 +389,7 @@ function Container({ children }: LayoutProps) {
 											<DropdownMenuLabel className="text-xs text-muted-foreground">
 												{t('appLayout.workspaces', 'Workspaces')}
 											</DropdownMenuLabel>
-											{recentWorkspaces.map((workspace, index) => {
+											{recentWorkspaces.map((workspace) => {
 												const name = workspace.name || workspaceNameFromPathString(workspace.path);
 												const isActive = workspace.path === currentWorkspacePath;
 												return (
@@ -402,20 +402,21 @@ function Container({ children }: LayoutProps) {
 															<AppIconOpenWriter className="size-3.5 shrink-0" />
 														</div>
 														<span className={isActive ? 'font-medium' : ''}>{name}</span>
-														{index < 9 && <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>}
 													</DropdownMenuItem>
 												);
 											})}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem className="gap-2 p-2" onClick={handleAddWorkspace}>
-											<div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
-												<Plus className="size-4" />
-											</div>
-											<div className="font-medium text-muted-foreground">
-												{t('appLayout.addWorkspace', 'Add workspace')}
-											</div>
-										</DropdownMenuItem>
+										<DropdownMenuGroup>
+											<DropdownMenuItem className="gap-2 p-2" onClick={handleAddWorkspace}>
+												<div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+													<Plus className="size-4" />
+												</div>
+												<div className="font-medium text-muted-foreground">
+													{t('appLayout.addWorkspace', 'Add workspace')}
+												</div>
+											</DropdownMenuItem>
+										</DropdownMenuGroup>
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</SidebarMenuItem>
