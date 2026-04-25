@@ -87,29 +87,10 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		editor.view.dispatch(tr);
 		session.insertedLength = newInsertedLength;
 
-		if (scrollEl) {
-			// Undo any browser-driven scroll caused by the caret move.
-			if (scrollEl.scrollTop !== prevScrollTop) scrollEl.scrollTop = prevScrollTop;
-
-			// Then scroll just enough to keep the prompt input bottom visible —
-			// but only if it was visible before, so manual scroll-aways are respected.
-			if (anchorWasVisible) {
-				try {
-					const containerRect = scrollEl.getBoundingClientRect();
-					const margin = 24;
-					const promptEl = editor.view.dom.querySelector<HTMLElement>(
-						'[data-type="content-generator"]'
-					);
-					const anchorBottom = promptEl
-						? promptEl.getBoundingClientRect().bottom
-						: editor.view.coordsAtPos(endPos).bottom;
-					if (anchorBottom > containerRect.bottom - margin) {
-						scrollEl.scrollTop += anchorBottom - (containerRect.bottom - margin);
-					}
-				} catch {
-					// Coord lookup may fail mid-render; safe to ignore.
-				}
-			}
+		// Undo any browser-driven scroll caused by the caret move; scroll-into-view
+		// for the prompt nodeview is handled separately by setPromptStatusBar.
+		if (scrollEl && scrollEl.scrollTop !== prevScrollTop) {
+			scrollEl.scrollTop = prevScrollTop;
 		}
 	}, [editor, clampPos]);
 
