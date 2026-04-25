@@ -110,19 +110,20 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 			// Undo any browser-driven scroll caused by the caret move.
 			if (scrollEl.scrollTop !== prevScrollTop) scrollEl.scrollTop = prevScrollTop;
 
-			// Then scroll just enough to keep the caret visible — but only if
-			// it was visible before, so manual scroll-aways are respected.
-			if (caretWasVisible) {
+			// Then scroll just enough to keep the prompt input bottom visible —
+			// but only if it was visible before, so manual scroll-aways are respected.
+			if (anchorWasVisible) {
 				try {
-					const coords = editor.view.coordsAtPos(endPos);
-					const rect = scrollEl.getBoundingClientRect();
+					const containerRect = scrollEl.getBoundingClientRect();
+					const margin = 24;
 					const promptEl = editor.view.dom.querySelector<HTMLElement>(
 						'[data-type="content-generator"]'
 					);
-					const promptHeight = promptEl?.getBoundingClientRect().height ?? 0;
-					const margin = 24 + promptHeight;
-					if (coords.bottom > rect.bottom - margin) {
-						scrollEl.scrollTop += coords.bottom - (rect.bottom - margin);
+					const anchorBottom = promptEl
+						? promptEl.getBoundingClientRect().bottom
+						: editor.view.coordsAtPos(endPos).bottom;
+					if (anchorBottom > containerRect.bottom - margin) {
+						scrollEl.scrollTop += anchorBottom - (containerRect.bottom - margin);
 					}
 				} catch {
 					// Coord lookup may fail mid-render; safe to ignore.
