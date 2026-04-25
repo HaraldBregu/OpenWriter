@@ -468,9 +468,7 @@ const Editor = React.memo(
 						// reflected in getBoundingClientRect.
 						requestAnimationFrame(() => {
 							if (!editor || editor.isDestroyed) return;
-							const promptEl = editor.view.dom.querySelector<HTMLElement>(
-								'[data-type="content-generator"]'
-							);
+							const promptEl = findPromptDom(editor);
 							if (!promptEl) return;
 							const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
 							if (!scrollEl) return;
