@@ -3,8 +3,6 @@ import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
-import { BlockControls } from './components/BlockControls';
-import { BlockActions } from './components/BlockActions';
 
 import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
