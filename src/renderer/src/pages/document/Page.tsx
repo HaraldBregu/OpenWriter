@@ -545,7 +545,14 @@ function PageContent(): ReactElement {
 	const [, forceRender] = useState(0);
 	useEffect(() => {
 		if (!editor) return;
-		const bump = (): void => forceRender((n) => (n + 1) % 1_000_000);
+		const bump = ({
+			transaction,
+		}: {
+			transaction: { getMeta: (key: string) => unknown };
+		}): void => {
+			if (transaction.getMeta('preventEditorUpdate')) return;
+			forceRender((n) => (n + 1) % 1_000_000);
+		};
 		editor.on('transaction', bump);
 		return () => {
 			editor.off('transaction', bump);
