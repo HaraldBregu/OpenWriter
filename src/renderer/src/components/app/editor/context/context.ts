@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import type React from 'react';
 import type { Editor } from '@tiptap/core';
-import type { EditorState, HoveredBlock } from './state';
+import type { EditorState } from './state';
 
 export type AssistantAction =
 	| 'improve'
@@ -14,7 +14,6 @@ export interface EditorContextValue {
 	state: EditorState;
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
-	setHoveredBlock: (block: HoveredBlock | null) => void;
 	setImageDialogOpen: (open: boolean) => void;
 	onInsertContent?: () => void;
 	onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
