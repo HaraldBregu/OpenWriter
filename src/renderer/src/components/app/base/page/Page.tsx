@@ -145,7 +145,7 @@ export const PageSidebar = memo(function PageSidebar({
 	return (
 		<aside
 			className={cn(
-				'flex shrink-0 flex-col overflow-y-auto p-4 mt-6',
+				'flex shrink-0 flex-col overflow-y-auto p-4',
 				state.sidebarSide === 'left' ? 'order-first border-r' : 'order-last border-l',
 				className
 			)}

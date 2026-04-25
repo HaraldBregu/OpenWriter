@@ -22,6 +22,7 @@ function NavItem({ to, label }: NavItemProps): React.JSX.Element {
 		<NavLink to={to} end className="block outline-none">
 			{({ isActive }) => (
 				<Button
+					nativeButton={false}
 					variant={isActive ? 'secondary' : 'ghost'}
 					size="sm"
 					className="w-full justify-start"
