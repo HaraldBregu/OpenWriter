@@ -14,6 +14,22 @@ import Layout from './Layout';
 import type { AssistantAction } from './context/context';
 import { PromptSubmitPayload } from '@shared/index';
 
+function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
+	let node = el?.parentElement ?? null;
+	while (node) {
+		const style = getComputedStyle(node);
+		const overflowY = style.overflowY;
+		if (
+			(overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
+			node.scrollHeight > node.clientHeight
+		) {
+			return node;
+		}
+		node = node.parentElement;
+	}
+	return null;
+}
+
 export interface ImageInsertOptions {
 	src: string;
 	alt?: string;
