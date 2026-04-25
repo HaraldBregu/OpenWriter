@@ -117,20 +117,20 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 	const cancelPendingFrame = useCallback((): void => {
 		const session = sessionRef.current;
-		if (session?.pendingFrame != null) {
-			cancelAnimationFrame(session.pendingFrame);
-			session.pendingFrame = null;
+		if (session?.pendingTimer != null) {
+			window.clearTimeout(session.pendingTimer);
+			session.pendingTimer = null;
 		}
 	}, []);
 
 	const scheduleRender = useCallback((): void => {
 		const session = sessionRef.current;
-		if (!session || session.pendingFrame != null) return;
-		session.pendingFrame = requestAnimationFrame(() => {
+		if (!session || session.pendingTimer != null) return;
+		session.pendingTimer = window.setTimeout(() => {
 			if (sessionRef.current !== session) return;
-			session.pendingFrame = null;
+			session.pendingTimer = null;
 			renderBuffer();
-		});
+		}, STREAM_RENDER_DEBOUNCE_MS);
 	}, [renderBuffer]);
 
 	const begin = useCallback(
