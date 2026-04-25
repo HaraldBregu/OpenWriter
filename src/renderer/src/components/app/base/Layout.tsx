@@ -640,7 +640,7 @@ function Container({ children }: LayoutProps) {
 										className="w-(--radix-dropdown-menu-trigger-width) min-w-72"
 										side="top"
 										align="end"
-										sideOffset={0}
+										sideOffset={4}
 									>
 										<DropdownMenuGroup>
 											<DropdownMenuLabel className="flex flex-col gap-0.5 font-normal">

@@ -63,25 +63,6 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
 		const prevScrollTop = scrollEl?.scrollTop ?? 0;
-		let anchorWasVisible = true;
-		if (scrollEl) {
-			try {
-				const containerRect = scrollEl.getBoundingClientRect();
-				const promptEl = editor.view.dom.querySelector<HTMLElement>(
-					'[data-type="content-generator"]'
-				);
-				if (promptEl) {
-					const r = promptEl.getBoundingClientRect();
-					anchorWasVisible = r.bottom > containerRect.top && r.top < containerRect.bottom;
-				} else {
-					const oldCoords = editor.view.coordsAtPos(to);
-					anchorWasVisible =
-						oldCoords.bottom > containerRect.top && oldCoords.top < containerRect.bottom;
-				}
-			} catch {
-				// Assume visible if we can't measure.
-			}
-		}
 
 		let tr = editor.state.tr;
 		const json = session.buffer ? editor.markdown?.parse(session.buffer) : null;
