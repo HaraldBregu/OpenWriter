@@ -664,38 +664,52 @@ function Container({ children }: LayoutProps) {
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuGroup className="space-y-1">
-											<DropdownMenuLabel className="text-xs text-muted-foreground">
-												{t('settings.theme.title')}
-											</DropdownMenuLabel>
-											<DropdownMenuRadioGroup
-												value={themeMode}
-												onValueChange={handleThemeChange}
-												className="space-y-1"
-											>
-												<DropdownMenuRadioItem
-													value="light"
-													className={ACCOUNT_MENU_ITEM_CLASS}
-												>
-													<Sun />
-													<span className="flex-1">{t('settings.theme.light', 'Light')}</span>
-												</DropdownMenuRadioItem>
-												<DropdownMenuRadioItem
-													value="system"
-													className={ACCOUNT_MENU_ITEM_CLASS}
-												>
-													<Monitor />
-													<span className="flex-1">{t('settings.theme.system', 'System')}</span>
-												</DropdownMenuRadioItem>
-												<DropdownMenuRadioItem
-													value="dark"
-													className={ACCOUNT_MENU_ITEM_CLASS}
-												>
-													<Moon />
-													<span className="flex-1">{t('settings.theme.dark', 'Dark')}</span>
-												</DropdownMenuRadioItem>
-											</DropdownMenuRadioGroup>
-										</DropdownMenuGroup>
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger className={ACCOUNT_MENU_ITEM_CLASS}>
+												<Sun />
+												<span className="flex-1">{t('settings.theme.title')}</span>
+											</DropdownMenuSubTrigger>
+											<DropdownMenuSubContent className="min-w-40 p-1">
+												<DropdownMenuGroup className="space-y-1">
+													<DropdownMenuLabel className="text-xs text-muted-foreground">
+														{t('settings.theme.title')}
+													</DropdownMenuLabel>
+													<DropdownMenuRadioGroup
+														value={themeMode}
+														onValueChange={handleThemeChange}
+														className="space-y-1"
+													>
+														<DropdownMenuRadioItem
+															value="light"
+															className={ACCOUNT_MENU_ITEM_CLASS}
+														>
+															<Sun />
+															<span className="flex-1">
+																{t('settings.theme.light', 'Light')}
+															</span>
+														</DropdownMenuRadioItem>
+														<DropdownMenuRadioItem
+															value="system"
+															className={ACCOUNT_MENU_ITEM_CLASS}
+														>
+															<Monitor />
+															<span className="flex-1">
+																{t('settings.theme.system', 'System')}
+															</span>
+														</DropdownMenuRadioItem>
+														<DropdownMenuRadioItem
+															value="dark"
+															className={ACCOUNT_MENU_ITEM_CLASS}
+														>
+															<Moon />
+															<span className="flex-1">
+																{t('settings.theme.dark', 'Dark')}
+															</span>
+														</DropdownMenuRadioItem>
+													</DropdownMenuRadioGroup>
+												</DropdownMenuGroup>
+											</DropdownMenuSubContent>
+										</DropdownMenuSub>
 										<DropdownMenuSeparator />
 										<DropdownMenuSub>
 											<DropdownMenuSubTrigger className={ACCOUNT_MENU_ITEM_CLASS}>
