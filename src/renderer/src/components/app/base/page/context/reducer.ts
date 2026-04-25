@@ -24,6 +24,18 @@ export function pageReducer(state: PageState, action: PageAction): PageState {
 		case 'HEADER_TOGGLED':
 			return { ...state, isHeaderVisible: !state.isHeaderVisible };
 
+		case 'SIDEBAR_OPEN_SET':
+			return { ...state, sidebarOpen: action.open };
+
+		case 'SIDEBAR_OPEN_TOGGLED':
+			return { ...state, sidebarOpen: !state.sidebarOpen };
+
+		case 'SIDEBAR_OPEN_MOBILE_SET':
+			return { ...state, sidebarOpenMobile: action.open };
+
+		case 'SIDEBAR_OPEN_MOBILE_TOGGLED':
+			return { ...state, sidebarOpenMobile: !state.sidebarOpenMobile };
+
 		default: {
 			const _exhaustive: never = action;
 			return _exhaustive;
