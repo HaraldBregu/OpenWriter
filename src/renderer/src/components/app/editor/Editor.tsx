@@ -432,6 +432,27 @@ const Editor = React.memo(
 							return true;
 						});
 						editor.view.dispatch(tr);
+
+						// After the status bar updates, ensure the prompt nodeview is in
+						// view. Wait one frame so the new layout (status bar height) is
+						// reflected in getBoundingClientRect.
+						requestAnimationFrame(() => {
+							if (!editor || editor.isDestroyed) return;
+							const promptEl = editor.view.dom.querySelector<HTMLElement>(
+								'[data-type="content-generator"]'
+							);
+							if (!promptEl) return;
+							const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
+							if (!scrollEl) return;
+							const promptRect = promptEl.getBoundingClientRect();
+							const containerRect = scrollEl.getBoundingClientRect();
+							const fullyVisible =
+								promptRect.top >= containerRect.top &&
+								promptRect.bottom <= containerRect.bottom;
+							if (!fullyVisible) {
+								scrollEl.scrollTop += promptRect.height;
+							}
+						});
 					},
 					clearPromptInput() {
 						if (!editor || editor.isDestroyed) return;
