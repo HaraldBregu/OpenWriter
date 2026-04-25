@@ -777,6 +777,13 @@ function PageContent(): ReactElement {
 	);
 }
 
+function extractTaskSelection(value: unknown): { from: number; to: number } | null {
+	if (!value || typeof value !== 'object') return null;
+	const v = value as { from?: unknown; to?: unknown };
+	if (typeof v.from !== 'number' || typeof v.to !== 'number') return null;
+	return { from: v.from, to: v.to };
+}
+
 function buildExtensionDocumentContext(
 	documentId: string,
 	markdown: string,
