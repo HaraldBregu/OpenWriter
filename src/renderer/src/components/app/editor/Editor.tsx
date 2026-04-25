@@ -30,6 +30,20 @@ function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
 	return null;
 }
 
+function findPromptDom(editor: TiptapEditor): HTMLElement | null {
+	let pos: number | null = null;
+	editor.state.doc.descendants((node, p) => {
+		if (node.type.name === 'contentGenerator') {
+			pos = p;
+			return false;
+		}
+		return true;
+	});
+	if (pos == null) return null;
+	const dom = editor.view.nodeDOM(pos);
+	return dom instanceof HTMLElement ? dom : null;
+}
+
 export interface ImageInsertOptions {
 	src: string;
 	alt?: string;
