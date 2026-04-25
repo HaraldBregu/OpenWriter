@@ -101,19 +101,14 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		// After the new content is in the DOM, ensure the prompt nodeview is
 		// fully visible. If not, scroll exactly by its own height.
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
-		if (scrollEl) {
-			const promptEl = editor.view.dom.querySelector<HTMLElement>(
-				'[data-type="content-generator"]'
-			);
-			if (promptEl) {
-				const promptRect = promptEl.getBoundingClientRect();
-				const containerRect = scrollEl.getBoundingClientRect();
-				const fullyVisible =
-					promptRect.top >= containerRect.top &&
-					promptRect.bottom <= containerRect.bottom;
-				if (!fullyVisible) {
-					scrollEl.scrollTop += promptRect.height;
-				}
+		const promptEl = findPromptDom(editor);
+		if (scrollEl && promptEl) {
+			const promptRect = promptEl.getBoundingClientRect();
+			const containerRect = scrollEl.getBoundingClientRect();
+			const fullyVisible =
+				promptRect.top >= containerRect.top && promptRect.bottom <= containerRect.bottom;
+			if (!fullyVisible) {
+				scrollEl.scrollTop += promptRect.height;
 			}
 		}
 	}, [editor, clampPos]);
