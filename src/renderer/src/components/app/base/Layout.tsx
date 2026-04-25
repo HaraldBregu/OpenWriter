@@ -642,69 +642,89 @@ function Container({ children }: LayoutProps) {
 										align="end"
 										sideOffset={0}
 									>
-										<DropdownMenuGroup className="space-y-1">
-											<DropdownMenuLabel className="p-0 font-normal">
-												<Item size="xs" className="px-1 py-1.5">
-													<ItemMedia>
-														<Avatar className="h-8 w-8 rounded-lg">
-															<AvatarImage src="" alt={footerUserName} />
-															<AvatarFallback className="rounded-lg">
-																{footerUserInitial}
-															</AvatarFallback>
-														</Avatar>
-													</ItemMedia>
-													<ItemContent>
-														<ItemTitle>{footerUserName}</ItemTitle>
-														<p className="truncate text-xs text-muted-foreground">
-															{footerUserEmail}
-														</p>
-													</ItemContent>
-												</Item>
+										<DropdownMenuGroup>
+											<DropdownMenuLabel className="flex flex-col gap-0.5 font-normal">
+												<span className="text-sm font-medium">{footerUserName}</span>
+												<span className="truncate text-xs text-muted-foreground">
+													{footerUserEmail}
+												</span>
 											</DropdownMenuLabel>
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
 										<DropdownMenuGroup className="space-y-1">
-											{accountMenuItems.slice(0, 4).map(({ value, label, icon: Icon }) => (
-												<React.Fragment key={value}>
-													{value === 'language' ? (
-														<DropdownMenuSub>
-															<DropdownMenuSubTrigger className={ACCOUNT_MENU_ITEM_CLASS}>
-																<Icon />
-																<span className="flex-1">{label}</span>
-															</DropdownMenuSubTrigger>
-															<DropdownMenuSubContent className="min-w-40 p-1">
-																<DropdownMenuRadioGroup
-																	value={language}
-																	onValueChange={handleLanguageChange}
-																	className="space-y-1"
-																>
-																	{LANGUAGE_OPTIONS.map((option) => (
-																		<DropdownMenuRadioItem
-																			key={option.value}
-																			value={option.value}
-																			className={ACCOUNT_MENU_ITEM_CLASS}
-																		>
-																			{t(option.labelKey)}
-																		</DropdownMenuRadioItem>
-																	))}
-																</DropdownMenuRadioGroup>
-															</DropdownMenuSubContent>
-														</DropdownMenuSub>
-													) : (
-														<DropdownMenuItem
-															className={ACCOUNT_MENU_ITEM_CLASS}
-															onClick={() => handleAccountMenuValueChange(value)}
-														>
-															<Icon />
-															<span className="flex-1">{label}</span>
-															{value === 'settings' && (
-																<DropdownMenuShortcut>⇧⌘,</DropdownMenuShortcut>
-															)}
-														</DropdownMenuItem>
-													)}
-												</React.Fragment>
+											{accountMenuItems.slice(0, 3).map(({ value, label, icon: Icon }) => (
+												<DropdownMenuItem
+													key={value}
+													className={ACCOUNT_MENU_ITEM_CLASS}
+													onClick={() => handleAccountMenuValueChange(value)}
+												>
+													<Icon />
+													<span className="flex-1">{label}</span>
+												</DropdownMenuItem>
 											))}
 										</DropdownMenuGroup>
+										<DropdownMenuSeparator />
+										<DropdownMenuGroup className="space-y-1">
+											<DropdownMenuLabel className="text-xs text-muted-foreground">
+												{t('settings.theme.title')}
+											</DropdownMenuLabel>
+											<DropdownMenuRadioGroup
+												value={themeMode}
+												onValueChange={handleThemeChange}
+												className="space-y-1"
+											>
+												<DropdownMenuRadioItem
+													value="light"
+													className={ACCOUNT_MENU_ITEM_CLASS}
+												>
+													<Sun />
+													<span className="flex-1">{t('settings.theme.light', 'Light')}</span>
+												</DropdownMenuRadioItem>
+												<DropdownMenuRadioItem
+													value="system"
+													className={ACCOUNT_MENU_ITEM_CLASS}
+												>
+													<Monitor />
+													<span className="flex-1">{t('settings.theme.system', 'System')}</span>
+												</DropdownMenuRadioItem>
+												<DropdownMenuRadioItem
+													value="dark"
+													className={ACCOUNT_MENU_ITEM_CLASS}
+												>
+													<Moon />
+													<span className="flex-1">{t('settings.theme.dark', 'Dark')}</span>
+												</DropdownMenuRadioItem>
+											</DropdownMenuRadioGroup>
+										</DropdownMenuGroup>
+										<DropdownMenuSeparator />
+										<DropdownMenuSub>
+											<DropdownMenuSubTrigger className={ACCOUNT_MENU_ITEM_CLASS}>
+												<Globe />
+												<span className="flex-1">{t('menu.language', 'Language')}</span>
+											</DropdownMenuSubTrigger>
+											<DropdownMenuSubContent className="min-w-40 p-1">
+												<DropdownMenuGroup className="space-y-1">
+													<DropdownMenuLabel className="text-xs text-muted-foreground">
+														{t('menu.language', 'Language')}
+													</DropdownMenuLabel>
+													<DropdownMenuRadioGroup
+														value={language}
+														onValueChange={handleLanguageChange}
+														className="space-y-1"
+													>
+														{LANGUAGE_OPTIONS.map((option) => (
+															<DropdownMenuRadioItem
+																key={option.value}
+																value={option.value}
+																className={ACCOUNT_MENU_ITEM_CLASS}
+															>
+																{t(option.labelKey)}
+															</DropdownMenuRadioItem>
+														))}
+													</DropdownMenuRadioGroup>
+												</DropdownMenuGroup>
+											</DropdownMenuSubContent>
+										</DropdownMenuSub>
 										<DropdownMenuSeparator />
 										<DropdownMenuGroup className="space-y-1">
 											{accountMenuItems.slice(4, 8).map(({ value, label, icon: Icon }) => (
@@ -719,50 +739,15 @@ function Container({ children }: LayoutProps) {
 											))}
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
-										<DropdownMenuItem
-											className={ACCOUNT_MENU_ITEM_CLASS}
-											onClick={() => handleAccountMenuValueChange('logOut')}
-										>
-											<LogOut />
-											{t('menu.logOut', 'Log out')}
-										</DropdownMenuItem>
-										<DropdownMenuSeparator />
-										<Item size="xs" className="px-2 py-2">
-											<ItemContent>
-												<ItemTitle className="font-normal">{t('settings.theme.title')}</ItemTitle>
-											</ItemContent>
-											<ItemActions>
-												<ButtonGroup>
-													<Button
-														variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
-														size="icon-sm"
-														onClick={() => setTheme('light')}
-														aria-label={t('settings.theme.light', 'Light')}
-														aria-pressed={themeMode === 'light'}
-													>
-														<Sun className="size-3.5" />
-													</Button>
-													<Button
-														variant={themeMode === 'system' ? 'outline-selected' : 'outline'}
-														size="icon-sm"
-														onClick={() => setTheme('system')}
-														aria-label={t('settings.theme.system', 'System')}
-														aria-pressed={themeMode === 'system'}
-													>
-														<Monitor className="size-3.5" />
-													</Button>
-													<Button
-														variant={themeMode === 'dark' ? 'outline-selected' : 'outline'}
-														size="icon-sm"
-														onClick={() => setTheme('dark')}
-														aria-label={t('settings.theme.dark', 'Dark')}
-														aria-pressed={themeMode === 'dark'}
-													>
-														<Moon className="size-3.5" />
-													</Button>
-												</ButtonGroup>
-											</ItemActions>
-										</Item>
+										<DropdownMenuGroup>
+											<DropdownMenuItem
+												className={ACCOUNT_MENU_ITEM_CLASS}
+												onClick={() => handleAccountMenuValueChange('logOut')}
+											>
+												<LogOut />
+												<span className="flex-1">{t('menu.logOut', 'Log out')}</span>
+											</DropdownMenuItem>
+										</DropdownMenuGroup>
 									</DropdownMenuContent>
 								</DropdownMenu>
 							</SidebarMenuItem>
