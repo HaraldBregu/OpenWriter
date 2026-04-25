@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
 import { Undo2, Redo2, Loader2, X, Check, Plus } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
+import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import ExtensionPanel from './panels/extension/Panel';
