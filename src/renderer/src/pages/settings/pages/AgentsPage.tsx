@@ -152,7 +152,7 @@ const AgentsPage: React.FC = () => {
 	const imageModel = assistantAgent.models.image ?? DEFAULT_IMAGE_MODEL_ID;
 
 	return (
-		<div className="w-full max-w-2xl p-4 sm:p-6">
+		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-1">{t('settings.agents.title', 'Agents')}</h1>
 			<p className="text-sm text-muted-foreground mb-6">
 				{t(

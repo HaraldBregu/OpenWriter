@@ -107,7 +107,11 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 				try {
 					const coords = editor.view.coordsAtPos(endPos);
 					const rect = scrollEl.getBoundingClientRect();
-					const margin = 24;
+					const promptEl = editor.view.dom.querySelector<HTMLElement>(
+						'[data-type="content-generator"]'
+					);
+					const promptHeight = promptEl?.getBoundingClientRect().height ?? 0;
+					const margin = 24 + promptHeight;
 					if (coords.bottom > rect.bottom - margin) {
 						scrollEl.scrollTop += coords.bottom - (rect.bottom - margin);
 					}
