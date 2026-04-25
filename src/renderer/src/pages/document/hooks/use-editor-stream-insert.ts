@@ -63,9 +63,16 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
 		const prevScrollTop = scrollEl?.scrollTop ?? 0;
-		const wasAtBottom = scrollEl
-			? scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 4
-			: false;
+		let caretWasVisible = true;
+		if (scrollEl) {
+			try {
+				const oldCoords = editor.view.coordsAtPos(to);
+				const rect = scrollEl.getBoundingClientRect();
+				caretWasVisible = oldCoords.bottom > rect.top && oldCoords.top < rect.bottom;
+			} catch {
+				// Assume visible if we can't measure.
+			}
+		}
 
 		let tr = editor.state.tr;
 		const json = session.buffer ? editor.markdown?.parse(session.buffer) : null;
@@ -91,8 +98,23 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		session.insertedLength = newInsertedLength;
 
 		if (scrollEl) {
-			const target = wasAtBottom ? scrollEl.scrollHeight : prevScrollTop;
-			if (scrollEl.scrollTop !== target) scrollEl.scrollTop = target;
+			// Undo any browser-driven scroll caused by the caret move.
+			if (scrollEl.scrollTop !== prevScrollTop) scrollEl.scrollTop = prevScrollTop;
+
+			// Then scroll just enough to keep the caret visible — but only if
+			// it was visible before, so manual scroll-aways are respected.
+			if (caretWasVisible) {
+				try {
+					const coords = editor.view.coordsAtPos(endPos);
+					const rect = scrollEl.getBoundingClientRect();
+					const margin = 24;
+					if (coords.bottom > rect.bottom - margin) {
+						scrollEl.scrollTop += coords.bottom - (rect.bottom - margin);
+					}
+				} catch {
+					// Coord lookup may fail mid-render; safe to ignore.
+				}
+			}
 		}
 	}, [editor, clampPos]);
 
