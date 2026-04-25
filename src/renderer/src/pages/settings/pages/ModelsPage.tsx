@@ -160,7 +160,7 @@ const ModelsPage: React.FC = () => {
 	const filteredCount = filteredModels.length;
 
 	return (
-		<div className="w-full max-w-2xl p-4 sm:p-6">
+		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-1">{t('settings.models.title', 'Models')}</h1>
 			<p className="text-sm text-muted-foreground mb-6">
 				{t('settings.models.subtitle', 'Browse all available AI models across providers.')}
