@@ -22,10 +22,7 @@ import {
 import { selectAllDocuments, documentAdded } from '../../../store/workspace';
 import { TitleBar } from '../titlebar/TitleBar';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/Collapsible';
-import { Button } from '@/components/ui/Button';
-import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/Avatar';
-import { Item, ItemActions, ItemContent, ItemMedia, ItemTitle } from '@/components/ui/Item';
 import {
 	SidebarContent,
 	SidebarFooter,
