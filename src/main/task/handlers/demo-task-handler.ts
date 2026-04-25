@@ -6,7 +6,7 @@ export interface DemoTaskInput {
 }
 
 const STATE_DELAY_MS = 100;
-const TOKEN_DELAY_MS = 50;
+const TOKEN_DELAY_MS = 20;
 const LOG_SOURCE = 'DemoTaskHandler';
 
 const LOREM_IPSUM_LONG = `# Lorem Ipsum Dolor Sit Amet
@@ -90,7 +90,7 @@ Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit la
 
 ###### Quis Autem Vel`;
 
-const LOREM = LOREM_IPSUM_SHORT;
+const LOREM = LOREM_IPSUM_LONG;
 
 function tokenize(text: string): string[] {
 	return text.match(/\S+\s*/g) ?? [];

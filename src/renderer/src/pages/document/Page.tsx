@@ -402,8 +402,6 @@ function PageContent(): ReactElement {
 
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.metadata.documentId !== id) return;
-
-			console.log('Received task event', event);
 			editorActionsRef.current.showPromptStatusBar(event.data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {

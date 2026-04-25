@@ -45,6 +45,12 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		const to = clampPos(editor, session.origin + session.insertedLength);
 		const sizeBefore = editor.state.doc.content.size;
 
+		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
+		const prevScrollTop = scrollEl?.scrollTop ?? 0;
+		const wasAtBottom = scrollEl
+			? scrollEl.scrollTop + scrollEl.clientHeight >= scrollEl.scrollHeight - 4
+			: false;
+
 		let tr = editor.state.tr;
 		const json = session.buffer ? editor.markdown?.parse(session.buffer) : null;
 		if (json) {
@@ -67,6 +73,11 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 		editor.view.dispatch(tr);
 		session.insertedLength = newInsertedLength;
+
+		if (scrollEl) {
+			const target = wasAtBottom ? scrollEl.scrollHeight : prevScrollTop;
+			if (scrollEl.scrollTop !== target) scrollEl.scrollTop = target;
+		}
 	}, [editor, clampPos]);
 
 	const cancelPendingFrame = useCallback((): void => {
