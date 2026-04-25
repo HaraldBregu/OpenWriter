@@ -147,7 +147,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 				origin: from,
 				insertedLength: 0,
 				buffer: '',
-				pendingFrame: null,
+				pendingTimer: null,
 			};
 		},
 		[editor, clampPos, cancelPendingFrame]
