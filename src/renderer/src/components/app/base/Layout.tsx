@@ -341,6 +341,15 @@ function Container({ children }: LayoutProps) {
 		[setLanguage]
 	);
 
+	const handleThemeChange = useCallback(
+		(value: string) => {
+			if (value === 'light' || value === 'dark' || value === 'system') {
+				setTheme(value);
+			}
+		},
+		[setTheme]
+	);
+
 	return (
 		<>
 			<TitleBar

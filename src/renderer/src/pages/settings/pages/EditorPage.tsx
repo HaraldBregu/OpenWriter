@@ -29,7 +29,7 @@ const EditorPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="w-full max-w-2xl p-4 sm:p-6">
+		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.editor')}</h1>
 
 			<SectionHeader title={t('settings.sections.editor')} />
