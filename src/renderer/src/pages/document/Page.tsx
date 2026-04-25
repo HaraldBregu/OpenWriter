@@ -296,6 +296,10 @@ function PageContent(): ReactElement {
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
 	const [preexistingTaskContent, setPreexistingTaskContent] = useState<string | null>(null);
+	const [preexistingTaskSelection, setPreexistingTaskSelection] = useState<{
+		from: number;
+		to: number;
+	} | null>(null);
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
