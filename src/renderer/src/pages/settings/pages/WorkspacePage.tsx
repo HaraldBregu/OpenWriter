@@ -139,7 +139,7 @@ const WorkspacePage: React.FC = () => {
 	// ---- Render -------------------------------------------------------------
 
 	return (
-		<div className="w-full max-w-2xl p-4 sm:p-6" aria-busy={isSaving}>
+		<div className="w-full max-w-2xl" aria-busy={isSaving}>
 			{/* Page title */}
 			<h1 className="text-lg font-normal mb-6">{t('workspacePage.title')}</h1>
 
