@@ -57,7 +57,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		}
 
 		const newInsertedLength = session.insertedLength + (tr.doc.content.size - sizeBefore);
-		const endPos = clampPos(editor, from + newInsertedLength);
+		const endPos = Math.min(Math.max(from + newInsertedLength, 0), tr.doc.content.size);
 		try {
 			tr = tr.setSelection(TextSelection.near(tr.doc.resolve(endPos), -1));
 		} catch {
