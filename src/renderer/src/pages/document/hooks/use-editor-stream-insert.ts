@@ -61,9 +61,6 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		const to = clampPos(editor, session.origin + session.insertedLength);
 		const sizeBefore = editor.state.doc.content.size;
 
-		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
-		const prevScrollTop = scrollEl?.scrollTop ?? 0;
-
 		let tr = editor.state.tr;
 		const json = session.buffer ? editor.markdown?.parse(session.buffer) : null;
 		if (json) {
@@ -87,10 +84,23 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		editor.view.dispatch(tr);
 		session.insertedLength = newInsertedLength;
 
-		// Undo any browser-driven scroll caused by the caret move; scroll-into-view
-		// for the prompt nodeview is handled separately by setPromptStatusBar.
-		if (scrollEl && scrollEl.scrollTop !== prevScrollTop) {
-			scrollEl.scrollTop = prevScrollTop;
+		// After the new content is in the DOM, ensure the prompt nodeview is
+		// fully visible. If not, scroll exactly by its own height.
+		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
+		if (scrollEl) {
+			const promptEl = editor.view.dom.querySelector<HTMLElement>(
+				'[data-type="content-generator"]'
+			);
+			if (promptEl) {
+				const promptRect = promptEl.getBoundingClientRect();
+				const containerRect = scrollEl.getBoundingClientRect();
+				const fullyVisible =
+					promptRect.top >= containerRect.top &&
+					promptRect.bottom <= containerRect.bottom;
+				if (!fullyVisible) {
+					scrollEl.scrollTop += promptRect.height;
+				}
+			}
 		}
 	}, [editor, clampPos]);
 

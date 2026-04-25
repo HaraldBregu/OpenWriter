@@ -156,29 +156,39 @@ function PageContent(): ReactElement {
 	return (
 		<PageContainer>
 			<PageHeader>
-				<PageHeaderTitle>{t(section.titleKey)}</PageHeaderTitle>
-				<PageHeaderItems>
-					<Button variant="outline" size="lg" onClick={handleOpenResourcesFolder}>
-						<FolderOpen />
+				<PageHeaderTitle>
+					{t(section.titleKey)}
+					<Button
+						variant="ghost"
+						size="icon"
+						title="Open folder"
+						aria-label="Open folder"
+						onClick={handleOpenResourcesFolder}
+					>
+						<FolderOpen aria-hidden="true" />
 					</Button>
 					<DropdownMenu>
-						<DropdownMenuTrigger render={<Button size="lg" />} className="gap-1.5">
-							<Upload />
-							Upload
-							<ChevronDown className="h-3.5 w-3.5 opacity-50" />
+						<DropdownMenuTrigger
+							render={
+								<Button variant="ghost" size="icon" title="Upload" aria-label="Upload" />
+							}
+						>
+							<Upload aria-hidden="true" />
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
-							<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
-								<FileText className="h-4 w-4" />
-								Markdown
-							</DropdownMenuItem>
-							<DropdownMenuItem onClick={() => setFileDialogOpen(true)}>
-								<Upload className="h-4 w-4" />
-								File
-							</DropdownMenuItem>
+							<DropdownMenuGroup>
+								<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
+									<FileText className="h-4 w-4" />
+									Markdown
+								</DropdownMenuItem>
+								<DropdownMenuItem onClick={() => setFileDialogOpen(true)}>
+									<Upload className="h-4 w-4" />
+									File
+								</DropdownMenuItem>
+							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
-				</PageHeaderItems>
+				</PageHeaderTitle>
 			</PageHeader>
 			<PageSubHeader>
 				<ButtonGroup className="min-w-0 flex-1">
