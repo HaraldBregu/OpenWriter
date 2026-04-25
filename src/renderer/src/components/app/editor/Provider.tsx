@@ -4,8 +4,6 @@ import { EditorContext } from './context/context';
 import type { AssistantAction, EditorContextValue } from './context/context';
 import { editorReducer } from './context/reducer';
 import type { EditorState } from './context/state';
-import type { HoveredBlock } from './context/state';
-import { useBlockHover } from './hooks/use-block-hover';
 import { InsertImageDialog } from '../dialogs';
 
 interface ProviderProps {
@@ -29,16 +27,8 @@ export function Provider({
 		editorReducer,
 		undefined,
 		(): EditorState => ({
-			hoveredBlock: null,
 			imageDialogOpen: false,
 		})
-	);
-
-	useBlockHover({ editor, containerRef, dispatch });
-
-	const setHoveredBlock = useCallback(
-		(block: HoveredBlock | null) => dispatch({ type: 'SET_HOVERED_BLOCK', payload: block }),
-		[]
 	);
 
 	const setImageDialogOpen = useCallback(
@@ -51,7 +41,6 @@ export function Provider({
 			state,
 			editor,
 			containerRef,
-			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
 			onAssistantAction,
@@ -60,7 +49,6 @@ export function Provider({
 			state,
 			editor,
 			containerRef,
-			setHoveredBlock,
 			setImageDialogOpen,
 			onInsertContent,
 			onAssistantAction,
