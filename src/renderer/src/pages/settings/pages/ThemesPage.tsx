@@ -88,7 +88,7 @@ const ThemesPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="w-full max-w-2xl p-4 sm:p-6">
+		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.themes.title')}</h1>
 
 			{feedback.status === 'error' && (
