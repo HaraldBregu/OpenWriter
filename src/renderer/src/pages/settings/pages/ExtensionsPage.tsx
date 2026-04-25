@@ -254,7 +254,7 @@ const ExtensionsPage: React.FC = () => {
 	}, []);
 
 	return (
-		<div className="w-full max-w-5xl p-4 sm:p-6">
+		<div className="w-full max-w-5xl">
 			<h1 className="text-lg font-normal mb-1">{t('settings.extensions.title')}</h1>
 			<p className="text-sm text-muted-foreground mb-6">{t('settings.extensions.subtitle')}</p>
 
