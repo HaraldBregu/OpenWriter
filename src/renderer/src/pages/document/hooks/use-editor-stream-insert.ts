@@ -8,8 +8,10 @@ interface InsertSession {
 	origin: number;
 	insertedLength: number;
 	buffer: string;
-	pendingFrame: number | null;
+	pendingTimer: number | null;
 }
+
+const STREAM_RENDER_DEBOUNCE_MS = 120;
 
 function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
 	let node = el?.parentElement ?? null;
