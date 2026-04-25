@@ -939,9 +939,6 @@
 		"previewNotAvailable": "Anteprima non disponibile per i file {{mimeType}}",
 		"loadingPreview": "Caricamento…"
 	},
-	"blockActions": {
-		"title": "Azioni blocco"
-	},
 	"insertImageDialog": {
 		"title": "Inserisci Immagine",
 		"description": "Aggiungi un'immagine da un URL o caricala dal tuo computer.",
