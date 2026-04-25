@@ -939,9 +939,6 @@
 		"previewNotAvailable": "Preview is not available for {{mimeType}} files",
 		"loadingPreview": "Loading…"
 	},
-	"blockActions": {
-		"title": "Block actions"
-	},
 	"insertImageDialog": {
 		"title": "Insert Image",
 		"description": "Add an image from a URL or upload from your computer.",
