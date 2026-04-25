@@ -312,6 +312,7 @@ function PageContent(): ReactElement {
 			setPreexistingTaskActive(false);
 			setDocumentTaskState(null);
 			setPreexistingTaskContent(null);
+			setPreexistingTaskSelection(null);
 			return;
 		}
 		if (typeof window.task?.list !== 'function') return;
@@ -321,6 +322,7 @@ function PageContent(): ReactElement {
 		setPreexistingTaskActive(false);
 		setDocumentTaskState(null);
 		setPreexistingTaskContent(null);
+		setPreexistingTaskSelection(null);
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
@@ -342,6 +344,7 @@ function PageContent(): ReactElement {
 			setPreexistingTaskActive(!!displayTask);
 			setDocumentTaskState(displayTask?.status ?? null);
 			setPreexistingTaskContent(finishedTask?.data ?? null);
+			setPreexistingTaskSelection(displayTask?.metadata?.selection ?? null);
 		});
 
 		return () => {
