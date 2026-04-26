@@ -13,12 +13,10 @@ import {
 	flip,
 	FloatingPortal,
 	offset,
-	safePolygon,
 	shift,
 	useClick,
 	useDismiss,
 	useFloating,
-	useHover,
 	useInteractions,
 	useTransitionStyles,
 } from '@floating-ui/react';
