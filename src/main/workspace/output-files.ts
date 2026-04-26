@@ -214,16 +214,6 @@ export class OutputFilesService implements Disposable {
 		const metadata: OutputFileMetadata = {
 			title: input.metadata.title,
 			type: 'document',
-			category: input.metadata.category ?? '',
-			tags: input.metadata.tags ?? [],
-			visibility: input.metadata.visibility ?? 'private',
-			provider: input.metadata.provider ?? APP_DEFAULTS.provider,
-			model: input.metadata.model ?? APP_DEFAULTS.model,
-			temperature: input.metadata.temperature ?? APP_DEFAULTS.temperature,
-			maxTokens:
-				input.metadata.maxTokens !== undefined ? input.metadata.maxTokens : APP_DEFAULTS.maxTokens,
-			reasoning:
-				input.metadata.reasoning !== undefined ? input.metadata.reasoning : APP_DEFAULTS.reasoning,
 			createdAt: now,
 			updatedAt: now,
 		};
