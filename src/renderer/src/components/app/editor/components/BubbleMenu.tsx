@@ -67,14 +67,17 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	}, [refs, virtualReference]);
 
 	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
-		duration: { open: 180, close: 100 },
-		initial: ({ side }) => ({
-			opacity: 0,
-			transform: `scale(0.97) translateX(${side === 'left' ? 4 : -4}px)`,
+		duration: { open: 220, close: 120 },
+		initial: { opacity: 0, transform: 'scale(0.8)' },
+		open: {
+			opacity: 1,
+			transform: 'scale(1)',
+			transitionTimingFunction: 'cubic-bezier(0.16, 1.2, 0.4, 1)',
+		},
+		close: { opacity: 0, transform: 'scale(0.95)' },
+		common: ({ side }) => ({
+			transformOrigin: side === 'left' ? 'right center' : 'left center',
 		}),
-		open: { opacity: 1, transform: 'scale(1) translateX(0)' },
-		close: { opacity: 0, transform: 'scale(1) translateX(0)' },
-		common: { transformOrigin: 'center' },
 	});
 
 	const handlePluginUpdate = useCallback(
@@ -128,7 +131,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					size="sm"
 					className={cn(
 						'flex flex-col gap-1! p-2! w-40',
-						'shadow-lg! shadow-black/10 dark:shadow-xl! dark:shadow-black/50'
+						'shadow-lg! shadow-black/10 dark:shadow-xl! dark:shadow-black/10'
 					)}
 				>
 					<div className="flex flex-row items-center gap-0.5">
