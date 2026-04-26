@@ -6,7 +6,7 @@ import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import { BubbleMenu } from './components/BubbleMenu';
+import { BubbleMenu, type AiActionPayload } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import { PromptSubmitPayload } from '@shared/index';
