@@ -57,9 +57,18 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
 		duration: { open: 180, close: 120 },
-		initial: { opacity: 0, transform: 'scale(0.95) translateY(4px)' },
-		open: { opacity: 1, transform: 'scale(1) translateY(0)' },
-		close: { opacity: 0, transform: 'scale(0.95) translateY(4px)' },
+		initial: ({ side }) => ({
+			opacity: 0,
+			transform: `scale(0.95) translateX(${side === 'left' ? 4 : -4}px)`,
+		}),
+		open: { opacity: 1, transform: 'scale(1) translateX(0)' },
+		close: ({ side }) => ({
+			opacity: 0,
+			transform: `scale(0.95) translateX(${side === 'left' ? 4 : -4}px)`,
+		}),
+		common: ({ side }) => ({
+			transformOrigin: side === 'left' ? 'right center' : 'left center',
+		}),
 	});
 
 	const handlePluginUpdate = useCallback(
