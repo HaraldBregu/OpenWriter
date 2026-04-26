@@ -227,7 +227,16 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					<Separator className="my-1" />
 
 					<div className="flex flex-col gap-0.5">
-						<Button variant="ghost" size="sm" className="justify-start w-full">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => {
+								const { from, to } = editor.state.selection;
+								if (from === to) return;
+								editor.commands.setAiActionMarker({ from, to });
+							}}
+						>
 							<Wand2 />
 							Improve writing
 						</Button>
