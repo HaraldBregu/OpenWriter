@@ -283,7 +283,12 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<Wand2 />
 							Improve writing
 						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={handleFixGrammar}
+						>
 							<SpellCheck />
 							Fix grammar
 						</Button>
