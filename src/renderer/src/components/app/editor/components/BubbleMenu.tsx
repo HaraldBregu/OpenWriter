@@ -118,10 +118,12 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			improveWritingTimerRef.current = null;
 		}
 		editor.view.dom.classList.add('improving-writing');
+		editor.setEditable(false);
 		improveWritingTimerRef.current = setTimeout(() => {
 			improveWritingTimerRef.current = null;
 			if (editor.isDestroyed) return;
 			editor.view.dom.classList.remove('improving-writing');
+			editor.setEditable(true);
 		}, IMPROVE_WRITING_DURATION);
 	}, [editor]);
 
@@ -132,6 +134,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 				improveWritingTimerRef.current = null;
 				if (!editor.isDestroyed) {
 					editor.view.dom.classList.remove('improving-writing');
+					editor.setEditable(true);
 				}
 			}
 		};
@@ -148,9 +151,10 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			if (getReferenceRect) {
 				referenceRectRef.current = getReferenceRect;
 			}
+			if (!nextOpen && editor.view.dom.classList.contains('improving-writing')) return;
 			setOpen(nextOpen);
 		},
-		[]
+		[editor]
 	);
 
 	useEffect(() => {
