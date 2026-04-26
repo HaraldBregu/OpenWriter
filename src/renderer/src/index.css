@@ -284,39 +284,6 @@
 	background-color: hsl(var(--info) / 0.18);
 }
 
-.ProseMirror .ai-action-marker {
-	background-image: linear-gradient(
-		90deg,
-		hsl(48 100% 78%),
-		hsl(330 92% 86%),
-		hsl(48 100% 78%)
-	);
-	background-size: 200% 100%;
-	background-position: 0% 50%;
-	-webkit-box-decoration-break: clone;
-	box-decoration-break: clone;
-	padding-block: max(0px, calc((1lh - 1em) / 2));
-	animation: ai-action-marker-flow 3.2s linear infinite;
-}
-
-.dark .ProseMirror .ai-action-marker {
-	background-image: linear-gradient(
-		90deg,
-		hsl(48 55% 30%),
-		hsl(330 45% 36%),
-		hsl(48 55% 30%)
-	);
-}
-
-@keyframes ai-action-marker-flow {
-	0% {
-		background-position: 0% 50%;
-	}
-	100% {
-		background-position: 200% 50%;
-	}
-}
-
 .ProseMirror .ProseMirror-gapcursor::after {
 	content: '';
 	display: block;
