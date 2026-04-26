@@ -211,7 +211,53 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 					<Separator className="my-1" />
 
-					<AssistantMenu editor={editor} onAction={onAssistantAction} />
+					<div className="flex flex-col gap-0.5">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => onAssistantAction?.('improve', editor)}
+						>
+							<Wand2 className="h-3.5 w-3.5" />
+							Improve writing
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => onAssistantAction?.('fix-grammar', editor)}
+						>
+							<SpellCheck className="h-3.5 w-3.5" />
+							Fix grammar
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => onAssistantAction?.('summarize', editor)}
+						>
+							<FileText className="h-3.5 w-3.5" />
+							Summarize
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => onAssistantAction?.('translate', editor)}
+						>
+							<Languages className="h-3.5 w-3.5" />
+							Translate
+						</Button>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => onAssistantAction?.('continue-writing', editor)}
+						>
+							<ArrowRight className="h-3.5 w-3.5" />
+							Continue writing
+						</Button>
+					</div>
 				</Card>
 				<FloatingArrow
 					ref={arrowRef}
