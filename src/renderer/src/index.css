@@ -293,12 +293,9 @@
 	);
 	background-size: 200% 100%;
 	background-position: 0% 50%;
-	border-radius: 4px;
 	-webkit-box-decoration-break: clone;
 	box-decoration-break: clone;
 	padding-block: max(0px, calc((1lh - 1em) / 2));
-	padding-inline: 2px;
-	margin-inline: -2px;
 	animation: ai-action-marker-flow 3.2s linear infinite;
 }
 
