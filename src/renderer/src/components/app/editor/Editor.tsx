@@ -104,13 +104,13 @@ function readFileAsDataUri(file: File): Promise<string> {
 }
 
 function Content({
-	onFixGrammar,
+	onAiAction,
 }: {
-	onFixGrammar?: (text: string) => void;
+	onAiAction?: (action: AiActionPayload) => void;
 }): React.JSX.Element {
 	return (
 		<>
-			<BubbleMenu onFixGrammar={onFixGrammar} />
+			<BubbleMenu onAiAction={onAiAction} />
 			<OptionMenu />
 		</>
 	);
