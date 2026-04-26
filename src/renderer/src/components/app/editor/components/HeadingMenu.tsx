@@ -43,6 +43,15 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 	editor: Editor;
 }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
+	const [, forceRender] = useReducer((x: number) => x + 1, 0);
+
+	useEffect(() => {
+		const handler = (): void => forceRender();
+		editor.on('transaction', handler);
+		return () => {
+			editor.off('transaction', handler);
+		};
+	}, [editor]);
 
 	const { refs, floatingStyles, context } = useFloating({
 		open,
