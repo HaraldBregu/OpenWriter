@@ -150,22 +150,52 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 				</PopoverContent>
 			</Popover>
 
-			<Button
-				variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
-				size="icon"
-				aria-label="Bullet list"
-				onClick={() => editor.chain().focus().toggleBulletList().run()}
-			>
-				<List className="h-3.5 w-3.5" />
-			</Button>
-			<Button
-				variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
-				size="icon"
-				aria-label="Ordered list"
-				onClick={() => editor.chain().focus().toggleOrderedList().run()}
-			>
-				<ListOrdered className="h-3.5 w-3.5" />
-			</Button>
+			<Popover open={listOpen} onOpenChange={setListOpen}>
+				<PopoverTrigger
+					openOnHover
+					delay={100}
+					closeDelay={150}
+					render={
+						<Button
+							variant={
+								editor.isActive('bulletList') || editor.isActive('orderedList')
+									? 'default'
+									: 'ghost'
+							}
+							size="icon"
+							aria-label="List"
+						>
+							<List className="h-3.5 w-3.5" />
+						</Button>
+					}
+				/>
+				<PopoverContent side="top" align="center" className="w-auto p-1">
+					<div className="flex flex-row items-center gap-0.5">
+						<Button
+							variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Bullet list"
+							onClick={() => {
+								editor.chain().focus().toggleBulletList().run();
+								setListOpen(false);
+							}}
+						>
+							<List className="h-3.5 w-3.5" />
+						</Button>
+						<Button
+							variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Ordered list"
+							onClick={() => {
+								editor.chain().focus().toggleOrderedList().run();
+								setListOpen(false);
+							}}
+						>
+							<ListOrdered className="h-3.5 w-3.5" />
+						</Button>
+					</div>
+				</PopoverContent>
+			</Popover>
 
 			<Popover>
 				<PopoverTrigger
