@@ -58,7 +58,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		[]
 	);
 
-	const { refs, floatingStyles, context, middlewareData } = useFloating({
+	const { refs, floatingStyles, context, middlewareData, update } = useFloating({
 		open,
 		onOpenChange: setOpen,
 		placement: 'left',
