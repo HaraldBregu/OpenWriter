@@ -74,6 +74,7 @@ export const AiActionMarkerExtension = Extension.create({
 	},
 
 	addProseMirrorPlugins() {
+		const editor = this.editor;
 		return [
 			new Plugin<AiActionMarkerPluginState>({
 				key: aiActionMarkerPluginKey,
@@ -108,12 +109,32 @@ export const AiActionMarkerExtension = Extension.create({
 				view(view) {
 					let timer: ReturnType<typeof setTimeout> | null = null;
 					let lastSession = 0;
+					let disabled = false;
 
 					const clearTimer = (): void => {
 						if (timer) {
 							clearTimeout(timer);
 							timer = null;
 						}
+					};
+
+					const setEditorEditable = (editable: boolean): void => {
+						queueMicrotask(() => {
+							if (editor.isDestroyed) return;
+							editor.setEditable(editable);
+						});
+					};
+
+					const disableEditor = (): void => {
+						if (disabled) return;
+						disabled = true;
+						setEditorEditable(false);
+					};
+
+					const enableEditor = (): void => {
+						if (!disabled) return;
+						disabled = false;
+						setEditorEditable(true);
 					};
 
 					return {
@@ -124,17 +145,24 @@ export const AiActionMarkerExtension = Extension.create({
 							lastSession = state.session;
 							clearTimer();
 							if (state.range) {
+								disableEditor();
 								timer = setTimeout(() => {
 									timer = null;
+									enableEditor();
 									currentView.dispatch(
 										currentView.state.tr.setMeta(aiActionMarkerPluginKey, {
 											range: null,
 										} satisfies AiActionMarkerMeta)
 									);
 								}, AI_ACTION_MARKER_DURATION);
+							} else {
+								enableEditor();
 							}
 						},
-						destroy: clearTimer,
+						destroy: () => {
+							clearTimer();
+							enableEditor();
+						},
 					};
 				},
 
