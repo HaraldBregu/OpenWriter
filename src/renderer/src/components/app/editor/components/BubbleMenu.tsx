@@ -37,12 +37,7 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 const IMPROVE_WRITING_DURATION = 5000;
 
-export type AiActionType =
-	| 'improve-writing'
-	| 'fix-grammar'
-	| 'summarize'
-	| 'translate'
-	| 'continue-writing';
+export type AiActionType = 'improve-writing' | 'fix-grammar';
 
 export interface AiActionPayload {
 	type: AiActionType;
