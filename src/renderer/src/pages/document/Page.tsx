@@ -586,25 +586,6 @@ function PageContent(): ReactElement {
 		[setEditor]
 	);
 
-	const handleAssistantAction = useCallback(
-		(action: AssistantAction, editor: TiptapEditor) => {
-			const instructionByAction: Record<AssistantAction, string> = {
-				improve: 'Improve the writing of the selected text while preserving its meaning.',
-				'fix-grammar': 'Fix grammar and spelling mistakes in the selected text.',
-				summarize: 'Summarize the selected text concisely.',
-				translate: 'Translate the selected text to English.',
-				'continue-writing':
-					'Continue writing from where the text ends, matching tone and style.',
-			};
-
-			void handlePromptSubmit(
-				{ prompt: instructionByAction[action], files: [], editor },
-				editor
-			);
-		},
-		[handlePromptSubmit]
-	);
-
 	const handleInsertContent = useCallback(() => {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
