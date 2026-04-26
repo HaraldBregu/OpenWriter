@@ -57,6 +57,7 @@
 		"@electron-toolkit/utils": "^4.0.0",
 		"@embedpdf/react-pdf-viewer": "^2.14.0",
 		"@floating-ui/dom": "^1.7.5",
+		"@floating-ui/react": "^0.27.19",
 		"@fontsource/alegreya": "^5.2.8",
 		"@fontsource/merriweather": "^5.2.11",
 		"@mistralai/mistralai": "^2.2.0",

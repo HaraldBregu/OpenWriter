@@ -15,7 +15,6 @@ export type BubbleMenuShouldShow = (props: {
 export interface BubbleMenuPluginProps {
 	pluginKey: PluginKey | string;
 	editor: Editor;
-	element: HTMLElement;
 	updateDelay?: number;
 	shouldShow?: BubbleMenuShouldShow | null;
 	onUpdate: (state: { open: boolean; getReferenceRect: (() => DOMRect) | null }) => void;
@@ -25,30 +24,19 @@ export type BubbleMenuViewProps = BubbleMenuPluginProps & { view: EditorView };
 
 export class BubbleMenuView {
 	public editor: Editor;
-	public element: HTMLElement;
 	public view: EditorView;
-	public preventHide = false;
 	public updateDelay: number;
 
 	private updateDebounceTimer: ReturnType<typeof setTimeout> | undefined;
 	private shouldShow: BubbleMenuShouldShow;
 	private onUpdate: BubbleMenuPluginProps['onUpdate'];
 
-	constructor({
-		editor,
-		element,
-		view,
-		updateDelay = 250,
-		shouldShow,
-		onUpdate,
-	}: BubbleMenuViewProps) {
+	constructor({ editor, view, updateDelay = 250, shouldShow, onUpdate }: BubbleMenuViewProps) {
 		this.editor = editor;
-		this.element = element;
 		this.view = view;
 		this.updateDelay = updateDelay;
 		this.onUpdate = onUpdate;
 
-		this.element.addEventListener('mousedown', this.mousedownHandler, { capture: true });
 		this.view.dom.addEventListener('dragstart', this.dragstartHandler);
 		this.editor.on('focus', this.focusHandler);
 		this.editor.on('blur', this.blurHandler);
@@ -63,10 +51,6 @@ export class BubbleMenuView {
 			});
 	}
 
-	mousedownHandler = (): void => {
-		this.preventHide = true;
-	};
-
 	dragstartHandler = (): void => {
 		this.emitClosed();
 	};
@@ -75,14 +59,7 @@ export class BubbleMenuView {
 		setTimeout(() => this.update(this.editor.view));
 	};
 
-	blurHandler = ({ event }: { event: FocusEvent }): void => {
-		if (this.preventHide) {
-			this.preventHide = false;
-			return;
-		}
-		if (event?.relatedTarget && this.element.parentNode?.contains(event.relatedTarget as Node)) {
-			return;
-		}
+	blurHandler = (): void => {
 		this.emitClosed();
 	};
 
@@ -161,9 +138,6 @@ export class BubbleMenuView {
 
 	destroy(): void {
 		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
-		this.element.removeEventListener('mousedown', this.mousedownHandler, {
-			capture: true,
-		} as EventListenerOptions);
 		this.view.dom.removeEventListener('dragstart', this.dragstartHandler);
 		this.editor.off('focus', this.focusHandler);
 		this.editor.off('blur', this.blurHandler);
