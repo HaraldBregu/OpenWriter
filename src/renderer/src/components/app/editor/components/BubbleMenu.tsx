@@ -194,67 +194,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					</PopoverContent>
 				</Popover>
 
-				<Popover>
-					<PopoverTrigger
-						openOnHover
-						delay={100}
-						closeDelay={150}
-						render={
-							<Button variant="ghost" size="icon" aria-label="Assistant" className="ml-auto">
-								<Sparkles className="h-3.5 w-3.5" />
-							</Button>
-						}
-					/>
-					<PopoverContent side="top" align="end" className="w-56 p-1">
-						<div className="flex flex-col gap-0.5">
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => onAssistantAction?.('improve', editor)}
-							>
-								<Wand2 className="h-3.5 w-3.5" />
-								Improve writing
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => onAssistantAction?.('fix-grammar', editor)}
-							>
-								<SpellCheck className="h-3.5 w-3.5" />
-								Fix grammar
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => onAssistantAction?.('summarize', editor)}
-							>
-								<FileText className="h-3.5 w-3.5" />
-								Summarize
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => onAssistantAction?.('translate', editor)}
-							>
-								<Languages className="h-3.5 w-3.5" />
-								Translate
-							</Button>
-							<Button
-								variant="ghost"
-								size="sm"
-								className="justify-start w-full"
-								onClick={() => onAssistantAction?.('continue-writing', editor)}
-							>
-								<ArrowRight className="h-3.5 w-3.5" />
-								Continue writing
-							</Button>
-						</div>
-					</PopoverContent>
-				</Popover>
+				<AssistantMenu editor={editor} onAction={onAssistantAction} />
 			</Card>
 				<FloatingArrow
 					ref={arrowRef}
