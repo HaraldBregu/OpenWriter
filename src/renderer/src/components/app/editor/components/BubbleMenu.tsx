@@ -37,12 +37,24 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 const IMPROVE_WRITING_DURATION = 5000;
 
+export type AiActionType =
+	| 'improve-writing'
+	| 'fix-grammar'
+	| 'summarize'
+	| 'translate'
+	| 'continue-writing';
+
+export interface AiActionPayload {
+	type: AiActionType;
+	text: string;
+}
+
 export interface BubbleMenuProps {
-	onFixGrammar?: (text: string) => void;
+	onAiAction?: (action: AiActionPayload) => void;
 }
 
 export const BubbleMenu = React.memo(function BubbleMenu({
-	onFixGrammar,
+	onAiAction,
 }: BubbleMenuProps): React.JSX.Element | null {
 	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
