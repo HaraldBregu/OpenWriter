@@ -38,7 +38,6 @@ import {
 } from '@/components/app';
 import { PageBody } from '@/components/app/base/page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
-import type { AssistantAction } from '@/components/app/editor/context/context';
 import { PromptSubmitPayload } from '@shared/index';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
