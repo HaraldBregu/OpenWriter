@@ -128,8 +128,9 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 			size="sm"
 			data-state={open ? 'open' : 'closed'}
 			onMouseDown={(e) => e.preventDefault()}
+			style={{ position: 'fixed', top: 0, left: 0 }}
 			className={cn(
-				'fixed top-0 left-0 z-50 flex flex-row items-center gap-0.5! p-2!',
+				'z-50 flex flex-row items-center gap-0.5! p-2!',
 				'origin-bottom transition-[opacity,transform] duration-150 ease-out will-change-transform',
 				'data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0 data-[state=closed]:scale-95 data-[state=closed]:translate-y-1',
 				'data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:translate-y-0'
