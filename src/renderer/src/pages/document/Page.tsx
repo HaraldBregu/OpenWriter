@@ -592,7 +592,7 @@ function PageContent(): ReactElement {
 
 	const handleAiAction = useCallback(
 		(action: { type: string; text: string }) => {
-			console.log('AI action:', action.type);
+			console.log('AI action:', action.type, action.text);
 		},
 		[]
 	);
