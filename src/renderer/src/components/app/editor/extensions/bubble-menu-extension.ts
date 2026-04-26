@@ -2,16 +2,13 @@ import { Extension } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
 import { BubbleMenuPlugin, type BubbleMenuPluginProps } from '../plugins/bubble-menu-plugin';
 
-export type BubbleMenuExtensionOptions = Omit<BubbleMenuPluginProps, 'editor' | 'element'> & {
-	element: HTMLElement | null;
-};
+export type BubbleMenuExtensionOptions = Omit<BubbleMenuPluginProps, 'editor'>;
 
 export const BubbleMenuExtension = Extension.create<BubbleMenuExtensionOptions>({
 	name: 'bubbleMenu',
 
 	addOptions() {
 		return {
-			element: null,
 			pluginKey: 'bubbleMenu',
 			updateDelay: 250,
 			shouldShow: null,
@@ -20,10 +17,6 @@ export const BubbleMenuExtension = Extension.create<BubbleMenuExtensionOptions>(
 	},
 
 	addProseMirrorPlugins() {
-		if (!this.options.element) {
-			return [];
-		}
-
 		return [
 			BubbleMenuPlugin({
 				pluginKey:
@@ -31,7 +24,6 @@ export const BubbleMenuExtension = Extension.create<BubbleMenuExtensionOptions>(
 						? this.options.pluginKey
 						: new PluginKey(this.options.pluginKey),
 				editor: this.editor,
-				element: this.options.element,
 				updateDelay: this.options.updateDelay,
 				shouldShow: this.options.shouldShow,
 				onUpdate: this.options.onUpdate,
