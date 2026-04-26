@@ -31,6 +31,7 @@ import { Card } from '@/components/ui/Card';
 import { Separator } from '@/components/ui/Separator';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
+import { aiActionMarkerPluginKey } from '../extensions/ai-action-marker-extension';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
 
