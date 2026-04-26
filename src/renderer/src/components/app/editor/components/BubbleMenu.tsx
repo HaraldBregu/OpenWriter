@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
 	ArrowRight,
 	Bold,
@@ -60,7 +60,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			flip({ fallbackPlacements: ['right'] }),
 			shift({ padding: 8 }),
 			arrow({ element: arrowRef }),
-			hide({ strategy: 'referenceHidden', padding: { top: 30, bottom: 30 } }),
+			hide({ strategy: 'referenceHidden' }),
 		],
 	});
 
