@@ -118,10 +118,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			onMouseDown={(e) => e.preventDefault()}
 			className="z-50"
 		>
-			<div
-				style={{ ...transitionStyles, transformOrigin: 'bottom' }}
-				className="relative will-change-transform"
-			>
+			<div style={transitionStyles} className="relative will-change-transform">
 			<Card
 				size="sm"
 				className={cn('flex flex-row items-center gap-0.5! p-2!')}
