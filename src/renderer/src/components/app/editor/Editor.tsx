@@ -102,10 +102,14 @@ function readFileAsDataUri(file: File): Promise<string> {
 	});
 }
 
-function Content(): React.JSX.Element {
+function Content({
+	onFixGrammar,
+}: {
+	onFixGrammar?: (text: string) => void;
+}): React.JSX.Element {
 	return (
 		<>
-			<BubbleMenu />
+			<BubbleMenu onFixGrammar={onFixGrammar} />
 			<OptionMenu />
 		</>
 	);
