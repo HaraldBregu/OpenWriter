@@ -117,7 +117,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			clearTimeout(improveWritingTimerRef.current);
 			improveWritingTimerRef.current = null;
 		}
-		editor.chain().setAiActionMarker({ from, to }).setTextSelection(to).run();
+		editor.commands.setAiActionMarker({ from, to });
 		editor.setEditable(false);
 		improveWritingTimerRef.current = setTimeout(() => {
 			improveWritingTimerRef.current = null;
