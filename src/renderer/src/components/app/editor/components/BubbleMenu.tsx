@@ -104,10 +104,12 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 
 		const update = (): void => {
 			void computePosition(virtualEl as ReferenceElement, el, {
+				strategy: 'fixed',
 				placement: 'top',
 				middleware: [offset(8), flip(), shift({ padding: 8 })],
 			}).then(({ x, y }) => {
-				el.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+				el.style.left = `${Math.round(x)}px`;
+				el.style.top = `${Math.round(y)}px`;
 			});
 		};
 
