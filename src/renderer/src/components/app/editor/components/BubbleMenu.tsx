@@ -37,7 +37,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		[]
 	);
 
-	const { refs, floatingStyles, context } = useFloating({
+	const { refs, floatingStyles, context, middlewareData } = useFloating({
 		open,
 		onOpenChange: setOpen,
 		placement: 'left',
@@ -48,8 +48,11 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			flip({ fallbackPlacements: ['right'] }),
 			shift({ padding: 8 }),
 			arrow({ element: arrowRef }),
+			hide({ strategy: 'referenceHidden' }),
 		],
 	});
+
+	const referenceHidden = middlewareData.hide?.referenceHidden ?? false;
 
 	useEffect(() => {
 		refs.setPositionReference(virtualReference);
