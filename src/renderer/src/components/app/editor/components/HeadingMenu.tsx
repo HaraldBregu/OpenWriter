@@ -60,7 +60,7 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 		placement: 'top',
 		strategy: 'fixed',
 		whileElementsMounted: autoUpdate,
-		middleware: [offset(8), flip(), shift({ padding: 8 })],
+		middleware: [offset(8), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
 	});
 
 	const click = useClick(context);
