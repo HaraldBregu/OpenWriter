@@ -32,7 +32,6 @@ import { Separator } from '@/components/ui/Separator';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
-import { AssistantMenu } from './AssistantMenu';
 import { HeadingMenu } from './HeadingMenu';
 
 const pluginKey = new PluginKey('bubbleMenu');
