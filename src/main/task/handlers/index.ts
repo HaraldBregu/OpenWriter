@@ -4,3 +4,5 @@ export { DemoFixGrammarTaskHandler } from './demo-fix-grammar-task-handler';
 export type { DemoFixGrammarTaskInput } from './demo-fix-grammar-task-handler';
 export { DemoContinueWritingTaskHandler } from './demo-continue-writing-task-handler';
 export type { DemoContinueWritingTaskInput } from './demo-continue-writing-task-handler';
+export { DemoPostGeneratorTaskHandler } from './demo-post-generator-task-handler';
+export type { DemoPostGeneratorTaskInput } from './demo-post-generator-task-handler';
