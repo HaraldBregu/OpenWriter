@@ -9,7 +9,6 @@ import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
-import type { AssistantAction } from './context/context';
 import { PromptSubmitPayload } from '@shared/index';
 
 function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
