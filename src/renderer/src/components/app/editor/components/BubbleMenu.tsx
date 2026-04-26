@@ -131,7 +131,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					size="sm"
 					className={cn(
 						'flex flex-col gap-1! p-2! w-40',
-						'shadow-lg! shadow-black/10 dark:shadow-xl! dark:shadow-black/10'
+						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
 					<div className="flex flex-row items-center gap-0.5">
