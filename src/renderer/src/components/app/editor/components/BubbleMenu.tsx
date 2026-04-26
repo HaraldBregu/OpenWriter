@@ -59,19 +59,14 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	}, [refs, virtualReference]);
 
 	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
-		duration: { open: 180, close: 120 },
+		duration: { open: 180, close: 100 },
 		initial: ({ side }) => ({
 			opacity: 0,
-			transform: `scale(0.95) translateX(${side === 'left' ? 4 : -4}px)`,
+			transform: `scale(0.97) translateX(${side === 'left' ? 4 : -4}px)`,
 		}),
 		open: { opacity: 1, transform: 'scale(1) translateX(0)' },
-		close: ({ side }) => ({
-			opacity: 0,
-			transform: `scale(0.95) translateX(${side === 'left' ? 4 : -4}px)`,
-		}),
-		common: ({ side }) => ({
-			transformOrigin: side === 'left' ? 'right center' : 'left center',
-		}),
+		close: { opacity: 0, transform: 'scale(1) translateX(0)' },
+		common: { transformOrigin: 'center' },
 	});
 
 	const handlePluginUpdate = useCallback(
@@ -118,7 +113,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			className="z-50"
 		>
 			<div style={transitionStyles} className="relative will-change-transform">
-				<Card size="sm" className={cn('flex flex-col gap-1! p-2! w-44')}>
+				<Card size="sm" className={cn('flex flex-col gap-1! p-2! w-38')}>
 					<div className="flex flex-row items-center gap-0.5">
 						<Button
 							variant={editor.isActive('bold') ? 'default' : 'ghost'}
