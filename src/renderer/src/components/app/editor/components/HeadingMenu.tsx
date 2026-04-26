@@ -44,6 +44,7 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 }): React.JSX.Element {
 	const [open, setOpen] = useState(false);
 	const [, forceRender] = useReducer((x: number) => x + 1, 0);
+	const arrowRef = useRef<SVGSVGElement>(null);
 
 	useEffect(() => {
 		const handler = (): void => forceRender();
