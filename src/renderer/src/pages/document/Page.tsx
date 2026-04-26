@@ -408,6 +408,9 @@ function PageContent(): ReactElement {
 				handlers.handleDelta(event.data);
 			} else if (event.state === 'finished') {
 				handlers.handleCompleted(event.data);
+				if (typeof window.task?.cancel === 'function') {
+					void window.task.cancel(activeTaskId);
+				}
 				setActiveTaskId(null);
 			} else if (event.state === 'cancelled') {
 				handlers.handleCancelOrError();
