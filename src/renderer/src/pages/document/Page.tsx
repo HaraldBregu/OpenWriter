@@ -590,9 +590,12 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
-	const handleFixGrammar = useCallback((text: string) => {
-		console.log('Fix grammar:', text);
-	}, []);
+	const handleAiAction = useCallback(
+		(action: { type: string; text: string }) => {
+			console.log('AI action:', action.type);
+		},
+		[]
+	);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
 		if (!id) return;
