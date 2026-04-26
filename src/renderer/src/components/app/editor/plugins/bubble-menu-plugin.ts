@@ -2,28 +2,26 @@ import { isTextSelection, posToDOMRect } from '@tiptap/core';
 import type { Editor } from '@tiptap/core';
 import { type EditorState, Plugin, PluginKey } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
-import { computePosition, flip, offset, shift } from '@floating-ui/dom';
+
+export type BubbleMenuShouldShow = (props: {
+	editor: Editor;
+	view: EditorView;
+	state: EditorState;
+	oldState?: EditorState;
+	from: number;
+	to: number;
+}) => boolean;
 
 export interface BubbleMenuPluginProps {
 	pluginKey: PluginKey | string;
 	editor: Editor;
 	element: HTMLElement;
 	updateDelay?: number;
-	shouldShow?:
-		| ((props: {
-				editor: Editor;
-				view: EditorView;
-				state: EditorState;
-				oldState?: EditorState;
-				from: number;
-				to: number;
-		  }) => boolean)
-		| null;
+	shouldShow?: BubbleMenuShouldShow | null;
+	onUpdate: (state: { open: boolean; getReferenceRect: (() => DOMRect) | null }) => void;
 }
 
-export type BubbleMenuViewProps = BubbleMenuPluginProps & {
-	view: EditorView;
-};
+export type BubbleMenuViewProps = BubbleMenuPluginProps & { view: EditorView };
 
 export class BubbleMenuView {
 	public editor: Editor;
@@ -33,32 +31,34 @@ export class BubbleMenuView {
 	public updateDelay: number;
 
 	private updateDebounceTimer: ReturnType<typeof setTimeout> | undefined;
-	private shouldShow: Exclude<BubbleMenuPluginProps['shouldShow'], null>;
+	private shouldShow: BubbleMenuShouldShow;
+	private onUpdate: BubbleMenuPluginProps['onUpdate'];
 
-	constructor({ editor, element, view, updateDelay = 250, shouldShow }: BubbleMenuViewProps) {
+	constructor({
+		editor,
+		element,
+		view,
+		updateDelay = 250,
+		shouldShow,
+		onUpdate,
+	}: BubbleMenuViewProps) {
 		this.editor = editor;
 		this.element = element;
 		this.view = view;
 		this.updateDelay = updateDelay;
+		this.onUpdate = onUpdate;
 
 		this.element.addEventListener('mousedown', this.mousedownHandler, { capture: true });
 		this.view.dom.addEventListener('dragstart', this.dragstartHandler);
 		this.editor.on('focus', this.focusHandler);
 		this.editor.on('blur', this.blurHandler);
 
-		this.element.style.visibility = 'hidden';
-		this.element.style.position = 'absolute';
-
 		this.shouldShow =
 			shouldShow ??
 			(({ view: v, state, from, to }) => {
 				const { doc, selection } = state;
 				const isEmptyTextBlock = !doc.textBetween(from, to).length && isTextSelection(selection);
-
-				if (!v.hasFocus() || state.selection.empty || isEmptyTextBlock) {
-					return false;
-				}
-
+				if (!v.hasFocus() || state.selection.empty || isEmptyTextBlock) return false;
 				return true;
 			});
 	}
@@ -68,11 +68,10 @@ export class BubbleMenuView {
 	};
 
 	dragstartHandler = (): void => {
-		this.hide();
+		this.emitClosed();
 	};
 
 	focusHandler = (): void => {
-		// we use `setTimeout` to make sure `selection` is already updated
 		setTimeout(() => this.update(this.editor.view));
 	};
 
@@ -81,50 +80,31 @@ export class BubbleMenuView {
 			this.preventHide = false;
 			return;
 		}
-
 		if (event?.relatedTarget && this.element.parentNode?.contains(event.relatedTarget as Node)) {
 			return;
 		}
-
-		this.hide();
+		this.emitClosed();
 	};
 
-	async updatePosition(): Promise<void> {
+	private getReferenceRect = (): DOMRect => {
 		const { selection } = this.editor.state;
+		if (isTextSelection(selection)) {
+			const { ranges } = selection;
+			const from = Math.min(...ranges.map((r) => r.$from.pos));
+			const to = Math.max(...ranges.map((r) => r.$to.pos));
+			return posToDOMRect(this.view, from, to);
+		}
+		const node = this.view.nodeDOM(selection.from) as HTMLElement | null;
+		if (node) return node.getBoundingClientRect();
+		return posToDOMRect(this.view, selection.from, selection.to);
+	};
 
-		const virtualEl = {
-			getBoundingClientRect: () => {
-				if (isTextSelection(selection)) {
-					const { ranges } = selection;
-					const from = Math.min(...ranges.map((r) => r.$from.pos));
-					const to = Math.max(...ranges.map((r) => r.$to.pos));
-					return posToDOMRect(this.view, from, to);
-				}
-
-				const node = this.view.nodeDOM(selection.from) as HTMLElement | null;
-				if (node) {
-					return node.getBoundingClientRect();
-				}
-
-				return posToDOMRect(this.view, selection.from, selection.to);
-			},
-		};
-
-		const pos = await computePosition(virtualEl, this.element, {
-			placement: 'left',
-			middleware: [offset(8), flip(), shift({ padding: 8 })],
-		});
-
-		this.element.style.left = `${pos.x}px`;
-		this.element.style.top = `${pos.y}px`;
+	private emitOpen(): void {
+		this.onUpdate({ open: true, getReferenceRect: this.getReferenceRect });
 	}
 
-	show(): void {
-		this.element.style.visibility = 'visible';
-	}
-
-	hide(): void {
-		this.element.style.visibility = 'hidden';
+	private emitClosed(): void {
+		this.onUpdate({ open: false, getReferenceRect: null });
 	}
 
 	update(view: EditorView, oldState?: EditorState): void {
@@ -138,28 +118,21 @@ export class BubbleMenuView {
 
 		const selectionChanged = !oldState?.selection.eq(view.state.selection);
 		const docChanged = !oldState?.doc.eq(view.state.doc);
-
-		this.updateHandler(view, selectionChanged, docChanged, oldState);
+		this.runUpdate(view, selectionChanged, docChanged, oldState);
 	}
 
-	handleDebouncedUpdate = (view: EditorView, oldState?: EditorState): void => {
+	private handleDebouncedUpdate = (view: EditorView, oldState?: EditorState): void => {
 		const selectionChanged = !oldState?.selection.eq(view.state.selection);
 		const docChanged = !oldState?.doc.eq(view.state.doc);
+		if (!selectionChanged && !docChanged) return;
 
-		if (!selectionChanged && !docChanged) {
-			return;
-		}
-
-		if (this.updateDebounceTimer) {
-			clearTimeout(this.updateDebounceTimer);
-		}
-
+		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
 		this.updateDebounceTimer = setTimeout(() => {
-			this.updateHandler(view, selectionChanged, docChanged, oldState);
+			this.runUpdate(view, selectionChanged, docChanged, oldState);
 		}, this.updateDelay);
 	};
 
-	updateHandler = (
+	private runUpdate = (
 		view: EditorView,
 		selectionChanged: boolean,
 		docChanged: boolean,
@@ -167,35 +140,27 @@ export class BubbleMenuView {
 	): void => {
 		const { state, composing } = view;
 		const { selection } = state;
-
 		const isSame = !selectionChanged && !docChanged;
+		if (composing || isSame) return;
 
-		if (composing || isSame) {
-			return;
-		}
-
-		const from = selection.from;
-		const to = selection.to;
-
-		const shouldShow = this.shouldShow?.({
+		const shouldShow = this.shouldShow({
 			editor: this.editor,
 			view,
 			state,
 			oldState,
-			from,
-			to,
+			from: selection.from,
+			to: selection.to,
 		});
 
 		if (!shouldShow) {
-			this.hide();
+			this.emitClosed();
 			return;
 		}
-
-		void this.updatePosition();
-		this.show();
+		this.emitOpen();
 	};
 
 	destroy(): void {
+		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
 		this.element.removeEventListener('mousedown', this.mousedownHandler, {
 			capture: true,
 		} as EventListenerOptions);
