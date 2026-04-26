@@ -212,48 +212,23 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					<Separator className="my-1" />
 
 					<div className="flex flex-col gap-0.5">
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => onAssistantAction?.('improve', editor)}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<Wand2 className="h-3.5 w-3.5" />
 							Improve writing
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => onAssistantAction?.('fix-grammar', editor)}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<SpellCheck className="h-3.5 w-3.5" />
 							Fix grammar
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => onAssistantAction?.('summarize', editor)}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<FileText className="h-3.5 w-3.5" />
 							Summarize
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => onAssistantAction?.('translate', editor)}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<Languages className="h-3.5 w-3.5" />
 							Translate
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => onAssistantAction?.('continue-writing', editor)}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<ArrowRight className="h-3.5 w-3.5" />
 							Continue writing
 						</Button>
