@@ -293,7 +293,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={handleImproveWriting}
+							onClick={() => {
+								handleImproveWriting();
+								handleAiAction('improve-writing');
+							}}
 						>
 							<Wand2 />
 							Improve writing
@@ -302,20 +305,35 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={handleFixGrammar}
+							onClick={() => handleAiAction('fix-grammar')}
 						>
 							<SpellCheck />
 							Fix grammar
 						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => handleAiAction('summarize')}
+						>
 							<FileText />
 							Summarize
 						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => handleAiAction('translate')}
+						>
 							<Languages />
 							Translate
 						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={() => handleAiAction('continue-writing')}
+						>
 							<ArrowRight />
 							Continue writing
 						</Button>
