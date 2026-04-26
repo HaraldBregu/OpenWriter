@@ -159,40 +159,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					<Type className="h-3.5 w-3.5" />
 				</Button>
 
-				<Popover open={headingOpen} onOpenChange={setHeadingOpen}>
-					<PopoverTrigger
-						openOnHover
-						delay={100}
-						closeDelay={150}
-						render={
-							<Button
-								variant={isHeadingActive ? 'default' : 'ghost'}
-								size="icon"
-								aria-label="Heading"
-							>
-								<HeadingIcon className="h-3.5 w-3.5" />
-							</Button>
-						}
-					/>
-					<PopoverContent side="top" align="center" className="w-auto p-1">
-						<div className="flex flex-row items-center gap-0.5">
-							{HEADING_LEVELS.map(({ level, Icon, label }) => (
-								<Button
-									key={level}
-									variant={editor.isActive('heading', { level }) ? 'default' : 'ghost'}
-									size="icon"
-									aria-label={label}
-									onClick={() => {
-										editor.chain().focus().toggleHeading({ level }).run();
-										setHeadingOpen(false);
-									}}
-								>
-									<Icon className="h-3.5 w-3.5" />
-								</Button>
-							))}
-						</div>
-					</PopoverContent>
-				</Popover>
+				<HeadingMenu editor={editor} />
 
 				<Popover open={listOpen} onOpenChange={setListOpen}>
 					<PopoverTrigger
