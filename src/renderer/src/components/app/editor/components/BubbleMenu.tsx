@@ -126,7 +126,10 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			<div style={transitionStyles} className="relative will-change-transform">
 				<Card
 					size="sm"
-					className={cn('flex flex-col gap-1! p-2! w-40 shadow-lg! shadow-foreground/20')}
+					className={cn(
+						'flex flex-col gap-1! p-2! w-40',
+						'shadow-lg! shadow-black/10 dark:shadow-xl! dark:shadow-black/50'
+					)}
 				>
 					<div className="flex flex-row items-center gap-0.5">
 						<Button
