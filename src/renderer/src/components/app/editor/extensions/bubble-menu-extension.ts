@@ -15,6 +15,7 @@ export const BubbleMenuExtension = Extension.create<BubbleMenuExtensionOptions>(
 			pluginKey: 'bubbleMenu',
 			updateDelay: 250,
 			shouldShow: null,
+			onUpdate: () => {},
 		};
 	},
 
@@ -33,6 +34,7 @@ export const BubbleMenuExtension = Extension.create<BubbleMenuExtensionOptions>(
 				element: this.options.element,
 				updateDelay: this.options.updateDelay,
 				shouldShow: this.options.shouldShow,
+				onUpdate: this.options.onUpdate,
 			}),
 		];
 	},
