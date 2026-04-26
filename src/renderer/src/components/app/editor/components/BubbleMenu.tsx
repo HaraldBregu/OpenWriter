@@ -53,6 +53,17 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	});
 
 	const referenceHidden = middlewareData.hide?.referenceHidden ?? false;
+	const side = placement.split('-')[0];
+	const flatSideClass =
+		side === 'left'
+			? 'rounded-r-none'
+			: side === 'right'
+				? 'rounded-l-none'
+				: side === 'top'
+					? 'rounded-b-none'
+					: side === 'bottom'
+						? 'rounded-t-none'
+						: '';
 
 	useEffect(() => {
 		refs.setPositionReference(virtualReference);
