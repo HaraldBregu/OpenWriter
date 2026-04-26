@@ -30,17 +30,9 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/Popover
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
+import { HeadingMenu } from './HeadingMenu';
 
 const pluginKey = new PluginKey('bubbleMenu');
-
-const HEADING_LEVELS: { level: 1 | 2 | 3 | 4 | 5 | 6; Icon: typeof Heading1; label: string }[] = [
-	{ level: 1, Icon: Heading1, label: 'Heading 1' },
-	{ level: 2, Icon: Heading2, label: 'Heading 2' },
-	{ level: 3, Icon: Heading3, label: 'Heading 3' },
-	{ level: 4, Icon: Heading4, label: 'Heading 4' },
-	{ level: 5, Icon: Heading5, label: 'Heading 5' },
-	{ level: 6, Icon: Heading6, label: 'Heading 6' },
-];
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | null {
 	const { editor, onAssistantAction } = useEditor();
