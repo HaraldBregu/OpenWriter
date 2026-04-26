@@ -39,7 +39,10 @@ function createDecorations(
 		Decoration.inline(
 			range.from,
 			range.to,
-			{ class: 'ai-action-marker' },
+			{
+				class:
+					'bg-[linear-gradient(to_right,#ff4d4d,#7c3aed,#00c2ff)] bg-clip-text text-transparent',
+			},
 			{ inclusiveStart: true, inclusiveEnd: true }
 		),
 	]);
