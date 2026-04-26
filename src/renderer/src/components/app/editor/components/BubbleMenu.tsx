@@ -234,7 +234,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 							onClick={() => {
 								const { from, to } = editor.state.selection;
 								if (from === to) return;
-								editor.commands.setAiActionMarker({ from, to });
+								editor.chain().setAiActionMarker({ from, to }).setTextSelection(to).run();
 							}}
 						>
 							<Wand2 />
