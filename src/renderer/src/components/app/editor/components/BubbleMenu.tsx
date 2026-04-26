@@ -60,7 +60,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			flip({ fallbackPlacements: ['right'] }),
 			shift({ padding: 8 }),
 			arrow({ element: arrowRef }),
-			hide({ strategy: 'referenceHidden' }),
+			hide({ strategy: 'referenceHidden', padding: { top: 30, bottom: 30 } }),
 		],
 	});
 
