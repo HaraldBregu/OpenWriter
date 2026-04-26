@@ -87,12 +87,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	);
 
 	useEffect(() => {
-		if (!open) {
-			setListOpen(false);
-		}
-	}, [open]);
-
-	useEffect(() => {
 		if (editor.isDestroyed) return;
 		const plugin = BubbleMenuPlugin({
 			pluginKey,
