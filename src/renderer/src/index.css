@@ -50,6 +50,25 @@
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
+	--animate-ai-action-marker-text: ai-action-marker-text 3.6s ease-in-out infinite;
+}
+
+@keyframes ai-action-marker-text {
+	0% {
+		color: #000000;
+	}
+	25% {
+		color: #b91c1c;
+	}
+	50% {
+		color: #1d4ed8;
+	}
+	75% {
+		color: #15803d;
+	}
+	100% {
+		color: #000000;
+	}
 }
 
 /* CSS custom properties for theme support */
