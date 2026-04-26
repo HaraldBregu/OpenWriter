@@ -9,8 +9,10 @@ import {
 	Heading6,
 } from 'lucide-react';
 import {
+	arrow,
 	autoUpdate,
 	flip,
+	FloatingArrow,
 	FloatingPortal,
 	offset,
 	shift,
