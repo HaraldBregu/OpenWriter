@@ -636,7 +636,7 @@ const Editor = React.memo(
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
-					{editor && <Content />}
+					{editor && <Content onFixGrammar={onFixGrammar} />}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
