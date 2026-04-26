@@ -117,13 +117,11 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			clearTimeout(improveWritingTimerRef.current);
 			improveWritingTimerRef.current = null;
 		}
-		editor.commands.setAiActionMarker({ from, to });
-		editor.setEditable(false);
+		editor.view.dom.classList.add('improving-writing');
 		improveWritingTimerRef.current = setTimeout(() => {
 			improveWritingTimerRef.current = null;
 			if (editor.isDestroyed) return;
-			editor.commands.clearAiActionMarker();
-			editor.setEditable(true);
+			editor.view.dom.classList.remove('improving-writing');
 		}, IMPROVE_WRITING_DURATION);
 	}, [editor]);
 
@@ -133,8 +131,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 				clearTimeout(improveWritingTimerRef.current);
 				improveWritingTimerRef.current = null;
 				if (!editor.isDestroyed) {
-					editor.commands.clearAiActionMarker();
-					editor.setEditable(true);
+					editor.view.dom.classList.remove('improving-writing');
 				}
 			}
 		};
@@ -151,10 +148,9 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			if (getReferenceRect) {
 				referenceRectRef.current = getReferenceRect;
 			}
-			if (!nextOpen && aiActionMarkerPluginKey.getState(editor.state)?.range) return;
 			setOpen(nextOpen);
 		},
-		[editor]
+		[]
 	);
 
 	useEffect(() => {
