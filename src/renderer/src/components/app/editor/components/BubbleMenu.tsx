@@ -210,7 +210,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 						</Popover>
 					</div>
 
-					<div className="my-1 h-px bg-foreground/10" />
+					<Separator className="my-1" />
 
 					<AssistantMenu editor={editor} onAction={onAssistantAction} />
 				</Card>
