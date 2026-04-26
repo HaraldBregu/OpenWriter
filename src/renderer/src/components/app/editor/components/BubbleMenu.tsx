@@ -305,30 +305,15 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<SpellCheck />
 							Fix grammar
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => handleAiAction('summarize')}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<FileText />
 							Summarize
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => handleAiAction('translate')}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<Languages />
 							Translate
 						</Button>
-						<Button
-							variant="ghost"
-							size="sm"
-							className="justify-start w-full"
-							onClick={() => handleAiAction('continue-writing')}
-						>
+						<Button variant="ghost" size="sm" className="justify-start w-full">
 							<ArrowRight />
 							Continue writing
 						</Button>
