@@ -87,8 +87,6 @@ export interface EditorProps {
 	streamingContent?: string;
 	onPromptSubmit?: (payload: PromptSubmitPayload, editor: TiptapEditor) => void;
 	onInsertContent?: () => void;
-	/** Called when the user clicks an assistant action in the bubble menu popover. */
-	onAssistantAction?: (action: AssistantAction, editor: TiptapEditor) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
