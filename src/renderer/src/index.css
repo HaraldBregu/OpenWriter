@@ -284,6 +284,12 @@
 	background-color: hsl(var(--info) / 0.18);
 }
 
+.ProseMirror .ai-action-marker {
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
+	padding-block: max(0px, calc((1lh - 1em) / 2));
+}
+
 .ProseMirror .ProseMirror-gapcursor::after {
 	content: '';
 	display: block;
