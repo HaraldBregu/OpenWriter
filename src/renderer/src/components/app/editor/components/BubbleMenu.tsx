@@ -43,17 +43,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	const [open, setOpen] = useState(false);
 	const [, forceRender] = useReducer((x: number) => x + 1, 0);
 
-	useEffect(() => {
-		const handler = (): void => {
-			forceRender();
-			update();
-		};
-		editor.on('transaction', handler);
-		return () => {
-			editor.off('transaction', handler);
-		};
-	}, [editor, update]);
-
 	const virtualReference = useMemo<VirtualElement>(
 		() => ({
 			getBoundingClientRect: () => referenceRectRef.current?.() ?? new DOMRect(),
@@ -75,6 +64,17 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			hide({ strategy: 'referenceHidden' }),
 		],
 	});
+
+	useEffect(() => {
+		const handler = (): void => {
+			forceRender();
+			update();
+		};
+		editor.on('transaction', handler);
+		return () => {
+			editor.off('transaction', handler);
+		};
+	}, [editor, update]);
 
 	const referenceHiddenOffsets = middlewareData.hide?.referenceHiddenOffsets;
 	const referenceHidden =
