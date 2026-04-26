@@ -84,9 +84,9 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		(middlewareData.hide?.referenceHidden ?? false) ||
 		(referenceHiddenOffsets
 			? referenceHiddenOffsets.top > 0 ||
-				referenceHiddenOffsets.bottom > 0 ||
-				referenceHiddenOffsets.left > 0 ||
-				referenceHiddenOffsets.right > 0
+			referenceHiddenOffsets.bottom > 0 ||
+			referenceHiddenOffsets.left > 0 ||
+			referenceHiddenOffsets.right > 0
 			: false);
 
 	useEffect(() => {
@@ -157,7 +157,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 				<Card
 					size="sm"
 					className={cn(
-						'flex flex-col gap-1! p-2! w-40',
+						'flex flex-col gap-1! py-2! px-2.5! w-39',
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
@@ -228,23 +228,23 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 					<div className="flex flex-col gap-0.5">
 						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<Wand2 className="h-3.5 w-3.5" />
+							<Wand2 />
 							Improve writing
 						</Button>
 						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<SpellCheck className="h-3.5 w-3.5" />
+							<SpellCheck />
 							Fix grammar
 						</Button>
 						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<FileText className="h-3.5 w-3.5" />
+							<FileText />
 							Summarize
 						</Button>
 						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<Languages className="h-3.5 w-3.5" />
+							<Languages />
 							Translate
 						</Button>
 						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<ArrowRight className="h-3.5 w-3.5" />
+							<ArrowRight />
 							Continue writing
 						</Button>
 					</div>
