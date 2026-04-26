@@ -1,5 +1,19 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Bold, Italic, Underline, Strikethrough, Type, List, ListOrdered } from 'lucide-react';
+import {
+	ArrowRight,
+	Bold,
+	FileText,
+	Italic,
+	Languages,
+	List,
+	ListOrdered,
+	Sparkles,
+	SpellCheck,
+	Strikethrough,
+	Type,
+	Underline,
+	Wand2,
+} from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import {
 	arrow,
