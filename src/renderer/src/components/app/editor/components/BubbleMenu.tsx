@@ -152,9 +152,10 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			if (getReferenceRect) {
 				referenceRectRef.current = getReferenceRect;
 			}
+			if (!nextOpen && aiActionMarkerPluginKey.getState(editor.state)?.range) return;
 			setOpen(nextOpen);
 		},
-		[]
+		[editor]
 	);
 
 	useEffect(() => {
