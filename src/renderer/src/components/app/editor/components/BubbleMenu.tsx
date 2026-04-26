@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
 	Bold,
 	Italic,
@@ -22,6 +22,15 @@ import {
 	ArrowRight,
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
+import {
+	autoUpdate,
+	computePosition,
+	flip,
+	offset,
+	shift,
+	type ReferenceElement,
+	type VirtualElement,
+} from '@floating-ui/dom';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/Popover';
@@ -43,8 +52,28 @@ const HEADING_LEVELS: { level: 1 | 2 | 3 | 4 | 5 | 6; Icon: typeof Heading1; lab
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 	const { editor, onAssistantAction } = useEditor();
 	const menuRef = useRef<HTMLDivElement>(null);
+	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
+	const [open, setOpen] = useState(false);
 	const [headingOpen, setHeadingOpen] = useState(false);
 	const [listOpen, setListOpen] = useState(false);
+
+	const handlePluginUpdate = useCallback(
+		({
+			open: nextOpen,
+			getReferenceRect,
+		}: {
+			open: boolean;
+			getReferenceRect: (() => DOMRect) | null;
+		}) => {
+			if (getReferenceRect) referenceRectRef.current = getReferenceRect;
+			setOpen(nextOpen);
+			if (!nextOpen) {
+				setHeadingOpen(false);
+				setListOpen(false);
+			}
+		},
+		[]
+	);
 
 	useEffect(() => {
 		const el = menuRef.current;
@@ -55,24 +84,54 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 			editor,
 			element: el,
 			updateDelay: 250,
+			onUpdate: handlePluginUpdate,
 		});
 
 		editor.registerPlugin(plugin);
 		return () => {
 			editor.unregisterPlugin(pluginKey);
 		};
-	}, [editor]);
+	}, [editor, handlePluginUpdate]);
+
+	useEffect(() => {
+		const el = menuRef.current;
+		const getRect = referenceRectRef.current;
+		if (!open || !el || !getRect) return;
+
+		const virtualEl: VirtualElement = {
+			getBoundingClientRect: () => referenceRectRef.current?.() ?? new DOMRect(),
+		};
+
+		const update = (): void => {
+			void computePosition(virtualEl as ReferenceElement, el, {
+				placement: 'top',
+				middleware: [offset(8), flip(), shift({ padding: 8 })],
+			}).then(({ x, y }) => {
+				el.style.transform = `translate3d(${Math.round(x)}px, ${Math.round(y)}px, 0)`;
+			});
+		};
+
+		const cleanup = autoUpdate(virtualEl as ReferenceElement, el, update);
+		return cleanup;
+	}, [open]);
 
 	const isHeadingActive = HEADING_LEVELS.some(({ level }) =>
 		editor.isActive('heading', { level })
 	);
+	const isListActive = editor.isActive('bulletList') || editor.isActive('orderedList');
 
 	return (
 		<Card
 			ref={menuRef}
 			size="sm"
-			className={cn('flex-row items-center gap-0.5! p-1! z-50')}
-			style={{ visibility: 'hidden', position: 'absolute' }}
+			data-state={open ? 'open' : 'closed'}
+			onMouseDown={(e) => e.preventDefault()}
+			className={cn(
+				'fixed top-0 left-0 z-50 flex flex-row items-center gap-0.5! p-2!',
+				'origin-bottom transition-[opacity,transform] duration-150 ease-out will-change-transform',
+				'data-[state=closed]:pointer-events-none data-[state=closed]:opacity-0 data-[state=closed]:scale-95 data-[state=closed]:translate-y-1',
+				'data-[state=open]:opacity-100 data-[state=open]:scale-100 data-[state=open]:translate-y-0'
+			)}
 		>
 			<Button
 				variant={editor.isActive('bold') ? 'default' : 'ghost'}
@@ -156,15 +215,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 					delay={100}
 					closeDelay={150}
 					render={
-						<Button
-							variant={
-								editor.isActive('bulletList') || editor.isActive('orderedList')
-									? 'default'
-									: 'ghost'
-							}
-							size="icon"
-							aria-label="List"
-						>
+						<Button variant={isListActive ? 'default' : 'ghost'} size="icon" aria-label="List">
 							<List className="h-3.5 w-3.5" />
 						</Button>
 					}
