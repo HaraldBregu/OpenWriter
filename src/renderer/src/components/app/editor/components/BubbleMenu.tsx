@@ -108,6 +108,38 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		}),
 	});
 
+	const improveWritingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const handleImproveWriting = useCallback(() => {
+		const { from, to } = editor.state.selection;
+		if (from === to) return;
+		if (improveWritingTimerRef.current) {
+			clearTimeout(improveWritingTimerRef.current);
+			improveWritingTimerRef.current = null;
+		}
+		editor.chain().setAiActionMarker({ from, to }).setTextSelection(to).run();
+		editor.setEditable(false);
+		improveWritingTimerRef.current = setTimeout(() => {
+			improveWritingTimerRef.current = null;
+			if (editor.isDestroyed) return;
+			editor.commands.clearAiActionMarker();
+			editor.setEditable(true);
+		}, IMPROVE_WRITING_DURATION);
+	}, [editor]);
+
+	useEffect(() => {
+		return () => {
+			if (improveWritingTimerRef.current) {
+				clearTimeout(improveWritingTimerRef.current);
+				improveWritingTimerRef.current = null;
+				if (!editor.isDestroyed) {
+					editor.commands.clearAiActionMarker();
+					editor.setEditable(true);
+				}
+			}
+		};
+	}, [editor]);
+
 	const handlePluginUpdate = useCallback(
 		({
 			open: nextOpen,
