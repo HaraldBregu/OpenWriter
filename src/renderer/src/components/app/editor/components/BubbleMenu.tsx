@@ -145,12 +145,15 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		}, IMPROVE_WRITING_DURATION);
 	}, [editor]);
 
-	const handleFixGrammar = useCallback(() => {
-		const { from, to } = editor.state.selection;
-		if (from === to) return;
-		const text = editor.state.doc.textBetween(from, to, '\n\n');
-		onFixGrammar?.(text);
-	}, [editor, onFixGrammar]);
+	const handleAiAction = useCallback(
+		(type: AiActionType) => {
+			const { from, to } = editor.state.selection;
+			if (from === to) return;
+			const text = editor.state.doc.textBetween(from, to, '\n\n');
+			onAiAction?.({ type, text });
+		},
+		[editor, onAiAction]
+	);
 
 	useEffect(() => {
 		return () => {
