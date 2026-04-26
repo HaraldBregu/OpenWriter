@@ -432,14 +432,6 @@ export type OutputType = 'documents';
 export interface OutputFileMetadata {
 	title: string;
 	type: string;
-	category: string;
-	tags: string[];
-	visibility: string;
-	provider: string;
-	model: string;
-	temperature?: number;
-	maxTokens?: number | null;
-	reasoning?: boolean;
 	createdAt: string;
 	updatedAt: string;
 }
