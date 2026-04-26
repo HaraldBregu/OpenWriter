@@ -37,7 +37,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		[]
 	);
 
-	const { refs, floatingStyles, context, middlewareData, placement } = useFloating({
+	const { refs, floatingStyles, context, middlewareData } = useFloating({
 		open,
 		onOpenChange: setOpen,
 		placement: 'left',
@@ -52,24 +52,15 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		],
 	});
 
-	const referenceHidden = middlewareData.hide?.referenceHidden ?? false;
-	const side = placement.split('-')[0];
-	const arrowX = middlewareData.arrow?.x;
-	const arrowY = middlewareData.arrow?.y;
-	const floatingEl = context.elements.floating;
-	const floatingHeight = floatingEl?.offsetHeight ?? 0;
-	const floatingWidth = floatingEl?.offsetWidth ?? 0;
-
-	let flatCornerClass = '';
-	if (side === 'left' && arrowY != null && floatingHeight > 0) {
-		flatCornerClass = arrowY < floatingHeight / 2 ? 'rounded-tr-none' : 'rounded-br-none';
-	} else if (side === 'right' && arrowY != null && floatingHeight > 0) {
-		flatCornerClass = arrowY < floatingHeight / 2 ? 'rounded-tl-none' : 'rounded-bl-none';
-	} else if (side === 'top' && arrowX != null && floatingWidth > 0) {
-		flatCornerClass = arrowX < floatingWidth / 2 ? 'rounded-bl-none' : 'rounded-br-none';
-	} else if (side === 'bottom' && arrowX != null && floatingWidth > 0) {
-		flatCornerClass = arrowX < floatingWidth / 2 ? 'rounded-tl-none' : 'rounded-tr-none';
-	}
+	const referenceHiddenOffsets = middlewareData.hide?.referenceHiddenOffsets;
+	const referenceHidden =
+		(middlewareData.hide?.referenceHidden ?? false) ||
+		(referenceHiddenOffsets
+			? referenceHiddenOffsets.top > 0 ||
+				referenceHiddenOffsets.bottom > 0 ||
+				referenceHiddenOffsets.left > 0 ||
+				referenceHiddenOffsets.right > 0
+			: false);
 
 	useEffect(() => {
 		refs.setPositionReference(virtualReference);
@@ -133,7 +124,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			className="z-50"
 		>
 			<div style={transitionStyles} className="relative will-change-transform">
-				<Card size="sm" className={cn('flex flex-col gap-1! p-2! w-40', flatCornerClass)}>
+				<Card size="sm" className={cn('flex flex-col gap-1! p-2! w-40')}>
 					<div className="flex flex-row items-center gap-0.5">
 						<Button
 							variant={editor.isActive('bold') ? 'default' : 'ghost'}
