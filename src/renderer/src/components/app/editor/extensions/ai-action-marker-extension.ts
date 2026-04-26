@@ -39,7 +39,7 @@ function createDecorations(
 		Decoration.inline(
 			range.from,
 			range.to,
-			{ class: 'bg-yellow-300 text-black' },
+			{ class: 'ai-action-marker bg-yellow-300 text-black' },
 			{ inclusiveStart: true, inclusiveEnd: true }
 		),
 	]);
