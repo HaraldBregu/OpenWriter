@@ -264,11 +264,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={() => {
-								const { from, to } = editor.state.selection;
-								if (from === to) return;
-								editor.chain().setAiActionMarker({ from, to }).setTextSelection(to).run();
-							}}
+							onClick={handleImproveWriting}
 						>
 							<Wand2 />
 							Improve writing
