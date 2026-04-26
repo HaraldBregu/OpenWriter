@@ -100,26 +100,37 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 						className="z-[60]"
 						{...getFloatingProps()}
 					>
-						<Card
-							size="sm"
+						<div
 							style={{ ...transitionStyles, transformOrigin: 'bottom' }}
-							className="flex flex-row items-center gap-0.5! p-1! will-change-transform"
+							className="relative will-change-transform"
 						>
-							{HEADING_LEVELS.map(({ level, Icon, label }) => (
-								<Button
-									key={level}
-									variant={editor.isActive('heading', { level }) ? 'default' : 'ghost'}
-									size="icon"
-									aria-label={label}
-									onClick={() => {
-										editor.chain().focus().toggleHeading({ level }).run();
-										setOpen(false);
-									}}
-								>
-									<Icon className="h-3.5 w-3.5" />
-								</Button>
-							))}
-						</Card>
+							<Card
+								size="sm"
+								className="flex flex-row items-center gap-0.5! p-1! shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!"
+							>
+								{HEADING_LEVELS.map(({ level, Icon, label }) => (
+									<Button
+										key={level}
+										variant={editor.isActive('heading', { level }) ? 'default' : 'ghost'}
+										size="icon"
+										aria-label={label}
+										onClick={() => {
+											editor.chain().focus().toggleHeading({ level }).run();
+											setOpen(false);
+										}}
+									>
+										<Icon className="h-3.5 w-3.5" />
+									</Button>
+								))}
+							</Card>
+							<FloatingArrow
+								ref={arrowRef}
+								context={context}
+								className="fill-card [&>path:first-of-type]:stroke-foreground/10 [&>path:last-of-type]:stroke-card"
+								strokeWidth={1}
+								tipRadius={2}
+							/>
+						</div>
 					</div>
 				</FloatingPortal>
 			)}
