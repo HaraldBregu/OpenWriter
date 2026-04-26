@@ -35,6 +35,7 @@ import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
 
 const pluginKey = new PluginKey('bubbleMenu');
+const IMPROVE_WRITING_DURATION = 5000;
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | null {
 	const { editor } = useEditor();
