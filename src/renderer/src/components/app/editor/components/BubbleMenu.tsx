@@ -106,8 +106,9 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			ref={refs.setFloating}
 			style={{
 				...floatingStyles,
-				visibility: referenceHidden ? 'hidden' : 'visible',
+				opacity: referenceHidden ? 0 : 1,
 				pointerEvents: referenceHidden ? 'none' : undefined,
+				transition: 'opacity 120ms ease-out',
 			}}
 			onMouseDown={(e) => e.preventDefault()}
 			className="z-50"
