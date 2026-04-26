@@ -70,8 +70,11 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		strategy: 'fixed',
 		whileElementsMounted: autoUpdate,
 		middleware: [offset(8), flip(), shift({ padding: 8 })],
-		elements: { reference: virtualReference },
 	});
+
+	useEffect(() => {
+		refs.setPositionReference(virtualReference);
+	}, [refs, virtualReference]);
 
 	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
 		duration: { open: 180, close: 120 },
