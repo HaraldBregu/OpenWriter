@@ -120,7 +120,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			<Card
 				size="sm"
 				style={{ ...transitionStyles, transformOrigin: 'bottom' }}
-				className={cn('relative flex flex-row items-center gap-0.5! p-2! will-change-transform')}
+				className={cn('flex flex-row items-center gap-0.5! p-2! will-change-transform')}
 			>
 				<Button
 					variant={editor.isActive('bold') ? 'default' : 'ghost'}
