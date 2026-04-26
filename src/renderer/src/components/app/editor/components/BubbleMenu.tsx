@@ -269,6 +269,14 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 					</PopoverContent>
 				</Popover>
 			</Card>
+				<FloatingArrow
+					ref={arrowRef}
+					context={context}
+					className="fill-card [&>path:first-of-type]:stroke-foreground/10 [&>path:last-of-type]:stroke-card"
+					strokeWidth={1}
+					tipRadius={2}
+				/>
+			</div>
 		</div>
 	);
 });
