@@ -60,13 +60,9 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 		middleware: [offset(8), flip(), shift({ padding: 8 })],
 	});
 
-	const hover = useHover(context, {
-		delay: { open: 100, close: 150 },
-		handleClose: safePolygon(),
-	});
 	const click = useClick(context);
 	const dismiss = useDismiss(context);
-	const { getReferenceProps, getFloatingProps } = useInteractions([hover, click, dismiss]);
+	const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);
 
 	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
 		duration: { open: 150, close: 100 },
