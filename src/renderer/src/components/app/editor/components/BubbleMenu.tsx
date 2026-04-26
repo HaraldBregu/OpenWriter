@@ -44,6 +44,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element {
 	const { editor, onAssistantAction } = useEditor();
 	const menuRef = useRef<HTMLDivElement>(null);
 	const [headingOpen, setHeadingOpen] = useState(false);
+	const [listOpen, setListOpen] = useState(false);
 
 	useEffect(() => {
 		const el = menuRef.current;
