@@ -7,7 +7,6 @@ import {
 	Languages,
 	List,
 	ListOrdered,
-	Sparkles,
 	SpellCheck,
 	Strikethrough,
 	Type,
