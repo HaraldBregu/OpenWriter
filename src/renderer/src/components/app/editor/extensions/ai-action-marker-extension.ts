@@ -10,7 +10,6 @@ interface AiActionMarkerRange {
 
 interface AiActionMarkerPluginState {
 	range: AiActionMarkerRange | null;
-	session: number;
 	deco: DecorationSet;
 }
 
@@ -30,8 +29,6 @@ declare module '@tiptap/core' {
 export const aiActionMarkerPluginKey = new PluginKey<AiActionMarkerPluginState>(
 	'aiActionMarker'
 );
-
-const AI_ACTION_MARKER_DURATION = 5000;
 
 function createDecorations(
 	doc: ProseMirrorNode,
@@ -74,13 +71,12 @@ export const AiActionMarkerExtension = Extension.create({
 	},
 
 	addProseMirrorPlugins() {
-		const editor = this.editor;
 		return [
 			new Plugin<AiActionMarkerPluginState>({
 				key: aiActionMarkerPluginKey,
 
 				state: {
-					init: () => ({ range: null, session: 0, deco: DecorationSet.empty }),
+					init: () => ({ range: null, deco: DecorationSet.empty }),
 					apply: (tr, pluginState, _oldState, newState) => {
 						const meta = tr.getMeta(aiActionMarkerPluginKey) as
 							| AiActionMarkerMeta
@@ -88,7 +84,6 @@ export const AiActionMarkerExtension = Extension.create({
 						if (meta !== undefined) {
 							return {
 								range: meta.range,
-								session: pluginState.session + 1,
 								deco: createDecorations(newState.doc, meta.range),
 							};
 						}
@@ -97,73 +92,12 @@ export const AiActionMarkerExtension = Extension.create({
 							const to = tr.mapping.map(pluginState.range.to);
 							const range = from < to ? { from, to } : null;
 							return {
-								...pluginState,
 								range,
 								deco: createDecorations(newState.doc, range),
 							};
 						}
 						return pluginState;
 					},
-				},
-
-				view(view) {
-					let timer: ReturnType<typeof setTimeout> | null = null;
-					let lastSession = 0;
-					let disabled = false;
-
-					const clearTimer = (): void => {
-						if (timer) {
-							clearTimeout(timer);
-							timer = null;
-						}
-					};
-
-					const setEditorEditable = (editable: boolean): void => {
-						queueMicrotask(() => {
-							if (editor.isDestroyed) return;
-							editor.setEditable(editable);
-						});
-					};
-
-					const disableEditor = (): void => {
-						if (disabled) return;
-						disabled = true;
-						setEditorEditable(false);
-					};
-
-					const enableEditor = (): void => {
-						if (!disabled) return;
-						disabled = false;
-						setEditorEditable(true);
-					};
-
-					return {
-						update: (currentView) => {
-							const state = aiActionMarkerPluginKey.getState(currentView.state);
-							if (!state) return;
-							if (state.session === lastSession) return;
-							lastSession = state.session;
-							clearTimer();
-							if (state.range) {
-								disableEditor();
-								timer = setTimeout(() => {
-									timer = null;
-									enableEditor();
-									currentView.dispatch(
-										currentView.state.tr.setMeta(aiActionMarkerPluginKey, {
-											range: null,
-										} satisfies AiActionMarkerMeta)
-									);
-								}, AI_ACTION_MARKER_DURATION);
-							} else {
-								enableEditor();
-							}
-						},
-						destroy: () => {
-							clearTimer();
-							enableEditor();
-						},
-					};
 				},
 
 				props: {
