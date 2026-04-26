@@ -37,7 +37,7 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | null {
-	const { editor, onAssistantAction } = useEditor();
+	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const arrowRef = useRef<SVGSVGElement>(null);
 	const [open, setOpen] = useState(false);
