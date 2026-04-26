@@ -104,6 +104,8 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	return (
 		<div
 			ref={refs.setFloating}
+			role="toolbar"
+			aria-label="Selection toolbar"
 			style={{
 				...floatingStyles,
 				opacity: referenceHidden ? 0 : 1,
