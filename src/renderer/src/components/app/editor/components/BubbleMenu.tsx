@@ -39,6 +39,7 @@ const pluginKey = new PluginKey('bubbleMenu');
 export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | null {
 	const { editor, onAssistantAction } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
+	const arrowRef = useRef<SVGSVGElement>(null);
 	const [open, setOpen] = useState(false);
 	const [listOpen, setListOpen] = useState(false);
 
@@ -55,7 +56,7 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 		placement: 'top',
 		strategy: 'fixed',
 		whileElementsMounted: autoUpdate,
-		middleware: [offset(8), flip(), shift({ padding: 8 })],
+		middleware: [offset(8), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
 	});
 
 	useEffect(() => {
