@@ -25,19 +25,10 @@ export const VALID_OUTPUT_TYPES: readonly OutputType[] = ['documents'] as const;
 
 /**
  * Metadata stored in config.json of each output entry folder.
- * Captures the full context of how the content was generated.
  */
 export interface OutputFileMetadata {
 	title: string;
 	type: string;
-	category: string;
-	tags: string[];
-	visibility: string;
-	provider: string;
-	model: string;
-	temperature?: number;
-	maxTokens?: number | null;
-	reasoning?: boolean;
 	createdAt: string; // ISO 8601
 	updatedAt: string; // ISO 8601
 }
