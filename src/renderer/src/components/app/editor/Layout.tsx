@@ -2,31 +2,18 @@ import { forwardRef, useRef, type ReactNode } from 'react';
 import type { Editor } from '@tiptap/core';
 import { cn } from '@/lib/utils';
 import { Provider } from './Provider';
-import type { AssistantAction } from './context/context';
 
 interface LayoutProps {
 	readonly id?: string;
 	readonly className?: string;
 	readonly editor: Editor | null;
 	readonly onInsertContent?: () => void;
-	readonly onAssistantAction?: (action: AssistantAction, editor: Editor) => void;
 	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
 }
 
 const Layout = forwardRef<HTMLDivElement, LayoutProps>(
-	(
-		{
-			id,
-			className,
-			editor,
-			onInsertContent,
-			onAssistantAction,
-			onImageInsert,
-			children,
-		},
-		ref
-	) => {
+	({ id, className, editor, onInsertContent, onImageInsert, children }, ref) => {
 		const containerRef = useRef<HTMLDivElement>(null);
 		return (
 			<div id={id} className={cn('h-full min-w-0 flex flex-col', className)}>
@@ -43,7 +30,6 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 										editor={editor}
 										containerRef={containerRef}
 										onInsertContent={onInsertContent}
-										onAssistantAction={onAssistantAction}
 										onImageInsert={onImageInsert}
 									>
 										{children}
