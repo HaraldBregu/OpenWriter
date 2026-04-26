@@ -44,12 +44,15 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	const [, forceRender] = useReducer((x: number) => x + 1, 0);
 
 	useEffect(() => {
-		const handler = (): void => forceRender();
+		const handler = (): void => {
+			forceRender();
+			update();
+		};
 		editor.on('transaction', handler);
 		return () => {
 			editor.off('transaction', handler);
 		};
-	}, [editor]);
+	}, [editor, update]);
 
 	const virtualReference = useMemo<VirtualElement>(
 		() => ({
