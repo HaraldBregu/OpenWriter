@@ -50,6 +50,16 @@
 	--radius-lg: var(--radius);
 	--radius-md: calc(var(--radius) - 2px);
 	--radius-sm: calc(var(--radius) - 4px);
+	--animate-ai-action-marker-flow: ai-action-marker-flow 3.2s linear infinite;
+}
+
+@keyframes ai-action-marker-flow {
+	0% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 200% 50%;
+	}
 }
 
 /* CSS custom properties for theme support */
