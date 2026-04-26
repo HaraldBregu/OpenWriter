@@ -273,27 +273,11 @@
 	position: absolute;
 }
 
-.ProseMirror .selection-marker {
-	background-color: hsl(var(--info) / 0.3);
-	-webkit-box-decoration-break: clone;
-	box-decoration-break: clone;
-	padding-block: max(0px, calc((1lh - 1em) / 2));
-}
-
-.dark .ProseMirror .selection-marker {
-	background-color: hsl(var(--info) / 0.18);
-}
-
 .ProseMirror.improving-writing {
 	pointer-events: none;
 }
 
 .ProseMirror.improving-writing ::selection {
-	background-color: rgb(252 211 77);
-	color: rgb(23 23 23);
-}
-
-.ProseMirror.improving-writing .selection-marker {
 	background-color: rgb(252 211 77);
 	color: rgb(23 23 23);
 }
