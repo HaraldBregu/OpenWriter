@@ -31,7 +31,7 @@ export const aiActionMarkerPluginKey = new PluginKey<AiActionMarkerPluginState>(
 	'aiActionMarker'
 );
 
-const AI_ACTION_MARKER_DURATION = 2000;
+const AI_ACTION_MARKER_DURATION = 5000;
 
 function createDecorations(
 	doc: ProseMirrorNode,
