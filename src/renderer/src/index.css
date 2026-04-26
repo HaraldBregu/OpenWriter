@@ -306,9 +306,7 @@
 	background-image: linear-gradient(
 		90deg,
 		hsl(48 55% 30%),
-		hsl(20 55% 32%),
 		hsl(330 45% 36%),
-		hsl(20 55% 32%),
 		hsl(48 55% 30%)
 	);
 }
