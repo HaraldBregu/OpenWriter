@@ -52,7 +52,6 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		ImageExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		ImagePlaceholderExtension.configure({ onImageInsert: handlers.onImageInsert }),
 		SearchExtension,
-		SelectionMarkerExtension,
 		PromptExtension.configure({
 			onPromptSubmit: handlers.onPromptSubmit,
 		}),
