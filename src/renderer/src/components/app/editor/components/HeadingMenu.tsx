@@ -87,7 +87,7 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 				<FloatingPortal>
 					<div
 						ref={refs.setFloating}
-						style={{ ...floatingStyles, zIndex: 50 }}
+						style={{ ...floatingStyles, zIndex: 60 }}
 						onMouseDown={(e) => e.preventDefault()}
 						{...getFloatingProps()}
 					>
