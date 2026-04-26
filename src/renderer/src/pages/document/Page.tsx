@@ -748,7 +748,6 @@ function PageContent(): ReactElement {
 									onSelectionChange={handleSelectionChange}
 									onPromptSubmit={handlePromptSubmit}
 									onInsertContent={handleInsertContent}
-									onAssistantAction={handleAssistantAction}
 									documentId={id}
 									onEditorReady={handleEditorReady}
 								/>
