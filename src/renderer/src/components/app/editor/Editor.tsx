@@ -628,7 +628,6 @@ const Editor = React.memo(
 					ref={rootRef}
 					editor={editor}
 					onInsertContent={onInsertContent}
-					onAssistantAction={onAssistantAction}
 					onImageInsert={handleImageInsert}
 				>
 					{editor && <Content />}
