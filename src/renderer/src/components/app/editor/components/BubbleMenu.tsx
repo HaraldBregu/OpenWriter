@@ -6,6 +6,7 @@ import {
 	autoUpdate,
 	flip,
 	FloatingArrow,
+	hide,
 	offset,
 	shift,
 	useFloating,
