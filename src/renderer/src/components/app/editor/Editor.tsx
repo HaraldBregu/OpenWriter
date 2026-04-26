@@ -87,7 +87,7 @@ export interface EditorProps {
 	streamingContent?: string;
 	onPromptSubmit?: (payload: PromptSubmitPayload, editor: TiptapEditor) => void;
 	onInsertContent?: () => void;
-	onFixGrammar?: (text: string) => void;
+	onAiAction?: (action: AiActionPayload) => void;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
