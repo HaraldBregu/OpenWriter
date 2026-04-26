@@ -37,7 +37,13 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 const IMPROVE_WRITING_DURATION = 5000;
 
-export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | null {
+export interface BubbleMenuProps {
+	onFixGrammar?: (text: string) => void;
+}
+
+export const BubbleMenu = React.memo(function BubbleMenu({
+	onFixGrammar,
+}: BubbleMenuProps): React.JSX.Element | null {
 	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const arrowRef = useRef<SVGSVGElement>(null);
