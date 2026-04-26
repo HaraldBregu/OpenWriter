@@ -85,7 +85,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 	useEffect(() => {
 		if (!open) {
-			setHeadingOpen(false);
 			setListOpen(false);
 		}
 	}, [open]);
