@@ -54,16 +54,22 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 	const referenceHidden = middlewareData.hide?.referenceHidden ?? false;
 	const side = placement.split('-')[0];
-	const flatSideClass =
-		side === 'left'
-			? 'rounded-r-none'
-			: side === 'right'
-				? 'rounded-l-none'
-				: side === 'top'
-					? 'rounded-b-none'
-					: side === 'bottom'
-						? 'rounded-t-none'
-						: '';
+	const arrowX = middlewareData.arrow?.x;
+	const arrowY = middlewareData.arrow?.y;
+	const floatingEl = context.elements.floating;
+	const floatingHeight = floatingEl?.offsetHeight ?? 0;
+	const floatingWidth = floatingEl?.offsetWidth ?? 0;
+
+	let flatCornerClass = '';
+	if (side === 'left' && arrowY != null && floatingHeight > 0) {
+		flatCornerClass = arrowY < floatingHeight / 2 ? 'rounded-tr-none' : 'rounded-br-none';
+	} else if (side === 'right' && arrowY != null && floatingHeight > 0) {
+		flatCornerClass = arrowY < floatingHeight / 2 ? 'rounded-tl-none' : 'rounded-bl-none';
+	} else if (side === 'top' && arrowX != null && floatingWidth > 0) {
+		flatCornerClass = arrowX < floatingWidth / 2 ? 'rounded-bl-none' : 'rounded-br-none';
+	} else if (side === 'bottom' && arrowX != null && floatingWidth > 0) {
+		flatCornerClass = arrowX < floatingWidth / 2 ? 'rounded-tl-none' : 'rounded-tr-none';
+	}
 
 	useEffect(() => {
 		refs.setPositionReference(virtualReference);
