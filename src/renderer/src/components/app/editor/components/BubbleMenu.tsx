@@ -40,10 +40,15 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	const { refs, floatingStyles, context } = useFloating({
 		open,
 		onOpenChange: setOpen,
-		placement: 'top',
+		placement: 'left',
 		strategy: 'fixed',
 		whileElementsMounted: autoUpdate,
-		middleware: [offset(8), flip(), shift({ padding: 8 }), arrow({ element: arrowRef })],
+		middleware: [
+			offset(8),
+			flip({ fallbackPlacements: ['right'] }),
+			shift({ padding: 8 }),
+			arrow({ element: arrowRef }),
+		],
 	});
 
 	useEffect(() => {
