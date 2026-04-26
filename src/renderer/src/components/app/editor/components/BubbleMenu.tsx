@@ -119,94 +119,100 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 			className="z-50"
 		>
 			<div style={transitionStyles} className="relative will-change-transform">
-			<Card
-				size="sm"
-				className={cn('flex flex-row items-center gap-0.5! p-2!')}
-			>
-				<Button
-					variant={editor.isActive('bold') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Bold"
-					onClick={() => editor.chain().focus().toggleBold().run()}
-				>
-					<Bold className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('italic') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Italic"
-					onClick={() => editor.chain().focus().toggleItalic().run()}
-				>
-					<Italic className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('underline') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Underline"
-					onClick={() => editor.chain().focus().toggleUnderline().run()}
-				>
-					<Underline className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('strike') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Strikethrough"
-					onClick={() => editor.chain().focus().toggleStrike().run()}
-				>
-					<Strikethrough className="h-3.5 w-3.5" />
-				</Button>
-				<Button
-					variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
-					size="icon"
-					aria-label="Text"
-					onClick={() => editor.chain().focus().setParagraph().run()}
-				>
-					<Type className="h-3.5 w-3.5" />
-				</Button>
+				<Card size="sm" className={cn('flex flex-col gap-1! p-2! w-56')}>
+					<div className="flex flex-row items-center gap-0.5">
+						<Button
+							variant={editor.isActive('bold') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Bold"
+							onClick={() => editor.chain().focus().toggleBold().run()}
+						>
+							<Bold className="h-3.5 w-3.5" />
+						</Button>
+						<Button
+							variant={editor.isActive('italic') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Italic"
+							onClick={() => editor.chain().focus().toggleItalic().run()}
+						>
+							<Italic className="h-3.5 w-3.5" />
+						</Button>
+						<Button
+							variant={editor.isActive('underline') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Underline"
+							onClick={() => editor.chain().focus().toggleUnderline().run()}
+						>
+							<Underline className="h-3.5 w-3.5" />
+						</Button>
+						<Button
+							variant={editor.isActive('strike') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Strikethrough"
+							onClick={() => editor.chain().focus().toggleStrike().run()}
+						>
+							<Strikethrough className="h-3.5 w-3.5" />
+						</Button>
+					</div>
 
-				<HeadingMenu editor={editor} />
+					<div className="flex flex-row items-center gap-0.5">
+						<Button
+							variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Text"
+							onClick={() => editor.chain().focus().setParagraph().run()}
+						>
+							<Type className="h-3.5 w-3.5" />
+						</Button>
+						<HeadingMenu editor={editor} />
+						<Popover open={listOpen} onOpenChange={setListOpen}>
+							<PopoverTrigger
+								openOnHover
+								delay={100}
+								closeDelay={150}
+								render={
+									<Button
+										variant={isListActive ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="List"
+									>
+										<List className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<PopoverContent side="top" align="center" className="w-auto p-1">
+								<div className="flex flex-row items-center gap-0.5">
+									<Button
+										variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Bullet list"
+										onClick={() => {
+											editor.chain().focus().toggleBulletList().run();
+											setListOpen(false);
+										}}
+									>
+										<List className="h-3.5 w-3.5" />
+									</Button>
+									<Button
+										variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Ordered list"
+										onClick={() => {
+											editor.chain().focus().toggleOrderedList().run();
+											setListOpen(false);
+										}}
+									>
+										<ListOrdered className="h-3.5 w-3.5" />
+									</Button>
+								</div>
+							</PopoverContent>
+						</Popover>
+					</div>
 
-				<Popover open={listOpen} onOpenChange={setListOpen}>
-					<PopoverTrigger
-						openOnHover
-						delay={100}
-						closeDelay={150}
-						render={
-							<Button variant={isListActive ? 'default' : 'ghost'} size="icon" aria-label="List">
-								<List className="h-3.5 w-3.5" />
-							</Button>
-						}
-					/>
-					<PopoverContent side="top" align="center" className="w-auto p-1">
-						<div className="flex flex-row items-center gap-0.5">
-							<Button
-								variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
-								size="icon"
-								aria-label="Bullet list"
-								onClick={() => {
-									editor.chain().focus().toggleBulletList().run();
-									setListOpen(false);
-								}}
-							>
-								<List className="h-3.5 w-3.5" />
-							</Button>
-							<Button
-								variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
-								size="icon"
-								aria-label="Ordered list"
-								onClick={() => {
-									editor.chain().focus().toggleOrderedList().run();
-									setListOpen(false);
-								}}
-							>
-								<ListOrdered className="h-3.5 w-3.5" />
-							</Button>
-						</div>
-					</PopoverContent>
-				</Popover>
+					<div className="my-1 h-px bg-foreground/10" />
 
-				<AssistantMenu editor={editor} onAction={onAssistantAction} />
-			</Card>
+					<AssistantMenu editor={editor} onAction={onAssistantAction} />
+				</Card>
 				<FloatingArrow
 					ref={arrowRef}
 					context={context}
