@@ -68,7 +68,10 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	useEffect(() => {
 		const handler = (): void => {
 			forceRender();
-			update();
+			const { from, to } = editor.state.selection;
+			if (from !== to) {
+				update();
+			}
 		};
 		editor.on('transaction', handler);
 		return () => {
