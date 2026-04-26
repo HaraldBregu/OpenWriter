@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/Popover';
+import { Separator } from '@/components/ui/Separator';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
