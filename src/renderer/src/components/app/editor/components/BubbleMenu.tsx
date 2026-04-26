@@ -38,7 +38,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 	const { editor, onAssistantAction } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const [open, setOpen] = useState(false);
-	const [headingOpen, setHeadingOpen] = useState(false);
 	const [listOpen, setListOpen] = useState(false);
 
 	const virtualReference = useMemo<VirtualElement>(
