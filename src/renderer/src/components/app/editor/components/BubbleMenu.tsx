@@ -102,8 +102,6 @@ export const BubbleMenu = React.memo(function BubbleMenu(): React.JSX.Element | 
 
 	if (!isMounted) return null;
 
-	const isListActive = editor.isActive('bulletList') || editor.isActive('orderedList');
-
 	return (
 		<div
 			ref={refs.setFloating}
