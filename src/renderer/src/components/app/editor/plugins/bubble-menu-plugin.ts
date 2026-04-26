@@ -111,7 +111,7 @@ export class BubbleMenuView {
 		};
 
 		const pos = await computePosition(virtualEl, this.element, {
-			placement: 'top',
+			placement: 'left',
 			middleware: [offset(8), flip(), shift({ padding: 8 })],
 		});
 
