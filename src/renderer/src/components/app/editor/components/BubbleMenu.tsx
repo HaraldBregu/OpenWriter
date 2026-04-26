@@ -16,8 +16,10 @@ import {
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import {
+	arrow,
 	autoUpdate,
 	flip,
+	FloatingArrow,
 	offset,
 	shift,
 	useFloating,
