@@ -307,7 +307,10 @@ function PageContent(): ReactElement {
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
 	const assistantIsRunning =
-		activeTaskId !== null || documentHasActiveTask || preexistingTaskActive;
+		activeTaskId !== null ||
+		aiActionTaskId !== null ||
+		documentHasActiveTask ||
+		preexistingTaskActive;
 
 	useEffect(() => {
 		if (!id) {
