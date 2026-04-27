@@ -2,19 +2,22 @@ import { posToDOMRect } from '@tiptap/core';
 import type { Editor } from '@tiptap/core';
 import { type EditorState, Plugin, PluginKey } from '@tiptap/pm/state';
 import type { EditorView } from '@tiptap/pm/view';
-import { computePosition, offset, shift, flip } from '@floating-ui/dom';
 
 export interface OptionMenuControls {
 	forceHide: () => void;
 }
 
+export interface OptionMenuState {
+	open: boolean;
+	getReferenceRect: (() => DOMRect) | null;
+	query: string;
+	slashPos: number | null;
+}
+
 export interface OptionMenuPluginProps {
 	pluginKey: PluginKey | string;
 	editor: Editor;
-	element: HTMLElement;
-	onShow: () => void;
-	onHide: () => void;
-	onQueryChange: (query: string, slashPos: number) => void;
+	onUpdate: (state: OptionMenuState) => void;
 	onKeyEvent: (event: KeyboardEvent) => boolean;
 	getIsLocked?: () => boolean;
 	controls?: OptionMenuControls;
@@ -22,33 +25,25 @@ export interface OptionMenuPluginProps {
 
 export class OptionMenuView {
 	public editor: Editor;
-	public element: HTMLElement;
 	public view: EditorView;
 
 	private visible = false;
 	private dismissed = false;
 	private dismissedSlashPos: number | null = null;
 	private slashPos: number | null = null;
-	private onShow: () => void;
-	private onHide: () => void;
-	private onQueryChange: (query: string, slashPos: number) => void;
+	private query = '';
+	private onUpdate: (state: OptionMenuState) => void;
 	private getIsLocked: () => boolean;
 
 	constructor(view: EditorView, props: OptionMenuPluginProps) {
 		this.editor = props.editor;
-		this.element = props.element;
 		this.view = view;
-		this.onShow = props.onShow;
-		this.onHide = props.onHide;
-		this.onQueryChange = props.onQueryChange;
+		this.onUpdate = props.onUpdate;
 		this.getIsLocked = props.getIsLocked ?? (() => false);
 
 		if (props.controls) {
 			props.controls.forceHide = () => this.forceHide();
 		}
-
-		this.element.style.visibility = 'hidden';
-		this.element.style.position = 'absolute';
 	}
 
 	update(view: EditorView, _oldState?: EditorState): void {
@@ -56,7 +51,6 @@ export class OptionMenuView {
 		const { state } = view;
 		const { selection } = state;
 
-		// Only work with cursor selections (not ranges)
 		if (!selection.empty) {
 			this.hide();
 			return;
@@ -64,12 +58,9 @@ export class OptionMenuView {
 
 		const $from = selection.$from;
 		const cursorPos = $from.pos;
-
-		// Get the start of the current text block
 		const blockStart = $from.start();
 		const textBefore = state.doc.textBetween(blockStart, cursorPos, '\0', '\0');
 
-		// Find the last "/" that is either at the start of the block or preceded by whitespace
 		let slashIndex = -1;
 		for (let i = textBefore.length - 1; i >= 0; i--) {
 			if (textBefore[i] === '/') {
@@ -89,48 +80,46 @@ export class OptionMenuView {
 
 		const foundSlashPos = blockStart + slashIndex;
 
-		// If user dismissed this exact slash, don't re-show
 		if (this.dismissed && this.dismissedSlashPos === foundSlashPos) {
 			return;
 		}
 
-		// A new slash position means a new trigger — reset dismissed
 		if (this.dismissedSlashPos !== foundSlashPos) {
 			this.dismissed = false;
 			this.dismissedSlashPos = null;
 		}
 
-		const query = textBefore.slice(slashIndex + 1);
+		this.query = textBefore.slice(slashIndex + 1);
 		this.slashPos = foundSlashPos;
-
-		this.onQueryChange(query, this.slashPos);
-		void this.updatePosition();
 		this.show();
 	}
 
-	async updatePosition(): Promise<void> {
-		if (this.slashPos === null) return;
+	private getReferenceRect = (): DOMRect => {
+		const slashPos = this.slashPos ?? 0;
+		return posToDOMRect(this.view, slashPos, slashPos + 1);
+	};
 
-		const slashPos = this.slashPos;
-		const virtualEl = {
-			getBoundingClientRect: () => posToDOMRect(this.view, slashPos, slashPos + 1),
-		};
-
-		const pos = await computePosition(virtualEl, this.element, {
-			placement: 'bottom-start',
-			middleware: [offset(4), flip(), shift({ padding: 8 })],
+	private emitOpen(): void {
+		this.onUpdate({
+			open: true,
+			getReferenceRect: this.getReferenceRect,
+			query: this.query,
+			slashPos: this.slashPos,
 		});
+	}
 
-		this.element.style.left = `${pos.x}px`;
-		this.element.style.top = `${pos.y}px`;
+	private emitClosed(): void {
+		this.onUpdate({
+			open: false,
+			getReferenceRect: null,
+			query: '',
+			slashPos: null,
+		});
 	}
 
 	show(): void {
-		if (!this.visible) {
-			this.visible = true;
-			this.element.style.visibility = 'visible';
-			this.onShow();
-		}
+		this.visible = true;
+		this.emitOpen();
 	}
 
 	hide(): void {
@@ -138,16 +127,16 @@ export class OptionMenuView {
 		if (this.getIsLocked()) return;
 		this.visible = false;
 		this.slashPos = null;
-		this.element.style.visibility = 'hidden';
-		this.onHide();
+		this.query = '';
+		this.emitClosed();
 	}
 
 	forceHide(): void {
 		if (!this.visible) return;
 		this.visible = false;
 		this.slashPos = null;
-		this.element.style.visibility = 'hidden';
-		this.onHide();
+		this.query = '';
+		this.emitClosed();
 	}
 
 	dismiss(): void {

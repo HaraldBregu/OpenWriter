@@ -39,6 +39,7 @@ import {
 import { PageBody } from '@/components/app/base/page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import { PromptSubmitPayload } from '@shared/index';
+import { AiActionPayload } from '@/components/app/editor/components/BubbleMenu';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
@@ -337,8 +338,8 @@ function PageContent(): ReactElement {
 			const finishedTask = activeTask
 				? undefined
 				: res.data.find(
-						(t) => t.metadata?.documentId === id && t.status === 'finished'
-					);
+					(t) => t.metadata?.documentId === id && t.status === 'finished'
+				);
 			const displayTask = activeTask ?? finishedTask;
 			setDocumentHasActiveTask(!!activeTask);
 			setPreexistingTaskActive(!!displayTask);
@@ -591,7 +592,7 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handleAiAction = useCallback(
-		(action: { type: string; text: string }) => {
+		(action: AiActionPayload) => {
 			console.log('AI action:', action.type, action.text);
 		},
 		[]
