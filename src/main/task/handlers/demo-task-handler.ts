@@ -1,5 +1,6 @@
 import type { TaskHandler, Emit } from '../task-handler';
 import type { LoggerService } from '../../services/logger';
+import type { TaskState } from '../../../shared/types';
 
 export interface DemoTaskInput {
 	prompt: string;
