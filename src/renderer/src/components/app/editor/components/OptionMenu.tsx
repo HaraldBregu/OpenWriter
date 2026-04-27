@@ -556,21 +556,21 @@ export function OptionMenu(): React.JSX.Element | null {
 						})}
 					</div>
 
-					<div className="flex items-center justify-between px-2 py-1.5 border-t border-border/60">
+					<div className="p-1 border-t border-border/60">
 						<Button
 							variant="ghost"
 							size="sm"
-							className="h-7 px-2 text-xs"
+							className="w-full justify-between"
 							onMouseDown={(e) => {
 								e.preventDefault();
 								handleClose();
 							}}
 						>
-							Close
+							<span>Close</span>
+							<kbd className="text-[10px] text-muted-foreground rounded border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
+								esc
+							</kbd>
 						</Button>
-						<kbd className="text-[10px] text-muted-foreground rounded border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
-							esc
-						</kbd>
 					</div>
 				</Card>
 			</div>
