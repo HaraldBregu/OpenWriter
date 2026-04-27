@@ -173,6 +173,8 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		};
 	}, [editor]);
 
+	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
 	const handlePluginUpdate = useCallback(
 		({
 			open: nextOpen,
@@ -184,12 +186,32 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			if (getReferenceRect) {
 				referenceRectRef.current = getReferenceRect;
 			}
-			if (!nextOpen && editor.view.dom.classList.contains('improving-writing')) return;
-			if (!nextOpen && refs.floating.current?.contains(document.activeElement)) return;
-			setOpen(nextOpen);
+			if (closeTimerRef.current) {
+				clearTimeout(closeTimerRef.current);
+				closeTimerRef.current = null;
+			}
+			if (nextOpen) {
+				setOpen(true);
+				return;
+			}
+			if (editor.view.dom.classList.contains('improving-writing')) return;
+			closeTimerRef.current = setTimeout(() => {
+				closeTimerRef.current = null;
+				if (refs.floating.current?.contains(document.activeElement)) return;
+				setOpen(false);
+			}, 0);
 		},
 		[editor, refs]
 	);
+
+	useEffect(() => {
+		return () => {
+			if (closeTimerRef.current) {
+				clearTimeout(closeTimerRef.current);
+				closeTimerRef.current = null;
+			}
+		};
+	}, []);
 
 	useEffect(() => {
 		if (editor.isDestroyed) return;
