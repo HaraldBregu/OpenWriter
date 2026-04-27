@@ -10,6 +10,8 @@ export interface MovingShadowProps extends React.HTMLAttributes<HTMLElement> {
 	shadowBlur?: number;
 	/** Three CSS colors blended into the glow (default cyan/green/rose). */
 	shadowColors?: [string, string, string];
+	/** Overall opacity of the cast glow. Default 0.18 (very subtle). */
+	shadowOpacity?: number;
 	children: React.ReactNode;
 	as?: React.ElementType;
 	containerClassName?: string;
@@ -18,9 +20,9 @@ export interface MovingShadowProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const DEFAULT_COLORS: [string, string, string] = [
-	'rgba(56, 189, 248, 0.85)',
-	'rgba(52, 211, 153, 0.75)',
-	'rgba(251, 113, 133, 0.85)',
+	'rgba(56, 189, 248, 0.55)',
+	'rgba(52, 211, 153, 0.45)',
+	'rgba(251, 113, 133, 0.55)',
 ];
 
 const TWO_PI = Math.PI * 2;
