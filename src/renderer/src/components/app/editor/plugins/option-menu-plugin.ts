@@ -5,6 +5,7 @@ import type { EditorView } from '@tiptap/pm/view';
 
 export interface OptionMenuControls {
 	forceHide: () => void;
+	dismiss: () => void;
 }
 
 export interface OptionMenuState {
