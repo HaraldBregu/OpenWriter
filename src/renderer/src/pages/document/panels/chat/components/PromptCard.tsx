@@ -225,6 +225,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				</CardFooter>
 				</Card>
 			</MovingBorderButton>
+			</MovingShadow>
 		</div>
 	);
 };
