@@ -27,7 +27,7 @@ export function PromptHeader(): React.JSX.Element | null {
 		<CardHeader className="space-y-0 py-0!">
 			<ItemGroup>
 				<Item size="xs" className="p-0">
-					<div className="flex w-full flex-col gap-1.5 pt-1.5 pr-1.5">
+					<div className="flex w-full min-w-0 flex-col gap-1.5 pt-0 pr-1.5">
 						{hasSelection && (
 							<div
 								className="flex w-full items-center gap-1.5 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
