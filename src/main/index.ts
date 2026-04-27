@@ -271,10 +271,14 @@ app.whenReady().then(async () => {
 		logger.info('App', `Workspace process ready with PID: ${process.pid}`);
 
 		// Track whether the workspace window is closing due to user action vs.
-		// renderer crash. `close` fires only on user close; `render-process-gone`
-		// fires on crash and is followed by `closed` without a prior `close`.
+		// renderer crash. NOTE: `close` fires for ALL closes (user X, programmatic
+		// win.close(), app.quit(), Cmd+Q, OS shutdown) — not just user action.
+		// The flag name is historical; the stack trace below is what actually
+		// distinguishes idle/spurious closes from user clicks.
 		let userClose = false;
 		workspaceWindow.on('close', () => {
+			const stack = new Error('workspace window close').stack;
+			writeCrashLine(`[workspace:close] isQuitting=${appState.isQuitting}\n${stack}`);
 			userClose = true;
 		});
 
