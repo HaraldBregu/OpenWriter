@@ -98,7 +98,7 @@ export function OptionMenu(): React.JSX.Element | null {
 		[]
 	);
 
-	const { refs, floatingStyles, context, update, placement } = useFloating({
+	const { refs, floatingStyles, context, update } = useFloating({
 		open,
 		onOpenChange: setOpen,
 		placement: 'bottom-start',
