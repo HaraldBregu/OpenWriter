@@ -609,13 +609,18 @@ function PageContent(): ReactElement {
 			const taskType =
 				action.type === 'fix-grammar' ? 'demo-fix-grammar' : 'demo-improve-writing';
 
+			setActiveAiAction(action.type);
+
 			const result = await window.task.submit({
 				type: taskType,
 				input: { text: action.text },
 				metadata: { documentId: id, selection: { from, to } },
 			});
 
-			if (!result.success) return;
+			if (!result.success) {
+				setActiveAiAction(null);
+				return;
+			}
 			setAiActionTaskId(result.data.taskId);
 		},
 		[id, assistantIsRunning, editor]
