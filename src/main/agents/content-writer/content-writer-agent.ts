@@ -9,7 +9,6 @@ import type {
 	ContentWriterAgentOutput,
 	ContentWriterLlmCaller,
 	ContentWriterRoute,
-	ContentWriterRouting,
 	ContentWriterState,
 } from './types';
 
