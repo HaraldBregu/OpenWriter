@@ -8,6 +8,7 @@ import type {
 	ContentWriterAgentOutput,
 } from '../../agents/content-writer';
 import type { AgentEvent } from '../../agents/core/agent';
+import type { TaskState } from '../../../shared/types';
 
 export interface ContentWriterTaskInput {
 	prompt: string;
@@ -30,9 +31,10 @@ const LOG_SOURCE = 'ContentWriterTaskHandler';
  * AgentEvents into TaskEvents for the renderer.
  *
  * Event mapping:
- *   handler enters       → task `queued` then `started`
- *   agent `text` delta   → task `running: <token>`
- *   agent return value   → task `finished: <full content>`
+ *   handler enters       → task `queued` / `started` ({success: true, data})
+ *   agent `text` delta   → task `running: <token>` ({success: true, data})
+ *   agent return value   → task `finished: <content>` ({success: true, data})
+ *   caught error         → task `cancelled` ({success: false, error}); rethrown
  */
 export class ContentWriterTaskHandler
 	implements TaskHandler<ContentWriterTaskInput, string>
@@ -52,45 +54,62 @@ export class ContentWriterTaskHandler
 			promptLength: input.prompt.length,
 		});
 
-		const logAndEmit: Emit = (update) => {
+		const logAndEmitSuccess = (update: { state: TaskState; data: string }): void => {
 			if (update.state !== 'running') {
 				const payload =
 					update.state === 'finished' ? `length=${update.data.length}` : update.data;
 				logger.info(LOG_SOURCE, `state=${update.state}`, { data: payload });
 			}
-			emit(update);
+			emit({ state: update.state, data: { success: true, data: update.data } });
 		};
 
-		logAndEmit({ state: 'queued', data: 'queued' });
-		logAndEmit({ state: 'started', data: 'started' });
-
-		const service = serviceResolver.resolve(
-			input.providerId ? { providerId: input.providerId } : undefined
-		);
-		const model = modelResolver.resolve(input.modelId ? { modelId: input.modelId } : undefined);
-
-		const agentInput: ContentWriterAgentInput = {
-			prompt: input.prompt,
-			providerId: service.provider.id,
-			apiKey: service.apiKey,
-			modelName: model.modelId,
+		const emitFailure = (message: string): void => {
+			logger.error(LOG_SOURCE, 'Content-writer task failed', { error: message });
+			emit({ state: 'cancelled', data: { success: false, error: message } });
 		};
 
-		const onEvent = (event: AgentEvent): void => {
-			if (event.kind === 'text') {
-				const token = (event.payload as { text: string }).text;
-				logAndEmit({ state: 'running', data: token });
-			}
-		};
+		logAndEmitSuccess({ state: 'queued', data: 'queued' });
+		logAndEmitSuccess({ state: 'started', data: 'started' });
 
-		const output: ContentWriterAgentOutput = await agent.execute(agentInput, {
-			signal,
-			logger,
-			onEvent,
-		});
+		try {
+			const service = serviceResolver.resolve(
+				input.providerId ? { providerId: input.providerId } : undefined
+			);
+			const model = modelResolver.resolve(
+				input.modelId ? { modelId: input.modelId } : undefined
+			);
 
-		logAndEmit({ state: 'finished', data: output.content });
+			const agentInput: ContentWriterAgentInput = {
+				prompt: input.prompt,
+				providerId: service.provider.id,
+				apiKey: service.apiKey,
+				modelName: model.modelId,
+			};
 
-		return output.content;
+			const onEvent = (event: AgentEvent): void => {
+				if (event.kind === 'text') {
+					const token = (event.payload as { text: string }).text;
+					logAndEmitSuccess({ state: 'running', data: token });
+				}
+			};
+
+			const output: ContentWriterAgentOutput = await agent.execute(agentInput, {
+				signal,
+				logger,
+				onEvent,
+			});
+
+			logAndEmitSuccess({ state: 'finished', data: output.content });
+
+			return output.content;
+		} catch (err) {
+			// Aborts are user-initiated, not errors — let the executor emit the
+			// neutral cancelled event by re-throwing without our failure event.
+			if (err instanceof Error && err.name === 'AbortError') throw err;
+
+			const message = err instanceof Error ? err.message : String(err);
+			emitFailure(message);
+			throw err;
+		}
 	}
 }
