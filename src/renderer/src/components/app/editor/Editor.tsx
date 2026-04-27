@@ -106,12 +106,14 @@ function readFileAsDataUri(file: File): Promise<string> {
 
 function Content({
 	onAiAction,
+	activeAiAction,
 }: {
 	onAiAction?: (action: AiActionPayload) => void;
+	activeAiAction?: AiActionType | null;
 }): React.JSX.Element {
 	return (
 		<>
-			<BubbleMenu onAiAction={onAiAction} />
+			<BubbleMenu onAiAction={onAiAction} activeAction={activeAiAction} />
 			<OptionMenu />
 		</>
 	);
