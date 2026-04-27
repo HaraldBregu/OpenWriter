@@ -2,10 +2,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Slice } from '@tiptap/pm/model';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
-import type { PromptSubmitPayload } from '@shared/index';
-import type { AiActionPayload } from '@/components/app/editor/components/BubbleMenu';
+import type { AiActionType, PromptSubmitPayload } from '@shared/index';
 import type { EditorActions } from './use-editor';
 import type { EditorStreamInsert } from './use-editor-stream-insert';
+
+type PromptInputPayload = Extract<PromptSubmitPayload, { files: File[] }>;
+type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
 
 const TASK_TYPE = 'content-writer';
 
