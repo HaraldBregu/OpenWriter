@@ -32,6 +32,7 @@ export function MovingShadow({
 	shadowSize = 60,
 	shadowBlur = 56,
 	shadowColors = DEFAULT_COLORS,
+	shadowOpacity = 0.18,
 	duration = 6000,
 	children,
 	as: Component = 'div',
