@@ -102,11 +102,14 @@ function applyEvent(task: TrackedTask, event: TaskEvent): TrackedTask {
 				...base,
 				status: 'finished',
 				progress: { percent: 100 },
-				result: dataField<unknown>(event.data, 'result') ?? event.data,
+				result: event.data.success ? event.data.data : undefined,
 				durationMs: dataField<number>(event.data, 'durationMs'),
 			};
-		case 'cancelled':
-			return { ...base, status: 'cancelled', error: event.data || undefined };
+		case 'cancelled': {
+			const errorMessage =
+				!event.data.success && event.data.error.length > 0 ? event.data.error : undefined;
+			return { ...base, status: 'cancelled', error: errorMessage };
+		}
 		default:
 			return base;
 	}
