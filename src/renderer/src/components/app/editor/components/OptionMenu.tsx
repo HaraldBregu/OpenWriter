@@ -312,7 +312,10 @@ export function OptionMenu(): React.JSX.Element | null {
 	);
 
 	useEffect(() => {
-		if (selectedIndex !== imagesItemIndex) setImageSelectedIndex(-1);
+		if (selectedIndex !== imagesItemIndex) {
+			setImageSelectedIndex(-1);
+			setImagesMenuOpen(false);
+		}
 	}, [selectedIndex, imagesItemIndex]);
 
 	useEffect(() => {
