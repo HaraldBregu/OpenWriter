@@ -829,6 +829,7 @@ function PageContent(): ReactElement {
 									onPromptSubmit={handlePromptSubmit}
 									onInsertContent={handleInsertContent}
 									onAiAction={handleAiAction}
+									activeAiAction={activeAiAction}
 									documentId={id}
 									onEditorReady={handleEditorReady}
 								/>
