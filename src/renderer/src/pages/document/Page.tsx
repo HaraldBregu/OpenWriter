@@ -608,9 +608,7 @@ function PageContent(): ReactElement {
 			const taskType =
 				action.type === 'fix-grammar' ? 'demo-fix-grammar' : 'demo-improve-writing';
 
-			editorActions.showLoading();
-			editorActions.disable();
-			editorInsert.begin(from, to);
+			editorInsert.begin(to, to);
 
 			const result = await window.task.submit({
 				type: taskType,
@@ -620,15 +618,43 @@ function PageContent(): ReactElement {
 
 			if (!result.success) {
 				editorInsert.revert();
-				editorActions.hideLoading();
-				editorActions.enable();
 				return;
 			}
-			aiActionTaskIdsRef.current.add(result.data.taskId);
-			setActiveTaskId(result.data.taskId);
+			setAiActionTaskId(result.data.taskId);
 		},
-		[id, assistantIsRunning, editor, editorActions, editorInsert]
+		[id, assistantIsRunning, editor, editorInsert]
 	);
+
+	useEffect(() => {
+		if (!id || !aiActionTaskId) return;
+		if (typeof window.task?.onEvent !== 'function') return;
+
+		return window.task.onEvent((event: TaskEvent) => {
+			if (event.taskId !== aiActionTaskId) return;
+			if (event.metadata.documentId !== id) return;
+
+			if (event.state === 'running') {
+				editorInsert.appendDelta(event.data);
+			} else if (event.state === 'finished') {
+				console.log('AI action response:', event.data);
+				editorInsert.commitFinal(event.data);
+				if (typeof window.task?.cancel === 'function') {
+					void window.task.cancel(aiActionTaskId);
+				}
+				if (editor && !editor.isDestroyed) {
+					const fullMarkdown = editor.getMarkdown();
+					setContent(fullMarkdown);
+					dispatch({ type: 'CONTENT_CHANGED', value: fullMarkdown });
+					debouncedContentSave.cancel();
+					window.workspace.updateDocumentContent(id, fullMarkdown);
+				}
+				setAiActionTaskId(null);
+			} else if (event.state === 'cancelled') {
+				editorInsert.revert();
+				setAiActionTaskId(null);
+			}
+		});
+	}, [aiActionTaskId, id, editor, editorInsert, dispatch, debouncedContentSave]);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
 		if (!id) return;
