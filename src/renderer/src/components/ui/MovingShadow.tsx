@@ -72,6 +72,7 @@ export function MovingShadow({
 					left: inset,
 					x,
 					y,
+					rotate,
 					borderRadius: blobRadius,
 					background: glowBackground,
 					filter: `blur(${shadowBlur}px)`,
