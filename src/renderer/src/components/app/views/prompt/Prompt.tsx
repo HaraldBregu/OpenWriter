@@ -68,10 +68,10 @@ function PromptContainer(): React.JSX.Element {
 					/>
 					<MovingBorderButton
 						as="div"
-						borderRadius="1rem"
+						borderRadius="0.75rem"
 						duration={6200}
 						containerClassName="h-auto w-full text-sm"
-						borderClassName="h-24 w-24 bg-[radial-gradient(circle,_#38bdf8_8%,_#34d399_32%,_#fb7185_56%,_transparent_72%)] opacity-[0.92]"
+						borderClassName="h-24 w-96 bg-[radial-gradient(ellipse_50%_50%_at_center,_#38bdf8_8%,_#34d399_28%,_#fb7185_50%,_transparent_75%)] opacity-[0.92]"
 						className="block border-none bg-transparent p-0 text-inherit backdrop-blur-none"
 					>
 						<Card className="w-full shadow-none!">
