@@ -56,16 +56,12 @@ function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React
 	);
 }
 
-export type AiActionType = 'improve-selected-text-writing' | 'fix-selected-text-grammar' | 'custom';
+import type { AiActionType, PromptSubmitPayload } from '@shared/index';
 
-export interface AiActionPayload {
-	type: AiActionType;
-	text: string;
-	prompt?: string;
-}
+export type { AiActionType };
 
 export interface BubbleMenuProps {
-	onAiAction?: (action: AiActionPayload) => void;
+	onAiAction?: (action: Extract<PromptSubmitPayload, { type: AiActionType }>) => void;
 	activeAction?: AiActionType | null;
 }
 
