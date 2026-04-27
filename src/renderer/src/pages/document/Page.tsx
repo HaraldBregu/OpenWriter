@@ -44,7 +44,7 @@ import { ErrorDialog } from '@/components/app/dialogs';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
-const TASK_TYPE = 'demo';
+const TASK_TYPE = 'content-writer';
 
 function PageContent(): ReactElement {
 	const { documentId: id, selection } = useDocumentState();
