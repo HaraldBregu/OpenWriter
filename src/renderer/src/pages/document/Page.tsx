@@ -633,9 +633,7 @@ function PageContent(): ReactElement {
 			if (event.taskId !== aiActionTaskId) return;
 			if (event.metadata.documentId !== id) return;
 
-			if (event.state === 'running') {
-				editorInsert.appendDelta(event.data);
-			} else if (event.state === 'finished') {
+			if (event.state === 'finished') {
 				console.log('AI action response:', event.data);
 				editorInsert.commitFinal(event.data);
 				if (typeof window.task?.cancel === 'function') {
