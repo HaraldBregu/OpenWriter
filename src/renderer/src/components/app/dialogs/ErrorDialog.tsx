@@ -46,7 +46,7 @@ export function ErrorDialog({
 					<AlertDialogDescription>{description}</AlertDialogDescription>
 				</AlertDialogHeader>
 				<AlertDialogFooter>
-					<AlertDialogAction onClick={handleDismiss}>
+					<AlertDialogAction className="col-span-2 w-full" onClick={handleDismiss}>
 						{dismissLabel ?? t('common.ok', 'OK')}
 					</AlertDialogAction>
 				</AlertDialogFooter>
