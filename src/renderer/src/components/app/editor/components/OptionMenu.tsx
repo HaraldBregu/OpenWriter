@@ -441,8 +441,6 @@ export function OptionMenu(): React.JSX.Element | null {
 
 	if (!isMounted) return null;
 
-	const placedTop = placement.startsWith('top');
-
 	return (
 		<div ref={refs.setFloating} style={floatingStyles} className="z-50">
 			<div style={transitionStyles} className="will-change-transform">
