@@ -192,7 +192,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 	// ---- Submit: prompt task ------------------------------------------------
 	const submitPrompt = useCallback(
-		async (payload: PromptSubmitPayload, editorArg: TiptapEditor): Promise<void> => {
+		async (payload: PromptInputPayload, editorArg: TiptapEditor): Promise<void> => {
 			if (!documentId || isBusyRef.current) return;
 			if (typeof window.task?.submit !== 'function') return;
 
