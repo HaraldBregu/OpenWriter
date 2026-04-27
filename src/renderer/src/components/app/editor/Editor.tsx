@@ -632,6 +632,14 @@ const Editor = React.memo(
 				[editor, documentId]
 			);
 
+			const handleAiAction = useCallback(
+				(action: AiActionPayload) => {
+					if (!editor || editor.isDestroyed) return;
+					onPromptSubmitRef.current?.(action, editor);
+				},
+				[editor]
+			);
+
 			return (
 				<Layout
 					id={id}
@@ -641,7 +649,7 @@ const Editor = React.memo(
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
-					{editor && <Content onAiAction={onAiAction} activeAiAction={activeAiAction} />}
+					{editor && <Content onAiAction={handleAiAction} activeAiAction={activeAiAction} />}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
