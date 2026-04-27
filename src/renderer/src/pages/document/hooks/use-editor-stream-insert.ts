@@ -118,20 +118,28 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		editor.view.dispatch(tr);
 		session.insertedLength = newInsertedLength;
 
-		// After the new content is in the DOM, ensure the prompt nodeview is
-		// fully visible. If not, scroll exactly by its own height.
+		// Follow the trailing edge of inserted text. We update a scroll target
+		// after each render and let an rAF loop ease toward it, so streaming
+		// tokens produce one continuous glide instead of per-frame jumps.
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
-		const promptEl = findPromptDom(editor);
-		if (scrollEl && promptEl) {
-			const promptRect = promptEl.getBoundingClientRect();
-			const containerRect = scrollEl.getBoundingClientRect();
-			const fullyVisible =
-				promptRect.top >= containerRect.top && promptRect.bottom <= containerRect.bottom;
-			if (!fullyVisible) {
-				scrollEl.scrollTop += promptRect.height;
+		if (scrollEl) {
+			try {
+				const coords = editor.view.coordsAtPos(endPos);
+				const containerRect = scrollEl.getBoundingClientRect();
+				const bottomMargin = 96;
+				const overflow = coords.bottom - (containerRect.bottom - bottomMargin);
+				if (overflow > 0) {
+					scrollTargetRef.current = {
+						el: scrollEl,
+						top: scrollEl.scrollTop + overflow,
+					};
+					ensureScrollAnimation();
+				}
+			} catch {
+				// coordsAtPos throws on invalid positions; nothing to do.
 			}
 		}
-	}, [editor, clampPos]);
+	}, [editor, clampPos, ensureScrollAnimation]);
 
 	const cancelPendingFrame = useCallback((): void => {
 		const session = sessionRef.current;

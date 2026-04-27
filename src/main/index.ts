@@ -6,6 +6,7 @@ import {
 	Menu as ElectronMenu,
 	protocol,
 	net,
+	crashReporter,
 } from 'electron';
 import path from 'node:path';
 import { Main } from './main';
@@ -44,11 +45,27 @@ const workspacePath = WorkspaceProcessManager.getWorkspacePathFromArgs();
 // Install process-level safety net BEFORE anything else so we can see silent exits.
 setupProcessSafetyNet();
 
+// Start Chromium crash capture as early as possible so renderer/process
+// crashes produce dumps instead of only a generic Crashpad stderr line.
+try {
+	const crashDumpsPath = app.getPath('crashDumps');
+	// eslint-disable-next-line no-console
+	console.log(`[CrashReporter] crash dumps path: ${crashDumpsPath}`);
+	crashReporter.start({
+		submitURL: '',
+		uploadToServer: false,
+	});
+} catch (error) {
+	// eslint-disable-next-line no-console
+	console.error('[CrashReporter] Failed to start', error);
+}
+
 // Bootstrap new architecture - FULL INTEGRATION ENABLED
 const { container, eventBus, appState, windowFactory, logger, windowContextManager } =
 	bootstrapServices();
 // Re-bind safety net with the real logger now that it exists.
 setupProcessSafetyNet(logger);
+logger.info('CrashReporter', `Crash dumps path: ${app.getPath('crashDumps')}`);
 logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`);
 if (isWorkspaceMode && workspacePath) {
 	logger.info('Main', `Workspace path: ${workspacePath}`);
