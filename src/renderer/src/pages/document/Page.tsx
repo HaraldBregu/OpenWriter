@@ -26,6 +26,8 @@ import type {
 	ExtensionDocPanelInfo,
 	TaskEvent,
 } from '../../../../shared/types';
+import type { PromptSubmitPayload } from '@shared/index';
+import type { AiActionPayload } from '@/components/app/editor/components/BubbleMenu';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
