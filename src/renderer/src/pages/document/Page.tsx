@@ -608,21 +608,16 @@ function PageContent(): ReactElement {
 			const taskType =
 				action.type === 'fix-grammar' ? 'demo-fix-grammar' : 'demo-improve-writing';
 
-			editorInsert.begin(to, to);
-
 			const result = await window.task.submit({
 				type: taskType,
 				input: { text: action.text },
 				metadata: { documentId: id, selection: { from, to } },
 			});
 
-			if (!result.success) {
-				editorInsert.revert();
-				return;
-			}
+			if (!result.success) return;
 			setAiActionTaskId(result.data.taskId);
 		},
-		[id, assistantIsRunning, editor, editorInsert]
+		[id, assistantIsRunning, editor]
 	);
 
 	useEffect(() => {
@@ -635,24 +630,37 @@ function PageContent(): ReactElement {
 
 			if (event.state === 'finished') {
 				console.log('AI action response:', event.data);
-				editorInsert.commitFinal(event.data);
-				if (typeof window.task?.cancel === 'function') {
-					void window.task.cancel(aiActionTaskId);
-				}
+
 				if (editor && !editor.isDestroyed) {
+					const range = extractTaskSelection(event.metadata.selection);
+					if (range) {
+						const docSize = editor.state.doc.content.size;
+						const from = Math.min(range.from, docSize);
+						const to = Math.min(range.to, docSize);
+						const json = editor.markdown?.parse(event.data);
+						if (json) {
+							const node = editor.schema.nodeFromJSON(json);
+							const slice = new Slice(node.content, 0, 0);
+							const tr = editor.state.tr.replaceRange(from, to, slice);
+							editor.view.dispatch(tr);
+						}
+					}
 					const fullMarkdown = editor.getMarkdown();
 					setContent(fullMarkdown);
 					dispatch({ type: 'CONTENT_CHANGED', value: fullMarkdown });
 					debouncedContentSave.cancel();
 					window.workspace.updateDocumentContent(id, fullMarkdown);
 				}
+
+				if (typeof window.task?.cancel === 'function') {
+					void window.task.cancel(aiActionTaskId);
+				}
 				setAiActionTaskId(null);
 			} else if (event.state === 'cancelled') {
-				editorInsert.revert();
 				setAiActionTaskId(null);
 			}
 		});
-	}, [aiActionTaskId, id, editor, editorInsert, dispatch, debouncedContentSave]);
+	}, [aiActionTaskId, id, editor, dispatch, debouncedContentSave]);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
 		if (!id) return;
