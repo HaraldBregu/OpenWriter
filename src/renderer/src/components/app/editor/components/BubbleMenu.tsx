@@ -404,7 +404,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Ordered list</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Ordered list" keys={[modKey, shiftKey, '7']} />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
