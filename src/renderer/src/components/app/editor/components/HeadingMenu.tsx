@@ -75,9 +75,11 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 		close: { opacity: 0, transform: 'scale(0.95) translateY(4px)' },
 	});
 
-	const isHeadingActive = HEADING_LEVELS.some(({ level }) =>
+	const activeHeading = HEADING_LEVELS.find(({ level }) =>
 		editor.isActive('heading', { level })
 	);
+	const TriggerIcon = activeHeading?.Icon ?? HeadingIcon;
+	const triggerLabel = activeHeading?.label ?? 'Heading';
 
 	return (
 		<>
@@ -86,18 +88,18 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 					render={
 						<Button
 							ref={refs.setReference}
-							variant={isHeadingActive ? 'default' : 'ghost'}
+							variant={activeHeading ? 'default' : 'ghost'}
 							size="icon"
-							aria-label="Heading"
+							aria-label={triggerLabel}
 							{...getReferenceProps()}
 						>
-							<HeadingIcon className="h-3.5 w-3.5" />
+							<TriggerIcon className="h-3.5 w-3.5" />
 						</Button>
 					}
 				/>
 				<TooltipContent>
 					<div className="flex flex-col items-start gap-0.5">
-						<span>Heading</span>
+						<span>{triggerLabel}</span>
 					</div>
 				</TooltipContent>
 			</Tooltip>
