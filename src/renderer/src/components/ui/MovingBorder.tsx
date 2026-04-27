@@ -43,7 +43,7 @@ export function Button({
 				className="absolute inset-0"
 				style={{ borderRadius: `calc(${borderRadius} * 0.96)` }}
 			>
-				<MovingBorder duration={duration} rx="30%" ry="30%">
+				<MovingBorder duration={duration} rx={borderRadius} ry={borderRadius}>
 					<div
 						className={cn(
 							'h-20 w-20 bg-[radial-gradient(#0ea5e9_40%,transparent_60%)] opacity-[0.8]',
