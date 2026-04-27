@@ -74,12 +74,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					isDragOver && 'opacity-100'
 				)}
 			/>
-			<MovingShadow
-				borderRadius="1rem"
-				shadowSize="40px"
-				duration={7800}
-				shadowClassName="h-40 w-40 opacity-60"
-			>
+			<MovingShadow borderRadius="1rem" shadowSize={32} shadowBlur={44} duration={7800}>
 				<Card
 					ref={wrapperRef}
 					onBlur={onWrapperBlur}
