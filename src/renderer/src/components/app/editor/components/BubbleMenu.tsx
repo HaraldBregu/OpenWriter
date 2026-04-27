@@ -452,7 +452,11 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 
 					<InputGroup className='rounded-sm!'>
 						<InputGroupAddon>
-							<Sparkles className="h-3.5 w-3.5" />
+							{activeAction === 'custom' ? (
+								<Loader2 className="h-3.5 w-3.5 animate-spin" />
+							) : (
+								<Sparkles className="h-3.5 w-3.5" />
+							)}
 						</InputGroupAddon>
 						<InputGroupInput
 							value={customPrompt}
@@ -463,7 +467,8 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									handleCustomPromptSubmit();
 								}
 							}}
-							placeholder="Ask AI…"
+							disabled={activeAction !== null && activeAction !== undefined}
+							placeholder={activeAction === 'custom' ? 'Working…' : 'Ask AI…'}
 						/>
 					</InputGroup>
 				</Card>
