@@ -605,7 +605,8 @@ function PageContent(): ReactElement {
 
 			editorActions.showLoading();
 			editorActions.disable();
-			editorInsert.begin(from, to);
+			const insertFrom = action.type === 'fix-grammar' ? to : from;
+			editorInsert.begin(insertFrom, to);
 
 			const result = await window.task.submit({
 				type: taskType,
