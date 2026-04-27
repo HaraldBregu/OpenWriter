@@ -253,77 +253,140 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				<Card
 					size="sm"
 					className={cn(
-						'flex flex-col gap-1! py-2! px-2.5! w-39',
+						'flex flex-col gap-1! py-2! px-2.5! w-fit',
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
 					<div className="flex flex-row items-center gap-0.5">
-						<Button
-							variant={editor.isActive('bold') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Bold"
-							onClick={() => editor.chain().focus().toggleBold().run()}
-						>
-							<Bold className="h-3.5 w-3.5" />
-						</Button>
-						<Button
-							variant={editor.isActive('italic') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Italic"
-							onClick={() => editor.chain().focus().toggleItalic().run()}
-						>
-							<Italic className="h-3.5 w-3.5" />
-						</Button>
-						<Button
-							variant={editor.isActive('underline') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Underline"
-							onClick={() => editor.chain().focus().toggleUnderline().run()}
-						>
-							<Underline className="h-3.5 w-3.5" />
-						</Button>
-						<Button
-							variant={editor.isActive('strike') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Strikethrough"
-							onClick={() => editor.chain().focus().toggleStrike().run()}
-						>
-							<Strikethrough className="h-3.5 w-3.5" />
-						</Button>
-						<Button
-							variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Text"
-							onClick={() => editor.chain().focus().setParagraph().run()}
-						>
-							<Type className="h-3.5 w-3.5" />
-						</Button>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('bold') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Bold"
+										onClick={() => editor.chain().focus().toggleBold().run()}
+									>
+										<Bold className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Bold</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('italic') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Italic"
+										onClick={() => editor.chain().focus().toggleItalic().run()}
+									>
+										<Italic className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Italic</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('underline') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Underline"
+										onClick={() => editor.chain().focus().toggleUnderline().run()}
+									>
+										<Underline className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Underline</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('strike') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Strikethrough"
+										onClick={() => editor.chain().focus().toggleStrike().run()}
+									>
+										<Strikethrough className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Strikethrough</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Text"
+										onClick={() => editor.chain().focus().setParagraph().run()}
+									>
+										<Type className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Text</TooltipContent>
+						</Tooltip>
 						<HeadingMenu editor={editor} />
 					</div>
 
 					<div className="flex flex-row items-center gap-0.5">
-						<Button
-							variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Bullet list"
-							onClick={() => editor.chain().focus().toggleBulletList().run()}
-						>
-							<List className="h-3.5 w-3.5" />
-						</Button>
-						<Button
-							variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
-							size="icon"
-							aria-label="Ordered list"
-							onClick={() => editor.chain().focus().toggleOrderedList().run()}
-						>
-							<ListOrdered className="h-3.5 w-3.5" />
-						</Button>
-						<Button variant="ghost" size="icon" aria-label="Comment" disabled>
-							<MessageSquare className="h-3.5 w-3.5" />
-						</Button>
-						<Button variant="ghost" size="icon" aria-label="Chat" disabled>
-							<MessageCircle className="h-3.5 w-3.5" />
-						</Button>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Bullet list"
+										onClick={() => editor.chain().focus().toggleBulletList().run()}
+									>
+										<List className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Bullet list</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('orderedList') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Ordered list"
+										onClick={() => editor.chain().focus().toggleOrderedList().run()}
+									>
+										<ListOrdered className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Ordered list</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button variant="ghost" size="icon" aria-label="Comment" disabled>
+										<MessageSquare className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Comment</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button variant="ghost" size="icon" aria-label="Chat" disabled>
+										<MessageCircle className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>Chat</TooltipContent>
+						</Tooltip>
 					</div>
 
 					<Separator className="my-1" />
