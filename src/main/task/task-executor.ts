@@ -182,7 +182,7 @@ export class TaskExecutor implements Disposable {
 		this.send(task.windowId, 'task:event', {
 			state: 'cancelled',
 			taskId,
-			data: '',
+			data: { success: true, data: '' },
 			metadata: task.metadata ?? {},
 		} satisfies TaskEvent);
 
