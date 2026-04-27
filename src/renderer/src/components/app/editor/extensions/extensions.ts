@@ -24,6 +24,7 @@ import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
 import type { PromptSubmitPayload } from '@shared/index';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
+import { SelectionMarkerExtension } from './selection-marker-extension';
 
 export interface ExtensionHandlers {
 	onPromptSubmit: (payload: PromptSubmitPayload) => void;
