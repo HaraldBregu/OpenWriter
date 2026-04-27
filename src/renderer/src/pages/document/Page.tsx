@@ -607,13 +607,24 @@ function PageContent(): ReactElement {
 			if (from === to) return;
 
 			const taskType =
-				action.type === 'fix-grammar' ? 'demo-fix-grammar' : 'demo-improve-writing';
+				action.type === 'fix-grammar'
+					? 'demo-fix-grammar'
+					: action.type === 'custom'
+						? 'demo-custom-prompt'
+						: 'demo-improve-writing';
+
+			if (action.type === 'custom' && !action.prompt?.trim()) return;
 
 			setActiveAiAction(action.type);
 
+			const input =
+				action.type === 'custom'
+					? { text: action.text, prompt: action.prompt ?? '' }
+					: { text: action.text };
+
 			const result = await window.task.submit({
 				type: taskType,
-				input: { text: action.text },
+				input,
 				metadata: { documentId: id, selection: { from, to } },
 			});
 
