@@ -288,6 +288,7 @@ function PageContent(): ReactElement {
 	editorActionsRef.current = editorActions;
 
 	const editorInsert = useEditorStreamInsert();
+	const aiActionTaskIdsRef = useRef<Set<string>>(new Set());
 
 	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 	const activeTaskIdRef = useRef<string | null>(null);
