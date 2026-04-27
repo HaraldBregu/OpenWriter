@@ -4,6 +4,8 @@ import {
 	Italic,
 	List,
 	ListOrdered,
+	MessageCircle,
+	MessageSquare,
 	SpellCheck,
 	Strikethrough,
 	Type,
