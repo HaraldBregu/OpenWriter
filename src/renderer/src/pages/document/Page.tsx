@@ -681,11 +681,11 @@ function PageContent(): ReactElement {
 				</ResizablePanel>
 			</ResizablePanelGroup>
 			<ErrorDialog
-				open={taskError !== null}
+				open={aiTasks.taskError !== null}
 				onOpenChange={(open) => {
-					if (!open) setTaskError(null);
+					if (!open) aiTasks.dismissTaskError();
 				}}
-				description={taskError ?? ''}
+				description={aiTasks.taskError ?? ''}
 			/>
 		</PageContainer>
 	);
