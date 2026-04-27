@@ -36,6 +36,9 @@ import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
+import type { AiActionType, PromptSubmitPayload } from '@shared/index';
+
+export type { AiActionType };
 
 const pluginKey = new PluginKey('bubbleMenu');
 
