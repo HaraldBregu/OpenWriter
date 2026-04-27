@@ -206,7 +206,7 @@ let safetyNetLogger: LoggerService | null = null;
 let safetyNetInstalled = false;
 let safetyNetCrashFile: string | null = null;
 
-function writeCrashLine(line: string): void {
+export function writeCrashLine(line: string): void {
 	// Write synchronously to a dedicated file so we capture the reason even
 	// when the process is torn down before the buffered LoggerService flushes.
 	try {
