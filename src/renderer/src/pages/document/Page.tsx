@@ -275,7 +275,7 @@ function PageContent(): ReactElement {
 		return () => {
 			if (!documentDeletedRef.current) {
 				debouncedMetadataSave.flush();
-				if (!activeTaskIdRef.current) {
+				if (!aiTasksRunningRef.current) {
 					debouncedContentSave.flush();
 				}
 			}
