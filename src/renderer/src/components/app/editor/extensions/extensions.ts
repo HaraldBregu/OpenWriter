@@ -27,7 +27,7 @@ import { ImagePlaceholderExtension } from './image-placeholder-extension';
 import { SelectionMarkerExtension } from './selection-marker-extension';
 
 export interface ExtensionHandlers {
-	onPromptSubmit: (payload: PromptSubmitPayload) => void;
+	onPromptSubmit: (payload: Extract<PromptSubmitPayload, { files: File[] }>) => void;
 	onImageInsert: ImageInsertHandler;
 }
 
