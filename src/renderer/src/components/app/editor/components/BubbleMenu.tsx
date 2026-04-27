@@ -297,23 +297,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<TooltipTrigger
 								render={
 									<Button
-										variant={editor.isActive('strike') ? 'default' : 'ghost'}
-										size="icon"
-										aria-label="Strikethrough"
-										onClick={() => editor.chain().focus().toggleStrike().run()}
-									>
-										<Strikethrough className="h-3.5 w-3.5" />
-									</Button>
-								}
-							/>
-							<TooltipContent>
-								<TooltipBody title="Strikethrough" keys={[modKey, shiftKey, 'S']} />
-							</TooltipContent>
-						</Tooltip>
-						<Tooltip>
-							<TooltipTrigger
-								render={
-									<Button
 										variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
 										size="icon"
 										aria-label="Text"
@@ -363,6 +346,23 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							/>
 							<TooltipContent>
 								<TooltipBody title="Ordered list" keys={[modKey, shiftKey, '7']} />
+							</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button
+										variant={editor.isActive('strike') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Strikethrough"
+										onClick={() => editor.chain().focus().toggleStrike().run()}
+									>
+										<Strikethrough className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>
+								<TooltipBody title="Strikethrough" keys={[modKey, shiftKey, 'S']} />
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
