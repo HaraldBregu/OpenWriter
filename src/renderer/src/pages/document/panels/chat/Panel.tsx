@@ -43,13 +43,12 @@ function applyTaskEventToSnapshot(prev: TaskSnapshot, event: TaskEvent): TaskSna
 			return {
 				...prev,
 				status: 'finished',
-				result: dataField<unknown>(event.data, 'result'),
+				result: event.data.success ? event.data.data : undefined,
 				metadata,
 			};
 		case 'cancelled': {
-			const errorMessage = typeof event.data === 'string' && event.data.length > 0
-				? event.data
-				: undefined;
+			const errorMessage =
+				!event.data.success && event.data.error.length > 0 ? event.data.error : undefined;
 			return { ...prev, status: 'cancelled', error: errorMessage, metadata };
 		}
 		default:
