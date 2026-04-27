@@ -289,9 +289,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						>
 							<Strikethrough className="h-3.5 w-3.5" />
 						</Button>
-					</div>
-
-					<div className="flex flex-row items-center gap-0.5">
 						<Button
 							variant={editor.isActive('paragraph') ? 'default' : 'ghost'}
 							size="icon"
@@ -301,6 +298,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<Type className="h-3.5 w-3.5" />
 						</Button>
 						<HeadingMenu editor={editor} />
+					</div>
+
+					<div className="flex flex-row items-center gap-0.5">
 						<Button
 							variant={editor.isActive('bulletList') ? 'default' : 'ghost'}
 							size="icon"
@@ -316,6 +316,12 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							onClick={() => editor.chain().focus().toggleOrderedList().run()}
 						>
 							<ListOrdered className="h-3.5 w-3.5" />
+						</Button>
+						<Button variant="ghost" size="icon" aria-label="Comment" disabled>
+							<MessageSquare className="h-3.5 w-3.5" />
+						</Button>
+						<Button variant="ghost" size="icon" aria-label="Chat" disabled>
+							<MessageCircle className="h-3.5 w-3.5" />
 						</Button>
 					</div>
 
