@@ -33,6 +33,7 @@ import { ModelResolver } from './shared/model-resolver';
 import {
 	AgentRegistry,
 	AssistantAgent,
+	ContentWriterAgent,
 	RagAgent,
 	OcrAgent,
 	TextGeneratorV1Agent,
