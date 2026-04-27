@@ -136,7 +136,6 @@ const Editor = React.memo(
 				streamingContent,
 				onPromptSubmit,
 				onInsertContent,
-				onAiAction,
 				activeAiAction,
 				documentId,
 				onEditorReady,
