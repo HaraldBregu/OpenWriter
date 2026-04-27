@@ -125,6 +125,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			submitRef,
 			...actions,
 			setSelection,
+			clearSelection,
 			resizeTextarea,
 		}),
 		[
@@ -139,6 +140,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			submitRef,
 			actions,
 			setSelection,
+			clearSelection,
 			resizeTextarea,
 		]
 	);
