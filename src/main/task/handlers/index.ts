@@ -8,3 +8,5 @@ export { DemoCustomPromptTaskHandler } from './demo-custom-prompt-task-handler';
 export type { DemoCustomPromptTaskInput } from './demo-custom-prompt-task-handler';
 export { DemoPostGeneratorTaskHandler } from './demo-post-generator-task-handler';
 export type { DemoPostGeneratorTaskInput } from './demo-post-generator-task-handler';
+export { ContentWriterTaskHandler } from './content-writer-task-handler';
+export type { ContentWriterTaskInput } from './content-writer-task-handler';

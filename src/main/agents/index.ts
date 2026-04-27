@@ -20,6 +20,20 @@ export type {
 	TextWriterSkill,
 	TextWriterSkillSelection,
 } from './text-writer';
+export { ContentWriterAgent } from './content-writer';
+export type {
+	ContentWriterAgentInput,
+	ContentWriterAgentOptions,
+	ContentWriterAgentOutput,
+	ContentWriterCallParams,
+	ContentWriterJsonSchema,
+	ContentWriterLlmCaller,
+	ContentWriterPhase,
+	ContentWriterRoute,
+	ContentWriterRouting,
+	ContentWriterState,
+	ContentWriterStreamParams,
+} from './content-writer';
 export { TextGeneratorV2Agent } from './text-generator-v2';
 export type {
 	TextGeneratorV2AgentInput,
