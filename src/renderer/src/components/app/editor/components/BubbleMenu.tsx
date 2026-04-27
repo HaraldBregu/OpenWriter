@@ -349,7 +349,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Strikethrough</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Strikethrough" keys={[modKey, shiftKey, 'S']} />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
