@@ -1,10 +1,6 @@
 import type OpenAI from 'openai';
 import { isReasoningModel } from '../../shared/ai-utils';
-import type {
-	ContentWriterCallParams,
-	ContentWriterLlmCaller,
-	ContentWriterStreamParams,
-} from './types';
+import type { ContentWriterLlmCaller, ContentWriterStreamParams } from './types';
 
 export class OpenAIContentWriterLlmCaller implements ContentWriterLlmCaller {
 	constructor(
@@ -12,23 +8,11 @@ export class OpenAIContentWriterLlmCaller implements ContentWriterLlmCaller {
 		private readonly timeoutMs: number
 	) {}
 
-	async call(params: ContentWriterCallParams, signal: AbortSignal): Promise<string> {
-		const merged = withTimeout(signal, this.timeoutMs);
-		try {
-			const response = await this.client.chat.completions.create(buildParams(params, false), {
-				signal: merged.signal,
-			});
-			return response.choices[0]?.message?.content ?? '';
-		} finally {
-			merged.clear();
-		}
-	}
-
 	async stream(params: ContentWriterStreamParams, signal: AbortSignal): Promise<string> {
 		const merged = withTimeout(signal, this.timeoutMs);
 		try {
 			const stream = await this.client.chat.completions.create(
-				{ ...buildParams(params, true), stream: true },
+				{ ...buildParams(params), stream: true },
 				{ signal: merged.signal }
 			);
 			let content = '';
@@ -47,8 +31,7 @@ export class OpenAIContentWriterLlmCaller implements ContentWriterLlmCaller {
 }
 
 function buildParams(
-	params: ContentWriterCallParams,
-	streaming: boolean
+	params: ContentWriterStreamParams
 ): OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming {
 	const reasoning = isReasoningModel(params.modelName);
 	const out: OpenAI.Chat.Completions.ChatCompletionCreateParamsNonStreaming = {
@@ -60,16 +43,6 @@ function buildParams(
 	};
 	if (!reasoning && params.temperature !== undefined) out.temperature = params.temperature;
 	if (params.maxTokens) out.max_tokens = params.maxTokens;
-	if (params.jsonSchema && !streaming) {
-		out.response_format = {
-			type: 'json_schema',
-			json_schema: {
-				name: params.jsonSchema.name,
-				strict: true,
-				schema: params.jsonSchema.schema,
-			},
-		};
-	}
 	return out;
 }
 
