@@ -557,5 +557,17 @@ export function OptionMenu(): React.JSX.Element | null {
 				</Card>
 			</div>
 		</div>
+		<ImagesMenu
+			open={imagesMenuOpen}
+			anchor={imagesAnchorEl}
+			images={images}
+			selectedIndex={imageSelectedIndex}
+			onSelectIndex={setImageSelectedIndex}
+			onPick={runImageFromWorkspace}
+			onMouseEnter={() => {
+				if (imagesItemIndex >= 0) setSelectedIndex(imagesItemIndex);
+			}}
+		/>
+		</>
 	);
 }
