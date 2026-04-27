@@ -613,15 +613,16 @@ function PageContent(): ReactElement {
 				editor.markdown?.serialize(slicedDoc.toJSON()) ??
 				editor.state.doc.textBetween(from, to, '\n\n');
 
-			const input: { intent: AiActionPayload['type']; text: string; prompt?: string } = {
-				intent: action.type,
-				text,
-				...(action.type === 'custom' && action.prompt?.trim()
-					? { prompt: action.prompt.trim() }
-					: {}),
-			};
+			const instruction =
+				action.type === 'fix-grammar'
+					? 'Fix the grammar of the following text. Return only the corrected text.'
+					: action.type === 'improve-writing'
+						? 'Improve the writing of the following text. Return only the rewritten text.'
+						: action.prompt!.trim();
 
-			console.log('AI action input:', input);
+			const prompt = `${instruction}\n\n${text}`;
+
+			console.log('AI action prompt:', prompt);
 
 			setActiveAiAction(action.type);
 		},
