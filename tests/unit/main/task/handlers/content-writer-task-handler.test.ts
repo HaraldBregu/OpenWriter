@@ -2,21 +2,47 @@ import {
 	ContentWriterTaskHandler,
 	type ContentWriterTaskInput,
 } from '../../../../../src/main/task/handlers/content-writer-task-handler';
+import { ContentWriterAgent } from '../../../../../src/main/agents/content-writer';
+import type {
+	ContentWriterCallParams,
+	ContentWriterLlmCaller,
+	ContentWriterRoute,
+	ContentWriterStreamParams,
+} from '../../../../../src/main/agents/content-writer';
 import type { TaskEvent } from '../../../../../src/shared/types';
 
 type EmittedEvent = Omit<TaskEvent, 'taskId' | 'metadata'>;
 
-function collectEvents(): {
-	events: EmittedEvent[];
-	emit: (event: EmittedEvent) => void;
+interface FakeCallerOptions {
+	route: ContentWriterRoute;
+	tokens: string[];
+	reasoning?: string;
+}
+
+function makeFakeCaller(opts: FakeCallerOptions): {
+	caller: ContentWriterLlmCaller;
+	streamCalls: ContentWriterStreamParams[];
+	jsonCalls: ContentWriterCallParams[];
 } {
-	const events: EmittedEvent[] = [];
-	return {
-		events,
-		emit: (event) => {
-			events.push(event);
+	const streamCalls: ContentWriterStreamParams[] = [];
+	const jsonCalls: ContentWriterCallParams[] = [];
+	const caller: ContentWriterLlmCaller = {
+		async call(params, _signal) {
+			jsonCalls.push(params);
+			return JSON.stringify({
+				route: opts.route,
+				reasoning: opts.reasoning ?? `routing to ${opts.route}`,
+			});
+		},
+		async stream(params, _signal) {
+			streamCalls.push(params);
+			for (const token of opts.tokens) {
+				params.onDelta(token);
+			}
+			return opts.tokens.join('');
 		},
 	};
+	return { caller, streamCalls, jsonCalls };
 }
 
 function makeLogger(): {
@@ -33,71 +59,179 @@ function makeLogger(): {
 	};
 }
 
+function makeServiceResolver(overrides?: {
+	providerId?: string;
+	apiKey?: string;
+}): { resolve: jest.Mock } {
+	return {
+		resolve: jest.fn().mockReturnValue({
+			provider: { id: overrides?.providerId ?? 'openai', name: 'OpenAI' },
+			apiKey: overrides?.apiKey ?? 'sk-test',
+		}),
+	};
+}
+
+function makeModelResolver(modelId = 'gpt-test'): { resolve: jest.Mock } {
+	return {
+		resolve: jest.fn().mockReturnValue({
+			providerId: 'openai',
+			modelId,
+			name: modelId,
+			type: 'text',
+			contextWindow: 128_000,
+			maxOutputTokens: 4_096,
+		}),
+	};
+}
+
+function collectEvents(): {
+	events: EmittedEvent[];
+	emit: (event: EmittedEvent) => void;
+} {
+	const events: EmittedEvent[] = [];
+	return {
+		events,
+		emit: (event) => {
+			events.push(event);
+		},
+	};
+}
+
+function buildHandler(callerOpts: FakeCallerOptions): {
+	handler: ContentWriterTaskHandler;
+	logger: ReturnType<typeof makeLogger>;
+	serviceResolver: ReturnType<typeof makeServiceResolver>;
+	modelResolver: ReturnType<typeof makeModelResolver>;
+	streamCalls: ContentWriterStreamParams[];
+	jsonCalls: ContentWriterCallParams[];
+} {
+	const { caller, streamCalls, jsonCalls } = makeFakeCaller(callerOpts);
+	const agent = new ContentWriterAgent({ llmCaller: caller });
+	const logger = makeLogger();
+	const serviceResolver = makeServiceResolver();
+	const modelResolver = makeModelResolver();
+	const handler = new ContentWriterTaskHandler({
+		agent,
+		serviceResolver: serviceResolver as never,
+		modelResolver: modelResolver as never,
+		logger: logger as never,
+	});
+	return { handler, logger, serviceResolver, modelResolver, streamCalls, jsonCalls };
+}
+
 describe('ContentWriterTaskHandler', () => {
-	beforeEach(() => {
-		jest.useFakeTimers();
-	});
-
-	afterEach(() => {
-		jest.useRealTimers();
-	});
-
 	it('exposes the "content-writer" type identifier', () => {
-		const handler = new ContentWriterTaskHandler();
+		const { handler } = buildHandler({ route: 'short', tokens: ['hi'] });
 		expect(handler.type).toBe('content-writer');
 	});
 
-	it('emits the queued → started → running → finished lifecycle and returns the full draft', async () => {
-		const handler = new ContentWriterTaskHandler();
+	it('drives the agent through the routing → generating → finished lifecycle (short route)', async () => {
+		const { handler } = buildHandler({
+			route: 'short',
+			tokens: ['Hello', ' ', 'world', '.'],
+		});
 		const { events, emit } = collectEvents();
-		const controller = new AbortController();
-		const input: ContentWriterTaskInput = { prompt: 'Write a short essay on daily writing' };
 
-		const promise = handler.execute(input, controller.signal, emit);
-		await jest.runAllTimersAsync();
-		const result = await promise;
+		const result = await handler.execute(
+			{ prompt: 'say hi' },
+			new AbortController().signal,
+			emit
+		);
 
-		// The first three events must be queued -> started -> started ("Routing prompt...")
+		expect(result).toBe('Hello world.');
+
+		// First two task events are the handler's own queued/started markers.
 		expect(events[0]).toEqual({ state: 'queued', data: 'queued' });
 		expect(events[1]).toEqual({ state: 'started', data: 'started' });
 
+		// Lifecycle: routing → route announcement → drafting label → tokens → finished.
 		const startedEvents = events.filter((e) => e.state === 'started');
-		const runningEvents = events.filter((e) => e.state === 'running');
-		const finishedEvents = events.filter((e) => e.state === 'finished');
-
-		// 1 "started" + 3 status messages = 4 started-state events.
-		expect(startedEvents).toHaveLength(4);
 		expect(startedEvents.map((e) => e.data)).toEqual([
 			'started',
 			'Routing prompt...',
-			'Outlining content...',
-			'Drafting body...',
+			'Route: short',
+			'Drafting short copy...',
 		]);
 
-		// At least one streamed token plus exactly one terminal finished event.
-		expect(runningEvents.length).toBeGreaterThan(0);
-		expect(finishedEvents).toHaveLength(1);
+		const runningEvents = events.filter((e) => e.state === 'running');
+		expect(runningEvents.map((e) => e.data)).toEqual(['Hello', ' ', 'world', '.']);
 
-		// Concatenating the streamed tokens reconstructs the full draft.
-		const streamed = runningEvents.map((e) => e.data).join('');
-		expect(streamed).toBe(result);
-		expect(finishedEvents[0].data).toBe(result);
-
-		// Sanity-check the dummy content shape (markdown heading + body).
-		expect(result.startsWith('# ')).toBe(true);
-		expect(result).toContain('Daily Writing');
+		const finished = events.filter((e) => e.state === 'finished');
+		expect(finished).toHaveLength(1);
+		expect(finished[0].data).toBe('Hello world.');
 	});
 
-	it('logs the start of execution with prompt length when a logger is provided', async () => {
-		const logger = makeLogger();
-		const handler = new ContentWriterTaskHandler(logger as unknown as never);
-		const { emit } = collectEvents();
-		const controller = new AbortController();
-		const input: ContentWriterTaskInput = { prompt: 'hi there' };
+	it('uses the route-specific status label for grammar and long routes', async () => {
+		const grammar = buildHandler({ route: 'grammar', tokens: ['Fixed.'] });
+		const long = buildHandler({ route: 'long', tokens: ['Long answer.'] });
 
-		const promise = handler.execute(input, controller.signal, emit);
-		await jest.runAllTimersAsync();
-		await promise;
+		const { events: grammarEvents, emit: emitG } = collectEvents();
+		const { events: longEvents, emit: emitL } = collectEvents();
+
+		await grammar.handler.execute(
+			{ prompt: 'fix this', existingText: 'Their is an error.' },
+			new AbortController().signal,
+			emitG
+		);
+		await long.handler.execute(
+			{ prompt: 'write a long piece' },
+			new AbortController().signal,
+			emitL
+		);
+
+		expect(grammarEvents.filter((e) => e.state === 'started').map((e) => e.data)).toEqual([
+			'started',
+			'Routing prompt...',
+			'Route: grammar',
+			'Polishing grammar...',
+		]);
+		expect(longEvents.filter((e) => e.state === 'started').map((e) => e.data)).toEqual([
+			'started',
+			'Routing prompt...',
+			'Route: long',
+			'Drafting long-form content...',
+		]);
+	});
+
+	it('passes the resolved provider/api key/model through to the agent input', async () => {
+		const { handler, jsonCalls, streamCalls, serviceResolver, modelResolver } = buildHandler({
+			route: 'short',
+			tokens: ['ok'],
+		});
+		const { emit } = collectEvents();
+
+		await handler.execute(
+			{ prompt: 'go', providerId: 'openai', modelId: 'gpt-test' },
+			new AbortController().signal,
+			emit
+		);
+
+		expect(serviceResolver.resolve).toHaveBeenCalledWith({ providerId: 'openai' });
+		expect(modelResolver.resolve).toHaveBeenCalledWith({ modelId: 'gpt-test' });
+		// The router call uses the resolved modelName.
+		expect(jsonCalls[0].modelName).toBe('gpt-test');
+		expect(streamCalls[0].modelName).toBe('gpt-test');
+	});
+
+	it('forwards existingText to the router context for grammar fixes', async () => {
+		const { handler, jsonCalls } = buildHandler({ route: 'grammar', tokens: ['ok'] });
+		const { emit } = collectEvents();
+
+		await handler.execute(
+			{ prompt: 'fix grammar', existingText: 'this are wrong' },
+			new AbortController().signal,
+			emit
+		);
+
+		// Router receives the existingText embedded in its userPrompt.
+		expect(jsonCalls[0].userPrompt).toContain('this are wrong');
+	});
+
+	it('logs the start of execution with the prompt length', async () => {
+		const { handler, logger } = buildHandler({ route: 'short', tokens: ['ok'] });
+		const { emit } = collectEvents();
+
+		await handler.execute({ prompt: 'hi there' }, new AbortController().signal, emit);
 
 		expect(logger.info).toHaveBeenCalledWith(
 			'ContentWriterTaskHandler',
@@ -106,10 +240,8 @@ describe('ContentWriterTaskHandler', () => {
 		);
 	});
 
-	it('rejects with an AbortError when the signal is aborted before execution', async () => {
-		// Real timers — the handler should reject synchronously from the first sleep().
-		jest.useRealTimers();
-		const handler = new ContentWriterTaskHandler();
+	it('rejects with an AbortError when the signal is already aborted', async () => {
+		const { handler } = buildHandler({ route: 'short', tokens: ['ok'] });
 		const { emit } = collectEvents();
 		const controller = new AbortController();
 		controller.abort();
@@ -119,20 +251,21 @@ describe('ContentWriterTaskHandler', () => {
 		).rejects.toMatchObject({ name: 'AbortError' });
 	});
 
-	it('rejects with an AbortError when the signal is aborted mid-stream', async () => {
-		jest.useRealTimers();
-		const handler = new ContentWriterTaskHandler();
-		const { events, emit } = collectEvents();
-		const controller = new AbortController();
+	it('surfaces validation errors from the agent (missing apiKey)', async () => {
+		const { caller } = makeFakeCaller({ route: 'short', tokens: ['ok'] });
+		const agent = new ContentWriterAgent({ llmCaller: caller });
+		const handler = new ContentWriterTaskHandler({
+			agent,
+			serviceResolver: {
+				resolve: () => ({ provider: { id: 'openai', name: 'OpenAI' }, apiKey: '' }),
+			} as never,
+			modelResolver: makeModelResolver() as never,
+			logger: makeLogger() as never,
+		});
+		const { emit } = collectEvents();
 
-		const promise = handler.execute({ prompt: 'go' }, controller.signal, emit);
-		// Allow the queued/started lifecycle to fire, then abort before the
-		// token stream finishes.
-		setTimeout(() => controller.abort(), 50);
-
-		await expect(promise).rejects.toMatchObject({ name: 'AbortError' });
-		expect(events[0]).toEqual({ state: 'queued', data: 'queued' });
-		// Should not have reached the finished state.
-		expect(events.find((e) => e.state === 'finished')).toBeUndefined();
+		await expect(
+			handler.execute({ prompt: 'go' }, new AbortController().signal, emit)
+		).rejects.toThrow(/apiKey required/);
 	});
 });
