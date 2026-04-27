@@ -46,20 +46,10 @@ const altKey = isMac ? '⌥' : 'Alt';
 
 function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React.JSX.Element {
 	return (
-		<div className="flex flex-col items-start gap-0.5">
+		<div className="flex flex-col items-start gap-0.5 py-0.5">
 			<span>{title}</span>
 			{keys && keys.length > 0 && (
-				<span className="flex items-center gap-0.5 text-[10px] opacity-70">
-					{keys.map((k, i) => (
-						<kbd
-							key={`${k}-${i}`}
-							data-slot="kbd"
-							className="px-1 py-0 font-sans bg-background/15"
-						>
-							{k}
-						</kbd>
-					))}
-				</span>
+				<span className="text-[10px] opacity-70">{keys.join(' ')}</span>
 			)}
 		</div>
 	);
