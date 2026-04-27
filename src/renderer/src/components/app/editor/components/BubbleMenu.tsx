@@ -298,7 +298,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Bold</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Bold" keys={[modKey, 'B']} />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
