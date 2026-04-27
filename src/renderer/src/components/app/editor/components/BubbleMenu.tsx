@@ -398,10 +398,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={() => {
-								handleImproveWriting();
-								handleAiAction('improve-writing');
-							}}
+							onClick={() => handleAiAction('improve-writing')}
 						>
 							<Wand2 />
 							Improve writing
