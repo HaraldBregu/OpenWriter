@@ -18,6 +18,7 @@ import {
 	useEditorInstance,
 	useEditor,
 	useEditorStreamInsert,
+	useDocumentAiTasks,
 } from './hooks';
 import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
 import type {
