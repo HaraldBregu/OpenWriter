@@ -80,14 +80,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				duration={7800}
 				shadowClassName="h-40 w-40 opacity-60"
 			>
-			<MovingBorderButton
-				as="div"
-				borderRadius="1rem"
-				duration={6200}
-				containerClassName="h-auto w-full text-sm"
-				borderClassName="h-24 w-24 bg-[radial-gradient(circle,_#38bdf8_8%,_#34d399_32%,_#fb7185_56%,_transparent_72%)] opacity-[0.92]"
-				className="block border-none bg-transparent p-0 text-inherit backdrop-blur-none"
-			>
 				<Card
 					ref={wrapperRef}
 					onBlur={onWrapperBlur}
