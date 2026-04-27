@@ -310,6 +310,19 @@ export function OptionMenu(): React.JSX.Element | null {
 		if (selectedIndex !== imagesItemIndex) setImageSelectedIndex(-1);
 	}, [selectedIndex, imagesItemIndex]);
 
+	useEffect(() => {
+		const container = scrollContainerRef.current;
+		if (!container) return;
+		const target = container.querySelector<HTMLElement>(`[data-item-index="${selectedIndex}"]`);
+		if (!target) return;
+		const cTop = container.scrollTop;
+		const cBottom = cTop + container.clientHeight;
+		const tTop = target.offsetTop;
+		const tBottom = tTop + target.offsetHeight;
+		if (tTop < cTop) container.scrollTop = tTop;
+		else if (tBottom > cBottom) container.scrollTop = tBottom - container.clientHeight;
+	}, [selectedIndex]);
+
 	const moveSelection = useCallback((delta: 1 | -1) => {
 		const items = flatItemsRef.current;
 		if (items.length === 0) return;
