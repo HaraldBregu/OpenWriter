@@ -66,14 +66,7 @@ function PromptContainer(): React.JSX.Element {
 						aria-hidden="true"
 						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
 					/>
-					<MovingBorderButton
-						as="div"
-						borderRadius="1rem"
-						duration={6200}
-						containerClassName="h-auto w-full text-sm"
-						borderClassName="h-24 w-24 bg-[radial-gradient(circle,_#38bdf8_8%,_#34d399_32%,_#fb7185_56%,_transparent_72%)] opacity-[0.92]"
-						className="block border-none bg-transparent p-0 text-inherit backdrop-blur-none"
-					>
+					<MovingShadow borderRadius="1rem" shadowSize={60} shadowBlur={56} duration={6200}>
 						<Card className="w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!">
 							<PromptHeader />
 							<CardContent>
