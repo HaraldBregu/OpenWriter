@@ -499,6 +499,17 @@ function PageContent(): ReactElement {
 		openInsertContentDialog();
 	}, [openInsertContentDialog]);
 
+	const handlePromptSubmit = useCallback(
+		(payload: PromptSubmitPayload | AiActionPayload, ed: TiptapEditor) => {
+			if ('type' in payload) {
+				void aiTasks.submitAiAction(payload);
+			} else {
+				void aiTasks.submitPrompt(payload, ed);
+			}
+		},
+		[aiTasks]
+	);
+
 	const handleCancelPreexistingTask = useCallback(async () => {
 		if (!id) return;
 		if (typeof window.task?.list !== 'function') return;
