@@ -149,10 +149,6 @@ export class OptionMenuView {
 		return this.visible;
 	}
 
-	getSlashPos(): number | null {
-		return this.slashPos;
-	}
-
 	destroy(): void {
 		this.forceHide();
 	}
