@@ -10,3 +10,5 @@ export { useEditor } from './use-editor';
 export type { EditorActions } from './use-editor';
 export { useEditorStreamInsert } from './use-editor-stream-insert';
 export type { EditorStreamInsert } from './use-editor-stream-insert';
+export { useDocumentAiTasks } from './use-document-ai-tasks';
+export type { UseDocumentAiTasks, UseDocumentAiTasksOptions } from './use-document-ai-tasks';
