@@ -74,7 +74,7 @@ export function MovingShadow({
 					borderRadius: blobRadius,
 					background: glowBackground,
 					filter: `blur(${shadowBlur}px)`,
-					opacity: 0.85,
+					opacity: shadowOpacity,
 				}}
 			/>
 			<div className={cn('relative', className)} style={{ borderRadius }}>
