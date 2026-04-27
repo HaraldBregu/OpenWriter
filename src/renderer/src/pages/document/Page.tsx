@@ -377,7 +377,7 @@ function PageContent(): ReactElement {
 			} else if (event.state === 'finished') {
 				if (preexistingTaskActiveRef.current) {
 					setDocumentTaskState('finished');
-					setPreexistingTaskContent(event.data);
+					setPreexistingTaskContent(event.data.success ? event.data.data : null);
 					setPreexistingTaskSelection(extractTaskSelection(event.metadata?.selection));
 				}
 				if (typeof window.task?.list !== 'function') {
