@@ -34,7 +34,10 @@ const LOG_SOURCE = 'ContentWriterTaskHandler';
  *   handler enters       → task `queued` / `started` ({success: true, data})
  *   agent `text` delta   → task `running: <token>` ({success: true, data})
  *   agent return value   → task `finished: <content>` ({success: true, data})
- *   caught error         → task `cancelled` ({success: false, error}); rethrown
+ *
+ * Error path: caught errors are logged here and rethrown. The executor
+ * emits the resulting `cancelled` event with `{success: false, error: <message>}`,
+ * so we don't double-emit from the handler.
  */
 export class ContentWriterTaskHandler
 	implements TaskHandler<ContentWriterTaskInput, string>
