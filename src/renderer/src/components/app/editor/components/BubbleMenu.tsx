@@ -157,15 +157,16 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		[editor, onAiAction]
 	);
 
+	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const isLockedRef = useRef(false);
+
 	const handleCustomPromptSubmit = useCallback(() => {
 		const trimmed = customPrompt.trim();
 		if (!trimmed) return;
+		isLockedRef.current = true;
 		handleAiAction('custom', trimmed);
 		setCustomPrompt('');
 	}, [customPrompt, handleAiAction]);
-
-	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-	const isLockedRef = useRef(false);
 
 	const handlePluginUpdate = useCallback(
 		({
