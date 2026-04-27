@@ -469,6 +469,7 @@ export function OptionMenu(): React.JSX.Element | null {
 	if (!isMounted) return null;
 
 	return (
+		<>
 		<div ref={refs.setFloating} style={floatingStyles} className="z-50">
 			<div style={transitionStyles} className="will-change-transform">
 				<Card
