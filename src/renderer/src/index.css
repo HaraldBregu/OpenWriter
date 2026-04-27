@@ -282,6 +282,11 @@
 	color: rgb(23 23 23);
 }
 
+.ProseMirror .selection-marker {
+	background-color: var(--color-accent);
+	color: var(--color-accent-foreground);
+}
+
 .ProseMirror .ProseMirror-gapcursor::after {
 	content: '';
 	display: block;
