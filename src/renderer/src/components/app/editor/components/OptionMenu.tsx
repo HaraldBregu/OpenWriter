@@ -76,6 +76,7 @@ export function OptionMenu(): React.JSX.Element | null {
 	const [images, setImages] = useState<ImageEntry[]>([]);
 	const slashPosRef = useRef<number | null>(null);
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+	const [imagesAnchorEl, setImagesAnchorEl] = useState<HTMLElement | null>(null);
 	const menuControlsRef = useRef<OptionMenuControls>({
 		forceHide: () => undefined,
 		dismiss: () => undefined,
