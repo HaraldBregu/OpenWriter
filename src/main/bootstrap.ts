@@ -46,6 +46,7 @@ import {
 	DemoImproveWritingTaskHandler,
 	DemoCustomPromptTaskHandler,
 	DemoPostGeneratorTaskHandler,
+	ContentWriterTaskHandler,
 } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
 
