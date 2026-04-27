@@ -161,19 +161,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		setCustomPrompt('');
 	}, [customPrompt, handleAiAction]);
 
-	useEffect(() => {
-		return () => {
-			if (improveWritingTimerRef.current) {
-				clearTimeout(improveWritingTimerRef.current);
-				improveWritingTimerRef.current = null;
-				if (!editor.isDestroyed) {
-					editor.view.dom.classList.remove('improving-writing');
-					editor.setEditable(true);
-				}
-			}
-		};
-	}, [editor]);
-
 	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const handlePluginUpdate = useCallback(
