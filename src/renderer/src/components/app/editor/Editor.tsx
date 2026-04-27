@@ -640,7 +640,7 @@ const Editor = React.memo(
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
-					{editor && <Content onAiAction={onAiAction} />}
+					{editor && <Content onAiAction={onAiAction} activeAiAction={activeAiAction} />}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
