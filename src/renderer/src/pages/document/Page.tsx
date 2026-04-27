@@ -879,6 +879,13 @@ function PageContent(): ReactElement {
 					) : null}
 				</ResizablePanel>
 			</ResizablePanelGroup>
+			<ErrorDialog
+				open={taskError !== null}
+				onOpenChange={(open) => {
+					if (!open) setTaskError(null);
+				}}
+				description={taskError ?? ''}
+			/>
 		</PageContainer>
 	);
 }
