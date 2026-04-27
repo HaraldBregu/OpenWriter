@@ -162,6 +162,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	}, [customPrompt, handleAiAction]);
 
 	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const isLockedRef = useRef(false);
 
 	const handlePluginUpdate = useCallback(
 		({
@@ -182,6 +183,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				setOpen(true);
 				return;
 			}
+			if (isLockedRef.current) return;
 			closeTimerRef.current = setTimeout(() => {
 				closeTimerRef.current = null;
 				if (refs.floating.current?.contains(document.activeElement)) return;
@@ -199,6 +201,18 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			}
 		};
 	}, []);
+
+	useEffect(() => {
+		const onDocMouseDown = (e: MouseEvent): void => {
+			if (!isLockedRef.current) return;
+			const target = e.target as Node | null;
+			if (target && refs.floating.current?.contains(target)) return;
+			isLockedRef.current = false;
+			setOpen(false);
+		};
+		document.addEventListener('mousedown', onDocMouseDown, true);
+		return () => document.removeEventListener('mousedown', onDocMouseDown, true);
+	}, [refs]);
 
 	useEffect(() => {
 		if (editor.isDestroyed) return;
