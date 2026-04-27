@@ -30,19 +30,21 @@ export function PromptHeader(): React.JSX.Element | null {
 					<div className="flex w-full min-w-0 flex-col gap-1.5 pt-0 pr-1.5">
 						{hasSelection && (
 							<div
-								className="flex w-full items-center gap-1.5 rounded-full border border-border/80 bg-background/75 px-2.5 py-1 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
+								className="flex w-full items-start gap-1.5 rounded-2xl border border-border/80 bg-background/75 px-2.5 py-1.5 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
 								title={trimmedSelection}
 								aria-label={t('assistantNode.selectedText', 'Selected text: {{text}}', {
 									text: trimmedSelection,
 								})}
 							>
-								<CornerDownRight className="h-3 w-3 shrink-0" aria-hidden="true" />
-								<span className="min-w-0 flex-1 truncate">{trimmedSelection}</span>
+								<CornerDownRight className="mt-0.5 h-3 w-3 shrink-0" aria-hidden="true" />
+								<span className="min-w-0 flex-1 line-clamp-3 break-words leading-snug">
+									{trimmedSelection}
+								</span>
 								<button
 									type="button"
 									onMouseDown={(e) => e.preventDefault()}
 									onClick={clearSelection}
-									className="shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
+									className="mt-0.5 shrink-0 rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent/80 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:text-muted-foreground/95 dark:hover:bg-accent/80 dark:hover:text-foreground"
 									aria-label={t('assistantNode.clearSelection', 'Clear selection')}
 								>
 									<X className="h-3 w-3" aria-hidden="true" />
