@@ -44,12 +44,46 @@ export interface EditorStreamInsert {
 export function useEditorStreamInsert(): EditorStreamInsert {
 	const { editor } = useEditorInstance();
 	const sessionRef = useRef<InsertSession | null>(null);
+	const scrollAnimationRef = useRef<number | null>(null);
+	const scrollTargetRef = useRef<{ el: HTMLElement; top: number } | null>(null);
 
 	const clampPos = useCallback((ed: Editor, pos: number): number => {
 		const size = ed.state.doc.content.size;
 		if (pos < 0) return 0;
 		if (pos > size) return size;
 		return pos;
+	}, []);
+
+	const cancelScrollAnimation = useCallback((): void => {
+		if (scrollAnimationRef.current != null) {
+			cancelAnimationFrame(scrollAnimationRef.current);
+			scrollAnimationRef.current = null;
+		}
+		scrollTargetRef.current = null;
+	}, []);
+
+	// Continuously eases scrollTop toward the latest target so that consecutive
+	// streaming deltas blend into one smooth motion instead of stepwise jumps.
+	const ensureScrollAnimation = useCallback((): void => {
+		if (scrollAnimationRef.current != null) return;
+		const tick = (): void => {
+			const target = scrollTargetRef.current;
+			if (!target) {
+				scrollAnimationRef.current = null;
+				return;
+			}
+			const current = target.el.scrollTop;
+			const diff = target.top - current;
+			if (Math.abs(diff) < 0.5) {
+				target.el.scrollTop = target.top;
+				scrollAnimationRef.current = null;
+				scrollTargetRef.current = null;
+				return;
+			}
+			target.el.scrollTop = current + diff * 0.18;
+			scrollAnimationRef.current = requestAnimationFrame(tick);
+		};
+		scrollAnimationRef.current = requestAnimationFrame(tick);
 	}, []);
 
 	const renderBuffer = useCallback((): void => {
