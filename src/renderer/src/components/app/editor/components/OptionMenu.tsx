@@ -88,6 +88,8 @@ export function OptionMenu(): React.JSX.Element | null {
 	selectedIndexRef.current = selectedIndex;
 	const imageSelectedIndexRef = useRef(imageSelectedIndex);
 	imageSelectedIndexRef.current = imageSelectedIndex;
+	const imagesMenuOpenRef = useRef(imagesMenuOpen);
+	imagesMenuOpenRef.current = imagesMenuOpen;
 	const imagesRef = useRef(images);
 	imagesRef.current = images;
 
