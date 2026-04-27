@@ -316,6 +316,21 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							Fix grammar
 						</Button>
 					</div>
+
+					<Separator className="my-1" />
+
+					<Input
+						value={customPrompt}
+						onChange={(e) => setCustomPrompt(e.target.value)}
+						onKeyDown={(e) => {
+							if (e.key === 'Enter' && !e.shiftKey) {
+								e.preventDefault();
+								handleCustomPromptSubmit();
+							}
+						}}
+						placeholder="Ask AI…"
+						className="h-7 text-xs"
+					/>
 				</Card>
 				<FloatingArrow
 					ref={arrowRef}
