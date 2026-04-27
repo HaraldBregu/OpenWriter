@@ -1,5 +1,6 @@
 import React, { useReducer, useRef, useMemo, useCallback, useEffect } from 'react';
 import type { NodeViewProps } from '@tiptap/react';
+import { TextSelection } from '@tiptap/pm/state';
 import { contentGeneratorReducer } from './context/reducer';
 import { DEFAULT_TEXT_MODEL_ID, IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
 import { usePromptActions, useTextareaSetup } from './hooks';
