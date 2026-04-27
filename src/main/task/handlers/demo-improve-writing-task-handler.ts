@@ -52,13 +52,13 @@ export class DemoImproveWritingTaskHandler
 			textLength: input.text.length,
 		});
 
-		const logAndEmit: Emit = (update) => {
+		const logAndEmit = (update: { state: TaskState; data: string }): void => {
 			if (update.state !== 'running') {
 				const payload =
 					update.state === 'finished' ? `length=${update.data.length}` : update.data;
 				this.logger?.info(LOG_SOURCE, `state=${update.state}`, { data: payload });
 			}
-			emit(update);
+			emit({ state: update.state, data: { success: true, data: update.data } });
 		};
 
 		logAndEmit({ state: 'queued', data: 'queued' });
