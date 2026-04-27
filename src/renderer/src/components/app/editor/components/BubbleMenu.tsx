@@ -185,9 +185,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				referenceRectRef.current = getReferenceRect;
 			}
 			if (!nextOpen && editor.view.dom.classList.contains('improving-writing')) return;
+			if (!nextOpen && refs.floating.current?.contains(document.activeElement)) return;
 			setOpen(nextOpen);
 		},
-		[editor]
+		[editor, refs]
 	);
 
 	useEffect(() => {
