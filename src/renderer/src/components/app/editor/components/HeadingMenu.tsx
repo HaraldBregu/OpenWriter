@@ -81,15 +81,26 @@ export const HeadingMenu = React.memo(function HeadingMenu({
 
 	return (
 		<>
-			<Button
-				ref={refs.setReference}
-				variant={isHeadingActive ? 'default' : 'ghost'}
-				size="icon"
-				aria-label="Heading"
-				{...getReferenceProps()}
-			>
-				<HeadingIcon className="h-3.5 w-3.5" />
-			</Button>
+			<Tooltip>
+				<TooltipTrigger
+					render={
+						<Button
+							ref={refs.setReference}
+							variant={isHeadingActive ? 'default' : 'ghost'}
+							size="icon"
+							aria-label="Heading"
+							{...getReferenceProps()}
+						>
+							<HeadingIcon className="h-3.5 w-3.5" />
+						</Button>
+					}
+				/>
+				<TooltipContent>
+					<div className="flex flex-col items-start gap-0.5">
+						<span>Heading</span>
+					</div>
+				</TooltipContent>
+			</Tooltip>
 			{isMounted && (
 				<FloatingPortal>
 					<div
