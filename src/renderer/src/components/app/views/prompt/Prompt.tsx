@@ -60,7 +60,7 @@ function PromptContainer(): React.JSX.Element {
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
 				<PromptStatusBar />
-				<Card className="w-full mb-2">
+				<Card className="w-full mb-2 shadow-md">
 					<PromptHeader />
 					<CardContent>
 						<Textarea
