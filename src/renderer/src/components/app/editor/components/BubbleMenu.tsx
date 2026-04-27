@@ -25,6 +25,7 @@ import {
 } from '@floating-ui/react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
