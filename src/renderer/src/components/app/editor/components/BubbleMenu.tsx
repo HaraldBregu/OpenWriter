@@ -315,7 +315,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Italic</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Italic" keys={[modKey, 'I']} />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
