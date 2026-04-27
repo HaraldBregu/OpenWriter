@@ -31,7 +31,6 @@ export function PromptHeader(): React.JSX.Element | null {
 						{hasSelection && (
 							<div
 								className="flex w-full items-start gap-1.5 rounded-sm border border-border/80 bg-background/75 px-2.5 py-1.5 text-xs text-foreground/72 shadow-none dark:border-border/90 dark:bg-background/50 dark:text-muted-foreground/95"
-								title={trimmedSelection}
 								aria-label={t('assistantNode.selectedText', 'Selected text: {{text}}', {
 									text: trimmedSelection,
 								})}
