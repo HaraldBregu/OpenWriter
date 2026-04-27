@@ -290,14 +290,6 @@ function PageContent(): ReactElement {
 
 	const editorInsert = useEditorStreamInsert();
 
-	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
-	const activeTaskIdRef = useRef<string | null>(null);
-	activeTaskIdRef.current = activeTaskId;
-
-	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
-	const [activeAiAction, setActiveAiAction] = useState<AiActionPayload['type'] | null>(null);
-	const [taskError, setTaskError] = useState<string | null>(null);
-
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
