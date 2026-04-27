@@ -102,7 +102,12 @@ export class ContentWriterTaskHandler
 			return output.content;
 		} catch (err) {
 			// Aborts are user-initiated, not errors — log neutrally.
-			if (err instanceof Error && err.name === 'AbortError') {
+			// `DOMException` is not always an `Error` subclass under the test
+			// runtime, so check the name property directly rather than via
+			// `instanceof`.
+			const name =
+				err && typeof err === 'object' ? (err as { name?: unknown }).name : undefined;
+			if (name === 'AbortError') {
 				logger.info(LOG_SOURCE, 'Content-writer task aborted');
 				throw err;
 			}
