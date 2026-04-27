@@ -297,6 +297,9 @@ export function setupAppLifecycle(appState: AppState, logger?: LoggerService): v
 	});
 
 	app.on('window-all-closed', () => {
+		writeCrashLine(
+			`[window-all-closed] platform=${process.platform} isQuitting=${appState.isQuitting}`
+		);
 		logger?.info('App', 'All windows closed');
 		if (process.platform !== 'darwin' && appState.isQuitting) {
 			app.quit();
