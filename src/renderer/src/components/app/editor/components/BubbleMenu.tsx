@@ -56,7 +56,7 @@ function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React
 	);
 }
 
-export type AiActionType = 'improve-writing' | 'fix-grammar' | 'custom';
+export type AiActionType = 'improve-selected-text-writing' | 'fix-selected-text-grammar' | 'custom';
 
 export interface AiActionPayload {
 	type: AiActionType;
@@ -419,10 +419,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
-								handleAiAction('improve-writing');
+								handleAiAction('improve-selected-text-writing');
 							}}
 						>
-							{activeAction === 'improve-writing' ? (
+							{activeAction === 'improve-selected-text-writing' ? (
 								<Loader2 className="animate-spin" />
 							) : (
 								<Wand2 />
@@ -436,10 +436,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
-								handleAiAction('fix-grammar');
+								handleAiAction('fix-selected-text-grammar');
 							}}
 						>
-							{activeAction === 'fix-grammar' ? (
+							{activeAction === 'fix-selected-text-grammar' ? (
 								<Loader2 className="animate-spin" />
 							) : (
 								<SpellCheck />

@@ -333,9 +333,7 @@ function PageContent(): ReactElement {
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
-
-			console.log(res)
-
+			
 			const activeTask = res.data.find(
 				(t) =>
 					t.metadata?.documentId === id &&
@@ -622,21 +620,14 @@ function PageContent(): ReactElement {
 			const selectedText = sliceToMarkdown(from, to);
 			const after = sliceToMarkdown(to, docSize);
 
-			const instruction =
-				action.type === 'fix-grammar'
-					? 'Fix the grammar of the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the corrected selection text in markdown — do not include <before>, <after>, or any tags.'
-					: action.type === 'improve-writing'
-						? 'Improve the writing of the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the rewritten selection text in markdown — do not include <before>, <after>, or any tags.'
-						: `${action.prompt!.trim()}\n\nApply this to the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the new selection text in markdown — do not include <before>, <after>, or any tags.`;
-
 			const prompt = [
-				`<instruction>${instruction}</instruction>`,
+				`<instruction>${action.type}</instruction>\n`,
 				`<before>\n${before}\n</before>`,
 				`<selection>\n${selectedText}\n</selection>`,
 				`<after>\n${after}\n</after>`,
 			].join('\n\n');
 
-			console.log('AI action prompt:', prompt);
+			console.log(prompt);
 
 			setActiveAiAction(action.type);
 		},
