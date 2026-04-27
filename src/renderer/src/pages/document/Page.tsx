@@ -333,7 +333,7 @@ function PageContent(): ReactElement {
 
 		window.task.list().then((res) => {
 			if (cancelled || !res.success) return;
-			
+
 			const activeTask = res.data.find(
 				(t) =>
 					t.metadata?.documentId === id &&
@@ -620,16 +620,29 @@ function PageContent(): ReactElement {
 			const selectedText = sliceToMarkdown(from, to);
 			const after = sliceToMarkdown(to, docSize);
 
+			const instruction = action.type === 'custom' ? action.prompt : action.type;
+
 			const prompt = [
-				`<instruction>${action.type}</instruction>\n`,
+				`<instruction>${instruction}</instruction>\n`,
 				`<before>\n${before}\n</before>`,
 				`<selection>\n${selectedText}\n</selection>`,
 				`<after>\n${after}\n</after>`,
 			].join('\n\n');
 
-			console.log(prompt);
-
 			setActiveAiAction(action.type);
+
+			const result = await window.task.submit({
+				type: 'content-writer',
+				input: { prompt },
+				metadata: { documentId: id, selection: { from, to } },
+			});
+
+			if (!result.success) {
+				setActiveAiAction(null);
+				return;
+			}
+
+			setAiActionTaskId(result.data.taskId);
 		},
 		[id, assistantIsRunning, editor]
 	);
