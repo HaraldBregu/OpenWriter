@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
 	motion,
 	useAnimationFrame,
@@ -10,109 +10,67 @@ import { cn } from '@/lib/utils';
 
 export interface MovingShadowProps extends React.HTMLAttributes<HTMLElement> {
 	borderRadius?: string;
-	shadowSize?: string;
+	/** Orbit radius of the moving light sources, in pixels. */
+	shadowSize?: number;
+	/** Blur radius of each cast shadow, in pixels. */
+	shadowBlur?: number;
+	/** Three CSS colors for the orbiting shadows (default cyan/green/rose). */
+	shadowColors?: [string, string, string];
 	children: React.ReactNode;
 	as?: React.ElementType;
 	containerClassName?: string;
-	shadowClassName?: string;
 	duration?: number;
 	className?: string;
 }
 
+const DEFAULT_COLORS: [string, string, string] = [
+	'rgba(56, 189, 248, 0.55)',
+	'rgba(52, 211, 153, 0.45)',
+	'rgba(251, 113, 133, 0.50)',
+];
+
+const TWO_PI = Math.PI * 2;
+const PHASE_120 = TWO_PI / 3;
+const PHASE_240 = (TWO_PI * 2) / 3;
+
 export function MovingShadow({
 	borderRadius = '1rem',
-	shadowSize = '32px',
+	shadowSize = 28,
+	shadowBlur = 36,
+	shadowColors = DEFAULT_COLORS,
+	duration = 6000,
 	children,
 	as: Component = 'div',
 	containerClassName,
-	shadowClassName,
-	duration,
 	className,
 	...otherProps
 }: MovingShadowProps): React.ReactElement {
-	return (
-		<Component
-			className={cn('relative', containerClassName)}
-			style={{ borderRadius }}
-			{...otherProps}
-		>
-			<div
-				aria-hidden="true"
-				className="pointer-events-none absolute"
-				style={{
-					inset: `calc(${shadowSize} * -1)`,
-					borderRadius: `calc(${borderRadius} + ${shadowSize})`,
-				}}
-			>
-				<ShadowPath duration={duration} rx={borderRadius} ry={borderRadius}>
-					<div
-						className={cn(
-							'h-32 w-32 rounded-full bg-[radial-gradient(circle,_#38bdf8_8%,_#34d399_32%,_#fb7185_56%,_transparent_72%)] opacity-70 blur-3xl',
-							shadowClassName
-						)}
-					/>
-				</ShadowPath>
-			</div>
-			<div className={cn('relative', className)} style={{ borderRadius }}>
-				{children}
-			</div>
-		</Component>
-	);
-}
+	const time = useMotionValue(0);
 
-interface ShadowPathProps extends React.SVGProps<SVGSVGElement> {
-	children: React.ReactNode;
-	duration?: number;
-	rx?: string;
-	ry?: string;
-}
-
-const ShadowPath = ({
-	children,
-	duration = 3000,
-	rx,
-	ry,
-	...otherProps
-}: ShadowPathProps): React.ReactElement => {
-	const pathRef = useRef<SVGRectElement | null>(null);
-	const progress = useMotionValue<number>(0);
-
-	useAnimationFrame((time) => {
-		const length = pathRef.current?.getTotalLength();
-		if (length) {
-			const pxPerMillisecond = length / duration;
-			progress.set((time * pxPerMillisecond) % length);
-		}
+	useAnimationFrame((t) => {
+		time.set(t);
 	});
 
-	const x = useTransform(progress, (val) => pathRef.current?.getPointAtLength(val).x ?? 0);
-	const y = useTransform(progress, (val) => pathRef.current?.getPointAtLength(val).y ?? 0);
+	const angle = useTransform(time, (t) => ((t % duration) / duration) * TWO_PI);
 
-	const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px) translateX(-50%) translateY(-50%)`;
+	const x1 = useTransform(angle, (a) => Math.cos(a) * shadowSize);
+	const y1 = useTransform(angle, (a) => Math.sin(a) * shadowSize);
+	const x2 = useTransform(angle, (a) => Math.cos(a + PHASE_120) * shadowSize);
+	const y2 = useTransform(angle, (a) => Math.sin(a + PHASE_120) * shadowSize);
+	const x3 = useTransform(angle, (a) => Math.cos(a + PHASE_240) * shadowSize);
+	const y3 = useTransform(angle, (a) => Math.sin(a + PHASE_240) * shadowSize);
+
+	const [c1, c2, c3] = shadowColors;
+	const boxShadow = useMotionTemplate`${x1}px ${y1}px ${shadowBlur}px 0 ${c1}, ${x2}px ${y2}px ${shadowBlur}px 0 ${c2}, ${x3}px ${y3}px ${shadowBlur}px 0 ${c3}`;
 
 	return (
-		<>
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				preserveAspectRatio="none"
-				className="absolute h-full w-full"
-				width="100%"
-				height="100%"
-				{...otherProps}
-			>
-				<rect fill="none" width="100%" height="100%" rx={rx} ry={ry} ref={pathRef} />
-			</svg>
+		<Component className={cn('relative', containerClassName)} {...otherProps}>
 			<motion.div
-				style={{
-					position: 'absolute',
-					top: 0,
-					left: 0,
-					display: 'inline-block',
-					transform,
-				}}
+				className={cn('relative', className)}
+				style={{ borderRadius, boxShadow }}
 			>
 				{children}
 			</motion.div>
-		</>
+		</Component>
 	);
-};
+}
