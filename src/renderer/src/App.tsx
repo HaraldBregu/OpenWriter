@@ -28,37 +28,6 @@ import {
 import { TooltipProvider } from './components/ui/Tooltip';
 import './index.css';
 
-// IPC → Redux bridge: load documents on startup and re-load on file changes.
-let documentsInitialized = false;
-if (!documentsInitialized && typeof window.workspace?.onOutputFileChange === 'function') {
-	documentsInitialized = true;
-	store.dispatch(loadDocuments());
-	window.workspace.onOutputFileChange((event) => {
-		if (event.outputType !== 'documents') return;
-		if (event.type === 'changed') {
-			store.dispatch(refreshDocument(event.fileId));
-		} else if (event.type === 'removed') {
-			store.dispatch(documentRemoved(event.fileId));
-		} else {
-			store.dispatch(loadDocuments());
-		}
-	});
-}
-
-// IPC → Redux bridge: load resources on startup and re-load on file changes.
-let resourcesInitialized = false;
-if (!resourcesInitialized && typeof window.workspace?.onDocumentFileChange === 'function') {
-	resourcesInitialized = true;
-	store.dispatch(loadResources());
-	window.workspace.onDocumentFileChange((event) => {
-		if (event.type === 'removed') {
-			store.dispatch(resourceRemoved(event.fileId));
-		} else {
-			store.dispatch(loadResources());
-		}
-	});
-}
-
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
 const HomePage = lazy(() => import('./pages/home/Page'));
@@ -105,6 +74,49 @@ function ExtensionRouteContextSync(): null {
 		const match = matchPath('/content/:id', location.pathname);
 		void window.extensions.setActiveDocument(match?.params.id ?? null);
 	}, [location.pathname]);
+
+	return null;
+}
+
+function WorkspaceEventBridge(): null {
+	useEffect(() => {
+		if (typeof window.workspace?.onOutputFileChange !== 'function') {
+			return;
+		}
+
+		// Keep subscriptions lifecycle-bound so dev reloads do not accumulate
+		// duplicate IPC listeners and repeated refresh dispatches.
+		store.dispatch(loadDocuments());
+		const unsubscribe = window.workspace.onOutputFileChange((event) => {
+			if (event.outputType !== 'documents') return;
+			if (event.type === 'changed') {
+				store.dispatch(refreshDocument(event.fileId));
+			} else if (event.type === 'removed') {
+				store.dispatch(documentRemoved(event.fileId));
+			} else {
+				store.dispatch(loadDocuments());
+			}
+		});
+
+		return unsubscribe;
+	}, []);
+
+	useEffect(() => {
+		if (typeof window.workspace?.onDocumentFileChange !== 'function') {
+			return;
+		}
+
+		store.dispatch(loadResources());
+		const unsubscribe = window.workspace.onDocumentFileChange((event) => {
+			if (event.type === 'removed') {
+				store.dispatch(resourceRemoved(event.fileId));
+			} else {
+				store.dispatch(loadResources());
+			}
+		});
+
+		return unsubscribe;
+	}, []);
 
 	return null;
 }
@@ -177,6 +189,7 @@ const App: React.FC = () => {
 				<Provider store={store}>
 					<AppProvider>
 						<TooltipProvider>
+							<WorkspaceEventBridge />
 							<LayoutLoadingSkeleton />
 						</TooltipProvider>
 					</AppProvider>
@@ -189,10 +202,11 @@ const App: React.FC = () => {
 		<ErrorBoundary level="root">
 			<Provider store={store}>
 				<AppProvider>
-						<TooltipProvider>
-							<Router>
-								<ExtensionRouteContextSync />
-								<Routes>
+					<TooltipProvider>
+						<WorkspaceEventBridge />
+						<Router>
+							<ExtensionRouteContextSync />
+							<Routes>
 								<Route
 									path="/splash"
 									element={
