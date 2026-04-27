@@ -294,6 +294,7 @@ function PageContent(): ReactElement {
 	activeTaskIdRef.current = activeTaskId;
 
 	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
+	const [activeAiAction, setActiveAiAction] = useState<AiActionPayload['type'] | null>(null);
 
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
