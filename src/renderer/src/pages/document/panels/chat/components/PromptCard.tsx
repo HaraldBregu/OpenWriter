@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ImagePlus, Paperclip, SendHorizontal, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
+import { MovingShadow } from '@/components/ui/MovingShadow';
 import { Textarea } from '@/components/ui/Textarea';
 import { cn } from '@/lib/utils';
 
@@ -73,17 +74,18 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					isDragOver && 'opacity-100'
 				)}
 			/>
-			<Card
-				ref={wrapperRef}
-				onBlur={onWrapperBlur}
-				onDragOver={onDragOver}
-				onDragLeave={onDragLeave}
-				onDrop={onDrop}
-				className={cn(
-					'w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!',
-					isDragOver && 'bg-primary/5 dark:bg-primary/10'
-				)}
-			>
+			<MovingShadow borderRadius="9rem" shadowSize={320} shadowBlur={440} duration={7800}>
+				<Card
+					ref={wrapperRef}
+					onBlur={onWrapperBlur}
+					onDragOver={onDragOver}
+					onDragLeave={onDragLeave}
+					onDrop={onDrop}
+					className={cn(
+						'w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!',
+						isDragOver && 'bg-primary/5 dark:bg-primary/10'
+					)}
+				>
 				{(previewUrls.length > 0 || selectionLabel) && (
 					<CardHeader className="space-y-0 p-0 px-3.5">
 						{previewUrls.length > 0 && (
@@ -108,8 +110,8 @@ const PromptCard: React.FC<PromptCardProps> = ({
 												aria-label={
 													fileName
 														? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
-															name: fileName,
-														})
+																name: fileName,
+															})
 														: t('assistantNode.removeImage', 'Remove image')
 												}
 											>
@@ -207,7 +209,8 @@ const PromptCard: React.FC<PromptCardProps> = ({
 						<span>{t('agenticPanel.submit', 'Submit')}</span>
 					</Button>
 				</CardFooter>
-			</Card>
+				</Card>
+			</MovingShadow>
 		</div>
 	);
 };
