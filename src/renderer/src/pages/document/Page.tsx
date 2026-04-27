@@ -40,6 +40,7 @@ import { PageBody } from '@/components/app/base/page';
 import { Editor, EditorElement } from '@/components/app/editor/Editor';
 import { PromptSubmitPayload } from '@shared/index';
 import { AiActionPayload } from '@/components/app/editor/components/BubbleMenu';
+import { ErrorDialog } from '@/components/app/dialogs';
 
 const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
