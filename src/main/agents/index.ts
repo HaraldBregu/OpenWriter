@@ -25,13 +25,7 @@ export type {
 	ContentWriterAgentInput,
 	ContentWriterAgentOptions,
 	ContentWriterAgentOutput,
-	ContentWriterCallParams,
-	ContentWriterJsonSchema,
 	ContentWriterLlmCaller,
-	ContentWriterPhase,
-	ContentWriterRoute,
-	ContentWriterRouting,
-	ContentWriterState,
 	ContentWriterStreamParams,
 } from './content-writer';
 export { TextGeneratorV2Agent } from './text-generator-v2';
