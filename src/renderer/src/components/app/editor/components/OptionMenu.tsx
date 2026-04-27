@@ -490,6 +490,7 @@ export function OptionMenu(): React.JSX.Element | null {
 										return (
 											<div key={item.id} className="relative">
 												<Button
+													data-item-index={flatIdx}
 													variant={isSelected ? 'secondary' : 'ghost'}
 													disabled={item.disabled}
 													className="w-full justify-start"
