@@ -301,6 +301,9 @@ app.whenReady().then(async () => {
 		});
 
 		workspaceWindow.on('closed', () => {
+			writeCrashLine(
+				`[workspace:closed] userClose=${userClose} isQuitting=${appState.isQuitting}`
+			);
 			if (userClose || appState.isQuitting) {
 				logger.info('App', 'Workspace window closed by user, quitting process');
 				app.quit();
