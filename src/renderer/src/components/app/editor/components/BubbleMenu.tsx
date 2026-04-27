@@ -188,7 +188,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				setOpen(false);
 			}, 0);
 		},
-		[editor, refs]
+		[refs]
 	);
 
 	useEffect(() => {
