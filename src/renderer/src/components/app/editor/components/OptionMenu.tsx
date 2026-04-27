@@ -36,6 +36,7 @@ import {
 	type OptionMenuState,
 } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
+import { ImagesMenu } from './ImagesMenu';
 
 const pluginKey = new PluginKey('optionMenu');
 
