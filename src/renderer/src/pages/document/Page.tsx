@@ -657,8 +657,8 @@ function PageContent(): ReactElement {
 									onSelectionChange={handleSelectionChange}
 									onPromptSubmit={aiTasks.submitPrompt}
 									onInsertContent={handleInsertContent}
-									onAiAction={handleAiAction}
-									activeAiAction={activeAiAction}
+									onAiAction={aiTasks.submitAiAction}
+									activeAiAction={aiTasks.activeAiAction}
 									documentId={id}
 									onEditorReady={handleEditorReady}
 								/>
