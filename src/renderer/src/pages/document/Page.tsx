@@ -288,11 +288,12 @@ function PageContent(): ReactElement {
 	editorActionsRef.current = editorActions;
 
 	const editorInsert = useEditorStreamInsert();
-	const aiActionTaskIdsRef = useRef<Set<string>>(new Set());
 
 	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 	const activeTaskIdRef = useRef<string | null>(null);
 	activeTaskIdRef.current = activeTaskId;
+
+	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
 
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
@@ -611,7 +612,7 @@ function PageContent(): ReactElement {
 
 			editorActions.showLoading();
 			editorActions.disable();
-			editorInsert.begin(to, to);
+			editorInsert.begin(from, to);
 
 			const result = await window.task.submit({
 				type: taskType,
