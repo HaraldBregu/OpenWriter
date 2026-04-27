@@ -2,6 +2,7 @@ import React from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
+import { Button as MovingBorderButton } from '@/components/ui/MovingBorder';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { usePrompt } from './hooks';
@@ -60,57 +61,72 @@ function PromptContainer(): React.JSX.Element {
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
 				<PromptStatusBar />
-				<Card className="w-full mb-2 shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!">
-					<PromptHeader />
-					<CardContent>
-						<Textarea
-							ref={textareaRef}
-							value={state.prompt}
-							onChange={(e) => {
-								handlePromptChange(e.target.value);
-								resizeTextarea();
-							}}
-							disabled={!enable}
-							aria-label={inputLabel}
-							className={cn(
-								'disabled:bg-transparent! disabled:focus:bg-transparent!',
-								'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
-								'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
-								'disabled:cursor-not-allowed disabled:opacity-60'
-							)}
-							placeholder={t('assistantNode.placeholder', 'What can i write for you?')}
-							rows={1}
-						/>
-					</CardContent>
-					<CardFooter className="bg-transparent border-none">
-						<FileUploadTrigger
-							render={
-								<Button
-									type="button"
-									variant="outline"
-									size="icon"
-									title={t('assistantNode.addAttachment', 'Add attachment')}
-									aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+				<div className="relative mb-2 w-full">
+					<div
+						aria-hidden="true"
+						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
+					/>
+					<MovingBorderButton
+						as="div"
+						borderRadius="1rem"
+						duration={6200}
+						containerClassName="h-auto w-full text-sm"
+						borderClassName="h-24 w-24 bg-[radial-gradient(circle,_#38bdf8_8%,_#34d399_32%,_#fb7185_56%,_transparent_72%)] opacity-[0.92]"
+						className="block border-none bg-transparent p-0 text-inherit backdrop-blur-none"
+					>
+						<Card className="w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!">
+							<PromptHeader />
+							<CardContent>
+								<Textarea
+									ref={textareaRef}
+									value={state.prompt}
+									onChange={(e) => {
+										handlePromptChange(e.target.value);
+										resizeTextarea();
+									}}
+									disabled={!enable}
+									aria-label={inputLabel}
+									className={cn(
+										'disabled:bg-transparent! disabled:focus:bg-transparent!',
+										'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+										'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
+										'disabled:cursor-not-allowed disabled:opacity-60'
+									)}
+									placeholder={t('assistantNode.placeholder', 'What can i write for you?')}
+									rows={1}
 								/>
-							}
-						>
-							<Paperclip />
-						</FileUploadTrigger>
-						<Button
-							variant="default"
-							className="ml-auto shrink-0"
-							disabled={isSubmitDisabled}
-							onMouseDown={(e) => e.preventDefault()}
-							onClick={() => {
-								if (!loading) submitRef.current?.();
-							}}
-							aria-label={t('agenticPanel.submit', 'Submit')}
-						>
-							{loading ? <LoaderCircle className="animate-spin" /> : <SendHorizontal />}
-							<span>{t('agenticPanel.submit', 'Submit')}</span>
-						</Button>
-					</CardFooter>
-				</Card>
+							</CardContent>
+							<CardFooter className="bg-transparent border-none">
+								<FileUploadTrigger
+									render={
+										<Button
+											type="button"
+											variant="outline"
+											size="icon"
+											title={t('assistantNode.addAttachment', 'Add attachment')}
+											aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+										/>
+									}
+								>
+									<Paperclip />
+								</FileUploadTrigger>
+								<Button
+									variant="default"
+									className="ml-auto shrink-0"
+									disabled={isSubmitDisabled}
+									onMouseDown={(e) => e.preventDefault()}
+									onClick={() => {
+										if (!loading) submitRef.current?.();
+									}}
+									aria-label={t('agenticPanel.submit', 'Submit')}
+								>
+									{loading ? <LoaderCircle className="animate-spin" /> : <SendHorizontal />}
+									<span>{t('agenticPanel.submit', 'Submit')}</span>
+								</Button>
+							</CardFooter>
+						</Card>
+					</MovingBorderButton>
+				</div>
 			</FileUploadDropzone>
 		</FileUpload>
 	);
