@@ -420,6 +420,9 @@ function PageContent(): ReactElement {
 				}
 				setActiveTaskId(null);
 			} else if (event.state === 'cancelled') {
+				if (!event.data.success && event.data.error.length > 0) {
+					setTaskError(event.data.error);
+				}
 				handlers.handleCancelOrError();
 				setActiveTaskId(null);
 			}
