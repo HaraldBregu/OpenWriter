@@ -203,6 +203,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 
 	const revert = useCallback((): void => {
 		cancelPendingFrame();
+		cancelScrollAnimation();
 		const session = sessionRef.current;
 		if (!session) return;
 		if (editor && !editor.isDestroyed) {
@@ -214,13 +215,14 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 			}
 		}
 		sessionRef.current = null;
-	}, [editor, clampPos, cancelPendingFrame]);
+	}, [editor, clampPos, cancelPendingFrame, cancelScrollAnimation]);
 
 	useEffect(() => {
 		return () => {
 			cancelPendingFrame();
+			cancelScrollAnimation();
 		};
-	}, [cancelPendingFrame]);
+	}, [cancelPendingFrame, cancelScrollAnimation]);
 
 	return { begin, appendDelta, commitFinal, revert };
 }
