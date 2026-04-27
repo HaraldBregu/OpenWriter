@@ -10,5 +10,7 @@ export type PromptSubmitPayload =
 	| { type: AiActionType; text: string; prompt?: string };
 
 export interface PromptOptions {
-	onPromptSubmit: (payload: PromptSubmitPayload) => void;
+	onPromptSubmit: (
+		payload: Extract<PromptSubmitPayload, { files: File[] }>
+	) => void;
 }
