@@ -40,7 +40,7 @@ export interface UseDocumentAiTasks {
 	/** Clears `taskError` (called when the error dialog is dismissed). */
 	dismissTaskError: () => void;
 	/** Submit a prompt typed in the editor's content-generator block. */
-	submitPrompt: (payload: PromptSubmitPayload, editor: TiptapEditor) => Promise<void>;
+	submitPrompt: (payload: PromptInputPayload, editor: TiptapEditor) => Promise<void>;
 	/** Submit a bubble-menu AI action (fix-grammar / improve-writing / custom). */
 	submitAiAction: (action: AiActionPayload) => Promise<void>;
 }
