@@ -475,7 +475,7 @@ function PageContent(): ReactElement {
 		(newContent: string) => {
 			setContent(newContent);
 			dispatch({ type: 'CONTENT_CHANGED', value: newContent });
-			if (activeTaskIdRef.current) return;
+			if (aiTasksRunningRef.current) return;
 			debouncedContentSave();
 		},
 		[dispatch, debouncedContentSave]
