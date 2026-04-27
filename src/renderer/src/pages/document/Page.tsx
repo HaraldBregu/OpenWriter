@@ -406,12 +406,13 @@ function PageContent(): ReactElement {
 
 		return window.task.onEvent((event: TaskEvent) => {
 			if (event.metadata.documentId !== id) return;
-			editorActionsRef.current.showPromptStatusBar(event.data);
+			const data = event.data.success ? event.data.data : '';
+			editorActionsRef.current.showPromptStatusBar(data);
 			const handlers = taskHandlersRef.current;
 			if (event.state === 'running') {
-				handlers.handleDelta(event.data);
+				handlers.handleDelta(data);
 			} else if (event.state === 'finished') {
-				handlers.handleCompleted(event.data);
+				handlers.handleCompleted(data);
 				if (typeof window.task?.cancel === 'function') {
 					void window.task.cancel(activeTaskId);
 				}
