@@ -451,14 +451,14 @@ export function OptionMenu(): React.JSX.Element | null {
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
-					<div className="px-3 pt-2 pb-1.5 border-b border-border/60">
-						<div className="text-sm font-semibold leading-tight">Insert block</div>
-						<div className="text-[11px] text-muted-foreground leading-tight">
-							Select a block to insert
-						</div>
+					<div className="px-3 py-1.5 border-b border-border/60">
+						<div className="text-xs font-semibold leading-tight">Blocks</div>
 					</div>
 
-					<div className="flex flex-col gap-1 p-1 max-h-[340px] overflow-y-auto">
+					<div
+						ref={scrollContainerRef}
+						className="flex flex-col gap-1 p-1 max-h-[340px] overflow-y-auto"
+					>
 						{sections.map((section, sIdx) => {
 							const baseOffset = sections
 								.slice(0, sIdx)
