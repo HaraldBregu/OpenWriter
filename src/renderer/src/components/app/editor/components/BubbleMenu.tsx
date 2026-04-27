@@ -144,12 +144,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		(type: AiActionType) => {
 			const { from, to } = editor.state.selection;
 			if (from === to) return;
-			const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-			const serializer = storage.markdown?.serializer as
-				| { serialize: (node: unknown) => string }
-				| undefined;
+			const slicedDoc = editor.state.doc.cut(from, to);
 			const text =
-				serializer?.serialize(editor.state.doc.cut(from, to)) ??
+				editor.markdown?.serialize(slicedDoc.toJSON()) ??
 				editor.state.doc.textBetween(from, to, '\n\n');
 			onAiAction?.({ type, text });
 		},
