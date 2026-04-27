@@ -141,25 +141,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		}),
 	});
 
-	const improveWritingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-	const handleImproveWriting = useCallback(() => {
-		const { from, to } = editor.state.selection;
-		if (from === to) return;
-		if (improveWritingTimerRef.current) {
-			clearTimeout(improveWritingTimerRef.current);
-			improveWritingTimerRef.current = null;
-		}
-		editor.view.dom.classList.add('improving-writing');
-		editor.setEditable(false);
-		improveWritingTimerRef.current = setTimeout(() => {
-			improveWritingTimerRef.current = null;
-			if (editor.isDestroyed) return;
-			editor.view.dom.classList.remove('improving-writing');
-			editor.setEditable(true);
-		}, IMPROVE_WRITING_DURATION);
-	}, [editor]);
-
 	const handleAiAction = useCallback(
 		(type: AiActionType, prompt?: string) => {
 			const { from, to } = editor.state.selection;
