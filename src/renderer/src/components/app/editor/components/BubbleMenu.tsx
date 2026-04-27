@@ -308,18 +308,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<SpellCheck />
 							Fix grammar
 						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<FileText />
-							Summarize
-						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<Languages />
-							Translate
-						</Button>
-						<Button variant="ghost" size="sm" className="justify-start w-full">
-							<ArrowRight />
-							Continue writing
-						</Button>
 					</div>
 				</Card>
 				<FloatingArrow
