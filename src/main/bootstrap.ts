@@ -115,11 +115,19 @@ export function bootstrapServices(): BootstrapResult {
 	taskHandlerRegistry.register(new DemoImproveWritingTaskHandler(logger));
 	taskHandlerRegistry.register(new DemoCustomPromptTaskHandler(logger));
 	taskHandlerRegistry.register(new DemoPostGeneratorTaskHandler(logger));
-	taskHandlerRegistry.register(new ContentWriterTaskHandler(logger));
 	const serviceResolver = new ServiceResolver(storeService);
 	const modelResolver = new ModelResolver();
 	container.register('serviceResolver', serviceResolver);
 	container.register('modelResolver', modelResolver);
+	const contentWriterAgent = new ContentWriterAgent();
+	taskHandlerRegistry.register(
+		new ContentWriterTaskHandler({
+			agent: contentWriterAgent,
+			serviceResolver,
+			modelResolver,
+			logger,
+		})
+	);
 	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
 	// Agent registry -- feature agents (assistant, rag, ocr).
@@ -130,6 +138,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new TextWriterAgent());
 	agentRegistry.register(new TextGeneratorV1Agent());
 	agentRegistry.register(new TextGeneratorV2Agent());
+	agentRegistry.register(contentWriterAgent);
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
 	agentRegistry.register(new TranscriptionAgent());
