@@ -355,7 +355,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							}
 						}}
 						placeholder="Ask AI…"
-						className="h-7 text-xs"
 					/>
 				</Card>
 				<FloatingArrow
