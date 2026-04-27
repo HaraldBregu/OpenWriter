@@ -606,33 +606,24 @@ function PageContent(): ReactElement {
 			const { from, to } = editor.state.selection;
 			if (from === to) return;
 
-			const taskType =
-				action.type === 'fix-grammar'
-					? 'demo-fix-grammar'
-					: action.type === 'custom'
-						? 'demo-custom-prompt'
-						: 'demo-improve-writing';
-
 			if (action.type === 'custom' && !action.prompt?.trim()) return;
 
+			const slicedDoc = editor.state.doc.cut(from, to);
+			const text =
+				editor.markdown?.serialize(slicedDoc.toJSON()) ??
+				editor.state.doc.textBetween(from, to, '\n\n');
+
+			const input: { intent: AiActionPayload['type']; text: string; prompt?: string } = {
+				intent: action.type,
+				text,
+				...(action.type === 'custom' && action.prompt?.trim()
+					? { prompt: action.prompt.trim() }
+					: {}),
+			};
+
+			console.log('AI action input:', input);
+
 			setActiveAiAction(action.type);
-
-			const input =
-				action.type === 'custom'
-					? { text: action.text, prompt: action.prompt ?? '' }
-					: { text: action.text };
-
-			const result = await window.task.submit({
-				type: taskType,
-				input,
-				metadata: { documentId: id, selection: { from, to } },
-			});
-
-			if (!result.success) {
-				setActiveAiAction(null);
-				return;
-			}
-			setAiActionTaskId(result.data.taskId);
 		},
 		[id, assistantIsRunning, editor]
 	);
