@@ -141,17 +141,24 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	}, [editor]);
 
 	const handleAiAction = useCallback(
-		(type: AiActionType) => {
+		(type: AiActionType, prompt?: string) => {
 			const { from, to } = editor.state.selection;
 			if (from === to) return;
 			const slicedDoc = editor.state.doc.cut(from, to);
 			const text =
 				editor.markdown?.serialize(slicedDoc.toJSON()) ??
 				editor.state.doc.textBetween(from, to, '\n\n');
-			onAiAction?.({ type, text });
+			onAiAction?.({ type, text, prompt });
 		},
 		[editor, onAiAction]
 	);
+
+	const handleCustomPromptSubmit = useCallback(() => {
+		const trimmed = customPrompt.trim();
+		if (!trimmed) return;
+		handleAiAction('custom', trimmed);
+		setCustomPrompt('');
+	}, [customPrompt, handleAiAction]);
 
 	useEffect(() => {
 		return () => {
