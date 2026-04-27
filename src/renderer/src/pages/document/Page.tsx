@@ -608,19 +608,33 @@ function PageContent(): ReactElement {
 
 			if (action.type === 'custom' && !action.prompt?.trim()) return;
 
-			const slicedDoc = editor.state.doc.cut(from, to);
-			const text =
-				editor.markdown?.serialize(slicedDoc.toJSON()) ??
-				editor.state.doc.textBetween(from, to, '\n\n');
+			const sliceToMarkdown = (start: number, end: number): string => {
+				if (start === end) return '';
+				const slice = editor.state.doc.cut(start, end);
+				return (
+					editor.markdown?.serialize(slice.toJSON()) ??
+					editor.state.doc.textBetween(start, end, '\n\n')
+				);
+			};
+
+			const docSize = editor.state.doc.content.size;
+			const before = sliceToMarkdown(0, from);
+			const selectedText = sliceToMarkdown(from, to);
+			const after = sliceToMarkdown(to, docSize);
 
 			const instruction =
 				action.type === 'fix-grammar'
-					? 'Fix the grammar of the following text. Return only the corrected text.'
+					? 'Fix the grammar of the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the corrected selection text in markdown — do not include <before>, <after>, or any tags.'
 					: action.type === 'improve-writing'
-						? 'Improve the writing of the following text. Return only the rewritten text.'
-						: action.prompt!.trim();
+						? 'Improve the writing of the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the rewritten selection text in markdown — do not include <before>, <after>, or any tags.'
+						: `${action.prompt!.trim()}\n\nApply this to the text inside <selection>. Use <before> and <after> only as surrounding context. Return ONLY the new selection text in markdown — do not include <before>, <after>, or any tags.`;
 
-			const prompt = `${instruction}\n\n${text}`;
+			const prompt = [
+				`<instruction>${instruction}</instruction>`,
+				`<before>\n${before}\n</before>`,
+				`<selection>\n${selectedText}\n</selection>`,
+				`<after>\n${after}\n</after>`,
+			].join('\n\n');
 
 			console.log('AI action prompt:', prompt);
 
