@@ -416,7 +416,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Comment</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Comment" />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
