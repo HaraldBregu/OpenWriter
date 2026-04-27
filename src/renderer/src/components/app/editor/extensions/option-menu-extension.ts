@@ -2,29 +2,20 @@ import { Extension } from '@tiptap/core';
 import { PluginKey } from '@tiptap/pm/state';
 import { OptionMenuPlugin, type OptionMenuPluginProps } from '../plugins/option-menu-plugin';
 
-export type OptionMenuExtensionOptions = Omit<OptionMenuPluginProps, 'editor' | 'element'> & {
-	element: HTMLElement | null;
-};
+export type OptionMenuExtensionOptions = Omit<OptionMenuPluginProps, 'editor'>;
 
 export const OptionMenuExtension = Extension.create<OptionMenuExtensionOptions>({
 	name: 'optionMenu',
 
 	addOptions() {
 		return {
-			element: null,
 			pluginKey: 'optionMenu',
-			onShow: () => {},
-			onHide: () => {},
-			onQueryChange: () => {},
+			onUpdate: () => {},
 			onKeyEvent: () => false,
 		};
 	},
 
 	addProseMirrorPlugins() {
-		if (!this.options.element) {
-			return [];
-		}
-
 		return [
 			OptionMenuPlugin({
 				pluginKey:
@@ -32,11 +23,10 @@ export const OptionMenuExtension = Extension.create<OptionMenuExtensionOptions>(
 						? this.options.pluginKey
 						: new PluginKey(this.options.pluginKey as string),
 				editor: this.editor,
-				element: this.options.element,
-				onShow: this.options.onShow,
-				onHide: this.options.onHide,
-				onQueryChange: this.options.onQueryChange,
+				onUpdate: this.options.onUpdate,
 				onKeyEvent: this.options.onKeyEvent,
+				getIsLocked: this.options.getIsLocked,
+				controls: this.options.controls,
 			}),
 		];
 	},
