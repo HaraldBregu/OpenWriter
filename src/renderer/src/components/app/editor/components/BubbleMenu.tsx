@@ -428,7 +428,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Chat</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Chat" />
+							</TooltipContent>
 						</Tooltip>
 					</div>
 
