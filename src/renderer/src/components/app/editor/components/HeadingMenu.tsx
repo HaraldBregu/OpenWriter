@@ -25,6 +25,7 @@ import {
 import type { Editor } from '@tiptap/core';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 
 type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 
