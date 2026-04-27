@@ -21,6 +21,7 @@ export interface ContextValue {
 	handlePromptChange: (value: string) => void;
 	handleAgentChange: (agentId: AgentId) => void;
 	setSelection: (value: string) => void;
+	clearSelection: () => void;
 	addFile: (file: File) => void;
 	removeFile: (index: number) => void;
 	handleFilesChange: (files: File[]) => void;
