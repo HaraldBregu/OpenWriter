@@ -37,7 +37,6 @@ import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
 
 const pluginKey = new PluginKey('bubbleMenu');
-const IMPROVE_WRITING_DURATION = 5000;
 
 const isMac =
 	typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
@@ -453,7 +452,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 
 					<Separator className="my-1" />
 
-					<InputGroup>
+					<InputGroup className='rounded-sm!'>
 						<InputGroupAddon>
 							<Sparkles className="h-3.5 w-3.5" />
 						</InputGroupAddon>
