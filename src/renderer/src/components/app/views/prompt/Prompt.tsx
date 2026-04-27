@@ -2,7 +2,7 @@ import React from 'react';
 import type { NodeViewProps } from '@tiptap/react';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardFooter } from '@/components/ui/Card';
-import { MovingShadow } from '@/components/ui/MovingShadow';
+import { Button as MovingBorderButton } from '@/components/ui/MovingBorder';
 import { Textarea } from '@/components/ui/Textarea';
 import { FileUpload, FileUploadDropzone, FileUploadTrigger } from '@/components/ui/FileUpload';
 import { usePrompt } from './hooks';

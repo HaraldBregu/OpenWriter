@@ -49,7 +49,6 @@ export function MovingShadow({
 	const angle = useTransform(time, (t) => ((t % duration) / duration) * TWO_PI);
 	const x = useTransform(angle, (a) => Math.cos(a) * shadowSize);
 	const y = useTransform(angle, (a) => Math.sin(a) * shadowSize);
-	const rotate = useTransform(angle, (a) => (a * 180) / Math.PI);
 
 	const [c1, c2, c3] = shadowColors;
 	const glowBackground = `conic-gradient(from 0deg, ${c1}, ${c2}, ${c3}, ${c1})`;
@@ -72,7 +71,6 @@ export function MovingShadow({
 					left: inset,
 					x,
 					y,
-					rotate,
 					borderRadius: blobRadius,
 					background: glowBackground,
 					filter: `blur(${shadowBlur}px)`,
