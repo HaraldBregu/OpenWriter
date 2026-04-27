@@ -129,7 +129,7 @@ export class TaskExecutor implements Disposable {
 			this.send(windowId, 'task:event', {
 				state: 'queued',
 				taskId,
-				data: '',
+				data: { success: true, data: '' },
 				metadata: metadata ?? {},
 			} satisfies TaskEvent);
 
