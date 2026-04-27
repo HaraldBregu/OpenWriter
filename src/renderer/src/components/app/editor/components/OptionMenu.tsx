@@ -359,7 +359,7 @@ export function OptionMenu(): React.JSX.Element | null {
 		(event: KeyboardEvent): boolean => {
 			const idx = selectedIndexRef.current;
 			const imgIdx = imageSelectedIndexRef.current;
-			const inSubmenu = idx === imagesItemIndex && imgIdx >= 0;
+			const inSubmenu = imagesMenuOpenRef.current && idx === imagesItemIndex;
 
 			if (inSubmenu) {
 				const len = imagesRef.current.length;
@@ -372,8 +372,12 @@ export function OptionMenu(): React.JSX.Element | null {
 
 				if (event.key === 'ArrowLeft') {
 					event.preventDefault();
-					if (imgIdx <= 0) setImageSelectedIndex(-1);
-					else setImageSelectedIndex((p) => p - 1);
+					if (imgIdx <= 0) {
+						setImagesMenuOpen(false);
+						setImageSelectedIndex(-1);
+					} else {
+						setImageSelectedIndex((p) => p - 1);
+					}
 					return true;
 				}
 
@@ -395,6 +399,7 @@ export function OptionMenu(): React.JSX.Element | null {
 
 			if (event.key === 'ArrowRight' && idx === imagesItemIndex && imagesRef.current.length > 0) {
 				event.preventDefault();
+				setImagesMenuOpen(true);
 				setImageSelectedIndex(0);
 				return true;
 			}
