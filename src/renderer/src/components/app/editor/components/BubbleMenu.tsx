@@ -415,24 +415,34 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
+							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
 								handleAiAction('improve-writing');
 							}}
 						>
-							<Wand2 />
+							{activeAction === 'improve-writing' ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<Wand2 />
+							)}
 							Improve writing
 						</Button>
 						<Button
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
+							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
 								handleAiAction('fix-grammar');
 							}}
 						>
-							<SpellCheck />
+							{activeAction === 'fix-grammar' ? (
+								<Loader2 className="animate-spin" />
+							) : (
+								<SpellCheck />
+							)}
 							Fix grammar
 						</Button>
 					</div>
