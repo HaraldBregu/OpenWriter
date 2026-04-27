@@ -301,11 +301,26 @@ function PageContent(): ReactElement {
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
+	const aiTasks = useDocumentAiTasks({
+		documentId: id ?? null,
+		editor,
+		editorActions,
+		editorInsert,
+		selection,
+		isExternallyBusy: documentHasActiveTask || preexistingTaskActive,
+		onMarkdownChanged: (markdown) => {
+			setContent(markdown);
+			dispatch({ type: 'CONTENT_CHANGED', value: markdown });
+			debouncedContentSave.cancel();
+			if (id) window.workspace.updateDocumentContent(id, markdown);
+		},
+	});
+
+	const aiTasksRunningRef = useRef(aiTasks.isRunning);
+	aiTasksRunningRef.current = aiTasks.isRunning;
+
 	const assistantIsRunning =
-		activeTaskId !== null ||
-		aiActionTaskId !== null ||
-		documentHasActiveTask ||
-		preexistingTaskActive;
+		aiTasks.isRunning || documentHasActiveTask || preexistingTaskActive;
 
 	useEffect(() => {
 		if (!id) {
