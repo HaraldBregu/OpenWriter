@@ -54,6 +54,17 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		dispatch({ type: 'SET_SELECTION', payload: value });
 	}, []);
 
+	const clearSelection = useCallback(() => {
+		if (editor.isDestroyed) return;
+		const { from, to } = editor.state.selection;
+		if (from === to) return;
+		const docSize = editor.state.doc.content.size;
+		const collapsePos = Math.max(0, Math.min(to, docSize));
+		const nextSelection = TextSelection.near(editor.state.doc.resolve(collapsePos), -1);
+		const tr = editor.state.tr.setSelection(nextSelection);
+		editor.view.dispatch(tr);
+	}, [editor]);
+
 	const nodePrompt = (node.attrs.prompt as string) ?? '';
 	useEffect(() => {
 		if (state.prompt !== nodePrompt) {
