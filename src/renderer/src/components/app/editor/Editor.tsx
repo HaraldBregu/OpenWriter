@@ -88,6 +88,7 @@ export interface EditorProps {
 	onPromptSubmit?: (payload: PromptSubmitPayload, editor: TiptapEditor) => void;
 	onInsertContent?: () => void;
 	onAiAction?: (action: AiActionPayload) => void;
+	activeAiAction?: AiActionType | null;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
