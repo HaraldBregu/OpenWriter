@@ -66,11 +66,6 @@ export class ContentWriterTaskHandler
 			emit({ state: update.state, data: { success: true, data: update.data } });
 		};
 
-		const emitFailure = (message: string): void => {
-			logger.error(LOG_SOURCE, 'Content-writer task failed', { error: message });
-			emit({ state: 'cancelled', data: { success: false, error: message } });
-		};
-
 		logAndEmitSuccess({ state: 'queued', data: 'queued' });
 		logAndEmitSuccess({ state: 'started', data: 'started' });
 
