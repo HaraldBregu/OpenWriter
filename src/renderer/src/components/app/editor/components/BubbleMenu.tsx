@@ -6,6 +6,7 @@ import {
 	ListOrdered,
 	MessageCircle,
 	MessageSquare,
+	Sparkles,
 	SpellCheck,
 	Strikethrough,
 	Type,
