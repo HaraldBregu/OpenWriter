@@ -4,6 +4,7 @@ import {
 	Italic,
 	List,
 	ListOrdered,
+	Loader2,
 	MessageCircle,
 	MessageSquare,
 	Sparkles,
