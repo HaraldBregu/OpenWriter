@@ -237,7 +237,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				<Card
 					size="sm"
 					className={cn(
-						'flex flex-col gap-1! py-2! px-2.5! w-fit',
+						'flex flex-col gap-1! py-2! px-2.5! w-[188px]',
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
