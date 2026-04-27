@@ -1,43 +1,18 @@
 import { ContentWriterAgent } from '../../../../../src/main/agents/content-writer';
 import type {
 	ContentWriterAgentInput,
-	ContentWriterCallParams,
 	ContentWriterLlmCaller,
-	ContentWriterRoute,
 	ContentWriterStreamParams,
 } from '../../../../../src/main/agents/content-writer';
-import type {
-	AgentContext,
-	AgentEvent,
-} from '../../../../../src/main/agents/core';
+import type { AgentContext, AgentEvent } from '../../../../../src/main/agents/core';
 import { AgentValidationError } from '../../../../../src/main/agents/core';
 
-interface FakeCallerOptions {
-	route: ContentWriterRoute;
-	routerReasoning?: string;
-	tokens?: string[];
-}
-
-interface FakeCallerSpy {
+function buildFakeCaller(tokens: string[] = ['Hello', ', ', 'world.']): {
 	caller: ContentWriterLlmCaller;
-	calls: ContentWriterCallParams[];
 	streams: ContentWriterStreamParams[];
-}
-
-function buildFakeCaller(opts: FakeCallerOptions): FakeCallerSpy {
-	const tokens = opts.tokens ?? ['Hello', ', ', 'world.'];
-	const calls: ContentWriterCallParams[] = [];
+} {
 	const streams: ContentWriterStreamParams[] = [];
-
 	const caller: ContentWriterLlmCaller = {
-		async call(params, signal) {
-			calls.push(params);
-			if (signal.aborted) throw new DOMException('Aborted', 'AbortError');
-			return JSON.stringify({
-				route: opts.route,
-				reasoning: opts.routerReasoning ?? `picked ${opts.route}`,
-			});
-		},
 		async stream(params, signal) {
 			streams.push(params);
 			let combined = '';
@@ -49,8 +24,7 @@ function buildFakeCaller(opts: FakeCallerOptions): FakeCallerSpy {
 			return combined;
 		},
 	};
-
-	return { caller, calls, streams };
+	return { caller, streams };
 }
 
 function buildContext(signal: AbortSignal): {
@@ -94,7 +68,7 @@ describe('ContentWriterAgent', () => {
 		];
 
 		it.each(cases)('throws AgentValidationError when $field is missing', async ({ input }) => {
-			const { caller } = buildFakeCaller({ route: 'short' });
+			const { caller } = buildFakeCaller();
 			const agent = new ContentWriterAgent({ llmCaller: caller });
 			const controller = new AbortController();
 			const { ctx } = buildContext(controller.signal);
@@ -102,108 +76,40 @@ describe('ContentWriterAgent', () => {
 		});
 	});
 
-	describe('routing and generation', () => {
-		const routes: ContentWriterRoute[] = ['short', 'grammar', 'long'];
+	it('streams the LLM response and returns the joined content', async () => {
+		const { caller, streams } = buildFakeCaller(['piece-', 'one-', 'two']);
+		const agent = new ContentWriterAgent({ llmCaller: caller });
+		const controller = new AbortController();
+		const { ctx, events } = buildContext(controller.signal);
 
-		it.each(routes)('routes the request to the %s node and returns its output', async (route) => {
-			const { caller, calls, streams } = buildFakeCaller({
-				route,
-				tokens: ['piece-', 'one-', 'two'],
-			});
-			const agent = new ContentWriterAgent({ llmCaller: caller });
-			const controller = new AbortController();
-			const { ctx, events } = buildContext(controller.signal);
+		const out = await agent.execute(baseInput, ctx);
 
-			const out = await agent.execute(baseInput, ctx);
+		expect(out).toEqual({ content: 'piece-one-two' });
+		expect(streams).toHaveLength(1);
+		expect(streams[0].modelName).toBe('gpt-test');
+		expect(streams[0].userPrompt).toBe(baseInput.prompt);
 
-			expect(out.route).toBe(route);
-			expect(out.routing.route).toBe(route);
-			expect(out.routing.reasoning).toBe(`picked ${route}`);
-			expect(out.content).toBe('piece-one-two');
-			expect(out.stoppedReason).toBe('done');
-
-			// Exactly one router call (JSON-schema constrained), one streaming call.
-			expect(calls).toHaveLength(1);
-			expect(calls[0].jsonSchema?.name).toBe('content_writer_route');
-			expect(streams).toHaveLength(1);
-
-			// Each route uses a distinct system prompt.
-			const sys = streams[0].systemPrompt;
-			if (route === 'short') expect(sys).toMatch(/short, focused text/i);
-			if (route === 'grammar') expect(sys).toMatch(/proofreader/i);
-			if (route === 'long') expect(sys).toMatch(/long-form/i);
-
-			// Route event was emitted before generation tokens.
-			const routeIdx = events.findIndex((e) => e.kind === 'route');
-			const firstTextIdx = events.findIndex((e) => e.kind === 'text');
-			expect(routeIdx).toBeGreaterThan(-1);
-			expect(firstTextIdx).toBeGreaterThan(routeIdx);
-		});
-
-		it('forwards existing text into the grammar node user prompt', async () => {
-			const { caller, streams } = buildFakeCaller({ route: 'grammar', tokens: ['ok'] });
-			const agent = new ContentWriterAgent({ llmCaller: caller });
-			const controller = new AbortController();
-			const { ctx } = buildContext(controller.signal);
-
-			await agent.execute(
-				{ ...baseInput, prompt: 'fix grammar', existingText: 'I has a apple' },
-				ctx
-			);
-
-			expect(streams[0].userPrompt).toContain('Text to correct:');
-			expect(streams[0].userPrompt).toContain('I has a apple');
-		});
+		const textTokens = events
+			.filter((e) => e.kind === 'text')
+			.map((e) => (e.payload as { text: string }).text);
+		expect(textTokens).toEqual(['piece-', 'one-', 'two']);
 	});
 
-	describe('state management', () => {
-		it('emits idle → routing → generating → completed in order', async () => {
-			const { caller } = buildFakeCaller({ route: 'short' });
-			const agent = new ContentWriterAgent({ llmCaller: caller });
-			const controller = new AbortController();
-			const { ctx, events } = buildContext(controller.signal);
+	it('forwards temperature and maxTokens to the LLM caller', async () => {
+		const { caller, streams } = buildFakeCaller(['ok']);
+		const agent = new ContentWriterAgent({ llmCaller: caller });
+		const controller = new AbortController();
+		const { ctx } = buildContext(controller.signal);
 
-			const out = await agent.execute(baseInput, ctx);
+		await agent.execute({ ...baseInput, temperature: 0.7, maxTokens: 500 }, ctx);
 
-			const stateEvents = events.filter((e) => e.kind === 'state');
-			const phases = stateEvents.map(
-				(e) => (e.payload as { phase: string }).phase
-			);
-			expect(phases).toEqual(['routing', 'generating', 'completed']);
-
-			// Final snapshot reflects the completed state on the chosen route.
-			expect(out.state).toEqual({ phase: 'completed', route: 'short' });
-
-			// Routing event has no route yet; generating/completed carry the route.
-			const stateRoutes = stateEvents.map(
-				(e) => (e.payload as { route: ContentWriterRoute | null }).route
-			);
-			expect(stateRoutes).toEqual([null, 'short', 'short']);
-		});
-
-		it('streams text deltas as text events', async () => {
-			const { caller } = buildFakeCaller({
-				route: 'long',
-				tokens: ['a-', 'b-', 'c'],
-			});
-			const agent = new ContentWriterAgent({ llmCaller: caller });
-			const controller = new AbortController();
-			const { ctx, events } = buildContext(controller.signal);
-
-			await agent.execute(baseInput, ctx);
-
-			const textEvents = events.filter((e) => e.kind === 'text');
-			expect(textEvents.map((e) => (e.payload as { text: string }).text)).toEqual([
-				'a-',
-				'b-',
-				'c',
-			]);
-		});
+		expect(streams[0].temperature).toBe(0.7);
+		expect(streams[0].maxTokens).toBe(500);
 	});
 
 	describe('cancellation', () => {
 		it('rejects with AbortError when the signal is aborted before run', async () => {
-			const { caller } = buildFakeCaller({ route: 'short' });
+			const { caller } = buildFakeCaller();
 			const agent = new ContentWriterAgent({ llmCaller: caller });
 			const controller = new AbortController();
 			controller.abort();
@@ -214,11 +120,8 @@ describe('ContentWriterAgent', () => {
 
 		it('propagates abort raised by the LLM caller', async () => {
 			const caller: ContentWriterLlmCaller = {
-				async call() {
-					throw new DOMException('Aborted', 'AbortError');
-				},
 				async stream() {
-					throw new Error('should not stream');
+					throw new DOMException('Aborted', 'AbortError');
 				},
 			};
 			const agent = new ContentWriterAgent({ llmCaller: caller });
@@ -226,24 +129,6 @@ describe('ContentWriterAgent', () => {
 			const { ctx } = buildContext(controller.signal);
 
 			await expect(agent.execute(baseInput, ctx)).rejects.toMatchObject({ name: 'AbortError' });
-		});
-	});
-
-	describe('schema parsing', () => {
-		it('throws when the router returns an unknown route', async () => {
-			const caller: ContentWriterLlmCaller = {
-				async call() {
-					return JSON.stringify({ route: 'medium', reasoning: 'nope' });
-				},
-				async stream() {
-					return '';
-				},
-			};
-			const agent = new ContentWriterAgent({ llmCaller: caller });
-			const controller = new AbortController();
-			const { ctx } = buildContext(controller.signal);
-
-			await expect(agent.execute(baseInput, ctx)).rejects.toThrow(/Invalid route/);
 		});
 	});
 });
