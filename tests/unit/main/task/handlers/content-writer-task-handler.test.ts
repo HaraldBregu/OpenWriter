@@ -4,45 +4,28 @@ import {
 } from '../../../../../src/main/task/handlers/content-writer-task-handler';
 import { ContentWriterAgent } from '../../../../../src/main/agents/content-writer';
 import type {
-	ContentWriterCallParams,
 	ContentWriterLlmCaller,
-	ContentWriterRoute,
 	ContentWriterStreamParams,
 } from '../../../../../src/main/agents/content-writer';
 import type { TaskEvent } from '../../../../../src/shared/types';
 
 type EmittedEvent = Omit<TaskEvent, 'taskId' | 'metadata'>;
 
-interface FakeCallerOptions {
-	route: ContentWriterRoute;
-	tokens: string[];
-	reasoning?: string;
-}
-
-function makeFakeCaller(opts: FakeCallerOptions): {
+function makeFakeCaller(tokens: string[]): {
 	caller: ContentWriterLlmCaller;
-	streamCalls: ContentWriterStreamParams[];
-	jsonCalls: ContentWriterCallParams[];
+	streams: ContentWriterStreamParams[];
 } {
-	const streamCalls: ContentWriterStreamParams[] = [];
-	const jsonCalls: ContentWriterCallParams[] = [];
+	const streams: ContentWriterStreamParams[] = [];
 	const caller: ContentWriterLlmCaller = {
-		async call(params, _signal) {
-			jsonCalls.push(params);
-			return JSON.stringify({
-				route: opts.route,
-				reasoning: opts.reasoning ?? `routing to ${opts.route}`,
-			});
-		},
 		async stream(params, _signal) {
-			streamCalls.push(params);
-			for (const token of opts.tokens) {
+			streams.push(params);
+			for (const token of tokens) {
 				params.onDelta(token);
 			}
-			return opts.tokens.join('');
+			return tokens.join('');
 		},
 	};
-	return { caller, streamCalls, jsonCalls };
+	return { caller, streams };
 }
 
 function makeLogger(): {
@@ -97,15 +80,14 @@ function collectEvents(): {
 	};
 }
 
-function buildHandler(callerOpts: FakeCallerOptions): {
+function buildHandler(tokens: string[]): {
 	handler: ContentWriterTaskHandler;
 	logger: ReturnType<typeof makeLogger>;
 	serviceResolver: ReturnType<typeof makeServiceResolver>;
 	modelResolver: ReturnType<typeof makeModelResolver>;
-	streamCalls: ContentWriterStreamParams[];
-	jsonCalls: ContentWriterCallParams[];
+	streams: ContentWriterStreamParams[];
 } {
-	const { caller, streamCalls, jsonCalls } = makeFakeCaller(callerOpts);
+	const { caller, streams } = makeFakeCaller(tokens);
 	const agent = new ContentWriterAgent({ llmCaller: caller });
 	const logger = makeLogger();
 	const serviceResolver = makeServiceResolver();
@@ -116,20 +98,17 @@ function buildHandler(callerOpts: FakeCallerOptions): {
 		modelResolver: modelResolver as never,
 		logger: logger as never,
 	});
-	return { handler, logger, serviceResolver, modelResolver, streamCalls, jsonCalls };
+	return { handler, logger, serviceResolver, modelResolver, streams };
 }
 
 describe('ContentWriterTaskHandler', () => {
 	it('exposes the "content-writer" type identifier', () => {
-		const { handler } = buildHandler({ route: 'short', tokens: ['hi'] });
+		const { handler } = buildHandler(['hi']);
 		expect(handler.type).toBe('content-writer');
 	});
 
-	it('drives the agent through the routing → generating → finished lifecycle (short route)', async () => {
-		const { handler } = buildHandler({
-			route: 'short',
-			tokens: ['Hello', ' ', 'world', '.'],
-		});
+	it('emits queued → started → running tokens → finished and returns the full content', async () => {
+		const { handler } = buildHandler(['Hello', ' ', 'world', '.']);
 		const { events, emit } = collectEvents();
 
 		const result = await handler.execute(
@@ -140,18 +119,8 @@ describe('ContentWriterTaskHandler', () => {
 
 		expect(result).toBe('Hello world.');
 
-		// First two task events are the handler's own queued/started markers.
 		expect(events[0]).toEqual({ state: 'queued', data: 'queued' });
 		expect(events[1]).toEqual({ state: 'started', data: 'started' });
-
-		// Lifecycle: routing → route announcement → drafting label → tokens → finished.
-		const startedEvents = events.filter((e) => e.state === 'started');
-		expect(startedEvents.map((e) => e.data)).toEqual([
-			'started',
-			'Routing prompt...',
-			'Route: short',
-			'Drafting short copy...',
-		]);
 
 		const runningEvents = events.filter((e) => e.state === 'running');
 		expect(runningEvents.map((e) => e.data)).toEqual(['Hello', ' ', 'world', '.']);
@@ -161,43 +130,8 @@ describe('ContentWriterTaskHandler', () => {
 		expect(finished[0].data).toBe('Hello world.');
 	});
 
-	it('uses the route-specific status label for grammar and long routes', async () => {
-		const grammar = buildHandler({ route: 'grammar', tokens: ['Fixed.'] });
-		const long = buildHandler({ route: 'long', tokens: ['Long answer.'] });
-
-		const { events: grammarEvents, emit: emitG } = collectEvents();
-		const { events: longEvents, emit: emitL } = collectEvents();
-
-		await grammar.handler.execute(
-			{ prompt: 'fix this', existingText: 'Their is an error.' },
-			new AbortController().signal,
-			emitG
-		);
-		await long.handler.execute(
-			{ prompt: 'write a long piece' },
-			new AbortController().signal,
-			emitL
-		);
-
-		expect(grammarEvents.filter((e) => e.state === 'started').map((e) => e.data)).toEqual([
-			'started',
-			'Routing prompt...',
-			'Route: grammar',
-			'Polishing grammar...',
-		]);
-		expect(longEvents.filter((e) => e.state === 'started').map((e) => e.data)).toEqual([
-			'started',
-			'Routing prompt...',
-			'Route: long',
-			'Drafting long-form content...',
-		]);
-	});
-
-	it('passes the resolved provider/api key/model through to the agent input', async () => {
-		const { handler, jsonCalls, streamCalls, serviceResolver, modelResolver } = buildHandler({
-			route: 'short',
-			tokens: ['ok'],
-		});
+	it('passes the resolved provider/api key/model through to the agent', async () => {
+		const { handler, streams, serviceResolver, modelResolver } = buildHandler(['ok']);
 		const { emit } = collectEvents();
 
 		await handler.execute(
@@ -208,27 +142,12 @@ describe('ContentWriterTaskHandler', () => {
 
 		expect(serviceResolver.resolve).toHaveBeenCalledWith({ providerId: 'openai' });
 		expect(modelResolver.resolve).toHaveBeenCalledWith({ modelId: 'gpt-test' });
-		// The router call uses the resolved modelName.
-		expect(jsonCalls[0].modelName).toBe('gpt-test');
-		expect(streamCalls[0].modelName).toBe('gpt-test');
-	});
-
-	it('forwards existingText to the router context for grammar fixes', async () => {
-		const { handler, jsonCalls } = buildHandler({ route: 'grammar', tokens: ['ok'] });
-		const { emit } = collectEvents();
-
-		await handler.execute(
-			{ prompt: 'fix grammar', existingText: 'this are wrong' },
-			new AbortController().signal,
-			emit
-		);
-
-		// Router receives the existingText embedded in its userPrompt.
-		expect(jsonCalls[0].userPrompt).toContain('this are wrong');
+		expect(streams[0].modelName).toBe('gpt-test');
+		expect(streams[0].userPrompt).toBe('go');
 	});
 
 	it('logs the start of execution with the prompt length', async () => {
-		const { handler, logger } = buildHandler({ route: 'short', tokens: ['ok'] });
+		const { handler, logger } = buildHandler(['ok']);
 		const { emit } = collectEvents();
 
 		await handler.execute({ prompt: 'hi there' }, new AbortController().signal, emit);
@@ -241,7 +160,7 @@ describe('ContentWriterTaskHandler', () => {
 	});
 
 	it('rejects with an AbortError when the signal is already aborted', async () => {
-		const { handler } = buildHandler({ route: 'short', tokens: ['ok'] });
+		const { handler } = buildHandler(['ok']);
 		const { emit } = collectEvents();
 		const controller = new AbortController();
 		controller.abort();
@@ -252,7 +171,7 @@ describe('ContentWriterTaskHandler', () => {
 	});
 
 	it('surfaces validation errors from the agent (missing apiKey)', async () => {
-		const { caller } = makeFakeCaller({ route: 'short', tokens: ['ok'] });
+		const { caller } = makeFakeCaller(['ok']);
 		const agent = new ContentWriterAgent({ llmCaller: caller });
 		const handler = new ContentWriterTaskHandler({
 			agent,
