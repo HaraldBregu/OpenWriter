@@ -653,13 +653,12 @@ function PageContent(): ReactElement {
 		if (typeof window.task?.onEvent !== 'function') return;
 
 		return window.task.onEvent((event: TaskEvent) => {
-			
-			console.log("task", event)
 			if (event.taskId !== aiActionTaskId) return;
 			if (event.metadata.documentId !== id) return;
 
-			if (event.state === 'finished') {
-				console.log('AI action response:', event.data);
+			if (event.state === 'finished' && event.data.success) {
+				const responseText = event.data.data;
+				console.log('AI action response:', responseText);
 
 				if (editor && !editor.isDestroyed) {
 					const range = extractTaskSelection(event.metadata.selection);
@@ -667,7 +666,7 @@ function PageContent(): ReactElement {
 						const docSize = editor.state.doc.content.size;
 						const from = Math.min(range.from, docSize);
 						const to = Math.min(range.to, docSize);
-						const json = editor.markdown?.parse(event.data);
+						const json = editor.markdown?.parse(responseText);
 						if (json) {
 							const node = editor.schema.nodeFromJSON(json);
 							const slice = new Slice(node.content, 0, 0);
@@ -688,6 +687,9 @@ function PageContent(): ReactElement {
 				setAiActionTaskId(null);
 				setActiveAiAction(null);
 			} else if (event.state === 'cancelled') {
+				if (!event.data.success) {
+					console.error('AI action failed:', event.data.error);
+				}
 				setAiActionTaskId(null);
 				setActiveAiAction(null);
 			}
