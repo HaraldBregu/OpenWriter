@@ -112,7 +112,7 @@ export function KnowledgeBaseDialog({
 			}
 			if (event.state === 'cancelled') {
 				const errorMessage =
-					typeof event.data === 'string' && event.data.length > 0 ? event.data : undefined;
+					!event.data.success && event.data.error.length > 0 ? event.data.error : undefined;
 				if (errorMessage) setError(errorMessage);
 			}
 		});
