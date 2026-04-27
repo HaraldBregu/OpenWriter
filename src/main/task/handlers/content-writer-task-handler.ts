@@ -101,12 +101,14 @@ export class ContentWriterTaskHandler
 
 			return output.content;
 		} catch (err) {
-			// Aborts are user-initiated, not errors — let the executor emit the
-			// neutral cancelled event by re-throwing without our failure event.
-			if (err instanceof Error && err.name === 'AbortError') throw err;
+			// Aborts are user-initiated, not errors — log neutrally.
+			if (err instanceof Error && err.name === 'AbortError') {
+				logger.info(LOG_SOURCE, 'Content-writer task aborted');
+				throw err;
+			}
 
 			const message = err instanceof Error ? err.message : String(err);
-			emitFailure(message);
+			logger.error(LOG_SOURCE, 'Content-writer task failed', { error: message });
 			throw err;
 		}
 	}
