@@ -366,7 +366,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Text</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Text" keys={[modKey, altKey, '0']} />
+							</TooltipContent>
 						</Tooltip>
 						<HeadingMenu editor={editor} />
 					</div>
