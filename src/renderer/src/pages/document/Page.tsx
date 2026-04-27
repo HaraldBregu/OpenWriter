@@ -625,6 +625,7 @@ function PageContent(): ReactElement {
 				editorActions.enable();
 				return;
 			}
+			aiActionTaskIdsRef.current.add(result.data.taskId);
 			setActiveTaskId(result.data.taskId);
 		},
 		[id, assistantIsRunning, editor, editorActions, editorInsert]
