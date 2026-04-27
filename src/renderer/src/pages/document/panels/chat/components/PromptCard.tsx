@@ -208,7 +208,6 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					</Button>
 				</CardFooter>
 				</Card>
-			</MovingShadow>
 		</div>
 	);
 };
