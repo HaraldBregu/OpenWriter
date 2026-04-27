@@ -6,16 +6,11 @@ import type {
 	ContentWriterAgent,
 	ContentWriterAgentInput,
 	ContentWriterAgentOutput,
-	ContentWriterRoute,
-	ContentWriterRouting,
-	ContentWriterState,
 } from '../../agents/content-writer';
 import type { AgentEvent } from '../../agents/core/agent';
 
 export interface ContentWriterTaskInput {
 	prompt: string;
-	/** Existing text — required only when the router picks the "grammar" path. */
-	existingText?: string;
 	/** Optional overrides; default to whatever ServiceResolver/ModelResolver pick. */
 	providerId?: string;
 	modelId?: string;
@@ -30,22 +25,14 @@ export interface ContentWriterTaskHandlerDeps {
 
 const LOG_SOURCE = 'ContentWriterTaskHandler';
 
-const ROUTE_LABELS: Record<ContentWriterRoute, string> = {
-	short: 'Drafting short copy...',
-	grammar: 'Polishing grammar...',
-	long: 'Drafting long-form content...',
-};
-
 /**
  * Task handler that drives the ContentWriterAgent and translates its
  * AgentEvents into TaskEvents for the renderer.
  *
  * Event mapping:
- *   agent `state{routing}`     → task `started: 'Routing prompt...'`
- *   agent `route`              → task `started: 'Route: <route>'`
- *   agent `state{generating}`  → task `started: '<route-specific label>'`
- *   agent `text`               → task `running: <token>`
- *   agent return value         → task `finished: <full content>`
+ *   handler enters       → task `queued` then `started`
+ *   agent `text` delta   → task `running: <token>`
+ *   agent return value   → task `finished: <full content>`
  */
 export class ContentWriterTaskHandler
 	implements TaskHandler<ContentWriterTaskInput, string>
@@ -87,28 +74,9 @@ export class ContentWriterTaskHandler
 			providerId: service.provider.id,
 			apiKey: service.apiKey,
 			modelName: model.modelId,
-			existingText: input.existingText,
 		};
 
 		const onEvent = (event: AgentEvent): void => {
-			if (event.kind === 'state') {
-				const phase = (event.payload as ContentWriterState).phase;
-				if (phase === 'routing') {
-					logAndEmit({ state: 'started', data: 'Routing prompt...' });
-				} else if (phase === 'generating') {
-					const route = (event.payload as ContentWriterState).route;
-					logAndEmit({
-						state: 'started',
-						data: route ? ROUTE_LABELS[route] : 'Generating...',
-					});
-				}
-				return;
-			}
-			if (event.kind === 'route') {
-				const routing = event.payload as ContentWriterRouting;
-				logAndEmit({ state: 'started', data: `Route: ${routing.route}` });
-				return;
-			}
 			if (event.kind === 'text') {
 				const token = (event.payload as { text: string }).text;
 				logAndEmit({ state: 'running', data: token });
