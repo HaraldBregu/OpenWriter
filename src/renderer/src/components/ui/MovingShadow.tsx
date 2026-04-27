@@ -20,9 +20,9 @@ export interface MovingShadowProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const DEFAULT_COLORS: [string, string, string] = [
-	'rgba(56, 189, 248, 0.55)',
-	'rgba(52, 211, 153, 0.45)',
-	'rgba(251, 113, 133, 0.55)',
+	'rgba(56, 189, 248, 0.85)',
+	'rgba(52, 211, 153, 0.85)',
+	'rgba(251, 113, 133, 0.85)',
 ];
 
 const TWO_PI = Math.PI * 2;
