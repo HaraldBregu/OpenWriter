@@ -652,6 +652,8 @@ function PageContent(): ReactElement {
 		if (typeof window.task?.onEvent !== 'function') return;
 
 		return window.task.onEvent((event: TaskEvent) => {
+			
+			console.log("task", event)
 			if (event.taskId !== aiActionTaskId) return;
 			if (event.metadata.documentId !== id) return;
 

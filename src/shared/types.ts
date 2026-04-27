@@ -245,17 +245,31 @@ export interface TaskQueueStatus {
 }
 
 /**
+ * Discriminated payload carried by `TaskEvent.data`.
+ *
+ * - `success: true`  → the task is producing valid output (queued message,
+ *   stream token, final content). `data` is the stringified payload.
+ * - `success: false` → the task failed. `error` is the failure message.
+ *   Empty string means "normal user cancellation, no error".
+ *
+ * Discriminator-only access to a string keeps the IPC payload simple.
+ */
+export type TaskEventResult =
+	| { success: true; data: string }
+	| { success: false; error: string };
+
+/**
  * Flat task event shape.
  *
  * - `state`    — lifecycle stage.
  * - `taskId`   — unique identifier of the task.
- * - `data`     — stringified payload for this state.
+ * - `data`     — typed result envelope for this state. See `TaskEventResult`.
  * - `metadata` — caller-supplied metadata captured at submission time.
  */
 export interface TaskEvent {
 	state: TaskState;
 	taskId: string;
-	data: string;
+	data: TaskEventResult;
 	metadata: Record<string, unknown>;
 }
 
