@@ -38,6 +38,33 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 const IMPROVE_WRITING_DURATION = 5000;
 
+const isMac =
+	typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
+const modKey = isMac ? '⌘' : 'Ctrl';
+const shiftKey = isMac ? '⇧' : 'Shift';
+const altKey = isMac ? '⌥' : 'Alt';
+
+function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React.JSX.Element {
+	return (
+		<div className="flex flex-col items-start gap-0.5">
+			<span>{title}</span>
+			{keys && keys.length > 0 && (
+				<span className="flex items-center gap-0.5 text-[10px] opacity-70">
+					{keys.map((k, i) => (
+						<kbd
+							key={`${k}-${i}`}
+							data-slot="kbd"
+							className="px-1 py-0 font-sans bg-background/15"
+						>
+							{k}
+						</kbd>
+					))}
+				</span>
+			)}
+		</div>
+	);
+}
+
 export type AiActionType = 'improve-writing' | 'fix-grammar' | 'custom';
 
 export interface AiActionPayload {
