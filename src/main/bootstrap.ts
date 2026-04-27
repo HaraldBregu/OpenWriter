@@ -109,7 +109,7 @@ export function bootstrapServices(): BootstrapResult {
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
 	taskHandlerRegistry.register(new DemoTaskHandler(logger));
 	taskHandlerRegistry.register(new DemoFixGrammarTaskHandler(logger));
-	taskHandlerRegistry.register(new DemoContinueWritingTaskHandler(logger));
+	taskHandlerRegistry.register(new DemoImproveWritingTaskHandler(logger));
 	taskHandlerRegistry.register(new DemoPostGeneratorTaskHandler(logger));
 	const serviceResolver = new ServiceResolver(storeService);
 	const modelResolver = new ModelResolver();

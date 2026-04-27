@@ -592,10 +592,36 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handleAiAction = useCallback(
-		(action: AiActionPayload) => {
-			console.log('AI action:', action.type, action.text);
+		async (action: AiActionPayload) => {
+			if (!id || assistantIsRunning) return;
+			if (typeof window.task?.submit !== 'function') return;
+			if (!editor || editor.isDestroyed) return;
+
+			const { from, to } = editor.state.selection;
+			if (from === to) return;
+
+			const taskType =
+				action.type === 'fix-grammar' ? 'demo-fix-grammar' : 'demo-improve-writing';
+
+			editorActions.showLoading();
+			editorActions.disable();
+			editorInsert.begin(from, to);
+
+			const result = await window.task.submit({
+				type: taskType,
+				input: { text: action.text },
+				metadata: { documentId: id, selection: { from, to } },
+			});
+
+			if (!result.success) {
+				editorInsert.revert();
+				editorActions.hideLoading();
+				editorActions.enable();
+				return;
+			}
+			setActiveTaskId(result.data.taskId);
 		},
-		[]
+		[id, assistantIsRunning, editor, editorActions, editorInsert]
 	);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
