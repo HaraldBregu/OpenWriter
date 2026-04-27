@@ -859,12 +859,16 @@ function buildExtensionDocumentContext(
 	selection: { from: number; to: number } | null,
 	editor: TiptapEditor
 ): ExtensionDocumentContextSnapshot {
+	const docSize = editor.state.doc.content.size;
+	const clampedFrom =
+		selection ? Math.max(0, Math.min(selection.from, docSize)) : null;
+	const clampedTo = selection ? Math.max(0, Math.min(selection.to, docSize)) : null;
 	const selectionSnapshot =
-		selection && selection.from !== selection.to
+		clampedFrom !== null && clampedTo !== null && clampedFrom !== clampedTo
 			? {
-				from: selection.from,
-				to: selection.to,
-				text: editor.state.doc.textBetween(selection.from, selection.to, '\n\n'),
+				from: clampedFrom,
+				to: clampedTo,
+				text: editor.state.doc.textBetween(clampedFrom, clampedTo, '\n\n'),
 			}
 			: null;
 
