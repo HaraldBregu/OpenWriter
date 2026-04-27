@@ -501,7 +501,10 @@ export function OptionMenu(): React.JSX.Element | null {
 										const Icon = item.Icon;
 										const isImagesItem = item.id === IMAGES_ITEM_ID;
 										return (
-											<div key={item.id} className="relative">
+											<div
+												key={item.id}
+												ref={isImagesItem ? setImagesAnchorEl : undefined}
+											>
 												<Button
 													data-item-index={flatIdx}
 													variant={isSelected ? 'secondary' : 'ghost'}
@@ -513,54 +516,19 @@ export function OptionMenu(): React.JSX.Element | null {
 													onMouseDown={(e) => {
 														e.preventDefault();
 														if (item.disabled) return;
-														if (item.kind === 'submenu') return;
+														if (item.kind === 'submenu') {
+															if (isImagesItem) {
+																setSelectedIndex(flatIdx);
+																setImagesMenuOpen((prev) => !prev);
+															}
+															return;
+														}
 														item.run?.();
 													}}
 												>
 													<Icon />
 													<span className="truncate">{item.label}</span>
 												</Button>
-												{isImagesItem && isSelected && (
-													<Card
-														size="sm"
-														className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
-														onMouseEnter={() => setSelectedIndex(flatIdx)}
-													>
-														{images.length > 0 ? (
-															<div className="flex flex-wrap gap-1">
-																{images.map((img, i) => (
-																	<button
-																		type="button"
-																		key={img.id}
-																		className={
-																			'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
-																			(i === imageSelectedIndex
-																				? 'border-foreground ring-2 ring-ring'
-																				: 'border-border/70')
-																		}
-																		title={img.name}
-																		onMouseEnter={() => setImageSelectedIndex(i)}
-																		onMouseDown={(e) => {
-																			e.preventDefault();
-																			runImageFromWorkspace(img);
-																		}}
-																	>
-																		<img
-																			src={toLocalResourceUrl(img.path)}
-																			alt={img.name}
-																			className="h-full w-full object-cover"
-																			loading="lazy"
-																		/>
-																	</button>
-																))}
-															</div>
-														) : (
-															<span className="block px-1 py-2 text-xs text-muted-foreground">
-																No images yet
-															</span>
-														)}
-													</Card>
-												)}
 											</div>
 										);
 									})}
