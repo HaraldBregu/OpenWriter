@@ -6,10 +6,12 @@ import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import { BubbleMenu, type AiActionPayload, type AiActionType } from './components/BubbleMenu';
+import { BubbleMenu, type AiActionType } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
-import { PromptSubmitPayload } from '@shared/index';
+import type { PromptSubmitPayload } from '@shared/index';
+
+type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
 
 function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
 	let node = el?.parentElement ?? null;
