@@ -453,17 +453,22 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 
 					<Separator className="my-1" />
 
-					<Input
-						value={customPrompt}
-						onChange={(e) => setCustomPrompt(e.target.value)}
-						onKeyDown={(e) => {
-							if (e.key === 'Enter' && !e.shiftKey) {
-								e.preventDefault();
-								handleCustomPromptSubmit();
-							}
-						}}
-						placeholder="Ask AI…"
-					/>
+					<InputGroup>
+						<InputGroupAddon>
+							<Sparkles className="h-3.5 w-3.5" />
+						</InputGroupAddon>
+						<InputGroupInput
+							value={customPrompt}
+							onChange={(e) => setCustomPrompt(e.target.value)}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' && !e.shiftKey) {
+									e.preventDefault();
+									handleCustomPromptSubmit();
+								}
+							}}
+							placeholder="Ask AI…"
+						/>
+					</InputGroup>
 				</Card>
 				<FloatingArrow
 					ref={arrowRef}
