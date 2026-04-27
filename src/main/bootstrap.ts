@@ -43,7 +43,7 @@ import {
 import {
 	DemoTaskHandler,
 	DemoFixGrammarTaskHandler,
-	DemoContinueWritingTaskHandler,
+	DemoImproveWritingTaskHandler,
 	DemoPostGeneratorTaskHandler,
 } from './task/handlers';
 import { ExtensionManager, ExtensionsIpc } from './extensions';
