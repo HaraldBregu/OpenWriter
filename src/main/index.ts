@@ -35,6 +35,7 @@ import {
 	setupEventLogging,
 	setupProcessSafetyNet,
 	cleanup,
+	writeCrashLine,
 } from './bootstrap';
 import { TSRCT_EXT } from './constants';
 
