@@ -217,7 +217,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				pointerEvents: referenceHidden ? 'none' : undefined,
 				transition: 'opacity 120ms ease-out',
 			}}
-			onMouseDown={(e) => e.preventDefault()}
+			onMouseDown={(e) => {
+				if ((e.target as HTMLElement).closest('input, textarea')) return;
+				e.preventDefault();
+			}}
 			className="z-50"
 		>
 			<div style={transitionStyles} className="relative will-change-transform">
