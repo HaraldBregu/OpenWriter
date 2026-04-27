@@ -285,6 +285,10 @@
 .ProseMirror .selection-marker {
 	background-color: var(--color-accent);
 	color: var(--color-accent-foreground);
+	padding-block: 0.25em;
+	margin-block: -0.25em;
+	-webkit-box-decoration-break: clone;
+	box-decoration-break: clone;
 }
 
 .ProseMirror .ProseMirror-gapcursor::after {
