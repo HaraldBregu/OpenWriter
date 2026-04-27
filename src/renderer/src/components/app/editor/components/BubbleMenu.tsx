@@ -182,7 +182,6 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				setOpen(true);
 				return;
 			}
-			if (editor.view.dom.classList.contains('improving-writing')) return;
 			closeTimerRef.current = setTimeout(() => {
 				closeTimerRef.current = null;
 				if (refs.floating.current?.contains(document.activeElement)) return;
