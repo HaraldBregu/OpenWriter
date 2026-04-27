@@ -412,7 +412,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={() => handleAiAction('improve-writing')}
+							onClick={() => {
+								isLockedRef.current = true;
+								handleAiAction('improve-writing');
+							}}
 						>
 							<Wand2 />
 							Improve writing
@@ -421,7 +424,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							onClick={() => handleAiAction('fix-grammar')}
+							onClick={() => {
+								isLockedRef.current = true;
+								handleAiAction('fix-grammar');
+							}}
 						>
 							<SpellCheck />
 							Fix grammar
