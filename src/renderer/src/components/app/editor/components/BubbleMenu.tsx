@@ -35,11 +35,12 @@ import { HeadingMenu } from './HeadingMenu';
 const pluginKey = new PluginKey('bubbleMenu');
 const IMPROVE_WRITING_DURATION = 5000;
 
-export type AiActionType = 'improve-writing' | 'fix-grammar';
+export type AiActionType = 'improve-writing' | 'fix-grammar' | 'custom';
 
 export interface AiActionPayload {
 	type: AiActionType;
 	text: string;
+	prompt?: string;
 }
 
 export interface BubbleMenuProps {
