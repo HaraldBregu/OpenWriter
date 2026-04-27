@@ -59,10 +59,6 @@ function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React
 	);
 }
 
-import type { AiActionType, PromptSubmitPayload } from '@shared/index';
-
-export type { AiActionType };
-
 export interface BubbleMenuProps {
 	onAiAction?: (action: Extract<PromptSubmitPayload, { type: AiActionType }>) => void;
 	activeAction?: AiActionType | null;
