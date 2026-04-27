@@ -74,16 +74,16 @@ const PromptCard: React.FC<PromptCardProps> = ({
 				)}
 			/>
 			<Card
-					ref={wrapperRef}
-					onBlur={onWrapperBlur}
-					onDragOver={onDragOver}
-					onDragLeave={onDragLeave}
-					onDrop={onDrop}
-					className={cn(
-						'w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!',
-						isDragOver && 'bg-primary/5 dark:bg-primary/10'
-					)}
-				>
+				ref={wrapperRef}
+				onBlur={onWrapperBlur}
+				onDragOver={onDragOver}
+				onDragLeave={onDragLeave}
+				onDrop={onDrop}
+				className={cn(
+					'w-full shadow-[0_12px_32px_hsl(var(--foreground)/0.06)]! dark:shadow-[0_20px_48px_hsl(var(--background)/0.42)]!',
+					isDragOver && 'bg-primary/5 dark:bg-primary/10'
+				)}
+			>
 				{(previewUrls.length > 0 || selectionLabel) && (
 					<CardHeader className="space-y-0 p-0 px-3.5">
 						{previewUrls.length > 0 && (
@@ -108,8 +108,8 @@ const PromptCard: React.FC<PromptCardProps> = ({
 												aria-label={
 													fileName
 														? t('assistantNode.removeNamedImage', 'Remove {{name}}', {
-																name: fileName,
-															})
+															name: fileName,
+														})
 														: t('assistantNode.removeImage', 'Remove image')
 												}
 											>
@@ -207,7 +207,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 						<span>{t('agenticPanel.submit', 'Submit')}</span>
 					</Button>
 				</CardFooter>
-				</Card>
+			</Card>
 		</div>
 	);
 };
