@@ -408,12 +408,17 @@ function PageContent(): ReactElement {
 			if (event.state === 'running') {
 				handlers.handleDelta(event.data);
 			} else if (event.state === 'finished') {
+				if (aiActionTaskIdsRef.current.has(event.taskId)) {
+					console.log('AI action response:', event.data);
+					aiActionTaskIdsRef.current.delete(event.taskId);
+				}
 				handlers.handleCompleted(event.data);
 				if (typeof window.task?.cancel === 'function') {
 					void window.task.cancel(activeTaskId);
 				}
 				setActiveTaskId(null);
 			} else if (event.state === 'cancelled') {
+				aiActionTaskIdsRef.current.delete(event.taskId);
 				handlers.handleCancelOrError();
 				setActiveTaskId(null);
 			}
