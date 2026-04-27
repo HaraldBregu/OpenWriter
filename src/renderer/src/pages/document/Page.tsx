@@ -688,8 +688,8 @@ function PageContent(): ReactElement {
 				setAiActionTaskId(null);
 				setActiveAiAction(null);
 			} else if (event.state === 'cancelled') {
-				if (!event.data.success) {
-					console.error('AI action failed:', event.data.error);
+				if (!event.data.success && event.data.error.length > 0) {
+					setTaskError(event.data.error);
 				}
 				setAiActionTaskId(null);
 				setActiveAiAction(null);
