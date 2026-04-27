@@ -662,8 +662,10 @@ function PageContent(): ReactElement {
 					void window.task.cancel(aiActionTaskId);
 				}
 				setAiActionTaskId(null);
+				setActiveAiAction(null);
 			} else if (event.state === 'cancelled') {
 				setAiActionTaskId(null);
+				setActiveAiAction(null);
 			}
 		});
 	}, [aiActionTaskId, id, editor, dispatch, debouncedContentSave]);
