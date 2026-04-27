@@ -125,7 +125,7 @@ function PromptContainer(): React.JSX.Element {
 								</Button>
 							</CardFooter>
 						</Card>
-					</MovingShadow>
+					</MovingBorderButton>
 				</div>
 			</FileUploadDropzone>
 		</FileUpload>
