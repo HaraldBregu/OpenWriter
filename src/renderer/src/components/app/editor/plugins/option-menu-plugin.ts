@@ -44,6 +44,7 @@ export class OptionMenuView {
 
 		if (props.controls) {
 			props.controls.forceHide = () => this.forceHide();
+			props.controls.dismiss = () => this.dismiss();
 		}
 	}
 
