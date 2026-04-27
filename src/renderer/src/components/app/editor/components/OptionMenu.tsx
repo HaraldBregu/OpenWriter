@@ -1,6 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-	Heading,
+	Heading1,
+	Heading2,
+	Heading3,
+	Heading4,
+	Heading5,
+	Heading6,
 	Type,
 	List,
 	ListOrdered,
@@ -8,6 +13,8 @@ import {
 	ImagePlus,
 	Images as ImagesIcon,
 	FileText,
+	Video,
+	Music,
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
 import {
@@ -31,14 +38,31 @@ import {
 import { useEditor } from '../hooks';
 
 const pluginKey = new PluginKey('optionMenu');
-const ITEM_COUNT = 10;
-const IMAGES_INDEX = 8;
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
 	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
 	return `local-resource://localhost${urlPath}`;
 }
+
+type ItemKind = 'action' | 'submenu';
+
+type Item = {
+	id: string;
+	label: string;
+	Icon: typeof Type;
+	kind: ItemKind;
+	disabled?: boolean;
+	run?: () => void;
+};
+
+type Section = {
+	id: string;
+	label: string;
+	items: Item[];
+};
+
+const IMAGES_ITEM_ID = 'images-gallery';
 
 export function OptionMenu(): React.JSX.Element | null {
 	const { editor, onInsertContent } = useEditor();
@@ -49,7 +73,10 @@ export function OptionMenu(): React.JSX.Element | null {
 	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
 	const [images, setImages] = useState<ImageEntry[]>([]);
 	const slashPosRef = useRef<number | null>(null);
-	const menuControlsRef = useRef<OptionMenuControls>({ forceHide: () => undefined });
+	const menuControlsRef = useRef<OptionMenuControls>({
+		forceHide: () => undefined,
+		dismiss: () => undefined,
+	});
 	const isLockedRef = useRef(false);
 
 	const queryRef = useRef(query);
@@ -71,13 +98,13 @@ export function OptionMenu(): React.JSX.Element | null {
 		[]
 	);
 
-	const { refs, floatingStyles, context, update } = useFloating({
+	const { refs, floatingStyles, context, update, placement } = useFloating({
 		open,
 		onOpenChange: setOpen,
 		placement: 'bottom-start',
 		strategy: 'fixed',
 		whileElementsMounted: autoUpdate,
-		middleware: [offset(4), flip(), shift({ padding: 8 })],
+		middleware: [offset(6), flip({ fallbackPlacements: ['top-start'] }), shift({ padding: 8 })],
 	});
 
 	useEffect(() => {
@@ -93,6 +120,9 @@ export function OptionMenu(): React.JSX.Element | null {
 			transitionTimingFunction: 'cubic-bezier(0.16, 1.2, 0.4, 1)',
 		},
 		close: { opacity: 0, transform: 'scale(0.97) translateY(-2px)' },
+		common: ({ side }) => ({
+			transformOrigin: side === 'top' ? 'left bottom' : 'left top',
+		}),
 	});
 
 	useEffect(() => {
@@ -119,10 +149,6 @@ export function OptionMenu(): React.JSX.Element | null {
 		setSelectedIndex(0);
 	}, [query]);
 
-	useEffect(() => {
-		if (selectedIndex !== IMAGES_INDEX) setImageSelectedIndex(-1);
-	}, [selectedIndex]);
-
 	const deleteSlash = useCallback((): { slashPos: number; queryLength: number } | null => {
 		const slashPos = slashPosRef.current;
 		if (slashPos === null) return null;
@@ -130,7 +156,7 @@ export function OptionMenu(): React.JSX.Element | null {
 	}, []);
 
 	const runHeading = useCallback(
-		(level: 1 | 2 | 3) => {
+		(level: 1 | 2 | 3 | 4 | 5 | 6) => {
 			const ctx = deleteSlash();
 			if (!ctx) return;
 			editor
@@ -223,47 +249,95 @@ export function OptionMenu(): React.JSX.Element | null {
 		[editor, deleteSlash]
 	);
 
-	const runByIndex = useCallback(
-		(idx: number) => {
-			switch (idx) {
-				case 0:
-					return runHeading(1);
-				case 1:
-					return runHeading(2);
-				case 2:
-					return runHeading(3);
-				case 3:
-					return runParagraph();
-				case 4:
-					return runBulletList();
-				case 5:
-					return runOrderedList();
-				case 6:
-					return runHorizontalRule();
-				case 7:
-					return runImage();
-				case IMAGES_INDEX:
-					return;
-				case 9:
-					return runInsertContent();
-			}
-		},
+	const sections: Section[] = useMemo(
+		() => [
+			{
+				id: 'text',
+				label: 'Text',
+				items: [
+					{ id: 'paragraph', label: 'Text', Icon: Type, kind: 'action', run: runParagraph },
+					{ id: 'h1', label: 'Heading 1', Icon: Heading1, kind: 'action', run: () => runHeading(1) },
+					{ id: 'h2', label: 'Heading 2', Icon: Heading2, kind: 'action', run: () => runHeading(2) },
+					{ id: 'h3', label: 'Heading 3', Icon: Heading3, kind: 'action', run: () => runHeading(3) },
+					{ id: 'h4', label: 'Heading 4', Icon: Heading4, kind: 'action', run: () => runHeading(4) },
+					{ id: 'h5', label: 'Heading 5', Icon: Heading5, kind: 'action', run: () => runHeading(5) },
+					{ id: 'h6', label: 'Heading 6', Icon: Heading6, kind: 'action', run: () => runHeading(6) },
+				],
+			},
+			{
+				id: 'media',
+				label: 'Media',
+				items: [
+					{ id: 'image', label: 'Image', Icon: ImagePlus, kind: 'action', run: runImage },
+					{ id: IMAGES_ITEM_ID, label: 'Images', Icon: ImagesIcon, kind: 'submenu' },
+					{ id: 'video', label: 'Video', Icon: Video, kind: 'action', disabled: true },
+					{ id: 'audio', label: 'Audio', Icon: Music, kind: 'action', disabled: true },
+				],
+			},
+			{
+				id: 'content',
+				label: 'Content',
+				items: [
+					{ id: 'bulletList', label: 'Bullet list', Icon: List, kind: 'action', run: runBulletList },
+					{ id: 'orderedList', label: 'Ordered list', Icon: ListOrdered, kind: 'action', run: runOrderedList },
+					{ id: 'hr', label: 'Horizontal rule', Icon: Minus, kind: 'action', run: runHorizontalRule },
+					{ id: 'insertContent', label: 'Insert content', Icon: FileText, kind: 'action', run: runInsertContent },
+				],
+			},
+		],
 		[
-			runHeading,
 			runParagraph,
+			runHeading,
+			runImage,
 			runBulletList,
 			runOrderedList,
 			runHorizontalRule,
-			runImage,
 			runInsertContent,
 		]
 	);
+
+	const flatItems = useMemo(() => sections.flatMap((s) => s.items), [sections]);
+	const flatItemsRef = useRef(flatItems);
+	flatItemsRef.current = flatItems;
+
+	const imagesItemIndex = useMemo(
+		() => flatItems.findIndex((it) => it.id === IMAGES_ITEM_ID),
+		[flatItems]
+	);
+
+	useEffect(() => {
+		if (selectedIndex !== imagesItemIndex) setImageSelectedIndex(-1);
+	}, [selectedIndex, imagesItemIndex]);
+
+	const moveSelection = useCallback((delta: 1 | -1) => {
+		const items = flatItemsRef.current;
+		if (items.length === 0) return;
+		setSelectedIndex((prev) => {
+			let next = prev;
+			for (let i = 0; i < items.length; i++) {
+				next = (next + delta + items.length) % items.length;
+				if (!items[next].disabled) return next;
+			}
+			return prev;
+		});
+	}, []);
+
+	const runByIndex = useCallback((idx: number) => {
+		const item = flatItemsRef.current[idx];
+		if (!item || item.disabled) return;
+		if (item.kind === 'submenu') return;
+		item.run?.();
+	}, []);
+
+	const handleClose = useCallback(() => {
+		menuControlsRef.current.dismiss();
+	}, []);
 
 	const onKeyEvent = useCallback(
 		(event: KeyboardEvent): boolean => {
 			const idx = selectedIndexRef.current;
 			const imgIdx = imageSelectedIndexRef.current;
-			const inSubmenu = idx === IMAGES_INDEX && imgIdx >= 0;
+			const inSubmenu = idx === imagesItemIndex && imgIdx >= 0;
 
 			if (inSubmenu) {
 				const len = imagesRef.current.length;
@@ -297,11 +371,7 @@ export function OptionMenu(): React.JSX.Element | null {
 				return false;
 			}
 
-			if (
-				event.key === 'ArrowRight' &&
-				idx === IMAGES_INDEX &&
-				imagesRef.current.length > 0
-			) {
+			if (event.key === 'ArrowRight' && idx === imagesItemIndex && imagesRef.current.length > 0) {
 				event.preventDefault();
 				setImageSelectedIndex(0);
 				return true;
@@ -309,13 +379,13 @@ export function OptionMenu(): React.JSX.Element | null {
 
 			if (event.key === 'ArrowDown') {
 				event.preventDefault();
-				setSelectedIndex((prev) => (prev + 1) % ITEM_COUNT);
+				moveSelection(1);
 				return true;
 			}
 
 			if (event.key === 'ArrowUp') {
 				event.preventDefault();
-				setSelectedIndex((prev) => (prev - 1 + ITEM_COUNT) % ITEM_COUNT);
+				moveSelection(-1);
 				return true;
 			}
 
@@ -327,7 +397,7 @@ export function OptionMenu(): React.JSX.Element | null {
 
 			return false;
 		},
-		[runByIndex, runImageFromWorkspace]
+		[runByIndex, runImageFromWorkspace, moveSelection, imagesItemIndex]
 	);
 
 	const onKeyEventRef = useRef(onKeyEvent);
@@ -369,25 +439,9 @@ export function OptionMenu(): React.JSX.Element | null {
 		};
 	}, [editor, handlePluginUpdate]);
 
-	const itemProps = (
-		index: number,
-		onRun: () => void
-	): {
-		variant: 'secondary' | 'ghost';
-		className: string;
-		onMouseEnter: () => void;
-		onMouseDown: (e: React.MouseEvent) => void;
-	} => ({
-		variant: index === selectedIndex ? 'secondary' : 'ghost',
-		className: 'w-full justify-start',
-		onMouseEnter: () => setSelectedIndex(index),
-		onMouseDown: (e) => {
-			e.preventDefault();
-			onRun();
-		},
-	});
-
 	if (!isMounted) return null;
+
+	const placedTop = placement.startsWith('top');
 
 	return (
 		<div ref={refs.setFloating} style={floatingStyles} className="z-50">
@@ -395,96 +449,116 @@ export function OptionMenu(): React.JSX.Element | null {
 				<Card
 					size="sm"
 					className={cn(
-						'gap-1! p-1! m-0! text-left overflow-visible!',
+						'w-[260px] gap-0! p-0! m-0! text-left overflow-visible!',
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
-					<Button {...itemProps(0, () => runHeading(1))}>
-						<Heading />
-						<span className="truncate">Heading 1</span>
-					</Button>
-					<Button {...itemProps(1, () => runHeading(2))}>
-						<Heading />
-						<span className="truncate">Heading 2</span>
-					</Button>
-					<Button {...itemProps(2, () => runHeading(3))}>
-						<Heading />
-						<span className="truncate">Heading 3</span>
-					</Button>
-					<Button {...itemProps(3, runParagraph)}>
-						<Type />
-						<span className="truncate">Text</span>
-					</Button>
-					<Button {...itemProps(4, runBulletList)}>
-						<List />
-						<span className="truncate">Bullet List</span>
-					</Button>
-					<Button {...itemProps(5, runOrderedList)}>
-						<ListOrdered />
-						<span className="truncate">Ordered List</span>
-					</Button>
-					<Button {...itemProps(6, runHorizontalRule)}>
-						<Minus />
-						<span className="truncate">Horizontal Rule</span>
-					</Button>
-					<Button {...itemProps(7, runImage)}>
-						<ImagePlus />
-						<span className="truncate">Image</span>
-					</Button>
-					<div className="relative">
-						<Button
-							{...itemProps(IMAGES_INDEX, () => undefined)}
-							onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
-						>
-							<ImagesIcon />
-							<span className="truncate">Images</span>
-						</Button>
-						{selectedIndex === IMAGES_INDEX && (
-							<Card
-								size="sm"
-								className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
-								onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
-							>
-								{images.length > 0 ? (
-									<div className="flex flex-wrap gap-1">
-										{images.map((img, i) => (
-											<button
-												type="button"
-												key={img.id}
-												className={
-													'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
-													(i === imageSelectedIndex
-														? 'border-foreground ring-2 ring-ring'
-														: 'border-border/70')
-												}
-												title={img.name}
-												onMouseEnter={() => setImageSelectedIndex(i)}
-												onMouseDown={(e) => {
-													e.preventDefault();
-													runImageFromWorkspace(img);
-												}}
-											>
-												<img
-													src={toLocalResourceUrl(img.path)}
-													alt={img.name}
-													className="h-full w-full object-cover"
-													loading="lazy"
-												/>
-											</button>
-										))}
-									</div>
-								) : (
-									<span className="block px-1 py-2 text-xs text-muted-foreground">
-										No images yet
-									</span>
-								)}
-							</Card>
-						)}
+					<div className="px-3 pt-2 pb-1.5 border-b border-border/60">
+						<div className="text-sm font-semibold leading-tight">Insert block</div>
+						<div className="text-[11px] text-muted-foreground leading-tight">
+							Select a block to insert
+						</div>
 					</div>
-					<Button {...itemProps(9, runInsertContent)}>
-						<FileText />
-						<span className="truncate">Insert content</span>
-					</Button>
+
+					<div className="flex flex-col gap-1 p-1 max-h-[340px] overflow-y-auto">
+						{sections.map((section, sIdx) => {
+							const baseOffset = sections
+								.slice(0, sIdx)
+								.reduce((acc, s) => acc + s.items.length, 0);
+							return (
+								<div key={section.id} className="flex flex-col">
+									<div className="px-2 pt-1.5 pb-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+										{section.label}
+									</div>
+									{section.items.map((item, iIdx) => {
+										const flatIdx = baseOffset + iIdx;
+										const isSelected = selectedIndex === flatIdx;
+										const Icon = item.Icon;
+										const isImagesItem = item.id === IMAGES_ITEM_ID;
+										return (
+											<div key={item.id} className="relative">
+												<Button
+													variant={isSelected ? 'secondary' : 'ghost'}
+													disabled={item.disabled}
+													className="w-full justify-start"
+													onMouseEnter={() => {
+														if (!item.disabled) setSelectedIndex(flatIdx);
+													}}
+													onMouseDown={(e) => {
+														e.preventDefault();
+														if (item.disabled) return;
+														if (item.kind === 'submenu') return;
+														item.run?.();
+													}}
+												>
+													<Icon />
+													<span className="truncate">{item.label}</span>
+												</Button>
+												{isImagesItem && isSelected && (
+													<Card
+														size="sm"
+														className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
+														onMouseEnter={() => setSelectedIndex(flatIdx)}
+													>
+														{images.length > 0 ? (
+															<div className="flex flex-wrap gap-1">
+																{images.map((img, i) => (
+																	<button
+																		type="button"
+																		key={img.id}
+																		className={
+																			'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
+																			(i === imageSelectedIndex
+																				? 'border-foreground ring-2 ring-ring'
+																				: 'border-border/70')
+																		}
+																		title={img.name}
+																		onMouseEnter={() => setImageSelectedIndex(i)}
+																		onMouseDown={(e) => {
+																			e.preventDefault();
+																			runImageFromWorkspace(img);
+																		}}
+																	>
+																		<img
+																			src={toLocalResourceUrl(img.path)}
+																			alt={img.name}
+																			className="h-full w-full object-cover"
+																			loading="lazy"
+																		/>
+																	</button>
+																))}
+															</div>
+														) : (
+															<span className="block px-1 py-2 text-xs text-muted-foreground">
+																No images yet
+															</span>
+														)}
+													</Card>
+												)}
+											</div>
+										);
+									})}
+								</div>
+							);
+						})}
+					</div>
+
+					<div className="flex items-center justify-between px-2 py-1.5 border-t border-border/60">
+						<Button
+							variant="ghost"
+							size="sm"
+							className="h-7 px-2 text-xs"
+							onMouseDown={(e) => {
+								e.preventDefault();
+								handleClose();
+							}}
+						>
+							Close
+						</Button>
+						<kbd className="text-[10px] text-muted-foreground rounded border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
+							esc
+						</kbd>
+					</div>
 				</Card>
 			</div>
 		</div>
