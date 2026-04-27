@@ -66,10 +66,12 @@ export interface AiActionPayload {
 
 export interface BubbleMenuProps {
 	onAiAction?: (action: AiActionPayload) => void;
+	activeAction?: AiActionType | null;
 }
 
 export const BubbleMenu = React.memo(function BubbleMenu({
 	onAiAction,
+	activeAction,
 }: BubbleMenuProps): React.JSX.Element | null {
 	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
