@@ -332,7 +332,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									</Button>
 								}
 							/>
-							<TooltipContent>Underline</TooltipContent>
+							<TooltipContent>
+								<TooltipBody title="Underline" keys={[modKey, 'U']} />
+							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
 							<TooltipTrigger
