@@ -66,7 +66,7 @@ function PromptContainer(): React.JSX.Element {
 						aria-hidden="true"
 						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
 					/>
-					<MovingShadow borderRadius="1rem" shadowSize={60} shadowBlur={56} duration={6200}>
+					<MovingShadow borderRadius="1rem" shadowSize={2} shadowBlur={3} duration={6200}>
 						<Card className="w-full shadow-none!">
 							<PromptHeader />
 							<CardContent>

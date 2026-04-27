@@ -49,7 +49,9 @@ export function MovingShadow({
 
 	const [c1, c2, c3] = shadowColors;
 	const glowBackground = `conic-gradient(from 0deg, ${c1}, ${c2}, ${c3}, ${c1})`;
-	const inset = -(shadowBlur + shadowSize);
+	const insetSize = shadowBlur + shadowSize;
+	const inset = -insetSize;
+	const blobRadius = `calc(${borderRadius} + ${insetSize}px)`;
 
 	return (
 		<Component
