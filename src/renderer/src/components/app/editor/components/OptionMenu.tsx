@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Heading,
 	Type,
@@ -10,10 +10,24 @@ import {
 	FileText,
 } from 'lucide-react';
 import { PluginKey } from '@tiptap/pm/state';
+import {
+	autoUpdate,
+	flip,
+	offset,
+	shift,
+	useFloating,
+	useTransitionStyles,
+	type VirtualElement,
+} from '@floating-ui/react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { cn } from '@/lib/utils';
 import type { ImageEntry } from '../../../../../../shared/types';
-import { OptionMenuPlugin, type OptionMenuControls } from '../plugins/option-menu-plugin';
+import {
+	OptionMenuPlugin,
+	type OptionMenuControls,
+	type OptionMenuState,
+} from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
 
 const pluginKey = new PluginKey('optionMenu');
@@ -26,9 +40,10 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
-export function OptionMenu(): React.JSX.Element {
+export function OptionMenu(): React.JSX.Element | null {
 	const { editor, onInsertContent } = useEditor();
-	const menuRef = useRef<HTMLDivElement>(null);
+	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
+	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
@@ -48,6 +63,37 @@ export function OptionMenu(): React.JSX.Element {
 
 	const onInsertContentRef = useRef(onInsertContent);
 	onInsertContentRef.current = onInsertContent;
+
+	const virtualReference = useMemo<VirtualElement>(
+		() => ({
+			getBoundingClientRect: () => referenceRectRef.current?.() ?? new DOMRect(),
+		}),
+		[]
+	);
+
+	const { refs, floatingStyles, context, update } = useFloating({
+		open,
+		onOpenChange: setOpen,
+		placement: 'bottom-start',
+		strategy: 'fixed',
+		whileElementsMounted: autoUpdate,
+		middleware: [offset(4), flip(), shift({ padding: 8 })],
+	});
+
+	useEffect(() => {
+		refs.setPositionReference(virtualReference);
+	}, [refs, virtualReference]);
+
+	const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+		duration: { open: 180, close: 110 },
+		initial: { opacity: 0, transform: 'scale(0.96) translateY(-4px)' },
+		open: {
+			opacity: 1,
+			transform: 'scale(1) translateY(0)',
+			transitionTimingFunction: 'cubic-bezier(0.16, 1.2, 0.4, 1)',
+		},
+		close: { opacity: 0, transform: 'scale(0.97) translateY(-2px)' },
+	});
 
 	useEffect(() => {
 		let cancelled = false;
@@ -287,35 +333,41 @@ export function OptionMenu(): React.JSX.Element {
 	const onKeyEventRef = useRef(onKeyEvent);
 	onKeyEventRef.current = onKeyEvent;
 
-	useEffect(() => {
-		const el = menuRef.current;
-		if (!el || editor.isDestroyed) return;
-
-		const plugin = OptionMenuPlugin({
-			pluginKey,
-			editor,
-			element: el,
-			onShow: () => {},
-			onHide: () => {
+	const handlePluginUpdate = useCallback(
+		(state: OptionMenuState) => {
+			if (state.getReferenceRect) {
+				referenceRectRef.current = state.getReferenceRect;
+			}
+			if (state.open) {
+				setQuery(state.query);
+				slashPosRef.current = state.slashPos;
+				update();
+			} else {
 				isLockedRef.current = false;
 				setQuery('');
 				setSelectedIndex(0);
 				slashPosRef.current = null;
-			},
-			onQueryChange: (q, slashPos) => {
-				setQuery(q);
-				slashPosRef.current = slashPos;
-			},
+			}
+			setOpen(state.open);
+		},
+		[update]
+	);
+
+	useEffect(() => {
+		if (editor.isDestroyed) return;
+		const plugin = OptionMenuPlugin({
+			pluginKey,
+			editor,
+			onUpdate: handlePluginUpdate,
 			onKeyEvent: (event) => onKeyEventRef.current(event),
 			getIsLocked: () => isLockedRef.current,
 			controls: menuControlsRef.current,
 		});
-
 		editor.registerPlugin(plugin, (newPlugin, plugins) => [newPlugin, ...plugins]);
 		return () => {
 			editor.unregisterPlugin(pluginKey);
 		};
-	}, [editor]);
+	}, [editor, handlePluginUpdate]);
 
 	const itemProps = (
 		index: number,
@@ -335,99 +387,106 @@ export function OptionMenu(): React.JSX.Element {
 		},
 	});
 
+	if (!isMounted) return null;
+
 	return (
-		<Card
-			ref={menuRef}
-			size="sm"
-			className="z-50 gap-1! p-1! m-0! text-left overflow-visible!"
-			style={{ visibility: 'hidden', position: 'absolute' }}
-		>
-			<Button {...itemProps(0, () => runHeading(1))}>
-				<Heading />
-				<span className="truncate">Heading 1</span>
-			</Button>
-			<Button {...itemProps(1, () => runHeading(2))}>
-				<Heading />
-				<span className="truncate">Heading 2</span>
-			</Button>
-			<Button {...itemProps(2, () => runHeading(3))}>
-				<Heading />
-				<span className="truncate">Heading 3</span>
-			</Button>
-			<Button {...itemProps(3, runParagraph)}>
-				<Type />
-				<span className="truncate">Text</span>
-			</Button>
-			<Button {...itemProps(4, runBulletList)}>
-				<List />
-				<span className="truncate">Bullet List</span>
-			</Button>
-			<Button {...itemProps(5, runOrderedList)}>
-				<ListOrdered />
-				<span className="truncate">Ordered List</span>
-			</Button>
-			<Button {...itemProps(6, runHorizontalRule)}>
-				<Minus />
-				<span className="truncate">Horizontal Rule</span>
-			</Button>
-			<Button {...itemProps(7, runImage)}>
-				<ImagePlus />
-				<span className="truncate">Image</span>
-			</Button>
-			<div className="relative">
-				<Button
-					{...itemProps(IMAGES_INDEX, () => undefined)}
-					onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
+		<div ref={refs.setFloating} style={floatingStyles} className="z-50">
+			<div style={transitionStyles} className="will-change-transform">
+				<Card
+					size="sm"
+					className={cn(
+						'gap-1! p-1! m-0! text-left overflow-visible!',
+						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
+					)}
 				>
-					<ImagesIcon />
-					<span className="truncate">Images</span>
-				</Button>
-				{selectedIndex === IMAGES_INDEX && (
-					<Card
-						size="sm"
-						className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
-						onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
-					>
-						{images.length > 0 ? (
-							<div className="flex flex-wrap gap-1">
-								{images.map((img, i) => (
-									<button
-										type="button"
-										key={img.id}
-										className={
-											'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
-											(i === imageSelectedIndex
-												? 'border-foreground ring-2 ring-ring'
-												: 'border-border/70')
-										}
-										title={img.name}
-										onMouseEnter={() => setImageSelectedIndex(i)}
-										onMouseDown={(e) => {
-											e.preventDefault();
-											runImageFromWorkspace(img);
-										}}
-									>
-										<img
-											src={toLocalResourceUrl(img.path)}
-											alt={img.name}
-											className="h-full w-full object-cover"
-											loading="lazy"
-										/>
-									</button>
-								))}
-							</div>
-						) : (
-							<span className="block px-1 py-2 text-xs text-muted-foreground">
-								No images yet
-							</span>
+					<Button {...itemProps(0, () => runHeading(1))}>
+						<Heading />
+						<span className="truncate">Heading 1</span>
+					</Button>
+					<Button {...itemProps(1, () => runHeading(2))}>
+						<Heading />
+						<span className="truncate">Heading 2</span>
+					</Button>
+					<Button {...itemProps(2, () => runHeading(3))}>
+						<Heading />
+						<span className="truncate">Heading 3</span>
+					</Button>
+					<Button {...itemProps(3, runParagraph)}>
+						<Type />
+						<span className="truncate">Text</span>
+					</Button>
+					<Button {...itemProps(4, runBulletList)}>
+						<List />
+						<span className="truncate">Bullet List</span>
+					</Button>
+					<Button {...itemProps(5, runOrderedList)}>
+						<ListOrdered />
+						<span className="truncate">Ordered List</span>
+					</Button>
+					<Button {...itemProps(6, runHorizontalRule)}>
+						<Minus />
+						<span className="truncate">Horizontal Rule</span>
+					</Button>
+					<Button {...itemProps(7, runImage)}>
+						<ImagePlus />
+						<span className="truncate">Image</span>
+					</Button>
+					<div className="relative">
+						<Button
+							{...itemProps(IMAGES_INDEX, () => undefined)}
+							onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
+						>
+							<ImagesIcon />
+							<span className="truncate">Images</span>
+						</Button>
+						{selectedIndex === IMAGES_INDEX && (
+							<Card
+								size="sm"
+								className="absolute left-full top-0 ml-1 z-50 p-2! m-0! max-w-[220px] max-h-[220px] overflow-y-auto"
+								onMouseEnter={() => setSelectedIndex(IMAGES_INDEX)}
+							>
+								{images.length > 0 ? (
+									<div className="flex flex-wrap gap-1">
+										{images.map((img, i) => (
+											<button
+												type="button"
+												key={img.id}
+												className={
+													'group relative h-[36px] w-[36px] overflow-hidden rounded-md border bg-accent/45 cursor-pointer dark:bg-muted/40 ' +
+													(i === imageSelectedIndex
+														? 'border-foreground ring-2 ring-ring'
+														: 'border-border/70')
+												}
+												title={img.name}
+												onMouseEnter={() => setImageSelectedIndex(i)}
+												onMouseDown={(e) => {
+													e.preventDefault();
+													runImageFromWorkspace(img);
+												}}
+											>
+												<img
+													src={toLocalResourceUrl(img.path)}
+													alt={img.name}
+													className="h-full w-full object-cover"
+													loading="lazy"
+												/>
+											</button>
+										))}
+									</div>
+								) : (
+									<span className="block px-1 py-2 text-xs text-muted-foreground">
+										No images yet
+									</span>
+								)}
+							</Card>
 						)}
-					</Card>
-				)}
+					</div>
+					<Button {...itemProps(9, runInsertContent)}>
+						<FileText />
+						<span className="truncate">Insert content</span>
+					</Button>
+				</Card>
 			</div>
-			<Button {...itemProps(9, runInsertContent)}>
-				<FileText />
-				<span className="truncate">Insert content</span>
-			</Button>
-		</Card>
+		</div>
 	);
 }
