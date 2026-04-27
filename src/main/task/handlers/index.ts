@@ -1,12 +1,4 @@
 export { DemoTaskHandler } from './demo-task-handler';
 export type { DemoTaskInput } from './demo-task-handler';
-export { DemoFixGrammarTaskHandler } from './demo-fix-grammar-task-handler';
-export type { DemoFixGrammarTaskInput } from './demo-fix-grammar-task-handler';
-export { DemoImproveWritingTaskHandler } from './demo-improve-writing-task-handler';
-export type { DemoImproveWritingTaskInput } from './demo-improve-writing-task-handler';
-export { DemoCustomPromptTaskHandler } from './demo-custom-prompt-task-handler';
-export type { DemoCustomPromptTaskInput } from './demo-custom-prompt-task-handler';
-export { DemoPostGeneratorTaskHandler } from './demo-post-generator-task-handler';
-export type { DemoPostGeneratorTaskInput } from './demo-post-generator-task-handler';
 export { ContentWriterTaskHandler } from './content-writer-task-handler';
 export type { ContentWriterTaskInput } from './content-writer-task-handler';
