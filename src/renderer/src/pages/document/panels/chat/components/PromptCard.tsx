@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { ImagePlus, Paperclip, SendHorizontal, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/Card';
-import { MovingShadow } from '@/components/ui/MovingShadow';
 import { Textarea } from '@/components/ui/Textarea';
 import { cn } from '@/lib/utils';
 
@@ -74,7 +73,7 @@ const PromptCard: React.FC<PromptCardProps> = ({
 					isDragOver && 'opacity-100'
 				)}
 			/>
-			<MovingShadow borderRadius="2rem" shadowSize={32} shadowBlur={44} duration={7800}>
+			<MovingShadow borderRadius="9rem" shadowSize={320} shadowBlur={440} duration={7800}>
 				<Card
 					ref={wrapperRef}
 					onBlur={onWrapperBlur}
