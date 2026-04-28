@@ -127,6 +127,7 @@ const Editor = React.memo(
 						if (!initial) return;
 						queueMicrotask(() => {
 							if (ed.isDestroyed) return;
+							console.log('[Editor] setContent (onCreate initial)', initial);
 							ed.commands.setContent(initial, {
 								emitUpdate: false,
 								contentType: 'markdown',
