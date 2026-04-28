@@ -34,6 +34,7 @@ import {
 	AgentRegistry,
 	AssistantAgent,
 	ContentWriterAgent,
+	ContentReviewerAgent,
 	RagAgent,
 	OcrAgent,
 	TextGeneratorV1Agent,
