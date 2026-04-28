@@ -18,6 +18,7 @@ export interface ImageInsertOptions {
 }
 
 export interface EditorElement extends HTMLDivElement {
+	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
 	insertMarkdown: (
@@ -134,6 +135,8 @@ const Editor = React.memo(
 				[]
 			);
 
+			const lastEmittedRef = useRef<string>('');
+			const lastExternalValueVersionRef = useRef(externalValueVersion);
 			const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 			const initialValueRef = useRef(value);
 
@@ -146,8 +149,19 @@ const Editor = React.memo(
 			const editorOptions = useMemo<UseEditorOptions>(
 				() => ({
 					extensions,
-					content: initialValueRef.current ?? '',
+					content: '',
 					immediatelyRender: false,
+					onCreate: ({ editor: ed }: { editor: TiptapEditor }) => {
+						const initial = initialValueRef.current;
+						if (!initial) return;
+						queueMicrotask(() => {
+							if (ed.isDestroyed) return;
+							ed.commands.setContent(initial, {
+								emitUpdate: false,
+								contentType: 'markdown',
+							});
+						});
+					},
 					onUpdate: ({
 						editor: ed,
 						transaction,
@@ -158,7 +172,9 @@ const Editor = React.memo(
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
-							onChangeRef.current(ed.getMarkdown());
+							const md = ed.getMarkdown();
+							lastEmittedRef.current = md;
+							onChangeRef.current(md);
 						}, 100);
 					},
 					editorProps: {
@@ -271,6 +287,18 @@ const Editor = React.memo(
 			useImperativeHandle(ref, () => {
 				const el = rootRef.current!;
 				return Object.assign(el, {
+					setContent(
+						markdown: string,
+						options: { preventEditorUpdate?: boolean } = {
+							preventEditorUpdate: false,
+						}
+					) {
+						if (!editor || editor.isDestroyed) return;
+						editor.commands.setContent(markdown, {
+							emitUpdate: !(options.preventEditorUpdate ?? false),
+							contentType: 'markdown',
+						});
+					},
 					insertText(
 						text: string,
 						options: { preventEditorUpdate: boolean } = {
@@ -446,6 +474,44 @@ const Editor = React.memo(
 					},
 				}) as EditorElement;
 			}, [editor]);
+
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+
+				const hasExternalValueVersionChanged =
+					lastExternalValueVersionRef.current !== externalValueVersion;
+				lastExternalValueVersionRef.current = externalValueVersion;
+
+				if (streamingContent !== undefined) {
+					const current = editor.getMarkdown();
+					if (current !== streamingContent) {
+						queueMicrotask(() => {
+							if (editor.isDestroyed) return;
+							editor.commands.setContent(streamingContent || '', {
+								emitUpdate: false,
+								contentType: 'markdown',
+							});
+						});
+					}
+					return;
+				}
+
+				if (!hasExternalValueVersionChanged && value === lastEmittedRef.current) {
+					return;
+				}
+
+				const current = editor.getMarkdown();
+				const incoming = value || '';
+				if (current !== incoming) {
+					queueMicrotask(() => {
+						if (editor.isDestroyed) return;
+						editor.commands.setContent(incoming, {
+							emitUpdate: false,
+							contentType: 'markdown',
+						});
+					});
+				}
+			}, [value, streamingContent, editor, externalValueVersion]);
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
