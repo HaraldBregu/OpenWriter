@@ -207,6 +207,9 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		(posFrom: number, posTo: number): void => {
 			if (!editor || editor.isDestroyed) return;
 			cancelPendingFrame();
+			cancelScrollAnimation();
+			userScrolledAwayRef.current = false;
+			expectedScrollTopRef.current = null;
 			const from = clampPos(editor, posFrom);
 			const to = clampPos(editor, Math.max(posFrom, posTo));
 			if (to > from) {
@@ -220,7 +223,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 				pendingFrame: null,
 			};
 		},
-		[editor, clampPos, cancelPendingFrame]
+		[editor, clampPos, cancelPendingFrame, cancelScrollAnimation]
 	);
 
 	const appendDelta = useCallback(
