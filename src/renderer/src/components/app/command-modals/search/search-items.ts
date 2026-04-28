@@ -89,7 +89,6 @@ export function buildAppSearchSections({
 	actions,
 	icons,
 	labels,
-	extensionCommands,
 }: BuildSearchSectionsParams): AppSearchResultSection[] {
 	const normalizedQuery = normalizeQuery(query);
 	const hasQuery = normalizedQuery.length > 0;
