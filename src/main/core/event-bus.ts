@@ -58,7 +58,6 @@ export interface AppEvents {
 		windowId?: number;
 	};
 	'task:cancelled': { taskId: string; taskType: string; windowId?: number };
-	'document:changed': { document: ExtensionDocumentSnapshot; windowId?: number };
 	'tray:set-enabled': { enabled: boolean };
 }
 
