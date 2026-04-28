@@ -28,6 +28,14 @@ export type {
 	ContentWriterLlmCaller,
 	ContentWriterStreamParams,
 } from './content-writer';
+export { ContentReviewerAgent } from './content-reviewer';
+export type {
+	ContentReviewerAgentInput,
+	ContentReviewerAgentOptions,
+	ContentReviewerAgentOutput,
+	ContentReviewerLlmCaller,
+	ContentReviewerStreamParams,
+} from './content-reviewer';
 export { TextGeneratorV2Agent } from './text-generator-v2';
 export type {
 	TextGeneratorV2AgentInput,
