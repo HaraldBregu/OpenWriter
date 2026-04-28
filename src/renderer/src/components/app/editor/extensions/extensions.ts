@@ -22,12 +22,12 @@ import { PromptExtension } from './prompt-extension';
 import { ImageExtension } from './image-extension';
 import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
-import type { PromptSubmitPayload } from '@shared/index';
+import type { PromptSubmitPayload } from '../types';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
 import { SelectionMarkerExtension } from './selection-marker-extension';
 
 export interface ExtensionHandlers {
-	onPromptSubmit: (payload: Extract<PromptSubmitPayload, { files: File[] }>) => void;
+	onPromptSubmit: (payload: PromptSubmitPayload) => void;
 	onImageInsert: ImageInsertHandler;
 }
 
