@@ -280,11 +280,9 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	}, [aiActionTaskId, documentId]);
 
 	// ---- Submit -------------------------------------------------------------
-	// One entry point for both flows. `selectedText` decides routing:
-	//   empty   → prompt flow: show loading UI, send raw prompt, stream into
-	//             the content-generator block.
-	//   present → AI-action flow: wrap prompt with surrounding <before>/<after>
-	//             context, replace the selection range on completion.
+	// All payloads go through the same path: wrap `payload.prompt` with the
+	// surrounding doc context so the model can use it, then replace the
+	// selection range on completion (collapsed range → insert at cursor).
 	const submit = useCallback(
 		async (payload: PromptSubmitPayload): Promise<void> => {
 			if (!documentId || isBusyRef.current) return;
@@ -293,73 +291,49 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const ed = payload.editor;
 			if (ed.isDestroyed) return;
 
-			const isAiAction = payload.selectedText.length > 0;
+			const action: AiActionType = KNOWN_AI_ACTIONS.has(payload.prompt as AiActionType)
+				? (payload.prompt as AiActionType)
+				: 'custom';
+			if (action === 'custom' && !payload.prompt.trim()) return;
 
-console.log('Submitting task with payload:', payload);
-			return 
-			let prompt = payload.prompt;
-			let selectionRange: { from: number; to: number } = ed.state.selection;
-			let action: AiActionType | null = null;
+			const { from, to } = ed.state.selection;
 
-			if (isAiAction) {
-				const { from, to } = ed.state.selection;
-				if (from === to) return;
+			const sliceToMarkdown = (start: number, end: number): string => {
+				if (start === end) return '';
+				const slice = ed.state.doc.cut(start, end);
+				return (
+					ed.markdown?.serialize(slice.toJSON()) ??
+					ed.state.doc.textBetween(start, end, '\n\n')
+				);
+			};
 
-				action = KNOWN_AI_ACTIONS.has(payload.prompt as AiActionType)
-					? (payload.prompt as AiActionType)
-					: 'custom';
-				if (action === 'custom' && !payload.prompt.trim()) return;
+			const docSize = ed.state.doc.content.size;
+			const before = sliceToMarkdown(0, from);
+			const after = sliceToMarkdown(to, docSize);
 
-				const sliceToMarkdown = (start: number, end: number): string => {
-					if (start === end) return '';
-					const slice = ed.state.doc.cut(start, end);
-					return (
-						ed.markdown?.serialize(slice.toJSON()) ??
-						ed.state.doc.textBetween(start, end, '\n\n')
-					);
-				};
+			const prompt = [
+				`<instruction>${payload.prompt}</instruction>\n`,
+				`<before>\n${before}\n</before>`,
+				`<selection>\n${payload.selectedText}\n</selection>`,
+				`<after>\n${after}\n</after>`,
+			].join('\n\n');
 
-				const docSize = ed.state.doc.content.size;
-				const before = sliceToMarkdown(0, from);
-				const after = sliceToMarkdown(to, docSize);
-
-				prompt = [
-					`<instruction>${payload.prompt}</instruction>\n`,
-					`<before>\n${before}\n</before>`,
-					`<selection>\n${payload.selectedText}\n</selection>`,
-					`<after>\n${after}\n</after>`,
-				].join('\n\n');
-
-				selectionRange = { from, to };
-				setActiveAiAction(action);
-			} else {
-				editorActions.showLoading();
-				editorActions.disable();
-			}
+			setActiveAiAction(action);
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
-				metadata: { documentId, selection: selectionRange },
+				metadata: { documentId, selection: { from, to } },
 			});
 
 			if (!result.success) {
-				if (isAiAction) {
-					setActiveAiAction(null);
-				} else {
-					editorActions.hideLoading();
-					editorActions.enable();
-				}
+				setActiveAiAction(null);
 				return;
 			}
 
-			if (isAiAction) {
-				setAiActionTaskId(result.data.taskId);
-			} else {
-				setActiveTaskId(result.data.taskId);
-			}
+			setAiActionTaskId(result.data.taskId);
 		},
-		[documentId, editorActions]
+		[documentId]
 	);
 
 	const dismissTaskError = useCallback(() => {
