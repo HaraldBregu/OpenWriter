@@ -244,13 +244,18 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 			session.buffer = content;
 			renderBuffer();
 			sessionRef.current = null;
+			detachScrollListener();
+			expectedScrollTopRef.current = null;
 		},
-		[cancelPendingFrame, renderBuffer]
+		[cancelPendingFrame, renderBuffer, detachScrollListener]
 	);
 
 	const revert = useCallback((): void => {
 		cancelPendingFrame();
 		cancelScrollAnimation();
+		detachScrollListener();
+		expectedScrollTopRef.current = null;
+		userScrolledAwayRef.current = false;
 		const session = sessionRef.current;
 		if (!session) return;
 		if (editor && !editor.isDestroyed) {
@@ -262,14 +267,15 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 			}
 		}
 		sessionRef.current = null;
-	}, [editor, clampPos, cancelPendingFrame, cancelScrollAnimation]);
+	}, [editor, clampPos, cancelPendingFrame, cancelScrollAnimation, detachScrollListener]);
 
 	useEffect(() => {
 		return () => {
 			cancelPendingFrame();
 			cancelScrollAnimation();
+			detachScrollListener();
 		};
-	}, [cancelPendingFrame, cancelScrollAnimation]);
+	}, [cancelPendingFrame, cancelScrollAnimation, detachScrollListener]);
 
 	return { begin, appendDelta, commitFinal, revert };
 }
