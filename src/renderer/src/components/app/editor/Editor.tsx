@@ -403,6 +403,7 @@ const Editor = React.memo(
 				if (current !== incoming) {
 					queueMicrotask(() => {
 						if (editor.isDestroyed) return;
+						console.log('[Editor] setContent (value sync)', incoming);
 						editor.commands.setContent(incoming, {
 							emitUpdate: false,
 							contentType: 'markdown',
