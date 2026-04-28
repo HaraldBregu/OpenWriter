@@ -5,7 +5,6 @@ import {
 	Italic,
 	List,
 	ListOrdered,
-	Loader2,
 	MessageCircle,
 	MessageSquare,
 	Scissors,
@@ -39,12 +38,11 @@ import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
-import type { AiActionType, PromptSubmitPayload } from '../types';
+import type { PromptSubmitPayload } from '../types';
 
 const pluginKey = new PluginKey('bubbleMenu');
 
-const isMac =
-	typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
+const isMac = typeof navigator !== 'undefined' && /mac|iphone|ipad/i.test(navigator.platform);
 const modKey = isMac ? '⌘' : 'Ctrl';
 const shiftKey = isMac ? '⇧' : 'Shift';
 const altKey = isMac ? '⌥' : 'Alt';
@@ -53,21 +51,17 @@ function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React
 	return (
 		<div className="flex flex-col items-start gap-0.5">
 			<span>{title}</span>
-			{keys && keys.length > 0 && (
-				<span className="text-[10px] opacity-70">{keys.join(' ')}</span>
-			)}
+			{keys && keys.length > 0 && <span className="text-[10px] opacity-70">{keys.join(' ')}</span>}
 		</div>
 	);
 }
 
 export interface BubbleMenuProps {
 	onAiAction?: (payload: PromptSubmitPayload) => void;
-	activeAction?: AiActionType | null;
 }
 
 export const BubbleMenu = React.memo(function BubbleMenu({
 	onAiAction,
-	activeAction,
 }: BubbleMenuProps): React.JSX.Element | null {
 	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
@@ -117,9 +111,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		(middlewareData.hide?.referenceHidden ?? false) ||
 		(referenceHiddenOffsets
 			? referenceHiddenOffsets.top > 0 ||
-			referenceHiddenOffsets.bottom > 0 ||
-			referenceHiddenOffsets.left > 0 ||
-			referenceHiddenOffsets.right > 0
+				referenceHiddenOffsets.bottom > 0 ||
+				referenceHiddenOffsets.left > 0 ||
+				referenceHiddenOffsets.right > 0
 			: false);
 
 	useEffect(() => {
@@ -141,7 +135,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	});
 
 	const handleAiAction = useCallback(
-		(type: AiActionType, prompt?: string) => {
+		(prompt: string) => {
 			const { from, to } = editor.state.selection;
 			if (from === to) return;
 			const slicedDoc = editor.state.doc.cut(from, to);
@@ -149,7 +143,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				editor.markdown?.serialize(slicedDoc.toJSON()) ??
 				editor.state.doc.textBetween(from, to, '\n\n');
 			onAiAction?.({
-				prompt: type === 'custom' ? (prompt ?? '') : type,
+				prompt,
 				selectedText,
 				files: [],
 				editor,
@@ -165,7 +159,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		const trimmed = customPrompt.trim();
 		if (!trimmed) return;
 		isLockedRef.current = true;
-		handleAiAction('custom', trimmed);
+		handleAiAction(trimmed);
 		setCustomPrompt('');
 	}, [customPrompt, handleAiAction]);
 
@@ -438,47 +432,33 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
 								handleAiAction('improve-selected-text-writing');
 							}}
 						>
-							{activeAction === 'improve-selected-text-writing' ? (
-								<Loader2 className="animate-spin" />
-							) : (
-								<Wand2 />
-							)}
+							<Wand2 />
 							Improve writing
 						</Button>
 						<Button
 							variant="ghost"
 							size="sm"
 							className="justify-start w-full"
-							disabled={activeAction !== null && activeAction !== undefined}
 							onClick={() => {
 								isLockedRef.current = true;
 								handleAiAction('fix-selected-text-grammar');
 							}}
 						>
-							{activeAction === 'fix-selected-text-grammar' ? (
-								<Loader2 className="animate-spin" />
-							) : (
-								<SpellCheck />
-							)}
+							<SpellCheck />
 							Fix grammar
 						</Button>
 					</div>
 
 					<Separator className="my-1" />
 
-					<InputGroup className='rounded-sm!'>
+					<InputGroup className="rounded-sm!">
 						<InputGroupAddon>
-							{activeAction === 'custom' ? (
-								<Loader2 className="h-3.5 w-3.5 animate-spin" />
-							) : (
-								<Sparkles className="h-3.5 w-3.5" />
-							)}
+							<Sparkles className="h-3.5 w-3.5" />
 						</InputGroupAddon>
 						<InputGroupInput
 							value={customPrompt}
@@ -489,8 +469,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 									handleCustomPromptSubmit();
 								}
 							}}
-							disabled={activeAction !== null && activeAction !== undefined}
-							placeholder={activeAction === 'custom' ? 'Working…' : 'Ask AI…'}
+							placeholder={'Working…'}
 						/>
 					</InputGroup>
 

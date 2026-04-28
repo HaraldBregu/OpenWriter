@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Slice } from '@tiptap/pm/model';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
-import type { AiActionType, PromptSubmitPayload } from '@/components/app/editor/types';
+import type { PromptSubmitPayload } from '@/components/app/editor/types';
 import type { EditorActions } from './use-editor';
 
 interface InsertSession {
@@ -12,14 +12,6 @@ interface InsertSession {
 }
 
 const TASK_TYPE = 'content-writer';
-
-// Selection-bound bubble-menu action keys. When `payload.prompt` matches one,
-// the bubble flow runs with that action highlighted in the spinner; otherwise
-// (still selection-bound) it is treated as a custom prompt.
-const KNOWN_AI_ACTIONS = new Set<AiActionType>([
-	'improve-selected-text-writing',
-	'fix-selected-text-grammar',
-]);
 
 export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
@@ -41,8 +33,6 @@ export interface UseDocumentAiTasksOptions {
 export interface UseDocumentAiTasks {
 	/** True while a prompt task or AI action task is in flight. */
 	isRunning: boolean;
-	/** Type of the AI action currently running, used by the BubbleMenu spinner. */
-	activeAiAction: AiActionType | null;
 	/** Latest captured task failure message; null when no error to surface. */
 	taskError: string | null;
 	/** Clears `taskError` (called when the error dialog is dismissed). */
@@ -167,7 +157,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	activeTaskIdRef.current = activeTaskId;
 
 	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
-	const [activeAiAction, setActiveAiAction] = useState<AiActionType | null>(null);
 	const [taskError, setTaskError] = useState<string | null>(null);
 
 	const isRunning = activeTaskId !== null || aiActionTaskId !== null;
@@ -217,7 +206,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const data = event.data.success ? event.data.data : '';
 			editorActions.showPromptStatusBar(data);
 			const handlers = taskHandlersRef.current;
-		
+
 			if (event.state === 'running') {
 				handlers.handleDelta(data);
 			} else if (event.state === 'finished') {
@@ -278,13 +267,11 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 					void window.task.cancel(aiActionTaskId);
 				}
 				setAiActionTaskId(null);
-				setActiveAiAction(null);
 			} else if (event.state === 'cancelled') {
 				if (!event.data.success && event.data.error.length > 0) {
 					setTaskError(event.data.error);
 				}
 				setAiActionTaskId(null);
-				setActiveAiAction(null);
 			}
 		});
 	}, [aiActionTaskId, documentId]);
@@ -300,11 +287,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const ed = payload.editor;
 			if (ed.isDestroyed) return;
-
-			const action: AiActionType = KNOWN_AI_ACTIONS.has(payload.prompt as AiActionType)
-				? (payload.prompt as AiActionType)
-				: 'custom';
-			if (action === 'custom' && !payload.prompt.trim()) return;
 
 			const { from, to } = ed.state.selection;
 
@@ -329,20 +311,15 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 				`<after>\n${after}\n</after>`,
 			].join('\n\n');
 
-			setActiveAiAction(action);
-
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
 				metadata: { documentId, selection: { from, to } },
 			});
 
-			if (!result.success) {
-				setActiveAiAction(null);
-				return;
+			if (result.success) {
+				setAiActionTaskId(result.data.taskId);
 			}
-
-			setAiActionTaskId(result.data.taskId);
 		},
 		[documentId]
 	);
@@ -353,7 +330,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 	return {
 		isRunning,
-		activeAiAction,
 		taskError,
 		dismissTaskError,
 		submit,

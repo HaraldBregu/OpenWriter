@@ -9,7 +9,7 @@ import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
-import type { AiActionType, PromptSubmitPayload } from './types';
+import type { PromptSubmitPayload } from './types';
 
 export interface ImageInsertOptions {
 	src: string;
@@ -57,7 +57,6 @@ export interface EditorProps {
 	streamingContent?: string;
 	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
-	activeAiAction?: AiActionType | null;
 	/** Document UUID — needed to save image files into the document folder. */
 	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
@@ -75,14 +74,12 @@ function readFileAsDataUri(file: File): Promise<string> {
 
 function Content({
 	onAiAction,
-	activeAiAction,
 }: {
 	onAiAction?: (payload: PromptSubmitPayload) => void;
-	activeAiAction?: AiActionType | null;
 }): React.JSX.Element {
 	return (
 		<>
-			<BubbleMenu onAiAction={onAiAction} activeAction={activeAiAction} />
+			<BubbleMenu onAiAction={onAiAction} />
 			<OptionMenu />
 		</>
 	);
@@ -103,7 +100,6 @@ const Editor = React.memo(
 				streamingContent,
 				onPromptSubmit,
 				onInsertContent,
-				activeAiAction,
 				documentId,
 				onEditorReady,
 			},
@@ -597,7 +593,7 @@ const Editor = React.memo(
 					onInsertContent={onInsertContent}
 					onImageInsert={handleImageInsert}
 				>
-					{editor && <Content onAiAction={handleAiAction} activeAiAction={activeAiAction} />}
+					{editor && <Content onAiAction={handleAiAction} />}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
