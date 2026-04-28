@@ -490,6 +490,47 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							placeholder={activeAction === 'custom' ? 'Working…' : 'Ask AI…'}
 						/>
 					</InputGroup>
+
+					<Separator className="my-1" />
+
+					<div className="flex flex-row items-center gap-0.5">
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button variant="ghost" size="icon" aria-label="Cut" onClick={handleCut}>
+										<Scissors className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>
+								<TooltipBody title="Cut" keys={[modKey, 'X']} />
+							</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button variant="ghost" size="icon" aria-label="Copy" onClick={handleCopy}>
+										<Copy className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>
+								<TooltipBody title="Copy" keys={[modKey, 'C']} />
+							</TooltipContent>
+						</Tooltip>
+						<Tooltip>
+							<TooltipTrigger
+								render={
+									<Button variant="ghost" size="icon" aria-label="Delete" onClick={handleDelete}>
+										<Trash2 className="h-3.5 w-3.5" />
+									</Button>
+								}
+							/>
+							<TooltipContent>
+								<TooltipBody title="Delete" keys={['Delete']} />
+							</TooltipContent>
+						</Tooltip>
+					</div>
 				</Card>
 				<FloatingArrow
 					ref={arrowRef}
