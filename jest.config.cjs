@@ -40,6 +40,7 @@ module.exports = {
 				// main-process tests can import source modules that depend on it without
 				// hitting "Cannot use import statement outside a module".
 				'^chokidar$': '<rootDir>/tests/mocks/chokidar.ts',
+				'\\.md\\?raw$': '<rootDir>/tests/mocks/raw-md.ts',
 			},
 			// Seed globalThis.__VITE_ENV__ before modules are loaded so that the
 			// rewritten import.meta.env accesses resolve to defined (not undefined) objects.
