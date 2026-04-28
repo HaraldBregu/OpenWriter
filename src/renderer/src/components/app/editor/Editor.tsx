@@ -453,44 +453,6 @@ const Editor = React.memo(
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
-
-				const hasExternalValueVersionChanged =
-					lastExternalValueVersionRef.current !== externalValueVersion;
-				lastExternalValueVersionRef.current = externalValueVersion;
-
-				if (streamingContent !== undefined) {
-					const current = editor.getMarkdown();
-					if (current !== streamingContent) {
-						queueMicrotask(() => {
-							if (editor.isDestroyed) return;
-							editor.commands.setContent(streamingContent || '', {
-								emitUpdate: false,
-								contentType: 'markdown',
-							});
-						});
-					}
-					return;
-				}
-
-				if (!hasExternalValueVersionChanged && value === lastEmittedRef.current) {
-					return;
-				}
-
-				const current = editor.getMarkdown();
-				const incoming = value || '';
-				if (current !== incoming) {
-					queueMicrotask(() => {
-						if (editor.isDestroyed) return;
-						editor.commands.setContent(incoming, {
-							emitUpdate: false,
-							contentType: 'markdown',
-						});
-					});
-				}
-			}, [value, streamingContent, editor, externalValueVersion]);
-
-			useEffect(() => {
-				if (!editor || editor.isDestroyed) return;
 				editor.setEditable(!disabled);
 			}, [editor, disabled]);
 
