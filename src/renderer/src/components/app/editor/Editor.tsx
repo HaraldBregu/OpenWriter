@@ -198,6 +198,7 @@ const Editor = React.memo(
 						}
 					) {
 						if (!editor || editor.isDestroyed) return;
+						console.log('[Editor] setContent (imperative)', markdown, options);
 						editor.commands.setContent(markdown, {
 							emitUpdate: !(options.preventEditorUpdate ?? false),
 							contentType: 'markdown',
