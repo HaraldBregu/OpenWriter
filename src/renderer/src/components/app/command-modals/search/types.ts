@@ -1,6 +1,6 @@
 import type { LucideIcon } from 'lucide-react';
 
-export type AppSearchResultKind = 'action' | 'document' | 'resource' | 'extension';
+export type AppSearchResultKind = 'action' | 'document' | 'resource';
 
 export interface AppSearchResultItem {
 	id: string;
@@ -9,12 +9,11 @@ export interface AppSearchResultItem {
 	description: string;
 	meta: string;
 	href?: string;
-	commandId?: string;
 	icon: LucideIcon;
 }
 
 export interface AppSearchResultSection {
-	id: 'actions' | 'documents' | 'resources' | 'extensions';
+	id: 'actions' | 'documents' | 'resources';
 	title: string;
 	items: AppSearchResultItem[];
 }
