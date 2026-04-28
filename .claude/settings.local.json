@@ -154,7 +154,8 @@
       "Bash(command -v strings)",
       "Bash(command -v powershell)",
       "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/BRGHLD87H/Documents/OpenWriter/.tmp_inspect.ps1 -Path \"C:/Users/BRGHLD87H/AppData/Roaming/OpenWriter/Crashpad/reports/a3f46f1f-3249-4c39-8f3f-bde74c649ce2.dmp\")",
-      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/BRGHLD87H/Documents/OpenWriter/.tmp_inspect.ps1 -Path C:/Users/BRGHLD87H/AppData/Roaming/OpenWriter/Crashpad/reports/__TRACKED_VAR__.dmp)"
+      "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/BRGHLD87H/Documents/OpenWriter/.tmp_inspect.ps1 -Path C:/Users/BRGHLD87H/AppData/Roaming/OpenWriter/Crashpad/reports/__TRACKED_VAR__.dmp)",
+      "Bash(powershell -NoProfile -Command \"\\(Get-Item 'C:\\\\Users\\\\BRGHLD87H\\\\Documents'\\).Target\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
