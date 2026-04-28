@@ -11,7 +11,7 @@ interface InsertSession {
 	buffer: string;
 }
 
-const TASK_TYPE = 'content-writer';
+const TASK_TYPE = 'content-reviewer';
 
 export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
