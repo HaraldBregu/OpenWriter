@@ -152,30 +152,6 @@ export function buildAppSearchSections({
 		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
 
-	const extensionItems = sortByScoreAndDate(
-		extensionCommands
-			.map((command) => ({
-				score: getMatchScore(normalizedQuery, [
-					command.title,
-					command.description,
-					command.extensionName,
-				]),
-				timestamp: 0,
-				item: {
-					id: command.id,
-					kind: 'extension' as const,
-					title: command.title,
-					description: command.description,
-					meta: command.extensionName,
-					commandId: command.id,
-					icon: icons.resource,
-				},
-			}))
-			.filter((entry) => !hasQuery || entry.score > 0)
-	)
-		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
-		.map((entry) => entry.item);
-
 	const sections: AppSearchResultSection[] = [
 		{
 			id: 'actions',
@@ -191,11 +167,6 @@ export function buildAppSearchSections({
 			id: 'resources',
 			title: labels.resources.title,
 			items: resourceItems,
-		},
-		{
-			id: 'extensions',
-			title: labels.extensions.title,
-			items: extensionItems,
 		},
 	];
 
