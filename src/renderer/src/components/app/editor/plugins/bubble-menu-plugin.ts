@@ -30,6 +30,7 @@ export class BubbleMenuView {
 	private updateDebounceTimer: ReturnType<typeof setTimeout> | undefined;
 	private shouldShow: BubbleMenuShouldShow;
 	private onUpdate: BubbleMenuPluginProps['onUpdate'];
+	private isMouseDown = false;
 
 	constructor({ editor, view, updateDelay = 250, shouldShow, onUpdate }: BubbleMenuViewProps) {
 		this.editor = editor;
@@ -38,6 +39,8 @@ export class BubbleMenuView {
 		this.onUpdate = onUpdate;
 
 		this.view.dom.addEventListener('dragstart', this.dragstartHandler);
+		this.view.dom.addEventListener('mousedown', this.mousedownHandler);
+		document.addEventListener('mouseup', this.mouseupHandler, true);
 		this.editor.on('focus', this.focusHandler);
 		this.editor.on('blur', this.blurHandler);
 

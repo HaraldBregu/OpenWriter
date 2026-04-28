@@ -280,23 +280,23 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			// `success` first, then act on the lifecycle state.
 			if (event.state === 'finished') {
 				if (event.data.success) {
-					console.log('Receiving metadata: ', event.metadata.selection);
-					console.log('Receiving data: ', event.data.data);
-
 					const responseText = event.data.data;
 					const ed = editorRef.current;
 					if (ed && !ed.isDestroyed) {
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
-							const docSize = ed.state.doc.content.size;
-							const from = Math.min(range.from, docSize);
-							const to = Math.min(range.to, docSize);
-							const json = ed.markdown?.parse(responseText);
-							if (json) {
-								ed.chain().insertContentAt({ from, to }, json).run();
-							}
+							console.log('AI action response: ', responseText);
+							ed.chain().insertContentAt({ from: range?.from, to: range?.to }, responseText).run();
+
+							// const docSize = ed.state.doc.content.size;
+							// const from = Math.min(range.from, docSize);
+							// const to = Math.min(range.to, docSize);
+							// const json = ed.markdown?.parse(responseText);
+							// if (json) {
+							// 	ed.chain().insertContentAt({ from, to }, json).run();
+							// }
 						}
-						onMarkdownChangedRef.current(ed.getMarkdown());
+						// onMarkdownChangedRef.current(ed.getMarkdown());
 					}
 				} else if (event.data.error.length > 0) {
 					setTaskError(event.data.error);
@@ -329,7 +329,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const { from, to } = ed.state.selection;
 
-			console.log('Submitting prompt: ', payload);
 			const sliceToMarkdown = (start: number, end: number): string => {
 				if (start === end) return '';
 				const slice = ed.state.doc.cut(start, end);
