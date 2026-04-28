@@ -469,21 +469,6 @@ export class WorkspaceIpc implements IpcModule {
 				async (event: IpcMainInvokeEvent, documentId: string, content: string) => {
 					const mgr = this.mgr(event, container);
 					await mgr.updateDocumentContent(documentId, content);
-					const [updated, documentPath] = await Promise.all([
-						mgr.getDocumentConfig(documentId),
-						Promise.resolve(mgr.getDocumentFolderPath(documentId)),
-					]);
-					const windowId = BrowserWindow.fromWebContents(event.sender)?.id;
-					eventBus.emit('document:changed', {
-						windowId,
-						document: {
-							id: documentId,
-							title: updated.title,
-							content,
-							path: documentPath,
-							windowId,
-						},
-					});
 				},
 				WorkspaceChannels.updateDocumentContent
 			)
