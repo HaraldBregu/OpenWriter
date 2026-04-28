@@ -398,12 +398,8 @@ function PageContent(): ReactElement {
 	}, [openInsertContentDialog]);
 
 	const handlePromptSubmit = useCallback(
-		(payload: PromptSubmitPayload, ed: TiptapEditor) => {
-			if ('type' in payload) {
-				void aiTasks.submitAiAction(payload);
-			} else {
-				void aiTasks.submitPrompt(payload, ed);
-			}
+		(payload: PromptSubmitPayload) => {
+			void aiTasks.submit(payload);
 		},
 		[aiTasks]
 	);
