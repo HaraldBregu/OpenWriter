@@ -15,7 +15,6 @@ export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
 	editorActions: EditorActions;
-	editorInsert: EditorStreamInsert;
 	selection: { from: number; to: number } | null;
 	/**
 	 * Caller-owned busy state (e.g. preexisting task on this document, document-
