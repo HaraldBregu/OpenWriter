@@ -190,8 +190,6 @@ function PageContent(): ReactElement {
 	const editorActionsRef = useRef(editorActions);
 	editorActionsRef.current = editorActions;
 
-	const editorInsert = useEditorStreamInsert();
-
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
