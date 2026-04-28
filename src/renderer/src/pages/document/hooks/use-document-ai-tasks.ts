@@ -4,7 +4,7 @@ import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { AiActionType, PromptSubmitPayload } from '@shared/index';
 import type { EditorActions } from './use-editor';
-import type { EditorStreamInsert } from './use-editor-stream-insert';
+import { useEditorStreamInsert } from './use-editor-stream-insert';
 
 type PromptInputPayload = Extract<PromptSubmitPayload, { files: File[] }>;
 type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
