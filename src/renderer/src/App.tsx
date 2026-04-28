@@ -4,8 +4,6 @@ import {
 	Routes,
 	Route,
 	Navigate,
-	matchPath,
-	useLocation,
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { store } from './store';
