@@ -302,11 +302,6 @@ function Container({ children }: LayoutProps) {
 			icon: CircleArrowUp,
 		},
 		{
-			value: 'extensions',
-			label: t('menu.appsAndExtensions', 'Get apps and extensions'),
-			icon: Download,
-		},
-		{
 			value: 'learnMore',
 			label: t('menu.learnMore', 'Learn more'),
 			icon: Info,
