@@ -45,6 +45,7 @@ import {
 import {
 	DemoTaskHandler,
 	ContentWriterTaskHandler,
+	ContentReviewerTaskHandler,
 } from './task/handlers';
 
 // IPC modules
