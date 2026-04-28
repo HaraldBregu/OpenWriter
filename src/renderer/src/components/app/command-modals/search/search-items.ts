@@ -4,7 +4,6 @@ import type {
 	AppSearchActionDefinition,
 	AppSearchResultSection,
 	SearchableDocument,
-	SearchableExtensionCommand,
 	SearchableResource,
 } from './types';
 
@@ -16,7 +15,6 @@ interface BuildSearchSectionsParams {
 	query: string;
 	documents: SearchableDocument[];
 	resources: SearchableResource[];
-	extensionCommands: SearchableExtensionCommand[];
 	actions: AppSearchActionDefinition[];
 	icons: {
 		document: LucideIcon;
@@ -26,7 +24,6 @@ interface BuildSearchSectionsParams {
 		actions: SectionLabel;
 		documents: SectionLabel;
 		resources: SectionLabel;
-		extensions: SectionLabel;
 	};
 }
 
