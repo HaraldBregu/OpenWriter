@@ -1,5 +1,5 @@
-export { ContentWriterAgent } from './content-writer-agent';
-export type { ContentWriterAgentOptions } from './content-writer-agent';
+export { ContentWriterAgent } from './agent';
+export type { ContentWriterAgentOptions } from './agent';
 export type {
 	ContentWriterAgentInput,
 	ContentWriterAgentOutput,
