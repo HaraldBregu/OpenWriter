@@ -51,7 +51,7 @@ export function Provider({
 			<InsertImageDialog
 				open={state.imageDialogOpen}
 				onOpenChange={setImageDialogOpen}
-				onInsert={onImageInsert}
+				onInsert={onImageInsert ?? (() => undefined)}
 			/>
 		</EditorContext.Provider>
 	);
