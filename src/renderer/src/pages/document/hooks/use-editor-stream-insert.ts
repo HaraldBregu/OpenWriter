@@ -165,6 +165,8 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		// tokens produce one continuous glide instead of per-frame jumps.
 		const scrollEl = getScrollableAncestor(editor.view.dom as HTMLElement);
 		if (scrollEl) {
+			attachScrollListener(scrollEl);
+			if (userScrolledAwayRef.current) return;
 			try {
 				const coords = editor.view.coordsAtPos(endPos);
 				const containerRect = scrollEl.getBoundingClientRect();
@@ -181,7 +183,7 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 				// coordsAtPos throws on invalid positions; nothing to do.
 			}
 		}
-	}, [editor, clampPos, ensureScrollAnimation]);
+	}, [editor, clampPos, ensureScrollAnimation, attachScrollListener]);
 
 	const cancelPendingFrame = useCallback((): void => {
 		const session = sessionRef.current;
