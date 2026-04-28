@@ -5,17 +5,10 @@ import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
-import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
 import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
-
-export interface ImageInsertOptions {
-	src: string;
-	alt?: string;
-	title?: string;
-}
 
 export interface EditorElement extends HTMLDivElement {
 	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
@@ -29,7 +22,6 @@ export interface EditorElement extends HTMLDivElement {
 		markdown: string,
 		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
 	) => void;
-	insertImage: (options: ImageInsertOptions) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 	removeAssistant: () => void;
@@ -57,19 +49,8 @@ export interface EditorProps {
 	streamingContent?: string;
 	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
-	/** Document UUID — needed to save image files into the document folder. */
-	documentId?: string;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
 	onEditorReady?: (editor: TiptapEditor | null) => void;
-}
-
-function readFileAsDataUri(file: File): Promise<string> {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onload = (): void => resolve(reader.result as string);
-		reader.onerror = (): void => reject(new Error(`FileReader failed for ${file.name}`));
-		reader.readAsDataURL(file);
-	});
 }
 
 function Content({
@@ -100,7 +81,6 @@ const Editor = React.memo(
 				streamingContent,
 				onPromptSubmit,
 				onInsertContent,
-				documentId,
 				onEditorReady,
 			},
 			ref
@@ -108,28 +88,20 @@ const Editor = React.memo(
 			const onChangeRef = useRef(onChange);
 			const onSelectionChangeRef = useRef(onSelectionChange);
 			const onPromptSubmitRef = useRef(onPromptSubmit);
-			const documentIdRef = useRef(documentId);
 			const onEditorReadyRef = useRef(onEditorReady);
 
 			useEffect(() => {
 				onChangeRef.current = onChange;
 				onSelectionChangeRef.current = onSelectionChange;
 				onPromptSubmitRef.current = onPromptSubmit;
-				documentIdRef.current = documentId;
 				onEditorReadyRef.current = onEditorReady;
 			});
-
-			// Stable ref used by the extensions useMemo (which runs once).
-			// Updated after editor is initialised so it always points at the
-			// latest handler that has access to the live editor instance.
-			const handleImageFileInsertRef = useRef<ImageInsertHandler>(() => undefined);
 
 			const extensions = useMemo(
 				() =>
 					createExtensions({
 						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload),
-						onImageInsert: (file, insertAtPos) =>
-							handleImageFileInsertRef.current(file, insertAtPos),
+						onImageInsert: () => undefined,
 					}),
 				[]
 			);
@@ -189,7 +161,6 @@ const Editor = React.memo(
 
 			const editor = useEditor(editorOptions, []);
 
-			// Notify the parent when the editor instance becomes available.
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
 				onEditorReadyRef.current?.(editor);
@@ -213,79 +184,6 @@ const Editor = React.memo(
 					editor.off('selectionUpdate', emitSelection);
 				};
 			}, [editor]);
-
-			// Keep the image-insert ref pointing at a callback that closes over
-			// the live editor instance. This is updated every time editor changes
-			// so the handler is always fresh, while extensions only need the ref.
-			const handleImageFileInsert = useCallback(
-				(file: File, _insertAtPos: number | null): void => {
-					if (!editor || editor.isDestroyed) return;
-
-					readFileAsDataUri(file)
-						.then(async (dataUri) => {
-							if (!editor || editor.isDestroyed) return;
-
-							let imageSrc = dataUri;
-							const currentDocumentId = documentIdRef.current;
-
-							if (currentDocumentId && imageSrc.startsWith('data:')) {
-								const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
-								if (match) {
-									const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-									const base64 = match[2];
-									const fileName = `${crypto.randomUUID()}.${ext}`;
-									await window.workspace.saveDocumentImage({
-										documentId: currentDocumentId,
-										fileName,
-										base64,
-									});
-									imageSrc = `images/${fileName}`;
-								}
-							}
-
-							editor.commands.setImage({ src: imageSrc, alt: file.name });
-						})
-						.catch((err: unknown) => {
-							console.error('[Editor] Failed to process dropped/pasted image:', err);
-						});
-				},
-				[editor]
-			);
-			useEffect(() => {
-				handleImageFileInsertRef.current = handleImageFileInsert;
-			}, [handleImageFileInsert]);
-
-			// Save an edited image to the document's images/ directory and
-			// return the relative path. Falls back to the data URI when no
-			// documentId is available.
-			const handleImageEditSave = useCallback(async (dataUri: string): Promise<string> => {
-				const currentDocumentId = documentIdRef.current;
-				if (currentDocumentId && dataUri.startsWith('data:')) {
-					const match = dataUri.match(/^data:image\/(\w+);base64,(.+)$/);
-					if (match) {
-						const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-						const base64 = match[2];
-						const fileName = `${crypto.randomUUID()}.${ext}`;
-						await window.workspace.saveDocumentImage({
-							documentId: currentDocumentId,
-							fileName,
-							base64,
-						});
-						return `images/${fileName}`;
-					}
-				}
-				return dataUri;
-			}, []);
-
-			useEffect(() => {
-				if (!editor || editor.isDestroyed) return;
-				const imgStorage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-				imgStorage.image.onImageEditSave = handleImageEditSave;
-				return () => {
-					if (editor.isDestroyed) return;
-					imgStorage.image.onImageEditSave = undefined;
-				};
-			}, [editor, handleImageEditSave]);
 
 			const rootRef = useRef<HTMLDivElement>(null);
 
@@ -363,14 +261,6 @@ const Editor = React.memo(
 							.replaceRange(from, to, slice)
 							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
 						editor.view.dispatch(tr);
-					},
-					insertImage(options: ImageInsertOptions) {
-						if (!editor || editor.isDestroyed) return;
-						editor.commands.setImage({
-							src: options.src,
-							alt: options.alt,
-							title: options.title,
-						});
 					},
 					setSearch(query: string) {
 						if (!editor || editor.isDestroyed) return;
@@ -523,22 +413,6 @@ const Editor = React.memo(
 				editor.setEditable(!disabled);
 			}, [editor, disabled]);
 
-			useEffect(() => {
-				if (!editor || editor.isDestroyed || !documentId) return;
-				let cancelled = false;
-				window.workspace.getCurrent().then((workspacePath) => {
-					if (cancelled || editor.isDestroyed || !workspacePath) return;
-					const basePath = `${workspacePath}/documents/${documentId}`;
-					const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-					storage.image.documentBasePath = basePath;
-					// Force node views to re-render so images resolve with the new base path.
-					editor.view.dispatch(editor.state.tr.setMeta('preventEditorUpdate', true));
-				});
-				return () => {
-					cancelled = true;
-				};
-			}, [editor, documentId]);
-
 			const autoFocusedEditorRef = useRef<TiptapEditor | null>(null);
 			useEffect(() => {
 				if (!autoFocus || !editor || editor.isDestroyed) return;
@@ -548,39 +422,6 @@ const Editor = React.memo(
 					if (!editor.isDestroyed) editor.commands.focus('start');
 				});
 			}, [editor, autoFocus]);
-
-			const handleImageInsert = useCallback(
-				async (result: { src: string; alt: string; title: string }) => {
-					if (!editor || editor.isDestroyed) return;
-
-					let imageSrc = result.src;
-
-					// When the source is a data URI and we have a document folder,
-					// save the image file into the document's images/ directory
-					// and store its relative path for portability.
-					if (documentId && imageSrc.startsWith('data:')) {
-						const match = imageSrc.match(/^data:image\/(\w+);base64,(.+)$/);
-						if (match) {
-							const ext = match[1] === 'jpeg' ? 'jpg' : match[1];
-							const base64 = match[2];
-							const fileName = `${crypto.randomUUID()}.${ext}`;
-							await window.workspace.saveDocumentImage({
-								documentId,
-								fileName,
-								base64,
-							});
-							imageSrc = `images/${fileName}`;
-						}
-					}
-
-					editor.commands.setImage({
-						src: imageSrc,
-						alt: result.alt || undefined,
-						title: result.title || undefined,
-					});
-				},
-				[editor, documentId]
-			);
 
 			const handleAiAction = useCallback((payload: PromptSubmitPayload) => {
 				onPromptSubmitRef.current?.(payload);
@@ -593,7 +434,6 @@ const Editor = React.memo(
 					ref={rootRef}
 					editor={editor}
 					onInsertContent={onInsertContent}
-					onImageInsert={handleImageInsert}
 				>
 					{editor && <Content onAiAction={handleAiAction} />}
 					<EditorContent editor={editor} />
