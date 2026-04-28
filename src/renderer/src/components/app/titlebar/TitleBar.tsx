@@ -165,27 +165,6 @@ export const TitleBar = React.memo(function TitleBar({
 			{/* ── Spacer (pushes right buttons to the right) ── */}
 			<div className="flex-1" />
 
-			{showSidebarToggles && (
-				<div
-					className="flex items-center h-full mr-3"
-					style={{ WebkitAppRegion: 'no-drag' } as React.CSSProperties}
-				>
-					{extensionPanels.map((panel) => (
-						<button
-							key={panel.id}
-							type="button"
-							onClick={() => toggleSidebar(panel.id as `extension:${string}`)}
-							className={sidebarToggleButtonClass(activeSidebar === panel.id)}
-							title={`${panel.title} · ${panel.extensionName}`}
-							aria-label={`${panel.title} · ${panel.extensionName}`}
-							aria-pressed={activeSidebar === panel.id}
-						>
-							{renderExtensionButtonContent(panel)}
-						</button>
-					))}
-				</div>
-			)}
-
 			{/* ── Right: minimize / maximize / close (Windows only) ── */}
 			{!isMac && (
 				<TitleBarRightContainer>
