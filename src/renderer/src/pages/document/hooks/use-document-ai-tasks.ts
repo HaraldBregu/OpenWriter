@@ -279,22 +279,16 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		});
 	}, [aiActionTaskId, documentId]);
 
-	// ---- Submit: prompt task ------------------------------------------------
+	// ---- Submit: prompt flow (no selection) --------------------------------
 	const submitPrompt = useCallback(
-		async (payload: PromptInputPayload, editorArg: TiptapEditor): Promise<void> => {
-			if (!documentId || isBusyRef.current) return;
-			if (typeof window.task?.submit !== 'function') return;
-
+		async (payload: PromptSubmitPayload): Promise<void> => {
 			editorActions.showLoading();
 			editorActions.disable();
-
-			const selection = editorArg.state.selection;
-			console.log('Submitting prompt task with selection', selection);
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt: payload.prompt },
-				metadata: { documentId, selection },
+				metadata: { documentId, selection: payload.editor.state.selection },
 			});
 
 			if (!result.success) {
@@ -304,21 +298,22 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			}
 			setActiveTaskId(result.data.taskId);
 		},
-		[documentId, selection, editorActions]
+		[documentId, editorActions]
 	);
 
-	// ---- Submit: AI action --------------------------------------------------
+	// ---- Submit: AI-action flow (selection wraps with before/after) --------
 	const submitAiAction = useCallback(
-		async (action: AiActionPayload): Promise<void> => {
-			if (!documentId || isBusyRef.current) return;
-			if (typeof window.task?.submit !== 'function') return;
-			const ed = editorRef.current;
-			if (!ed || ed.isDestroyed) return;
+		async (payload: PromptSubmitPayload): Promise<void> => {
+			const ed = payload.editor;
+			if (ed.isDestroyed) return;
 
 			const { from, to } = ed.state.selection;
 			if (from === to) return;
 
-			if (action.type === 'custom' && !action.prompt?.trim()) return;
+			const action: AiActionType = KNOWN_AI_ACTIONS.has(payload.prompt as AiActionType)
+				? (payload.prompt as AiActionType)
+				: 'custom';
+			if (action === 'custom' && !payload.prompt.trim()) return;
 
 			const sliceToMarkdown = (start: number, end: number): string => {
 				if (start === end) return '';
@@ -331,23 +326,20 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const docSize = ed.state.doc.content.size;
 			const before = sliceToMarkdown(0, from);
-			const selectedText = sliceToMarkdown(from, to);
 			const after = sliceToMarkdown(to, docSize);
 
-			const instruction = action.type === 'custom' ? action.prompt : action.type;
-
-			const prompt = [
-				`<instruction>${instruction}</instruction>\n`,
+			const wrapped = [
+				`<instruction>${payload.prompt}</instruction>\n`,
 				`<before>\n${before}\n</before>`,
-				`<selection>\n${selectedText}\n</selection>`,
+				`<selection>\n${payload.selectedText}\n</selection>`,
 				`<after>\n${after}\n</after>`,
 			].join('\n\n');
 
-			setActiveAiAction(action.type);
+			setActiveAiAction(action);
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
-				input: { prompt },
+				input: { prompt: wrapped },
 				metadata: { documentId, selection: { from, to } },
 			});
 
@@ -361,6 +353,20 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		[documentId]
 	);
 
+	// ---- Submit: dispatcher -------------------------------------------------
+	const submit = useCallback(
+		async (payload: PromptSubmitPayload): Promise<void> => {
+			if (!documentId || isBusyRef.current) return;
+			if (typeof window.task?.submit !== 'function') return;
+			if (payload.selectedText.length > 0) {
+				await submitAiAction(payload);
+			} else {
+				await submitPrompt(payload);
+			}
+		},
+		[documentId, submitAiAction, submitPrompt]
+	);
+
 	const dismissTaskError = useCallback(() => {
 		setTaskError(null);
 	}, []);
@@ -370,7 +376,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		activeAiAction,
 		taskError,
 		dismissTaskError,
-		submitPrompt,
-		submitAiAction,
+		submit,
 	};
 }
