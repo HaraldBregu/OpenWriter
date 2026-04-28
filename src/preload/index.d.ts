@@ -60,18 +60,6 @@ import type {
 	CustomThemeInfo,
 	Theme,
 	SkillInfo,
-	ExtensionCommandExecutionResult,
-	ExtensionCommandInfo,
-	ExtensionDocPanelContent,
-	ExtensionDocPanelContentChangedPayload,
-	ExtensionDocPanelInfo,
-	ExtensionDocPanelsChangedPayload,
-	ExtensionDocumentContextSnapshot,
-	ExtensionPreferenceContribution,
-	ExtensionRegistrySnapshot,
-	ExtensionRuntimeChangedPayload,
-	ExtensionRuntimeInfo,
-	ExtensionRuntimeState,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
