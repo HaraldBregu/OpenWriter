@@ -389,6 +389,5 @@ declare global {
 		app: AppApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
-		extensions: ExtensionsApi;
 	}
 }
