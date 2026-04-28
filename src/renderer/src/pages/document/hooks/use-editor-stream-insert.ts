@@ -70,6 +70,32 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 		scrollTargetRef.current = null;
 	}, []);
 
+	const detachScrollListener = useCallback((): void => {
+		const ref = scrollListenerRef.current;
+		if (ref) {
+			ref.el.removeEventListener('scroll', ref.handler);
+			scrollListenerRef.current = null;
+		}
+	}, []);
+
+	const attachScrollListener = useCallback(
+		(el: HTMLElement): void => {
+			if (scrollListenerRef.current?.el === el) return;
+			detachScrollListener();
+			const handler = (): void => {
+				const expected = expectedScrollTopRef.current;
+				if (expected == null) return;
+				if (Math.abs(el.scrollTop - expected) > 2) {
+					userScrolledAwayRef.current = true;
+					cancelScrollAnimation();
+				}
+			};
+			el.addEventListener('scroll', handler, { passive: true });
+			scrollListenerRef.current = { el, handler };
+		},
+		[detachScrollListener, cancelScrollAnimation]
+	);
+
 	// Continuously eases scrollTop toward the latest target so that consecutive
 	// streaming deltas blend into one smooth motion instead of stepwise jumps.
 	const ensureScrollAnimation = useCallback((): void => {
