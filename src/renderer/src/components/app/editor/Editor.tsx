@@ -582,13 +582,9 @@ const Editor = React.memo(
 				[editor, documentId]
 			);
 
-			const handleAiAction = useCallback(
-				(payload: PromptSubmitPayload) => {
-					if (!editor || editor.isDestroyed) return;
-					onPromptSubmitRef.current?.(payload);
-				},
-				[editor]
-			);
+			const handleAiAction = useCallback((payload: PromptSubmitPayload) => {
+				onPromptSubmitRef.current?.(payload);
+			}, []);
 
 			return (
 				<Layout
