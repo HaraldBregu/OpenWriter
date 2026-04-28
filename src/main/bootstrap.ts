@@ -191,6 +191,33 @@ let safetyNetLogger: LoggerService | null = null;
 let safetyNetInstalled = false;
 let safetyNetCrashFile: string | null = null;
 
+/**
+ * Periodic memory snapshot.
+ *
+ * Categorises growth so we can tell V8/JS leaks (heapUsed) from native
+ * leaks (rss - heapUsed - external) from buffer leaks (external/arrayBuffers).
+ * Writes to the regular logger and to crash.log so the last snapshot
+ * survives a hard crash that kills the buffered logger.
+ */
+let memoryMonitorInterval: NodeJS.Timeout | null = null;
+
+export function setupMemoryMonitor(logger: LoggerService, intervalMs = 30_000): void {
+	if (memoryMonitorInterval) return;
+	const sample = (): void => {
+		const m = process.memoryUsage();
+		const mb = (n: number): number => Math.round(n / 1024 / 1024);
+		const line =
+			`[mem] rss=${mb(m.rss)}MB heapUsed=${mb(m.heapUsed)}MB ` +
+			`heapTotal=${mb(m.heapTotal)}MB external=${mb(m.external)}MB ` +
+			`arrayBuffers=${mb(m.arrayBuffers)}MB`;
+		logger.info('MemoryMonitor', line);
+		writeCrashLine(line);
+	};
+	sample();
+	memoryMonitorInterval = setInterval(sample, intervalMs);
+	memoryMonitorInterval.unref?.();
+}
+
 export function writeCrashLine(line: string): void {
 	// Write synchronously to a dedicated file so we capture the reason even
 	// when the process is torn down before the buffered LoggerService flushes.
