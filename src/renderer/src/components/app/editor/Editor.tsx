@@ -483,10 +483,6 @@ const Editor = React.memo(
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
 
-				const hasExternalValueVersionChanged =
-					lastExternalValueVersionRef.current !== externalValueVersion;
-				lastExternalValueVersionRef.current = externalValueVersion;
-
 				if (streamingContent !== undefined) {
 					const current = editor.getMarkdown();
 					if (current !== streamingContent) {
@@ -501,9 +497,13 @@ const Editor = React.memo(
 					return;
 				}
 
+				const hasExternalValueVersionChanged =
+					lastExternalValueVersionRef.current !== externalValueVersion;
+
 				if (!hasExternalValueVersionChanged && value === lastEmittedRef.current) {
 					return;
 				}
+				lastExternalValueVersionRef.current = externalValueVersion;
 
 				const current = editor.getMarkdown();
 				const incoming = value || '';
