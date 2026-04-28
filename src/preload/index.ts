@@ -386,42 +386,6 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
-// window.extensions — DISABLED. Extension subsystem is currently turned off
-// (no host process spawned, no IPC handlers registered). The API surface is
-// stubbed so renderer code keeps compiling and `?.` checks resolve to no-ops.
-// ---------------------------------------------------------------------------
-const noopUnsubscribe = (): void => {};
-const emptyRuntimeState = {
-	status: 'idle' as const,
-	activated: false,
-	crashCount: 0,
-	registeredCommands: [],
-	registeredDocPanels: [],
-};
-const extensions: ExtensionsApi = {
-	list: () => Promise.resolve([]),
-	getState: () => Promise.resolve(emptyRuntimeState),
-	getCommands: () => Promise.resolve([]),
-	getDocPanels: () => Promise.resolve([]),
-	getDocPanelContent: () => Promise.resolve({ kind: 'html', html: '' } as never),
-	refreshDocPanel: () => Promise.resolve({ kind: 'html', html: '' } as never),
-	getPreferences: () => Promise.resolve({ definitions: [], values: {} }),
-	setPreference: () => Promise.resolve(),
-	installLocal: () => Promise.resolve(null),
-	executeCommand: () => Promise.resolve({ ok: false, error: 'Extensions are disabled' }),
-	executeDocPanelAction: () => Promise.resolve({ ok: false, error: 'Extensions are disabled' }),
-	setEnabled: () => Promise.resolve(),
-	reload: () => Promise.resolve(),
-	setActiveDocument: () => Promise.resolve(),
-	setDocumentContext: () => Promise.resolve(),
-	openFolder: () => Promise.resolve(),
-	onRegistryChanged: () => noopUnsubscribe,
-	onRuntimeChanged: () => noopUnsubscribe,
-	onDocPanelsChanged: () => noopUnsubscribe,
-	onDocPanelContentChanged: () => noopUnsubscribe,
-} satisfies ExtensionsApi;
-
-// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
@@ -430,7 +394,6 @@ if (process.contextIsolated) {
 		contextBridge.exposeInMainWorld('win', win);
 		contextBridge.exposeInMainWorld('workspace', workspace);
 		contextBridge.exposeInMainWorld('task', task);
-		contextBridge.exposeInMainWorld('extensions', extensions);
 	} catch (error) {
 		console.error('[preload] Failed to expose IPC APIs:', error);
 	}
@@ -443,6 +406,4 @@ if (process.contextIsolated) {
 	globalThis.workspace = workspace;
 	// @ts-ignore (define in dts)
 	globalThis.task = task;
-	// @ts-ignore (define in dts)
-	globalThis.extensions = extensions;
 }
