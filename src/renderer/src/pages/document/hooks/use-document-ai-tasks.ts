@@ -249,19 +249,9 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const docSize = ed.state.doc.content.size;
 							const from = Math.min(range.from, docSize);
 							const to = Math.min(range.to, docSize);
-							console.log('Replace range:', { from, to, docSize });
-							console.log(
-								'Doc before insert:',
-								JSON.stringify(ed.state.doc.toJSON(), null, 2)
-							);
 							const json = ed.markdown?.parse(responseText);
-							console.log('Parsed JSON:', JSON.stringify(json, null, 2));
 							if (json) {
 								ed.chain().insertContentAt({ from, to }, json).run();
-								console.log(
-									'Doc after insert:',
-									JSON.stringify(ed.state.doc.toJSON(), null, 2)
-								);
 							}
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());
@@ -318,6 +308,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 				`<after>\n${after}\n</after>`,
 			].join('\n\n');
 
+			console.log('Constructed prompt: ', prompt);
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },

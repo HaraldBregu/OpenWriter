@@ -434,7 +434,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							className="justify-start w-full"
 							onClick={() => {
 								isLockedRef.current = true;
-								handleAiAction('improve-selected-text-writing');
+								handleAiAction('Enhance the text.');
 							}}
 						>
 							<Wand2 />
