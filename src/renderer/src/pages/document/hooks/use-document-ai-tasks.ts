@@ -62,7 +62,7 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
  * Owns the prompt-input task and AI-action flows for a document page.
  *
  *   prompt flow      → streams tokens into the editor at the inserted prompt
- *                       position via `editorInsert`, replacing on finish.
+ *                       position, replacing with parsed markdown on finish.
  *   AI-action flow   → submits a tagged prompt from the bubble menu and on
  *                       finish replaces the original selection range with the
  *                       returned markdown.
