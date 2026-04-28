@@ -387,38 +387,39 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
-// window.extensions — Extension registry and command execution
+// window.extensions — DISABLED. Extension subsystem is currently turned off
+// (no host process spawned, no IPC handlers registered). The API surface is
+// stubbed so renderer code keeps compiling and `?.` checks resolve to no-ops.
 // ---------------------------------------------------------------------------
+const noopUnsubscribe = (): void => {};
+const emptyRuntimeState = {
+	status: 'idle' as const,
+	activated: false,
+	crashCount: 0,
+	registeredCommands: [],
+	registeredDocPanels: [],
+};
 const extensions: ExtensionsApi = {
-	list: () => typedInvokeUnwrap(ExtensionChannels.list),
-	getState: (extensionId) => typedInvokeUnwrap(ExtensionChannels.getState, extensionId),
-	getCommands: () => typedInvokeUnwrap(ExtensionChannels.getCommands),
-	getDocPanels: (documentId) => typedInvokeUnwrap(ExtensionChannels.getDocPanels, documentId),
-	getDocPanelContent: (panelId, documentId) =>
-		typedInvokeUnwrap(ExtensionChannels.getDocPanelContent, panelId, documentId),
-	refreshDocPanel: (panelId, documentId) =>
-		typedInvokeUnwrap(ExtensionChannels.refreshDocPanel, panelId, documentId),
-	getPreferences: (extensionId) => typedInvokeUnwrap(ExtensionChannels.getPreferences, extensionId),
-	setPreference: (extensionId, key, value) =>
-		typedInvokeUnwrap(ExtensionChannels.setPreference, extensionId, key, value),
-	installLocal: () => typedInvokeUnwrap(ExtensionChannels.installLocal),
-	executeCommand: (commandId, payload) =>
-		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
-	executeDocPanelAction: (commandId, payload) =>
-		typedInvokeUnwrap(ExtensionChannels.executeCommand, commandId, payload),
-	setEnabled: (extensionId, enabled) =>
-		typedInvokeUnwrap(ExtensionChannels.setEnabled, extensionId, enabled),
-	reload: (extensionId) => typedInvokeUnwrap(ExtensionChannels.reload, extensionId),
-	setActiveDocument: (documentId) =>
-		typedInvokeUnwrap(ExtensionChannels.setActiveDocument, documentId),
-	setDocumentContext: (documentId, context) =>
-		typedInvokeUnwrap(ExtensionChannels.setDocumentContext, documentId, context),
-	openFolder: () => typedInvokeUnwrap(ExtensionChannels.openFolder),
-	onRegistryChanged: (callback) => typedOn(ExtensionChannels.registryChanged, callback),
-	onRuntimeChanged: (callback) => typedOn(ExtensionChannels.runtimeChanged, callback),
-	onDocPanelsChanged: (callback) => typedOn(ExtensionChannels.docPanelsChanged, callback),
-	onDocPanelContentChanged: (callback) =>
-		typedOn(ExtensionChannels.docPanelContentChanged, callback),
+	list: () => Promise.resolve([]),
+	getState: () => Promise.resolve(emptyRuntimeState),
+	getCommands: () => Promise.resolve([]),
+	getDocPanels: () => Promise.resolve([]),
+	getDocPanelContent: () => Promise.resolve({ kind: 'html', html: '' } as never),
+	refreshDocPanel: () => Promise.resolve({ kind: 'html', html: '' } as never),
+	getPreferences: () => Promise.resolve({ definitions: [], values: {} }),
+	setPreference: () => Promise.resolve(),
+	installLocal: () => Promise.resolve(null),
+	executeCommand: () => Promise.resolve({ ok: false, error: 'Extensions are disabled' }),
+	executeDocPanelAction: () => Promise.resolve({ ok: false, error: 'Extensions are disabled' }),
+	setEnabled: () => Promise.resolve(),
+	reload: () => Promise.resolve(),
+	setActiveDocument: () => Promise.resolve(),
+	setDocumentContext: () => Promise.resolve(),
+	openFolder: () => Promise.resolve(),
+	onRegistryChanged: () => noopUnsubscribe,
+	onRuntimeChanged: () => noopUnsubscribe,
+	onDocPanelsChanged: () => noopUnsubscribe,
+	onDocPanelContentChanged: () => noopUnsubscribe,
 } satisfies ExtensionsApi;
 
 // ---------------------------------------------------------------------------
