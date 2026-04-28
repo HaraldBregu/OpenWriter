@@ -286,37 +286,6 @@ export class StoreService {
 
 	// --- Workspace settings ---
 
-	getExtensionEnabled(extensionId: string, defaultEnabled: boolean): boolean {
-		const stored = this.store.get('extensionEnabled');
-		const value = stored[extensionId];
-		return typeof value === 'boolean' ? value : defaultEnabled;
-	}
-
-	setExtensionEnabled(extensionId: string, enabled: boolean): void {
-		const next = {
-			...this.store.get('extensionEnabled'),
-			[extensionId]: enabled,
-		};
-		this.store.set('extensionEnabled', next);
-	}
-
-	getExtensionPreferences(extensionId: string): Record<string, unknown> {
-		const stored = this.store.get('extensionPreferences');
-		const values = stored[extensionId];
-		return isRecord(values) ? { ...values } : {};
-	}
-
-	setExtensionPreference(extensionId: string, key: string, value: unknown): void {
-		const stored = this.store.get('extensionPreferences');
-		this.store.set('extensionPreferences', {
-			...stored,
-			[extensionId]: {
-				...(isRecord(stored[extensionId]) ? stored[extensionId] : {}),
-				[key]: value,
-			},
-		});
-	}
-
 	getCurrentWorkspace(): string | null {
 		return this.store.get('currentWorkspace');
 	}
