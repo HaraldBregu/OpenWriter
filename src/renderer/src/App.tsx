@@ -61,21 +61,6 @@ function RouteWrapper({ children }: { children: React.ReactNode }) {
 	);
 }
 
-function ExtensionRouteContextSync(): null {
-	const location = useLocation();
-
-	useEffect(() => {
-		if (typeof window.extensions?.setActiveDocument !== 'function') {
-			return;
-		}
-
-		const match = matchPath('/content/:id', location.pathname);
-		void window.extensions.setActiveDocument(match?.params.id ?? null);
-	}, [location.pathname]);
-
-	return null;
-}
-
 function WorkspaceEventBridge(): null {
 	useEffect(() => {
 		if (typeof window.workspace?.onOutputFileChange !== 'function') {
