@@ -64,7 +64,8 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
  * error dialog to surface.
  */
 export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocumentAiTasks {
-	const { documentId, editor, editorActions, editorInsert, selection, isExternallyBusy } = opts;
+	const { documentId, editor, editorActions, selection, isExternallyBusy } = opts;
+	const editorInsert = useEditorStreamInsert();
 
 	const onMarkdownChangedRef = useRef(opts.onMarkdownChanged);
 	onMarkdownChangedRef.current = opts.onMarkdownChanged;
