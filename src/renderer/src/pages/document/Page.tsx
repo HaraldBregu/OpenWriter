@@ -48,37 +48,11 @@ function PageContent(): ReactElement {
 	const [content, setContent] = useState('');
 	const [contentVersion, setContentVersion] = useState(0);
 	const [loaded, setLoaded] = useState(false);
-	const [extensionDocPanels, setExtensionDocPanels] = useState<ExtensionDocPanelInfo[]>([]);
-	const [editorContextVersion, setEditorContextVersion] = useState(0);
 
-	const { activeSidebar, setActiveSidebar } = useSidebarVisibility();
 	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
 	const editorRef = useRef<EditorElement>(null);
-	const sidebarPanelRef = usePanelRef();
-
-	useEffect(() => {
-		if (activeSidebar) {
-			sidebarPanelRef.current?.expand();
-		} else {
-			sidebarPanelRef.current?.collapse();
-		}
-	}, [activeSidebar, sidebarPanelRef]);
-
-	const loadExtensionDocPanels = useCallback(async () => {
-		if (!id) {
-			setExtensionDocPanels([]);
-			return;
-		}
-
-		try {
-			const panels = await window.extensions.getDocPanels(id);
-			setExtensionDocPanels(panels);
-		} catch {
-			setExtensionDocPanels([]);
-		}
-	}, [id]);
 
 	const stateRef = useRef({ title });
 	stateRef.current = { title };
