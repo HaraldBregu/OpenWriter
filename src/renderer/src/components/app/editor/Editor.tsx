@@ -18,7 +18,6 @@ export interface ImageInsertOptions {
 }
 
 export interface EditorElement extends HTMLDivElement {
-	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
 	insertMarkdown: (
