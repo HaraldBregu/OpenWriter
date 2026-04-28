@@ -205,28 +205,6 @@ export const AppChannels = {
 	openReduxDialog: 'app:open-redux-dialog',
 } as const;
 
-export const ExtensionChannels = {
-	list: 'extensions:list',
-	getState: 'extensions:get-state',
-	getCommands: 'extensions:get-commands',
-	executeCommand: 'extensions:execute-command',
-	getDocPanels: 'extensions:get-doc-panels',
-	getDocPanelContent: 'extensions:get-doc-panel-content',
-	refreshDocPanel: 'extensions:refresh-doc-panel',
-	getPreferences: 'extensions:get-preferences',
-	setPreference: 'extensions:set-preference',
-	installLocal: 'extensions:install-local',
-	setEnabled: 'extensions:set-enabled',
-	reload: 'extensions:reload',
-	setActiveDocument: 'extensions:set-active-document',
-	setDocumentContext: 'extensions:set-document-context',
-	openFolder: 'extensions:open-folder',
-	registryChanged: 'extensions:registry-changed',
-	runtimeChanged: 'extensions:runtime-changed',
-	docPanelsChanged: 'extensions:doc-panels-changed',
-	docPanelContentChanged: 'extensions:doc-panel-content-changed',
-} as const;
-
 // ===========================================================================
 // Channel-to-Type Maps
 // ===========================================================================
