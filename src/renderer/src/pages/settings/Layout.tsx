@@ -56,7 +56,6 @@ export function Layout(): React.JSX.Element {
 						<NavItem to="/settings/models" label={t('settings.tabs.models')} />
 						<NavItem to="/settings/agents" label={t('settings.tabs.agents')} />
 						<NavItem to="/settings/skill" label={t('settings.tabs.skill')} />
-						<NavItem to="/settings/extensions" label={t('settings.tabs.extensions')} />
 					</div>
 					<div className="my-2 border-t" />
 					<div className="flex flex-col gap-0.5">
