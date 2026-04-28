@@ -141,7 +141,6 @@
 			"providers": "Provider",
 			"agents": "Agenti",
 			"skill": "Skill",
-			"extensions": "Estensioni",
 			"media": "Media",
 			"devices": "Dispositivi",
 			"tools": "Strumenti",
