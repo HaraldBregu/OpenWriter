@@ -9,9 +9,6 @@
 	"copyright": "© 2026 OpenWriter Project. All rights reserved.",
 	"type": "module",
 	"license": "MIT",
-	"workspaces": [
-		"packages/*"
-	],
 	"main": "./out/main/index.js",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development electron-vite dev --inspect",
