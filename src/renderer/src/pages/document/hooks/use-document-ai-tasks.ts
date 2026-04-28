@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Slice } from '@tiptap/pm/model';
-import { TextSelection } from '@tiptap/pm/state';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { AiActionType, PromptSubmitPayload } from '@shared/index';

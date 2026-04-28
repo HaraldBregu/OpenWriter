@@ -150,7 +150,9 @@
       "Bash(sed -n '1060,1075p' /Users/haraldbregu/Documents/9Spartans/apps/OpenWriter/resources/i18n/it/main.json)",
       "Bash(wait %bp79syxm4)",
       "Bash(tasklist)",
-      "Bash(echo \"EXIT_CODE=$?\")"
+      "Bash(echo \"EXIT_CODE=$?\")",
+      "Bash(command -v strings)",
+      "Bash(command -v powershell)"
     ],
     "deny": [
       "Bash(git push --force:*)",
