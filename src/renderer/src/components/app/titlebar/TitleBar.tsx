@@ -49,15 +49,11 @@ export const TitleBar = React.memo(function TitleBar({
 	onToggleSidebar,
 	onNavigateBack,
 	onNavigateForward,
-	showSidebarToggles = false,
+	showSidebarToggles: _showSidebarToggles = false,
 }: TitleBarProps) {
 	const { t } = useTranslation();
-	const { activeSidebar, toggleSidebar } = useSidebarVisibility();
-	const contentMatch = useMatch('/content/:id');
-	const documentId = contentMatch?.params.id ?? null;
 	const [isMaximized, setIsMaximized] = useState(false);
 	const [isFullScreen, setIsFullScreen] = useState(false);
-	const [extensionPanels, setExtensionPanels] = useState<ExtensionDocPanelInfo[]>([]);
 
 	useEffect(() => {
 		if (!window.win) return;
@@ -72,43 +68,6 @@ export const TitleBar = React.memo(function TitleBar({
 			unsubFs();
 		};
 	}, []);
-
-	const loadExtensionPanels = useCallback(async () => {
-		if (!showSidebarToggles || !documentId || typeof window.extensions?.getDocPanels !== 'function') {
-			setExtensionPanels([]);
-			return;
-		}
-
-		try {
-			const panels = await window.extensions.getDocPanels(documentId);
-			setExtensionPanels(panels);
-		} catch {
-			setExtensionPanels([]);
-		}
-	}, [documentId, showSidebarToggles]);
-
-	useEffect(() => {
-		void loadExtensionPanels();
-	}, [loadExtensionPanels]);
-
-	useEffect(() => {
-		if (!showSidebarToggles || typeof window.extensions?.onRegistryChanged !== 'function') {
-			return;
-		}
-
-		const unsubscribeRegistry = window.extensions.onRegistryChanged(() => {
-			void loadExtensionPanels();
-		});
-		const unsubscribeDocPanels = window.extensions.onDocPanelsChanged((payload) => {
-			if (documentId && payload.documentId && payload.documentId !== documentId) return;
-			void loadExtensionPanels();
-		});
-
-		return () => {
-			unsubscribeRegistry();
-			unsubscribeDocPanels();
-		};
-	}, [documentId, loadExtensionPanels, showSidebarToggles]);
 
 	const btnBase = `
     flex items-center justify-center h-full w-[46px]
