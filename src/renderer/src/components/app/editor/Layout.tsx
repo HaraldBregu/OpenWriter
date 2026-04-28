@@ -8,7 +8,7 @@ interface LayoutProps {
 	readonly className?: string;
 	readonly editor: Editor | null;
 	readonly onInsertContent?: () => void;
-	readonly onImageInsert: (result: { src: string; alt: string; title: string }) => void;
+	readonly onImageInsert?: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
 }
 
