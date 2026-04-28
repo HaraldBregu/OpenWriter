@@ -1,7 +1,11 @@
 import { Node, mergeAttributes } from '@tiptap/core';
 import { ReactNodeViewRenderer } from '@tiptap/react';
 import { PromptNodeView } from '../nodes/PromptNodeView';
-import { PromptOptions } from '@shared/index';
+import type { PromptSubmitPayload } from '../types';
+
+export interface PromptOptions {
+	onPromptSubmit: (payload: PromptSubmitPayload) => void;
+}
 
 type AgentId = 'text' | 'image';
 
