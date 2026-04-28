@@ -89,6 +89,7 @@ const { container, eventBus, appState, windowFactory, logger, windowContextManag
 	bootstrapServices();
 // Re-bind safety net with the real logger now that it exists.
 setupProcessSafetyNet(logger);
+setupMemoryMonitor(logger);
 logger.info('CrashReporter', `Crash dumps path: ${app.getPath('crashDumps')}`);
 logger.info('Main', `Starting in ${isWorkspaceMode ? 'WORKSPACE' : 'LAUNCHER'} mode`);
 if (isWorkspaceMode && workspacePath) {
