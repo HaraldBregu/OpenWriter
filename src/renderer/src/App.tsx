@@ -188,7 +188,6 @@ const App: React.FC = () => {
 					<TooltipProvider>
 						<WorkspaceEventBridge />
 						<Router>
-							<ExtensionRouteContextSync />
 							<Routes>
 								<Route
 									path="/splash"
