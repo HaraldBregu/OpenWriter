@@ -87,47 +87,6 @@ export const TitleBar = React.memo(function TitleBar({
     text-muted-foreground
   `;
 
-	const sidebarToggleButtonClass = (isActive: boolean): string =>
-		isMac
-			? `flex items-center justify-center h-full px-2 transition-colors hover:text-foreground ${
-					isActive ? 'text-foreground' : 'text-muted-foreground'
-				}`
-			: `flex items-center justify-center h-full w-[38px] transition-colors ${
-					isActive ? 'text-foreground bg-accent/60' : 'text-muted-foreground hover:text-foreground'
-				}`;
-
-	const renderExtensionButtonContent = (panel: ExtensionDocPanelInfo): React.ReactElement => {
-		const fallback = panel.title.trim().charAt(0).toUpperCase() || '?';
-		const icon = panel.icon;
-
-		if (panel.iconAssetUri && icon && typeof icon !== 'string' && icon.type === 'asset') {
-			return (
-				<img
-					src={panel.iconAssetUri}
-					alt=""
-					aria-hidden="true"
-					className="size-4 object-contain"
-				/>
-			);
-		}
-
-		const iconLabel = typeof icon === 'string' ? icon.trim() : '';
-
-		if (iconLabel) {
-			return (
-				<span className="flex min-w-[1.25rem] items-center justify-center text-[11px] font-semibold leading-none">
-					{iconLabel}
-				</span>
-			);
-		}
-
-		return (
-			<span className="flex size-4 items-center justify-center rounded-full border border-current/25 text-[10px] font-semibold leading-none">
-				{fallback}
-			</span>
-		);
-	};
-
 	return (
 		<TitleBarContainer>
 			{/* ── Left: burger menu (Windows) + optional sidebar toggle ── */}
