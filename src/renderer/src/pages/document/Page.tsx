@@ -550,7 +550,6 @@ function PageContent(): ReactElement {
 									onSelectionChange={handleSelectionChange}
 									onPromptSubmit={handlePromptSubmit}
 									onInsertContent={handleInsertContent}
-									documentId={id}
 									onEditorReady={handleEditorReady}
 								/>
 							)}
