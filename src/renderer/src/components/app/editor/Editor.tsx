@@ -77,7 +77,7 @@ function Content({
 	onAiAction,
 	activeAiAction,
 }: {
-	onAiAction?: (action: AiActionPayload) => void;
+	onAiAction?: (payload: PromptSubmitPayload) => void;
 	activeAiAction?: AiActionType | null;
 }): React.JSX.Element {
 	return (
