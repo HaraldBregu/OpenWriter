@@ -46,6 +46,14 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 	const sessionRef = useRef<InsertSession | null>(null);
 	const scrollAnimationRef = useRef<number | null>(null);
 	const scrollTargetRef = useRef<{ el: HTMLElement; top: number } | null>(null);
+	// User-takeover guard: while autoscroll is animating, every assignment to
+	// `scrollEl.scrollTop` updates `expectedScrollTopRef`. The scroll listener
+	// compares observed scrollTop against expected — any divergence means the
+	// user scrolled, so we latch `userScrolledAwayRef` and stop following until
+	// the next `begin()` resets the session.
+	const userScrolledAwayRef = useRef(false);
+	const expectedScrollTopRef = useRef<number | null>(null);
+	const scrollListenerRef = useRef<{ el: HTMLElement; handler: () => void } | null>(null);
 
 	const clampPos = useCallback((ed: Editor, pos: number): number => {
 		const size = ed.state.doc.content.size;
