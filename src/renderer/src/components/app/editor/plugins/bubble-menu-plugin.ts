@@ -157,6 +157,8 @@ export class BubbleMenuView {
 	destroy(): void {
 		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
 		this.view.dom.removeEventListener('dragstart', this.dragstartHandler);
+		this.view.dom.removeEventListener('mousedown', this.mousedownHandler);
+		document.removeEventListener('mouseup', this.mouseupHandler, true);
 		this.editor.off('focus', this.focusHandler);
 		this.editor.off('blur', this.blurHandler);
 	}
