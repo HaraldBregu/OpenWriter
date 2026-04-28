@@ -217,6 +217,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const data = event.data.success ? event.data.data : '';
 			editorActions.showPromptStatusBar(data);
 			const handlers = taskHandlersRef.current;
+		
 			if (event.state === 'running') {
 				handlers.handleDelta(data);
 			} else if (event.state === 'finished') {
@@ -244,24 +245,33 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (event.taskId !== aiActionTaskId) return;
 			if (event.metadata.documentId !== documentId) return;
 
-			if (event.state === 'finished' && event.data.success) {
-				const responseText = event.data.data;
-				const ed = editorRef.current;
-				if (ed && !ed.isDestroyed) {
-					const range = extractTaskSelection(event.metadata.selection);
-					if (range) {
-						const docSize = ed.state.doc.content.size;
-						const from = Math.min(range.from, docSize);
-						const to = Math.min(range.to, docSize);
-						const json = ed.markdown?.parse(responseText);
-						if (json) {
-							const node = ed.schema.nodeFromJSON(json);
-							const slice = new Slice(node.content, 0, 0);
-							const tr = ed.state.tr.replaceRange(from, to, slice);
-							ed.view.dispatch(tr);
+			// `event.data: TaskEventResult` is a discriminated union. Narrow on
+			// `success` first, then act on the lifecycle state.
+			if (event.state === 'finished') {
+				if (event.data.success) {
+					console.log('Receiving metadata: ', event.metadata.selection);
+					console.log('Receiving data: ', event.data.data);
+
+					const responseText = event.data.data;
+					const ed = editorRef.current;
+					if (ed && !ed.isDestroyed) {
+						const range = extractTaskSelection(event.metadata.selection);
+						if (range) {
+							const docSize = ed.state.doc.content.size;
+							const from = Math.min(range.from, docSize);
+							const to = Math.min(range.to, docSize);
+							const json = ed.markdown?.parse(responseText);
+							if (json) {
+								const node = ed.schema.nodeFromJSON(json);
+								const slice = new Slice(node.content, 0, 0);
+								const tr = ed.state.tr.replaceRange(from, to, slice);
+								ed.view.dispatch(tr);
+							}
 						}
+						onMarkdownChangedRef.current(ed.getMarkdown());
 					}
-					onMarkdownChangedRef.current(ed.getMarkdown());
+				} else if (event.data.error.length > 0) {
+					setTaskError(event.data.error);
 				}
 
 				if (typeof window.task?.cancel === 'function') {
@@ -298,6 +308,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const { from, to } = ed.state.selection;
 
+			console.log('Submitting prompt task with selection', { from, to, });
 			const sliceToMarkdown = (start: number, end: number): string => {
 				if (start === end) return '';
 				const slice = ed.state.doc.cut(start, end);
