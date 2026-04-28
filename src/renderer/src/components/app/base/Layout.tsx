@@ -547,6 +547,14 @@ function Container({ children }: LayoutProps) {
 																	<Pencil />
 																	<span>{t('menu.rename', 'Rename')}</span>
 																</DropdownMenuItem>
+																<DropdownMenuItem
+																	onClick={() =>
+																		handleDuplicateDocument({ id: w.id, title: w.title })
+																	}
+																>
+																	<Copy />
+																	<span>{t('menu.duplicate', 'Duplicate')}</span>
+																</DropdownMenuItem>
 																<DropdownMenuSeparator />
 																<DropdownMenuItem
 																	variant="destructive"

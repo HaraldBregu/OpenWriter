@@ -72,13 +72,144 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
  */
 export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocumentAiTasks {
 	const { documentId, editor, editorActions, selection, isExternallyBusy } = opts;
-	const editorInsert = useEditorStreamInsert();
 
 	const onMarkdownChangedRef = useRef(opts.onMarkdownChanged);
 	onMarkdownChangedRef.current = opts.onMarkdownChanged;
 
 	const editorRef = useRef(editor);
 	editorRef.current = editor;
+
+	// ---- Streaming insert ---------------------------------------------------
+	// Streams agent-generated markdown into the editor at a tracked position.
+	// Each delta appends to a buffer that is re-parsed as markdown on the next
+	// animation frame. Editor update events are suppressed via the
+	// `preventEditorUpdate` meta so the document's `onChange` handler does not
+	// persist intermediate states.
+	const sessionRef = useRef<InsertSession | null>(null);
+
+	const clampPos = useCallback((ed: TiptapEditor, pos: number): number => {
+		const size = ed.state.doc.content.size;
+		if (pos < 0) return 0;
+		if (pos > size) return size;
+		return pos;
+	}, []);
+
+	const renderBuffer = useCallback((): void => {
+		const ed = editorRef.current;
+		if (!ed || ed.isDestroyed) return;
+		const session = sessionRef.current;
+		if (!session) return;
+
+		const from = clampPos(ed, session.origin);
+		const to = clampPos(ed, session.origin + session.insertedLength);
+		const sizeBefore = ed.state.doc.content.size;
+
+		let tr = ed.state.tr;
+		const json = session.buffer ? ed.markdown?.parse(session.buffer) : null;
+		if (json) {
+			const doc = ed.schema.nodeFromJSON(json);
+			const slice = new Slice(doc.content, 0, 0);
+			tr = tr.replaceRange(from, to, slice);
+		} else {
+			tr = tr.delete(from, to);
+			if (session.buffer) tr = tr.insertText(session.buffer, from);
+		}
+
+		const newInsertedLength = session.insertedLength + (tr.doc.content.size - sizeBefore);
+		const endPos = Math.min(Math.max(from + newInsertedLength, 0), tr.doc.content.size);
+		try {
+			tr = tr.setSelection(TextSelection.near(tr.doc.resolve(endPos), -1));
+		} catch {
+			// Selection placement is best-effort.
+		}
+		tr.setMeta('preventEditorUpdate', true);
+
+		ed.view.dispatch(tr);
+		session.insertedLength = newInsertedLength;
+	}, [clampPos]);
+
+	const cancelPendingFrame = useCallback((): void => {
+		const session = sessionRef.current;
+		if (session?.pendingFrame != null) {
+			cancelAnimationFrame(session.pendingFrame);
+			session.pendingFrame = null;
+		}
+	}, []);
+
+	const scheduleRender = useCallback((): void => {
+		const session = sessionRef.current;
+		if (!session || session.pendingFrame != null) return;
+		session.pendingFrame = requestAnimationFrame(() => {
+			if (sessionRef.current !== session) return;
+			session.pendingFrame = null;
+			renderBuffer();
+		});
+	}, [renderBuffer]);
+
+	const beginInsert = useCallback(
+		(posFrom: number, posTo: number): void => {
+			const ed = editorRef.current;
+			if (!ed || ed.isDestroyed) return;
+			cancelPendingFrame();
+			const from = clampPos(ed, posFrom);
+			const to = clampPos(ed, Math.max(posFrom, posTo));
+			if (to > from) {
+				const tr = ed.state.tr.delete(from, to).setMeta('preventEditorUpdate', true);
+				ed.view.dispatch(tr);
+			}
+			sessionRef.current = {
+				origin: from,
+				insertedLength: 0,
+				buffer: '',
+				pendingFrame: null,
+			};
+		},
+		[clampPos, cancelPendingFrame]
+	);
+
+	const appendDelta = useCallback(
+		(token: string): void => {
+			const session = sessionRef.current;
+			if (!session || !token) return;
+			session.buffer += token;
+			scheduleRender();
+		},
+		[scheduleRender]
+	);
+
+	const commitFinal = useCallback(
+		(content: string): void => {
+			cancelPendingFrame();
+			const session = sessionRef.current;
+			if (!session) return;
+			session.buffer = content;
+			renderBuffer();
+			sessionRef.current = null;
+		},
+		[cancelPendingFrame, renderBuffer]
+	);
+
+	const revertInsert = useCallback((): void => {
+		cancelPendingFrame();
+		const session = sessionRef.current;
+		if (!session) return;
+		const ed = editorRef.current;
+		if (ed && !ed.isDestroyed) {
+			const from = clampPos(ed, session.origin);
+			const to = clampPos(ed, session.origin + session.insertedLength);
+			if (to > from) {
+				const tr = ed.state.tr.delete(from, to).setMeta('preventEditorUpdate', true);
+				ed.view.dispatch(tr);
+			}
+		}
+		sessionRef.current = null;
+	}, [clampPos, cancelPendingFrame]);
+
+	useEffect(() => {
+		return () => {
+			cancelPendingFrame();
+		};
+	}, [cancelPendingFrame]);
 
 	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 	const activeTaskIdRef = useRef<string | null>(null);
