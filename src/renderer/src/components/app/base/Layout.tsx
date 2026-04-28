@@ -64,6 +64,7 @@ import {
 	Pencil,
 	Trash2,
 	FileImage,
+	Copy,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
