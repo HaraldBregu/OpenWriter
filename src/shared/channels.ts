@@ -429,8 +429,4 @@ export interface EventChannelMap {
 	[WorkspaceChannels.filesChanged]: { data: FileEntryChangeEvent };
 	// ---- Images watcher events ----
 	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
-	[ExtensionChannels.registryChanged]: { data: ExtensionRegistrySnapshot };
-	[ExtensionChannels.runtimeChanged]: { data: ExtensionRuntimeChangedPayload };
-	[ExtensionChannels.docPanelsChanged]: { data: ExtensionDocPanelsChangedPayload };
-	[ExtensionChannels.docPanelContentChanged]: { data: ExtensionDocPanelContentChangedPayload };
 }
