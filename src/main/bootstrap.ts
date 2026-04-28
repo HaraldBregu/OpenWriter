@@ -121,6 +121,15 @@ export function bootstrapServices(): BootstrapResult {
 			logger,
 		})
 	);
+	const contentReviewerAgent = new ContentReviewerAgent();
+	taskHandlerRegistry.register(
+		new ContentReviewerTaskHandler({
+			agent: contentReviewerAgent,
+			serviceResolver,
+			modelResolver,
+			logger,
+		})
+	);
 	container.register('taskExecutor', new TaskExecutor(taskHandlerRegistry, eventBus, 10, logger));
 
 	// Agent registry -- feature agents (assistant, rag, ocr).
