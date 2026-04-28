@@ -19,7 +19,7 @@ import {
 	useDocumentAiTasks,
 } from './hooks';
 import type { TaskEvent } from '../../../../shared/types';
-import type { PromptSubmitPayload } from '@shared/index';
+import type { PromptSubmitPayload } from '@/components/app/editor/types';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
 import Layout from './Layout';
