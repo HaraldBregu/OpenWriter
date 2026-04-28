@@ -295,6 +295,8 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const isAiAction = payload.selectedText.length > 0;
 
+console.log('Submitting task with payload:', payload);
+			return 
 			let prompt = payload.prompt;
 			let selectionRange: { from: number; to: number } = ed.state.selection;
 			let action: AiActionType | null = null;
