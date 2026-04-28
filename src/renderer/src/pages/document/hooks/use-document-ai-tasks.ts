@@ -10,7 +10,6 @@ interface InsertSession {
 	origin: number;
 	insertedLength: number;
 	buffer: string;
-	pendingFrame: number | null;
 }
 
 type PromptInputPayload = Extract<PromptSubmitPayload, { files: File[] }>;
