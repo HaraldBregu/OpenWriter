@@ -46,9 +46,3 @@ export interface SearchableResource {
 	icon: LucideIcon;
 }
 
-export interface SearchableExtensionCommand {
-	id: string;
-	title: string;
-	description: string;
-	extensionName: string;
-}
