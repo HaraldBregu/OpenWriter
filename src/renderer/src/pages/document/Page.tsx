@@ -7,7 +7,6 @@ import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import ExtensionPanel from './panels/extension/Panel';
 import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoPopover from './components/DocumentInfoPopover';
 import {
@@ -20,17 +19,10 @@ import {
 	useEditorStreamInsert,
 	useDocumentAiTasks,
 } from './hooks';
-import { useSidebarVisibility } from '@/hooks/use-sidebar-visibility';
-import type {
-	ExtensionDocumentContextSnapshot,
-	ExtensionDocPanelInfo,
-	TaskEvent,
-} from '../../../../shared/types';
+import type { TaskEvent } from '../../../../shared/types';
 import type { PromptSubmitPayload } from '@shared/index';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from '@/components/ui/Resizable';
-import { usePanelRef } from 'react-resizable-panels';
 import Layout from './Layout';
 import {
 	PageContainer,
