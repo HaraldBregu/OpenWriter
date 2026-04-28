@@ -380,6 +380,7 @@ const Editor = React.memo(
 					if (current !== streamingContent) {
 						queueMicrotask(() => {
 							if (editor.isDestroyed) return;
+							console.log('[Editor] setContent (streaming)', streamingContent);
 							editor.commands.setContent(streamingContent || '', {
 								emitUpdate: false,
 								contentType: 'markdown',
