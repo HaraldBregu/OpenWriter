@@ -251,7 +251,9 @@ const Editor = React.memo(
 				},
 				[editor]
 			);
-			handleImageFileInsertRef.current = handleImageFileInsert;
+			useEffect(() => {
+				handleImageFileInsertRef.current = handleImageFileInsert;
+			}, [handleImageFileInsert]);
 
 			// Save an edited image to the document's images/ directory and
 			// return the relative path. Falls back to the data URI when no
