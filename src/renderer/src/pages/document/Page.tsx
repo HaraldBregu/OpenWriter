@@ -565,22 +565,8 @@ function PageContent(): ReactElement {
 								/>
 							)}
 						</PageBody>
-					</div>
-				</ResizablePanel>
-				{activeSidebar && <ResizableHandle />}
-				<ResizablePanel
-					panelRef={sidebarPanelRef}
-					defaultSize="30%"
-					minSize="30%"
-					maxSize="50%"
-					collapsible
-					collapsedSize="0%"
-				>
-					{activeExtensionPanel && id ? (
-						<ExtensionPanel panelId={activeExtensionPanel.id} documentId={id} />
-					) : null}
-				</ResizablePanel>
-			</ResizablePanelGroup>
+				</div>
+			</div>
 			<ErrorDialog
 				open={aiTasks.taskError !== null}
 				onOpenChange={(open) => {
