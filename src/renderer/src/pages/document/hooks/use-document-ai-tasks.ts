@@ -80,8 +80,8 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 	// ---- Streaming insert ---------------------------------------------------
 	// Streams agent-generated markdown into the editor at a tracked position.
-	// Each delta appends to a buffer that is re-parsed as markdown on the next
-	// animation frame. Editor update events are suppressed via the
+	// Each delta appends to a buffer that is re-parsed as markdown and rendered
+	// synchronously. Editor update events are suppressed via the
 	// `preventEditorUpdate` meta so the document's `onChange` handler does not
 	// persist intermediate states.
 	const sessionRef = useRef<InsertSession | null>(null);
@@ -127,29 +127,10 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		session.insertedLength = newInsertedLength;
 	}, [clampPos]);
 
-	const cancelPendingFrame = useCallback((): void => {
-		const session = sessionRef.current;
-		if (session?.pendingFrame != null) {
-			cancelAnimationFrame(session.pendingFrame);
-			session.pendingFrame = null;
-		}
-	}, []);
-
-	const scheduleRender = useCallback((): void => {
-		const session = sessionRef.current;
-		if (!session || session.pendingFrame != null) return;
-		session.pendingFrame = requestAnimationFrame(() => {
-			if (sessionRef.current !== session) return;
-			session.pendingFrame = null;
-			renderBuffer();
-		});
-	}, [renderBuffer]);
-
 	const beginInsert = useCallback(
 		(posFrom: number, posTo: number): void => {
 			const ed = editorRef.current;
 			if (!ed || ed.isDestroyed) return;
-			cancelPendingFrame();
 			const from = clampPos(ed, posFrom);
 			const to = clampPos(ed, Math.max(posFrom, posTo));
 			if (to > from) {
@@ -160,10 +141,9 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 				origin: from,
 				insertedLength: 0,
 				buffer: '',
-				pendingFrame: null,
 			};
 		},
-		[clampPos, cancelPendingFrame]
+		[clampPos]
 	);
 
 	const appendDelta = useCallback(
@@ -171,25 +151,23 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const session = sessionRef.current;
 			if (!session || !token) return;
 			session.buffer += token;
-			scheduleRender();
+			renderBuffer();
 		},
-		[scheduleRender]
+		[renderBuffer]
 	);
 
 	const commitFinal = useCallback(
 		(content: string): void => {
-			cancelPendingFrame();
 			const session = sessionRef.current;
 			if (!session) return;
 			session.buffer = content;
 			renderBuffer();
 			sessionRef.current = null;
 		},
-		[cancelPendingFrame, renderBuffer]
+		[renderBuffer]
 	);
 
 	const revertInsert = useCallback((): void => {
-		cancelPendingFrame();
 		const session = sessionRef.current;
 		if (!session) return;
 		const ed = editorRef.current;
@@ -202,13 +180,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			}
 		}
 		sessionRef.current = null;
-	}, [clampPos, cancelPendingFrame]);
-
-	useEffect(() => {
-		return () => {
-			cancelPendingFrame();
-		};
-	}, [cancelPendingFrame]);
+	}, [clampPos]);
 
 	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
 	const activeTaskIdRef = useRef<string | null>(null);
