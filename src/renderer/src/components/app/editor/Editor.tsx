@@ -13,36 +13,6 @@ import type { PromptSubmitPayload } from '@shared/index';
 
 type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
 
-function getScrollableAncestor(el: HTMLElement | null): HTMLElement | null {
-	let node = el?.parentElement ?? null;
-	while (node) {
-		const style = getComputedStyle(node);
-		const overflowY = style.overflowY;
-		if (
-			(overflowY === 'auto' || overflowY === 'scroll' || overflowY === 'overlay') &&
-			node.scrollHeight > node.clientHeight
-		) {
-			return node;
-		}
-		node = node.parentElement;
-	}
-	return null;
-}
-
-function findPromptDom(editor: TiptapEditor): HTMLElement | null {
-	let pos: number | null = null;
-	editor.state.doc.descendants((node, p) => {
-		if (node.type.name === 'contentGenerator') {
-			pos = p;
-			return false;
-		}
-		return true;
-	});
-	if (pos == null) return null;
-	const dom = editor.view.nodeDOM(pos);
-	return dom instanceof HTMLElement ? dom : null;
-}
-
 export interface ImageInsertOptions {
 	src: string;
 	alt?: string;
