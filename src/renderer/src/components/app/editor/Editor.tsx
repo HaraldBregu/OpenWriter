@@ -158,9 +158,7 @@ const Editor = React.memo(
 						if (transaction.getMeta('preventEditorUpdate')) return;
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
-							const md = ed.getMarkdown();
-							lastEmittedRef.current = md;
-							onChangeRef.current(md);
+							onChangeRef.current(ed.getMarkdown());
 						}, 100);
 					},
 					editorProps: {
