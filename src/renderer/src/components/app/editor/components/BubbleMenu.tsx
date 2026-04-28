@@ -166,6 +166,27 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		setCustomPrompt('');
 	}, [customPrompt, handleAiAction]);
 
+	const handleCopy = useCallback(() => {
+		const { from, to } = editor.state.selection;
+		if (from === to) return;
+		const text = editor.state.doc.textBetween(from, to, '\n\n');
+		void navigator.clipboard.writeText(text);
+	}, [editor]);
+
+	const handleCut = useCallback(() => {
+		const { from, to } = editor.state.selection;
+		if (from === to) return;
+		const text = editor.state.doc.textBetween(from, to, '\n\n');
+		void navigator.clipboard.writeText(text);
+		editor.chain().focus().deleteSelection().run();
+	}, [editor]);
+
+	const handleDelete = useCallback(() => {
+		const { from, to } = editor.state.selection;
+		if (from === to) return;
+		editor.chain().focus().deleteSelection().run();
+	}, [editor]);
+
 	const handlePluginUpdate = useCallback(
 		({
 			open: nextOpen,
