@@ -1,6 +1,5 @@
 import type { DocumentState } from './state';
 import type { DocumentAction } from './actions';
-import { chatReducer } from '../panels/chat/context';
 
 export function documentReducer(state: DocumentState, action: DocumentAction): DocumentState {
 	switch (action.type) {
@@ -65,19 +64,6 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 				sidebarOpen: nextAgentic ? false : state.sidebarOpen,
 			};
 		}
-
-		case 'CHAT_SESSIONS_LOADED':
-			return { ...state, chatSessions: action.sessions };
-
-		case 'CHAT_MESSAGE_ADDED':
-		case 'CHAT_MESSAGE_INSERTED_BEFORE':
-		case 'CHAT_MESSAGE_UPDATED':
-		case 'CHAT_ACTIVE_TASK_SET':
-		case 'CHAT_ACTIVE_MESSAGE_SET':
-		case 'CHAT_MESSAGES_LOADED':
-		case 'CHAT_RESET':
-		case 'CHAT_SESSION_STARTED':
-			return { ...state, chat: chatReducer(state.chat, action) };
 
 		default: {
 			const _exhaustive: never = action;
