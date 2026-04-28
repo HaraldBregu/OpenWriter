@@ -585,43 +585,6 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
 	return { from: v.from, to: v.to };
 }
 
-function buildExtensionDocumentContext(
-	documentId: string,
-	markdown: string,
-	selection: { from: number; to: number } | null,
-	editor: TiptapEditor
-): ExtensionDocumentContextSnapshot {
-	const docSize = editor.state.doc.content.size;
-	const clampedFrom =
-		selection ? Math.max(0, Math.min(selection.from, docSize)) : null;
-	const clampedTo = selection ? Math.max(0, Math.min(selection.to, docSize)) : null;
-	const selectionSnapshot =
-		clampedFrom !== null && clampedTo !== null && clampedFrom !== clampedTo
-			? {
-				from: clampedFrom,
-				to: clampedTo,
-				text: editor.state.doc.textBetween(clampedFrom, clampedTo, '\n\n'),
-			}
-			: null;
-
-	const activeMarks = Array.from(
-		new Set(editor.state.selection.$from.marks().map((mark) => mark.type.name))
-	).sort();
-
-	return {
-		documentId,
-		markdown,
-		selection: selectionSnapshot,
-		editorState: {
-			isFocused: editor.isFocused,
-			isEditable: editor.isEditable,
-			isEmpty: editor.isEmpty,
-			activeNode: editor.state.selection.$from.parent.type.name,
-			activeMarks,
-		},
-	};
-}
-
 export default function Page(): ReactElement {
 	return (
 		<Layout>
