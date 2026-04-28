@@ -1,6 +1,5 @@
 import { BrowserWindow } from 'electron';
 import type { ThemeMode } from '../../shared/types';
-import type { ExtensionDocumentSnapshot } from '../../../packages/openwriter-extension-types/src/index';
 
 /**
  * Base event structure for main process events
