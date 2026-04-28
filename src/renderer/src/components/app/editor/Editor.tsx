@@ -581,9 +581,9 @@ const Editor = React.memo(
 			);
 
 			const handleAiAction = useCallback(
-				(action: AiActionPayload) => {
+				(payload: PromptSubmitPayload) => {
 					if (!editor || editor.isDestroyed) return;
-					onPromptSubmitRef.current?.(action, editor);
+					onPromptSubmitRef.current?.(payload);
 				},
 				[editor]
 			);
