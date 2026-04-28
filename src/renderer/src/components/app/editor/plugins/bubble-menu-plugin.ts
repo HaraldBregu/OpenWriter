@@ -147,6 +147,10 @@ export class BubbleMenuView {
 			this.emitClosed();
 			return;
 		}
+		if (this.isMouseDown) {
+			this.emitClosed();
+			return;
+		}
 		this.emitOpen();
 	};
 
