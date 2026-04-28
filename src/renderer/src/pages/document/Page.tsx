@@ -121,68 +121,6 @@ function PageContent(): ReactElement {
 	}, [loadImages]);
 
 	useEffect(() => {
-		void loadExtensionDocPanels();
-	}, [loadExtensionDocPanels]);
-
-	useEffect(() => {
-		if (!editor || editor.isDestroyed) return;
-
-		const bump = (): void => {
-			setEditorContextVersion((current) => current + 1);
-		};
-
-		editor.on('selectionUpdate', bump);
-		editor.on('transaction', bump);
-		editor.on('focus', bump);
-		editor.on('blur', bump);
-
-		return () => {
-			editor.off('selectionUpdate', bump);
-			editor.off('transaction', bump);
-			editor.off('focus', bump);
-			editor.off('blur', bump);
-		};
-	}, [editor]);
-
-	const extensionDocumentContext = useMemo<ExtensionDocumentContextSnapshot | null>(() => {
-		if (!id || !editor || editor.isDestroyed) return null;
-		return buildExtensionDocumentContext(id, content, selection, editor);
-	}, [content, editor, editorContextVersion, id, selection]);
-
-	const lastPublishedExtensionContextRef = useRef<string>('');
-	useEffect(() => {
-		if (!id || !extensionDocumentContext) return;
-
-		const serialized = JSON.stringify(extensionDocumentContext);
-		if (serialized === lastPublishedExtensionContextRef.current) {
-			return;
-		}
-
-		const timer = window.setTimeout(() => {
-			lastPublishedExtensionContextRef.current = serialized;
-			void window.extensions.setDocumentContext(id, extensionDocumentContext);
-		}, 120);
-
-		return () => {
-			window.clearTimeout(timer);
-		};
-	}, [extensionDocumentContext, id]);
-
-	useEffect(() => {
-		const unsubscribeRegistry = window.extensions.onRegistryChanged(() => {
-			void loadExtensionDocPanels();
-		});
-		const unsubscribeDocPanels = window.extensions.onDocPanelsChanged(() => {
-			void loadExtensionDocPanels();
-		});
-
-		return () => {
-			unsubscribeRegistry();
-			unsubscribeDocPanels();
-		};
-	}, [loadExtensionDocPanels]);
-
-	useEffect(() => {
 		if (!id) return;
 
 		const unsubscribe = window.workspace.onOutputFileChange((event) => {
