@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Slice } from '@tiptap/pm/model';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
-import type { AiActionType, PromptSubmitPayload } from '@shared/index';
+import type { AiActionType, PromptSubmitPayload } from '@/components/app/editor/types';
 import type { EditorActions } from './use-editor';
 
 interface InsertSession {
@@ -11,19 +11,23 @@ interface InsertSession {
 	buffer: string;
 }
 
-type PromptInputPayload = Extract<PromptSubmitPayload, { files: File[] }>;
-type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
-
 const TASK_TYPE = 'content-writer';
+
+// Selection-bound bubble-menu action keys. When `payload.prompt` matches one,
+// the bubble flow runs with that action highlighted in the spinner; otherwise
+// (still selection-bound) it is treated as a custom prompt.
+const KNOWN_AI_ACTIONS = new Set<AiActionType>([
+	'improve-selected-text-writing',
+	'fix-selected-text-grammar',
+]);
 
 export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
 	editorActions: EditorActions;
-	selection: { from: number; to: number } | null;
 	/**
 	 * Caller-owned busy state (e.g. preexisting task on this document, document-
-	 * scoped task from another window). The hook's submit guards combine this
+	 * scoped task from another window). The hook's submit guard combines this
 	 * with its own running state.
 	 */
 	isExternallyBusy: boolean;
@@ -38,15 +42,17 @@ export interface UseDocumentAiTasks {
 	/** True while a prompt task or AI action task is in flight. */
 	isRunning: boolean;
 	/** Type of the AI action currently running, used by the BubbleMenu spinner. */
-	activeAiAction: AiActionPayload['type'] | null;
+	activeAiAction: AiActionType | null;
 	/** Latest captured task failure message; null when no error to surface. */
 	taskError: string | null;
 	/** Clears `taskError` (called when the error dialog is dismissed). */
 	dismissTaskError: () => void;
-	/** Submit a prompt typed in the editor's content-generator block. */
-	submitPrompt: (payload: PromptInputPayload, editor: TiptapEditor) => Promise<void>;
-	/** Submit a bubble-menu AI action (fix-grammar / improve-writing / custom). */
-	submitAiAction: (action: AiActionPayload) => Promise<void>;
+	/**
+	 * Routes a payload to the right flow:
+	 *  - selectedText empty   → prompt flow (streams into content-generator).
+	 *  - selectedText present → AI-action flow (replaces the selection range).
+	 */
+	submit: (payload: PromptSubmitPayload) => Promise<void>;
 }
 
 function extractTaskSelection(value: unknown): { from: number; to: number } | null {
