@@ -462,22 +462,10 @@ function PageContent(): ReactElement {
 		await handleCancelPreexistingTask();
 	}, [preexistingTaskContent, preexistingTaskSelection, editor, handleCancelPreexistingTask]);
 
-	const activeExtensionPanel = useMemo(
-		() => extensionDocPanels.find((panel) => panel.id === activeSidebar) ?? null,
-		[activeSidebar, extensionDocPanels]
-	);
-
-	useEffect(() => {
-		if (!activeSidebar) return;
-		if (extensionDocPanels.some((panel) => panel.id === activeSidebar)) return;
-		setActiveSidebar(null);
-	}, [activeSidebar, extensionDocPanels, setActiveSidebar]);
-
 	return (
 		<PageContainer>
-			<ResizablePanelGroup orientation="horizontal" className="flex-1 min-h-0">
-				<ResizablePanel defaultSize="70%" minSize="40%">
-					<div className="flex h-full flex-col">
+			<div className="flex-1 min-h-0">
+				<div className="flex h-full flex-col">
 						<PageHeader>
 							<PageHeaderTitle>
 								<Input
