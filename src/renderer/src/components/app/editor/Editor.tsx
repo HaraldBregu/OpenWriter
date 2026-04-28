@@ -55,7 +55,7 @@ export interface EditorProps {
 	disabled?: boolean;
 	id?: string;
 	streamingContent?: string;
-	onPromptSubmit?: (payload: PromptSubmitPayload, editor: TiptapEditor) => void;
+	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onInsertContent?: () => void;
 	activeAiAction?: AiActionType | null;
 	/** Document UUID — needed to save image files into the document folder. */
