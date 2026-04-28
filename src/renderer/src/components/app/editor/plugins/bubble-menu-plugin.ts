@@ -30,7 +30,6 @@ export class BubbleMenuView {
 	private updateDebounceTimer: ReturnType<typeof setTimeout> | undefined;
 	private shouldShow: BubbleMenuShouldShow;
 	private onUpdate: BubbleMenuPluginProps['onUpdate'];
-	private isMouseDown = false;
 
 	constructor({ editor, view, updateDelay = 250, shouldShow, onUpdate }: BubbleMenuViewProps) {
 		this.editor = editor;
@@ -39,8 +38,6 @@ export class BubbleMenuView {
 		this.onUpdate = onUpdate;
 
 		this.view.dom.addEventListener('dragstart', this.dragstartHandler);
-		this.view.dom.addEventListener('mousedown', this.mousedownHandler);
-		document.addEventListener('mouseup', this.mouseupHandler, true);
 		this.editor.on('focus', this.focusHandler);
 		this.editor.on('blur', this.blurHandler);
 
@@ -56,18 +53,6 @@ export class BubbleMenuView {
 
 	dragstartHandler = (): void => {
 		this.emitClosed();
-	};
-
-	mousedownHandler = (): void => {
-		this.isMouseDown = true;
-		this.emitClosed();
-	};
-
-	mouseupHandler = (): void => {
-		if (!this.isMouseDown) return;
-		this.isMouseDown = false;
-		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
-		this.runUpdate(this.editor.view, true, false);
 	};
 
 	focusHandler = (): void => {
@@ -148,18 +133,12 @@ export class BubbleMenuView {
 			this.emitClosed();
 			return;
 		}
-		if (this.isMouseDown) {
-			this.emitClosed();
-			return;
-		}
 		this.emitOpen();
 	};
 
 	destroy(): void {
 		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
 		this.view.dom.removeEventListener('dragstart', this.dragstartHandler);
-		this.view.dom.removeEventListener('mousedown', this.mousedownHandler);
-		document.removeEventListener('mouseup', this.mouseupHandler, true);
 		this.editor.off('focus', this.focusHandler);
 		this.editor.off('blur', this.blurHandler);
 	}

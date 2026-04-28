@@ -106,19 +106,18 @@ const Editor = React.memo(
 			ref
 		) => {
 			const onChangeRef = useRef(onChange);
-			onChangeRef.current = onChange;
-
 			const onSelectionChangeRef = useRef(onSelectionChange);
-			onSelectionChangeRef.current = onSelectionChange;
-
 			const onPromptSubmitRef = useRef(onPromptSubmit);
-			onPromptSubmitRef.current = onPromptSubmit;
-
 			const documentIdRef = useRef(documentId);
-			documentIdRef.current = documentId;
-
 			const onEditorReadyRef = useRef(onEditorReady);
-			onEditorReadyRef.current = onEditorReady;
+
+			useEffect(() => {
+				onChangeRef.current = onChange;
+				onSelectionChangeRef.current = onSelectionChange;
+				onPromptSubmitRef.current = onPromptSubmit;
+				documentIdRef.current = documentId;
+				onEditorReadyRef.current = onEditorReady;
+			});
 
 			// Stable ref used by the extensions useMemo (which runs once).
 			// Updated after editor is initialised so it always points at the
