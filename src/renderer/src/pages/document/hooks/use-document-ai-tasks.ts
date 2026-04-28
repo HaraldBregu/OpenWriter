@@ -227,14 +227,14 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	// ---- Prompt-flow stream handlers ----------------------------------------
 	const handleDelta = useCallback(
 		(token: string) => {
-			editorInsert.appendDelta(token);
+			appendDelta(token);
 		},
-		[editorInsert]
+		[appendDelta]
 	);
 
 	const handleCompleted = useCallback(
 		(completedContent: string) => {
-			editorInsert.commitFinal(completedContent);
+			commitFinal(completedContent);
 			editorActions.hideLoading();
 			editorActions.enable();
 			editorActions.hidePromptStatusBar();
@@ -243,15 +243,15 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (!ed || ed.isDestroyed) return;
 			onMarkdownChangedRef.current(ed.getMarkdown());
 		},
-		[editorInsert, editorActions]
+		[commitFinal, editorActions]
 	);
 
 	const handleCancelOrError = useCallback(() => {
-		editorInsert.revert();
+		revertInsert();
 		editorActions.hideLoading();
 		editorActions.enable();
 		editorActions.hidePromptStatusBar();
-	}, [editorInsert, editorActions]);
+	}, [revertInsert, editorActions]);
 
 	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
 	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
