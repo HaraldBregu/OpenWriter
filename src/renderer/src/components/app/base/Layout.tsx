@@ -202,6 +202,29 @@ function Container({ children }: LayoutProps) {
 		setPendingDelete(doc);
 	}, []);
 
+	const handleDuplicateDocument = useCallback(
+		async (doc: { id: string; title: string }) => {
+			const original = await window.workspace.loadOutput({ type: 'documents', id: doc.id });
+			if (!original) return;
+			const duplicateTitle = doc.title ? `${doc.title} (Copy)` : '';
+			const result = await window.workspace.saveOutput({
+				type: 'documents',
+				content: original.content,
+				metadata: { title: duplicateTitle },
+			});
+			dispatch(
+				documentAdded({
+					id: result.id,
+					title: duplicateTitle,
+					path: result.path,
+					createdAt: Date.now(),
+					updatedAt: Date.now(),
+				})
+			);
+		},
+		[dispatch]
+	);
+
 	const handleDocumentKeyDown = useCallback(
 		(event: React.KeyboardEvent, doc: { id: string; title: string }) => {
 			if (event.key === 'Backspace' || event.key === 'Delete') {
