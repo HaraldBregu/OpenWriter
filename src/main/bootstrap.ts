@@ -37,10 +37,7 @@ import {
 	ContentReviewerAgent,
 	RagAgent,
 	OcrAgent,
-	TextGeneratorV1Agent,
-	TextGeneratorV2Agent,
 	TranscriptionAgent,
-	TextWriterAgent,
 } from './agents';
 import {
 	DemoTaskHandler,
@@ -137,9 +134,6 @@ export function bootstrapServices(): BootstrapResult {
 	// dropping a folder under src/main/agents and registering it here.
 	const agentRegistry = new AgentRegistry();
 	agentRegistry.register(new AssistantAgent());
-	agentRegistry.register(new TextWriterAgent());
-	agentRegistry.register(new TextGeneratorV1Agent());
-	agentRegistry.register(new TextGeneratorV2Agent());
 	agentRegistry.register(contentWriterAgent);
 	agentRegistry.register(contentReviewerAgent);
 	agentRegistry.register(new RagAgent());
