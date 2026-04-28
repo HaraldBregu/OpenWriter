@@ -209,43 +209,6 @@ export interface AppApi {
 	onOpenReduxDialog: (callback: () => void) => () => void;
 }
 
-export interface ExtensionsApi {
-	list: () => Promise<ExtensionRuntimeInfo[]>;
-	getState: (extensionId: string) => Promise<ExtensionRuntimeState>;
-	getCommands: () => Promise<ExtensionCommandInfo[]>;
-	getDocPanels: (documentId: string) => Promise<ExtensionDocPanelInfo[]>;
-	getDocPanelContent: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
-	refreshDocPanel: (panelId: string, documentId: string) => Promise<ExtensionDocPanelContent>;
-	getPreferences: (extensionId: string) => Promise<{
-		definitions: ExtensionPreferenceContribution[];
-		values: Record<string, unknown>;
-	}>;
-	setPreference: (extensionId: string, key: string, value: unknown) => Promise<void>;
-	installLocal: () => Promise<ExtensionRuntimeInfo | null>;
-	executeCommand: (
-		commandId: string,
-		payload?: unknown
-	) => Promise<ExtensionCommandExecutionResult>;
-	executeDocPanelAction: (
-		commandId: string,
-		payload?: unknown
-	) => Promise<ExtensionCommandExecutionResult>;
-	setEnabled: (extensionId: string, enabled: boolean) => Promise<void>;
-	reload: (extensionId: string) => Promise<void>;
-	setActiveDocument: (documentId: string | null) => Promise<void>;
-	setDocumentContext: (
-		documentId: string,
-		context: ExtensionDocumentContextSnapshot
-	) => Promise<void>;
-	openFolder: () => Promise<void>;
-	onRegistryChanged: (callback: (payload: ExtensionRegistrySnapshot) => void) => () => void;
-	onRuntimeChanged: (callback: (payload: ExtensionRuntimeChangedPayload) => void) => () => void;
-	onDocPanelsChanged: (callback: (payload: ExtensionDocPanelsChangedPayload) => void) => () => void;
-	onDocPanelContentChanged: (
-		callback: (payload: ExtensionDocPanelContentChangedPayload) => void
-	) => () => void;
-}
-
 /** Workspace folder selection, recent workspaces, and document/directory/output management */
 export interface WorkspaceApi {
 	selectFolder: () => Promise<string | null>;
