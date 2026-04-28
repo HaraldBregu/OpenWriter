@@ -66,7 +66,8 @@ export class BubbleMenuView {
 	mouseupHandler = (): void => {
 		if (!this.isMouseDown) return;
 		this.isMouseDown = false;
-		this.update(this.editor.view);
+		if (this.updateDebounceTimer) clearTimeout(this.updateDebounceTimer);
+		this.runUpdate(this.editor.view, true, false);
 	};
 
 	focusHandler = (): void => {
