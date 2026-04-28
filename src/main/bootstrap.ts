@@ -141,6 +141,7 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new TextGeneratorV1Agent());
 	agentRegistry.register(new TextGeneratorV2Agent());
 	agentRegistry.register(contentWriterAgent);
+	agentRegistry.register(contentReviewerAgent);
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
 	agentRegistry.register(new TranscriptionAgent());
