@@ -1,4 +1,4 @@
-import { ipcMain, dialog, shell, BrowserWindow } from 'electron';
+import { ipcMain, dialog, shell } from 'electron';
 import type { IpcMainInvokeEvent, FileFilter } from 'electron';
 import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
