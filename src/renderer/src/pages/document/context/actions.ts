@@ -1,6 +1,4 @@
 import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
-import type { ChatAction } from '../panels/chat/context';
-import type { ChatSessionListItem } from '../panels/chat/shared';
 
 export type DocumentAction =
 	| { type: 'LOAD_STARTED' }
@@ -14,6 +12,4 @@ export type DocumentAction =
 	| { type: 'TRASH_STARTED' }
 	| { type: 'TRASH_FAILED' }
 	| { type: 'SIDEBAR_TOGGLED' }
-	| { type: 'AGENTIC_SIDEBAR_TOGGLED' }
-	| { type: 'CHAT_SESSIONS_LOADED'; sessions: ChatSessionListItem[] }
-	| ChatAction;
+	| { type: 'AGENTIC_SIDEBAR_TOGGLED' };
