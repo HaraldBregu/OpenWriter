@@ -7,7 +7,7 @@ import {
 	TaskChannels,
 	LogChannels,
 } from '../shared/channels';
-import type { AppApi, ExtensionsApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
+import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
