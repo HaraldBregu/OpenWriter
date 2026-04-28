@@ -45,8 +45,6 @@ import {
 	DemoTaskHandler,
 	ContentWriterTaskHandler,
 } from './task/handlers';
-// Extension subsystem disabled — see whenReady() in src/main/index.ts.
-// import { ExtensionManager, ExtensionsIpc } from './extensions';
 
 // IPC modules
 import type { IpcModule } from './ipc';
