@@ -58,6 +58,17 @@ export class BubbleMenuView {
 		this.emitClosed();
 	};
 
+	mousedownHandler = (): void => {
+		this.isMouseDown = true;
+		this.emitClosed();
+	};
+
+	mouseupHandler = (): void => {
+		if (!this.isMouseDown) return;
+		this.isMouseDown = false;
+		this.update(this.editor.view);
+	};
+
 	focusHandler = (): void => {
 		setTimeout(() => this.update(this.editor.view));
 	};
