@@ -185,8 +185,6 @@ app.on('open-file', (event, filePath) => {
 });
 
 app.whenReady().then(async () => {
-	// Extension subsystem disabled — no host process is spawned.
-
 	// Serve local files via the local-resource:// protocol so the renderer
 	// can display images stored in document folders regardless of its origin.
 	protocol.handle('local-resource', (request) => {
