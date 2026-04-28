@@ -101,6 +101,11 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 	const ensureScrollAnimation = useCallback((): void => {
 		if (scrollAnimationRef.current != null) return;
 		const tick = (): void => {
+			if (userScrolledAwayRef.current) {
+				scrollAnimationRef.current = null;
+				scrollTargetRef.current = null;
+				return;
+			}
 			const target = scrollTargetRef.current;
 			if (!target) {
 				scrollAnimationRef.current = null;
@@ -109,12 +114,15 @@ export function useEditorStreamInsert(): EditorStreamInsert {
 			const current = target.el.scrollTop;
 			const diff = target.top - current;
 			if (Math.abs(diff) < 0.5) {
+				expectedScrollTopRef.current = target.top;
 				target.el.scrollTop = target.top;
 				scrollAnimationRef.current = null;
 				scrollTargetRef.current = null;
 				return;
 			}
-			target.el.scrollTop = current + diff * 0.18;
+			const next = current + diff * 0.18;
+			expectedScrollTopRef.current = next;
+			target.el.scrollTop = next;
 			scrollAnimationRef.current = requestAnimationFrame(tick);
 		};
 		scrollAnimationRef.current = requestAnimationFrame(tick);
