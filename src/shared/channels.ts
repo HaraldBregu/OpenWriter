@@ -53,18 +53,6 @@ import type {
 	SkillInfo,
 	Theme,
 	Service,
-	ExtensionCommandExecutionResult,
-	ExtensionCommandInfo,
-	ExtensionDocPanelContent,
-	ExtensionDocPanelContentChangedPayload,
-	ExtensionDocPanelInfo,
-	ExtensionDocPanelsChangedPayload,
-	ExtensionDocumentContextSnapshot,
-	ExtensionPreferenceContribution,
-	ExtensionRegistrySnapshot,
-	ExtensionRuntimeChangedPayload,
-	ExtensionRuntimeInfo,
-	ExtensionRuntimeState,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
