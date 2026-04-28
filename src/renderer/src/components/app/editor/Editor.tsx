@@ -275,18 +275,6 @@ const Editor = React.memo(
 			useImperativeHandle(ref, () => {
 				const el = rootRef.current!;
 				return Object.assign(el, {
-					setContent(
-						markdown: string,
-						options: { preventEditorUpdate?: boolean } = {
-							preventEditorUpdate: false,
-						}
-					) {
-						if (!editor || editor.isDestroyed) return;
-						editor.commands.setContent(markdown, {
-							emitUpdate: !(options.preventEditorUpdate ?? false),
-							contentType: 'markdown',
-						});
-					},
 					insertText(
 						text: string,
 						options: { preventEditorUpdate: boolean } = {
