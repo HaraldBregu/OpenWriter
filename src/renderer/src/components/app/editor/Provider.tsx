@@ -10,7 +10,7 @@ interface ProviderProps {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	onInsertContent?: () => void;
-	onImageInsert: (result: { src: string; alt: string; title: string }) => void;
+	onImageInsert?: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
 }
 
