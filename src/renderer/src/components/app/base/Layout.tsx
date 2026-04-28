@@ -242,13 +242,16 @@ function Container({ children }: LayoutProps) {
 			event.stopPropagation();
 			const action = await window.app.showContextMenu([
 				{ id: 'rename', label: t('menu.rename', 'Rename') },
+				{ id: 'duplicate', label: t('menu.duplicate', 'Duplicate') },
 				{ id: 'delete', label: t('menu.delete', 'Delete'), destructive: true },
 			]);
 			if (action === 'delete') {
 				requestDeleteDocument(doc);
+			} else if (action === 'duplicate') {
+				handleDuplicateDocument(doc);
 			}
 		},
-		[requestDeleteDocument, t]
+		[requestDeleteDocument, handleDuplicateDocument, t]
 	);
 
 	const handleConfirmDelete = useCallback(async () => {
