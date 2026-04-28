@@ -20,7 +20,6 @@
 		"typecheck:node": "tsc --noEmit -p tsconfig.node.json --composite false",
 		"typecheck:web": "tsc --noEmit -p tsconfig.web.json --composite false",
 		"typecheck": "yarn typecheck:node && yarn typecheck:web",
-		"build:extension-sdk": "yarn workspace @openwriter/extension-types build && yarn workspace @openwriter/extension-sdk build",
 		"build": "cross-env NODE_ENV=production yarn typecheck && electron-vite build",
 		"build:dev": "cross-env NODE_ENV=development yarn typecheck && electron-vite build --mode development",
 		"build:staging": "cross-env NODE_ENV=staging yarn typecheck && electron-vite build --mode staging",
