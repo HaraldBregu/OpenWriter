@@ -13,8 +13,6 @@ export interface WorkspaceInfo {
 export interface StoreSchema {
 	services: Service[];
 	agents: AgentSettings[];
-	extensionEnabled: Record<string, boolean>;
-	extensionPreferences: Record<string, Record<string, unknown>>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
