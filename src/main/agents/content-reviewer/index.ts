@@ -1,5 +1,5 @@
-export { ContentReviewerAgent } from './content-reviewer-agent';
-export type { ContentReviewerAgentOptions } from './content-reviewer-agent';
+export { ContentReviewerAgent } from './agent';
+export type { ContentReviewerAgentOptions } from './agent';
 export type {
 	ContentReviewerAgentInput,
 	ContentReviewerAgentOutput,
