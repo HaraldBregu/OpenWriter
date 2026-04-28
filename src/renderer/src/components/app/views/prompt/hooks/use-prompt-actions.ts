@@ -170,9 +170,9 @@ export function usePromptActions({
 				!trimmedPrompt && files.length > 0
 					? 'Create an image inspired by the uploaded reference images.'
 					: trimmedPrompt;
-			options.onPromptSubmit({ prompt: effectivePrompt, files, editor });
+			options.onPromptSubmit({ prompt: effectivePrompt, selectedText: '', files, editor });
 		} else {
-			options.onPromptSubmit({ prompt: trimmedPrompt, files: [], editor });
+			options.onPromptSubmit({ prompt: trimmedPrompt, selectedText: '', files: [], editor });
 		}
 	}, [agentId, editor, files, prompt, deleteNode, options, updateAttributes]);
 
