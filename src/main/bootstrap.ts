@@ -158,7 +158,6 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 
 	const ipcModules: IpcModule[] = [
 		new AppIpc(),
-		// new ExtensionsIpc(), — extension subsystem disabled
 		new WorkspaceIpc(),
 		new TaskManagerIpc(),
 		new WindowIpc(),
