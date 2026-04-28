@@ -114,18 +114,6 @@ export type {
 	CustomThemeInfo,
 	Theme,
 	SkillInfo,
-	ExtensionCommandExecutionResult,
-	ExtensionCommandInfo,
-	ExtensionDocPanelContent,
-	ExtensionDocPanelContentChangedPayload,
-	ExtensionDocPanelInfo,
-	ExtensionDocPanelsChangedPayload,
-	ExtensionDocumentContextSnapshot,
-	ExtensionPreferenceContribution,
-	ExtensionRegistrySnapshot,
-	ExtensionRuntimeChangedPayload,
-	ExtensionRuntimeInfo,
-	ExtensionRuntimeState,
 };
 export type { ShortcutId } from '../shared/shortcuts';
 
