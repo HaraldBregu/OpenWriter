@@ -211,7 +211,6 @@ const Editor = React.memo(
 
 				return () => {
 					editor.off('selectionUpdate', emitSelection);
-					onSelectionChangeRef.current?.(null);
 				};
 			}, [editor]);
 
