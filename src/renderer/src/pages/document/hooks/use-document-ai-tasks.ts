@@ -167,7 +167,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	activeTaskIdRef.current = activeTaskId;
 
 	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
-	const [activeAiAction, setActiveAiAction] = useState<AiActionPayload['type'] | null>(null);
+	const [activeAiAction, setActiveAiAction] = useState<AiActionType | null>(null);
 	const [taskError, setTaskError] = useState<string | null>(null);
 
 	const isRunning = activeTaskId !== null || aiActionTaskId !== null;
