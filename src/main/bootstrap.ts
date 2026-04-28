@@ -137,18 +137,19 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(new TranscriptionAgent());
 	container.register('agentRegistry', agentRegistry);
 
-	container.register(
-		'extensionManager',
-		new ExtensionManager({
-			container,
-			eventBus,
-			logger,
-			store: storeService,
-			windowContextManager,
-			taskExecutor: container.get<TaskExecutor>('taskExecutor'),
-			hostEntryPath: path.join(__dirname, 'extension-host.js'),
-		})
-	);
+	// Extension subsystem disabled — no host process spawn, no IPC handlers.
+	// container.register(
+	// 	'extensionManager',
+	// 	new ExtensionManager({
+	// 		container,
+	// 		eventBus,
+	// 		logger,
+	// 		store: storeService,
+	// 		windowContextManager,
+	// 		taskExecutor: container.get<TaskExecutor>('taskExecutor'),
+	// 		hostEntryPath: path.join(__dirname, 'extension-host.js'),
+	// 	})
+	// );
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
