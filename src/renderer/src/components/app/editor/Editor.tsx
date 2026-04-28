@@ -134,8 +134,6 @@ const Editor = React.memo(
 				[]
 			);
 
-			const lastEmittedRef = useRef<string>('');
-			const lastExternalValueVersionRef = useRef(externalValueVersion);
 			const emitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 			const initialValueRef = useRef(value);
 
