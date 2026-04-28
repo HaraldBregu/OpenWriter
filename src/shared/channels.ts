@@ -341,53 +341,6 @@ export interface InvokeChannelMap {
 	[AppChannels.setTrayEnabled]: { args: [enabled: boolean]; result: void };
 	[AppChannels.getTrayEnabled]: { args: []; result: boolean };
 
-	// ---- Extensions (IpcResult-wrapped) ----
-	[ExtensionChannels.list]: { args: []; result: ExtensionRuntimeInfo[] };
-	[ExtensionChannels.getState]: { args: [extensionId: string]; result: ExtensionRuntimeState };
-	[ExtensionChannels.getCommands]: { args: []; result: ExtensionCommandInfo[] };
-	[ExtensionChannels.executeCommand]: {
-		args: [commandId: string, payload?: unknown];
-		result: ExtensionCommandExecutionResult;
-	};
-	[ExtensionChannels.getDocPanels]: {
-		args: [documentId: string];
-		result: ExtensionDocPanelInfo[];
-	};
-	[ExtensionChannels.getDocPanelContent]: {
-		args: [panelId: string, documentId: string];
-		result: ExtensionDocPanelContent;
-	};
-	[ExtensionChannels.refreshDocPanel]: {
-		args: [panelId: string, documentId: string];
-		result: ExtensionDocPanelContent;
-	};
-	[ExtensionChannels.getPreferences]: {
-		args: [extensionId: string];
-		result: {
-			definitions: ExtensionPreferenceContribution[];
-			values: Record<string, unknown>;
-		};
-	};
-	[ExtensionChannels.setPreference]: {
-		args: [extensionId: string, key: string, value: unknown];
-		result: void;
-	};
-	[ExtensionChannels.installLocal]: {
-		args: [];
-		result: ExtensionRuntimeInfo | null;
-	};
-	[ExtensionChannels.setEnabled]: {
-		args: [extensionId: string, enabled: boolean];
-		result: void;
-	};
-	[ExtensionChannels.reload]: { args: [extensionId: string]; result: void };
-	[ExtensionChannels.setActiveDocument]: { args: [documentId: string | null]; result: void };
-	[ExtensionChannels.setDocumentContext]: {
-		args: [documentId: string, context: ExtensionDocumentContextSnapshot];
-		result: void;
-	};
-	[ExtensionChannels.openFolder]: { args: []; result: void };
-
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
