@@ -343,12 +343,12 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const before = sliceToMarkdown(0, from);
 			const after = sliceToMarkdown(to, docSize);
 
-			const prompt = [
-				`<instruction>${payload.prompt}</instruction>\n`,
-				`<before>\n${before}\n</before>`,
-				`<selection>\n${payload.selectedText}\n</selection>`,
-				`<after>\n${after}\n</after>`,
-			].join('\n\n');
+			const prompt = buildReviewPrompt({
+				textBefore: before,
+				selectedText: payload.selectedText,
+				textAfter: after,
+				userInstruction: payload.prompt,
+			});
 
 			console.log('Constructed prompt: ', prompt);
 			const result = await window.task.submit({
