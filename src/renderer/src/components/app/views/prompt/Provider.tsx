@@ -4,7 +4,7 @@ import { TextSelection } from '@tiptap/pm/state';
 import { contentGeneratorReducer } from './context/reducer';
 import { DEFAULT_TEXT_MODEL_ID, IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
 import { usePromptActions, useTextareaSetup } from './hooks';
-import { PromptOptions } from '@shared/index';
+import type { PromptOptions } from '../../editor/extensions/prompt-extension';
 import { Context, ContextValue, State } from './context';
 
 type ContentGeneratorAgentId = 'text' | 'image';
