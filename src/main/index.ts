@@ -39,6 +39,7 @@ import {
 	setupAppLifecycle,
 	setupEventLogging,
 	setupProcessSafetyNet,
+	setupMemoryMonitor,
 	cleanup,
 	writeCrashLine,
 } from './bootstrap';
