@@ -108,7 +108,7 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 										key={item.id}
 										value={`${item.title} ${item.description} ${item.meta}`}
 										onSelect={() => {
-											void handleSelect(item);
+											handleSelect(item);
 										}}
 										className="items-start gap-3 rounded-xl px-3 py-3"
 									>
