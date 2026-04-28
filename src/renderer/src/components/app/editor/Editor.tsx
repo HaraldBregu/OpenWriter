@@ -539,10 +539,11 @@ const Editor = React.memo(
 				};
 			}, [editor, documentId]);
 
-			const didAutoFocus = useRef(false);
+			const autoFocusedEditorRef = useRef<TiptapEditor | null>(null);
 			useEffect(() => {
-				if (didAutoFocus.current || !autoFocus || !editor || editor.isDestroyed) return;
-				didAutoFocus.current = true;
+				if (!autoFocus || !editor || editor.isDestroyed) return;
+				if (autoFocusedEditorRef.current === editor) return;
+				autoFocusedEditorRef.current = editor;
 				Promise.resolve().then(() => {
 					if (!editor.isDestroyed) editor.commands.focus('start');
 				});
