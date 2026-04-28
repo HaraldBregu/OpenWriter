@@ -61,7 +61,7 @@ function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React
 }
 
 export interface BubbleMenuProps {
-	onAiAction?: (action: Extract<PromptSubmitPayload, { type: AiActionType }>) => void;
+	onAiAction?: (payload: PromptSubmitPayload) => void;
 	activeAction?: AiActionType | null;
 }
 
