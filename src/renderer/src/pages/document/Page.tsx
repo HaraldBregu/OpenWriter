@@ -16,7 +16,6 @@ import {
 	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
-	useEditorStreamInsert,
 	useDocumentAiTasks,
 } from './hooks';
 import type { TaskEvent } from '../../../../shared/types';
