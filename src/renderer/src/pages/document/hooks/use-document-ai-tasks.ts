@@ -254,18 +254,11 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 								'Doc before insert:',
 								JSON.stringify(ed.state.doc.toJSON(), null, 2)
 							);
-							const json = ed.markdown?.parse(responseText);
-							console.log('Parsed JSON:', JSON.stringify(json, null, 2));
-							if (json) {
-								const node = ed.schema.nodeFromJSON(json);
-								const slice = new Slice(node.content, 0, 0);
-								const tr = ed.state.tr.replaceRange(from, to, slice);
-								ed.view.dispatch(tr);
-								console.log(
-									'Doc after insert:',
-									JSON.stringify(ed.state.doc.toJSON(), null, 2)
-								);
-							}
+							ed.chain().insertContentAt({ from, to }, responseText).run();
+							console.log(
+								'Doc after insert:',
+								JSON.stringify(ed.state.doc.toJSON(), null, 2)
+							);
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());
 					}
