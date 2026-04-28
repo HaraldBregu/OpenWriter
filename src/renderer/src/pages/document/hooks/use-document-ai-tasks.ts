@@ -348,7 +348,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			editorActions.showLoading();
 			editorActions.disable();
-			editorInsert.begin(from, to);
+			beginInsert(from, to);
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
@@ -357,14 +357,14 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			});
 
 			if (!result.success) {
-				editorInsert.revert();
+				revertInsert();
 				editorActions.hideLoading();
 				editorActions.enable();
 				return;
 			}
 			setActiveTaskId(result.data.taskId);
 		},
-		[documentId, selection, editorActions, editorInsert]
+		[documentId, selection, editorActions, beginInsert, revertInsert]
 	);
 
 	// ---- Submit: AI action --------------------------------------------------
