@@ -6,12 +6,10 @@ import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
 import { type ImageInsertHandler } from './plugins/image-drop-paste-plugin';
-import { BubbleMenu, type AiActionType } from './components/BubbleMenu';
+import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
-import type { PromptSubmitPayload } from '@shared/index';
-
-type AiActionPayload = Extract<PromptSubmitPayload, { type: AiActionType }>;
+import type { AiActionType, PromptSubmitPayload } from './types';
 
 export interface ImageInsertOptions {
 	src: string;
