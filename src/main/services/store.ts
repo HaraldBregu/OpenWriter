@@ -38,8 +38,6 @@ const DEFAULTS: StoreSchema = {
 			},
 		},
 	],
-	extensionEnabled: {},
-	extensionPreferences: {},
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
