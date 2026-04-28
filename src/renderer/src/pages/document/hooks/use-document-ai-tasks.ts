@@ -249,12 +249,22 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const docSize = ed.state.doc.content.size;
 							const from = Math.min(range.from, docSize);
 							const to = Math.min(range.to, docSize);
+							console.log('Replace range:', { from, to, docSize });
+							console.log(
+								'Doc before insert:',
+								JSON.stringify(ed.state.doc.toJSON(), null, 2)
+							);
 							const json = ed.markdown?.parse(responseText);
+							console.log('Parsed JSON:', JSON.stringify(json, null, 2));
 							if (json) {
 								const node = ed.schema.nodeFromJSON(json);
 								const slice = new Slice(node.content, 0, 0);
 								const tr = ed.state.tr.replaceRange(from, to, slice);
 								ed.view.dispatch(tr);
+								console.log(
+									'Doc after insert:',
+									JSON.stringify(ed.state.doc.toJSON(), null, 2)
+								);
 							}
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());
@@ -290,7 +300,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 
 			const { from, to } = ed.state.selection;
 
-			console.log('Submitting prompt task with selection', { from, to, });
+			console.log('Submitting prompt: ', payload);
 			const sliceToMarkdown = (start: number, end: number): string => {
 				if (start === end) return '';
 				const slice = ed.state.doc.cut(start, end);
