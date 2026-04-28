@@ -45,7 +45,6 @@ const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
 const EditorPage = lazy(() => import('./pages/settings/pages/EditorPage'));
 const DeveloperPage = lazy(() => import('./pages/settings/pages/DeveloperPage'));
 const ModelsPage = lazy(() => import('./pages/settings/pages/ModelsPage'));
-const ExtensionsPage = lazy(() => import('./pages/settings/pages/ExtensionsPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,
