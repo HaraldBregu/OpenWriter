@@ -1,15 +1,18 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
 	Bold,
+	Copy,
 	Italic,
 	List,
 	ListOrdered,
 	Loader2,
 	MessageCircle,
 	MessageSquare,
+	Scissors,
 	Sparkles,
 	SpellCheck,
 	Strikethrough,
+	Trash2,
 	Type,
 	Underline,
 	Wand2,
