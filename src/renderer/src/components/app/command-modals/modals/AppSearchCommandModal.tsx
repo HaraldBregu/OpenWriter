@@ -23,13 +23,9 @@ export function AppSearchCommandModal({ open, onOpenChange }: CommandModalProps)
 	const deferredQuery = useDeferredValue(query);
 	const { sections, totalCount } = useAppSearchResults(deferredQuery);
 
-	async function handleSelect(item: AppSearchResultItem): Promise<void> {
+	function handleSelect(item: AppSearchResultItem): void {
 		onOpenChange(false);
 		setQuery('');
-		if (item.commandId) {
-			await window.extensions.executeCommand(item.commandId);
-			return;
-		}
 		if (item.href) {
 			navigate(item.href);
 		}
