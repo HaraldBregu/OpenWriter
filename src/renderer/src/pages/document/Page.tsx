@@ -205,7 +205,6 @@ function PageContent(): ReactElement {
 		documentId: id ?? null,
 		editor,
 		editorActions,
-		selection,
 		isExternallyBusy: documentHasActiveTask || preexistingTaskActive,
 		onMarkdownChanged: (markdown) => {
 			setContent(markdown);
