@@ -52,7 +52,6 @@ import {
 	Globe,
 	CircleHelp,
 	CircleArrowUp,
-	Download,
 	Info,
 	LogOut,
 	Home,
