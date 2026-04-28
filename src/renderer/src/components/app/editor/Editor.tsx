@@ -281,6 +281,10 @@ const Editor = React.memo(
 				if (!editor || editor.isDestroyed) return;
 				const imgStorage = editor.storage as unknown as Record<string, Record<string, unknown>>;
 				imgStorage.image.onImageEditSave = handleImageEditSave;
+				return () => {
+					if (editor.isDestroyed) return;
+					imgStorage.image.onImageEditSave = undefined;
+				};
 			}, [editor, handleImageEditSave]);
 
 			const rootRef = useRef<HTMLDivElement>(null);
