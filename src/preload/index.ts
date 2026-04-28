@@ -2,7 +2,6 @@ import { contextBridge, webUtils } from 'electron';
 import { typedInvoke, typedInvokeUnwrap, typedInvokeRaw, typedSend, typedOn } from './typed-ipc';
 import {
 	AppChannels,
-	ExtensionChannels,
 	WindowChannels,
 	WorkspaceChannels,
 	TaskChannels,
