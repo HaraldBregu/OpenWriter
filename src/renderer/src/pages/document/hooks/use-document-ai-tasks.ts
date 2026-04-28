@@ -120,25 +120,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		session.insertedLength = newInsertedLength;
 	}, [clampPos]);
 
-	const beginInsert = useCallback(
-		(posFrom: number, posTo: number): void => {
-			const ed = editorRef.current;
-			if (!ed || ed.isDestroyed) return;
-			const from = clampPos(ed, posFrom);
-			const to = clampPos(ed, Math.max(posFrom, posTo));
-			if (to > from) {
-				const tr = ed.state.tr.delete(from, to).setMeta('preventEditorUpdate', true);
-				ed.view.dispatch(tr);
-			}
-			sessionRef.current = {
-				origin: from,
-				insertedLength: 0,
-				buffer: '',
-			};
-		},
-		[clampPos]
-	);
-
 	const appendDelta = useCallback(
 		(token: string): void => {
 			const session = sessionRef.current;
@@ -298,21 +279,11 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (!documentId || isBusyRef.current) return;
 			if (typeof window.task?.submit !== 'function') return;
 
-			let promptPos: number | null = null;
-			editorArg.state.doc.descendants((node, pos) => {
-				if (node.type.name === 'contentGenerator') {
-					promptPos = pos;
-					return false;
-				}
-				return true;
-			});
-
-			const from = promptPos ?? editorArg.state.selection.from;
-			const to = promptPos ?? editorArg.state.selection.to;
-
 			editorActions.showLoading();
 			editorActions.disable();
-			beginInsert(from, to);
+
+			const selection = editorArg.state.selection;
+			console.log('Submitting prompt task with selection', selection);
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
@@ -321,14 +292,13 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			});
 
 			if (!result.success) {
-				revertInsert();
 				editorActions.hideLoading();
 				editorActions.enable();
 				return;
 			}
 			setActiveTaskId(result.data.taskId);
 		},
-		[documentId, selection, editorActions, beginInsert, revertInsert]
+		[documentId, selection, editorActions]
 	);
 
 	// ---- Submit: AI action --------------------------------------------------
