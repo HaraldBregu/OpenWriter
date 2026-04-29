@@ -81,6 +81,46 @@ export class ProjectWorkspaceService {
 	}
 
 	/**
+	 * Write a fresh `project_workspace.openwriter` at the given workspace path
+	 * with the supplied name and description. Used when creating a new managed
+	 * workspace via `WorkspacesRegistry.create()` — the folder already exists
+	 * but no metadata has been written yet.
+	 *
+	 * Throws if the file already exists to avoid silently clobbering metadata.
+	 */
+	async createAt(
+		workspacePath: string,
+		name: string,
+		description: string
+	): Promise<ProjectWorkspaceInfo> {
+		this.validateName(name);
+		this.validateDescription(description);
+
+		const filePath = this.resolveFilePath(workspacePath);
+		if (fs.existsSync(filePath)) {
+			throw new Error(`project_workspace.openwriter already exists at: ${filePath}`);
+		}
+
+		const now = new Date().toISOString();
+		const info: ProjectWorkspaceInfo = {
+			version: SCHEMA_VERSION,
+			projectId: path.basename(workspacePath),
+			name: name.trim(),
+			description,
+			createdAt: now,
+			updatedAt: now,
+			appVersion: this.getAppVersion(),
+		};
+
+		await this.atomicWrite(filePath, info);
+		this.logger?.info(
+			'ProjectWorkspaceService',
+			`Created project_workspace.openwriter at: ${filePath}`
+		);
+		return info;
+	}
+
+	/**
 	 * Read `project_workspace.openwriter` for an arbitrary workspace path without
 	 * creating the file if it is missing. Intended for listing recent workspaces
 	 * where we want to show the project name but must not mutate the folder.
