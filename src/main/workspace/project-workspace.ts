@@ -217,12 +217,15 @@ export class ProjectWorkspaceService {
 	/**
 	 * Build a default `ProjectWorkspaceInfo` for a freshly opened workspace.
 	 * The project name defaults to the workspace folder's base name.
+	 *
+	 * In the managed-workspace model `projectId` is always the folder name (a
+	 * UUID assigned at creation time), so we use that here as well.
 	 */
 	private buildDefault(workspacePath: string): ProjectWorkspaceInfo {
 		const now = new Date().toISOString();
 		return {
 			version: SCHEMA_VERSION,
-			projectId: randomUUID(),
+			projectId: path.basename(workspacePath),
 			name: path.basename(workspacePath),
 			description: '',
 			createdAt: now,
