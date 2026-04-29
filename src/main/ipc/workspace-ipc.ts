@@ -48,24 +48,6 @@ export class WorkspaceIpc implements IpcModule {
 		// -------------------------------------------------------------------------
 
 		ipcMain.handle(
-			WorkspaceChannels.selectFolder,
-			wrapSimpleHandler(async () => {
-				const result = await dialog.showOpenDialog({
-					properties: ['openDirectory', 'createDirectory'],
-					title: 'Select Workspace Folder',
-					buttonLabel: 'Select Workspace',
-				});
-
-				if (!result.canceled && result.filePaths.length > 0) {
-					const workspacePath = result.filePaths[0];
-					logger.info('WorkspaceIpc', `Folder selected: ${workspacePath}`);
-					return workspacePath;
-				}
-				return null;
-			}, WorkspaceChannels.selectFolder)
-		);
-
-		ipcMain.handle(
 			WorkspaceChannels.getCurrent,
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).getCurrent(),
@@ -83,10 +65,19 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.getRecent,
+			WorkspaceChannels.list,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent) => this.mgr(event, container).getRecent(),
-				WorkspaceChannels.getRecent
+				(event: IpcMainInvokeEvent) => this.mgr(event, container).listWorkspaces(),
+				WorkspaceChannels.list
+			)
+		);
+
+		ipcMain.handle(
+			WorkspaceChannels.create,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, params: CreateWorkspaceParams) =>
+					this.mgr(event, container).createWorkspace(params.name, params.description),
+				WorkspaceChannels.create
 			)
 		);
 
@@ -95,26 +86,6 @@ export class WorkspaceIpc implements IpcModule {
 			wrapIpcHandler(
 				(event: IpcMainInvokeEvent) => this.mgr(event, container).clear(),
 				WorkspaceChannels.clear
-			)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.directoryExists,
-			wrapSimpleHandler((directoryPath: string) => {
-				try {
-					return fs.existsSync(directoryPath) && fs.statSync(directoryPath).isDirectory();
-				} catch {
-					return false;
-				}
-			}, WorkspaceChannels.directoryExists)
-		);
-
-		ipcMain.handle(
-			WorkspaceChannels.removeRecent,
-			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, workspacePath: string) =>
-					this.mgr(event, container).removeRecent(workspacePath),
-				WorkspaceChannels.removeRecent
 			)
 		);
 
