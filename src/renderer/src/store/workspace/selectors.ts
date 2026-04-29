@@ -29,9 +29,9 @@ export const selectProjectDescription = createSelector(
 	(state) => state.projectDescription
 );
 
-export const selectRecentWorkspaces = createSelector(
+export const selectWorkspaces = createSelector(
 	selectWorkspaceState,
-	(state) => state.recentWorkspaces
+	(state) => state.workspaces
 );
 
 export const selectWorkspaceStatus = createSelector(selectWorkspaceState, (state) => state.status);
