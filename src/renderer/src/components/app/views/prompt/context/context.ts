@@ -1,9 +1,6 @@
 import { createContext } from 'react';
 import type React from 'react';
 import type { State } from './state';
-import type { ModelInfo } from 'src/shared/types';
-
-type AgentId = 'text' | 'image';
 
 export interface ContextValue {
 	state: State;
@@ -11,15 +8,11 @@ export interface ContextValue {
 	enable: boolean;
 	statusBarVisible: boolean;
 	statusBarMessage: string;
-	agentId: AgentId;
-	isImage: boolean;
-	activeModel: ModelInfo;
 	isSubmitDisabled: boolean;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 	submitRef: React.RefObject<(() => void) | null>;
 	handlePromptChange: (value: string) => void;
-	handleAgentChange: (agentId: AgentId) => void;
 	setSelection: (value: string) => void;
 	clearSelection: () => void;
 	addFile: (file: File) => void;
