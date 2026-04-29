@@ -401,7 +401,12 @@ const Editor = React.memo(
 					editor={editor}
 					onInsertContent={onInsertContent}
 				>
-					{editor && <Content onAiAction={handleAiAction} />}
+					{editor && (
+						<>
+							<BubbleMenu onAiAction={handleAiAction} />
+							<OptionMenu />
+						</>
+					)}
 					<EditorContent editor={editor} />
 				</Layout>
 			);
