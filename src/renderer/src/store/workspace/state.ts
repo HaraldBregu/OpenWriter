@@ -46,7 +46,7 @@ export const initialState: WorkspaceState = {
 	currentPath: null,
 	projectName: null,
 	projectDescription: null,
-	recentWorkspaces: [],
+	workspaces: [],
 	status: 'idle',
 	error: null,
 	deletionReason: null,
