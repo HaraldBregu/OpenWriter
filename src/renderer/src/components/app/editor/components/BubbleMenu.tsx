@@ -131,14 +131,14 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			const selectedText =
 				editor.markdown?.serialize(slicedDoc.toJSON()) ??
 				editor.state.doc.textBetween(from, to, '\n\n');
-			onAiAction?.({
+			onPromptSubmit?.({
 				prompt,
 				selectedText,
 				files: [],
 				editor,
 			});
 		},
-		[editor, onAiAction]
+		[editor, onPromptSubmit]
 	);
 
 	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
