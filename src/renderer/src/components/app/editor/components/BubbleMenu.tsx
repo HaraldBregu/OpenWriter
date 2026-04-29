@@ -368,7 +368,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Bullet list" keys={[modKey, shiftKey, '8']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Bullet list</span>
+									<span className="text-[10px] opacity-70">{`${modKey} ${shiftKey} 8`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
