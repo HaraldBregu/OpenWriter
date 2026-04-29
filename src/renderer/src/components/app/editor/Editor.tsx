@@ -393,7 +393,7 @@ const Editor = React.memo(
 						});
 					});
 				}
-			}, [value, streamingContent, editor, externalValueVersion]);
+			}, [value, editor, externalValueVersion]);
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
