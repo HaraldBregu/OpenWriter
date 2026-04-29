@@ -7,8 +7,6 @@ export interface PromptOptions {
 	onPromptSubmit: (payload: PromptSubmitPayload) => void;
 }
 
-type AgentId = 'text' | 'image';
-
 declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		contentGenerator: {
