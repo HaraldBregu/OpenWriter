@@ -7,10 +7,9 @@ export { initialState } from './state';
 // Async thunks
 export {
 	loadCurrentWorkspace,
-	loadRecentWorkspaces,
+	listWorkspaces,
 	selectWorkspace,
-	openWorkspacePicker,
-	removeRecentWorkspace,
+	createWorkspace,
 	clearWorkspace,
 	loadResources,
 	removeResources,
@@ -24,7 +23,6 @@ export {
 export {
 	workspaceSlice,
 	handleWorkspaceChanged,
-	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 	resourceRemoved,
