@@ -43,7 +43,6 @@ import { AppIconOpenWriter } from '..';
 import {
 	Settings,
 	ChevronRight,
-	BookOpen,
 	Film,
 	Search,
 	Globe,
