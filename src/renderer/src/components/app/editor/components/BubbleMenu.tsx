@@ -8,6 +8,7 @@ import {
 	MessageCircle,
 	MessageSquare,
 	Scissors,
+	Sparkles,
 	SpellCheck,
 	Strikethrough,
 	Trash2,
