@@ -577,11 +577,14 @@ function PageContent(): ReactElement {
 				</div>
 			</div>
 			<ErrorDialog
-				open={aiTasks.taskError !== null}
+				open={reviewTask.taskError !== null || writeTask.taskError !== null}
 				onOpenChange={(open) => {
-					if (!open) aiTasks.dismissTaskError();
+					if (!open) {
+						reviewTask.dismissTaskError();
+						writeTask.dismissTaskError();
+					}
 				}}
-				description={aiTasks.taskError ?? ''}
+				description={reviewTask.taskError ?? writeTask.taskError ?? ''}
 			/>
 		</PageContainer>
 	);
