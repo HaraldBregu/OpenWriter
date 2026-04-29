@@ -201,7 +201,7 @@ function PageContent(): ReactElement {
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
-	const aiTasks = useDocumentAiTasks({
+	const aiTasks = useContentReviewerTask({
 		documentId: id ?? null,
 		editor,
 		onMarkdownChanged: (markdown) => {
