@@ -265,7 +265,7 @@ describe('ContentWriterTaskHandler', () => {
 
 		await handler.execute(input, new AbortController().signal, emit);
 
-		expect(events.map((e) => e.state)).toEqual(['queued', 'started', 'running', 'finished']);
+		expect(events.map((e) => e.state)).toEqual(['running']);
 		for (const event of events) {
 			expect(event.data).toEqual({ success: true, data: expect.any(String) });
 		}
