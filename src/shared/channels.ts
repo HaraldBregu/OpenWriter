@@ -232,13 +232,11 @@ export interface InvokeChannelMap {
 		result: AppStartupInfo;
 	};
 	// ---- Workspace (IpcResult-wrapped) ----
-	[WorkspaceChannels.selectFolder]: { args: []; result: string | null };
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
 	[WorkspaceChannels.setCurrent]: { args: [workspacePath: string]; result: void };
-	[WorkspaceChannels.getRecent]: { args: []; result: WorkspaceInfo[] };
+	[WorkspaceChannels.list]: { args: []; result: WorkspaceInfo[] };
+	[WorkspaceChannels.create]: { args: [params: CreateWorkspaceParams]; result: WorkspaceInfo };
 	[WorkspaceChannels.clear]: { args: []; result: void };
-	[WorkspaceChannels.directoryExists]: { args: [directoryPath: string]; result: boolean };
-	[WorkspaceChannels.removeRecent]: { args: [workspacePath: string]; result: void };
 
 	// ---- Window (IpcResult-wrapped for handle, raw for others) ----
 	[WindowChannels.isMaximized]: { args: []; result: boolean };
