@@ -437,7 +437,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Chat" />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Chat</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 					</div>
