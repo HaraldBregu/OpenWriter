@@ -41,13 +41,6 @@ export const workspaceSlice = createSlice({
 		},
 
 		/**
-		 * Handle external removal of a recent workspace.
-		 */
-		handleRecentRemoved: (state, action: PayloadAction<string>) => {
-			state.recentWorkspaces = state.recentWorkspaces.filter((ws) => ws.path !== action.payload);
-		},
-
-		/**
 		 * Handle workspace folder deletion detected by the main process.
 		 * Clears the workspace and records the reason so the UI can display
 		 * an appropriate message to the user.
