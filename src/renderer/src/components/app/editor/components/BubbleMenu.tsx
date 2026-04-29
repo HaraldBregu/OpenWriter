@@ -8,7 +8,6 @@ import {
 	MessageCircle,
 	MessageSquare,
 	Scissors,
-	Sparkles,
 	SpellCheck,
 	Strikethrough,
 	Trash2,
@@ -31,13 +30,13 @@ import {
 } from '@floating-ui/react';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
-import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/InputGroup';
 import { Separator } from '@/components/ui/Separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 import { useEditor } from '../hooks';
 import { BubbleMenuPlugin } from '../plugins/bubble-menu-plugin';
 import { HeadingMenu } from './HeadingMenu';
+import { InputMenu } from './InputMenu';
 import type { PromptSubmitPayload } from '../types';
 
 const pluginKey = new PluginKey('bubbleMenu');
