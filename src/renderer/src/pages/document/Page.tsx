@@ -174,7 +174,7 @@ function PageContent(): ReactElement {
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
-	const handleAiMarkdownChanged = useCallback(
+	const handleMarkdownChanged = useCallback(
 		(markdown: string) => {
 			setContent(markdown);
 			dispatch({ type: 'CONTENT_CHANGED', value: markdown });
@@ -187,13 +187,13 @@ function PageContent(): ReactElement {
 	const reviewTask = useContentReviewerTask({
 		documentId: id ?? null,
 		editor,
-		onMarkdownChanged: handleAiMarkdownChanged,
+		onMarkdownChanged: handleMarkdownChanged,
 	});
 
 	const writeTask = useContentWriterTask({
 		documentId: id ?? null,
 		editor,
-		onMarkdownChanged: handleAiMarkdownChanged,
+		onMarkdownChanged: handleMarkdownChanged,
 	});
 
 	const aiTasksRunningRef = useRef(reviewTask.isRunning || writeTask.isRunning);
