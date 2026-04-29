@@ -259,9 +259,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		};
 	}, [editor, handlePluginUpdate]);
 
-	if (!isMounted) return null;
-
 	return (
+		<>
+			{isMounted && (
 		<div
 			ref={refs.setFloating}
 			role="toolbar"
