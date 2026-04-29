@@ -31,13 +31,11 @@ const LOG_SOURCE = 'ContentReviewerTaskHandler';
  * AgentEvents into TaskEvents for the renderer.
  *
  * Event mapping:
- *   handler enters       → task `queued` / `started` ({success: true, data})
  *   agent `text` delta   → task `running: <token>` ({success: true, data})
- *   agent return value   → task `finished: <content>` ({success: true, data})
  *
- * Error path: caught errors are logged here and rethrown. The executor
- * emits the resulting `cancelled` event with `{success: false, error: <message>}`,
- * so we don't double-emit from the handler.
+ * Lifecycle events (`queued`, `started`, `finished`, `cancelled`) are emitted
+ * by the TaskExecutor — handlers must not emit them, otherwise consumers see
+ * duplicate events.
  */
 export class ContentReviewerTaskHandler
 	implements TaskHandler<ContentReviewerTaskInput, string>

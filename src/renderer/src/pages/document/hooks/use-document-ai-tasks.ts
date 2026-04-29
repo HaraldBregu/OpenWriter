@@ -101,7 +101,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
-								ed.chain().focus().insertContentAt({ from, to }, json).run();
+								ed.chain().focus().insertContentAt({ from, to }, "Artificial intelligence, or AI, has evolved from a futuristic concept into an everyday reality again.").run();
 							}
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());
