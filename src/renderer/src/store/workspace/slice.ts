@@ -12,17 +12,15 @@ export type { WorkspaceState } from './state';
 
 export {
 	loadCurrentWorkspace,
-	loadRecentWorkspaces,
+	listWorkspaces,
 	selectWorkspace,
-	openWorkspacePicker,
-	removeRecentWorkspace,
+	createWorkspace,
 	clearWorkspace,
 } from './actions';
 
 export {
 	workspaceSlice,
 	handleWorkspaceChanged,
-	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 } from './reducer';
@@ -33,7 +31,7 @@ export {
 	selectCurrentWorkspacePath,
 	selectHasWorkspace,
 	selectWorkspaceName,
-	selectRecentWorkspaces,
+	selectWorkspaces,
 	selectWorkspaceStatus,
 	selectWorkspaceError,
 	selectWorkspaceIsLoading,
