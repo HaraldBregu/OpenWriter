@@ -129,7 +129,7 @@ describe('ContentWriterTaskHandler', () => {
 		expect(handler.type).toBe('content-writer');
 	});
 
-	it('emits queued → started → running → finished as success-wrapped TaskEvents', async () => {
+	it('emits only running tokens as success-wrapped TaskEvents (lifecycle is the executor’s job)', async () => {
 		const { handler } = buildSuccessHandler(['Hello', ' ', 'world', '.']);
 		const { events, emit } = collectEvents();
 
@@ -141,24 +141,14 @@ describe('ContentWriterTaskHandler', () => {
 
 		expect(result).toBe('Hello world.');
 
-		// First two task events: queued, started — both wrapped in {success:true,data}.
-		expect(events[0]).toEqual({ state: 'queued', data: { success: true, data: 'queued' } });
-		expect(events[1]).toEqual({ state: 'started', data: { success: true, data: 'started' } });
-
-		const running = events.filter((e) => e.state === 'running');
-		expect(running.map((e) => e.data)).toEqual([
+		// Handler must not emit lifecycle events — those come from TaskExecutor.
+		expect(events.map((e) => e.state)).toEqual(['running', 'running', 'running', 'running']);
+		expect(events.map((e) => e.data)).toEqual([
 			{ success: true, data: 'Hello' },
 			{ success: true, data: ' ' },
 			{ success: true, data: 'world' },
 			{ success: true, data: '.' },
 		]);
-
-		const finished = events.filter((e) => e.state === 'finished');
-		expect(finished).toHaveLength(1);
-		expect(finished[0]).toEqual({
-			state: 'finished',
-			data: { success: true, data: 'Hello world.' },
-		});
 	});
 
 	it('passes the resolved provider/api key/model through to the agent', async () => {
