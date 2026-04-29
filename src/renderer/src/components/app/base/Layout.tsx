@@ -404,12 +404,12 @@ function Container({ children }: LayoutProps) {
 											<DropdownMenuLabel className="text-xs text-muted-foreground">
 												{t('appLayout.workspaces', 'Workspaces')}
 											</DropdownMenuLabel>
-											{recentWorkspaces.map((workspace) => {
+											{workspaces.map((workspace) => {
 												const name = workspace.name || workspaceNameFromPathString(workspace.path);
 												const isActive = workspace.path === currentWorkspacePath;
 												return (
 													<DropdownMenuItem
-														key={workspace.path}
+														key={workspace.id}
 														onClick={() => handleSelectWorkspace(workspace.path)}
 														className="gap-2 p-2"
 													>
