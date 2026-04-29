@@ -412,16 +412,16 @@ function PageContent(): ReactElement {
 
 	const handleReviewPromptSubmit = useCallback(
 		(payload: PromptSubmitPayload) => {
-			void aiTasks.submit(payload);
+			void reviewTask.submit(payload);
 		},
-		[aiTasks]
+		[reviewTask]
 	);
 
 	const handleWritePromptSubmit = useCallback(
 		(payload: PromptSubmitPayload) => {
-			void aiTasks.submit(payload);
+			void writeTask.submit(payload);
 		},
-		[aiTasks]
+		[writeTask]
 	);
 
 	const handleCancelPreexistingTask = useCallback(async () => {
