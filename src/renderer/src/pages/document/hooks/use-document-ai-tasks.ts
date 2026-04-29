@@ -50,7 +50,6 @@ function buildReviewPrompt(args: {
 export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
-	isExternallyBusy: boolean;
 	onMarkdownChanged: (markdown: string) => void;
 }
 
@@ -101,8 +100,10 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
 							const docSize = ed.state.doc.content.size;
-							const from = Math.min(range.from, docSize);
-							const to = Math.min(range.to, docSize);
+							// const from = Math.min(range.from, docSize);
+							// const to = Math.min(range.to, docSize);
+							const from = range.from;
+							const to = range.to;
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
 								console.log('Response text: ', responseText);
