@@ -8,14 +8,13 @@ import { useAppDispatch, useAppSelector } from '../../../store';
 import {
 	selectCurrentWorkspacePath,
 	selectProjectName,
-	selectRecentWorkspaces,
+	selectWorkspaces,
 	selectWorkspaceName,
 } from '../../../store/workspace/selectors';
 import {
 	loadCurrentWorkspace,
 	loadProjectName,
-	loadRecentWorkspaces,
-	openWorkspacePicker,
+	listWorkspaces,
 	selectWorkspace,
 } from '../../../store/workspace/actions';
 import { selectAllDocuments, documentAdded } from '../../../store/workspace';
