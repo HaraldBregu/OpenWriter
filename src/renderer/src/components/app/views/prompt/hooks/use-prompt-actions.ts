@@ -163,7 +163,7 @@ export function usePromptActions({
 			return;
 		}
 
-		updateAttributes({ loading: true, enable: false });
+		updateAttributes({ loading: true });
 
 		const { from, to } = editor.state.selection;
 		const selectedText =
