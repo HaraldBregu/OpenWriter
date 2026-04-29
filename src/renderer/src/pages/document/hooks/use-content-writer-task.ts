@@ -4,57 +4,15 @@ import { Slice } from '@tiptap/pm/model';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
 
-const TASK_TYPE = 'content-reviewer';
+const TASK_TYPE = 'content-writer';
 
-const PROMPT_TEMPLATE = `Enhance the selected text below. The text uses Markdown formatting (e.g., **bold**, *italic*, \`code\`, [links](url), lists, headings). You MUST preserve all existing Markdown formatting in your output — keep the same emphasis, links, code spans, and structural elements on the same words and phrases as in the original.
-
-Use the surrounding context (text before and after) only to understand tone, style, and intent — do NOT modify or include the surrounding text in your output.
-
-<context_before>
-{{TEXT_BEFORE}}
-</context_before>
-
-<selected_text>
-{{SELECTED_TEXT}}
-</selected_text>
-
-<context_after>
-{{TEXT_AFTER}}
-</context_after>
-
-Instructions: {{USER_INSTRUCTION}}
-
-Formatting rules:
-- Preserve all Markdown syntax exactly: **bold**, *italic*, ***bold italic***, ~~strikethrough~~, \`inline code\`, [link text](url), images, headings (#, ##, ###), blockquotes (>), lists (-, *, 1.), tables, and code blocks (\`\`\`).
-- If a word or phrase is emphasized in the original, keep it emphasized in the enhanced version — even if the wording changes, apply the same emphasis to the equivalent word/phrase.
-- Do not add new formatting that wasn't in the original unless the user explicitly asks for it.
-- Do not remove formatting unless the original phrase is being deleted entirely.
-- Never modify content inside \`inline code\` or fenced code blocks.
-- Never modify URLs inside link targets — only the visible link text may be edited.
-- Preserve list structure, indentation, and heading levels.
-- Preserve line breaks and paragraph boundaries unless restructuring is part of the requested enhancement.
-
-Return only the enhanced version of the selected text, with all Markdown formatting intact. Do not repeat the surrounding context. Do not wrap your response in code fences. Do not add explanations.`;
-
-function buildReviewPrompt(args: {
-	textBefore: string;
-	selectedText: string;
-	textAfter: string;
-	userInstruction: string;
-}): string {
-	return PROMPT_TEMPLATE.replaceAll('{{TEXT_BEFORE}}', args.textBefore)
-		.replaceAll('{{SELECTED_TEXT}}', args.selectedText)
-		.replaceAll('{{TEXT_AFTER}}', args.textAfter)
-		.replaceAll('{{USER_INSTRUCTION}}', args.userInstruction);
-}
-
-export interface UseDocumentAiTasksOptions {
+export interface UseContentWriterTaskOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
 	onMarkdownChanged: (markdown: string) => void;
 }
 
-export interface UseDocumentAiTasks {
+export interface UseContentWriterTask {
 	isRunning: boolean;
 	taskError: string | null;
 	dismissTaskError: () => void;
@@ -68,7 +26,7 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
 	return { from: v.from, to: v.to };
 }
 
-export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocumentAiTasks {
+export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseContentWriterTask {
 	const { documentId, editor } = opts;
 
 	const onMarkdownChangedRef = useRef(opts.onMarkdownChanged);
@@ -139,36 +97,10 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (ed.isDestroyed) return;
 
 			const { from, to } = ed.state.selection;
-			console.log('Submitting prompt with selection range: ', { from, to });
-
-			// const sliceToMarkdown = (start: number, end: number): string => {
-			// 	if (start === end) return '';
-			// 	const slice = ed.state.doc.cut(start, end);
-			// 	return (
-			// 		ed.markdown?.serialize(slice.toJSON()) ??
-			// 		ed.state.doc.textBetween(start, end, '\n\n')
-			// 	);
-			// };
-
-			const sliceToText = (start: number, end: number): string => {
-				if (start === end) return '';
-				return ed.state.doc.textBetween(start, end, '\n\n');
-			};
-
-			const docSize = ed.state.doc.content.size;
-			const before = sliceToText(0, from);
-			const after = sliceToText(to, docSize);
-
-			const prompt = buildReviewPrompt({
-				textBefore: before,
-				selectedText: payload.selectedText,
-				textAfter: after,
-				userInstruction: payload.prompt,
-			});
 
 			const result = await window.task.submit({
 				type: TASK_TYPE,
-				input: { prompt },
+				input: { prompt: payload.prompt },
 				metadata: { documentId, selection: { from, to } },
 			});
 
