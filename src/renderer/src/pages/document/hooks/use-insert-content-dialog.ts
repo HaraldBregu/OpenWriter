@@ -1,11 +1,11 @@
 import type { ContextValue } from '../context/context';
-import { useDocumentContext } from './use-document-context';
+import { useContext } from './use-context';
 
 export function useInsertContentDialog(): Pick<
 	ContextValue,
 	'insertContentDialogOpen' | 'openInsertContentDialog' | 'closeInsertContentDialog'
 > {
 	const { insertContentDialogOpen, openInsertContentDialog, closeInsertContentDialog } =
-		useDocumentContext();
+		useContext();
 	return { insertContentDialogOpen, openInsertContentDialog, closeInsertContentDialog };
 }
