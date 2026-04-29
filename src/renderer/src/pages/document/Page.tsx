@@ -8,7 +8,7 @@ import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import HistoryMenu from './components/HistoryMenu';
-import DocumentInfoPopover from './components/DocumentInfoPopover';
+import DocumentInfoMenu from './components/DocumentInfoMenu';
 import {
 	useDispatch,
 	useHistory,
