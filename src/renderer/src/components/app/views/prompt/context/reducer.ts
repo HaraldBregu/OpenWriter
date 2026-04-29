@@ -5,8 +5,6 @@ export function contentGeneratorReducer(state: State, action: Action): State {
 	switch (action.type) {
 		case 'SET_PROMPT':
 			return { ...state, prompt: action.payload };
-		case 'SET_AGENT':
-			return { ...state, agentId: action.payload };
 		case 'ADD_FILE':
 			return { ...state, files: [...state.files, action.payload] };
 		case 'ADD_PREVIEW_URL':
