@@ -507,7 +507,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Copy" keys={[modKey, 'C']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Copy</span>
+									<span className="text-[10px] opacity-70">{`${modKey} C`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
