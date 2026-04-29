@@ -43,7 +43,6 @@ import { AppIconOpenWriter } from '..';
 import {
 	Settings,
 	ChevronRight,
-	ChevronsUpDown,
 	BookOpen,
 	Film,
 	Search,
@@ -63,6 +62,8 @@ import {
 	Trash2,
 	FileImage,
 	Copy,
+	GalleryVerticalEnd,
+	EllipsisVertical,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
@@ -383,14 +384,14 @@ function Container({ children }: LayoutProps) {
 								<DropdownMenu>
 									<DropdownMenuTrigger
 										render={
-											<SidebarMenuButton
-												size="lg"
-												className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-											>
-												<div className="grid flex-1 text-left text-sm leading-tight">
-													<span className="truncate font-medium">{sidebarTitle}</span>
+											<SidebarMenuButton size="lg">
+												<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+													<GalleryVerticalEnd className="size-4" />
 												</div>
-												<ChevronsUpDown className="ml-auto" />
+												<div className="flex flex-col gap-1 leading-none">
+													<span className="font-medium">Workspace</span>
+													<span className="text-muted-foreground">{sidebarTitle}</span>
+												</div>
 											</SidebarMenuButton>
 										}
 									/>
@@ -477,7 +478,7 @@ function Container({ children }: LayoutProps) {
 											isActive={activeModal === 'search'}
 											onClick={handleOpenSearch}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent">
 												<Search className="h-3.5 w-3.5" />
 											</span>
 											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
@@ -631,7 +632,7 @@ function Container({ children }: LayoutProps) {
 						</SidebarGroup>
 					</SidebarContent>
 
-					<SidebarFooter className="border-t p-2">
+					<SidebarFooter>
 						<SidebarMenu>
 							<SidebarMenuItem>
 								<DropdownMenu>
@@ -639,11 +640,10 @@ function Container({ children }: LayoutProps) {
 										render={
 											<SidebarMenuButton
 												size="lg"
-												aria-label={t('appLayout.accountMenu', 'Open account menu')}
 												className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 											>
 												<Avatar className="h-8 w-8 rounded-lg">
-													<AvatarImage src="" alt={footerUserName} />
+													<AvatarImage alt={footerUserName} />
 													<AvatarFallback className="rounded-lg">
 														{footerUserInitial}
 													</AvatarFallback>
@@ -652,13 +652,13 @@ function Container({ children }: LayoutProps) {
 													<span className="truncate font-medium">{footerUserName}</span>
 													<span className="truncate text-xs">{footerUserEmail}</span>
 												</div>
-												<ChevronsUpDown className="ml-auto size-4" />
+												<EllipsisVertical className="ml-auto size-4" />
 											</SidebarMenuButton>
 										}
 									/>
 									<DropdownMenuContent
 										className="w-(--radix-dropdown-menu-trigger-width) min-w-72"
-										side="top"
+										side="right"
 										align="end"
 										sideOffset={4}
 									>
