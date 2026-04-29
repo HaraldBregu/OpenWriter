@@ -15,7 +15,8 @@ export interface WorkspaceState {
 	projectName: string | null;
 	/** Project description from workspace metadata (project_workspace.openwriter) */
 	projectDescription: string | null;
-	recentWorkspaces: WorkspaceInfo[];
+	/** Every managed workspace under `{userData}/workspaces/`. */
+	workspaces: WorkspaceInfo[];
 	status: 'idle' | 'loading' | 'ready' | 'error';
 	error: string | null;
 	/** Set when the workspace folder is externally deleted/moved while the app is open */
