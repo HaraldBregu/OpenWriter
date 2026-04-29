@@ -77,7 +77,6 @@ const Editor = React.memo(
 				className,
 				disabled,
 				id,
-				streamingContent,
 				onPromptSubmit,
 				onInsertContent,
 				onEditorReady,
