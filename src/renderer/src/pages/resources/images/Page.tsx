@@ -11,7 +11,6 @@ import {
 	Grid3x3,
 	List,
 	Pencil,
-	Plus,
 	Search,
 	Trash2,
 	Upload,
@@ -136,7 +135,7 @@ function PageContent(): ReactElement {
 					{!editMode && (
 						<>
 							<Button
-								variant="outline"
+								variant="ghost"
 								size="icon"
 								onClick={handleOpenFolder}
 								aria-label="Open folder"
@@ -145,15 +144,7 @@ function PageContent(): ReactElement {
 								<FolderOpen className="h-4 w-4" />
 							</Button>
 							<Button
-								variant="outline"
-								size="icon"
-								disabled
-								aria-label="New folder"
-								title="New folder"
-							>
-								<Plus className="h-4 w-4" />
-							</Button>
-							<Button
+								variant="ghost"
 								size="icon"
 								onClick={handleUpload}
 								disabled={uploading}
@@ -165,7 +156,7 @@ function PageContent(): ReactElement {
 						</>
 					)}
 					<Button
-						variant="outline"
+						variant="ghost"
 						size="icon"
 						onClick={toggleEditMode}
 						aria-label={editMode ? 'Done' : 'Edit'}
@@ -175,68 +166,69 @@ function PageContent(): ReactElement {
 					</Button>
 				</PageHeaderTitle>
 			</PageHeader>
-			<PageHeader>
-				<ButtonGroup className="min-w-0 flex-1">
-					<InputGroup>
-						<InputGroupAddon>
-							<InputGroupText>
-								<Search />
-							</InputGroupText>
-						</InputGroupAddon>
-						<InputGroupInput
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							placeholder="Start typing to search"
-						/>
-						<InputGroupAddon align="inline-end">
-							<DropdownMenu>
-								<DropdownMenuTrigger
-									render={
-										<InputGroupButton variant="ghost" className="pr-1.5! text-xs">
-											Filter <ChevronDownIcon className="size-3" />
-										</InputGroupButton>
-									}
-								>
-									<Filter className="h-4 w-4" />
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end" sideOffset={8} alignOffset={-4}>
-									<DropdownMenuRadioGroup
-										value={typeFilter}
-										onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
-									>
-										{FILE_TYPE_FILTERS.map(({ value, label }) => (
-											<DropdownMenuRadioItem key={value} value={value}>
-												{label}
-											</DropdownMenuRadioItem>
-										))}
-									</DropdownMenuRadioGroup>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</InputGroupAddon>
-					</InputGroup>
-				</ButtonGroup>
-				<ButtonGroup className="shrink-0">
-					<Button
-						variant={viewMode === 'list' ? 'outline-selected' : 'outline'}
-						size="icon"
-						onClick={() => setViewMode('list')}
-						aria-label="List view"
-						aria-pressed={viewMode === 'list'}
-					>
-						<List className="h-4 w-4" />
-					</Button>
-					<Button
-						variant={viewMode === 'grid' ? 'outline-selected' : 'outline'}
-						size="icon"
-						onClick={() => setViewMode('grid')}
-						aria-label="Grid view"
-						aria-pressed={viewMode === 'grid'}
-					>
-						<Grid3x3 className="h-4 w-4" />
-					</Button>
-				</ButtonGroup>
-			</PageHeader>
+
 			<PageBody>
+				<div>
+					<ButtonGroup className="min-w-0 flex-1">
+						<InputGroup>
+							<InputGroupAddon>
+								<InputGroupText>
+									<Search />
+								</InputGroupText>
+							</InputGroupAddon>
+							<InputGroupInput
+								value={searchQuery}
+								onChange={(e) => setSearchQuery(e.target.value)}
+								placeholder="Start typing to search"
+							/>
+							<InputGroupAddon align="inline-end">
+								<DropdownMenu>
+									<DropdownMenuTrigger
+										render={
+											<InputGroupButton variant="ghost" className="pr-1.5! text-xs">
+												Filter <ChevronDownIcon className="size-3" />
+											</InputGroupButton>
+										}
+									>
+										<Filter className="h-4 w-4" />
+									</DropdownMenuTrigger>
+									<DropdownMenuContent align="end" sideOffset={8} alignOffset={-4}>
+										<DropdownMenuRadioGroup
+											value={typeFilter}
+											onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+										>
+											{FILE_TYPE_FILTERS.map(({ value, label }) => (
+												<DropdownMenuRadioItem key={value} value={value}>
+													{label}
+												</DropdownMenuRadioItem>
+											))}
+										</DropdownMenuRadioGroup>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</InputGroupAddon>
+						</InputGroup>
+					</ButtonGroup>
+					<ButtonGroup className="shrink-0">
+						<Button
+							variant={viewMode === 'list' ? 'outline-selected' : 'outline'}
+							size="icon"
+							onClick={() => setViewMode('list')}
+							aria-label="List view"
+							aria-pressed={viewMode === 'list'}
+						>
+							<List className="h-4 w-4" />
+						</Button>
+						<Button
+							variant={viewMode === 'grid' ? 'outline-selected' : 'outline'}
+							size="icon"
+							onClick={() => setViewMode('grid')}
+							aria-label="Grid view"
+							aria-pressed={viewMode === 'grid'}
+						>
+							<Grid3x3 className="h-4 w-4" />
+						</Button>
+					</ButtonGroup>
+				</div>
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">Loading files...</p>
