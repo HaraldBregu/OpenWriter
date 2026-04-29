@@ -66,6 +66,8 @@ const Editor = React.memo(
 				onReviewPromptSubmit,
 				onWritePromptSubmit,
 				onInsertContent,
+				onUndo,
+				onRedo,
 				onEditorReady,
 			},
 			ref
@@ -74,6 +76,8 @@ const Editor = React.memo(
 			const onSelectionChangeRef = useRef(onSelectionChange);
 			const onReviewPromptSubmitRef = useRef(onReviewPromptSubmit);
 			const onWritePromptSubmitRef = useRef(onWritePromptSubmit);
+			const onUndoRef = useRef(onUndo);
+			const onRedoRef = useRef(onRedo);
 			const onEditorReadyRef = useRef(onEditorReady);
 
 			useEffect(() => {
@@ -81,6 +85,8 @@ const Editor = React.memo(
 				onSelectionChangeRef.current = onSelectionChange;
 				onReviewPromptSubmitRef.current = onReviewPromptSubmit;
 				onWritePromptSubmitRef.current = onWritePromptSubmit;
+				onUndoRef.current = onUndo;
+				onRedoRef.current = onRedo;
 				onEditorReadyRef.current = onEditorReady;
 			});
 
@@ -89,6 +95,8 @@ const Editor = React.memo(
 					createExtensions({
 						onPromptSubmit: (payload) => onWritePromptSubmitRef.current?.(payload),
 						onImageInsert: () => undefined,
+						onUndo: () => onUndoRef.current?.(),
+						onRedo: () => onRedoRef.current?.(),
 					}),
 				[]
 			);
