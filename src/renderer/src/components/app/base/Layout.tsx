@@ -460,7 +460,9 @@ function Container({ children }: LayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<Plus className="h-5 w-5 shrink-0" />
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent">
+												<Plus className="h-3.5 w-3.5" />
+											</span>
 											<span className="flex-1 truncate">{t('sidebar.document', 'Document')}</span>
 											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
 												{newDocumentShortcutLabel}
