@@ -33,6 +33,7 @@ export const InputMenu = React.memo(function InputMenu({
 	getReferenceRect,
 	placeholder = 'Ask anything…',
 }: InputMenuProps): React.JSX.Element | null {
+	const { editor } = useEditor();
 	const [value, setValue] = useState('');
 	const arrowRef = useRef<SVGSVGElement>(null);
 
@@ -45,11 +46,14 @@ export const InputMenu = React.memo(function InputMenu({
 	);
 
 	const virtualReference = useMemo<VirtualElement>(
-		() => ({ getBoundingClientRect: () => getReferenceRect() }),
-		[getReferenceRect]
+		() => ({
+			getBoundingClientRect: () => getReferenceRect(),
+			contextElement: editor.view.dom,
+		}),
+		[editor, getReferenceRect]
 	);
 
-	const { refs, floatingStyles, context } = useFloating({
+	const { refs, floatingStyles, context, update } = useFloating({
 		open,
 		onOpenChange: handleOpenChange,
 		placement: 'bottom',
@@ -66,6 +70,18 @@ export const InputMenu = React.memo(function InputMenu({
 	useEffect(() => {
 		refs.setPositionReference(virtualReference);
 	}, [refs, virtualReference]);
+
+	useEffect(() => {
+		if (!open) return;
+		const handler = (): void => {
+			const { from, to } = editor.state.selection;
+			if (from !== to) update();
+		};
+		editor.on('transaction', handler);
+		return () => {
+			editor.off('transaction', handler);
+		};
+	}, [editor, open, update]);
 
 	const dismiss = useDismiss(context);
 	const { getFloatingProps } = useInteractions([dismiss]);
