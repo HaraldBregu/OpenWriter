@@ -101,9 +101,11 @@ export function useContentReviewerTask(opts: UseContentReviewerTaskOptions): Use
 						if (range) {
 							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
+							console.log(json)
 							if (json) {
 								const node = ed.schema.nodeFromJSON(json);
-								const slice = new Slice(node.content, 0, 0);
+								const slice = new Slice(node.content, 1, 1);
+								console.log("slice: ", slice)
 								const tr = ed.state.tr.replaceRange(from, to, slice);
 								ed.view.dispatch(tr);
 								ed.view.focus();
@@ -139,16 +141,6 @@ export function useContentReviewerTask(opts: UseContentReviewerTaskOptions): Use
 			if (ed.isDestroyed) return;
 
 			const { from, to } = ed.state.selection;
-			console.log('Submitting prompt with selection range: ', { from, to });
-
-			// const sliceToMarkdown = (start: number, end: number): string => {
-			// 	if (start === end) return '';
-			// 	const slice = ed.state.doc.cut(start, end);
-			// 	return (
-			// 		ed.markdown?.serialize(slice.toJSON()) ??
-			// 		ed.state.doc.textBetween(start, end, '\n\n')
-			// 	);
-			// };
 
 			const sliceToText = (start: number, end: number): string => {
 				if (start === end) return '';
