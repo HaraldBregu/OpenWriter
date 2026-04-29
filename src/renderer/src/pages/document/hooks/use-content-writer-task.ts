@@ -147,6 +147,7 @@ export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseCont
 
 			const prompt = buildWritePrompt({
 				textBefore: before,
+				selectedText: payload.selectedText,
 				textAfter: after,
 				userInstruction: payload.prompt,
 			});
