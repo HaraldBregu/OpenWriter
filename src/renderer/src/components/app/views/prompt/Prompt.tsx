@@ -14,6 +14,22 @@ import { useTranslation } from 'react-i18next';
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 
+function PromptStatusBar(): React.JSX.Element | null {
+	const { statusBarVisible, statusBarMessage } = usePrompt();
+	if (!statusBarVisible) return null;
+	return (
+		<div className="mt-2 w-full">
+			<div
+				role='alert'
+				className="flex items-center gap-2 rounded-t-md px-3 py-1.5 text-xs text-muted-foreground"
+			>
+				<LoaderCircle className="h-3.5 w-3.5 animate-spin" />
+				<span>{statusBarMessage}</span>
+			</div>
+		</div>
+	);
+}
+
 function PromptContainer(): React.JSX.Element {
 	const { t } = useTranslation();
 	const {
@@ -44,6 +60,7 @@ function PromptContainer(): React.JSX.Element {
 				onClick={(event) => event.preventDefault()}
 				className="w-full gap-0 rounded-none border-0 p-0 hover:bg-transparent focus-visible:border-transparent"
 			>
+				<PromptStatusBar />
 				<div className="relative mb-2 w-full">
 					<div
 						aria-hidden="true"

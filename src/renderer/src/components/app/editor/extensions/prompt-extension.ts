@@ -51,9 +51,29 @@ export const PromptExtension = Node.create<PromptOptions>({
 				parseHTML: () => '',
 				renderHTML: () => ({}),
 			},
+			agentId: {
+				default: 'text' as AgentId,
+				parseHTML: (element) => {
+					const value = element.getAttribute('data-agent-id');
+					return value === 'image' ? 'image' : 'text';
+				},
+				renderHTML: (attributes) => ({
+					'data-agent-id': attributes.agentId as AgentId,
+				}),
+			},
 			files: {
 				default: [] as File[],
 				parseHTML: () => [] as File[],
+				renderHTML: () => ({}),
+			},
+			statusBarVisible: {
+				default: true,
+				parseHTML: () => false,
+				renderHTML: () => ({}),
+			},
+			statusBarMessage: {
+				default: null,
+				parseHTML: () => '',
 				renderHTML: () => ({}),
 			},
 		};
@@ -141,6 +161,7 @@ export const PromptExtension = Node.create<PromptOptions>({
 
 				const preservedAttrs = {
 					prompt: found.attrs.prompt,
+					agentId: found.attrs.agentId,
 					files: found.attrs.files,
 				};
 
