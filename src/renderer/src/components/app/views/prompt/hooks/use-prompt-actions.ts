@@ -23,7 +23,6 @@ interface UseContentGeneratorActionsParams {
 	options: PromptOptions;
 	updateAttributes: (attrs: Record<string, unknown>) => void;
 	prompt: string;
-	agentId: AgentId;
 	files: File[];
 	fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
@@ -36,7 +35,6 @@ export function usePromptActions({
 	options,
 	updateAttributes,
 	prompt,
-	agentId,
 	files,
 	fileInputRef,
 }: UseContentGeneratorActionsParams) {
