@@ -90,11 +90,47 @@ export const PromptExtension = Node.create<PromptOptions>({
 	},
 
 	addCommands() {
+		const nodeName = this.name;
 		return {
 			insertPromptView:
 				() =>
 				({ commands }) => {
-					return commands.insertContent({ type: this.name });
+					return commands.insertContent({ type: nodeName });
+				},
+			removePromptView:
+				() =>
+				({ tr, state, dispatch }) => {
+					let found = false;
+					state.doc.descendants((node, pos) => {
+						if (found) return false;
+						if (node.type.name === nodeName) {
+							if (dispatch) tr.delete(pos, pos + node.nodeSize);
+							found = true;
+							return false;
+						}
+						return true;
+					});
+					return found;
+				},
+			setPromptViewState:
+				({ loading, enable }) =>
+				({ tr, state, dispatch }) => {
+					let found = false;
+					state.doc.descendants((node, pos) => {
+						if (found) return false;
+						if (node.type.name === nodeName) {
+							if (dispatch) {
+								const attrs = { ...node.attrs };
+								if (loading !== undefined) attrs.loading = loading;
+								if (enable !== undefined) attrs.enable = enable;
+								tr.setNodeMarkup(pos, undefined, attrs);
+							}
+							found = true;
+							return false;
+						}
+						return true;
+					});
+					return found;
 				},
 		};
 	},
