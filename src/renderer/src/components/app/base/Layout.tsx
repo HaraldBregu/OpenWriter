@@ -583,10 +583,10 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton
-										render={<Link to="/resources/files" />}
+										render={<Link to="/resources/images" />}
 										className="group/btn h-9 px-3"
 										tooltip={t('appLayout.images', 'Images')}
-										isActive={location.pathname === '/resources/files'}
+										isActive={location.pathname === '/resources/images'}
 									>
 										<FileImage />
 										<span>{t('appLayout.images', 'Images')}</span>
