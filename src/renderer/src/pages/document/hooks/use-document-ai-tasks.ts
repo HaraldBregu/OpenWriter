@@ -1,15 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { Slice } from '@tiptap/pm/model';
 import type { Editor as TiptapEditor } from '@tiptap/core';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
-import type { EditorActions } from './use-editor';
-
-interface InsertSession {
-	origin: number;
-	insertedLength: number;
-	buffer: string;
-}
 
 const TASK_TYPE = 'content-reviewer';
 
@@ -58,7 +50,6 @@ function buildReviewPrompt(args: {
 export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
-	editorActions: EditorActions;
 	isExternallyBusy: boolean;
 	onMarkdownChanged: (markdown: string) => void;
 }
@@ -77,20 +68,8 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
 	return { from: v.from, to: v.to };
 }
 
-/**
- * Owns the prompt-input task and AI-action flows for a document page.
- *
- *   prompt flow      → streams tokens into the editor at the inserted prompt
- *                       position, replacing with parsed markdown on finish.
- *   AI-action flow   → submits a tagged prompt from the bubble menu and on
- *                       finish replaces the original selection range with the
- *                       returned markdown.
- *
- * Failures from either flow are captured into `taskError` for the page-level
- * error dialog to surface.
- */
 export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocumentAiTasks {
-	const { documentId, editor, editorActions, isExternallyBusy } = opts;
+	const { documentId, editor, isExternallyBusy } = opts;
 
 	const onMarkdownChangedRef = useRef(opts.onMarkdownChanged);
 	onMarkdownChangedRef.current = opts.onMarkdownChanged;
@@ -98,130 +77,14 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	const editorRef = useRef(editor);
 	editorRef.current = editor;
 
-	// ---- Streaming insert ---------------------------------------------------
-	// Streams agent-generated markdown into the editor at a tracked position.
-	// Each delta appends to a buffer that is re-parsed as markdown and rendered
-	// synchronously. Editor update events are suppressed via the
-	// `preventEditorUpdate` meta so the document's `onChange` handler does not
-	// persist intermediate states.
-	const sessionRef = useRef<InsertSession | null>(null);
-
-	const clampPos = useCallback((ed: TiptapEditor, pos: number): number => {
-		const size = ed.state.doc.content.size;
-		if (pos < 0) return 0;
-		if (pos > size) return size;
-		return pos;
-	}, []);
-
-	const renderBuffer = useCallback((): void => {
-		const ed = editorRef.current;
-		if (!ed || ed.isDestroyed) return;
-		const session = sessionRef.current;
-		if (!session) return;
-
-		const from = clampPos(ed, session.origin);
-		const to = clampPos(ed, session.origin + session.insertedLength);
-		const sizeBefore = ed.state.doc.content.size;
-
-		let tr = ed.state.tr;
-		const json = session.buffer ? ed.markdown?.parse(session.buffer) : null;
-		if (json) {
-			const doc = ed.schema.nodeFromJSON(json);
-			const slice = new Slice(doc.content, 0, 0);
-			tr = tr.replaceRange(from, to, slice);
-		} else {
-			tr = tr.delete(from, to);
-			if (session.buffer) tr = tr.insertText(session.buffer, from);
-		}
-
-		const newInsertedLength = session.insertedLength + (tr.doc.content.size - sizeBefore);
-		tr.setMeta('preventEditorUpdate', true);
-
-		ed.view.dispatch(tr);
-		session.insertedLength = newInsertedLength;
-	}, [clampPos]);
-
-	const appendDelta = useCallback(
-		(token: string): void => {
-			const session = sessionRef.current;
-			if (!session || !token) return;
-			session.buffer += token;
-			renderBuffer();
-		},
-		[renderBuffer]
-	);
-
-	const commitFinal = useCallback(
-		(content: string): void => {
-			const session = sessionRef.current;
-			if (!session) return;
-			session.buffer = content;
-			renderBuffer();
-			sessionRef.current = null;
-		},
-		[renderBuffer]
-	);
-
-	const revertInsert = useCallback((): void => {
-		const session = sessionRef.current;
-		if (!session) return;
-		const ed = editorRef.current;
-		if (ed && !ed.isDestroyed) {
-			const from = clampPos(ed, session.origin);
-			const to = clampPos(ed, session.origin + session.insertedLength);
-			if (to > from) {
-				const tr = ed.state.tr.delete(from, to).setMeta('preventEditorUpdate', true);
-				ed.view.dispatch(tr);
-			}
-		}
-		sessionRef.current = null;
-	}, [clampPos]);
-
-	const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
-	const activeTaskIdRef = useRef<string | null>(null);
-	activeTaskIdRef.current = activeTaskId;
-
 	const [aiActionTaskId, setAiActionTaskId] = useState<string | null>(null);
 	const [taskError, setTaskError] = useState<string | null>(null);
 
-	const isRunning = activeTaskId !== null || aiActionTaskId !== null;
+	const isRunning = aiActionTaskId !== null;
 	const isBusy = isRunning || isExternallyBusy;
 	const isBusyRef = useRef(isBusy);
 	isBusyRef.current = isBusy;
 
-	// ---- Prompt-flow stream handlers ----------------------------------------
-	const handleDelta = useCallback(
-		(token: string) => {
-			appendDelta(token);
-		},
-		[appendDelta]
-	);
-
-	const handleCompleted = useCallback(
-		(completedContent: string) => {
-			commitFinal(completedContent);
-			editorActions.hideLoading();
-			editorActions.enable();
-			editorActions.hidePromptStatusBar();
-			editorActions.clearPromptInput();
-			const ed = editorRef.current;
-			if (!ed || ed.isDestroyed) return;
-			onMarkdownChangedRef.current(ed.getMarkdown());
-		},
-		[commitFinal, editorActions]
-	);
-
-	const handleCancelOrError = useCallback(() => {
-		revertInsert();
-		editorActions.hideLoading();
-		editorActions.enable();
-		editorActions.hidePromptStatusBar();
-	}, [revertInsert, editorActions]);
-
-	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
-	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
-
-	// ---- AI-action event listener -------------------------------------------
 	useEffect(() => {
 		if (!documentId || !aiActionTaskId) return;
 		if (typeof window.task?.onEvent !== 'function') return;
@@ -230,8 +93,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (event.taskId !== aiActionTaskId) return;
 			if (event.metadata.documentId !== documentId) return;
 
-			// `event.data: TaskEventResult` is a discriminated union. Narrow on
-			// `success` first, then act on the lifecycle state.
 			if (event.state === 'finished') {
 				if (event.data.success) {
 					const responseText = event.data.data;
@@ -244,7 +105,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const to = Math.min(range.to, docSize);
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
-								console.log("Response text: ", responseText);
+								console.log('Response text: ', responseText);
 								ed.chain().deleteRange({ from, to }).insertContentAt(from, responseText).run();
 							}
 						}
@@ -267,10 +128,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 		});
 	}, [aiActionTaskId, documentId]);
 
-	// ---- Submit -------------------------------------------------------------
-	// All payloads go through the same path: wrap `payload.prompt` with the
-	// surrounding doc context so the model can use it, then replace the
-	// selection range on completion (collapsed range → insert at cursor).
 	const submit = useCallback(
 		async (payload: PromptSubmitPayload): Promise<void> => {
 			if (!documentId || isBusyRef.current) return;
