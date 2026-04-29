@@ -1,6 +1,11 @@
 /** Workspace async thunks — IPC calls for loading, selecting, and clearing workspaces. */
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import type { IndexingInfo, ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
+import type {
+	CreateWorkspaceParams,
+	IndexingInfo,
+	ResourceInfo,
+	WorkspaceInfo,
+} from '../../../../shared/types';
 import type { AppDispatch } from '../index';
 import type { DocumentItem } from './types';
 import {
@@ -24,13 +29,12 @@ export const loadCurrentWorkspace = createAsyncThunk('workspace/loadCurrent', as
 });
 
 /**
- * Load the list of recent workspaces from the main process.
+ * Load every managed workspace from `{userData}/workspaces/`.
  */
-export const loadRecentWorkspaces = createAsyncThunk<WorkspaceInfo[]>(
-	'workspace/loadRecent',
+export const listWorkspaces = createAsyncThunk<WorkspaceInfo[]>(
+	'workspace/list',
 	async () => {
-		const recent = await window.workspace.getRecent();
-		return recent;
+		return await window.workspace.list();
 	}
 );
 
@@ -47,24 +51,15 @@ export const selectWorkspace = createAsyncThunk(
 );
 
 /**
- * Open a folder picker and select a workspace.
+ * Create a new managed workspace and immediately switch to it.
+ * Returns the newly created workspace info.
  */
-export const openWorkspacePicker = createAsyncThunk('workspace/openPicker', async () => {
-	const selectedPath = await window.workspace.selectFolder();
-	if (selectedPath) {
-		await window.workspace.setCurrent(selectedPath);
-	}
-	return selectedPath;
-});
-
-/**
- * Remove a workspace from the recent workspaces list.
- */
-export const removeRecentWorkspace = createAsyncThunk(
-	'workspace/removeRecent',
-	async (workspacePath: string) => {
-		await window.workspace.removeRecent(workspacePath);
-		return workspacePath;
+export const createWorkspace = createAsyncThunk<WorkspaceInfo, CreateWorkspaceParams>(
+	'workspace/create',
+	async (params) => {
+		const info = await window.workspace.create(params);
+		await window.workspace.setCurrent(info.path);
+		return info;
 	}
 );
 
