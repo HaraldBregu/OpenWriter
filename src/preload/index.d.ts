@@ -14,6 +14,7 @@ import type {
 	WorkspaceInfo,
 	WorkspaceChangedEvent,
 	WorkspaceDeletedEvent,
+	CreateWorkspaceParams,
 	IndexingInfo,
 	ResourceInfo,
 	ContentEntryChangeEvent,
