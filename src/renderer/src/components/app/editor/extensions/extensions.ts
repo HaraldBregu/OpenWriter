@@ -19,6 +19,7 @@ import { Placeholder } from '@tiptap/extensions';
 import { SearchExtension } from './search-extension';
 import { PromptExtension } from './prompt-extension';
 import { ImageExtension } from './image-extension';
+import { UndoRedoKeymapExtension } from './undo-redo-keymap';
 import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
 import { Markdown } from '@tiptap/markdown';
 import type { PromptSubmitPayload } from '../types';
