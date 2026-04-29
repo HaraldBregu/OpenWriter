@@ -27,7 +27,6 @@ export interface EditorElement extends HTMLDivElement {
 	removeAssistant: () => void;
 	setAssistantLoading: (loading: boolean) => void;
 	setAssistantEnable: (enable: boolean) => void;
-	setPromptStatusBar: (state: { visible: boolean; message?: string }) => void;
 	insertPromptView: () => void;
 	splitBlock: () => void;
 	setHeading: (level: 1 | 2 | 3 | 4 | 5 | 6) => void;
