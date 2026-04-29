@@ -21,7 +21,7 @@ export const RESOURCE_SECTION_ORDER: ResourceSectionId[] = ['files', 'content', 
 export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig> = {
 	files: {
 		id: 'files',
-		route: '/resources/files',
+		route: '/resources/images',
 		titleKey: 'appLayout.files',
 		emptyKey: 'resources.files.empty',
 		loadingKey: 'resources.files.loading',
