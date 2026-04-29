@@ -30,7 +30,9 @@ export const CategoryCard = React.memo(function CategoryCard({
 			aria-disabled={disabled}
 		>
 			<CardContent className="flex flex-col gap-3">
-				<div className={`h-9 w-9 rounded-lg flex items-center justify-center ${accent}`}>
+				<div
+					className={`h-9 w-9 rounded-full flex items-center justify-center transition-colors group-hover:bg-primary group-hover:text-primary-foreground ${accent}`}
+				>
 					<Icon className="h-4 w-4" />
 				</div>
 				<div>
