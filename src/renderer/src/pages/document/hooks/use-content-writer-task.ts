@@ -131,9 +131,24 @@ export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseCont
 
 			const { from, to } = ed.state.selection;
 
+			const sliceToText = (start: number, end: number): string => {
+				if (start === end) return '';
+				return ed.state.doc.textBetween(start, end, '\n\n');
+			};
+
+			const docSize = ed.state.doc.content.size;
+			const before = sliceToText(0, from);
+			const after = sliceToText(to, docSize);
+
+			const prompt = buildWritePrompt({
+				textBefore: before,
+				textAfter: after,
+				userInstruction: payload.prompt,
+			});
+
 			const result = await window.task.submit({
 				type: TASK_TYPE,
-				input: { prompt: payload.prompt },
+				input: { prompt },
 				metadata: { documentId, selection: { from, to } },
 			});
 
