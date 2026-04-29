@@ -6,6 +6,39 @@ import type { PromptSubmitPayload } from '@/components/app/editor/types';
 
 const TASK_TYPE = 'content-writer';
 
+const PROMPT_TEMPLATE = `Generate new text to insert at the position indicated below. The surrounding text uses Markdown formatting (e.g., **bold**, *italic*, \`code\`, [links](url), lists, headings). Your output MUST use Markdown formatting consistent with the surrounding context.
+
+Use the surrounding context (text before and after) to understand tone, style, voice, and structural intent — match the style of the existing document.
+
+<context_before>
+{{TEXT_BEFORE}}
+</context_before>
+
+<context_after>
+{{TEXT_AFTER}}
+</context_after>
+
+Instructions: {{USER_INSTRUCTION}}
+
+Formatting rules:
+- Use Markdown syntax where appropriate: **bold**, *italic*, ***bold italic***, ~~strikethrough~~, \`inline code\`, [link text](url), images, headings (#, ##, ###), blockquotes (>), lists (-, *, 1.), tables, and code blocks (\`\`\`).
+- Match the formatting style and tone of the surrounding context.
+- Use heading levels consistent with the document's existing hierarchy.
+- Ensure the new text flows naturally with the context before and after.
+- Do not repeat content already present in the surrounding context.
+
+Return only the new text to insert at the position. Do not repeat the surrounding context. Do not wrap your response in code fences. Do not add explanations.`;
+
+function buildWritePrompt(args: {
+	textBefore: string;
+	textAfter: string;
+	userInstruction: string;
+}): string {
+	return PROMPT_TEMPLATE.replaceAll('{{TEXT_BEFORE}}', args.textBefore)
+		.replaceAll('{{TEXT_AFTER}}', args.textAfter)
+		.replaceAll('{{USER_INSTRUCTION}}', args.userInstruction);
+}
+
 export interface UseContentWriterTaskOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;

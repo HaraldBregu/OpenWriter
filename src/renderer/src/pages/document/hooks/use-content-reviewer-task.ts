@@ -101,11 +101,9 @@ export function useContentReviewerTask(opts: UseContentReviewerTaskOptions): Use
 						if (range) {
 							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
-							console.log(json)
 							if (json) {
 								const node = ed.schema.nodeFromJSON(json);
 								const slice = Slice.maxOpen(node.content);
-								console.log("slice: ", slice)
 								const tr = ed.state.tr.replaceRange(from, to, slice);
 								ed.view.dispatch(tr);
 								ed.view.focus();
