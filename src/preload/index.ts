@@ -14,6 +14,7 @@ import type {
 	Service,
 	ThemeMode,
 	WorkspaceInfo,
+	CreateWorkspaceParams,
 	DocumentConfig,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
