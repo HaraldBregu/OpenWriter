@@ -110,7 +110,7 @@ function Container({ children }: LayoutProps) {
 	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
 	const currentWorkspacePath = useAppSelector(selectCurrentWorkspacePath);
-	const recentWorkspaces = useAppSelector(selectRecentWorkspaces);
+	const workspaces = useAppSelector(selectWorkspaces);
 	const themeMode = useThemeMode();
 	const language = useLanguageMode();
 	const { setTheme, setLanguage } = useAppActions();
