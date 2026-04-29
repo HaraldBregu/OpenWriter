@@ -8,5 +8,8 @@ export { useDocumentActions } from './use-document-actions';
 export { useDocumentHistory, type HistoryEntry } from './use-document-history';
 export { useEditor } from './use-editor';
 export type { EditorActions } from './use-editor';
-export { useDocumentAiTasks } from './use-document-ai-tasks';
-export type { UseDocumentAiTasks, UseDocumentAiTasksOptions } from './use-document-ai-tasks';
+export { useContentReviewerTask } from './use-content-reviewer-task';
+export type {
+	UseContentReviewerTask,
+	UseContentReviewerTaskOptions,
+} from './use-content-reviewer-task';
