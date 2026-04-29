@@ -8,7 +8,6 @@ import type {
 	ContentWriterAgentOutput,
 } from '../../agents/content-writer';
 import type { AgentEvent } from '../../agents/core/agent';
-import type { TaskState } from '../../../shared/types';
 
 export interface ContentWriterTaskInput {
 	prompt: string;
