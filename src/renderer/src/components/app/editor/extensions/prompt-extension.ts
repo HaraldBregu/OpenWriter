@@ -13,6 +13,8 @@ declare module '@tiptap/core' {
 	interface Commands<ReturnType> {
 		contentGenerator: {
 			insertPromptView: () => ReturnType;
+			removePromptView: () => ReturnType;
+			setPromptViewState: (state: { loading?: boolean; enable?: boolean }) => ReturnType;
 		};
 	}
 }
