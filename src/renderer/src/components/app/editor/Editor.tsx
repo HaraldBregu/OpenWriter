@@ -398,16 +398,6 @@ const Editor = React.memo(
 				editor.setEditable(!disabled);
 			}, [editor, disabled]);
 
-			const autoFocusedEditorRef = useRef<TiptapEditor | null>(null);
-			useEffect(() => {
-				if (!autoFocus || !editor || editor.isDestroyed) return;
-				if (autoFocusedEditorRef.current === editor) return;
-				autoFocusedEditorRef.current = editor;
-				Promise.resolve().then(() => {
-					if (!editor.isDestroyed) editor.commands.focus('start');
-				});
-			}, [editor, autoFocus]);
-
 			const handleAiAction = useCallback((payload: PromptSubmitPayload) => {
 				onPromptSubmitRef.current?.(payload);
 			}, []);
