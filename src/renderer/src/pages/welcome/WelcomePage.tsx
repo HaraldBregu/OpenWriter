@@ -1,22 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Clock, X, AlertTriangle } from 'lucide-react';
+import { FolderOpen, Clock, Plus, X, AlertTriangle } from 'lucide-react';
 import { AppIconOpenWriter } from '@/components/app';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Textarea } from '@/components/ui/Textarea';
+import { Label } from '@/components/ui/Label';
+import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from '@/components/ui/Dialog';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import {
 	useWorkspaceDeletionReason,
 	useClearDeletionReason,
 } from '@/hooks/use-workspace-validation';
-import { useAppDispatch } from '@/store';
-import { selectWorkspace, openWorkspacePicker } from '@/store/workspace/actions';
-
-interface RecentProject {
-	path: string;
-	lastOpened: number;
-	exists?: boolean;
-}
+import { useAppDispatch, useAppSelector } from '@/store';
+import { selectWorkspace, listWorkspaces, createWorkspace } from '@/store/workspace/actions';
+import { selectWorkspaces } from '@/store/workspace/selectors';
 
 interface WelcomePageProps {}
 
@@ -24,100 +30,66 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation();
 	const dispatch = useAppDispatch();
-	const [recentProjects, setRecentProjects] = useState<RecentProject[]>([]);
+	const workspaces = useAppSelector(selectWorkspaces);
 	const deletionReason = useWorkspaceDeletionReason();
 	const clearDeletion = useClearDeletionReason();
 
-	const loadRecentProjects = useCallback(async () => {
-		try {
-			const projects = await window.workspace.getRecent();
-			const validProjects = projects.filter((project) => typeof project.path === 'string');
-			const projectsWithExistence = await Promise.all(
-				validProjects.map(async (project) => {
-					try {
-						const exists = await window.workspace.directoryExists(project.path);
-						return { ...project, exists };
-					} catch {
-						return { ...project, exists: false };
-					}
-				})
-			);
-
-			setRecentProjects(projectsWithExistence);
-		} catch (error) {
-			console.error('Failed to load recent projects:', error);
-			setRecentProjects([]);
-		}
-	}, []);
+	const [createOpen, setCreateOpen] = useState(false);
+	const [name, setName] = useState('');
+	const [description, setDescription] = useState('');
+	const [submitting, setSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState<string | null>(null);
 
 	useEffect(() => {
-		void loadRecentProjects();
-	}, [loadRecentProjects]);
+		void dispatch(listWorkspaces());
+	}, [dispatch]);
 
-	const handleOpenProject = useCallback(async () => {
-		try {
-			const selectedPath = await dispatch(openWorkspacePicker()).unwrap();
-			if (selectedPath) {
-				navigate('/home');
-			}
-		} catch (error) {
-			console.error('Failed to open project:', error);
-		}
-	}, [dispatch, navigate]);
+	const openCreateDialog = useCallback(() => {
+		setName('');
+		setDescription('');
+		setSubmitError(null);
+		setCreateOpen(true);
+	}, []);
 
-	const handleOpenRecentProject = useCallback(
-		async (path: string, exists: boolean) => {
-			if (!exists) {
+	const handleCreate = useCallback(
+		async (event: React.FormEvent) => {
+			event.preventDefault();
+			const trimmedName = name.trim();
+			if (!trimmedName) {
+				setSubmitError(t('welcome.workspaceNamePlaceholder'));
 				return;
 			}
+			setSubmitting(true);
+			setSubmitError(null);
+			try {
+				await dispatch(
+					createWorkspace({ name: trimmedName, description: description.trim() })
+				).unwrap();
+				setCreateOpen(false);
+				navigate('/home');
+			} catch (err) {
+				setSubmitError(err instanceof Error ? err.message : String(err));
+			} finally {
+				setSubmitting(false);
+			}
+		},
+		[dispatch, name, description, navigate, t]
+	);
 
+	const handleOpenWorkspace = useCallback(
+		async (path: string) => {
 			try {
 				await dispatch(selectWorkspace(path)).unwrap();
 				navigate('/home');
 			} catch (error) {
-				console.error('Failed to open recent project:', error);
+				console.error('Failed to open workspace:', error);
 			}
 		},
 		[dispatch, navigate]
 	);
 
-	const handleRemoveRecentProject = useCallback(
-		async (path: string, event: React.MouseEvent) => {
-			event.stopPropagation();
-
-			try {
-				await window.workspace.removeRecent(path);
-				await loadRecentProjects();
-			} catch (error) {
-				console.error('Failed to remove recent project:', error);
-			}
-		},
-		[loadRecentProjects]
-	);
-
-	const formatPath = (path: string) => {
-		if (typeof path !== 'string') return '';
-		if (path.includes('/Users/')) {
-			const parts = path.split('/Users/');
-			if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/');
-		}
-		if (path.includes('/home/')) {
-			const parts = path.split('/home/');
-			if (parts[1]) return '~/' + parts[1].split('/').slice(1).join('/');
-		}
-		if (path.includes('\\Users\\')) {
-			const parts = path.split('\\Users\\');
-			if (parts[1]) return '~\\' + parts[1].split('\\').slice(1).join('\\');
-		}
-		return path;
-	};
-
-	const getProjectName = (path: string) => {
-		if (typeof path !== 'string') return '';
-		return path.split(/[/\\]/).pop() || path;
-	};
-
 	const formatRelativeTime = (timestamp: number) => {
+		if (!timestamp) return '';
 		const seconds = Math.floor((Date.now() - timestamp) / 1000);
 		if (seconds < 60) return 'just now';
 		const minutes = Math.floor(seconds / 60);
@@ -181,93 +153,134 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 					<div className="rounded-xl border border-border p-6 flex items-center justify-between gap-6">
 						<div className="flex flex-col gap-2">
 							<h2 className="text-lg font-semibold text-foreground">
-								{t('welcome.openWorkspace')}
+								{t('welcome.createWorkspace')}
 							</h2>
 							<p className="text-sm text-muted-foreground">
-								{t('welcome.openWorkspaceDescription')}
+								{t('welcome.createWorkspaceDescription')}
 							</p>
 						</div>
 
 						<Button
-							variant="outline"
-							className="h-14 px-6 flex items-center gap-3 rounded-lg border-border hover:bg-accent hover:border-accent-foreground/20 transition-colors shrink-0"
-							onClick={handleOpenProject}
+							className="h-14 px-6 flex items-center gap-3 rounded-lg shrink-0"
+							onClick={openCreateDialog}
 						>
-							<FolderOpen className="h-5 w-5 text-foreground/70" />
-							<span className="text-sm font-medium">{t('welcome.browse')}</span>
+							<Plus className="h-5 w-5" />
+							<span className="text-sm font-medium">{t('welcome.create')}</span>
 						</Button>
 					</div>
 				</div>
 
-				{recentProjects.length > 0 && (
-					<div className="w-full max-w-2xl flex flex-col min-h-0">
-						<div className="flex items-center justify-between mb-3">
-							<h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-								{t('welcome.recentProjects')}
-							</h2>
+				<div className="w-full max-w-2xl flex flex-col min-h-0">
+					<div className="flex items-center justify-between mb-3">
+						<h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+							{t('welcome.yourWorkspaces')}
+						</h2>
+						{workspaces.length > 5 && (
 							<span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
 								{t('welcome.viewAll')}
 							</span>
+						)}
+					</div>
+
+					{workspaces.length === 0 ? (
+						<div className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+							{t('welcome.noWorkspaces')}
 						</div>
-
+					) : (
 						<div className="rounded-xl border border-border overflow-y-auto max-h-96">
-							{recentProjects.slice(0, 5).map((project, index) => {
-								const exists = project.exists !== false;
-
+							{workspaces.slice(0, 5).map((workspace, index) => {
+								const displayName = workspace.name || workspace.id;
 								return (
-									<div
-										key={index}
+									<button
+										key={workspace.id}
+										onClick={() => handleOpenWorkspace(workspace.path)}
 										className={`
-                    flex items-center justify-between px-4 py-3
-                    transition-colors
-                    ${index !== 0 ? 'border-t border-border' : ''}
-                    ${exists ? 'hover:bg-accent opacity-100' : 'opacity-40'}
-                  `}
-									>
-										<button
-											onClick={() => handleOpenRecentProject(project.path, exists)}
-											disabled={!exists}
-											className={`
-                      flex items-center gap-4 flex-1 min-w-0
-                      ${exists ? 'cursor-pointer' : 'cursor-not-allowed'}
+                      flex items-center justify-between w-full px-4 py-3 text-left
+                      transition-colors hover:bg-accent
+                      ${index !== 0 ? 'border-t border-border' : ''}
                     `}
-										>
+									>
+										<div className="flex items-center gap-4 flex-1 min-w-0">
 											<div className="h-8 w-8 rounded-md flex items-center justify-center shrink-0 bg-primary/10">
 												<FolderOpen className="h-4 w-4 text-primary" />
 											</div>
 
 											<div className="flex flex-col items-start min-w-0">
 												<span className="text-sm font-medium truncate text-foreground text-left">
-													{getProjectName(project.path)}
-													{!exists && ` ${t('welcome.notFound')}`}
+													{displayName}
 												</span>
-												<span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
-													{formatPath(project.path)}
-												</span>
+												{workspace.description && (
+													<span className="text-xs truncate mt-0.5 text-muted-foreground text-left">
+														{workspace.description}
+													</span>
+												)}
 											</div>
-										</button>
-
-										<div className="flex items-center gap-2 shrink-0">
-											<div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-												<Clock className="h-3 w-3" />
-												<span>{formatRelativeTime(project.lastOpened)}</span>
-											</div>
-
-											<button
-												onClick={(event) => handleRemoveRecentProject(project.path, event)}
-												className="h-8 w-8 rounded-md hover:bg-accent/50 flex items-center justify-center transition-colors"
-												title={t('welcome.removeFromRecent')}
-											>
-												<X className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-											</button>
 										</div>
-									</div>
+
+										{workspace.lastOpened > 0 && (
+											<div className="flex items-center gap-1.5 text-xs text-muted-foreground shrink-0 ml-3">
+												<Clock className="h-3 w-3" />
+												<span>{formatRelativeTime(workspace.lastOpened)}</span>
+											</div>
+										)}
+									</button>
 								);
 							})}
 						</div>
-					</div>
-				)}
+					)}
+				</div>
 			</div>
+
+			<Dialog open={createOpen} onOpenChange={setCreateOpen}>
+				<DialogContent>
+					<form onSubmit={handleCreate}>
+						<DialogHeader>
+							<DialogTitle>{t('welcome.createWorkspace')}</DialogTitle>
+							<DialogDescription>{t('welcome.createWorkspaceDescription')}</DialogDescription>
+						</DialogHeader>
+						<div className="grid gap-4 py-4">
+							<div className="grid gap-2">
+								<Label htmlFor="workspace-name">{t('welcome.workspaceName')}</Label>
+								<Input
+									id="workspace-name"
+									autoFocus
+									value={name}
+									placeholder={t('welcome.workspaceNamePlaceholder')}
+									onChange={(e) => setName(e.target.value)}
+									disabled={submitting}
+									required
+									maxLength={255}
+								/>
+							</div>
+							<div className="grid gap-2">
+								<Label htmlFor="workspace-description">{t('welcome.workspaceDescription')}</Label>
+								<Textarea
+									id="workspace-description"
+									value={description}
+									placeholder={t('welcome.workspaceDescriptionPlaceholder')}
+									onChange={(e) => setDescription(e.target.value)}
+									disabled={submitting}
+									rows={3}
+								/>
+							</div>
+							{submitError && <p className="text-xs text-destructive">{submitError}</p>}
+						</div>
+						<DialogFooter>
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => setCreateOpen(false)}
+								disabled={submitting}
+							>
+								{t('welcome.cancel')}
+							</Button>
+							<Button type="submit" disabled={submitting || !name.trim()}>
+								{t('welcome.create')}
+							</Button>
+						</DialogFooter>
+					</form>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 };
