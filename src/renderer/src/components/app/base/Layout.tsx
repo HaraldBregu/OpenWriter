@@ -450,7 +450,7 @@ function Container({ children }: LayoutProps) {
 											className="group/btn h-9 px-3"
 											isActive={location.pathname === '/home'}
 										>
-											<Home className="h-5 w-5 shrink-0" />
+											<LayoutDashboard className="h-5 w-5 shrink-0" />
 											<span className="flex-1 truncate">{t('menu.home', 'Home')}</span>
 										</SidebarMenuButton>
 									</SidebarMenuItem>
