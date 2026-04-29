@@ -103,23 +103,6 @@ function PageContent(): ReactElement {
 		};
 	}, [id, dispatch, navigate]);
 
-	const loadImages = useCallback(async () => {
-		if (!id) {
-			dispatch({ type: 'IMAGES_UPDATED', images: [] });
-			return;
-		}
-		try {
-			const result = await window.workspace.listDocumentImages(id);
-			dispatch({ type: 'IMAGES_UPDATED', images: result });
-		} catch {
-			dispatch({ type: 'IMAGES_UPDATED', images: [] });
-		}
-	}, [id, dispatch]);
-
-	useEffect(() => {
-		loadImages();
-	}, [loadImages]);
-
 	useEffect(() => {
 		if (!id) return;
 
@@ -134,17 +117,6 @@ function PageContent(): ReactElement {
 
 		return unsubscribe;
 	}, [id, navigate]);
-
-	useEffect(() => {
-		if (!id) return;
-
-		const unsubscribe = window.workspace.onDocumentImageChange((event) => {
-			if (event.documentId !== id) return;
-			loadImages();
-		});
-
-		return unsubscribe;
-	}, [id, loadImages]);
 
 	const debouncedMetadataSave = useMemo(
 		() =>
