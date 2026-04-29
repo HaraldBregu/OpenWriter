@@ -304,7 +304,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Italic" keys={[modKey, 'I']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Italic</span>
+									<span className="text-[10px] opacity-70">{`${modKey} I`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
