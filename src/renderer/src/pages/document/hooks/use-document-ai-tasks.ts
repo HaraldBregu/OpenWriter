@@ -238,35 +238,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	const taskHandlersRef = useRef({ handleDelta, handleCompleted, handleCancelOrError });
 	taskHandlersRef.current = { handleDelta, handleCompleted, handleCancelOrError };
 
-	// ---- Prompt-flow event listener -----------------------------------------
-	useEffect(() => {
-		if (!documentId || !activeTaskId) return;
-		if (typeof window.task?.onEvent !== 'function') return;
-
-		return window.task.onEvent((event: TaskEvent) => {
-			if (event.metadata.documentId !== documentId) return;
-			const data = event.data.success ? event.data.data : '';
-			editorActions.showPromptStatusBar(data);
-			const handlers = taskHandlersRef.current;
-
-			if (event.state === 'running') {
-				handlers.handleDelta(data);
-			} else if (event.state === 'finished') {
-				handlers.handleCompleted(data);
-				if (typeof window.task?.cancel === 'function') {
-					void window.task.cancel(activeTaskId);
-				}
-				setActiveTaskId(null);
-			} else if (event.state === 'cancelled') {
-				if (!event.data.success && event.data.error.length > 0) {
-					setTaskError(event.data.error);
-				}
-				handlers.handleCancelOrError();
-				setActiveTaskId(null);
-			}
-		});
-	}, [activeTaskId, documentId, editorActions]);
-
 	// ---- AI-action event listener -------------------------------------------
 	useEffect(() => {
 		if (!documentId || !aiActionTaskId) return;
@@ -294,7 +265,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 								ed.chain().deleteRange({ from, to }).insertContentAt(from, responseText).run();
 							}
 						}
-						// onMarkdownChangedRef.current(ed.getMarkdown());
+						onMarkdownChangedRef.current(ed.getMarkdown());
 					}
 				} else if (event.data.error.length > 0) {
 					setTaskError(event.data.error);
