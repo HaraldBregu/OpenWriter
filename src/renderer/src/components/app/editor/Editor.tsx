@@ -52,19 +52,6 @@ export interface EditorProps {
 	onEditorReady?: (editor: TiptapEditor | null) => void;
 }
 
-function Content({
-	onAiAction,
-}: {
-	onAiAction?: (payload: PromptSubmitPayload) => void;
-}): React.JSX.Element {
-	return (
-		<>
-			<BubbleMenu onAiAction={onAiAction} />
-			<OptionMenu />
-		</>
-	);
-}
-
 const Editor = React.memo(
 	React.forwardRef<EditorElement, EditorProps>(
 		(
