@@ -285,19 +285,16 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 					if (ed && !ed.isDestroyed) {
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
-							console.log('AI action response: ', responseText);
-
-
 							const docSize = ed.state.doc.content.size;
 							const from = Math.min(range.from, docSize);
 							const to = Math.min(range.to, docSize);
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
-								console.log('Parsed AI action response JSON: ', json);
-								ed.chain().deleteRange({ from, to }).insertContentAt(from, json).run();
+								console.log("Response text: ", responseText);
+								ed.chain().deleteRange({ from, to }).insertContentAt(from, responseText).run();
 							}
 						}
-						onMarkdownChangedRef.current(ed.getMarkdown());
+						// onMarkdownChangedRef.current(ed.getMarkdown());
 					}
 				} else if (event.data.error.length > 0) {
 					setTaskError(event.data.error);
@@ -329,6 +326,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			if (ed.isDestroyed) return;
 
 			const { from, to } = ed.state.selection;
+			console.log('Submitting prompt with selection range: ', { from, to });
 
 			const sliceToMarkdown = (start: number, end: number): string => {
 				if (start === end) return '';
@@ -350,7 +348,6 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 				userInstruction: payload.prompt,
 			});
 
-			console.log('Constructed prompt: ', prompt);
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
