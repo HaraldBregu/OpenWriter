@@ -148,26 +148,20 @@ const app: AppApi = {
 // window.workspace — Workspace folder selection, documents, directories, output
 // ---------------------------------------------------------------------------
 const workspace: WorkspaceApi = {
-	selectFolder: (): Promise<string | null> => {
-		return typedInvokeUnwrap(WorkspaceChannels.selectFolder);
-	},
 	getCurrent: (): Promise<string | null> => {
 		return typedInvokeUnwrap(WorkspaceChannels.getCurrent);
 	},
 	setCurrent: (workspacePath: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.setCurrent, workspacePath);
 	},
-	getRecent: (): Promise<WorkspaceInfo[]> => {
-		return typedInvokeUnwrap(WorkspaceChannels.getRecent);
+	list: (): Promise<WorkspaceInfo[]> => {
+		return typedInvokeUnwrap(WorkspaceChannels.list);
+	},
+	create: (params: CreateWorkspaceParams): Promise<WorkspaceInfo> => {
+		return typedInvokeUnwrap(WorkspaceChannels.create, params);
 	},
 	clear: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.clear);
-	},
-	directoryExists: (directoryPath: string): Promise<boolean> => {
-		return typedInvokeUnwrap(WorkspaceChannels.directoryExists, directoryPath);
-	},
-	removeRecent: (workspacePath: string): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.removeRecent, workspacePath);
 	},
 	onChange: (
 		callback: (event: { currentPath: string | null; previousPath: string | null }) => void
