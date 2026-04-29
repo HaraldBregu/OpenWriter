@@ -314,11 +314,6 @@ export class StoreService {
 		this.store.set('currentWorkspace', null);
 	}
 
-	removeRecentWorkspace(workspacePath: string): void {
-		const filtered = this.store.get('recentWorkspaces').filter((w) => w.path !== workspacePath);
-		this.store.set('recentWorkspaces', filtered);
-	}
-
 	private get rawStore(): SettingsStore {
 		return this.store;
 	}
