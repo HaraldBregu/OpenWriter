@@ -477,7 +477,7 @@ function Container({ children }: LayoutProps) {
 											isActive={activeModal === 'search'}
 											onClick={handleOpenSearch}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent">
 												<Search className="h-3.5 w-3.5" />
 											</span>
 											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>

@@ -108,6 +108,17 @@ export async function saveHistorySnapshot(
 	return { id, title, savedAt };
 }
 
+export async function deleteHistoryEntries(docPath: string, ids: string[]): Promise<void> {
+	if (ids.length === 0) return;
+	await Promise.all(
+		ids.map((id) => {
+			const filePath = buildHistoryFilePath(docPath, `${id}.json`);
+			deleteCachedHistoryEntry(filePath);
+			return window.workspace.deleteFile({ filePath }).catch(() => undefined);
+		})
+	);
+}
+
 export async function listHistoryEntries(docPath: string): Promise<HistoryEntry[]> {
 	const dir = historyDir(docPath);
 	const names = (await listHistoryJsonFileNames(dir)).slice(-MAX_HISTORY_ENTRIES);
