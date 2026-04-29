@@ -104,7 +104,7 @@ export function useContentReviewerTask(opts: UseContentReviewerTaskOptions): Use
 							console.log(json)
 							if (json) {
 								const node = ed.schema.nodeFromJSON(json);
-								const slice = new Slice(node.content, 1, 1);
+								const slice = Slice.maxOpen(node.content);
 								console.log("slice: ", slice)
 								const tr = ed.state.tr.replaceRange(from, to, slice);
 								ed.view.dispatch(tr);
