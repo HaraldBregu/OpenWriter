@@ -170,13 +170,13 @@ export const workspaceSlice = createSlice({
 				state.error = action.error.message || 'Failed to load current workspace';
 			});
 
-		// loadRecentWorkspaces
+		// listWorkspaces
 		builder
-			.addCase(loadRecentWorkspaces.fulfilled, (state, action) => {
-				state.recentWorkspaces = action.payload;
+			.addCase(listWorkspaces.fulfilled, (state, action) => {
+				state.workspaces = action.payload;
 			})
-			.addCase(loadRecentWorkspaces.rejected, (_state, action) => {
-				console.error('Failed to load recent workspaces:', action.error);
+			.addCase(listWorkspaces.rejected, (_state, action) => {
+				console.error('Failed to list workspaces:', action.error);
 			});
 
 		// selectWorkspace
@@ -194,27 +194,24 @@ export const workspaceSlice = createSlice({
 				state.error = action.error.message || 'Failed to select workspace';
 			});
 
-		// openWorkspacePicker
+		// createWorkspace
 		builder
-			.addCase(openWorkspacePicker.pending, (state) => {
+			.addCase(createWorkspace.pending, (state) => {
 				state.status = 'loading';
 				state.error = null;
 			})
-			.addCase(openWorkspacePicker.fulfilled, (state, action) => {
-				if (action.payload) {
-					state.currentPath = action.payload;
-				}
+			.addCase(createWorkspace.fulfilled, (state, action) => {
+				state.currentPath = action.payload.path;
+				state.workspaces = [
+					action.payload,
+					...state.workspaces.filter((ws) => ws.id !== action.payload.id),
+				];
 				state.status = 'ready';
 			})
-			.addCase(openWorkspacePicker.rejected, (state, action) => {
+			.addCase(createWorkspace.rejected, (state, action) => {
 				state.status = 'error';
-				state.error = action.error.message || 'Failed to open workspace picker';
+				state.error = action.error.message || 'Failed to create workspace';
 			});
-
-		// removeRecentWorkspace
-		builder.addCase(removeRecentWorkspace.fulfilled, (state, action) => {
-			state.recentWorkspaces = state.recentWorkspaces.filter((ws) => ws.path !== action.payload);
-		});
 
 		// clearWorkspace
 		builder
