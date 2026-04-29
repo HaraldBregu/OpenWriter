@@ -11,7 +11,6 @@ export function documentReducer(state: DocumentState, action: DocumentAction): D
 				content: '',
 				selection: null,
 				metadata: null,
-				images: [],
 			};
 
 		case 'LOAD_SUCCEEDED':
