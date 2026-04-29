@@ -47,11 +47,11 @@ const shiftKey = isMac ? '⇧' : 'Shift';
 const altKey = isMac ? '⌥' : 'Alt';
 
 export interface BubbleMenuProps {
-	onAiAction?: (payload: PromptSubmitPayload) => void;
+	onPromptSubmit?: (payload: PromptSubmitPayload) => void;
 }
 
 export const BubbleMenu = React.memo(function BubbleMenu({
-	onAiAction,
+	onPromptSubmit,
 }: BubbleMenuProps): React.JSX.Element | null {
 	const { editor } = useEditor();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
