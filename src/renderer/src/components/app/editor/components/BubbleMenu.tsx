@@ -423,7 +423,9 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Comment" />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Comment</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
