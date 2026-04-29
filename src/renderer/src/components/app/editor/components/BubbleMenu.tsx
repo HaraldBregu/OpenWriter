@@ -558,5 +558,13 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 				/>
 			</div>
 		</div>
+			)}
+			<InputMenu
+				open={inputMenuOpen}
+				onOpenChange={handleInputMenuOpenChange}
+				onSubmit={handleInputMenuSubmit}
+				getReferenceRect={getSelectionRect}
+			/>
+		</>
 	);
 });
