@@ -278,7 +278,6 @@ export const workspaceSlice = createSlice({
 
 export const {
 	handleWorkspaceChanged,
-	handleRecentRemoved,
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 	resourceRemoved,
