@@ -1,4 +1,4 @@
-import type { OutputFileMetadata, DocumentImageInfo } from '../../../../../shared/types';
+import type { OutputFileMetadata } from '../../../../../shared/types';
 
 export interface DocumentSelection {
 	readonly from: number;
@@ -11,7 +11,6 @@ export interface DocumentState {
 	readonly content: string;
 	readonly selection: DocumentSelection | null;
 	readonly metadata: OutputFileMetadata | null;
-	readonly images: DocumentImageInfo[];
 	readonly loaded: boolean;
 	readonly isTrashing: boolean;
 	readonly sidebarOpen: boolean;
@@ -24,7 +23,6 @@ export const INITIAL_DOCUMENT_STATE: DocumentState = {
 	content: '',
 	selection: null,
 	metadata: null,
-	images: [],
 	loaded: false,
 	isTrashing: false,
 	sidebarOpen: true,
