@@ -343,10 +343,10 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="/resources/files"
+														path="/resources/images"
 														element={
 															<RouteWrapper>
-																<FilesPage />
+																<ImagesPage />
 															</RouteWrapper>
 														}
 													/>
