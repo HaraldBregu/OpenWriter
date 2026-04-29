@@ -373,21 +373,6 @@ const Editor = React.memo(
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
 
-				if (streamingContent !== undefined) {
-					const current = editor.getMarkdown();
-					if (current !== streamingContent) {
-						queueMicrotask(() => {
-							if (editor.isDestroyed) return;
-							console.log('[Editor] setContent (streaming)', streamingContent);
-							editor.commands.setContent(streamingContent || '', {
-								emitUpdate: false,
-								contentType: 'markdown',
-							});
-						});
-					}
-					return;
-				}
-
 				const hasExternalValueVersionChanged =
 					lastExternalValueVersionRef.current !== externalValueVersion;
 
