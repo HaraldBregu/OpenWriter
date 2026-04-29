@@ -286,17 +286,18 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
 							console.log('AI action response: ', responseText);
-							ed.chain().insertContentAt({ from: range?.from, to: range?.to }, responseText).run();
 
-							// const docSize = ed.state.doc.content.size;
-							// const from = Math.min(range.from, docSize);
-							// const to = Math.min(range.to, docSize);
-							// const json = ed.markdown?.parse(responseText);
-							// if (json) {
-							// 	ed.chain().insertContentAt({ from, to }, json).run();
-							// }
+
+							const docSize = ed.state.doc.content.size;
+							const from = Math.min(range.from, docSize);
+							const to = Math.min(range.to, docSize);
+							const json = ed.markdown?.parse(responseText);
+							if (json) {
+								console.log('Parsed AI action response JSON: ', json);
+								ed.chain().deleteRange({ from, to }).insertContentAt(from, json).run();
+							}
 						}
-						// onMarkdownChangedRef.current(ed.getMarkdown());
+						onMarkdownChangedRef.current(ed.getMarkdown());
 					}
 				} else if (event.data.error.length > 0) {
 					setTaskError(event.data.error);
