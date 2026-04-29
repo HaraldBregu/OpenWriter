@@ -299,7 +299,10 @@ export class ProjectWorkspaceService {
 				typeof record['version'] === 'number' && record['version'] > 0
 					? (record['version'] as number)
 					: SCHEMA_VERSION,
-			projectId: typeof record['projectId'] === 'string' ? record['projectId'] : randomUUID(),
+			projectId:
+				typeof record['projectId'] === 'string'
+					? record['projectId']
+					: path.basename(workspacePath),
 			name:
 				typeof record['name'] === 'string' && record['name'].trim().length > 0
 					? (record['name'] as string)
