@@ -19,7 +19,7 @@ export function ResourcesSection(): ReactElement {
 					labelKey="appLayout.files"
 					descriptionKey="home.filesDescription"
 					accent="bg-foreground/8 text-foreground"
-					onClick={() => navigate('/resources/files')}
+					onClick={() => navigate('/resources/images')}
 				/>
 				<CategoryCard
 					icon={FileText}
