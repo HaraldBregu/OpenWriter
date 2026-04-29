@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
+import { Slice } from '@tiptap/pm/model';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
 
@@ -101,7 +102,7 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
-								ed.chain().focus().insertContentAt({ from, to }, "Artificial intelligence, or AI, has evolved from a futuristic concept into an everyday reality again.").run();
+								ed.chain().focus().insertContentAt({ from, to }, responseText).run();
 							}
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());

@@ -40,7 +40,6 @@ import {
 	TranscriptionAgent,
 } from './agents';
 import {
-	DemoTaskHandler,
 	ContentWriterTaskHandler,
 	ContentReviewerTaskHandler,
 } from './task/handlers';
@@ -104,7 +103,6 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Task system -- handler registry + executor
 	const taskHandlerRegistry = container.register('taskHandlerRegistry', new TaskHandlerRegistry());
-	taskHandlerRegistry.register(new DemoTaskHandler(logger));
 	const serviceResolver = new ServiceResolver(storeService);
 	const modelResolver = new ModelResolver();
 	container.register('serviceResolver', serviceResolver);
