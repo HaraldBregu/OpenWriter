@@ -8,7 +8,6 @@ import type {
 	ContentReviewerAgentOutput,
 } from '../../agents/content-reviewer';
 import type { AgentEvent } from '../../agents/core/agent';
-import type { TaskState } from '../../../shared/types';
 
 export interface ContentReviewerTaskInput {
 	prompt: string;
