@@ -58,6 +58,8 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const arrowRef = useRef<SVGSVGElement>(null);
 	const [open, setOpen] = useState(false);
+	const [inputMenuOpen, setInputMenuOpen] = useState(false);
+	const inputMenuOpenRef = useRef(false);
 	const [, forceRender] = useReducer((x: number) => x + 1, 0);
 
 	const virtualReference = useMemo<VirtualElement>(
