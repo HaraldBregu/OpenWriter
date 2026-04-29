@@ -488,11 +488,15 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<SpellCheck />
 							Fix grammar
 						</Button>
-						<InputMenu
-							onSubmit={handleInputMenuSubmit}
-							onOpenChange={handleInputMenuOpenChange}
-							triggerLabel="Custom prompt"
-						/>
+						<Button
+							variant="ghost"
+							size="sm"
+							className="justify-start w-full"
+							onClick={handleCustomPromptClick}
+						>
+							<Sparkles />
+							Custom prompt
+						</Button>
 					</div>
 
 					<Separator className="my-1" />
