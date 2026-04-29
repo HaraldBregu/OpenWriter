@@ -76,8 +76,7 @@ export class ContentReviewerTaskHandler
 
 			const onEvent = (event: AgentEvent): void => {
 				if (event.kind === 'text') {
-					const token = (event.payload as { text: string }).text;
-					logAndEmitSuccess({ state: 'running', data: token });
+					emitRunning((event.payload as { text: string }).text);
 				}
 			};
 
@@ -87,7 +86,9 @@ export class ContentReviewerTaskHandler
 				onEvent,
 			});
 
-			logAndEmitSuccess({ state: 'finished', data: output.content });
+			logger.info(LOG_SOURCE, 'Content-reviewer task finished', {
+				length: output.content.length,
+			});
 
 			return output.content;
 		} catch (err) {
