@@ -7,8 +7,6 @@ import { usePromptActions, useTextareaSetup } from './hooks';
 import type { PromptOptions } from '../../editor/extensions/prompt-extension';
 import { Context, ContextValue, State } from './context';
 
-type ContentGeneratorAgentId = 'text' | 'image';
-
 interface ProviderProps {
 	nodeViewProps: NodeViewProps;
 	children: React.ReactNode;
@@ -21,7 +19,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 	const enable = node.attrs.enable as boolean;
 	const statusBarVisible = (node.attrs.statusBarVisible as boolean) ?? false;
 	const statusBarMessage = (node.attrs.statusBarMessage as string) ?? '';
-	const initialAgentId = (node.attrs.agentId as ContentGeneratorAgentId) ?? 'text';
 	const options = extension.options as PromptOptions;
 
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -32,7 +29,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		undefined,
 		(): State => ({
 			prompt: (node.attrs.prompt as string) ?? '',
-			agentId: initialAgentId,
 			files: (node.attrs.files as File[] | null) ?? [],
 			previewUrls: [],
 			isDragOver: false,
