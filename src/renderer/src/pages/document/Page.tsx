@@ -164,9 +164,9 @@ function PageContent(): ReactElement {
 
 	const [documentHasActiveTask, setDocumentHasActiveTask] = useReactState(false);
 	const [preexistingTaskActive, setPreexistingTaskActive] = useReactState(false);
-	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
-	const [preexistingTaskContent, setPreexistingTaskContent] = useState<string | null>(null);
-	const [preexistingTaskSelection, setPreexistingTaskSelection] = useState<{
+	const [documentTaskState, setDocumentTaskState] = useReactState<string | null>(null);
+	const [preexistingTaskContent, setPreexistingTaskContent] = useReactState<string | null>(null);
+	const [preexistingTaskSelection, setPreexistingTaskSelection] = useReactState<{
 		from: number;
 		to: number;
 	} | null>(null);
