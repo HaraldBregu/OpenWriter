@@ -259,41 +259,15 @@ const Editor = React.memo(
 					},
 					removeAssistant() {
 						if (!editor || editor.isDestroyed) return;
-						const { doc } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
-								editor
-									.chain()
-									.deleteRange({ from: pos, to: pos + node.nodeSize })
-									.run();
-								return false;
-							}
-							return true;
-						});
+						editor.commands.removePromptView();
 					},
 					setAssistantLoading(loading: boolean) {
 						if (!editor || editor.isDestroyed) return;
-						const { doc, tr } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
-								tr.setNodeMarkup(pos, undefined, { ...node.attrs, loading });
-								return false;
-							}
-							return true;
-						});
-						editor.view.dispatch(tr);
+						editor.commands.setPromptViewState({ loading });
 					},
 					setAssistantEnable(enable: boolean) {
 						if (!editor || editor.isDestroyed) return;
-						const { doc, tr } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
-								tr.setNodeMarkup(pos, undefined, { ...node.attrs, enable });
-								return false;
-							}
-							return true;
-						});
-						editor.view.dispatch(tr);
+						editor.commands.setPromptViewState({ enable });
 					},
 					setPromptStatusBar({ visible, message }) {
 						if (!editor || editor.isDestroyed) return;
