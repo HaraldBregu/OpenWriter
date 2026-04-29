@@ -471,14 +471,12 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 							<SpellCheck />
 							Fix grammar
 						</Button>
+						<InputMenu
+							onSubmit={handleInputMenuSubmit}
+							onOpenChange={handleInputMenuOpenChange}
+							triggerLabel="Custom prompt"
+						/>
 					</div>
-
-					<Separator className="my-1" />
-
-					<InputMenu
-						onSubmit={handleInputMenuSubmit}
-						onOpenChange={handleInputMenuOpenChange}
-					/>
 
 					<Separator className="my-1" />
 
