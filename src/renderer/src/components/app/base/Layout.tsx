@@ -52,7 +52,7 @@ import {
 	CircleArrowUp,
 	Info,
 	LogOut,
-	Home,
+	LayoutDashboard,
 	Plus,
 	Sparkles,
 	Sun,
