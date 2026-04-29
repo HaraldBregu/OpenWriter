@@ -48,16 +48,6 @@ export function usePromptActions({
 		[dispatch, node.attrs.prompt, updateAttributes]
 	);
 
-	const handleAgentChange = useCallback(
-		(value: AgentId) => {
-			dispatch({ type: 'SET_AGENT', payload: value });
-			if ((node.attrs.agentId as AgentId) !== value) {
-				updateAttributes({ agentId: value });
-			}
-		},
-		[dispatch, node.attrs.agentId, updateAttributes]
-	);
-
 	const addFile = useCallback(
 		(newFile: File) => {
 			dispatch({ type: 'ADD_FILE', payload: newFile });
