@@ -38,6 +38,7 @@ import {
 	SidebarHeader,
 	useSidebar,
 	Sidebar,
+	SidebarRail,
 } from '@/components/ui/Sidebar';
 import { AppIconOpenWriter } from '..';
 import {
@@ -492,7 +493,7 @@ function Container({ children }: LayoutProps) {
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
 						{open && (
-							<Collapsible defaultOpen className="py-0">
+							<Collapsible defaultOpen className="py-0 mt-4">
 								<SidebarGroup className="py-0">
 									<SidebarGroupLabel
 										render={
@@ -704,27 +705,18 @@ function Container({ children }: LayoutProps) {
 															className={ACCOUNT_MENU_ITEM_CLASS}
 														>
 															<Sun />
-															<span className="flex-1">
-																{t('settings.theme.light', 'Light')}
-															</span>
+															<span className="flex-1">{t('settings.theme.light', 'Light')}</span>
 														</DropdownMenuRadioItem>
 														<DropdownMenuRadioItem
 															value="system"
 															className={ACCOUNT_MENU_ITEM_CLASS}
 														>
 															<Monitor />
-															<span className="flex-1">
-																{t('settings.theme.system', 'System')}
-															</span>
+															<span className="flex-1">{t('settings.theme.system', 'System')}</span>
 														</DropdownMenuRadioItem>
-														<DropdownMenuRadioItem
-															value="dark"
-															className={ACCOUNT_MENU_ITEM_CLASS}
-														>
+														<DropdownMenuRadioItem value="dark" className={ACCOUNT_MENU_ITEM_CLASS}>
 															<Moon />
-															<span className="flex-1">
-																{t('settings.theme.dark', 'Dark')}
-															</span>
+															<span className="flex-1">{t('settings.theme.dark', 'Dark')}</span>
 														</DropdownMenuRadioItem>
 													</DropdownMenuRadioGroup>
 												</DropdownMenuGroup>
@@ -787,6 +779,7 @@ function Container({ children }: LayoutProps) {
 							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarFooter>
+					<SidebarRail />
 				</Sidebar>
 
 				<SidebarPageInset>{children}</SidebarPageInset>

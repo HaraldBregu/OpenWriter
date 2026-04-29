@@ -5,6 +5,7 @@ import {
 	listHistoryEntries,
 	loadHistoryEntry,
 	readLatestHistoryEntry,
+	deleteHistoryEntries,
 	MAX_HISTORY_ENTRIES,
 	isHistoryEntryFilePath,
 	type HistoryEntry,
@@ -26,6 +27,10 @@ interface UseDocumentHistoryOptions {
 interface UseDocumentHistoryReturn {
 	entries: HistoryEntry[];
 	currentEntryId: string | null;
+	canUndo: boolean;
+	canRedo: boolean;
+	undo: () => void;
+	redo: () => void;
 	restoreEntry: (id: string) => Promise<void>;
 	returnToLive: () => void;
 }
@@ -112,12 +117,6 @@ export function useHistory({
 		setCurrentEntryId(null);
 	}, [documentId]);
 
-	// User edits while browsing history should return to the live document state.
-	useEffect(() => {
-		if (!loaded || isRestoringRef.current || currentEntryId === null) return;
-		setCurrentEntryId(null);
-	}, [content, title, loaded, currentEntryId]);
-
 	// Debounced snapshot creator
 	const debouncedSnapshot = useMemo(
 		() =>
@@ -162,6 +161,21 @@ export function useHistory({
 		[debouncedSnapshot]
 	);
 
+	// Editing while viewing a past snapshot drops the forward (redo) entries.
+	useEffect(() => {
+		if (!loaded || isRestoringRef.current || currentEntryId === null) return;
+		const idx = entries.findIndex((e) => e.id === currentEntryId);
+		if (idx >= 0 && idx < entries.length - 1 && docPath) {
+			const forwardIds = entries.slice(idx + 1).map((e) => e.id);
+			void deleteHistoryEntries(docPath, forwardIds);
+			setEntries((prev) => {
+				const newIdx = prev.findIndex((e) => e.id === currentEntryId);
+				return newIdx >= 0 ? prev.slice(0, newIdx + 1) : prev;
+			});
+		}
+		setCurrentEntryId(null);
+	}, [content, title, loaded, currentEntryId, entries, docPath]);
+
 	const restoreEntry = useCallback(
 		async (id: string) => {
 			if (!docPath) return;
@@ -175,6 +189,7 @@ export function useHistory({
 				const data = await loadHistoryEntry(docPath, id);
 				setCurrentEntryId(id);
 				onRestore(data.content, data.title);
+				lastSnapshotRef.current = { content: data.content, title: data.title };
 			} catch {
 				// ignore
 			} finally {
@@ -198,9 +213,88 @@ export function useHistory({
 		});
 	}, [currentEntryId, entries, restoreEntry]);
 
+	const canUndo = useMemo(() => {
+		if (currentEntryId === null) {
+			if (entries.length === 0) return false;
+			const last = lastSnapshotRef.current;
+			const liveDirty =
+				content.trim() !== '' &&
+				(!last || last.content !== content || last.title !== title);
+			return liveDirty || entries.length >= 2;
+		}
+		const idx = entries.findIndex((e) => e.id === currentEntryId);
+		return idx > 0;
+	}, [currentEntryId, entries, content, title]);
+
+	const canRedo = currentEntryId !== null;
+
+	const undo = useCallback(() => {
+		if (!docPath) return;
+
+		if (currentEntryId !== null) {
+			const idx = entries.findIndex((e) => e.id === currentEntryId);
+			if (idx > 0) {
+				void restoreEntry(entries[idx - 1].id);
+			}
+			return;
+		}
+
+		// At live state.
+		if (entries.length === 0) return;
+
+		const { content: c, title: t } = stateRef.current;
+		if (c.trim() === '') return;
+
+		const last = lastSnapshotRef.current;
+		const liveDirty = !last || last.content !== c || last.title !== t;
+
+		if (liveDirty) {
+			// Persist live so it is reachable via redo, then walk back one step.
+			void (async () => {
+				debouncedSnapshot.cancel();
+				try {
+					const newEntry = await saveHistorySnapshot(docPath, c, t);
+					lastSnapshotRef.current = { content: c, title: t };
+					const updated = [
+						...entries.filter((e) => e.id !== newEntry.id),
+						newEntry,
+					].slice(-MAX_HISTORY_ENTRIES);
+					setEntries(updated);
+					if (updated.length >= 2) {
+						void restoreEntry(updated[updated.length - 2].id);
+					}
+				} catch {
+					// ignore
+				}
+			})();
+			return;
+		}
+
+		// Live matches the latest snapshot — step to the one before it.
+		if (entries.length >= 2) {
+			void restoreEntry(entries[entries.length - 2].id);
+		}
+	}, [docPath, currentEntryId, entries, debouncedSnapshot, restoreEntry]);
+
+	const redo = useCallback(() => {
+		if (currentEntryId === null) return;
+		const idx = entries.findIndex((e) => e.id === currentEntryId);
+		if (idx < 0) return;
+		if (idx < entries.length - 1) {
+			void restoreEntry(entries[idx + 1].id);
+			return;
+		}
+		// On the latest snapshot — clear pointer to mark "back at live".
+		setCurrentEntryId(null);
+	}, [currentEntryId, entries, restoreEntry]);
+
 	return {
 		entries,
 		currentEntryId,
+		canUndo,
+		canRedo,
+		undo,
+		redo,
 		restoreEntry,
 		returnToLive,
 	};
