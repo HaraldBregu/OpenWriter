@@ -1,11 +1,11 @@
-export { useDocumentContext } from './use-document-context';
+export { useContext } from './use-context';
 export { useEditorInstance } from './use-editor-instance';
 export { useInsertContentDialog } from './use-insert-content-dialog';
-export { useDocumentState } from './use-document-state';
-export { useDocumentDispatch } from './use-document-dispatch';
-export { useDocumentUI } from './use-document-ui';
-export { useDocumentActions } from './use-document-actions';
-export { useDocumentHistory, type HistoryEntry } from './use-document-history';
+export { useState } from './use-state';
+export { useDispatch } from './use-dispatch';
+export { useUI } from './use-ui';
+export { useActions } from './use-actions';
+export { useHistory, type HistoryEntry } from './use-history';
 export { useEditor } from './use-editor';
 export type { EditorActions } from './use-editor';
 export { useContentReviewerTask } from './use-content-reviewer-task';
