@@ -67,12 +67,12 @@ export const PromptExtension = Node.create<PromptOptions>({
 				renderHTML: () => ({}),
 			},
 			statusBarVisible: {
-				default: true,
+				default: false,
 				parseHTML: () => false,
 				renderHTML: () => ({}),
 			},
 			statusBarMessage: {
-				default: null,
+				default: '',
 				parseHTML: () => '',
 				renderHTML: () => ({}),
 			},
