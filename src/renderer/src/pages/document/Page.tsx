@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/Input';
 import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoPopover from './components/DocumentInfoPopover';
 import {
-	useDocumentDispatch,
+	useDispatch,
 	useDocumentHistory,
 	useState,
 	useInsertContentDialog,
@@ -39,7 +39,7 @@ const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 
 function PageContent(): ReactElement {
 	const { documentId: id } = useState();
-	const dispatch = useDocumentDispatch();
+	const dispatch = useDispatch();
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const { editor, setEditor } = useEditorInstance();
