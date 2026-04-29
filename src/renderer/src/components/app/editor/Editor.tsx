@@ -76,7 +76,8 @@ const Editor = React.memo(
 				className,
 				disabled,
 				id,
-				onPromptSubmit,
+				onReviewPromptSubmit,
+				onWritePromptSubmit,
 				onInsertContent,
 				onEditorReady,
 			},
@@ -84,20 +85,22 @@ const Editor = React.memo(
 		) => {
 			const onChangeRef = useRef(onChange);
 			const onSelectionChangeRef = useRef(onSelectionChange);
-			const onPromptSubmitRef = useRef(onPromptSubmit);
+			const onReviewPromptSubmitRef = useRef(onReviewPromptSubmit);
+			const onWritePromptSubmitRef = useRef(onWritePromptSubmit);
 			const onEditorReadyRef = useRef(onEditorReady);
 
 			useEffect(() => {
 				onChangeRef.current = onChange;
 				onSelectionChangeRef.current = onSelectionChange;
-				onPromptSubmitRef.current = onPromptSubmit;
+				onReviewPromptSubmitRef.current = onReviewPromptSubmit;
+				onWritePromptSubmitRef.current = onWritePromptSubmit;
 				onEditorReadyRef.current = onEditorReady;
 			});
 
 			const extensions = useMemo(
 				() =>
 					createExtensions({
-						onPromptSubmit: (payload) => onPromptSubmitRef.current?.(payload),
+						onPromptSubmit: (payload) => onWritePromptSubmitRef.current?.(payload),
 						onImageInsert: () => undefined,
 					}),
 				[]
