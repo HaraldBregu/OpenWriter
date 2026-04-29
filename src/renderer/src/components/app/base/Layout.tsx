@@ -606,14 +606,6 @@ function Container({ children }: LayoutProps) {
 											{ title: t('appLayout.audio', 'Audio'), comingSoon: true },
 										],
 									},
-									{
-										title: t('appLayout.knowledgeBase'),
-										icon: BookOpen,
-										items: [
-											{ title: t('appLayout.content'), url: '/resources/content' },
-											{ title: t('appLayout.data'), url: '/resources/data' },
-										],
-									},
 								].map((item) => (
 									<Collapsible key={item.title} defaultOpen={false} className="group/collapsible">
 										<SidebarMenuItem>
