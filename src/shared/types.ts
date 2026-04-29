@@ -174,15 +174,21 @@ export interface AppStartupInfo {
 // ---- Workspace ------------------------------------------------------------
 
 export interface WorkspaceInfo {
+	/** Folder name (UUID) under `{userData}/workspaces/`. Stable identifier. */
+	id: string;
+	/** Absolute path to the workspace folder. */
 	path: string;
 	lastOpened: number;
-	data: string;
-	/**
-	 * Project name read from `project_workspace.openwriter` in the workspace root.
-	 * `null` when the file is missing or unreadable — consumers should fall back
-	 * to the folder basename in that case.
-	 */
+	/** Project name read from `project_workspace.openwriter`, or null if unreadable. */
 	name: string | null;
+	/** Project description read from `project_workspace.openwriter`, or null if unreadable. */
+	description: string | null;
+}
+
+/** Input payload when creating a new workspace via IPC. */
+export interface CreateWorkspaceParams {
+	name: string;
+	description?: string;
 }
 
 export interface WorkspaceChangedEvent {
