@@ -114,7 +114,6 @@ const Editor = React.memo(
 						if (!initial) return;
 						queueMicrotask(() => {
 							if (ed.isDestroyed) return;
-							console.log('[Editor] setContent (onCreate initial)', initial);
 							ed.commands.setContent(initial, {
 								emitUpdate: false,
 								contentType: 'markdown',
@@ -185,7 +184,6 @@ const Editor = React.memo(
 						}
 					) {
 						if (!editor || editor.isDestroyed) return;
-						console.log('[Editor] setContent (imperative)', markdown, options);
 						editor.commands.setContent(markdown, {
 							emitUpdate: !(options.preventEditorUpdate ?? false),
 							contentType: 'markdown',
@@ -375,7 +373,6 @@ const Editor = React.memo(
 				if (current !== incoming) {
 					queueMicrotask(() => {
 						if (editor.isDestroyed) return;
-						console.log('[Editor] setContent (value sync)', incoming);
 						editor.commands.setContent(incoming, {
 							emitUpdate: false,
 							contentType: 'markdown',

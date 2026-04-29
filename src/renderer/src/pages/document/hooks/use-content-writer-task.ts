@@ -8,13 +8,13 @@ const TASK_TYPE = 'content-writer';
 
 const PROMPT_TEMPLATE = `Generate new text to insert at the position indicated below. The surrounding text uses Markdown formatting (e.g., **bold**, *italic*, \`code\`, [links](url), lists, headings). Your output MUST use Markdown formatting consistent with the surrounding context.
 
-Use the surrounding context (text before and after) to understand tone, style, voice, and structural intent — match the style of the existing document.
+Use the surrounding context (text before and after) to understand tone, style, voice, and structural intent — match the style of the existing document. If a <selected_text> block is present, the user has selected that text and your output will replace it — use it as the basis for your response unless the instruction says otherwise.
 
 <context_before>
 {{TEXT_BEFORE}}
 </context_before>
 
-<context_after>
+{{SELECTED_TEXT_BLOCK}}<context_after>
 {{TEXT_AFTER}}
 </context_after>
 
@@ -31,10 +31,15 @@ Return only the new text to insert at the position. Do not repeat the surroundin
 
 function buildWritePrompt(args: {
 	textBefore: string;
+	selectedText: string;
 	textAfter: string;
 	userInstruction: string;
 }): string {
+	const selectedBlock = args.selectedText
+		? `<selected_text>\n${args.selectedText}\n</selected_text>\n\n`
+		: '';
 	return PROMPT_TEMPLATE.replaceAll('{{TEXT_BEFORE}}', args.textBefore)
+		.replaceAll('{{SELECTED_TEXT_BLOCK}}', selectedBlock)
 		.replaceAll('{{TEXT_AFTER}}', args.textAfter)
 		.replaceAll('{{USER_INSTRUCTION}}', args.userInstruction);
 }
@@ -146,6 +151,7 @@ export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseCont
 				userInstruction: payload.prompt,
 			});
 
+			console.log(prompt)
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
