@@ -59,7 +59,7 @@ startAppListening({
 	matcher: isAnyOf(
 		handleWorkspaceChanged,
 		selectWorkspace.fulfilled,
-		openWorkspacePicker.fulfilled
+		createWorkspace.fulfilled
 	),
 	effect: async (_action, { dispatch, getState }) => {
 		const currentPath = (getState() as { workspace: { currentPath: string | null } }).workspace
