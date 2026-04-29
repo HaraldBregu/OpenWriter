@@ -344,7 +344,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Text" keys={[modKey, altKey, '0']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Text</span>
+									<span className="text-[10px] opacity-70">{`${modKey} ${altKey} 0`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<HeadingMenu editor={editor} />
