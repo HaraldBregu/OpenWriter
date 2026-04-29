@@ -53,7 +53,7 @@ Two independent history surfaces:
   Restoring a snapshot rewrites both content and title, pushes the
   current state onto the in-memory history, and triggers save.
 
-Source: `src/renderer/src/pages/document/hooks/use-document-history.ts`.
+Source: `src/renderer/src/pages/document/hooks/use-history.ts`.
 
 ## Invoking The Agent
 
