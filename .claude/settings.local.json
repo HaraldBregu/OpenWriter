@@ -156,7 +156,15 @@
       "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/BRGHLD87H/Documents/OpenWriter/.tmp_inspect.ps1 -Path \"C:/Users/BRGHLD87H/AppData/Roaming/OpenWriter/Crashpad/reports/a3f46f1f-3249-4c39-8f3f-bde74c649ce2.dmp\")",
       "Bash(powershell -NoProfile -ExecutionPolicy Bypass -File C:/Users/BRGHLD87H/Documents/OpenWriter/.tmp_inspect.ps1 -Path C:/Users/BRGHLD87H/AppData/Roaming/OpenWriter/Crashpad/reports/__TRACKED_VAR__.dmp)",
       "Bash(powershell -NoProfile -Command \"\\(Get-Item 'C:\\\\Users\\\\BRGHLD87H\\\\Documents'\\).Target\")",
-      "Bash(echo \"---exit=$?---\")"
+      "Bash(echo \"---exit=$?---\")",
+      "Bash(yarn typecheck:node)",
+      "Bash(echo \"NODE_EXIT=$?\")",
+      "Bash(yarn typecheck:web)",
+      "Bash(echo \"WEB_EXIT=$?\")",
+      "Bash(yarn lint *)",
+      "Bash(echo \"LINT_EXIT=$?\")",
+      "Bash(yarn build *)",
+      "Bash(echo \"BUILD_EXIT=$?\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
