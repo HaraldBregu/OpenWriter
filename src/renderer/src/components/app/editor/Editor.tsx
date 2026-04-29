@@ -42,7 +42,6 @@ export interface EditorProps {
 	onChange: (value: string) => void;
 	onSelectionChange?: (selection: { from: number; to: number } | null) => void;
 	externalValueVersion?: number;
-	autoFocus?: boolean;
 	className?: string;
 	disabled?: boolean;
 	id?: string;
