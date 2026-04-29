@@ -129,12 +129,12 @@ function Container({ children }: LayoutProps) {
 	// Monitor workspace folder for external deletion and redirect to Welcome
 	useWorkspaceValidation();
 
-	// Load current workspace, project name, and recent workspaces on mount
+	// Load current workspace, project name, and the full workspaces list on mount
 	useEffect(() => {
 		dispatch(loadCurrentWorkspace()).then(() => {
 			dispatch(loadProjectName());
 		});
-		dispatch(loadRecentWorkspaces());
+		dispatch(listWorkspaces());
 	}, [dispatch]);
 
 	const workspaceNameFromPathString = (path: string) => {
