@@ -161,18 +161,52 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
-	 * Get the list of recently opened workspaces from the persistent store.
+	 * Resolve the managed workspaces root: `{userData}/workspaces/`.
+	 * Created on first access if missing.
 	 */
-	getRecent(): Array<{ path: string; lastOpened: number }> {
-		return this.store.getRecentWorkspaces();
+	getWorkspacesRoot(): string {
+		const root = path.join(app.getPath('userData'), WORKSPACES_FOLDER);
+		if (!fs.existsSync(root)) {
+			fs.mkdirSync(root, { recursive: true });
+		}
+		return root;
 	}
 
 	/**
-	 * Remove a workspace from the recent workspaces list.
+	 * Enumerate every workspace folder under the managed root.
+	 * Each entry is keyed by folder name (the workspace ID) and enriched with
+	 * the last-opened timestamp from the persistent store (0 if never opened).
 	 */
-	removeRecent(workspacePath: string): void {
-		this.store.removeRecentWorkspace(workspacePath);
-		this.logger?.info('WorkspaceService', `Removed from recent workspaces: ${workspacePath}`);
+	listWorkspaceFolders(): Array<{ id: string; path: string; lastOpened: number }> {
+		const root = this.getWorkspacesRoot();
+		const lastOpenedByPath = new Map(
+			this.store.getRecentWorkspaces().map((w) => [w.path, w.lastOpened])
+		);
+
+		const entries = fs.readdirSync(root, { withFileTypes: true });
+		return entries
+			.filter((e) => e.isDirectory())
+			.map((e) => {
+				const workspacePath = path.join(root, e.name);
+				return {
+					id: e.name,
+					path: workspacePath,
+					lastOpened: lastOpenedByPath.get(workspacePath) ?? 0,
+				};
+			});
+	}
+
+	/**
+	 * Create an empty workspace folder under the managed root with a fresh UUID.
+	 * Caller is responsible for writing `project_workspace.openwriter` afterwards.
+	 */
+	createWorkspaceFolder(): { id: string; path: string } {
+		const root = this.getWorkspacesRoot();
+		const id = randomUUID();
+		const workspacePath = path.join(root, id);
+		fs.mkdirSync(workspacePath, { recursive: true });
+		this.logger?.info('WorkspaceService', `Created workspace folder: ${workspacePath}`);
+		return { id, path: workspacePath };
 	}
 
 	/**
