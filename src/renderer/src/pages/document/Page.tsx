@@ -544,7 +544,6 @@ function PageContent(): ReactElement {
 									disabled={assistantIsRunning}
 									ref={editorRef}
 									value={content}
-									autoFocus={!content}
 									externalValueVersion={contentVersion}
 									onChange={handleContentChange}
 									onSelectionChange={handleSelectionChange}
