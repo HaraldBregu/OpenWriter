@@ -68,7 +68,7 @@ function extractTaskSelection(value: unknown): { from: number; to: number } | nu
 }
 
 export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocumentAiTasks {
-	const { documentId, editor, isExternallyBusy } = opts;
+	const { documentId, editor } = opts;
 
 	const onMarkdownChangedRef = useRef(opts.onMarkdownChanged);
 	onMarkdownChangedRef.current = opts.onMarkdownChanged;
