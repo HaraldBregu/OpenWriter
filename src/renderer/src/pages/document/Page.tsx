@@ -16,7 +16,7 @@ import {
 	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
-	useDocumentAiTasks,
+	useContentReviewerTask,
 } from './hooks';
 import type { TaskEvent } from '../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
