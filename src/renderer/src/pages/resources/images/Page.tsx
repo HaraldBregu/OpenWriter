@@ -51,6 +51,7 @@ import { formatBytes, formatDate } from '../shared/resource-utils';
 import { formatShortDate, getMimeTypeLabel } from './shared/file-utils';
 import { getFileIcon } from './components/FileIcon';
 import { SortIcon } from './components/SortIcon';
+import { Label } from '@/components/ui/Label';
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'name', label: 'Name', className: 'w-auto' },
@@ -120,7 +121,7 @@ function PageContent(): ReactElement {
 		<PageContainer>
 			<PageHeader>
 				<PageHeaderTitle>
-					{pageTitle}
+					<Label className="w-full text-left text-sm font-medium">{pageTitle}</Label>
 					{editMode && selected.size > 0 && (
 						<Button variant="destructive" size="lg" onClick={handleDelete}>
 							<Trash2 />
