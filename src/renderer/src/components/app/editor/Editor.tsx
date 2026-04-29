@@ -403,7 +403,7 @@ const Editor = React.memo(
 			}, [editor, disabled]);
 
 			const handleAiAction = useCallback((payload: PromptSubmitPayload) => {
-				onPromptSubmitRef.current?.(payload);
+				onReviewPromptSubmitRef.current?.(payload);
 			}, []);
 
 			return (
