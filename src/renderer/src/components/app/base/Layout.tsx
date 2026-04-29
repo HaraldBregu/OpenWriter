@@ -586,8 +586,18 @@ function Container({ children }: LayoutProps) {
 										<span>{t('appLayout.contents', 'Contents')}</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										render={<Link to="/resources/files" />}
+										className="group/btn h-9 px-3"
+										tooltip={t('appLayout.images', 'Images')}
+										isActive={location.pathname === '/resources/files'}
+									>
+										<FileImage />
+										<span>{t('appLayout.images', 'Images')}</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
 								{[
-									{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
 									{
 										title: t('appLayout.media', 'Media'),
 										icon: Film,
