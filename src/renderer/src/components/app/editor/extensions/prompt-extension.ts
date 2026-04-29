@@ -56,16 +56,6 @@ export const PromptExtension = Node.create<PromptOptions>({
 				parseHTML: () => [] as File[],
 				renderHTML: () => ({}),
 			},
-			statusBarVisible: {
-				default: false,
-				parseHTML: () => false,
-				renderHTML: () => ({}),
-			},
-			statusBarMessage: {
-				default: '',
-				parseHTML: () => '',
-				renderHTML: () => ({}),
-			},
 		};
 	},
 
