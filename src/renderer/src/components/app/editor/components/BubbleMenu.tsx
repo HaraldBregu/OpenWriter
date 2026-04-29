@@ -459,22 +459,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 
 					<Separator className="my-1" />
 
-					<InputGroup className="rounded-sm!">
-						<InputGroupAddon>
-							<Sparkles className="h-3.5 w-3.5" />
-						</InputGroupAddon>
-						<InputGroupInput
-							value={customPrompt}
-							onChange={(e) => setCustomPrompt(e.target.value)}
-							onKeyDown={(e) => {
-								if (e.key === 'Enter' && !e.shiftKey) {
-									e.preventDefault();
-									handleCustomPromptSubmit();
-								}
-							}}
-							placeholder={'Working…'}
-						/>
-					</InputGroup>
+					<InputMenu
+						onSubmit={handleInputMenuSubmit}
+						onOpenChange={handleInputMenuOpenChange}
+					/>
 
 					<Separator className="my-1" />
 
