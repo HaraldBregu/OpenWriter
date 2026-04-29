@@ -147,16 +147,29 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 	const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const isLockedRef = useRef(false);
 
+	const handleCustomPromptClick = useCallback(() => {
+		inputMenuOpenRef.current = true;
+		setInputMenuOpen(true);
+		setOpen(false);
+	}, []);
+
 	const handleInputMenuOpenChange = useCallback((nextOpen: boolean) => {
-		isLockedRef.current = nextOpen;
+		inputMenuOpenRef.current = nextOpen;
+		setInputMenuOpen(nextOpen);
 	}, []);
 
 	const handleInputMenuSubmit = useCallback(
 		(prompt: string) => {
-			isLockedRef.current = true;
 			handleAiAction(prompt);
+			inputMenuOpenRef.current = false;
+			setInputMenuOpen(false);
 		},
 		[handleAiAction]
+	);
+
+	const getSelectionRect = useCallback(
+		() => referenceRectRef.current?.() ?? new DOMRect(),
+		[]
 	);
 
 	const handleCopy = useCallback(() => {
