@@ -24,6 +24,7 @@ import type {
 	DocumentImageInfo,
 	SaveDocumentImageParams,
 	DocumentConfig,
+	CreateWorkspaceParams,
 } from '../../shared/types';
 
 /**
