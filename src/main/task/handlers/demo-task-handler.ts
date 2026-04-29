@@ -101,37 +101,27 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 	async execute(input: DemoTaskInput, signal: AbortSignal, emit: Emit): Promise<string> {
 		this.logger?.info(LOG_SOURCE, 'Demo task started', { promptLength: input.prompt.length });
 
-		const logAndEmit = (update: { state: TaskState; data: string }): void => {
-			if (update.state !== 'running') {
-				const payload =
-					update.state === 'finished' ? `length=${update.data.length}` : update.data;
-				this.logger?.info(LOG_SOURCE, `state=${update.state}`, { data: payload });
-			}
-			emit({ state: update.state, data: { success: true, data: update.data } });
+		const emitProgress = (data: string): void => {
+			emit({ state: 'started', data: { success: true, data } });
 		};
 
-		logAndEmit({ state: 'queued', data: 'queued' });
+		await sleep(STATE_DELAY_MS, signal);
+		emitProgress('Reasoning...');
 		await sleep(STATE_DELAY_MS, signal);
 
-		logAndEmit({ state: 'started', data: 'started' });
+		emitProgress('Routing request...');
 		await sleep(STATE_DELAY_MS, signal);
 
-		logAndEmit({ state: 'started', data: 'Reasoning...' });
+		emitProgress('Deciding intent...');
 		await sleep(STATE_DELAY_MS, signal);
 
-		logAndEmit({ state: 'started', data: 'Routing request...' });
+		emitProgress('Selecting skill...');
 		await sleep(STATE_DELAY_MS, signal);
 
-		logAndEmit({ state: 'started', data: 'Deciding intent...' });
+		emitProgress('Calling tool...');
 		await sleep(STATE_DELAY_MS, signal);
 
-		logAndEmit({ state: 'started', data: 'Selecting skill...' });
-		await sleep(STATE_DELAY_MS, signal);
-
-		logAndEmit({ state: 'started', data: 'Calling tool...' });
-		await sleep(STATE_DELAY_MS, signal);
-
-		logAndEmit({ state: 'started', data: 'Synthesizing answer...' });
+		emitProgress('Synthesizing answer...');
 		await sleep(STATE_DELAY_MS, signal);
 
 		const tokens = tokenize(LOREM);
@@ -139,10 +129,10 @@ export class DemoTaskHandler implements TaskHandler<DemoTaskInput, string> {
 		for (const token of tokens) {
 			await sleep(TOKEN_DELAY_MS, signal);
 			result += token;
-			logAndEmit({ state: 'running', data: token });
+			emit({ state: 'running', data: { success: true, data: token } });
 		}
 
-		logAndEmit({ state: 'finished', data: result });
+		this.logger?.info(LOG_SOURCE, 'Demo task finished', { length: result.length });
 
 		return result;
 	}
