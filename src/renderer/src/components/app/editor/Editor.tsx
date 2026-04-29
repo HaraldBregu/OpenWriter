@@ -72,7 +72,6 @@ const Editor = React.memo(
 				onChange,
 				onSelectionChange,
 				externalValueVersion = 0,
-				autoFocus,
 				className,
 				disabled,
 				id,
