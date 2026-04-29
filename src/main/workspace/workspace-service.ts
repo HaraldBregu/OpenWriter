@@ -1,10 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { app } from 'electron';
 import type { StoreService } from '../services/store';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
 import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
+
+const WORKSPACES_FOLDER = 'workspaces';
 
 /**
  * Snapshot of the current workspace state.
