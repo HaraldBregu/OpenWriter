@@ -59,31 +59,14 @@ export interface UseDocumentAiTasksOptions {
 	documentId: string | null;
 	editor: TiptapEditor | null;
 	editorActions: EditorActions;
-	/**
-	 * Caller-owned busy state (e.g. preexisting task on this document, document-
-	 * scoped task from another window). The hook's submit guard combines this
-	 * with its own running state.
-	 */
 	isExternallyBusy: boolean;
-	/**
-	 * Invoked after a task completion writes new content back into the editor.
-	 * Lets the page sync local state and persist the file.
-	 */
 	onMarkdownChanged: (markdown: string) => void;
 }
 
 export interface UseDocumentAiTasks {
-	/** True while a prompt task or AI action task is in flight. */
 	isRunning: boolean;
-	/** Latest captured task failure message; null when no error to surface. */
 	taskError: string | null;
-	/** Clears `taskError` (called when the error dialog is dismissed). */
 	dismissTaskError: () => void;
-	/**
-	 * Routes a payload to the right flow:
-	 *  - selectedText empty   → prompt flow (streams into content-generator).
-	 *  - selectedText present → AI-action flow (replaces the selection range).
-	 */
 	submit: (payload: PromptSubmitPayload) => Promise<void>;
 }
 
