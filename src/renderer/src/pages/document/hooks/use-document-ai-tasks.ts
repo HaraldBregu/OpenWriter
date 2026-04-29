@@ -139,18 +139,23 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 			const { from, to } = ed.state.selection;
 			console.log('Submitting prompt with selection range: ', { from, to });
 
-			const sliceToMarkdown = (start: number, end: number): string => {
+			// const sliceToMarkdown = (start: number, end: number): string => {
+			// 	if (start === end) return '';
+			// 	const slice = ed.state.doc.cut(start, end);
+			// 	return (
+			// 		ed.markdown?.serialize(slice.toJSON()) ??
+			// 		ed.state.doc.textBetween(start, end, '\n\n')
+			// 	);
+			// };
+
+			const sliceToText = (start: number, end: number): string => {
 				if (start === end) return '';
-				const slice = ed.state.doc.cut(start, end);
-				return (
-					ed.markdown?.serialize(slice.toJSON()) ??
-					ed.state.doc.textBetween(start, end, '\n\n')
-				);
+				return ed.state.doc.textBetween(start, end, '\n\n');
 			};
 
 			const docSize = ed.state.doc.content.size;
-			const before = sliceToMarkdown(0, from);
-			const after = sliceToMarkdown(to, docSize);
+			const before = sliceToText(0, from);
+			const after = sliceToText(to, docSize);
 
 			const prompt = buildReviewPrompt({
 				textBefore: before,

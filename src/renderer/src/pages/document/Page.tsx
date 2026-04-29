@@ -204,7 +204,6 @@ function PageContent(): ReactElement {
 	const aiTasks = useDocumentAiTasks({
 		documentId: id ?? null,
 		editor,
-		editorActions,
 		isExternallyBusy: documentHasActiveTask || preexistingTaskActive,
 		onMarkdownChanged: (markdown) => {
 			setContent(markdown);
