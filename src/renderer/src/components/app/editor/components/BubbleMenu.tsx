@@ -46,15 +46,6 @@ const modKey = isMac ? '⌘' : 'Ctrl';
 const shiftKey = isMac ? '⇧' : 'Shift';
 const altKey = isMac ? '⌥' : 'Alt';
 
-function TooltipBody({ title, keys }: { title: string; keys?: string[] }): React.JSX.Element {
-	return (
-		<div className="flex flex-col items-start gap-0.5">
-			<span>{title}</span>
-			{keys && keys.length > 0 && <span className="text-[10px] opacity-70">{keys.join(' ')}</span>}
-		</div>
-	);
-}
-
 export interface BubbleMenuProps {
 	onAiAction?: (payload: PromptSubmitPayload) => void;
 }
