@@ -151,7 +151,6 @@ export const PromptExtension = Node.create<PromptOptions>({
 
 				const preservedAttrs = {
 					prompt: found.attrs.prompt,
-					agentId: found.attrs.agentId,
 					files: found.attrs.files,
 				};
 
