@@ -16,6 +16,7 @@ import {
 } from '@floating-ui/react';
 import { Card } from '@/components/ui/Card';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/InputGroup';
+import { useEditor } from '../hooks';
 
 export interface InputMenuProps {
 	open: boolean;
