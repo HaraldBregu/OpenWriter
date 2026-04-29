@@ -267,22 +267,6 @@ const Editor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.setPromptViewState({ enable });
 					},
-					setPromptStatusBar({ visible, message }) {
-						if (!editor || editor.isDestroyed) return;
-						const { doc, tr } = editor.state;
-						doc.descendants((node, pos) => {
-							if (node.type.name === 'contentGenerator') {
-								tr.setNodeMarkup(pos, undefined, {
-									...node.attrs,
-									statusBarVisible: visible,
-									statusBarMessage: message ?? node.attrs.statusBarMessage,
-								});
-								return false;
-							}
-							return true;
-						});
-						editor.view.dispatch(tr);
-					},
 					insertPromptView() {
 						if (!editor || editor.isDestroyed) return;
 						const endPos = editor.state.doc.content.size;
