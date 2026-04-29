@@ -80,9 +80,8 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 	const [taskError, setTaskError] = useState<string | null>(null);
 
 	const isRunning = aiActionTaskId !== null;
-	const isBusy = isRunning || isExternallyBusy;
-	const isBusyRef = useRef(isBusy);
-	isBusyRef.current = isBusy;
+	const isBusyRef = useRef(isRunning);
+	isBusyRef.current = isRunning;
 
 	useEffect(() => {
 		if (!documentId || !aiActionTaskId) return;
