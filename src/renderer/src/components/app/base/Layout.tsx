@@ -152,10 +152,8 @@ function Container({ children }: LayoutProps) {
 	);
 
 	const handleAddWorkspace = useCallback(() => {
-		dispatch(openWorkspacePicker()).then(() => {
-			dispatch(loadRecentWorkspaces());
-		});
-	}, [dispatch]);
+		navigate('/welcome');
+	}, [navigate]);
 
 	const handleOpenSearch = useCallback(() => {
 		openCommandModal('search');
