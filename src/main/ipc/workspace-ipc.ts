@@ -1,6 +1,5 @@
 import { ipcMain, dialog, shell } from 'electron';
 import type { IpcMainInvokeEvent, FileFilter } from 'electron';
-import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { IpcModule } from './ipc-module';
