@@ -40,7 +40,6 @@ import { AppIconOpenWriter } from '..';
 import {
 	Settings,
 	ChevronRight,
-	Film,
 	Search,
 	Globe,
 	CircleHelp,
