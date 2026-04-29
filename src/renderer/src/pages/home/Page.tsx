@@ -28,7 +28,10 @@ function PageContent(): ReactElement {
 			<PageBody>
 				<div className="mx-auto max-w-5xl space-y-10 px-8 py-12">
 					<div>
-						<h1 className="text-2xl font-medium tracking-tight text-foreground">{greeting}</h1>
+						<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+							{t('menu.home', 'Dashboard')}
+						</p>
+						<h1 className="mt-2 text-2xl font-medium tracking-tight text-foreground">{greeting}</h1>
 						<p className="mt-1 text-sm text-muted-foreground">{t('home.workOnToday')}</p>
 					</div>
 
