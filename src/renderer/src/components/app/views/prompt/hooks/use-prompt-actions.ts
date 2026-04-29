@@ -6,8 +6,6 @@ import { TextSelection } from '@tiptap/pm/state';
 import type { PromptOptions } from '../../../editor/extensions/prompt-extension';
 import { Action } from '../context';
 
-type AgentId = 'text' | 'image';
-
 function readFileAsDataUri(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
