@@ -152,7 +152,6 @@ export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseCont
 				userInstruction: payload.prompt,
 			});
 
-			console.log(prompt)
 			const result = await window.task.submit({
 				type: TASK_TYPE,
 				input: { prompt },
