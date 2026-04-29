@@ -123,38 +123,55 @@ function PageContent(): ReactElement {
 				<PageHeaderTitle>
 					<Label className="w-full text-left text-sm font-medium">{pageTitle}</Label>
 					{editMode && selected.size > 0 && (
-						<Button variant="destructive" size="lg" onClick={handleDelete}>
-							<Trash2 />
-							Delete ({selected.size})
+						<Button
+							variant="destructive"
+							size="icon"
+							onClick={handleDelete}
+							aria-label={`Delete (${selected.size})`}
+							title={`Delete (${selected.size})`}
+						>
+							<Trash2 className="h-4 w-4" />
 						</Button>
 					)}
 					{!editMode && (
 						<>
-							<Button variant="outline" size="lg" onClick={handleOpenFolder}>
-								<FolderOpen />
+							<Button
+								variant="outline"
+								size="icon"
+								onClick={handleOpenFolder}
+								aria-label="Open folder"
+								title="Open folder"
+							>
+								<FolderOpen className="h-4 w-4" />
 							</Button>
-							<Button variant="outline" size="lg" disabled>
-								<Plus />
-								New folder
+							<Button
+								variant="outline"
+								size="icon"
+								disabled
+								aria-label="New folder"
+								title="New folder"
+							>
+								<Plus className="h-4 w-4" />
 							</Button>
-							<Button size="lg" onClick={handleUpload} disabled={uploading}>
-								<Upload />
-								Upload
+							<Button
+								size="icon"
+								onClick={handleUpload}
+								disabled={uploading}
+								aria-label="Upload"
+								title="Upload"
+							>
+								<Upload className="h-4 w-4" />
 							</Button>
 						</>
 					)}
-					<Button variant="outline" size="lg" onClick={toggleEditMode}>
-						{editMode ? (
-							<>
-								<X />
-								Done
-							</>
-						) : (
-							<>
-								<Pencil />
-								Edit
-							</>
-						)}
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={toggleEditMode}
+						aria-label={editMode ? 'Done' : 'Edit'}
+						title={editMode ? 'Done' : 'Edit'}
+					>
+						{editMode ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
 					</Button>
 				</PageHeaderTitle>
 			</PageHeader>
