@@ -324,7 +324,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Underline" keys={[modKey, 'U']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Underline</span>
+									<span className="text-[10px] opacity-70">{`${modKey} U`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
