@@ -596,55 +596,6 @@ function Container({ children }: LayoutProps) {
 										<span>{t('appLayout.images', 'Images')}</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
-								{[
-									{
-										title: t('appLayout.media', 'Media'),
-										icon: Film,
-										items: [
-											{ title: t('appLayout.video', 'Video'), comingSoon: true },
-											{ title: t('appLayout.audio', 'Audio'), comingSoon: true },
-										],
-									},
-								].map((item) => (
-									<Collapsible key={item.title} defaultOpen={false} className="group/collapsible">
-										<SidebarMenuItem>
-											<CollapsibleTrigger
-												render={
-													<SidebarMenuButton className="group/btn h-9 px-3" tooltip={item.title}>
-														<item.icon />
-														<span>{item.title}</span>
-														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
-													</SidebarMenuButton>
-												}
-											/>
-											<CollapsibleContent>
-												<SidebarMenuSub>
-													{item.items.map((subItem) => (
-														<SidebarMenuSubItem key={subItem.title}>
-															<SidebarMenuSubButton
-																className="group/btn h-8"
-																render={
-																	subItem.url && !subItem.comingSoon ? (
-																		<Link to={subItem.url} />
-																	) : undefined
-																}
-																isActive={subItem.url ? location.pathname === subItem.url : false}
-																aria-disabled={subItem.comingSoon ? true : undefined}
-															>
-																<span>{subItem.title}</span>
-																{subItem.comingSoon && (
-																	<span className="ml-auto text-[10px] uppercase tracking-wide text-muted-foreground">
-																		{t('appLayout.comingSoon', 'Soon')}
-																	</span>
-																)}
-															</SidebarMenuSubButton>
-														</SidebarMenuSubItem>
-													))}
-												</SidebarMenuSub>
-											</CollapsibleContent>
-										</SidebarMenuItem>
-									</Collapsible>
-								))}
 							</SidebarMenu>
 						</SidebarGroup>
 					</SidebarContent>
