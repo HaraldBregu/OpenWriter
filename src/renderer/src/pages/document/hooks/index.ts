@@ -13,3 +13,8 @@ export type {
 	UseContentReviewerTask,
 	UseContentReviewerTaskOptions,
 } from './use-content-reviewer-task';
+export { useContentWriterTask } from './use-content-writer-task';
+export type {
+	UseContentWriterTask,
+	UseContentWriterTaskOptions,
+} from './use-content-writer-task';
