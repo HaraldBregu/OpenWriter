@@ -403,7 +403,7 @@ const Editor = React.memo(
 				>
 					{editor && (
 						<>
-							<BubbleMenu onAiAction={handleAiAction} />
+							<BubbleMenu onPromptSubmit={handleAiAction} />
 							<OptionMenu />
 						</>
 					)}
