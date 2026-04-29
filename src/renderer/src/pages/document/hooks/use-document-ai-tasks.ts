@@ -102,6 +102,12 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
+								const node = ed.schema.nodeFromJSON(json);
+								const slice = new Slice(node.content, 0, 0);
+								const tr = ed.state.tr.replaceRange(from, to, slice);
+								ed.view.dispatch(tr);
+								ed.view.focus();
+							} else {
 								ed.chain().focus().insertContentAt({ from, to }, responseText).run();
 							}
 						}
