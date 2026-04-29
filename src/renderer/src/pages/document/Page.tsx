@@ -522,6 +522,8 @@ function PageContent(): ReactElement {
 									onReviewPromptSubmit={handleReviewPromptSubmit}
 									onWritePromptSubmit={handleWritePromptSubmit}
 									onInsertContent={handleInsertContent}
+									onUndo={handleUndo}
+									onRedo={handleRedo}
 									onEditorReady={handleEditorReady}
 								/>
 							)}

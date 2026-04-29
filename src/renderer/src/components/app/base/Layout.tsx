@@ -38,7 +38,6 @@ import {
 	SidebarHeader,
 	useSidebar,
 	Sidebar,
-	SidebarRail,
 } from '@/components/ui/Sidebar';
 import { AppIconOpenWriter } from '..';
 import {
@@ -779,7 +778,6 @@ function Container({ children }: LayoutProps) {
 							</SidebarMenuItem>
 						</SidebarMenu>
 					</SidebarFooter>
-					<SidebarRail />
 				</Sidebar>
 
 				<SidebarPageInset>{children}</SidebarPageInset>
