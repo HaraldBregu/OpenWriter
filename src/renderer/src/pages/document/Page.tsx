@@ -464,7 +464,7 @@ function PageContent(): ReactElement {
 									onRestoreEntry={handleRestoreHistoryEntry}
 									onReturnToLive={handleReturnToLive}
 								/>
-								<DocumentInfoPopover documentId={id ?? null} title={title} content={content} />
+								<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
 							</PageHeaderTitle>
 							{preexistingTaskActive && (
 								<PageHeaderDescription>
