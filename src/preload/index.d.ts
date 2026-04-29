@@ -211,15 +211,15 @@ export interface AppApi {
 	onOpenReduxDialog: (callback: () => void) => () => void;
 }
 
-/** Workspace folder selection, recent workspaces, and document/directory/output management */
+/** Managed workspaces under `{userData}/workspaces/`, plus document/output management */
 export interface WorkspaceApi {
-	selectFolder: () => Promise<string | null>;
 	getCurrent: () => Promise<string | null>;
 	setCurrent: (workspacePath: string) => Promise<void>;
-	getRecent: () => Promise<WorkspaceInfo[]>;
+	/** List every managed workspace, sorted most-recently-opened first. */
+	list: () => Promise<WorkspaceInfo[]>;
+	/** Create a new managed workspace and return its WorkspaceInfo. */
+	create: (params: CreateWorkspaceParams) => Promise<WorkspaceInfo>;
 	clear: () => Promise<void>;
-	directoryExists: (directoryPath: string) => Promise<boolean>;
-	removeRecent: (workspacePath: string) => Promise<void>;
 	onChange: (callback: (event: WorkspaceChangedEvent) => void) => () => void;
 	/** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
 	onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void;
