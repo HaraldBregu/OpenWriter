@@ -6,10 +6,9 @@ import type { WorkspaceState } from './state';
 import type { DocumentItem } from './types';
 import {
 	loadCurrentWorkspace,
-	loadRecentWorkspaces,
+	listWorkspaces,
 	selectWorkspace,
-	openWorkspacePicker,
-	removeRecentWorkspace,
+	createWorkspace,
 	clearWorkspace,
 	loadResources,
 	removeResources,
