@@ -1,7 +1,7 @@
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, ListTree, Pencil, Trash2, Upload } from 'lucide-react';
-import { PageHeader, PageHeaderItems, PageHeaderTitle } from '@/components/app';
+import { PageHeader, PageHeaderTitle } from '@/components/app';
 import { Button } from '@/components/ui/Button';
 
 interface ResourceSectionHeaderProps {
@@ -39,8 +39,8 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 
 	return (
 		<PageHeader>
-			<PageHeaderTitle>{title}</PageHeaderTitle>
-			<PageHeaderItems>
+			<PageHeaderTitle>
+				{title}
 				{editing && selectedCount > 0 && (
 					<Button variant="destructive" size="lg" disabled={removing} onClick={onRemove}>
 						<Trash2 />
@@ -68,7 +68,7 @@ export const ResourceSectionHeader = memo(function ResourceSectionHeader({
 				<Button variant={editing ? 'secondary' : 'outline'} size="lg" onClick={onToggleEdit}>
 					<Pencil />
 				</Button>
-			</PageHeaderItems>
+			</PageHeaderTitle>
 		</PageHeader>
 	);
 });

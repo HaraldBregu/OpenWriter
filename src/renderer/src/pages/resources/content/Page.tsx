@@ -6,7 +6,6 @@ import {
 	FileText,
 	Folder as FolderIcon,
 	FolderOpen,
-	Search,
 	Trash2,
 	Upload,
 } from 'lucide-react';
@@ -17,7 +16,6 @@ import {
 	PageHeaderTitle,
 } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
-import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,12 +24,6 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Input } from '@/components/ui/Input';
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-} from '@/components/ui/InputGroup';
 import {
 	Table,
 	TableBody,
@@ -50,6 +42,7 @@ import { SortIcon } from './components/SortIcon';
 import type { SortKey } from './shared/types';
 import type { FolderEntry } from '../../../../../shared/types';
 import Layout from './Layout';
+import { Label } from '@/components/ui/Label';
 
 const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'name', label: 'Name', className: 'w-auto' },
@@ -79,8 +72,6 @@ function PageContent(): ReactElement {
 		sortKey,
 		sortDirection,
 		handleSort,
-		searchQuery,
-		setSearchQuery,
 		handleUpload,
 		handleOpenResourcesFolder,
 		handleDeleteOne,
@@ -153,21 +144,10 @@ function PageContent(): ReactElement {
 		<PageContainer>
 			<PageHeader>
 				<PageHeaderTitle>
-					{t(section.titleKey)}
-					<Button
-						variant="ghost"
-						size="icon"
-						title="Open folder"
-						aria-label="Open folder"
-						onClick={handleOpenResourcesFolder}
-					>
-						<FolderOpen aria-hidden="true" />
-					</Button>
+					<Label className="w-full text-left text-sm font-medium">{t(section.titleKey)}</Label>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							render={
-								<Button variant="ghost" size="icon" title="Upload" aria-label="Upload" />
-							}
+							render={<Button variant="ghost" size="icon" title="Upload" aria-label="Upload" />}
 						>
 							<Upload aria-hidden="true" />
 						</DropdownMenuTrigger>
@@ -184,23 +164,16 @@ function PageContent(): ReactElement {
 							</DropdownMenuGroup>
 						</DropdownMenuContent>
 					</DropdownMenu>
+					<Button
+						variant="ghost"
+						size="icon"
+						title="Open folder"
+						aria-label="Open folder"
+						onClick={handleOpenResourcesFolder}
+					>
+						<FolderOpen aria-hidden="true" />
+					</Button>
 				</PageHeaderTitle>
-			</PageHeader>
-			<PageHeader>
-				<ButtonGroup className="min-w-0 flex-1">
-					<InputGroup>
-						<InputGroupAddon>
-							<InputGroupText>
-								<Search />
-							</InputGroupText>
-						</InputGroupAddon>
-						<InputGroupInput
-							value={searchQuery}
-							onChange={(e) => setSearchQuery(e.target.value)}
-							placeholder={t(section.searchPlaceholderKey)}
-						/>
-					</InputGroup>
-				</ButtonGroup>
 			</PageHeader>
 			<PageBody>
 				{isLoading && (

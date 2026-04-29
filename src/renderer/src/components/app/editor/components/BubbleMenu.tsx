@@ -466,7 +466,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 					<div className="flex flex-col gap-0.5">
 						<Button
 							variant="ghost"
-							size="sm"
+							size="md"
 							className="justify-start w-full"
 							onClick={() => {
 								isLockedRef.current = true;
@@ -478,7 +478,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="md"
 							className="justify-start w-full"
 							onClick={() => {
 								isLockedRef.current = true;
@@ -490,7 +490,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						</Button>
 						<Button
 							variant="ghost"
-							size="sm"
+							size="md"
 							className="justify-start w-full"
 							onClick={handleCustomPromptClick}
 						>

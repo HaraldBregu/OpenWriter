@@ -18,13 +18,7 @@ import {
 	X,
 	File,
 } from 'lucide-react';
-import {
-	PageBody,
-	PageContainer,
-	PageHeader,
-	PageHeaderItems,
-	PageHeaderTitle,
-} from '@/components/app/base/page';
+import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import Layout from './Layout';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
@@ -125,8 +119,8 @@ function PageContent(): ReactElement {
 	return (
 		<PageContainer>
 			<PageHeader>
-				<PageHeaderTitle>{pageTitle}</PageHeaderTitle>
-				<PageHeaderItems>
+				<PageHeaderTitle>
+					{pageTitle}
 					{editMode && selected.size > 0 && (
 						<Button variant="destructive" size="lg" onClick={handleDelete}>
 							<Trash2 />
@@ -161,7 +155,7 @@ function PageContent(): ReactElement {
 							</>
 						)}
 					</Button>
-				</PageHeaderItems>
+				</PageHeaderTitle>
 			</PageHeader>
 			<PageHeader>
 				<ButtonGroup className="min-w-0 flex-1">

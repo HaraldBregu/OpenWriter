@@ -75,18 +75,6 @@ export const PageHeaderTitle = memo(function PageHeaderTitle({
 	);
 });
 
-interface PageHeaderItemsProps {
-	readonly children: ReactNode;
-	readonly className?: string;
-}
-
-export const PageHeaderItems = memo(function PageHeaderItems({
-	children,
-	className,
-}: PageHeaderItemsProps): React.ReactElement {
-	return <div className={cn('flex items-center gap-2', className)}>{children}</div>;
-});
-
 interface PageHeaderDescriptionProps {
 	readonly children: ReactNode;
 	readonly className?: string;

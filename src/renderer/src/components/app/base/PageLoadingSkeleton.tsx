@@ -1,6 +1,6 @@
 import React from 'react';
 import { Skeleton } from '@/components/ui/Skeleton';
-import { PageContainer, PageHeader, PageHeaderTitle, PageHeaderItems, PageBody } from './page';
+import { PageContainer, PageHeader, PageHeaderTitle, PageBody } from './page';
 
 export const PageLoadingSkeleton = React.memo(function PageLoadingSkeleton() {
 	return (
@@ -9,10 +9,6 @@ export const PageLoadingSkeleton = React.memo(function PageLoadingSkeleton() {
 				<PageHeaderTitle>
 					<Skeleton className="h-6 w-48" />
 				</PageHeaderTitle>
-				<PageHeaderItems>
-					<Skeleton className="h-9 w-20 rounded-md" />
-					<Skeleton className="h-9 w-8 rounded-md" />
-				</PageHeaderItems>
 			</PageHeader>
 			<PageBody className="p-6">
 				<div className="flex flex-col gap-4 max-w-3xl">

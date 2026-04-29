@@ -61,6 +61,7 @@ import {
 	Pencil,
 	Trash2,
 	FileImage,
+	FileText,
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
@@ -385,7 +386,7 @@ function Container({ children }: LayoutProps) {
 									<DropdownMenuTrigger
 										render={
 											<SidebarMenuButton size="lg">
-												<div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+												<div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
 													<GalleryVerticalEnd className="size-4" />
 												</div>
 												<div className="flex flex-col gap-1 leading-none">
@@ -493,9 +494,10 @@ function Container({ children }: LayoutProps) {
 
 						{/* Writings collapsible group — hidden when sidebar is collapsed */}
 						{open && (
-							<Collapsible defaultOpen className="py-0 mt-4">
+							<Collapsible defaultOpen className="py-0">
 								<SidebarGroup className="py-0">
 									<SidebarGroupLabel
+										className="px-3"
 										render={
 											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
 										}
@@ -569,8 +571,10 @@ function Container({ children }: LayoutProps) {
 						)}
 
 						<SidebarGroup className="mt-auto">
-							<SidebarGroupLabel>{t('appLayout.resources', 'Resources')}</SidebarGroupLabel>
-							<SidebarMenu>
+							<SidebarGroupLabel className="px-3">
+								{t('appLayout.resources', 'Resources')}
+							</SidebarGroupLabel>
+							<SidebarMenu className="gap-1">
 								{[
 									{ title: t('appLayout.images', 'Images'), icon: FileImage, items: [] },
 									{
@@ -594,7 +598,7 @@ function Container({ children }: LayoutProps) {
 										<SidebarMenuItem>
 											<CollapsibleTrigger
 												render={
-													<SidebarMenuButton tooltip={item.title}>
+													<SidebarMenuButton className="group/btn h-9 px-3" tooltip={item.title}>
 														<item.icon />
 														<span>{item.title}</span>
 														<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
@@ -606,6 +610,7 @@ function Container({ children }: LayoutProps) {
 													{item.items.map((subItem) => (
 														<SidebarMenuSubItem key={subItem.title}>
 															<SidebarMenuSubButton
+																className="group/btn h-8"
 																render={
 																	subItem.url && !subItem.comingSoon ? (
 																		<Link to={subItem.url} />
@@ -642,9 +647,9 @@ function Container({ children }: LayoutProps) {
 												size="lg"
 												className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
 											>
-												<Avatar className="h-8 w-8 rounded-lg">
+												<Avatar className="h-8 w-8 rounded-full">
 													<AvatarImage alt={footerUserName} />
-													<AvatarFallback className="rounded-lg">
+													<AvatarFallback className="rounded-full">
 														{footerUserInitial}
 													</AvatarFallback>
 												</Avatar>

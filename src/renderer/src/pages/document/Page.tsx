@@ -1,4 +1,11 @@
-import { useState as useReactState, useCallback, useMemo, useEffect, useRef, type ReactElement } from 'react';
+import {
+	useState as useReactState,
+	useCallback,
+	useMemo,
+	useEffect,
+	useRef,
+	type ReactElement,
+} from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
@@ -199,10 +206,7 @@ function PageContent(): ReactElement {
 	aiTasksRunningRef.current = reviewTask.isRunning || writeTask.isRunning;
 
 	const assistantIsRunning =
-		reviewTask.isRunning ||
-		writeTask.isRunning ||
-		documentHasActiveTask ||
-		preexistingTaskActive;
+		reviewTask.isRunning || writeTask.isRunning || documentHasActiveTask || preexistingTaskActive;
 
 	useEffect(() => {
 		if (!id) {
@@ -232,9 +236,7 @@ function PageContent(): ReactElement {
 			);
 			const finishedTask = activeTask
 				? undefined
-				: res.data.find(
-					(t) => t.metadata?.documentId === id && t.status === 'finished'
-				);
+				: res.data.find((t) => t.metadata?.documentId === id && t.status === 'finished');
 			const displayTask = activeTask ?? finishedTask;
 			setDocumentHasActiveTask(!!activeTask);
 			setPreexistingTaskActive(!!displayTask);
@@ -290,7 +292,6 @@ function PageContent(): ReactElement {
 			}
 		});
 	}, [id]);
-
 
 	const handleHistoryRestore = useCallback(
 		(restoredContent: string, restoredTitle: string) => {
@@ -427,109 +428,105 @@ function PageContent(): ReactElement {
 
 	return (
 		<PageContainer>
-			<div className="flex-1 min-h-0">
-				<div className="flex h-full flex-col">
-						<PageHeader>
-							<PageHeaderTitle>
-								<Input
-									type="text"
-									value={title}
-									onChange={(e) => handleTitleChange(e.target.value)}
-									placeholder={t('writing.titlePlaceholder')}
-									className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
-								/>
-								<Button
-									variant="ghost"
-									size="icon"
-									title="Undo"
-									aria-label="Undo"
-									onClick={handleUndo}
-									disabled={!canUndo}
-								>
-									<Undo2 aria-hidden="true" />
-								</Button>
-								<Button
-									variant="ghost"
-									size="icon"
-									title="Redo"
-									aria-label="Redo"
-									onClick={handleRedo}
-									disabled={!canRedo}
-								>
-									<Redo2 aria-hidden="true" />
-								</Button>
-								<HistoryMenu
-									entries={historyEntries}
-									currentEntryId={currentHistoryEntryId}
-									onRestoreEntry={handleRestoreHistoryEntry}
-									onReturnToLive={handleReturnToLive}
-								/>
-								<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
-							</PageHeaderTitle>
-							{preexistingTaskActive && (
-								<PageHeaderDescription>
-									{documentTaskState === 'finished' ? (
-										<Check className="size-4" aria-hidden="true" />
-									) : (
-										<Loader2 className="size-4 animate-spin" aria-hidden="true" />
-									)}
-									<span>
-										{documentTaskState === 'queued'
-											? 'Task queued, waiting to start…'
-											: documentTaskState === 'started'
-												? 'Task started, preparing…'
-												: documentTaskState === 'running'
-													? 'Task running, generating content…'
-													: documentTaskState === 'finished'
-														? 'Task finished.'
-														: 'Task in progress…'}
-									</span>
-									{documentTaskState && (
-										<span className="text-xs uppercase tracking-wide opacity-70">
-											{documentTaskState}
-										</span>
-									)}
-									<Button
-										title="Insert"
-										aria-label="Insert"
-										onClick={handleInsertTaskContent}
-										disabled={documentTaskState !== 'finished' || !preexistingTaskContent}
-									>
-										<Plus aria-hidden="true" />
-										Insert
-									</Button>
-									<Button
-										title="Cancel task"
-										aria-label="Cancel task"
-										onClick={handleCancelPreexistingTask}
-									>
-										<X aria-hidden="true" />
-										Cancel
-									</Button>
-								</PageHeaderDescription>
-							)}
-						</PageHeader>
-						<PageBody className="p-0">
-							{loaded && (
-								<Editor
-									key={id}
-									disabled={assistantIsRunning}
-									ref={editorRef}
-									value={content}
-									externalValueVersion={contentVersion}
-									onChange={handleContentChange}
-									onSelectionChange={handleSelectionChange}
-									onReviewPromptSubmit={handleReviewPromptSubmit}
-									onWritePromptSubmit={handleWritePromptSubmit}
-									onInsertContent={handleInsertContent}
-									onUndo={handleUndo}
-									onRedo={handleRedo}
-									onEditorReady={handleEditorReady}
-								/>
-							)}
-						</PageBody>
-				</div>
-			</div>
+			<PageHeader>
+				<PageHeaderTitle>
+					<Input
+						type="text"
+						value={title}
+						onChange={(e) => handleTitleChange(e.target.value)}
+						placeholder={t('writing.titlePlaceholder')}
+						className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
+					/>
+					<Button
+						variant="ghost"
+						size="icon"
+						title="Undo"
+						aria-label="Undo"
+						onClick={handleUndo}
+						disabled={!canUndo}
+					>
+						<Undo2 aria-hidden="true" />
+					</Button>
+					<Button
+						variant="ghost"
+						size="icon"
+						title="Redo"
+						aria-label="Redo"
+						onClick={handleRedo}
+						disabled={!canRedo}
+					>
+						<Redo2 aria-hidden="true" />
+					</Button>
+					<HistoryMenu
+						entries={historyEntries}
+						currentEntryId={currentHistoryEntryId}
+						onRestoreEntry={handleRestoreHistoryEntry}
+						onReturnToLive={handleReturnToLive}
+					/>
+					<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
+				</PageHeaderTitle>
+				{preexistingTaskActive && (
+					<PageHeaderDescription>
+						{documentTaskState === 'finished' ? (
+							<Check className="size-4" aria-hidden="true" />
+						) : (
+							<Loader2 className="size-4 animate-spin" aria-hidden="true" />
+						)}
+						<span>
+							{documentTaskState === 'queued'
+								? 'Task queued, waiting to start…'
+								: documentTaskState === 'started'
+									? 'Task started, preparing…'
+									: documentTaskState === 'running'
+										? 'Task running, generating content…'
+										: documentTaskState === 'finished'
+											? 'Task finished.'
+											: 'Task in progress…'}
+						</span>
+						{documentTaskState && (
+							<span className="text-xs uppercase tracking-wide opacity-70">
+								{documentTaskState}
+							</span>
+						)}
+						<Button
+							title="Insert"
+							aria-label="Insert"
+							onClick={handleInsertTaskContent}
+							disabled={documentTaskState !== 'finished' || !preexistingTaskContent}
+						>
+							<Plus aria-hidden="true" />
+							Insert
+						</Button>
+						<Button
+							title="Cancel task"
+							aria-label="Cancel task"
+							onClick={handleCancelPreexistingTask}
+						>
+							<X aria-hidden="true" />
+							Cancel
+						</Button>
+					</PageHeaderDescription>
+				)}
+			</PageHeader>
+			<PageBody className="p-0">
+				{loaded && (
+					<Editor
+						key={id}
+						disabled={assistantIsRunning}
+						ref={editorRef}
+						value={content}
+						externalValueVersion={contentVersion}
+						onChange={handleContentChange}
+						onSelectionChange={handleSelectionChange}
+						onReviewPromptSubmit={handleReviewPromptSubmit}
+						onWritePromptSubmit={handleWritePromptSubmit}
+						onInsertContent={handleInsertContent}
+						onUndo={handleUndo}
+						onRedo={handleRedo}
+						onEditorReady={handleEditorReady}
+					/>
+				)}
+			</PageBody>
 			<ErrorDialog
 				open={reviewTask.taskError !== null || writeTask.taskError !== null}
 				onOpenChange={(open) => {

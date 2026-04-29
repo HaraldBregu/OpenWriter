@@ -16,7 +16,7 @@ import { TitleBarContainer } from '../titlebar/TitleBarContainer';
 import { TitleBarLeftContainer } from '../titlebar/TitleBarLeftContainer';
 import { TitleBarCenterContainer } from '../titlebar/TitleBarCenterContainer';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
-import { PageBody, PageContainer, PageHeader, PageHeaderItems, PageHeaderTitle } from './page';
+import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from './page';
 
 const SIDEBAR_NAV_ITEMS = 2;
 const SIDEBAR_GROUP_ITEMS = 4;
@@ -126,10 +126,6 @@ export const LayoutLoadingSkeleton = React.memo(function LayoutLoadingSkeleton()
 							<PageHeaderTitle>
 								<Skeleton className="h-6 w-48" />
 							</PageHeaderTitle>
-							<PageHeaderItems>
-								<Skeleton className="h-8 w-20 rounded-md" />
-								<Skeleton className="h-8 w-8 rounded-md" />
-							</PageHeaderItems>
 						</PageHeader>
 						<PageBody className="p-6">
 							<div className="flex flex-col gap-4 max-w-3xl">

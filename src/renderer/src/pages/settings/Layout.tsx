@@ -11,6 +11,7 @@ import {
 } from '@/components/app/base/page';
 import { useLanguageMode } from '@/hooks/use-language-mode';
 import { Button } from '@/components/ui/Button';
+import { Separator } from '@/components/ui/Separator';
 
 interface NavItemProps {
 	readonly to: string;
@@ -24,7 +25,7 @@ function NavItem({ to, label }: NavItemProps): React.JSX.Element {
 				<Button
 					nativeButton={false}
 					variant={isActive ? 'secondary' : 'ghost'}
-					size="sm"
+					size="md"
 					className="w-full justify-start"
 					render={<span />}
 				>
@@ -44,25 +45,25 @@ export function Layout(): React.JSX.Element {
 			<PageHeader>
 				<PageHeaderTitle>{t('settings.title')}</PageHeaderTitle>
 			</PageHeader>
-			<PageBody className="flex-row overflow-hidden">
+			<PageBody className="flex-row overflow-hidden p-0">
 				<PageSidebar className="w-64 border-r-0">
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/general" label={t('settings.tabs.general')} />
 						<NavItem to="/settings/workspace" label={t('settings.tabs.workspace')} />
 					</div>
-					<div className="my-2 border-t" />
+					<Separator className="my-2" />
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/providers" label={t('settings.tabs.providers')} />
 						<NavItem to="/settings/models" label={t('settings.tabs.models')} />
 						<NavItem to="/settings/agents" label={t('settings.tabs.agents')} />
 						<NavItem to="/settings/skill" label={t('settings.tabs.skill')} />
 					</div>
-					<div className="my-2 border-t" />
+					<Separator className="my-2" />
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/editor" label={t('settings.tabs.editor')} />
 						<NavItem to="/settings/themes" label={t('settings.tabs.themes')} />
 					</div>
-					<div className="my-2 border-t" />
+					<Separator className="my-2" />
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/system" label={t('settings.tabs.system')} />
 						<NavItem to="/settings/developer" label={t('settings.tabs.developer')} />
