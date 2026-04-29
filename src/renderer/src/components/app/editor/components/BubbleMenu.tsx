@@ -522,7 +522,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Delete" keys={['Delete']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Delete</span>
+									<span className="text-[10px] opacity-70">Delete</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 					</div>
