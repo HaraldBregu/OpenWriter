@@ -307,6 +307,10 @@ function PageContent(): ReactElement {
 	const {
 		entries: historyEntries,
 		currentEntryId: currentHistoryEntryId,
+		canUndo,
+		canRedo,
+		undo: handleUndo,
+		redo: handleRedo,
 		restoreEntry: handleRestoreHistoryEntry,
 		returnToLive: handleReturnToLive,
 	} = useHistory({
@@ -316,29 +320,6 @@ function PageContent(): ReactElement {
 		loaded,
 		onRestore: handleHistoryRestore,
 	});
-
-	const handleUndo = useCallback(() => {
-		editor?.chain().focus().undo().run();
-	}, [editor]);
-
-	const handleRedo = useCallback(() => {
-		editor?.chain().focus().redo().run();
-	}, [editor]);
-
-	// TipTap state changes do not trigger React renders on their own; subscribe
-	// to transactions so the Undo/Redo disabled states stay in sync.
-	const [, forceRender] = useReactState(0);
-	useEffect(() => {
-		if (!editor) return;
-		const bump = (): void => forceRender((n) => (n + 1) % 1_000_000);
-		editor.on('transaction', bump);
-		return () => {
-			editor.off('transaction', bump);
-		};
-	}, [editor]);
-
-	const canUndo = editor?.can().undo() ?? false;
-	const canRedo = editor?.can().redo() ?? false;
 
 	const handleTitleChange = useCallback(
 		(value: string) => {
