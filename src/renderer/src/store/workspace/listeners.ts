@@ -12,7 +12,7 @@ import {
 	loadIndexingInfo,
 	loadProjectName,
 	selectWorkspace,
-	openWorkspacePicker,
+	createWorkspace,
 } from './actions';
 
 /**
