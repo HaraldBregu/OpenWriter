@@ -45,7 +45,7 @@ export {
 	selectCurrentWorkspacePath,
 	selectHasWorkspace,
 	selectWorkspaceName,
-	selectRecentWorkspaces,
+	selectWorkspaces,
 	selectWorkspaceStatus,
 	selectWorkspaceError,
 	selectWorkspaceIsLoading,
