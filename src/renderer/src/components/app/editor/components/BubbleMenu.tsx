@@ -229,6 +229,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			if (!isLockedRef.current) return;
 			const target = e.target as Node | null;
 			if (target && refs.floating.current?.contains(target)) return;
+			if (target && (target as HTMLElement).closest?.('[data-input-menu-popover]')) return;
 			isLockedRef.current = false;
 			setOpen(false);
 		};
