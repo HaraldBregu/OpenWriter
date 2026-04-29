@@ -89,7 +89,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		options,
 		updateAttributes,
 		prompt: state.prompt,
-		agentId: state.agentId,
 		files: state.files,
 		fileInputRef,
 	});
@@ -100,10 +99,7 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		onDelete: actions.deleteNode,
 	});
 
-	const isImage = state.agentId === 'image';
-	const activeModel = isImage ? state.selectedImageModel : state.selectedTextModel;
-	const isSubmitDisabled =
-		!enable || loading || (!state.prompt.trim() && (!isImage || state.files.length === 0));
+	const isSubmitDisabled = !enable || loading || !state.prompt.trim();
 
 	const value = useMemo<ContextValue>(
 		() => ({
@@ -112,9 +108,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			enable,
 			statusBarVisible,
 			statusBarMessage,
-			agentId: state.agentId,
-			isImage,
-			activeModel,
 			isSubmitDisabled,
 			textareaRef,
 			fileInputRef,
@@ -130,8 +123,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			enable,
 			statusBarVisible,
 			statusBarMessage,
-			isImage,
-			activeModel,
 			isSubmitDisabled,
 			submitRef,
 			actions,
