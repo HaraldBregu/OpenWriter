@@ -63,13 +63,11 @@ import type { ShortcutId } from './shortcuts';
 
 export const WorkspaceChannels = {
 	// Workspace
-	selectFolder: 'workspace:select-folder',
 	getCurrent: 'workspace-get-current',
 	setCurrent: 'workspace-set-current',
-	getRecent: 'workspace-get-recent',
+	list: 'workspace-list',
+	create: 'workspace-create',
 	clear: 'workspace-clear',
-	directoryExists: 'workspace-directory-exists',
-	removeRecent: 'workspace-remove-recent',
 	changed: 'workspace:changed',
 	deleted: 'workspace:deleted',
 	// Indexing
