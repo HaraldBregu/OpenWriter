@@ -408,7 +408,10 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 								}
 							/>
 							<TooltipContent>
-								<TooltipBody title="Strikethrough" keys={[modKey, shiftKey, 'S']} />
+								<div className="flex flex-col items-start gap-0.5">
+									<span>Strikethrough</span>
+									<span className="text-[10px] opacity-70">{`${modKey} ${shiftKey} S`}</span>
+								</div>
 							</TooltipContent>
 						</Tooltip>
 						<Tooltip>
