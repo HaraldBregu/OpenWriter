@@ -143,8 +143,7 @@ export function usePromptActions({
 
 	const submit = useCallback(() => {
 		const trimmedPrompt = prompt.trim();
-		const canSubmitWithFiles = agentId === 'image' && files.length > 0;
-		if (!trimmedPrompt && !canSubmitWithFiles) {
+		if (!trimmedPrompt) {
 			deleteNode();
 			return;
 		}
@@ -158,16 +157,8 @@ export function usePromptActions({
 				: (editor.markdown?.serialize(editor.state.doc.cut(from, to).toJSON()) ??
 					editor.state.doc.textBetween(from, to, '\n\n'));
 
-		if (agentId === 'image') {
-			const effectivePrompt =
-				!trimmedPrompt && files.length > 0
-					? 'Create an image inspired by the uploaded reference images.'
-					: trimmedPrompt;
-			options.onPromptSubmit({ prompt: effectivePrompt, selectedText, files, editor });
-		} else {
-			options.onPromptSubmit({ prompt: trimmedPrompt, selectedText, files: [], editor });
-		}
-	}, [agentId, editor, files, prompt, deleteNode, options, updateAttributes]);
+		options.onPromptSubmit({ prompt: trimmedPrompt, selectedText, files: [], editor });
+	}, [editor, prompt, deleteNode, options, updateAttributes]);
 
 	return useMemo(
 		() => ({
