@@ -163,7 +163,6 @@ export function usePromptActions({
 	return useMemo(
 		() => ({
 			handlePromptChange,
-			handleAgentChange,
 			addFile,
 			removeFile,
 			handleFilesChange,
@@ -177,7 +176,6 @@ export function usePromptActions({
 		}),
 		[
 			handlePromptChange,
-			handleAgentChange,
 			addFile,
 			removeFile,
 			handleFilesChange,
