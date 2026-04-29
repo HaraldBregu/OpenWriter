@@ -11,7 +11,7 @@ import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoPopover from './components/DocumentInfoPopover';
 import {
 	useDispatch,
-	useDocumentHistory,
+	useHistory,
 	useState,
 	useInsertContentDialog,
 	useEditorInstance,
@@ -309,7 +309,7 @@ function PageContent(): ReactElement {
 		currentEntryId: currentHistoryEntryId,
 		restoreEntry: handleRestoreHistoryEntry,
 		returnToLive: handleReturnToLive,
-	} = useDocumentHistory({
+	} = useHistory({
 		documentId: id,
 		content,
 		title,
