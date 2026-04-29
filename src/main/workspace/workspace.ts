@@ -72,27 +72,61 @@ export class Workspace implements Disposable {
 		await this.projectWorkspace.getOrCreate();
 	}
 
-	async getRecent(): Promise<WorkspaceInfo[]> {
-		const entries = this.workspace.getRecent();
-		return Promise.all(
-			entries.map(async (w) => {
-				const info = await this.projectWorkspace.readAt(w.path);
+	/**
+	 * List every managed workspace under `{userData}/workspaces/`. Each entry is
+	 * enriched with project name + description from `project_workspace.openwriter`
+	 * (null when the file is missing/unreadable). Sorted most-recently-opened first;
+	 * never-opened workspaces fall back to alphabetical order at the end.
+	 */
+	async listWorkspaces(): Promise<WorkspaceInfo[]> {
+		const folders = this.workspace.listWorkspaceFolders();
+		const enriched = await Promise.all(
+			folders.map(async (f) => {
+				const info = await this.projectWorkspace.readAt(f.path);
 				return {
-					...w,
-					data: path.join(w.path, DATA_DIR),
+					id: f.id,
+					path: f.path,
+					lastOpened: f.lastOpened,
 					name: info?.name ?? null,
-				};
+					description: info?.description ?? null,
+				} satisfies WorkspaceInfo;
 			})
 		);
+		return enriched.sort((a, b) => {
+			if (a.lastOpened === 0 && b.lastOpened === 0) return a.id.localeCompare(b.id);
+			return b.lastOpened - a.lastOpened;
+		});
+	}
+
+	/**
+	 * Create a new managed workspace with the supplied name and description.
+	 * Allocates a UUID-named folder, writes `project_workspace.openwriter`, and
+	 * returns the full WorkspaceInfo. Does NOT activate the workspace — caller
+	 * decides whether to follow up with `setCurrent`.
+	 */
+	async createWorkspace(name: string, description: string = ''): Promise<WorkspaceInfo> {
+		const { id, path: workspacePath } = this.workspace.createWorkspaceFolder();
+		try {
+			const info = await this.projectWorkspace.createAt(workspacePath, name, description);
+			await this.ensureWorkspaceSubfolders(workspacePath);
+			this.logger.info('Workspace', `Created workspace "${info.name}" at: ${workspacePath}`);
+			return {
+				id,
+				path: workspacePath,
+				lastOpened: 0,
+				name: info.name,
+				description: info.description,
+			};
+		} catch (err) {
+			// Roll back the empty folder if metadata write fails so we don't leave
+			// orphan workspaces under {userData}/workspaces/.
+			await fsPromises.rm(workspacePath, { recursive: true, force: true }).catch(() => undefined);
+			throw err;
+		}
 	}
 
 	clear(): void {
 		this.workspace.clear();
-	}
-
-	removeRecent(workspacePath: string): void {
-		this.workspace.removeRecent(workspacePath);
-		this.logger.info('Workspace', `Removed from recent: ${workspacePath}`);
 	}
 
 	// -------------------------------------------------------------------------
