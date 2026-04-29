@@ -75,8 +75,7 @@ export class ContentWriterTaskHandler
 
 			const onEvent = (event: AgentEvent): void => {
 				if (event.kind === 'text') {
-					const token = (event.payload as { text: string }).text;
-					logAndEmitSuccess({ state: 'running', data: token });
+					emitRunning((event.payload as { text: string }).text);
 				}
 			};
 
@@ -86,7 +85,9 @@ export class ContentWriterTaskHandler
 				onEvent,
 			});
 
-			logAndEmitSuccess({ state: 'finished', data: output.content });
+			logger.info(LOG_SOURCE, 'Content-writer task finished', {
+				length: output.content.length,
+			});
 
 			return output.content;
 		} catch (err) {
