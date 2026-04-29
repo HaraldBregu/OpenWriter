@@ -12,7 +12,7 @@ import DocumentInfoPopover from './components/DocumentInfoPopover';
 import {
 	useDocumentDispatch,
 	useDocumentHistory,
-	useDocumentState,
+	useState,
 	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
@@ -38,7 +38,7 @@ const METADATA_SAVE_DEBOUNCE_MS = 500;
 const CONTENT_SAVE_DEBOUNCE_MS = 1500;
 
 function PageContent(): ReactElement {
-	const { documentId: id } = useDocumentState();
+	const { documentId: id } = useState();
 	const dispatch = useDocumentDispatch();
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
