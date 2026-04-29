@@ -44,10 +44,10 @@ function PageContent(): ReactElement {
 	const navigate = useNavigate();
 	const { editor, setEditor } = useEditorInstance();
 
-	const [title, setTitle] = useState('');
-	const [content, setContent] = useState('');
-	const [contentVersion, setContentVersion] = useState(0);
-	const [loaded, setLoaded] = useState(false);
+	const [title, setTitle] = useReactState('');
+	const [content, setContent] = useReactState('');
+	const [contentVersion, setContentVersion] = useReactState(0);
+	const [loaded, setLoaded] = useReactState(false);
 
 	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
@@ -162,8 +162,8 @@ function PageContent(): ReactElement {
 	const editorActionsRef = useRef(editorActions);
 	editorActionsRef.current = editorActions;
 
-	const [documentHasActiveTask, setDocumentHasActiveTask] = useState(false);
-	const [preexistingTaskActive, setPreexistingTaskActive] = useState(false);
+	const [documentHasActiveTask, setDocumentHasActiveTask] = useReactState(false);
+	const [preexistingTaskActive, setPreexistingTaskActive] = useReactState(false);
 	const [documentTaskState, setDocumentTaskState] = useState<string | null>(null);
 	const [preexistingTaskContent, setPreexistingTaskContent] = useState<string | null>(null);
 	const [preexistingTaskSelection, setPreexistingTaskSelection] = useState<{
@@ -327,7 +327,7 @@ function PageContent(): ReactElement {
 
 	// TipTap state changes do not trigger React renders on their own; subscribe
 	// to transactions so the Undo/Redo disabled states stay in sync.
-	const [, forceRender] = useState(0);
+	const [, forceRender] = useReactState(0);
 	useEffect(() => {
 		if (!editor) return;
 		const bump = (): void => forceRender((n) => (n + 1) % 1_000_000);
