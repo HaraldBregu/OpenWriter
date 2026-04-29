@@ -552,7 +552,8 @@ function PageContent(): ReactElement {
 									externalValueVersion={contentVersion}
 									onChange={handleContentChange}
 									onSelectionChange={handleSelectionChange}
-									onPromptSubmit={handlePromptSubmit}
+									onReviewPromptSubmit={handleReviewPromptSubmit}
+									onWritePromptSubmit={handleWritePromptSubmit}
 									onInsertContent={handleInsertContent}
 									onEditorReady={handleEditorReady}
 								/>
