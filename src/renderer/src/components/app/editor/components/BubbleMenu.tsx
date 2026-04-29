@@ -204,6 +204,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 			if (getReferenceRect) {
 				referenceRectRef.current = getReferenceRect;
 			}
+			if (inputMenuOpenRef.current) return;
 			if (closeTimerRef.current) {
 				clearTimeout(closeTimerRef.current);
 				closeTimerRef.current = null;
