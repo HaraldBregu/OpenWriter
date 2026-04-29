@@ -202,22 +202,36 @@ function PageContent(): ReactElement {
 	const preexistingTaskActiveRef = useRef(false);
 	preexistingTaskActiveRef.current = preexistingTaskActive;
 
-	const aiTasks = useContentReviewerTask({
-		documentId: id ?? null,
-		editor,
-		onMarkdownChanged: (markdown) => {
+	const handleAiMarkdownChanged = useCallback(
+		(markdown: string) => {
 			setContent(markdown);
 			dispatch({ type: 'CONTENT_CHANGED', value: markdown });
 			debouncedContentSave.cancel();
 			if (id) window.workspace.updateDocumentContent(id, markdown);
 		},
+		[dispatch, debouncedContentSave, id]
+	);
+
+	const reviewTask = useContentReviewerTask({
+		documentId: id ?? null,
+		editor,
+		onMarkdownChanged: handleAiMarkdownChanged,
 	});
 
-	const aiTasksRunningRef = useRef(aiTasks.isRunning);
-	aiTasksRunningRef.current = aiTasks.isRunning;
+	const writeTask = useContentWriterTask({
+		documentId: id ?? null,
+		editor,
+		onMarkdownChanged: handleAiMarkdownChanged,
+	});
+
+	const aiTasksRunningRef = useRef(reviewTask.isRunning || writeTask.isRunning);
+	aiTasksRunningRef.current = reviewTask.isRunning || writeTask.isRunning;
 
 	const assistantIsRunning =
-		aiTasks.isRunning || documentHasActiveTask || preexistingTaskActive;
+		reviewTask.isRunning ||
+		writeTask.isRunning ||
+		documentHasActiveTask ||
+		preexistingTaskActive;
 
 	useEffect(() => {
 		if (!id) {
