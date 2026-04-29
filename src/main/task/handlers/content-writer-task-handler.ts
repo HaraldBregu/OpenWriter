@@ -54,17 +54,9 @@ export class ContentWriterTaskHandler
 			promptLength: input.prompt.length,
 		});
 
-		const logAndEmitSuccess = (update: { state: TaskState; data: string }): void => {
-			if (update.state !== 'running') {
-				const payload =
-					update.state === 'finished' ? `length=${update.data.length}` : update.data;
-				logger.info(LOG_SOURCE, `state=${update.state}`, { data: payload });
-			}
-			emit({ state: update.state, data: { success: true, data: update.data } });
+		const emitRunning = (token: string): void => {
+			emit({ state: 'running', data: { success: true, data: token } });
 		};
-
-		logAndEmitSuccess({ state: 'queued', data: 'queued' });
-		logAndEmitSuccess({ state: 'started', data: 'started' });
 
 		try {
 			const service = serviceResolver.resolve(
