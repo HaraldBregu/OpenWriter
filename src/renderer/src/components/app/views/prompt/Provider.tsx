@@ -89,7 +89,6 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 		options,
 		updateAttributes,
 		prompt: state.prompt,
-		files: state.files,
 		fileInputRef,
 	});
 
