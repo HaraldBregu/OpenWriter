@@ -98,15 +98,10 @@ export function useDocumentAiTasks(opts: UseDocumentAiTasksOptions): UseDocument
 					if (ed && !ed.isDestroyed) {
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
-							const docSize = ed.state.doc.content.size;
-							// const from = Math.min(range.from, docSize);
-							// const to = Math.min(range.to, docSize);
-							const from = range.from;
-							const to = range.to;
+							const { from, to } = range;
 							const json = ed.markdown?.parse(responseText);
 							if (json) {
-								console.log('Response text: ', responseText);
-								ed.chain().deleteRange({ from, to }).insertContentAt(from, responseText).run();
+								ed.chain().focus().insertContentAt({ from, to }, json).run();
 							}
 						}
 						onMarkdownChangedRef.current(ed.getMarkdown());
