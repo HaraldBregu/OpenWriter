@@ -1,24 +1,24 @@
 import { useMemo } from 'react';
-import type { FolderEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 import type { SortDirection, SortKey } from '../shared/types';
 
 interface UseFilterParams {
-	folders: FolderEntry[];
+	contents: ResourceInfo[];
 	searchQuery: string;
 	sortKey: SortKey;
 	sortDirection: SortDirection;
 }
 
 export function useFilter({
-	folders,
+	contents,
 	searchQuery,
 	sortKey,
 	sortDirection,
-}: UseFilterParams): FolderEntry[] {
+}: UseFilterParams): ResourceInfo[] {
 	return useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		const result = folders.filter((folder) => {
-			if (query && !folder.name.toLowerCase().includes(query)) return false;
+		const result = contents.filter((item) => {
+			if (query && !item.name.toLowerCase().includes(query)) return false;
 			return true;
 		});
 
@@ -35,5 +35,5 @@ export function useFilter({
 		}
 
 		return result;
-	}, [folders, searchQuery, sortDirection, sortKey]);
+	}, [contents, searchQuery, sortDirection, sortKey]);
 }
