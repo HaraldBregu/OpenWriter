@@ -20,7 +20,6 @@ import {
 	useDispatch,
 	useHistory,
 	useState,
-	useInsertContentDialog,
 	useEditorInstance,
 	useEditor,
 	useContentReviewerTask,
