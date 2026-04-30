@@ -72,7 +72,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, []);
 
 	const handleOpenFolder = useCallback(() => {
-		void window.workspace.openFilesFolder();
+		void window.workspace.openImagesFolder();
 	}, []);
 
 	const setEntries = useCallback(
