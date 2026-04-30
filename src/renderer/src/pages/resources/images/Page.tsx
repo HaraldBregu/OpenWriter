@@ -105,7 +105,7 @@ function PageContent(): ReactElement {
 				{IMAGES.map((imageLink, index) => (
 					<img
 						key={index}
-						className="h-40 w-full max-w-full rounded-lg object-cover object-center"
+						className="aspect-square w-full rounded-lg object-cover object-center"
 						src={imageLink}
 						alt={`image-photo-${index + 1}`}
 					/>
