@@ -32,6 +32,7 @@ export interface ContentContextValue {
 	handleOpenResourcesFolder: () => void;
 	handleDelete: () => void;
 	handleDeleteOne: (id: string) => void;
+	handleDeleteMany: (ids: string[]) => void;
 	refreshContents: () => Promise<void>;
 	handleConfirmDelete: () => Promise<void>;
 	confirmOpen: boolean;
