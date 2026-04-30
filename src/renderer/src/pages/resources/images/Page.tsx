@@ -116,6 +116,14 @@ function PageContent(): ReactElement {
 				description={fileDescription}
 				onConfirm={handleConfirmDelete}
 			/>
+			<ImagePreviewDialog
+				open={preview !== null}
+				onOpenChange={(open) => {
+					if (!open) setPreview(null);
+				}}
+				src={preview?.src ?? null}
+				alt={preview?.alt ?? null}
+			/>
 		</PageContainer>
 	);
 }
