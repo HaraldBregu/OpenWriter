@@ -421,8 +421,6 @@ export interface EventChannelMap {
 	[AppChannels.openTasksDialog]: { data: undefined };
 	[AppChannels.openLogsDialog]: { data: undefined };
 	[AppChannels.openReduxDialog]: { data: undefined };
-	// ---- Files watcher events ----
-	[WorkspaceChannels.filesChanged]: { data: FileEntryChangeEvent };
 	// ---- Images watcher events ----
 	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
 }
