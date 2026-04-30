@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useImagesContext } from '../../../../contexts';
+import { useImagesContext, useContentContext } from '../../../../contexts';
 import {
 	Heading1,
 	Heading2,
@@ -37,7 +37,8 @@ import {
 } from '../plugins/option-menu-plugin';
 import { useEditor } from '../hooks';
 import { ImagesMenu } from './ImagesMenu';
-import { ImageEntry } from '@shared/types';
+import { ContentsMenu } from './ContentsMenu';
+import { ImageEntry, ResourceInfo } from '@shared/types';
 
 const pluginKey = new PluginKey('optionMenu');
 
@@ -65,19 +66,24 @@ type Section = {
 };
 
 const IMAGES_ITEM_ID = 'images-gallery';
+const CONTENT_ITEM_ID = 'insertContent';
 
 export function OptionMenu(): React.JSX.Element | null {
-	const { editor, onInsertContent } = useEditor();
+	const { editor } = useEditor();
 	const { images } = useImagesContext();
+	const { contents } = useContentContext();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
 	const [imagesMenuOpen, setImagesMenuOpen] = useState(false);
+	const [contentSelectedIndex, setContentSelectedIndex] = useState(-1);
+	const [contentsMenuOpen, setContentsMenuOpen] = useState(false);
 	const slashPosRef = useRef<number | null>(null);
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const [imagesAnchorEl, setImagesAnchorEl] = useState<HTMLElement | null>(null);
+	const [contentsAnchorEl, setContentsAnchorEl] = useState<HTMLElement | null>(null);
 	const menuControlsRef = useRef<OptionMenuControls>({
 		forceHide: () => undefined,
 		dismiss: () => undefined,
@@ -94,9 +100,12 @@ export function OptionMenu(): React.JSX.Element | null {
 	imagesMenuOpenRef.current = imagesMenuOpen;
 	const imagesRef = useRef(images);
 	imagesRef.current = images;
-
-	const onInsertContentRef = useRef(onInsertContent);
-	onInsertContentRef.current = onInsertContent;
+	const contentSelectedIndexRef = useRef(contentSelectedIndex);
+	contentSelectedIndexRef.current = contentSelectedIndex;
+	const contentsMenuOpenRef = useRef(contentsMenuOpen);
+	contentsMenuOpenRef.current = contentsMenuOpen;
+	const contentsRef = useRef(contents);
+	contentsRef.current = contents;
 
 	const virtualReference = useMemo<VirtualElement>(
 		() => ({
@@ -211,17 +220,6 @@ export function OptionMenu(): React.JSX.Element | null {
 			.run();
 	}, [editor, deleteSlash]);
 
-	const runInsertContent = useCallback(() => {
-		const ctx = deleteSlash();
-		if (!ctx) return;
-		editor
-			.chain()
-			.focus()
-			.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
-			.run();
-		onInsertContentRef.current?.();
-	}, [editor, deleteSlash]);
-
 	const runImageFromWorkspace = useCallback(
 		(image: ImageEntry) => {
 			const ctx = deleteSlash();
@@ -231,6 +229,20 @@ export function OptionMenu(): React.JSX.Element | null {
 				.focus()
 				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
 				.setImage({ src: toLocalResourceUrl(image.path), alt: image.name })
+				.run();
+		},
+		[editor, deleteSlash]
+	);
+
+	const runContentFromWorkspace = useCallback(
+		(content: ResourceInfo) => {
+			const ctx = deleteSlash();
+			if (!ctx) return;
+			editor
+				.chain()
+				.focus()
+				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
+				.insertContent(content.name)
 				.run();
 		},
 		[editor, deleteSlash]
@@ -274,7 +286,7 @@ export function OptionMenu(): React.JSX.Element | null {
 					{ id: IMAGES_ITEM_ID, label: 'Images', Icon: ImagesIcon, kind: 'submenu' },
 					{ id: 'video', label: 'Video', Icon: Video, kind: 'action', disabled: true },
 					{ id: 'audio', label: 'Audio', Icon: Music, kind: 'action', disabled: true },
-					{ id: 'insertContent', label: 'Content', Icon: FileText, kind: 'action', run: runInsertContent },
+					{ id: CONTENT_ITEM_ID, label: 'Content', Icon: FileText, kind: 'submenu' },
 				],
 			},
 		],
@@ -285,7 +297,6 @@ export function OptionMenu(): React.JSX.Element | null {
 			runBulletList,
 			runOrderedList,
 			runHorizontalRule,
-			runInsertContent,
 		]
 	);
 
@@ -298,12 +309,21 @@ export function OptionMenu(): React.JSX.Element | null {
 		[flatItems]
 	);
 
+	const contentItemIndex = useMemo(
+		() => flatItems.findIndex((it) => it.id === CONTENT_ITEM_ID),
+		[flatItems]
+	);
+
 	useEffect(() => {
 		if (selectedIndex !== imagesItemIndex) {
 			setImageSelectedIndex(-1);
 			setImagesMenuOpen(false);
 		}
-	}, [selectedIndex, imagesItemIndex]);
+		if (selectedIndex !== contentItemIndex) {
+			setContentSelectedIndex(-1);
+			setContentsMenuOpen(false);
+		}
+	}, [selectedIndex, imagesItemIndex, contentItemIndex]);
 
 	useEffect(() => {
 		const container = scrollContainerRef.current;
@@ -346,9 +366,11 @@ export function OptionMenu(): React.JSX.Element | null {
 		(event: KeyboardEvent): boolean => {
 			const idx = selectedIndexRef.current;
 			const imgIdx = imageSelectedIndexRef.current;
-			const inSubmenu = imagesMenuOpenRef.current && idx === imagesItemIndex;
+			const cIdx = contentSelectedIndexRef.current;
+			const inImagesSubmenu = imagesMenuOpenRef.current && idx === imagesItemIndex;
+			const inContentsSubmenu = contentsMenuOpenRef.current && idx === contentItemIndex;
 
-			if (inSubmenu) {
+			if (inImagesSubmenu) {
 				const len = imagesRef.current.length;
 
 				if (event.key === 'ArrowRight' || event.key === 'ArrowDown') {
@@ -384,10 +406,49 @@ export function OptionMenu(): React.JSX.Element | null {
 				return false;
 			}
 
+			if (inContentsSubmenu) {
+				const len = contentsRef.current.length;
+
+				if (event.key === 'ArrowDown') {
+					event.preventDefault();
+					if (len > 0) setContentSelectedIndex((p) => Math.min(len - 1, p + 1));
+					return true;
+				}
+
+				if (event.key === 'ArrowUp') {
+					event.preventDefault();
+					setContentSelectedIndex((p) => Math.max(0, p - 1));
+					return true;
+				}
+
+				if (event.key === 'ArrowLeft') {
+					event.preventDefault();
+					setContentsMenuOpen(false);
+					setContentSelectedIndex(-1);
+					return true;
+				}
+
+				if (event.key === 'Enter') {
+					event.preventDefault();
+					const item = contentsRef.current[cIdx];
+					if (item) runContentFromWorkspace(item);
+					return true;
+				}
+
+				return false;
+			}
+
 			if (event.key === 'ArrowRight' && idx === imagesItemIndex && imagesRef.current.length > 0) {
 				event.preventDefault();
 				setImagesMenuOpen(true);
 				setImageSelectedIndex(0);
+				return true;
+			}
+
+			if (event.key === 'ArrowRight' && idx === contentItemIndex && contentsRef.current.length > 0) {
+				event.preventDefault();
+				setContentsMenuOpen(true);
+				setContentSelectedIndex(0);
 				return true;
 			}
 
@@ -411,7 +472,7 @@ export function OptionMenu(): React.JSX.Element | null {
 
 			return false;
 		},
-		[runByIndex, runImageFromWorkspace, moveSelection, imagesItemIndex]
+		[runByIndex, runImageFromWorkspace, runContentFromWorkspace, moveSelection, imagesItemIndex, contentItemIndex]
 	);
 
 	const onKeyEventRef = useRef(onKeyEvent);
@@ -490,10 +551,16 @@ export function OptionMenu(): React.JSX.Element | null {
 										const isSelected = selectedIndex === flatIdx;
 										const Icon = item.Icon;
 										const isImagesItem = item.id === IMAGES_ITEM_ID;
+										const isContentItem = item.id === CONTENT_ITEM_ID;
+										const anchorSetter = isImagesItem
+											? setImagesAnchorEl
+											: isContentItem
+												? setContentsAnchorEl
+												: undefined;
 										return (
 											<div
 												key={item.id}
-												ref={isImagesItem ? setImagesAnchorEl : undefined}
+												ref={anchorSetter}
 											>
 												<Button
 													data-item-index={flatIdx}
@@ -510,6 +577,9 @@ export function OptionMenu(): React.JSX.Element | null {
 															if (isImagesItem) {
 																setSelectedIndex(flatIdx);
 																setImagesMenuOpen((prev) => !prev);
+															} else if (isContentItem) {
+																setSelectedIndex(flatIdx);
+																setContentsMenuOpen((prev) => !prev);
 															}
 															return;
 														}
@@ -555,6 +625,17 @@ export function OptionMenu(): React.JSX.Element | null {
 			onPick={runImageFromWorkspace}
 			onMouseEnter={() => {
 				if (imagesItemIndex >= 0) setSelectedIndex(imagesItemIndex);
+			}}
+		/>
+		<ContentsMenu
+			open={contentsMenuOpen}
+			anchor={contentsAnchorEl}
+			contents={contents}
+			selectedIndex={contentSelectedIndex}
+			onSelectIndex={setContentSelectedIndex}
+			onPick={runContentFromWorkspace}
+			onMouseEnter={() => {
+				if (contentItemIndex >= 0) setSelectedIndex(contentItemIndex);
 			}}
 		/>
 		</>
