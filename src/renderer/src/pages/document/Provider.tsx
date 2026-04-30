@@ -20,29 +20,14 @@ export function Provider({ children, documentId }: ProviderProps): React.JSX.Ele
 		setEditorState(ed);
 	}, []);
 
-	const [insertContentDialogOpen, setInsertContentDialogOpen] = useState(false);
-	const openInsertContentDialog = useCallback(() => setInsertContentDialogOpen(true), []);
-	const closeInsertContentDialog = useCallback(() => setInsertContentDialogOpen(false), []);
-
 	const value = useMemo<ContextValue>(
 		() => ({
 			state,
 			dispatch,
 			editor,
 			setEditor,
-			insertContentDialogOpen,
-			openInsertContentDialog,
-			closeInsertContentDialog,
 		}),
-		[
-			state,
-			dispatch,
-			editor,
-			setEditor,
-			insertContentDialogOpen,
-			openInsertContentDialog,
-			closeInsertContentDialog,
-		]
+		[state, dispatch, editor, setEditor]
 	);
 
 	return <DocumentContext.Provider value={value}>{children}</DocumentContext.Provider>;
