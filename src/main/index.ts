@@ -44,7 +44,7 @@ import {
 	cleanup,
 	writeCrashLine,
 } from './bootstrap';
-import { TSRCT_EXT } from './constants';
+import { WORKSPACE } from './constants';
 
 // Check if running in workspace mode
 const isWorkspaceMode = WorkspaceProcessManager.isWorkspaceMode();
