@@ -10,6 +10,7 @@ import {
 	FileText,
 	FolderOpen,
 	Settings2,
+	Trash2,
 	Upload,
 } from 'lucide-react';
 import {
