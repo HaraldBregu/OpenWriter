@@ -57,6 +57,7 @@ import {
 	Trash2,
 	FileImage,
 	FileText,
+	Table as TableIcon,
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
