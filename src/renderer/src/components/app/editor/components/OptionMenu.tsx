@@ -249,8 +249,20 @@ export function OptionMenu(): React.JSX.Element | null {
 					{ id: 'h4', label: 'Heading 4', Icon: Heading4, kind: 'action', run: () => runHeading(4) },
 					{ id: 'h5', label: 'Heading 5', Icon: Heading5, kind: 'action', run: () => runHeading(5) },
 					{ id: 'h6', label: 'Heading 6', Icon: Heading6, kind: 'action', run: () => runHeading(6) },
+				],
+			},
+			{
+				id: 'lists',
+				label: 'Lists',
+				items: [
 					{ id: 'bulletList', label: 'Bullet list', Icon: List, kind: 'action', run: runBulletList },
 					{ id: 'orderedList', label: 'Ordered list', Icon: ListOrdered, kind: 'action', run: runOrderedList },
+				],
+			},
+			{
+				id: 'divider',
+				label: 'Divider',
+				items: [
 					{ id: 'hr', label: 'Horizontal rule', Icon: Minus, kind: 'action', run: runHorizontalRule },
 				],
 			},
