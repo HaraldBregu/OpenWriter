@@ -198,7 +198,7 @@ export class WorkspaceService implements Disposable {
 
 	/**
 	 * Create an empty workspace folder under the managed root with a fresh UUID.
-	 * Caller is responsible for writing `project_workspace.openwriter` afterwards.
+	 * Caller is responsible for writing the workspace.json `project` block afterwards.
 	 */
 	createWorkspaceFolder(): { id: string; path: string } {
 		const root = this.getWorkspacesRoot();
