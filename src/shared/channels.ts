@@ -77,6 +77,7 @@ export const WorkspaceChannels = {
 	openDataFolder: 'workspace:open-data-folder',
 	openContentsFolder: 'workspace:open-contents-folder',
 	openFilesFolder: 'workspace:open-files-folder',
+	openImagesFolder: 'workspace:open-images-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
 	getDocumentPath: 'workspace:get-document-path',
 	// Document images
