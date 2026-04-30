@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useImagesContext } from '../../../../contexts';
 import {
 	Heading1,
 	Heading2,
