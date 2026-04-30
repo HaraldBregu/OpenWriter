@@ -9,6 +9,7 @@ import {
 	crashReporter,
 } from 'electron';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { Main } from './main';
 import { Tray } from './tray';
 import { Menu } from './menu';
