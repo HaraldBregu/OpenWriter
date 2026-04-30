@@ -99,7 +99,7 @@ export const PageBody = memo(function PageBody({
 	className,
 }: PageBodyProps): React.ReactElement {
 	return (
-		<div className={cn('flex min-h-0 flex-1 flex-col px-6 py-2 overflow-y-auto', className)}>{children}</div>
+		<div className={cn('flex min-h-0 flex-1 flex-col px-6 py-4 overflow-y-auto', className)}>{children}</div>
 	);
 });
 

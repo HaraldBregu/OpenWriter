@@ -1,7 +1,19 @@
+import * as React from 'react';
 import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FileText, FolderOpen, Upload } from 'lucide-react';
+import {
+	type ColumnFiltersState,
+	type SortingState,
+	type VisibilityState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from '@tanstack/react-table';
 import {
 	PageBody,
 	PageContainer,
@@ -16,12 +28,22 @@ import {
 	DropdownMenuItem,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { Input } from '@/components/ui/Input';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from '@/components/ui/Table';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import { useContentContext } from './Provider';
 import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
 import { MarkdownPreviewDialog } from './components/MarkdownPreviewDialog';
-import { DataTable } from './components/DataTable';
+import { DataTablePagination } from './components/DataTablePagination';
+import { DataTableViewOptions } from './components/DataTableViewOptions';
 import { buildColumns } from './components/columns';
 import type { ResourceInfo } from '../../../../../shared/types';
 import Layout from './Layout';
@@ -32,6 +54,10 @@ function PageContent(): ReactElement {
 	const section = RESOURCE_SECTIONS.content;
 	const [fileDialogOpen, setFileDialogOpen] = useState(false);
 	const [previewItem, setPreviewItem] = useState<ResourceInfo | null>(null);
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = React.useState({});
 	const {
 		contents,
 		filteredContents,
@@ -57,6 +83,20 @@ function PageContent(): ReactElement {
 			}),
 		[handleOpenResourcesFolder, handleDeleteOne],
 	);
+
+	const table = useReactTable({
+		data: filteredContents,
+		columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
+		onColumnVisibilityChange: setColumnVisibility,
+		onRowSelectionChange: setRowSelection,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		state: { sorting, columnFilters, columnVisibility, rowSelection },
+	});
 
 	const handleExtractorRun = async (payload: ExtractorRunPayload): Promise<void> => {
 		const { filePath, modelId } = payload;
@@ -131,12 +171,62 @@ function PageContent(): ReactElement {
 				)}
 
 				{!isLoading && hasContents && (
-					<DataTable
-						columns={columns}
-						data={filteredContents}
-						filterColumnId="name"
-						filterPlaceholder="Filter by name..."
-					/>
+					<div className="space-y-4">
+						<div className="flex items-center gap-2">
+							<Input
+								placeholder="Filter by name..."
+								value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+								onChange={(event) =>
+									table.getColumn('name')?.setFilterValue(event.target.value)
+								}
+								className="max-w-sm"
+							/>
+							<DataTableViewOptions table={table} />
+						</div>
+						<div className="overflow-hidden rounded-md border">
+							<Table>
+								<TableHeader>
+									{table.getHeaderGroups().map((headerGroup) => (
+										<TableRow key={headerGroup.id}>
+											{headerGroup.headers.map((header) => (
+												<TableHead key={header.id}>
+													{header.isPlaceholder
+														? null
+														: flexRender(
+																header.column.columnDef.header,
+																header.getContext(),
+															)}
+												</TableHead>
+											))}
+										</TableRow>
+									))}
+								</TableHeader>
+								<TableBody>
+									{table.getRowModel().rows.length ? (
+										table.getRowModel().rows.map((row) => (
+											<TableRow
+												key={row.id}
+												data-state={row.getIsSelected() ? 'selected' : undefined}
+											>
+												{row.getVisibleCells().map((cell) => (
+													<TableCell key={cell.id}>
+														{flexRender(cell.column.columnDef.cell, cell.getContext())}
+													</TableCell>
+												))}
+											</TableRow>
+										))
+									) : (
+										<TableRow>
+											<TableCell colSpan={columns.length} className="h-24 text-center">
+												No results.
+											</TableCell>
+										</TableRow>
+									)}
+								</TableBody>
+							</Table>
+						</div>
+						<DataTablePagination table={table} />
+					</div>
 				)}
 			</PageBody>
 
