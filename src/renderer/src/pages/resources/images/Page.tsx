@@ -77,6 +77,7 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 			<PageBody>
+				({JSON.stringify(filteredEntries)})
 				{filteredEntries.length === 0 ? (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">No images yet.</p>

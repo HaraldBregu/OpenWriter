@@ -40,9 +40,11 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
 			const items = await window.workspace.getImages();
+			console.log('[ImagesProvider] getImages returned', items.length, 'items', items);
 			if (!mountedRef.current) return;
 			dispatch({ type: 'SET_ENTRIES', payload: items });
-		} catch {
+		} catch (err) {
+			console.error('[ImagesProvider] getImages failed:', err);
 			if (!mountedRef.current) return;
 			dispatch({ type: 'SET_ENTRIES', payload: [] });
 		} finally {
