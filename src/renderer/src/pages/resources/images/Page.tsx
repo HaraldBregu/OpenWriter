@@ -42,25 +42,38 @@ function PageContent(): ReactElement {
 
 	const [images, setImages] = useState<ImageEntry[]>([]);
 
-	useEffect(() => {
-		let active = true;
-		const load = async (): Promise<void> => {
-			try {
-				const items = await window.workspace.getImages();
-				if (active) setImages(items);
-			} catch {
-				if (active) setImages([]);
-			}
-		};
-		void load();
-		const unsubscribe = window.workspace.onImagesChanged(() => {
-			void load();
-		});
-		return () => {
-			active = false;
-			unsubscribe();
-		};
+	const loadImages = useCallback(async (): Promise<void> => {
+		try {
+			const items = await window.workspace.getImages();
+			setImages(items);
+		} catch {
+			setImages([]);
+		}
 	}, []);
+
+	useEffect(() => {
+		void loadImages();
+		const unsubscribe = window.workspace.onImagesChanged(() => {
+			void loadImages();
+		});
+		return unsubscribe;
+	}, [loadImages]);
+
+	const prevUploadingRef = useRef(uploading);
+	useEffect(() => {
+		if (prevUploadingRef.current && !uploading) {
+			void loadImages();
+		}
+		prevUploadingRef.current = uploading;
+	}, [uploading, loadImages]);
+
+	const prevConfirmOpenRef = useRef(confirmOpen);
+	useEffect(() => {
+		if (prevConfirmOpenRef.current && !confirmOpen) {
+			void loadImages();
+		}
+		prevConfirmOpenRef.current = confirmOpen;
+	}, [confirmOpen, loadImages]);
 
 	const pageTitle = PAGE_TITLES[typeFilter];
 	const fileCount = selected.size;
