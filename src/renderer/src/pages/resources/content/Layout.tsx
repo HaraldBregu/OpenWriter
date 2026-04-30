@@ -4,21 +4,21 @@ import { useAppSelector } from '@/store';
 import { selectCurrentWorkspacePath } from '@/store/workspace';
 
 function Bootstrap(): null {
-	const { setFolders, setIsLoading } = useContentContext();
+	const { setContents, setIsLoading } = useContentContext();
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	useEffect(() => {
 		let active = true;
 
-		const loadFolders = async (): Promise<void> => {
+		const loadContents = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const folders = await window.workspace.getContentsFolders();
+				const items = await window.workspace.getContents();
 				if (!active) return;
-				setFolders(folders);
+				setContents(items);
 			} catch {
 				if (!active) return;
-				setFolders([]);
+				setContents([]);
 			} finally {
 				if (active) {
 					setIsLoading(false);
@@ -26,12 +26,12 @@ function Bootstrap(): null {
 			}
 		};
 
-		void loadFolders();
+		void loadContents();
 
 		return () => {
 			active = false;
 		};
-	}, [setFolders, setIsLoading, workspacePath]);
+	}, [setContents, setIsLoading, workspacePath]);
 
 	return null;
 }
