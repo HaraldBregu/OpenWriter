@@ -69,7 +69,7 @@ export const PageHeaderTitle = memo(function PageHeaderTitle({
 	className,
 }: PageHeaderTitleProps): React.ReactElement {
 	return (
-		<h1 className={cn('text-md font-medium flex items-center gap-3 flex-1 min-w-0', className)}>
+		<h1 className={cn('text-md font-medium flex items-center gap-2 flex-1 min-w-0', className)}>
 			{children}
 		</h1>
 	);
