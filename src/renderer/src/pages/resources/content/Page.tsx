@@ -117,6 +117,11 @@ function PageContent(): ReactElement {
 		state: { sorting, columnFilters, columnVisibility, rowSelection },
 	});
 
+	const handleConfirmDeleteAndReset = async (): Promise<void> => {
+		await handleConfirmDelete();
+		setRowSelection({});
+	};
+
 	const handleExtractorRun = async (payload: ExtractorRunPayload): Promise<void> => {
 		const { filePath, modelId } = payload;
 		if (!filePath || !modelId) return;
