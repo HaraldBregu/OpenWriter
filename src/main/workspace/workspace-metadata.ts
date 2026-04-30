@@ -45,6 +45,11 @@ export interface WorkspaceMetadata {
 		createdAt: number;
 		updatedAt: number;
 	};
+	/**
+	 * Project-level info (name, description, projectId, etc.).
+	 * Optional during read so legacy files lacking the block migrate cleanly.
+	 */
+	project?: ProjectWorkspaceInfo;
 	settings: WorkspaceSettings;
 }
 
