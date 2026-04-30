@@ -43,18 +43,6 @@ export const RESOURCE_SECTIONS: Record<ResourceSectionId, ResourceSectionConfig>
 		uploadExtensions: ['.txt', '.md', '.html', '.csv', '.json'],
 		supportsIndexing: true,
 	},
-	data: {
-		id: 'data',
-		route: '/resources/data',
-		titleKey: 'appLayout.knowledgeBase',
-		emptyKey: 'resources.data.empty',
-		loadingKey: 'resources.data.loading',
-		uploadKey: 'resources.data.upload',
-		searchPlaceholderKey: 'resources.data.searchPlaceholder',
-		icon: Database,
-		uploadExtensions: ['.csv', '.json', '.xml', '.yaml', '.yml', '.tsv', '.parquet', '.sqlite'],
-		supportsIndexing: true,
-	},
 };
 
 const DOCUMENT_MIME_TYPES = new Set(['application/json', 'application/xml']);

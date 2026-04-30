@@ -268,7 +268,7 @@ function PageContent(): ReactElement {
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{filteredFolders.length === 0 ? (
+							{displayFolders.length === 0 ? (
 								<TableRow>
 									<TableCell
 										colSpan={SORT_COLUMNS.length + 1}
