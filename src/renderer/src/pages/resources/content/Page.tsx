@@ -248,7 +248,7 @@ function PageContent(): ReactElement {
 					</div>
 				)}
 
-				{!isLoading && folders.length > 0 && (
+				{!isLoading && hasFolders && (
 					<Table className="table-fixed text-foreground">
 						<TableHeader className="bg-background sticky top-0 z-10">
 							<TableRow>
