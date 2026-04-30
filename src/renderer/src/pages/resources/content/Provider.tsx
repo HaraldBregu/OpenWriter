@@ -186,6 +186,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		handleOpenResourcesFolder,
 		handleDelete,
 		handleDeleteOne,
+		handleDeleteMany,
 		handleConfirmDelete,
 		refreshContents,
 		confirmOpen: state.confirmOpen,
