@@ -525,7 +525,7 @@ export function OptionMenu(): React.JSX.Element | null {
 								handleClose();
 							}}
 						>
-							<span>Close</span>
+							<span>Close menu</span>
 							<kbd className="text-[10px] text-muted-foreground rounded border border-border/70 bg-muted/40 px-1.5 py-0.5 font-mono">
 								esc
 							</kbd>
