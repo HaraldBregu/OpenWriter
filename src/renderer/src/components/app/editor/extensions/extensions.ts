@@ -48,6 +48,7 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		Italic,
 		Underline,
 		Strike,
+		Blockquote,
 		CodeBlock,
 		HorizontalRule,
 		BulletList,
