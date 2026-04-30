@@ -134,9 +134,7 @@
 .ProseMirror {
 	outline: none;
 	min-height: 1em;
-	font-family:
-		ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
-		Arial, sans-serif;
+	font-family: 'Merriweather', serif;
 }
 
 .ProseMirror > * + * {
