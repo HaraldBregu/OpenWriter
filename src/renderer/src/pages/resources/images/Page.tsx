@@ -1,4 +1,4 @@
-import type { ReactElement } from 'react';
+import { useEffect, useState, type ReactElement } from 'react';
 import { FolderOpen, Upload } from 'lucide-react';
 import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
@@ -9,38 +9,13 @@ import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/componen
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 import Layout from './Layout';
-import type { FileTypeFilter } from 'src/shared';
+import type { FileTypeFilter, ImageEntry } from '../../../../../shared/types';
 
-const UNSPLASH_IDS = [
-	'1574015974293-817f0ebebb74',
-	'1661327930345-9c6714b603b3',
-	'1578508637199-240a8f25eff6',
-	'1559745482-57bfa9ca5a8a',
-	'1737608734653-d1eaad541d46',
-	'1500530855697-b586d89ba3ee',
-	'1507525428034-b723cf961d3e',
-	'1519681393784-d120267933ba',
-	'1501785888041-af3ef285b470',
-	'1470770841072-f978cf4d019e',
-	'1496947850313-7743325fa58c',
-	'1464822759023-fed622ff2c3b',
-	'1500382017468-9049fed747ef',
-	'1472214103451-9374bd1c798e',
-	'1518791841217-8f162f1e1131',
-	'1518770660439-4636190af475',
-	'1521747116042-5a810fda9664',
-	'1517816743773-6e0fd518b4a6',
-	'1520975922131-d4a13e8b2d1f',
-	'1517694712202-14dd9538aa97',
-	'1515378791036-0648a3ef77b2',
-	'1496181133206-80ce9b88a853',
-	'1493612276216-ee3925520721',
-	'1488590528505-98d2b5aba04b',
-];
-
-const IMAGES = UNSPLASH_IDS.map(
-	(id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=400&h=400`
-);
+function toLocalResourceUrl(filePath: string): string {
+	const normalized = filePath.replace(/\\/g, '/');
+	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
+	return `local-resource://localhost${urlPath}`;
+}
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
 	all: 'Images',
