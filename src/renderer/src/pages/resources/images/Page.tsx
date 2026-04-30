@@ -77,13 +77,13 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 			<PageBody>
-				{images.length === 0 ? (
+				{filteredEntries.length === 0 ? (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">No images yet.</p>
 					</div>
 				) : (
 					<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
-						{images.map((image) => (
+						{filteredEntries.map((image) => (
 							<img
 								key={image.id}
 								className="aspect-square w-full rounded-lg object-cover object-center"
