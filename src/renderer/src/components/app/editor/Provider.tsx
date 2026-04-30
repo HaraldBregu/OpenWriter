@@ -9,7 +9,6 @@ import { InsertImageDialog } from '../dialogs';
 interface ProviderProps {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
-	onInsertContent?: () => void;
 	onImageInsert?: (result: { src: string; alt: string; title: string }) => void;
 	children: React.ReactNode;
 }
@@ -17,7 +16,6 @@ interface ProviderProps {
 export function Provider({
 	editor,
 	containerRef,
-	onInsertContent,
 	onImageInsert,
 	children,
 }: ProviderProps): React.JSX.Element {
@@ -40,9 +38,8 @@ export function Provider({
 			editor,
 			containerRef,
 			setImageDialogOpen,
-			onInsertContent,
 		}),
-		[state, editor, containerRef, setImageDialogOpen, onInsertContent]
+		[state, editor, containerRef, setImageDialogOpen]
 	);
 
 	return (
