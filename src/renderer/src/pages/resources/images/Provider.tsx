@@ -158,6 +158,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, [selected, setSelected]);
 
 	useEffect(() => {
+		mountedRef.current = true;
 		void refreshImages();
 		const unsubscribeImages = window.workspace.onImagesChanged(() => {
 			void refreshImages();
