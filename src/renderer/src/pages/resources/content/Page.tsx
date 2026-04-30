@@ -202,6 +202,23 @@ function PageContent(): ReactElement {
 								}
 								className="max-w-sm"
 							/>
+							{table.getFilteredSelectedRowModel().rows.length > 0 && (
+								<Button
+									variant="destructive"
+									size="sm"
+									className="h-8"
+									onClick={() =>
+										handleDeleteMany(
+											table
+												.getFilteredSelectedRowModel()
+												.rows.map((row) => row.original.id),
+										)
+									}
+								>
+									<Trash2 className="mr-2 h-4 w-4" />
+									Delete ({table.getFilteredSelectedRowModel().rows.length})
+								</Button>
+							)}
 							<DropdownMenu>
 								<DropdownMenuTrigger
 									render={
