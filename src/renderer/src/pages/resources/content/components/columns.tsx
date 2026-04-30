@@ -1,9 +1,9 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Eye, FileText, Folder as FolderIcon, FolderOpen, Trash2 } from 'lucide-react';
+import { Eye, FileText, FolderOpen, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
-import type { FolderEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 import { DataTableColumnHeader } from './DataTableColumnHeader';
 
 function formatShortDate(timestamp: number): string {
@@ -14,7 +14,7 @@ function formatShortDate(timestamp: number): string {
 }
 
 interface ColumnsOptions {
-	onPreview: (folder: FolderEntry) => void;
+	onPreview: (item: ResourceInfo) => void;
 	onOpenInFinder: () => void;
 	onDelete: (id: string) => void;
 }
@@ -23,7 +23,7 @@ export function buildColumns({
 	onPreview,
 	onOpenInFinder,
 	onDelete,
-}: ColumnsOptions): ColumnDef<FolderEntry>[] {
+}: ColumnsOptions): ColumnDef<ResourceInfo>[] {
 	return [
 		{
 			id: 'select',
@@ -53,37 +53,33 @@ export function buildColumns({
 			accessorKey: 'name',
 			header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
 			cell: ({ row }) => {
-				const folder = row.original;
+				const item = row.original;
 				return (
 					<div className="flex items-center gap-3">
-						{folder.kind === 'file' ? (
-							<FileText className="h-5 w-5 text-muted-foreground" />
-						) : (
-							<FolderIcon className="h-5 w-5 text-muted-foreground" />
-						)}
+						<FileText className="h-5 w-5 text-muted-foreground" />
 						<div className="min-w-0 flex-1">
-							<p className="truncate font-medium text-sm">{folder.name}</p>
-							<p className="truncate text-xs text-muted-foreground">{folder.path}</p>
+							<p className="truncate font-medium text-sm">{item.name}</p>
+							<p className="truncate text-xs text-muted-foreground">{item.path}</p>
 						</div>
 					</div>
 				);
 			},
 		},
 		{
-			accessorKey: 'createdAt',
-			header: ({ column }) => <DataTableColumnHeader column={column} title="Created" />,
+			accessorKey: 'importedAt',
+			header: ({ column }) => <DataTableColumnHeader column={column} title="Imported" />,
 			cell: ({ row }) => (
 				<span className="whitespace-nowrap text-muted-foreground">
-					{formatShortDate(row.getValue('createdAt'))}
+					{formatShortDate(row.getValue('importedAt'))}
 				</span>
 			),
 		},
 		{
-			accessorKey: 'modifiedAt',
+			accessorKey: 'lastModified',
 			header: ({ column }) => <DataTableColumnHeader column={column} title="Modified" />,
 			cell: ({ row }) => (
 				<span className="whitespace-nowrap text-muted-foreground">
-					{formatShortDate(row.getValue('modifiedAt'))}
+					{formatShortDate(row.getValue('lastModified'))}
 				</span>
 			),
 		},
@@ -91,21 +87,17 @@ export function buildColumns({
 			id: 'actions',
 			enableHiding: false,
 			cell: ({ row }) => {
-				const folder = row.original;
-				const isMarkdown =
-					folder.kind === 'file' && folder.name.toLowerCase().endsWith('.md');
+				const item = row.original;
 				return (
 					<div className="inline-flex items-center justify-end gap-1">
-						{isMarkdown && (
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={() => onPreview(folder)}
-								aria-label="Preview"
-							>
-								<Eye className="h-4 w-4" />
-							</Button>
-						)}
+						<Button
+							variant="ghost"
+							size="icon"
+							onClick={() => onPreview(item)}
+							aria-label="Preview"
+						>
+							<Eye className="h-4 w-4" />
+						</Button>
 						<Button
 							variant="ghost"
 							size="icon"
@@ -118,7 +110,7 @@ export function buildColumns({
 							variant="ghost"
 							size="icon"
 							className="text-destructive hover:text-destructive"
-							onClick={() => onDelete(folder.id)}
+							onClick={() => onDelete(item.id)}
 							aria-label="Delete"
 						>
 							<Trash2 className="h-4 w-4" />
