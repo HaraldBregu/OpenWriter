@@ -126,6 +126,23 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
 	}, [selected]);
 
+	const handleDeleteOne = useCallback(
+		(id: string) => {
+			setSelected(new Set([id]));
+			dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
+		},
+		[setSelected]
+	);
+
+	const handleDeleteMany = useCallback(
+		(ids: string[]) => {
+			if (ids.length === 0) return;
+			setSelected(new Set(ids));
+			dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
+		},
+		[setSelected]
+	);
+
 	const handleConfirmDelete = useCallback(async () => {
 		const ids = [...selected];
 		try {
