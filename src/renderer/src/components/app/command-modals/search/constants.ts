@@ -51,14 +51,6 @@ export const APP_SEARCH_ACTIONS: AppSearchActionDefinition[] = [
 		icon: RESOURCE_SECTIONS.files.icon,
 		meta: 'Route',
 	},
-	{
-		id: 'resources-data',
-		title: 'Open Data',
-		description: 'Browse imported data files and structured datasets.',
-		href: RESOURCE_SECTIONS.data.route,
-		icon: Database,
-		meta: 'Route',
-	},
 ];
 
 export const APP_SEARCH_SECTION_ICONS = {
