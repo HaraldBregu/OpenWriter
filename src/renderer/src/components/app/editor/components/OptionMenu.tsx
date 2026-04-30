@@ -274,7 +274,7 @@ export function OptionMenu(): React.JSX.Element | null {
 					{ id: IMAGES_ITEM_ID, label: 'Images', Icon: ImagesIcon, kind: 'submenu' },
 					{ id: 'video', label: 'Video', Icon: Video, kind: 'action', disabled: true },
 					{ id: 'audio', label: 'Audio', Icon: Music, kind: 'action', disabled: true },
-					{ id: 'insertContent', label: 'Insert content', Icon: FileText, kind: 'action', run: runInsertContent },
+					{ id: 'insertContent', label: 'Content', Icon: FileText, kind: 'action', run: runInsertContent },
 				],
 			},
 		],
