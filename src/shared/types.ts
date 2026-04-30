@@ -179,9 +179,9 @@ export interface WorkspaceInfo {
 	/** Absolute path to the workspace folder. */
 	path: string;
 	lastOpened: number;
-	/** Project name read from `project_workspace.openwriter`, or null if unreadable. */
+	/** Project name read from workspace.json `project` block, or null if unreadable. */
 	name: string | null;
-	/** Project description read from `project_workspace.openwriter`, or null if unreadable. */
+	/** Project description read from workspace.json `project` block, or null if unreadable. */
 	description: string | null;
 }
 
