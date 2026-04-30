@@ -57,7 +57,6 @@ import {
 	Trash2,
 	FileImage,
 	FileText,
-	Table as TableIcon,
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
@@ -580,17 +579,6 @@ function Container({ children }: LayoutProps) {
 									>
 										<FileText />
 										<span>{t('appLayout.contents', 'Contents')}</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										render={<Link to="/resources/data-table-demo" />}
-										className="group/btn h-9 px-3"
-										tooltip="Data Table"
-										isActive={location.pathname === '/resources/data-table-demo'}
-									>
-										<TableIcon />
-										<span>Data Table</span>
 									</SidebarMenuButton>
 								</SidebarMenuItem>
 								<SidebarMenuItem>
