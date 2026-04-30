@@ -30,6 +30,7 @@ const PAGE_TITLES: Record<FileTypeFilter, string> = {
 
 function PageContent(): ReactElement {
 	const {
+		filteredEntries,
 		uploading,
 		typeFilter,
 		handleUpload,
@@ -39,43 +40,6 @@ function PageContent(): ReactElement {
 		setConfirmOpen,
 		handleConfirmDelete,
 	} = useContext();
-
-	const [images, setImages] = useState<ImageEntry[]>([]);
-
-	const loadImages = useCallback(async (): Promise<void> => {
-		try {
-			const items = await window.workspace.getImages();
-						console.log('Loaded images:', items);
-
-			setImages(items);
-		} catch {
-			setImages([]);
-		}
-	}, []);
-
-	useEffect(() => {
-		void loadImages();
-		const unsubscribe = window.workspace.onImagesChanged(() => {
-			void loadImages();
-		});
-		return unsubscribe;
-	}, [loadImages]);
-
-	const prevUploadingRef = useRef(uploading);
-	useEffect(() => {
-		if (prevUploadingRef.current && !uploading) {
-			void loadImages();
-		}
-		prevUploadingRef.current = uploading;
-	}, [uploading, loadImages]);
-
-	const prevConfirmOpenRef = useRef(confirmOpen);
-	useEffect(() => {
-		if (prevConfirmOpenRef.current && !confirmOpen) {
-			void loadImages();
-		}
-		prevConfirmOpenRef.current = confirmOpen;
-	}, [confirmOpen, loadImages]);
 
 	const pageTitle = PAGE_TITLES[typeFilter];
 	const fileCount = selected.size;
@@ -112,7 +76,6 @@ function PageContent(): ReactElement {
 					</Button>
 				</PageHeaderTitle>
 			</PageHeader>
-
 			<PageBody>
 				{images.length === 0 ? (
 					<div className="flex flex-1 items-center justify-center py-16">
