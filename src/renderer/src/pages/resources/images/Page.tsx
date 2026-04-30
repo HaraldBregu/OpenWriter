@@ -12,14 +12,14 @@ import Layout from './Layout';
 import type { FileTypeFilter } from 'src/shared';
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
-	all: 'Files',
+	all: 'Images',
 	image: 'Images',
-	video: 'Video',
-	audio: 'Audio',
-	json: 'Files',
-	markdown: 'Files',
-	text: 'Files',
-	pdf: 'Files',
+	video: 'Images',
+	audio: 'Images',
+	json: 'Images',
+	markdown: 'Images',
+	text: 'Images',
+	pdf: 'Images',
 };
 
 function PageContent(): ReactElement {
