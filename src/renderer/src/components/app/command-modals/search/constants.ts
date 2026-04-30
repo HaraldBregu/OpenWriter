@@ -1,4 +1,4 @@
-import { Database, FileText, FolderOpen, Home, LibraryBig, Settings } from 'lucide-react';
+import { FileText, FolderOpen, Home, LibraryBig, Settings } from 'lucide-react';
 import type { AppSearchActionDefinition } from './types';
 import { RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
 

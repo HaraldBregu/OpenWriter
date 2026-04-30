@@ -278,7 +278,7 @@ function PageContent(): ReactElement {
 									</TableCell>
 								</TableRow>
 							) : (
-								filteredFolders.map((folder) => (
+								displayFolders.map((folder) => (
 									<TableRow
 										key={folder.id}
 										className="cursor-pointer"
