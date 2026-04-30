@@ -45,7 +45,6 @@ export interface EditorProps {
 	id?: string;
 	onReviewPromptSubmit?: (payload: PromptSubmitPayload) => void;
 	onWritePromptSubmit?: (payload: PromptSubmitPayload) => void;
-	onInsertContent?: () => void;
 	onUndo?: () => void;
 	onRedo?: () => void;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
