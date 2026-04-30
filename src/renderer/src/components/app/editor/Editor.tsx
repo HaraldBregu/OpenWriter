@@ -64,7 +64,6 @@ const Editor = React.memo(
 				id,
 				onReviewPromptSubmit,
 				onWritePromptSubmit,
-				onInsertContent,
 				onUndo,
 				onRedo,
 				onEditorReady,
