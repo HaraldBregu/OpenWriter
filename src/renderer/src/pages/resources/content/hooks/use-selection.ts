@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { FolderEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 
 interface UseSelectionParams {
-	filteredFolders: FolderEntry[];
+	filteredContents: ResourceInfo[];
 }
 
 interface UseSelectionReturn {
@@ -15,23 +15,24 @@ interface UseSelectionReturn {
 	handleToggleRow: (id: string) => void;
 }
 
-export function useSelection({ filteredFolders }: UseSelectionParams): UseSelectionReturn {
+export function useSelection({ filteredContents }: UseSelectionParams): UseSelectionReturn {
 	const [selected, setSelected] = useState<Set<string>>(new Set());
 
-	const allChecked = filteredFolders.length > 0 && filteredFolders.every((f) => selected.has(f.id));
-	const someChecked = !allChecked && filteredFolders.some((f) => selected.has(f.id));
+	const allChecked =
+		filteredContents.length > 0 && filteredContents.every((f) => selected.has(f.id));
+	const someChecked = !allChecked && filteredContents.some((f) => selected.has(f.id));
 
 	const handleToggleAll = useCallback(() => {
 		setSelected((current) => {
 			const next = new Set(current);
 			if (allChecked) {
-				filteredFolders.forEach((f) => next.delete(f.id));
+				filteredContents.forEach((f) => next.delete(f.id));
 			} else {
-				filteredFolders.forEach((f) => next.add(f.id));
+				filteredContents.forEach((f) => next.add(f.id));
 			}
 			return next;
 		});
-	}, [allChecked, filteredFolders]);
+	}, [allChecked, filteredContents]);
 
 	const handleToggleRow = useCallback((id: string) => {
 		setSelected((current) => {
