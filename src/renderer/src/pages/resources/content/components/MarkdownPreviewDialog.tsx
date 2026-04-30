@@ -10,16 +10,16 @@ import {
 	DialogTitle,
 } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import type { FolderEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 
 interface MarkdownPreviewDialogProps {
-	readonly folder: FolderEntry | null;
+	readonly item: ResourceInfo | null;
 	readonly open: boolean;
 	readonly onOpenChange: (open: boolean) => void;
 }
 
 export function MarkdownPreviewDialog({
-	folder,
+	item,
 	open,
 	onOpenChange,
 }: MarkdownPreviewDialogProps): ReactElement | null {
@@ -28,7 +28,7 @@ export function MarkdownPreviewDialog({
 	const [error, setError] = useState<string | null>(null);
 
 	useEffect(() => {
-		if (!open || !folder || folder.kind !== 'file') {
+		if (!open || !item) {
 			setContent(null);
 			setError(null);
 			setLoading(false);
@@ -41,7 +41,7 @@ export function MarkdownPreviewDialog({
 		setContent(null);
 
 		window.workspace
-			.readFile({ filePath: folder.path })
+			.readFile({ filePath: item.path })
 			.then((text) => {
 				if (!cancelled) setContent(text);
 			})
