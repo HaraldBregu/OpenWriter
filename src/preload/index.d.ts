@@ -318,14 +318,6 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	// Files (workspace/files/)
 	// -------------------------------------------------------------------------
-	/** Load all files from the workspace files/ directory. */
-	getFiles: () => Promise<FileEntry[]>;
-	/** Open a file picker, copy selected files into files/, return the new entries. */
-	insertFiles: (extensions?: string[]) => Promise<FileEntry[]>;
-	/** Delete a file from files/ by its ID. */
-	deleteFileEntry: (id: string) => Promise<void>;
-	/** Subscribe to file change events in files/. */
-	onFilesChanged: (callback: (event: FileEntryChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
