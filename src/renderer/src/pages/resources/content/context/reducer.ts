@@ -3,8 +3,8 @@ import type { ContentAction } from './actions';
 
 export function contentReducer(state: ContentState, action: ContentAction): ContentState {
 	switch (action.type) {
-		case 'SET_FOLDERS':
-			return { ...state, folders: action.payload };
+		case 'SET_CONTENTS':
+			return { ...state, contents: action.payload };
 		case 'SET_IS_LOADING':
 			return { ...state, isLoading: action.payload };
 		case 'SET_UPLOADING':
