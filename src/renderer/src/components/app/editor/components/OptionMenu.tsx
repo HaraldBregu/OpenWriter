@@ -67,13 +67,13 @@ const IMAGES_ITEM_ID = 'images-gallery';
 
 export function OptionMenu(): React.JSX.Element | null {
 	const { editor, onInsertContent } = useEditor();
+	const { images } = useImagesContext();
 	const referenceRectRef = useRef<(() => DOMRect) | null>(null);
 	const [open, setOpen] = useState(false);
 	const [query, setQuery] = useState('');
 	const [selectedIndex, setSelectedIndex] = useState(0);
 	const [imageSelectedIndex, setImageSelectedIndex] = useState(-1);
 	const [imagesMenuOpen, setImagesMenuOpen] = useState(false);
-	const [images, setImages] = useState<ImageEntry[]>([]);
 	const slashPosRef = useRef<number | null>(null);
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const [imagesAnchorEl, setImagesAnchorEl] = useState<HTMLElement | null>(null);
