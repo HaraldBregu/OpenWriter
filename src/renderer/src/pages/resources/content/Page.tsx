@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, FolderOpen, Upload } from 'lucide-react';
+import { FileText, FolderOpen, Settings2, Upload } from 'lucide-react';
 import {
 	type ColumnFiltersState,
 	type SortingState,
@@ -120,7 +120,7 @@ function PageContent(): ReactElement {
 					<Label className="w-full text-left text-sm font-medium">{t(section.titleKey)}</Label>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							render={<Button variant="ghost" size="md" title="Upload" aria-label="Upload" />}
+							render={<Button variant="outline" size="md" title="Upload" aria-label="Upload" />}
 						>
 							<Upload aria-hidden="true" />
 							<span>Upload</span>
@@ -139,7 +139,7 @@ function PageContent(): ReactElement {
 						</DropdownMenuContent>
 					</DropdownMenu>
 					<Button
-						variant="ghost"
+						variant="outline"
 						size="md"
 						title="Open folder"
 						aria-label="Open folder"
