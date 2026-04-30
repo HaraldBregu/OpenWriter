@@ -98,32 +98,36 @@ export function buildColumns({
 			cell: ({ row }) => {
 				const item = row.original;
 				return (
-					<div className="inline-flex items-center justify-end gap-1">
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={() => onPreview(item)}
-							aria-label="Preview"
-						>
-							<Eye className="h-4 w-4" />
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							onClick={onOpenInFinder}
-							aria-label="Open in Finder"
-						>
-							<FolderOpen className="h-4 w-4" />
-						</Button>
-						<Button
-							variant="ghost"
-							size="icon"
-							className="text-destructive hover:text-destructive"
-							onClick={() => onDelete(item.id)}
-							aria-label="Delete"
-						>
-							<Trash2 className="h-4 w-4" />
-						</Button>
+					<div className="flex justify-end">
+						<DropdownMenu>
+							<DropdownMenuTrigger
+								render={<Button variant="ghost" size="icon" className="h-8 w-8 p-0" />}
+							>
+								<span className="sr-only">Open menu</span>
+								<MoreHorizontal className="h-4 w-4" />
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align="end">
+								<DropdownMenuGroup>
+									<DropdownMenuLabel>Actions</DropdownMenuLabel>
+									<DropdownMenuItem onClick={() => onPreview(item)}>
+										<Eye className="mr-2 h-4 w-4" />
+										Preview
+									</DropdownMenuItem>
+									<DropdownMenuItem onClick={onOpenInFinder}>
+										<FolderOpen className="mr-2 h-4 w-4" />
+										Open in Finder
+									</DropdownMenuItem>
+									<DropdownMenuSeparator />
+									<DropdownMenuItem
+										onClick={() => onDelete(item.id)}
+										className="text-destructive focus:text-destructive"
+									>
+										<Trash2 className="mr-2 h-4 w-4" />
+										Delete
+									</DropdownMenuItem>
+								</DropdownMenuGroup>
+							</DropdownMenuContent>
+						</DropdownMenu>
 					</div>
 				);
 			},
