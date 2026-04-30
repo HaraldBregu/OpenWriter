@@ -470,7 +470,7 @@ export function OptionMenu(): React.JSX.Element | null {
 								.reduce((acc, s) => acc + s.items.length, 0);
 							return (
 								<div key={section.id} className="flex flex-col">
-									<div className="px-2 pt-1.5 pb-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+									<div className="px-2 pt-2 pb-1 text-xs text-muted-foreground">
 										{section.label}
 									</div>
 									{section.items.map((item, iIdx) => {
