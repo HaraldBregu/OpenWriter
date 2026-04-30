@@ -5,7 +5,7 @@ import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import { useContext } from './hooks/use-context';
-import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
+import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 import Layout from './Layout';
@@ -39,7 +39,7 @@ const UNSPLASH_IDS = [
 ];
 
 const IMAGES = UNSPLASH_IDS.map(
-	(id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=400&h=400`,
+	(id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=400&h=400`
 );
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
@@ -101,16 +101,18 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 
-			<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
-				{IMAGES.map((imageLink, index) => (
-					<img
-						key={index}
-						className="aspect-square w-full rounded-lg object-cover object-center"
-						src={imageLink}
-						alt={`image-photo-${index + 1}`}
-					/>
-				))}
-			</div>
+			<PageBody>
+				<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+					{IMAGES.map((imageLink, index) => (
+						<img
+							key={index}
+							className="aspect-square w-full rounded-lg object-cover object-center"
+							src={imageLink}
+							alt={`image-photo-${index + 1}`}
+						/>
+					))}
+				</div>
+			</PageBody>
 
 			<ImageDialog />
 			<PdfDialog />
