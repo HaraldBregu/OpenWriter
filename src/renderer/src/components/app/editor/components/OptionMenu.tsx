@@ -132,26 +132,6 @@ export function OptionMenu(): React.JSX.Element | null {
 	});
 
 	useEffect(() => {
-		let cancelled = false;
-		const loadImages = async (): Promise<void> => {
-			try {
-				const entries = await window.workspace.getImages();
-				if (!cancelled) setImages(entries);
-			} catch {
-				if (!cancelled) setImages([]);
-			}
-		};
-		void loadImages();
-		const unsubscribe = window.workspace.onImagesChanged(() => {
-			void loadImages();
-		});
-		return () => {
-			cancelled = true;
-			unsubscribe();
-		};
-	}, []);
-
-	useEffect(() => {
 		setSelectedIndex(0);
 	}, [query]);
 
