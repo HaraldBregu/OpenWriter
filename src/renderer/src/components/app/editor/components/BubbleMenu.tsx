@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import {
 	Bold,
+	Code2,
 	Copy,
 	Italic,
 	List,
 	ListOrdered,
-	MessageSquare,
 	Quote,
 	Scissors,
 	Sparkles,
