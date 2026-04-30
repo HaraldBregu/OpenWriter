@@ -348,7 +348,6 @@ const Editor = React.memo(
 					className={className}
 					ref={rootRef}
 					editor={editor}
-					onInsertContent={onInsertContent}
 				>
 					{editor && (
 						<>
