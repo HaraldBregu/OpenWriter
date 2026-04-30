@@ -3,10 +3,6 @@ import type { FilesAction } from './actions';
 
 export function filesReducer(state: FilesReducerState, action: FilesAction): FilesReducerState {
 	switch (action.type) {
-		case 'SET_ENTRIES':
-			return { ...state, entries: action.payload };
-		case 'SET_IS_LOADING':
-			return { ...state, isLoading: action.payload };
 		case 'SET_UPLOADING':
 			return { ...state, uploading: action.payload };
 		case 'SET_SEARCH_QUERY':
@@ -23,18 +19,8 @@ export function filesReducer(state: FilesReducerState, action: FilesAction): Fil
 			return { ...state, activeFile: null, fileDetailsOpen: false };
 		case 'TOGGLE_EDIT_MODE':
 			return { ...state, editMode: !state.editMode };
-		case 'ADD_ENTRIES':
-			return { ...state, entries: [...state.entries, ...action.payload] };
-		case 'REMOVE_ENTRY':
-			return { ...state, entries: state.entries.filter((e) => e.id !== action.payload) };
-		case 'REMOVE_ENTRIES': {
-			const ids = new Set(action.payload);
-			return { ...state, entries: state.entries.filter((e) => !ids.has(e.id)) };
-		}
 		case 'DELETE_SUCCESS':
 			return { ...state, confirmOpen: false };
-		case 'RESET_ENTRIES':
-			return { ...state, entries: [] };
 		default:
 			return state;
 	}
