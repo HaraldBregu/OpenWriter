@@ -235,15 +235,31 @@ export function OptionMenu(): React.JSX.Element | null {
 	);
 
 	const runContentFromWorkspace = useCallback(
-		(content: ResourceInfo) => {
+		async (content: ResourceInfo) => {
 			const ctx = deleteSlash();
 			if (!ctx) return;
 			editor
 				.chain()
 				.focus()
 				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
-				.insertContent(content.name)
 				.run();
+
+			if (content.mimeType === 'application/pdf') {
+				editor.chain().focus().insertContent(content.name).run();
+				return;
+			}
+
+			try {
+				const text = await window.workspace.readFile({ filePath: content.path });
+				const json = editor.markdown?.parse(text);
+				if (json) {
+					editor.chain().focus().insertContent(json).run();
+				} else {
+					editor.chain().focus().insertContent(text).run();
+				}
+			} catch (err) {
+				console.error('[OptionMenu] readFile failed:', err);
+			}
 		},
 		[editor, deleteSlash]
 	);
