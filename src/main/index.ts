@@ -271,7 +271,7 @@ app.whenReady().then(async () => {
 		logger.info('App', `Reinitializing WorkspaceMetadataService for workspace: ${workspacePath}`);
 		metadataService.initialize();
 
-		// Auto-create project_workspace.openwriter if it doesn't exist
+		// Auto-create workspace.json project block if it doesn't exist
 		const projectWorkspaceService = context.getService<ProjectWorkspaceService>(
 			'projectWorkspace',
 			container
@@ -279,7 +279,7 @@ app.whenReady().then(async () => {
 		projectWorkspaceService.getOrCreate().catch((err) => {
 			logger.error(
 				'App',
-				`Failed to create project_workspace.openwriter: ${err instanceof Error ? err.message : String(err)}`
+				`Failed to initialise workspace.json project block: ${err instanceof Error ? err.message : String(err)}`
 			);
 		});
 
