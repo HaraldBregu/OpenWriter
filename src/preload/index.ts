@@ -322,23 +322,6 @@ const workspace: WorkspaceApi = {
 		typedInvokeUnwrap(WorkspaceChannels.insertContents, extensions),
 	deleteContent: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteContent, id),
 	// -------------------------------------------------------------------------
-	// Files (workspace/files/)
-	// -------------------------------------------------------------------------
-	getFiles: () => typedInvokeUnwrap(WorkspaceChannels.getFiles),
-	insertFiles: (extensions?: string[]) =>
-		typedInvokeUnwrap(WorkspaceChannels.insertFiles, extensions),
-	deleteFileEntry: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteFileEntry, id),
-	onFilesChanged: (
-		callback: (event: {
-			type: 'added' | 'changed' | 'removed';
-			fileId: string;
-			filePath: string;
-			timestamp: number;
-		}) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.filesChanged, callback);
-	},
-	// -------------------------------------------------------------------------
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
 	getImages: () => typedInvokeUnwrap(WorkspaceChannels.getImages),
