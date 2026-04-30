@@ -59,7 +59,7 @@ export interface DirectoryValidationResult {
 // Constants
 // ---------------------------------------------------------------------------
 
-const METADATA_FILENAME = 'workspace.tsrct';
+const METADATA_FILENAME = 'workspace.json';
 const METADATA_VERSION = 1;
 const DEBOUNCE_MS = 800;
 
