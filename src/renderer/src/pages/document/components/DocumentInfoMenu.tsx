@@ -137,9 +137,11 @@ export default function DocumentInfoMenu({
 					}
 				/>
 				<DropdownMenuContent align="end" className="w-64">
-					<DropdownMenuLabel className="truncate text-sm font-medium text-foreground">
-						{displayTitle}
-					</DropdownMenuLabel>
+					<DropdownMenuGroup>
+						<DropdownMenuLabel className="truncate text-sm font-medium text-foreground">
+							{displayTitle}
+						</DropdownMenuLabel>
+					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
 						<DropdownMenuItem onClick={handleOpenFolder} disabled={!documentId}>
