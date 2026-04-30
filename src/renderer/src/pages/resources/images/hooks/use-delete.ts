@@ -13,7 +13,7 @@ export function useDelete({ activeFile, onDeleted }: UseDeleteParams) {
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
-			await window.workspace.deleteFileEntry(activeFile.id);
+			await window.workspace.deleteImage(activeFile.id);
 			removeEntry(activeFile.id);
 			onDeleted();
 		} catch {
