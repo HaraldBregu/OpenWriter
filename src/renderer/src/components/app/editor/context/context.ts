@@ -8,7 +8,6 @@ export interface EditorContextValue {
 	editor: Editor;
 	containerRef: React.RefObject<HTMLDivElement | null>;
 	setImageDialogOpen: (open: boolean) => void;
-	onInsertContent?: () => void;
 }
 
 export const EditorContext = createContext<EditorContextValue | null>(null);
