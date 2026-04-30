@@ -357,10 +357,6 @@ function PageContent(): ReactElement {
 		[setEditor]
 	);
 
-	const handleInsertContent = useCallback(() => {
-		openInsertContentDialog();
-	}, [openInsertContentDialog]);
-
 	const handleReviewPromptSubmit = useCallback(
 		(payload: PromptSubmitPayload) => {
 			void reviewTask.submit(payload);
