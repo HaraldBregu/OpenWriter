@@ -61,8 +61,6 @@ import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import { useContentContext } from './Provider';
 import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
 import { MarkdownPreviewDialog } from './components/MarkdownPreviewDialog';
-import { DataTablePagination } from './components/DataTablePagination';
-import { DataTableViewOptions } from './components/DataTableViewOptions';
 import { buildColumns } from './components/columns';
 import type { ResourceInfo } from '../../../../../shared/types';
 import Layout from './Layout';
