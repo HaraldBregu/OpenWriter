@@ -1,11 +1,4 @@
-import {
-	useCallback,
-	useEffect,
-	useReducer,
-	useRef,
-	type ReactElement,
-	type ReactNode,
-} from 'react';
+import { useCallback, useEffect, useReducer, type ReactElement, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import type { FilesContextValue } from './context/types';
 import { initialFilesState } from './context/state';
@@ -14,6 +7,7 @@ import { useSort } from './hooks/use-sort';
 import { useFilter } from './hooks/use-filter';
 import { useSelection } from './hooks/use-selection';
 import { Context } from './Context';
+import { useImagesContext } from '../../../contexts';
 
 interface FilesProviderProps {
 	readonly children: ReactNode;
@@ -21,12 +15,12 @@ interface FilesProviderProps {
 
 export function Provider({ children }: FilesProviderProps): ReactElement {
 	const location = useLocation();
-	const mountedRef = useRef(true);
+	const { images, isLoading, removeImage } = useImagesContext();
 	const [state, dispatch] = useReducer(filesReducer, initialFilesState);
 
 	const { sortKey, sortDirection, handleSort } = useSort();
 	const filteredEntries = useFilter({
-		entries: state.entries,
+		entries: images,
 		searchQuery: state.searchQuery,
 		typeFilter: state.typeFilter,
 		sortKey,
@@ -34,24 +28,6 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
 		useSelection({ filteredEntries });
-
-	const refreshImages = useCallback(async () => {
-		if (!mountedRef.current) return;
-		dispatch({ type: 'SET_IS_LOADING', payload: true });
-		try {
-			const items = await window.workspace.getImages();
-			if (!mountedRef.current) return;
-			dispatch({ type: 'SET_ENTRIES', payload: items });
-		} catch (err) {
-			console.error('[ImagesProvider] getImages failed:', err);
-			if (!mountedRef.current) return;
-			dispatch({ type: 'SET_ENTRIES', payload: [] });
-		} finally {
-			if (mountedRef.current) {
-				dispatch({ type: 'SET_IS_LOADING', payload: false });
-			}
-		}
-	}, []);
 
 	const handleUpload = useCallback(async () => {
 		dispatch({ type: 'SET_UPLOADING', payload: true });
