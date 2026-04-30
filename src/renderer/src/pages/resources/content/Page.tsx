@@ -2,7 +2,16 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, FolderOpen, Settings2, Upload } from 'lucide-react';
+import {
+	ChevronLeft,
+	ChevronRight,
+	ChevronsLeft,
+	ChevronsRight,
+	FileText,
+	FolderOpen,
+	Settings2,
+	Upload,
+} from 'lucide-react';
 import {
 	type ColumnFiltersState,
 	type SortingState,
