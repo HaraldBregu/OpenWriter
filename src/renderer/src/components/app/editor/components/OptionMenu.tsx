@@ -536,9 +536,9 @@ export function OptionMenu(): React.JSX.Element | null {
 								</div>
 							);
 						})}
-					</div>
+					</CardContent>
 
-					<div className="p-1 border-t border-border/60">
+					<CardFooter className="p-1! border-t border-border/60 bg-transparent">
 						<Button
 							variant="ghost"
 							size="sm"
@@ -553,7 +553,7 @@ export function OptionMenu(): React.JSX.Element | null {
 								esc
 							</kbd>
 						</Button>
-					</div>
+					</CardFooter>
 				</Card>
 			</div>
 		</div>
