@@ -297,6 +297,67 @@ export class WorkspaceMetadataService implements Disposable {
 		this.logger?.info('WorkspaceMetadataService', `Set OCR model ID: ${modelId}`);
 	}
 
+	// ---------------------------------------------------------------------------
+	// Project info (name, description, projectId)
+	// ---------------------------------------------------------------------------
+
+	/**
+	 * Read the project block from the current workspace's metadata.
+	 * Returns null when no workspace is set or the block has not been
+	 * initialised yet.
+	 */
+	getProject(): ProjectWorkspaceInfo | null {
+		if (!this.workspaceService.getCurrent()) return null;
+		return this.getMetadata().project ?? null;
+	}
+
+	/**
+	 * Read the project block from an arbitrary workspace path without affecting
+	 * the active workspace's cache. Returns null when the file is missing,
+	 * unreadable, or has no project block.
+	 */
+	readProjectAt(workspacePath: string): ProjectWorkspaceInfo | null {
+		const metadata = this.readMetadataFile(workspacePath);
+		return metadata?.project ?? null;
+	}
+
+	/**
+	 * Replace the project block in the current workspace's metadata.
+	 * Bumps `updatedAt`. Persists via the debounced write path.
+	 */
+	setProject(info: ProjectWorkspaceInfo): void {
+		this.requireWorkspace();
+		const metadata = this.getMetadata();
+		metadata.project = { ...info, updatedAt: new Date().toISOString() };
+		metadata.metadata.updatedAt = Date.now();
+		this.scheduleSave(metadata);
+		this.logger?.info('WorkspaceMetadataService', `Set project info: ${info.name}`);
+	}
+
+	/**
+	 * Write a fresh project block to a specific (not necessarily current)
+	 * workspace path. Used when materialising a brand-new managed workspace.
+	 * Throws if a project block already exists at that path.
+	 */
+	writeProjectAt(workspacePath: string, info: ProjectWorkspaceInfo): void {
+		const existing = this.readMetadataFile(workspacePath);
+		if (existing?.project) {
+			throw new Error(`Project info already exists at: ${workspacePath}`);
+		}
+		const now = Date.now();
+		const merged: WorkspaceMetadata = existing ?? {
+			metadata: { version: METADATA_VERSION, createdAt: now, updatedAt: now },
+			settings: { directories: [] },
+		};
+		merged.project = info;
+		merged.metadata.updatedAt = now;
+		this.writeMetadataFile(merged, workspacePath);
+		// Refresh cache if writing into the current workspace
+		if (this.workspaceService.getCurrent() === workspacePath) {
+			this.cache = { metadata: merged, workspacePath };
+		}
+	}
+
 	/**
 	 * Validate a directory path without adding it.
 	 * Useful for UI validation before presenting confirmation.
