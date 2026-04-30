@@ -79,33 +79,15 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 
-			<div className="p-4">
-				<Tabs defaultValue="html" className="w-full">
-					<TabsList className="w-full">
-						{TABS.map(({ label, value }) => (
-							<TabsTrigger key={value} value={value} className="flex-1">
-								{label}
-							</TabsTrigger>
-						))}
-					</TabsList>
-					{TABS.map(({ value, images }) => (
-						<TabsContent
-							key={value}
-							value={value}
-							className="grid grid-cols-2 gap-4 md:grid-cols-3"
-						>
-							{images.map((imageLink, index) => (
-								<div key={index}>
-									<img
-										className="h-40 w-full max-w-full rounded-lg object-cover object-center"
-										src={imageLink}
-										alt={`image-photo-${index + 1}`}
-									/>
-								</div>
-							))}
-						</TabsContent>
-					))}
-				</Tabs>
+			<div className="grid grid-cols-2 gap-4 p-4 md:grid-cols-3">
+				{IMAGES.map((imageLink, index) => (
+					<img
+						key={index}
+						className="h-40 w-full max-w-full rounded-lg object-cover object-center"
+						src={imageLink}
+						alt={`image-photo-${index + 1}`}
+					/>
+				))}
 			</div>
 
 			<ImageDialog />
