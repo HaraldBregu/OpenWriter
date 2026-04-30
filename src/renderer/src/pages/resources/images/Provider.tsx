@@ -228,6 +228,8 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		handleUpload,
 		handleOpenFolder,
 		handleDelete,
+		handleDeleteOne,
+		handleDeleteMany,
 		handleConfirmDelete,
 		confirmOpen: state.confirmOpen,
 		setConfirmOpen,
