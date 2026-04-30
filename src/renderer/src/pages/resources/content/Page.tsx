@@ -140,12 +140,13 @@ function PageContent(): ReactElement {
 					</DropdownMenu>
 					<Button
 						variant="ghost"
-						size="icon"
+						size="md"
 						title="Open folder"
 						aria-label="Open folder"
 						onClick={handleOpenResourcesFolder}
 					>
 						<FolderOpen aria-hidden="true" />
+						<span>Folder</span>
 					</Button>
 				</PageHeaderTitle>
 			</PageHeader>
