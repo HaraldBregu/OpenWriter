@@ -139,6 +139,15 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		[setSelected]
 	);
 
+	const handleDeleteMany = useCallback(
+		(ids: string[]) => {
+			if (ids.length === 0) return;
+			setSelected(new Set(ids));
+			dispatch({ type: 'SET_CONFIRM_OPEN', payload: true });
+		},
+		[setSelected]
+	);
+
 	const handleConfirmDelete = useCallback(async () => {
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: false });
 		const ids = [...selected];
