@@ -448,14 +448,20 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						<Tooltip>
 							<TooltipTrigger
 								render={
-									<Button variant="ghost" size="icon" aria-label="Chat" disabled>
-										<MessageCircle className="h-3.5 w-3.5" />
+									<Button
+										variant={editor.isActive('blockquote') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Blockquote"
+										onClick={() => editor.chain().focus().toggleBlockquote().run()}
+									>
+										<Quote className="h-3.5 w-3.5" />
 									</Button>
 								}
 							/>
 							<TooltipContent>
 								<div className="flex flex-col items-start gap-0.5">
-									<span>Chat</span>
+									<span>Blockquote</span>
+									<span className="text-[10px] opacity-70">{`${modKey} ${shiftKey} B`}</span>
 								</div>
 							</TooltipContent>
 						</Tooltip>
