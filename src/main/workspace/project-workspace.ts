@@ -5,23 +5,22 @@ import { app } from 'electron';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
 import type { LoggerService } from '../services/logger';
 import type { WorkspaceService } from './workspace-service';
+import type { WorkspaceMetadataService } from './workspace-metadata';
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
-const PROJECT_WORKSPACE_FILENAME = 'project_workspace.openwriter';
+/** Legacy file name. Migrated into workspace.json on first read. */
+const LEGACY_FILENAME = 'project_workspace.openwriter';
 
 /**
- * Current schema version written to every new project_workspace.openwriter.
- * Increment when the file shape changes in a breaking way and add migration
- * logic in `migrateIfNeeded`.
+ * Current schema version written to every new project block.
+ * Increment when the shape changes in a breaking way.
  */
 const SCHEMA_VERSION = 1;
 
-/**
- * Maximum allowed length for the `name` field.
- */
+/** Maximum allowed length for the `name` field. */
 const MAX_NAME_LENGTH = 255;
 
 // ---------------------------------------------------------------------------
@@ -29,25 +28,21 @@ const MAX_NAME_LENGTH = 255;
 // ---------------------------------------------------------------------------
 
 /**
- * ProjectWorkspaceService manages the `project_workspace.openwriter` file in the
- * root of each workspace folder.
+ * ProjectWorkspaceService manages the project block (name, description,
+ * projectId, ...) inside the workspace.json metadata file. Delegates all file
+ * IO to WorkspaceMetadataService so there is a single source of truth on disk.
  *
  * Responsibilities:
- *   - Read the file on demand (no caching — allows external edits to be picked
- *     up automatically without a restart).
- *   - Write the file atomically using a temp-file-then-rename strategy so that
- *     a crash mid-write never leaves a corrupt file on disk.
- *   - Validate all inputs before accepting them.
- *   - Auto-create a default file when the workspace is opened for the first
- *     time (i.e. the file does not exist yet).
- *
- * This service has no Electron dependency (other than `app.getVersion()` which
- * is lazy-resolved at write time) and can be unit-tested without mocking
- * Electron itself.
+ *   - Provide a typed API for reading / updating project info
+ *   - Validate inputs before accepting them
+ *   - Auto-create a default project block when the workspace is first opened
+ *   - One-shot migration of any legacy `project_workspace.openwriter` file
+ *     into the metadata file's `project` block
  */
 export class ProjectWorkspaceService {
 	constructor(
 		private readonly workspaceService: WorkspaceService,
+		private readonly metadata: WorkspaceMetadataService,
 		private readonly logger?: LoggerService
 	) {}
 
@@ -56,36 +51,29 @@ export class ProjectWorkspaceService {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Return the current `project_workspace.openwriter` data, creating it if it does
-	 * not yet exist.
-	 *
-	 * @returns The parsed `ProjectWorkspaceInfo`, guaranteed non-null.
-	 * @throws If no workspace is set or if the file exists but cannot be parsed.
+	 * Return the current workspace's project info, creating defaults if absent.
+	 * Migrates any legacy file in the workspace root before reading.
 	 */
 	async getOrCreate(): Promise<ProjectWorkspaceInfo> {
 		const workspacePath = this.requireWorkspace();
-		const filePath = this.resolveFilePath(workspacePath);
+		await this.migrateLegacy(workspacePath);
 
-		if (!fs.existsSync(filePath)) {
-			this.logger?.info(
-				'ProjectWorkspaceService',
-				`project_workspace.openwriter not found, creating default at: ${filePath}`
-			);
-			const created = this.buildDefault(workspacePath);
-			await this.atomicWrite(filePath, created);
-			return created;
-		}
+		const existing = this.metadata.getProject();
+		if (existing) return existing;
 
-		return this.readAndMigrate(filePath, workspacePath);
+		const created = this.buildDefault(workspacePath);
+		this.metadata.setProject(created);
+		this.logger?.info(
+			'ProjectWorkspaceService',
+			`Initialised default project info at: ${workspacePath}`
+		);
+		return created;
 	}
 
 	/**
-	 * Write a fresh `project_workspace.openwriter` at the given workspace path
-	 * with the supplied name and description. Used when creating a new managed
-	 * workspace via `WorkspacesRegistry.create()` — the folder already exists
-	 * but no metadata has been written yet.
-	 *
-	 * Throws if the file already exists to avoid silently clobbering metadata.
+	 * Materialise a fresh project block at the given workspace path. Used by
+	 * WorkspacesRegistry.create() right after allocating an empty folder.
+	 * Throws if a project block already exists.
 	 */
 	async createAt(
 		workspacePath: string,
@@ -94,11 +82,7 @@ export class ProjectWorkspaceService {
 	): Promise<ProjectWorkspaceInfo> {
 		this.validateName(name);
 		this.validateDescription(description);
-
-		const filePath = this.resolveFilePath(workspacePath);
-		if (fs.existsSync(filePath)) {
-			throw new Error(`project_workspace.openwriter already exists at: ${filePath}`);
-		}
+		await this.migrateLegacy(workspacePath);
 
 		const now = new Date().toISOString();
 		const info: ProjectWorkspaceInfo = {
@@ -111,82 +95,45 @@ export class ProjectWorkspaceService {
 			appVersion: this.getAppVersion(),
 		};
 
-		await this.atomicWrite(filePath, info);
+		this.metadata.writeProjectAt(workspacePath, info);
 		this.logger?.info(
 			'ProjectWorkspaceService',
-			`Created project_workspace.openwriter at: ${filePath}`
+			`Created project info at: ${workspacePath}`
 		);
 		return info;
 	}
 
 	/**
-	 * Read `project_workspace.openwriter` for an arbitrary workspace path without
-	 * creating the file if it is missing. Intended for listing recent workspaces
-	 * where we want to show the project name but must not mutate the folder.
-	 *
-	 * Returns `null` if the file does not exist, cannot be read, or contains
-	 * invalid JSON — callers should fall back to the folder basename.
+	 * Read project info for an arbitrary workspace path without creating
+	 * anything. Used by the recent-workspaces list. Returns null when missing.
 	 */
 	async readAt(workspacePath: string): Promise<ProjectWorkspaceInfo | null> {
-		const filePath = this.resolveFilePath(workspacePath);
-		if (!fs.existsSync(filePath)) return null;
-		try {
-			return await this.readAndMigrate(filePath, workspacePath);
-		} catch (err) {
-			this.logger?.warn(
-				'ProjectWorkspaceService',
-				`Failed to read project_workspace.openwriter at ${filePath}: ${
-					err instanceof Error ? err.message : String(err)
-				}`
-			);
-			return null;
-		}
+		await this.migrateLegacy(workspacePath);
+		return this.metadata.readProjectAt(workspacePath);
 	}
 
-	/**
-	 * Update the `name` field of the project.
-	 *
-	 * @param name - New project name. Must be non-empty, max 255 chars.
-	 * @returns The updated `ProjectWorkspaceInfo`.
-	 * @throws If validation fails, no workspace is set, or the write fails.
-	 */
 	async updateName(name: string): Promise<ProjectWorkspaceInfo> {
 		this.validateName(name);
-		const workspacePath = this.requireWorkspace();
-		const filePath = this.resolveFilePath(workspacePath);
-
 		const current = await this.getOrCreate();
 		const updated: ProjectWorkspaceInfo = {
 			...current,
 			name: name.trim(),
 			updatedAt: new Date().toISOString(),
 		};
-
-		await this.atomicWrite(filePath, updated);
+		this.metadata.setProject(updated);
 		this.logger?.info('ProjectWorkspaceService', `Updated project name to: "${updated.name}"`);
 		return updated;
 	}
 
-	/**
-	 * Update the `description` field of the project.
-	 *
-	 * @param description - New description. May be empty string to clear it.
-	 * @returns The updated `ProjectWorkspaceInfo`.
-	 * @throws If validation fails, no workspace is set, or the write fails.
-	 */
 	async updateDescription(description: string): Promise<ProjectWorkspaceInfo> {
 		this.validateDescription(description);
-		const workspacePath = this.requireWorkspace();
-		const filePath = this.resolveFilePath(workspacePath);
-
 		const current = await this.getOrCreate();
 		const updated: ProjectWorkspaceInfo = {
 			...current,
 			description,
 			updatedAt: new Date().toISOString(),
 		};
-
-		await this.atomicWrite(filePath, updated);
+		this.metadata.setProject(updated);
 		this.logger?.info('ProjectWorkspaceService', `Updated project description`);
 		return updated;
 	}
@@ -195,9 +142,6 @@ export class ProjectWorkspaceService {
 	// Private helpers
 	// -------------------------------------------------------------------------
 
-	/**
-	 * Require the current workspace path or throw.
-	 */
 	private requireWorkspace(): string {
 		const current = this.workspaceService.getCurrent();
 		if (!current) {
@@ -207,19 +151,40 @@ export class ProjectWorkspaceService {
 	}
 
 	/**
-	 * Resolve the absolute path to `project_workspace.openwriter` in a workspace.
+	 * If a legacy `project_workspace.openwriter` file exists at the workspace
+	 * root, parse it, fold it into workspace.json's project block (when the
+	 * block is not already present), then delete the legacy file.
+	 *
+	 * Idempotent: a workspace whose metadata already contains a project block
+	 * still gets its legacy file deleted to avoid stale duplicates on disk.
 	 */
-	private resolveFilePath(workspacePath: string): string {
-		return path.join(workspacePath, PROJECT_WORKSPACE_FILENAME);
+	private async migrateLegacy(workspacePath: string): Promise<void> {
+		const legacyPath = path.join(workspacePath, LEGACY_FILENAME);
+		if (!fs.existsSync(legacyPath)) return;
+
+		try {
+			const existing = this.metadata.readProjectAt(workspacePath);
+			if (!existing) {
+				const raw = await fsPromises.readFile(legacyPath, 'utf-8');
+				const parsed = JSON.parse(raw);
+				const info = this.validateSchema(parsed, workspacePath);
+				this.metadata.writeProjectAt(workspacePath, info);
+				this.logger?.info(
+					'ProjectWorkspaceService',
+					`Migrated ${LEGACY_FILENAME} → workspace.json at: ${workspacePath}`
+				);
+			}
+			await fsPromises.unlink(legacyPath);
+		} catch (err) {
+			this.logger?.warn(
+				'ProjectWorkspaceService',
+				`Failed to migrate ${LEGACY_FILENAME} at ${workspacePath}: ${
+					err instanceof Error ? err.message : String(err)
+				}`
+			);
+		}
 	}
 
-	/**
-	 * Build a default `ProjectWorkspaceInfo` for a freshly opened workspace.
-	 * The project name defaults to the workspace folder's base name.
-	 *
-	 * In the managed-workspace model `projectId` is always the folder name (a
-	 * UUID assigned at creation time), so we use that here as well.
-	 */
 	private buildDefault(workspacePath: string): ProjectWorkspaceInfo {
 		const now = new Date().toISOString();
 		return {
@@ -233,61 +198,9 @@ export class ProjectWorkspaceService {
 		};
 	}
 
-	/**
-	 * Read and parse the project_workspace.openwriter file.
-	 * Applies any pending migrations before returning.
-	 *
-	 * @throws If the file cannot be read or parsed as valid JSON.
-	 */
-	private async readAndMigrate(
-		filePath: string,
-		workspacePath: string
-	): Promise<ProjectWorkspaceInfo> {
-		let raw: string;
-		try {
-			raw = await fsPromises.readFile(filePath, 'utf-8');
-		} catch (err) {
-			throw new Error(
-				`Failed to read project_workspace.openwriter: ${err instanceof Error ? err.message : String(err)}`
-			);
-		}
-
-		let parsed: unknown;
-		try {
-			parsed = JSON.parse(raw);
-		} catch {
-			throw new Error(
-				`project_workspace.openwriter contains invalid JSON. ` +
-					`Delete the file to let OpenWriter recreate it.`
-			);
-		}
-
-		const info = this.validateSchema(parsed, workspacePath);
-		const migrated = this.migrateIfNeeded(info, workspacePath);
-
-		// Persist migrations back to disk if the version changed
-		if (migrated.version !== info.version) {
-			await this.atomicWrite(filePath, migrated);
-			this.logger?.info(
-				'ProjectWorkspaceService',
-				`Migrated project_workspace.openwriter v${info.version} → v${migrated.version}`
-			);
-		}
-
-		return migrated;
-	}
-
-	/**
-	 * Validate that the parsed value conforms to the expected schema shape and
-	 * fill in missing optional fields with sensible defaults.
-	 *
-	 * This is intentionally lenient so that manually edited files (e.g. a
-	 * developer edited the file by hand and removed a field) can still be
-	 * loaded rather than failing hard.
-	 */
 	private validateSchema(parsed: unknown, workspacePath: string): ProjectWorkspaceInfo {
 		if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
-			throw new Error('project_workspace.openwriter must contain a JSON object at the root level.');
+			throw new Error('Legacy project file must contain a JSON object at the root level.');
 		}
 
 		const record = parsed as Record<string, unknown>;
@@ -317,44 +230,6 @@ export class ProjectWorkspaceService {
 		};
 	}
 
-	/**
-	 * Apply schema migrations for older file versions.
-	 * Currently there is only v1, so this is a no-op placeholder for future use.
-	 */
-	private migrateIfNeeded(
-		info: ProjectWorkspaceInfo,
-		_workspacePath: string
-	): ProjectWorkspaceInfo {
-		// Future migrations go here, e.g.:
-		//   if (info.version < 2) info = migrateV1ToV2(info);
-		return info;
-	}
-
-	/**
-	 * Write `data` to `filePath` atomically using a temp-sibling-then-rename
-	 * strategy. This ensures no half-written file is left on disk if the
-	 * process crashes during the write.
-	 */
-	private async atomicWrite(filePath: string, data: ProjectWorkspaceInfo): Promise<void> {
-		const dir = path.dirname(filePath);
-		const tmpPath = path.join(dir, `.project_workspace_tmp_${Date.now()}.openwriter`);
-		const content = JSON.stringify(data, null, 2);
-
-		try {
-			await fsPromises.writeFile(tmpPath, content, 'utf-8');
-			await fsPromises.rename(tmpPath, filePath);
-		} catch (err) {
-			// Best-effort cleanup of the temp file
-			await fsPromises.unlink(tmpPath).catch(() => undefined);
-			throw new Error(
-				`Failed to write project_workspace.openwriter: ${err instanceof Error ? err.message : String(err)}`
-			);
-		}
-	}
-
-	/**
-	 * Validate the project name field.
-	 */
 	private validateName(name: unknown): void {
 		if (typeof name !== 'string') {
 			throw new TypeError('Project name must be a string');
@@ -368,20 +243,12 @@ export class ProjectWorkspaceService {
 		}
 	}
 
-	/**
-	 * Validate the project description field.
-	 */
 	private validateDescription(description: unknown): void {
 		if (typeof description !== 'string') {
 			throw new TypeError('Project description must be a string');
 		}
 	}
 
-	/**
-	 * Safely resolve the running Electron app version.
-	 * Falls back to '0.0.0' in unit-test environments where `app` is not
-	 * initialised.
-	 */
 	private getAppVersion(): string {
 		try {
 			return app.getVersion();
