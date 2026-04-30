@@ -167,12 +167,13 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register project workspace service (manages project_workspace.openwriter)
+	// Register project workspace service (manages the `project` block in workspace.json)
 	factory.register({
 		key: 'projectWorkspace',
-		factory: ({ workspaceService, globalContainer }) => {
+		factory: ({ workspaceService, globalContainer, windowContainer }) => {
 			const logger = globalContainer.get<LoggerService>('logger');
-			return new ProjectWorkspaceService(workspaceService, logger);
+			const metadata = windowContainer.get<WorkspaceMetadataService>('workspaceMetadata');
+			return new ProjectWorkspaceService(workspaceService, metadata, logger);
 		},
 	});
 
