@@ -8,7 +8,7 @@ import { useContext } from './hooks/use-context';
 import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
-import Gallery from '@/components/shadcn-studio/blocks/gallery-component-01/gallery-component-01';
+import Gallery from './components/Gallery';
 import Layout from './Layout';
 import type { FileTypeFilter } from 'src/shared';
 
