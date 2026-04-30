@@ -339,6 +339,9 @@ const workspace: WorkspaceApi = {
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
 	getImages: () => typedInvokeUnwrap(WorkspaceChannels.getImages),
+	insertImages: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertImages, extensions),
+	deleteImage: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteImage, id),
 	onImagesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
