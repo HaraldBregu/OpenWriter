@@ -359,6 +359,14 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
+														path="/resources/data-table-demo"
+														element={
+															<RouteWrapper>
+																<DataTableDemoPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route
 														path="/library"
 														element={<Navigate to="/resources/content" replace />}
 													/>
