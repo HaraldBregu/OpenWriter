@@ -385,7 +385,6 @@ export class OutputFilesService implements Disposable {
 		const folderPath = path.join(currentWorkspace, this.OUTPUT_DIR_NAME, id);
 		const configPath = path.join(folderPath, this.CONFIG_FILENAME);
 		const contentPath = path.join(folderPath, this.CONTENT_FILENAME);
-		await this.ensureDocumentSupportDirectories(folderPath, outputType);
 
 		// Read existing config to preserve createdAt
 		const configRaw = await fs.readFile(configPath, 'utf-8');
