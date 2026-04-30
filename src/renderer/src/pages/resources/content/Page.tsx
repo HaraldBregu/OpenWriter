@@ -233,7 +233,7 @@ function PageContent(): ReactElement {
 					</div>
 				)}
 
-				{!isLoading && folders.length === 0 && (
+				{!isLoading && !hasFolders && (
 					<div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
 						<div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
 							<FileText className="h-7 w-7 text-muted-foreground" />
