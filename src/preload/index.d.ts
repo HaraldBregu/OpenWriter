@@ -243,6 +243,7 @@ export interface WorkspaceApi {
 	openDataFolder: () => Promise<void>;
 	openContentsFolder: () => Promise<void>;
 	openFilesFolder: () => Promise<void>;
+	openImagesFolder: () => Promise<void>;
 	/** Open the folder for a specific document by its ID in the system file explorer. */
 	openDocumentFolder: (documentId: string) => Promise<void>;
 	/** Get the filesystem path of a document's folder given its ID. */
