@@ -1,41 +1,51 @@
-import type { KeyboardEvent, ReactElement } from 'react';
+import * as React from 'react';
+import { useMemo } from 'react';
+import type { ReactElement } from 'react';
+import {
+	type ColumnFiltersState,
+	type SortingState,
+	type VisibilityState,
+	flexRender,
+	getCoreRowModel,
+	getFilteredRowModel,
+	getPaginationRowModel,
+	getSortedRowModel,
+	useReactTable,
+} from '@tanstack/react-table';
+import {
+	ChevronLeft,
+	ChevronRight,
+	ChevronsLeft,
+	ChevronsRight,
+	FolderOpen,
+	Settings2,
+	Trash2,
+	Upload,
+} from 'lucide-react';
 import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
 import { useContext } from './hooks/use-context';
-import {
-	ChevronDownIcon,
-	Filter,
-	FolderOpen,
-	Grid3x3,
-	List,
-	Pencil,
-	Search,
-	Trash2,
-	Upload,
-	X,
-	File,
-} from 'lucide-react';
-import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
+import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
-import Layout from './Layout';
-import { ButtonGroup } from '@/components/ui/ButtonGroup';
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
+	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
+	DropdownMenuGroup,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
+import { Input } from '@/components/ui/Input';
 import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupText,
-	InputGroupInput,
-	InputGroupButton,
-} from '@/components/ui/InputGroup';
-import { Checkbox } from '@/components/ui/Checkbox';
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/Select';
 import {
 	Table,
 	TableBody,
@@ -44,20 +54,10 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import type { FileEntry, FilesSortKey as SortKey } from '../../../../../shared/types';
-import { FILE_TYPE_FILTERS, FileTypeFilter } from 'src/shared';
-import { formatBytes, formatDate } from '../shared/resource-utils';
-import { formatShortDate, getMimeTypeLabel } from './shared/file-utils';
-import { getFileIcon } from './components/FileIcon';
-import { SortIcon } from './components/SortIcon';
 import { Label } from '@/components/ui/Label';
-
-const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
-	{ key: 'name', label: 'Name', className: 'w-auto' },
-	{ key: 'createdAt', label: 'Added', className: 'w-28 whitespace-nowrap' },
-	{ key: 'mimeType', label: 'Type', className: 'w-28' },
-	{ key: 'size', label: 'File size', className: 'w-28 text-right' },
-];
+import Layout from './Layout';
+import { buildColumns } from './components/columns';
+import type { FileTypeFilter } from 'src/shared';
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
 	all: 'Files',
@@ -72,281 +72,263 @@ const PAGE_TITLES: Record<FileTypeFilter, string> = {
 
 function PageContent(): ReactElement {
 	const {
-		selected,
-		uploading,
-		editMode,
-		toggleEditMode,
-		handleDelete,
-		handleOpenFolder,
-		handleUpload,
-		searchQuery,
-		setSearchQuery,
-		viewMode,
-		setViewMode,
-		typeFilter,
-		setTypeFilter,
-		entries,
-		isLoading,
 		filteredEntries,
-		allChecked,
-		someChecked,
-		sortKey,
-		sortDirection,
-		handleSort,
-		handleToggleAll,
-		handleToggleRow,
+		uploading,
+		typeFilter,
+		handleUpload,
+		handleOpenFolder,
 		handleOpenFileDetails,
+		handleDeleteOne,
+		handleDeleteMany,
+		selected,
 		confirmOpen,
 		setConfirmOpen,
 		handleConfirmDelete,
 	} = useContext();
+
+	const [sorting, setSorting] = React.useState<SortingState>([]);
+	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+	const [rowSelection, setRowSelection] = React.useState({});
+
+	const pageTitle = PAGE_TITLES[typeFilter];
+
+	const columns = useMemo(
+		() =>
+			buildColumns({
+				onPreview: handleOpenFileDetails,
+				onOpenInFinder: handleOpenFolder,
+				onDelete: handleDeleteOne,
+			}),
+		[handleOpenFileDetails, handleOpenFolder, handleDeleteOne],
+	);
+
+	const table = useReactTable({
+		data: filteredEntries,
+		columns,
+		onSortingChange: setSorting,
+		onColumnFiltersChange: setColumnFilters,
+		onColumnVisibilityChange: setColumnVisibility,
+		onRowSelectionChange: setRowSelection,
+		getCoreRowModel: getCoreRowModel(),
+		getPaginationRowModel: getPaginationRowModel(),
+		getSortedRowModel: getSortedRowModel(),
+		getFilteredRowModel: getFilteredRowModel(),
+		state: { sorting, columnFilters, columnVisibility, rowSelection },
+	});
+
+	const handleConfirmDeleteAndReset = async (): Promise<void> => {
+		await handleConfirmDelete();
+		setRowSelection({});
+	};
 
 	const fileCount = selected.size;
 	const fileDescription =
 		fileCount === 1
 			? 'This will permanently delete 1 file. This action cannot be undone.'
 			: `This will permanently delete ${fileCount} files. This action cannot be undone.`;
-	const pageTitle = PAGE_TITLES[typeFilter];
-
-	const handleRowKeyDown = (event: KeyboardEvent<HTMLTableRowElement>, file: FileEntry) => {
-		if (editMode) return;
-		if (event.key === 'Enter' || event.key === ' ') {
-			event.preventDefault();
-			handleOpenFileDetails(file);
-		}
-	};
 
 	return (
 		<PageContainer>
 			<PageHeader>
 				<PageHeaderTitle>
 					<Label className="w-full text-left text-sm font-medium">{pageTitle}</Label>
-					{editMode && selected.size > 0 && (
-						<Button
-							variant="destructive"
-							size="icon"
-							onClick={handleDelete}
-							aria-label={`Delete (${selected.size})`}
-							title={`Delete (${selected.size})`}
-						>
-							<Trash2 className="h-4 w-4" />
-						</Button>
-					)}
-					{!editMode && (
-						<>
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={handleOpenFolder}
-								aria-label="Open folder"
-								title="Open folder"
-							>
-								<FolderOpen className="h-4 w-4" />
-							</Button>
-							<Button
-								variant="ghost"
-								size="icon"
-								onClick={handleUpload}
-								disabled={uploading}
-								aria-label="Upload"
-								title="Upload"
-							>
-								<Upload className="h-4 w-4" />
-							</Button>
-						</>
-					)}
 					<Button
-						variant="ghost"
-						size="icon"
-						onClick={toggleEditMode}
-						aria-label={editMode ? 'Done' : 'Edit'}
-						title={editMode ? 'Done' : 'Edit'}
+						variant="outline"
+						size="md"
+						onClick={handleUpload}
+						disabled={uploading}
+						aria-label="Upload"
+						title="Upload"
 					>
-						{editMode ? <X className="h-4 w-4" /> : <Pencil className="h-4 w-4" />}
+						<Upload aria-hidden="true" />
+						<span>Upload</span>
+					</Button>
+					<Button
+						variant="outline"
+						size="md"
+						onClick={handleOpenFolder}
+						aria-label="Open folder"
+						title="Open folder"
+					>
+						<FolderOpen aria-hidden="true" />
+						<span>Folder</span>
 					</Button>
 				</PageHeaderTitle>
 			</PageHeader>
 
-			<PageBody>
-				<div>
-					<ButtonGroup className="min-w-0 flex-1">
-						<InputGroup>
-							<InputGroupAddon>
-								<InputGroupText>
-									<Search />
-								</InputGroupText>
-							</InputGroupAddon>
-							<InputGroupInput
-								value={searchQuery}
-								onChange={(e) => setSearchQuery(e.target.value)}
-								placeholder="Start typing to search"
-							/>
-							<InputGroupAddon align="inline-end">
-								<DropdownMenu>
-									<DropdownMenuTrigger
-										render={
-											<InputGroupButton variant="ghost" className="pr-1.5! text-xs">
-												Filter <ChevronDownIcon className="size-3" />
-											</InputGroupButton>
-										}
-									>
-										<Filter className="h-4 w-4" />
-									</DropdownMenuTrigger>
-									<DropdownMenuContent align="end" sideOffset={8} alignOffset={-4}>
-										<DropdownMenuRadioGroup
-											value={typeFilter}
-											onValueChange={(value) => setTypeFilter(value as FileTypeFilter)}
+			<div className="space-y-4 p-4">
+				<div className="flex items-center gap-2">
+					<Input
+						placeholder="Filter by name..."
+						value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
+						onChange={(event) => table.getColumn('name')?.setFilterValue(event.target.value)}
+						className="max-w-sm"
+					/>
+					{table.getFilteredSelectedRowModel().rows.length > 0 && (
+						<Button
+							variant="destructive"
+							size="sm"
+							className="h-8"
+							onClick={() =>
+								handleDeleteMany(
+									table.getFilteredSelectedRowModel().rows.map((row) => row.original.id),
+								)
+							}
+						>
+							<Trash2 className="mr-2 h-4 w-4" />
+							Delete ({table.getFilteredSelectedRowModel().rows.length})
+						</Button>
+					)}
+					<DropdownMenu>
+						<DropdownMenuTrigger
+							render={
+								<Button
+									variant="outline"
+									size="sm"
+									className="ml-auto hidden h-8 lg:flex"
+								/>
+							}
+						>
+							<Settings2 className="mr-2 h-4 w-4" />
+							View
+						</DropdownMenuTrigger>
+						<DropdownMenuContent align="end" className="w-[150px]">
+							<DropdownMenuGroup>
+								<DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								{table
+									.getAllColumns()
+									.filter(
+										(column) =>
+											typeof column.accessorFn !== 'undefined' && column.getCanHide(),
+									)
+									.map((column) => (
+										<DropdownMenuCheckboxItem
+											key={column.id}
+											className="capitalize"
+											checked={column.getIsVisible()}
+											onCheckedChange={(value) => column.toggleVisibility(!!value)}
 										>
-											{FILE_TYPE_FILTERS.map(({ value, label }) => (
-												<DropdownMenuRadioItem key={value} value={value}>
-													{label}
-												</DropdownMenuRadioItem>
-											))}
-										</DropdownMenuRadioGroup>
-									</DropdownMenuContent>
-								</DropdownMenu>
-							</InputGroupAddon>
-						</InputGroup>
-					</ButtonGroup>
-					<ButtonGroup className="shrink-0">
-						<Button
-							variant={viewMode === 'list' ? 'outline-selected' : 'outline'}
-							size="icon"
-							onClick={() => setViewMode('list')}
-							aria-label="List view"
-							aria-pressed={viewMode === 'list'}
-						>
-							<List className="h-4 w-4" />
-						</Button>
-						<Button
-							variant={viewMode === 'grid' ? 'outline-selected' : 'outline'}
-							size="icon"
-							onClick={() => setViewMode('grid')}
-							aria-label="Grid view"
-							aria-pressed={viewMode === 'grid'}
-						>
-							<Grid3x3 className="h-4 w-4" />
-						</Button>
-					</ButtonGroup>
+											{column.id}
+										</DropdownMenuCheckboxItem>
+									))}
+							</DropdownMenuGroup>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
-				{isLoading && (
-					<div className="flex flex-1 items-center justify-center py-16">
-						<p className="text-sm text-muted-foreground">Loading files...</p>
-					</div>
-				)}
-
-				{!isLoading && entries.length === 0 && (
-					<div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
-						<div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
-							<File className="h-7 w-7 text-muted-foreground" />
-						</div>
-						<div className="space-y-1">
-							<p className="font-medium text-sm">No files yet</p>
-							<p className="text-sm text-muted-foreground">Upload files to get started</p>
-						</div>
-						<Button onClick={handleUpload} disabled={uploading} size="sm">
-							<Upload />
-							Upload files
-						</Button>
-					</div>
-				)}
-
-				{!isLoading && entries.length > 0 && viewMode === 'list' && (
-					<Table className="table-fixed text-foreground">
-						<TableHeader className="bg-muted sticky top-0 z-10">
-							<TableRow>
-								{editMode && (
-									<TableHead className="w-12 px-6 text-muted-foreground">
-										<Checkbox
-											checked={allChecked}
-											indeterminate={someChecked}
-											onCheckedChange={handleToggleAll}
-											aria-label="Select all"
-										/>
-									</TableHead>
-								)}
-								{SORT_COLUMNS.map(({ key, label, className }) => (
-									<TableHead key={key} className={`px-6 text-muted-foreground ${className}`}>
-										<button
-											type="button"
-											className="inline-flex items-center transition-colors hover:text-foreground"
-											onClick={() => handleSort(key)}
-										>
-											{label}
-											<SortIcon active={sortKey === key} direction={sortDirection} />
-										</button>
-									</TableHead>
-								))}
-							</TableRow>
+				<div className="overflow-hidden rounded-md border">
+					<Table>
+						<TableHeader>
+							{table.getHeaderGroups().map((headerGroup) => (
+								<TableRow key={headerGroup.id}>
+									{headerGroup.headers.map((header) => (
+										<TableHead key={header.id}>
+											{header.isPlaceholder
+												? null
+												: flexRender(header.column.columnDef.header, header.getContext())}
+										</TableHead>
+									))}
+								</TableRow>
+							))}
 						</TableHeader>
 						<TableBody>
-							{filteredEntries.length === 0 ? (
-								<TableRow>
-									<TableCell
-										colSpan={editMode ? 5 : 4}
-										className="px-6 py-8 text-center text-sm text-muted-foreground"
-									>
-										No files match your search.
-									</TableCell>
-								</TableRow>
-							) : (
-								filteredEntries.map((file) => (
+							{table.getRowModel().rows.length ? (
+								table.getRowModel().rows.map((row) => (
 									<TableRow
-										key={file.id}
-										className={editMode ? undefined : 'cursor-pointer'}
-										data-state={selected.has(file.id) ? 'selected' : undefined}
-										onClick={editMode ? undefined : () => handleOpenFileDetails(file)}
-										onKeyDown={editMode ? undefined : (event) => handleRowKeyDown(event, file)}
-										tabIndex={editMode ? undefined : 0}
+										key={row.id}
+										data-state={row.getIsSelected() ? 'selected' : undefined}
 									>
-										{editMode && (
-											<TableCell className="w-10 px-6">
-												<Checkbox
-													checked={selected.has(file.id)}
-													onClick={(event) => event.stopPropagation()}
-													onCheckedChange={() => handleToggleRow(file.id)}
-													aria-label={`Select ${file.name}`}
-												/>
+										{row.getVisibleCells().map((cell) => (
+											<TableCell key={cell.id}>
+												{flexRender(cell.column.columnDef.cell, cell.getContext())}
 											</TableCell>
-										)}
-										<TableCell className="px-6">
-											<div className="flex items-center gap-3">
-												{getFileIcon(file.mimeType)}
-												<div className="min-w-0">
-													<p className="truncate font-medium text-sm">{file.name}</p>
-													<p
-														className="truncate text-xs text-muted-foreground"
-														title={formatDate(file.createdAt)}
-													>
-														{file.path}
-													</p>
-												</div>
-											</div>
-										</TableCell>
-										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
-											{formatShortDate(file.createdAt)}
-										</TableCell>
-										<TableCell className="px-6 whitespace-nowrap text-muted-foreground">
-											{getMimeTypeLabel(file.mimeType)}
-										</TableCell>
-										<TableCell className="px-6 whitespace-nowrap text-right text-muted-foreground">
-											{formatBytes(file.size)}
-										</TableCell>
+										))}
 									</TableRow>
 								))
+							) : (
+								<TableRow>
+									<TableCell colSpan={columns.length} className="h-24 text-center">
+										No results.
+									</TableCell>
+								</TableRow>
 							)}
 						</TableBody>
 					</Table>
-				)}
-
-				{!isLoading && entries.length > 0 && viewMode === 'grid' && (
-					<div className="flex flex-1 items-center justify-center py-16">
-						<p className="text-sm text-muted-foreground">Grid view coming soon.</p>
+				</div>
+				<div className="flex items-center justify-between px-2 py-2">
+					<div className="flex-1 text-sm text-muted-foreground">
+						{table.getFilteredSelectedRowModel().rows.length} of{' '}
+						{table.getFilteredRowModel().rows.length} row(s) selected.
 					</div>
-				)}
-			</PageBody>
+					<div className="flex items-center space-x-6 lg:space-x-8">
+						<div className="flex items-center space-x-2">
+							<p className="text-sm font-medium">Rows per page</p>
+							<Select<string>
+								value={`${table.getState().pagination.pageSize}`}
+								onValueChange={(value) => table.setPageSize(Number(value))}
+							>
+								<SelectTrigger className="h-8 w-[70px]">
+									<SelectValue placeholder={`${table.getState().pagination.pageSize}`} />
+								</SelectTrigger>
+								<SelectContent side="top">
+									{[10, 20, 25, 30, 40, 50].map((pageSize) => (
+										<SelectItem key={pageSize} value={`${pageSize}`}>
+											{pageSize}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+						<div className="flex w-[100px] items-center justify-center text-sm font-medium">
+							Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+						</div>
+						<div className="flex items-center space-x-2">
+							<Button
+								variant="outline"
+								size="icon"
+								className="hidden size-8 lg:flex"
+								onClick={() => table.setPageIndex(0)}
+								disabled={!table.getCanPreviousPage()}
+							>
+								<span className="sr-only">Go to first page</span>
+								<ChevronsLeft className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="icon"
+								className="size-8"
+								onClick={() => table.previousPage()}
+								disabled={!table.getCanPreviousPage()}
+							>
+								<span className="sr-only">Go to previous page</span>
+								<ChevronLeft className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="icon"
+								className="size-8"
+								onClick={() => table.nextPage()}
+								disabled={!table.getCanNextPage()}
+							>
+								<span className="sr-only">Go to next page</span>
+								<ChevronRight className="h-4 w-4" />
+							</Button>
+							<Button
+								variant="outline"
+								size="icon"
+								className="hidden size-8 lg:flex"
+								onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+								disabled={!table.getCanNextPage()}
+							>
+								<span className="sr-only">Go to last page</span>
+								<ChevronsRight className="h-4 w-4" />
+							</Button>
+						</div>
+					</div>
+				</div>
+			</div>
 
-			{/* Dialogs */}
 			<ImageDialog />
 			<PdfDialog />
 			<TextDialog />
@@ -355,7 +337,7 @@ function PageContent(): ReactElement {
 				onOpenChange={setConfirmOpen}
 				title="Delete files"
 				description={fileDescription}
-				onConfirm={handleConfirmDelete}
+				onConfirm={handleConfirmDeleteAndReset}
 			/>
 		</PageContainer>
 	);
