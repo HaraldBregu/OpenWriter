@@ -255,8 +255,8 @@ export function OptionMenu(): React.JSX.Element | null {
 				],
 			},
 			{
-				id: 'media',
-				label: 'Media',
+				id: 'content',
+				label: 'Content',
 				items: [
 					{ id: 'image', label: 'Image', Icon: ImagePlus, kind: 'action', run: runImage },
 					{ id: IMAGES_ITEM_ID, label: 'Images', Icon: ImagesIcon, kind: 'submenu' },
