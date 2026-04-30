@@ -132,6 +132,8 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 
+			<Gallery sections={gallerySections} />
+
 			<ImageDialog />
 			<PdfDialog />
 			<TextDialog />
