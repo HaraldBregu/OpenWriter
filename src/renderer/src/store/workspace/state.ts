@@ -11,9 +11,9 @@ export type DocumentsStatus = 'idle' | 'loading' | 'ready' | 'error';
 
 export interface WorkspaceState {
 	currentPath: string | null;
-	/** Project name from workspace metadata (project_workspace.openwriter) */
+	/** Project name from workspace metadata (workspace.json `project` block) */
 	projectName: string | null;
-	/** Project description from workspace metadata (project_workspace.openwriter) */
+	/** Project description from workspace metadata (workspace.json `project` block) */
 	projectDescription: string | null;
 	/** Every managed workspace under `{userData}/workspaces/`. */
 	workspaces: WorkspaceInfo[];

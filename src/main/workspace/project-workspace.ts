@@ -1,5 +1,3 @@
-import fsPromises from 'node:fs/promises';
-import fs from 'node:fs';
 import path from 'node:path';
 import { app } from 'electron';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
@@ -10,9 +8,6 @@ import type { WorkspaceMetadataService } from './workspace-metadata';
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
-
-/** Legacy file name. Migrated into workspace.json on first read. */
-const LEGACY_FILENAME = 'project_workspace.openwriter';
 
 /**
  * Current schema version written to every new project block.
@@ -31,13 +26,6 @@ const MAX_NAME_LENGTH = 255;
  * ProjectWorkspaceService manages the project block (name, description,
  * projectId, ...) inside the workspace.json metadata file. Delegates all file
  * IO to WorkspaceMetadataService so there is a single source of truth on disk.
- *
- * Responsibilities:
- *   - Provide a typed API for reading / updating project info
- *   - Validate inputs before accepting them
- *   - Auto-create a default project block when the workspace is first opened
- *   - One-shot migration of any legacy `project_workspace.openwriter` file
- *     into the metadata file's `project` block
  */
 export class ProjectWorkspaceService {
 	constructor(
@@ -52,11 +40,9 @@ export class ProjectWorkspaceService {
 
 	/**
 	 * Return the current workspace's project info, creating defaults if absent.
-	 * Migrates any legacy file in the workspace root before reading.
 	 */
 	async getOrCreate(): Promise<ProjectWorkspaceInfo> {
 		const workspacePath = this.requireWorkspace();
-		await this.migrateLegacy(workspacePath);
 
 		const existing = this.metadata.getProject();
 		if (existing) return existing;
@@ -82,7 +68,6 @@ export class ProjectWorkspaceService {
 	): Promise<ProjectWorkspaceInfo> {
 		this.validateName(name);
 		this.validateDescription(description);
-		await this.migrateLegacy(workspacePath);
 
 		const now = new Date().toISOString();
 		const info: ProjectWorkspaceInfo = {
@@ -108,7 +93,6 @@ export class ProjectWorkspaceService {
 	 * anything. Used by the recent-workspaces list. Returns null when missing.
 	 */
 	async readAt(workspacePath: string): Promise<ProjectWorkspaceInfo | null> {
-		await this.migrateLegacy(workspacePath);
 		return this.metadata.readProjectAt(workspacePath);
 	}
 
@@ -150,41 +134,6 @@ export class ProjectWorkspaceService {
 		return current;
 	}
 
-	/**
-	 * If a legacy `project_workspace.openwriter` file exists at the workspace
-	 * root, parse it, fold it into workspace.json's project block (when the
-	 * block is not already present), then delete the legacy file.
-	 *
-	 * Idempotent: a workspace whose metadata already contains a project block
-	 * still gets its legacy file deleted to avoid stale duplicates on disk.
-	 */
-	private async migrateLegacy(workspacePath: string): Promise<void> {
-		const legacyPath = path.join(workspacePath, LEGACY_FILENAME);
-		if (!fs.existsSync(legacyPath)) return;
-
-		try {
-			const existing = this.metadata.readProjectAt(workspacePath);
-			if (!existing) {
-				const raw = await fsPromises.readFile(legacyPath, 'utf-8');
-				const parsed = JSON.parse(raw);
-				const info = this.validateSchema(parsed, workspacePath);
-				this.metadata.writeProjectAt(workspacePath, info);
-				this.logger?.info(
-					'ProjectWorkspaceService',
-					`Migrated ${LEGACY_FILENAME} → workspace.json at: ${workspacePath}`
-				);
-			}
-			await fsPromises.unlink(legacyPath);
-		} catch (err) {
-			this.logger?.warn(
-				'ProjectWorkspaceService',
-				`Failed to migrate ${LEGACY_FILENAME} at ${workspacePath}: ${
-					err instanceof Error ? err.message : String(err)
-				}`
-			);
-		}
-	}
-
 	private buildDefault(workspacePath: string): ProjectWorkspaceInfo {
 		const now = new Date().toISOString();
 		return {
@@ -195,38 +144,6 @@ export class ProjectWorkspaceService {
 			createdAt: now,
 			updatedAt: now,
 			appVersion: this.getAppVersion(),
-		};
-	}
-
-	private validateSchema(parsed: unknown, workspacePath: string): ProjectWorkspaceInfo {
-		if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
-			throw new Error('Legacy project file must contain a JSON object at the root level.');
-		}
-
-		const record = parsed as Record<string, unknown>;
-		const now = new Date().toISOString();
-
-		return {
-			version:
-				typeof record['version'] === 'number' && record['version'] > 0
-					? (record['version'] as number)
-					: SCHEMA_VERSION,
-			projectId:
-				typeof record['projectId'] === 'string'
-					? record['projectId']
-					: path.basename(workspacePath),
-			name:
-				typeof record['name'] === 'string' && record['name'].trim().length > 0
-					? (record['name'] as string)
-					: path.basename(workspacePath),
-			description:
-				typeof record['description'] === 'string' ? (record['description'] as string) : '',
-			createdAt: typeof record['createdAt'] === 'string' ? (record['createdAt'] as string) : now,
-			updatedAt: typeof record['updatedAt'] === 'string' ? (record['updatedAt'] as string) : now,
-			appVersion:
-				typeof record['appVersion'] === 'string'
-					? (record['appVersion'] as string)
-					: this.getAppVersion(),
 		};
 	}
 

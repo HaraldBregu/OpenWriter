@@ -265,7 +265,7 @@ export interface WorkspaceApi {
 	trashOutput: (params: { type: string; id: string }) => Promise<void>;
 	onOutputFileChange: (callback: (event: OutputFileChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Project workspace (project_workspace.openwriter)
+	// Project workspace (workspace.json `project` block)
 	// -------------------------------------------------------------------------
 	/** Get the project workspace info, or null if no workspace is set. */
 	getProjectInfo: () => Promise<ProjectWorkspaceInfo | null>;

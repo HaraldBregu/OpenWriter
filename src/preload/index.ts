@@ -278,7 +278,7 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.outputFileChanged, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Project workspace (project_workspace.openwriter)
+	// Project workspace (workspace.json `project` block)
 	// -------------------------------------------------------------------------
 	getProjectInfo: () => typedInvokeUnwrap(WorkspaceChannels.getProjectInfo),
 	updateProjectName: (name: string) => typedInvokeUnwrap(WorkspaceChannels.updateProjectName, name),
