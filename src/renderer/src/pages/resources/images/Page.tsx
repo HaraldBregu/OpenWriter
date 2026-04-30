@@ -8,7 +8,6 @@ import { useContext } from './hooks/use-context';
 import { PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import Layout from './Layout';
 import type { FileTypeFilter } from 'src/shared';
 
@@ -19,14 +18,6 @@ const IMAGES = [
 	'https://images.unsplash.com/photo-1559745482-57bfa9ca5a8a?auto=format&fit=crop&q=80&w=400&h=400',
 	'https://images.unsplash.com/photo-1737608734653-d1eaad541d46?auto=format&fit=crop&q=80&w=400&h=400',
 	'https://images.unsplash.com/photo-1574015974293-817f0ebebb74?auto=format&fit=crop&q=80&w=400&h=400',
-];
-
-const TABS = [
-	{ label: 'HTML', value: 'html', images: IMAGES },
-	{ label: 'React', value: 'react', images: IMAGES },
-	{ label: 'Vue', value: 'vue', images: IMAGES },
-	{ label: 'Angular', value: 'angular', images: IMAGES },
-	{ label: 'Svelte', value: 'svelte', images: IMAGES },
 ];
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
