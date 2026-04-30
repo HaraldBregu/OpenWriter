@@ -5,6 +5,7 @@ import { LanguageProvider } from './LanguageProvider';
 import { SidebarVisibilityProvider } from './SidebarVisibilityProvider';
 import { DebugDialogsProvider } from './DebugDialogsContext';
 import { ImagesProvider } from './ImagesProvider';
+import { ContentProvider } from './ContentProvider';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
