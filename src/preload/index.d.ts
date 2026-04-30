@@ -330,6 +330,10 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	/** Load all images from the workspace images/ directory. */
 	getImages: () => Promise<ImageEntry[]>;
+	/** Open a file picker and copy selected images into images/. */
+	insertImages: (extensions?: string[]) => Promise<ImageEntry[]>;
+	/** Delete an image entry from images/ by its id (basename). */
+	deleteImage: (id: string) => Promise<void>;
 	/** Subscribe to image change events in images/. */
 	onImagesChanged: (callback: (event: ImageEntryChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
