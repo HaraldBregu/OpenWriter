@@ -15,7 +15,7 @@
 // ---- File system ---------------------------------------------------------
 
 /** Proprietary project file extension for this application. */
-export const TSRCT_EXT = '.tsrct';
+export const WORKSPACE = '.json';
 
 // ---- Store ---------------------------------------------------------------
 
