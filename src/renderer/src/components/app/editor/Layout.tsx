@@ -7,13 +7,12 @@ interface LayoutProps {
 	readonly id?: string;
 	readonly className?: string;
 	readonly editor: Editor | null;
-	readonly onInsertContent?: () => void;
 	readonly onImageInsert?: (result: { src: string; alt: string; title: string }) => void;
 	readonly children: ReactNode;
 }
 
 const Layout = forwardRef<HTMLDivElement, LayoutProps>(
-	({ id, className, editor, onInsertContent, onImageInsert, children }, ref) => {
+	({ id, className, editor, onImageInsert, children }, ref) => {
 		const containerRef = useRef<HTMLDivElement>(null);
 		return (
 			<div id={id} className={cn('h-full min-w-0 flex flex-col', className)}>
@@ -29,7 +28,6 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 									<Provider
 										editor={editor}
 										containerRef={containerRef}
-										onInsertContent={onInsertContent}
 										onImageInsert={onImageInsert}
 									>
 										{children}
