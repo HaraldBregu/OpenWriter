@@ -56,12 +56,14 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const handleUpload = useCallback(async () => {
 		dispatch({ type: 'SET_UPLOADING', payload: true });
 		try {
-			const imported = await window.workspace.insertFiles(
-				RESOURCE_SECTIONS.files.uploadExtensions
-			);
-			if (imported.length > 0) {
-				dispatch({ type: 'ADD_ENTRIES', payload: imported });
-			}
+			await window.workspace.insertImages([
+				'.png',
+				'.jpg',
+				'.jpeg',
+				'.gif',
+				'.webp',
+				'.svg',
+			]);
 		} catch {
 			/* upload failed */
 		} finally {
