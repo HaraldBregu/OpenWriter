@@ -100,9 +100,9 @@ export class Workspace implements Disposable {
 
 	/**
 	 * Create a new managed workspace with the supplied name and description.
-	 * Allocates a UUID-named folder, writes `project_workspace.openwriter`, and
-	 * returns the full WorkspaceInfo. Does NOT activate the workspace — caller
-	 * decides whether to follow up with `setCurrent`.
+	 * Allocates a UUID-named folder, writes the workspace.json `project` block,
+	 * and returns the full WorkspaceInfo. Does NOT activate the workspace —
+	 * caller decides whether to follow up with `setCurrent`.
 	 */
 	async createWorkspace(name: string, description: string = ''): Promise<WorkspaceInfo> {
 		const { id, path: workspacePath } = this.workspace.createWorkspaceFolder();
