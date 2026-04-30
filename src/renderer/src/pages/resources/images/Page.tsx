@@ -89,15 +89,19 @@ function PageContent(): ReactElement {
 					</div>
 				) : (
 					<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
-						{filteredEntries.map((image) => (
-							<img
-								key={image.id}
-								className="aspect-square w-full rounded-lg object-cover object-center"
-								src={toLocalResourceUrl(image.path)}
-								alt={image.name}
-								title={image.name}
-							/>
-						))}
+						{filteredEntries.map((image) => {
+							const src = toLocalResourceUrl(image.path);
+							return (
+								<img
+									key={image.id}
+									className="aspect-square w-full cursor-pointer rounded-lg object-cover object-center"
+									src={src}
+									alt={image.name}
+									title={image.name}
+									onClick={() => setPreview({ src, alt: image.name })}
+								/>
+							);
+						})}
 					</div>
 				)}
 			</PageBody>
