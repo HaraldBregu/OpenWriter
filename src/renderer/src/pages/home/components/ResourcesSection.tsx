@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { File, FileText, Database } from 'lucide-react';
+import { File, FileText } from 'lucide-react';
 import { CategoryCard } from './CategoryCard';
 
 export function ResourcesSection(): ReactElement {
@@ -13,7 +13,7 @@ export function ResourcesSection(): ReactElement {
 			<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 				{t('appLayout.resources', 'Resources')}
 			</p>
-			<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 				<CategoryCard
 					icon={File}
 					labelKey="appLayout.files"
@@ -27,13 +27,6 @@ export function ResourcesSection(): ReactElement {
 					descriptionKey="home.contentDescription"
 					accent="bg-muted text-foreground"
 					onClick={() => navigate('/resources/content')}
-				/>
-				<CategoryCard
-					icon={Database}
-					labelKey="appLayout.knowledgeBase"
-					descriptionKey="home.dataDescription"
-					accent="bg-secondary text-foreground"
-					onClick={() => navigate('/resources/data')}
 				/>
 			</div>
 		</section>

@@ -130,6 +130,9 @@ function PageContent(): ReactElement {
 		handleConfirmDelete,
 	} = useContentContext();
 
+	const displayFolders = filteredFolders.length > 0 ? filteredFolders : DUMMY_FOLDERS;
+	const hasFolders = folders.length > 0 || DUMMY_FOLDERS.length > 0;
+
 	const splitName = (folder: FolderEntry): { base: string; ext: string } => {
 		if (folder.kind !== 'file') return { base: folder.name, ext: '' };
 		const dot = folder.name.lastIndexOf('.');
