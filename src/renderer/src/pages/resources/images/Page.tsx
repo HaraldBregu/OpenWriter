@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type ReactElement } from 'react';
+import type { ReactElement } from 'react';
 import { FolderOpen, Upload } from 'lucide-react';
 import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
@@ -9,7 +9,7 @@ import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/componen
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/components/ui/Label';
 import Layout from './Layout';
-import type { FileTypeFilter, ImageEntry } from '../../../../../shared/types';
+import type { FileTypeFilter } from '../../../../../shared/types';
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
@@ -45,6 +45,8 @@ function PageContent(): ReactElement {
 	const loadImages = useCallback(async (): Promise<void> => {
 		try {
 			const items = await window.workspace.getImages();
+						console.log('Loaded images:', items);
+
 			setImages(items);
 		} catch {
 			setImages([]);
