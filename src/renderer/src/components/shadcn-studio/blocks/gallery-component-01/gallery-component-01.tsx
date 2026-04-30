@@ -1,4 +1,6 @@
+import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 type GalleryImage = {
 	src: string;
@@ -9,6 +11,27 @@ type GallerySection = {
 	type?: string;
 	images: GalleryImage[];
 };
+
+function GalleryImg({ src, alt }: GalleryImage) {
+	const [loaded, setLoaded] = useState(false);
+	const [errored, setErrored] = useState(false);
+
+	return (
+		<div className="relative h-full w-full">
+			{!loaded && !errored && <Skeleton className="absolute inset-0 h-full w-full rounded-lg" />}
+			<img
+				src={src}
+				alt={alt}
+				onLoad={() => setLoaded(true)}
+				onError={() => setErrored(true)}
+				className={cn(
+					'h-full w-full rounded-lg object-cover transition-opacity duration-300',
+					loaded ? 'opacity-100' : 'opacity-0',
+				)}
+			/>
+		</div>
+	);
+}
 
 const Gallery = ({ sections }: { sections: GallerySection[] }) => {
 	return (
@@ -37,12 +60,7 @@ const Gallery = ({ sections }: { sections: GallerySection[] }) => {
 							className={cn({ 'grid grid-cols-2 gap-6': section.type === 'grid' })}
 						>
 							{section.images.map((image, imageIndex) => (
-								<img
-									key={imageIndex}
-									src={image.src}
-									alt={image.alt}
-									className="rounded-lg object-cover"
-								/>
+								<GalleryImg key={imageIndex} src={image.src} alt={image.alt} />
 							))}
 						</div>
 					))}
