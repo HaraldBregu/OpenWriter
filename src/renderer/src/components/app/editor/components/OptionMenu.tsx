@@ -475,7 +475,7 @@ export function OptionMenu(): React.JSX.Element | null {
 				<Card
 					size="sm"
 					className={cn(
-						'w-[260px] gap-0! p-0! m-0! text-left overflow-visible!',
+						'w-[260px] gap-0! py-0! m-0! text-left overflow-visible!',
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
