@@ -1,7 +1,7 @@
-import type { FolderEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 
 export interface ContentState {
-	folders: FolderEntry[];
+	contents: ResourceInfo[];
 	isLoading: boolean;
 	uploading: boolean;
 	searchQuery: string;
@@ -11,7 +11,7 @@ export interface ContentState {
 }
 
 export const initialState: ContentState = {
-	folders: [],
+	contents: [],
 	isLoading: true,
 	uploading: false,
 	searchQuery: '',
