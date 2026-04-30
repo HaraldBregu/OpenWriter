@@ -11,12 +11,12 @@ function Bootstrap(): null {
 	useEffect(() => {
 		let active = true;
 
-		const loadFiles = async (): Promise<void> => {
+		const loadImages = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const files = await window.workspace.getFiles();
+				const images = await window.workspace.getImages();
 				if (!active) return;
-				setEntries(files);
+				setEntries(images);
 			} catch {
 				if (!active) return;
 				setEntries([]);
@@ -27,7 +27,7 @@ function Bootstrap(): null {
 			}
 		};
 
-		void loadFiles();
+		void loadImages();
 
 		return () => {
 			active = false;
