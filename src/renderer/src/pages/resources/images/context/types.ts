@@ -13,9 +13,7 @@ export interface FilesContextValue {
 	filteredEntries: FileEntry[];
 	isLoading: boolean;
 	uploading: boolean;
-	setEntries: (entries: FileEntry[]) => void;
 	removeEntry: (id: string) => void;
-	setIsLoading: (loading: boolean) => void;
 	searchQuery: string;
 	setSearchQuery: (query: string) => void;
 	viewMode: ViewMode;
