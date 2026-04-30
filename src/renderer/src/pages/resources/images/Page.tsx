@@ -12,11 +12,14 @@ import Gallery from '@/components/shadcn-studio/blocks/gallery-component-01/gall
 import Layout from './Layout';
 import type { FileTypeFilter } from 'src/shared';
 
+const UNSPLASH = (id: string, w = 1200): string =>
+	`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+
 const gallerySections = [
 	{
 		images: [
 			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-10.png',
+				src: UNSPLASH('1500530855697-b586d89ba3ee', 1600),
 				alt: 'Coastal cliffs and ocean view',
 			},
 		],
@@ -24,49 +27,25 @@ const gallerySections = [
 	{
 		type: 'grid',
 		images: [
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-9.png',
-				alt: 'Silhouettes on beach',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-8.png',
-				alt: 'Snowy mountain peaks',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-7.png',
-				alt: 'Rolling green hills',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-6.png',
-				alt: 'Sunset landscape',
-			},
+			{ src: UNSPLASH('1507525428034-b723cf961d3e'), alt: 'Silhouettes on beach' },
+			{ src: UNSPLASH('1519681393784-d120267933ba'), alt: 'Snowy mountain peaks' },
+			{ src: UNSPLASH('1501785888041-af3ef285b470'), alt: 'Rolling green hills' },
+			{ src: UNSPLASH('1470770841072-f978cf4d019e'), alt: 'Sunset landscape' },
 		],
 	},
 	{
 		type: 'grid',
 		images: [
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-4.png',
-				alt: 'Silhouettes on beach',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-3.png',
-				alt: 'Snowy mountain peaks',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-2.png',
-				alt: 'Rolling green hills',
-			},
-			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-1.png',
-				alt: 'Sunset landscape',
-			},
+			{ src: UNSPLASH('1496947850313-7743325fa58c'), alt: 'Silhouettes on beach' },
+			{ src: UNSPLASH('1464822759023-fed622ff2c3b'), alt: 'Snowy mountain peaks' },
+			{ src: UNSPLASH('1500382017468-9049fed747ef'), alt: 'Rolling green hills' },
+			{ src: UNSPLASH('1472214103451-9374bd1c798e'), alt: 'Sunset landscape' },
 		],
 	},
 	{
 		images: [
 			{
-				src: 'https://cdn.shadcnstudio.com/ss-assets/blocks/marketing/gallery/image-5.png',
+				src: UNSPLASH('1518791841217-8f162f1e1131', 1600),
 				alt: 'Coastal cliffs and ocean view',
 			},
 		],
