@@ -120,7 +120,7 @@ function PageContent(): ReactElement {
 					<Label className="w-full text-left text-sm font-medium">{t(section.titleKey)}</Label>
 					<DropdownMenu>
 						<DropdownMenuTrigger
-							render={<Button variant="ghost" size="icon" title="Upload" aria-label="Upload" />}
+							render={<Button variant="ghost" size="md" title="Upload" aria-label="Upload" />}
 						>
 							<Upload aria-hidden="true" />
 						</DropdownMenuTrigger>
