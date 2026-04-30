@@ -120,10 +120,6 @@ export const WorkspaceChannels = {
 	getOcrModelId: 'workspace:get-ocr-model-id',
 	setOcrModelId: 'workspace:set-ocr-model-id',
 	// Files (workspace/files/)
-	getFiles: 'files:get-all',
-	insertFiles: 'files:insert',
-	deleteFileEntry: 'files:delete',
-	filesChanged: 'files:changed',
 	// Images (workspace/images/)
 	getImages: 'images:get-all',
 	insertImages: 'images:insert',
