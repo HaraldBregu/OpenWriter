@@ -20,7 +20,7 @@ export const WORKSPACE = '.json';
 // ---- Store ---------------------------------------------------------------
 
 /** Maximum number of recent workspace entries to keep. */
-export const MAX_RECENT_WORKSPACES = 10;
+export const MAX_RECENT_WORKSPACES = 20;
 
 // ---- Workspace -----------------------------------------------------------
 

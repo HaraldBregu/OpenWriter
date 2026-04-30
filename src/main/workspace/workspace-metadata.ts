@@ -11,7 +11,7 @@ import { DEFAULT_OCR_MODEL_ID } from '../../shared/models';
 // ---------------------------------------------------------------------------
 
 /**
- * A single indexed directory entry persisted in the workspace.tsrct metadata file.
+ * A single indexed directory entry persisted in the workspace.json metadata file.
  */
 export interface IndexedDirectory {
 	/** Unique identifier for this directory entry */
@@ -27,7 +27,7 @@ export interface IndexedDirectory {
 }
 
 /**
- * Settings block in the workspace.tsrct metadata file.
+ * Settings block in the workspace.json metadata file.
  */
 export interface WorkspaceSettings {
 	directories: IndexedDirectory[];
@@ -36,7 +36,7 @@ export interface WorkspaceSettings {
 }
 
 /**
- * Full schema for the workspace.tsrct metadata file.
+ * Full schema for the workspace.json metadata file.
  */
 export interface WorkspaceMetadata {
 	metadata: {
@@ -68,10 +68,10 @@ const DEBOUNCE_MS = 800;
 // ---------------------------------------------------------------------------
 
 /**
- * WorkspaceMetadataService manages the workspace.tsrct metadata file in the workspace root.
+ * WorkspaceMetadataService manages the workspace.json metadata file in the workspace root.
  *
  * Pattern: Repository + Observer
- * - Repository: Encapsulates all read/write operations for the workspace.tsrct file
+ * - Repository: Encapsulates all read/write operations for the workspace.json file
  * - Observer: Emits events via EventBus when directories change so other
  *   services (e.g. DocumentsWatcherService, RAG pipeline) can react
  *
@@ -100,7 +100,7 @@ export class WorkspaceMetadataService implements Disposable {
 	/**
 	 * Initialize the service by loading metadata from the current workspace.
 	 * If no workspace is set, this is a no-op.
-	 * If the workspace.tsrct file does not exist, it will be created on the first write.
+	 * If the workspace.json file does not exist, it will be created on the first write.
 	 */
 	initialize(): void {
 		const workspacePath = this.workspaceService.getCurrent();
@@ -417,14 +417,14 @@ export class WorkspaceMetadataService implements Disposable {
 	}
 
 	/**
-	 * Get the full path to the workspace.tsrct file in the given workspace.
+	 * Get the full path to the workspace.json file in the given workspace.
 	 */
 	private getMetadataFilePath(workspacePath: string): string {
 		return path.join(workspacePath, METADATA_FILENAME);
 	}
 
 	/**
-	 * Read and parse the workspace.tsrct file from a workspace directory.
+	 * Read and parse the workspace.json file from a workspace directory.
 	 * Returns null if the file does not exist or is invalid.
 	 */
 	private readMetadataFile(workspacePath: string): WorkspaceMetadata | null {
@@ -470,7 +470,7 @@ export class WorkspaceMetadataService implements Disposable {
 	}
 
 	/**
-	 * Write the metadata to the workspace.tsrct file in the specified workspace.
+	 * Write the metadata to the workspace.json file in the specified workspace.
 	 * @param metadata - The metadata to write
 	 * @param workspacePath - The workspace path to write to (required to handle workspace switches)
 	 */

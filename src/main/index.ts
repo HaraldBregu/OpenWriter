@@ -260,7 +260,7 @@ app.whenReady().then(async () => {
 		workspaceService.setCurrent(workspacePath);
 
 		// CRITICAL: Reinitialize WorkspaceMetadataService after workspace path is set
-		// This ensures the service reads from the correct workspace.tsrct file
+		// This ensures the service reads from the correct workspace.json file
 		// and doesn't have stale cache from initialization
 		const metadataService = context.getService<WorkspaceMetadataService>(
 			'workspaceMetadata',
