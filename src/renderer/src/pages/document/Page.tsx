@@ -55,7 +55,6 @@ function PageContent(): ReactElement {
 	const [contentVersion, setContentVersion] = useReactState(0);
 	const [loaded, setLoaded] = useReactState(false);
 
-	const { openInsertContentDialog } = useInsertContentDialog();
 	const { t } = useTranslation();
 
 	const editorRef = useRef<EditorElement>(null);
