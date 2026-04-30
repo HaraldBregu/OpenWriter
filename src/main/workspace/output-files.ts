@@ -1157,17 +1157,6 @@ export class OutputFilesService implements Disposable {
 		}
 	}
 
-	private async ensureDocumentSupportDirectories(
-		folderPath: string,
-		outputType: OutputType
-	): Promise<void> {
-		if (outputType !== 'documents') {
-			return;
-		}
-
-		await this.ensureDirectory(path.join(folderPath, this.CHAT_DIRNAME));
-	}
-
 	/**
 	 * Clear all pending debounce timers.
 	 */
