@@ -200,7 +200,42 @@ function PageContent(): ReactElement {
 								}
 								className="max-w-sm"
 							/>
-							<DataTableViewOptions table={table} />
+							<DropdownMenu>
+								<DropdownMenuTrigger
+									render={
+										<Button
+											variant="outline"
+											size="sm"
+											className="ml-auto hidden h-8 lg:flex"
+										/>
+									}
+								>
+									<Settings2 className="mr-2 h-4 w-4" />
+									View
+								</DropdownMenuTrigger>
+								<DropdownMenuContent align="end" className="w-[150px]">
+									<DropdownMenuGroup>
+										<DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										{table
+											.getAllColumns()
+											.filter(
+												(column) =>
+													typeof column.accessorFn !== 'undefined' && column.getCanHide(),
+											)
+											.map((column) => (
+												<DropdownMenuCheckboxItem
+													key={column.id}
+													className="capitalize"
+													checked={column.getIsVisible()}
+													onCheckedChange={(value) => column.toggleVisibility(!!value)}
+												>
+													{column.id}
+												</DropdownMenuCheckboxItem>
+											))}
+									</DropdownMenuGroup>
+								</DropdownMenuContent>
+							</DropdownMenu>
 						</div>
 						<div className="overflow-hidden rounded-md border">
 							<Table>
