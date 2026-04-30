@@ -1,8 +1,6 @@
 import type { FileEntry, FileTypeFilter, ViewMode } from './types';
 
 export interface FilesReducerState {
-	entries: FileEntry[];
-	isLoading: boolean;
 	uploading: boolean;
 	searchQuery: string;
 	viewMode: ViewMode;
@@ -14,8 +12,6 @@ export interface FilesReducerState {
 }
 
 export const initialFilesState: FilesReducerState = {
-	entries: [],
-	isLoading: true,
 	uploading: false,
 	searchQuery: '',
 	viewMode: 'list',
