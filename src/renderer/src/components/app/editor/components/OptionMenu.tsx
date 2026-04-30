@@ -30,7 +30,6 @@ import {
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
-import type { ImageEntry } from '../../../../../../shared/types';
 import {
 	OptionMenuPlugin,
 	type OptionMenuControls,
