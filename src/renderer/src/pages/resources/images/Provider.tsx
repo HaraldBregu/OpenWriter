@@ -157,12 +157,12 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, [selected, setSelected]);
 
 	useEffect(() => {
-		const unsubscribeFiles = window.workspace.onFilesChanged(() => {
-			void refreshFiles();
+		const unsubscribeImages = window.workspace.onImagesChanged(() => {
+			void refreshImages();
 		});
 		const unsubscribeWorkspace = window.workspace.onChange((event) => {
 			if (event.currentPath) {
-				void refreshFiles();
+				void refreshImages();
 				return;
 			}
 			dispatch({ type: 'RESET_ENTRIES' });
@@ -170,10 +170,10 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		});
 		return () => {
 			mountedRef.current = false;
-			unsubscribeFiles();
+			unsubscribeImages();
 			unsubscribeWorkspace();
 		};
-	}, [refreshFiles, setSelected]);
+	}, [refreshImages, setSelected]);
 
 	useEffect(() => {
 		setSelected((current) => {
