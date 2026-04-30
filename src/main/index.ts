@@ -102,7 +102,7 @@ setupAppLifecycle(appState, logger);
 setupEventLogging(logger);
 
 function isTsrctFile(filePath: string): boolean {
-	return path.extname(filePath).toLowerCase() === TSRCT_EXT;
+	return path.extname(filePath).toLowerCase() === WORKSPACE;
 }
 
 function extractFilePathFromArgs(args: string[]): string | null {
