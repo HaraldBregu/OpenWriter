@@ -384,7 +384,7 @@ function PageContent(): ReactElement {
 				onOpenChange={setConfirmOpen}
 				title={t('resources.removeItems')}
 				description={t('resources.removeConfirm', { count: selected.size })}
-				onConfirm={handleConfirmDelete}
+				onConfirm={handleConfirmDeleteAndReset}
 				confirmLabel={t('resources.remove')}
 			/>
 			<ExtractorDialog
