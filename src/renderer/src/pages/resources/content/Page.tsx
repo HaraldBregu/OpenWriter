@@ -84,6 +84,7 @@ function PageContent(): ReactElement {
 		handleUpload,
 		handleOpenResourcesFolder,
 		handleDeleteOne,
+		handleDeleteMany,
 		selected,
 		confirmOpen,
 		setConfirmOpen,
