@@ -123,6 +123,7 @@ function PageContent(): ReactElement {
 							render={<Button variant="ghost" size="md" title="Upload" aria-label="Upload" />}
 						>
 							<Upload aria-hidden="true" />
+							<span>Upload</span>
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuGroup>
