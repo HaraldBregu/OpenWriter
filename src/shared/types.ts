@@ -752,8 +752,8 @@ export interface DocumentConfig {
 // ---- Project Workspace ----------------------------------------------------
 
 /**
- * Schema for the project_workspace.openwriter file stored in the workspace root.
- * Contains project-level metadata that identifies and describes the workspace.
+ * Project-level metadata stored under the `project` key inside the workspace's
+ * workspace.json file. Identifies and describes the workspace.
  */
 export interface ProjectWorkspaceInfo {
 	/** Schema version for forward compatibility. */
