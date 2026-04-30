@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useReducer } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import type { FolderEntry } from '../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
 import type { SortDirection, SortKey } from './shared/types';
 import { initialState } from './context/state';
 import { contentReducer } from './context/reducer';
@@ -10,9 +10,9 @@ import { useSelection } from './hooks/use-selection';
 import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 
 export interface ContentContextValue {
-	folders: FolderEntry[];
-	setFolders: (folders: FolderEntry[]) => void;
-	filteredFolders: FolderEntry[];
+	contents: ResourceInfo[];
+	setContents: (contents: ResourceInfo[]) => void;
+	filteredContents: ResourceInfo[];
 	isLoading: boolean;
 	setIsLoading: (loading: boolean) => void;
 	uploading: boolean;
@@ -32,7 +32,7 @@ export interface ContentContextValue {
 	handleOpenResourcesFolder: () => void;
 	handleDelete: () => void;
 	handleDeleteOne: (id: string) => void;
-	refreshFolders: () => Promise<void>;
+	refreshContents: () => Promise<void>;
 	handleConfirmDelete: () => Promise<void>;
 	confirmOpen: boolean;
 	setConfirmOpen: (open: boolean) => void;
@@ -58,17 +58,17 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	const [state, dispatch] = useReducer(contentReducer, initialState);
 
 	const { sortKey, sortDirection, handleSort } = useSort();
-	const filteredFolders = useFilter({
-		folders: state.folders,
+	const filteredContents = useFilter({
+		contents: state.contents,
 		searchQuery: state.searchQuery,
 		sortKey,
 		sortDirection,
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
-		useSelection({ filteredFolders });
+		useSelection({ filteredContents });
 
-	const setFolders = useCallback((folders: FolderEntry[]) => {
-		dispatch({ type: 'SET_FOLDERS', payload: folders });
+	const setContents = useCallback((contents: ResourceInfo[]) => {
+		dispatch({ type: 'SET_CONTENTS', payload: contents });
 	}, []);
 
 	const setIsLoading = useCallback((loading: boolean) => {
@@ -83,13 +83,13 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: open });
 	}, []);
 
-	const refreshFolders = useCallback(async () => {
+	const refreshContents = useCallback(async () => {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
-			const next = await window.workspace.getContentsFolders();
-			dispatch({ type: 'SET_FOLDERS', payload: next });
+			const next = await window.workspace.getContents();
+			dispatch({ type: 'SET_CONTENTS', payload: next });
 		} catch {
-			dispatch({ type: 'SET_FOLDERS', payload: [] });
+			dispatch({ type: 'SET_CONTENTS', payload: [] });
 		} finally {
 			dispatch({ type: 'SET_IS_LOADING', payload: false });
 		}
@@ -103,7 +103,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 					extensions ?? section.uploadExtensions
 				);
 				if (imported.length > 0) {
-					await refreshFolders();
+					await refreshContents();
 				}
 			} catch {
 				// Swallow picker-cancellation and validation errors
@@ -111,7 +111,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 				dispatch({ type: 'SET_UPLOADING', payload: false });
 			}
 		},
-		[section, refreshFolders]
+		[section, refreshContents]
 	);
 
 	const handleToggleEdit = useCallback(() => {
@@ -146,17 +146,17 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		dispatch({ type: 'SET_REMOVING', payload: true });
 		try {
 			await Promise.all(ids.map((id) => window.workspace.deleteContent(id)));
-			await refreshFolders();
+			await refreshContents();
 			setSelected(new Set());
 		} finally {
 			dispatch({ type: 'SET_REMOVING', payload: false });
 		}
-	}, [selected, refreshFolders, setSelected]);
+	}, [selected, refreshContents, setSelected]);
 
 	const value: ContentContextValue = {
-		folders: state.folders,
-		setFolders,
-		filteredFolders,
+		contents: state.contents,
+		setContents,
+		filteredContents,
 		isLoading: state.isLoading,
 		setIsLoading,
 		uploading: state.uploading,
@@ -177,7 +177,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		handleDelete,
 		handleDeleteOne,
 		handleConfirmDelete,
-		refreshFolders,
+		refreshContents,
 		confirmOpen: state.confirmOpen,
 		setConfirmOpen,
 		removing: state.removing,
