@@ -27,7 +27,7 @@ import {
 	type VirtualElement,
 } from '@floating-ui/react';
 import { Button } from '@/components/ui/Button';
-import { Card } from '@/components/ui/Card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
 import { cn } from '@/lib/utils';
 import type { ImageEntry } from '../../../../../../shared/types';
 import {
