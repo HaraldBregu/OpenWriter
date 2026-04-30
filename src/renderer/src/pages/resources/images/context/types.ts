@@ -37,6 +37,8 @@ export interface FilesContextValue {
 	handleUpload: () => void;
 	handleOpenFolder: () => void;
 	handleDelete: () => void;
+	handleDeleteOne: (id: string) => void;
+	handleDeleteMany: (ids: string[]) => void;
 	handleConfirmDelete: () => Promise<void>;
 	confirmOpen: boolean;
 	setConfirmOpen: (open: boolean) => void;
