@@ -31,6 +31,7 @@ const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
 const HomePage = lazy(() => import('./pages/home/Page'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
+const DataTableDemoPage = lazy(() => import('./pages/resources/data-table-demo/Page'));
 const ImagesPage = lazy(() => import('./pages/resources/images/Page'));
 
 // Lazy-loaded settings pages
