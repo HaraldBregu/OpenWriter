@@ -13,8 +13,12 @@ import type { FileTypeFilter } from '../../../../../shared/types';
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
-	const urlPath = normalized.startsWith('/') ? normalized : `/${normalized}`;
-	return `local-resource://localhost${urlPath}`;
+	const withSlash = normalized.startsWith('/') ? normalized : `/${normalized}`;
+	const encoded = withSlash
+		.split('/')
+		.map((segment) => encodeURIComponent(segment))
+		.join('/');
+	return `local-resource://localhost${encoded}`;
 }
 
 const PAGE_TITLES: Record<FileTypeFilter, string> = {
@@ -77,7 +81,6 @@ function PageContent(): ReactElement {
 				</PageHeaderTitle>
 			</PageHeader>
 			<PageBody>
-				({JSON.stringify(filteredEntries)})
 				{filteredEntries.length === 0 ? (
 					<div className="flex flex-1 items-center justify-center py-16">
 						<p className="text-sm text-muted-foreground">No images yet.</p>
