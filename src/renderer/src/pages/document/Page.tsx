@@ -463,6 +463,15 @@ function PageContent(): ReactElement {
 						onRestoreEntry={handleRestoreHistoryEntry}
 						onReturnToLive={handleReturnToLive}
 					/>
+					<Button variant="ghost" size="icon" title="Download" aria-label="Download">
+						<Download aria-hidden="true" />
+					</Button>
+					<Button variant="ghost" size="icon" title="Search" aria-label="Search">
+						<Search aria-hidden="true" />
+					</Button>
+					<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
+						<Sparkles aria-hidden="true" />
+					</Button>
 					<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
 				</PageHeaderTitle>
 				{preexistingTaskActive && (
