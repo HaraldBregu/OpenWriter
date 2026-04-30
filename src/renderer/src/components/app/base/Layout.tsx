@@ -584,6 +584,17 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton
+										render={<Link to="/resources/data-table-demo" />}
+										className="group/btn h-9 px-3"
+										tooltip="Data Table"
+										isActive={location.pathname === '/resources/data-table-demo'}
+									>
+										<TableIcon />
+										<span>Data Table</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton
 										render={<Link to="/resources/images" />}
 										className="group/btn h-9 px-3"
 										tooltip={t('appLayout.images', 'Images')}
