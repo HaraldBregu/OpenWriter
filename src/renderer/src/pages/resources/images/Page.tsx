@@ -1,9 +1,9 @@
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { FolderOpen, Upload } from 'lucide-react';
 import { TextDialog } from './components/TextDialog';
 import { ImageDialog } from './components/ImageDialog';
 import { PdfDialog } from './components/PdfDialog';
-import { DeleteConfirmDialog } from '@/components/app/dialogs';
+import { DeleteConfirmDialog, ImagePreviewDialog } from '@/components/app/dialogs';
 import { useContext } from './hooks/use-context';
 import { PageBody, PageContainer, PageHeader, PageHeaderTitle } from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
