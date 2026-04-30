@@ -35,13 +35,13 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
 		useSelection({ filteredEntries });
 
-	const refreshFiles = useCallback(async () => {
+	const refreshImages = useCallback(async () => {
 		if (!mountedRef.current) return;
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
-			const files = await window.workspace.getFiles();
+			const items = await window.workspace.getImages();
 			if (!mountedRef.current) return;
-			dispatch({ type: 'SET_ENTRIES', payload: files });
+			dispatch({ type: 'SET_ENTRIES', payload: items });
 		} catch {
 			if (!mountedRef.current) return;
 			dispatch({ type: 'SET_ENTRIES', payload: [] });
