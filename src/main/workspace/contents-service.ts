@@ -33,7 +33,8 @@ export class ContentsService {
 	}
 
 	/**
-	 * Load all files from the workspace contents/ directory.
+	 * Load all markdown (.md) files from the workspace contents/ directory.
+	 * Folders and non-markdown files are excluded.
 	 */
 	async getContents(workspacePath: string): Promise<ResourceInfo[]> {
 		const contentsDir = this.getContentsDir(workspacePath);
