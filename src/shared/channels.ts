@@ -125,6 +125,8 @@ export const WorkspaceChannels = {
 	filesChanged: 'files:changed',
 	// Images (workspace/images/)
 	getImages: 'images:get-all',
+	insertImages: 'images:insert',
+	deleteImage: 'images:delete',
 	imagesChanged: 'images:changed',
 } as const;
 
