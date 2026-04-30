@@ -74,8 +74,8 @@ export class Workspace implements Disposable {
 
 	/**
 	 * List every managed workspace under `{userData}/workspaces/`. Each entry is
-	 * enriched with project name + description from `project_workspace.openwriter`
-	 * (null when the file is missing/unreadable). Sorted most-recently-opened first;
+	 * enriched with project name + description from workspace.json's `project`
+	 * block (null when missing/unreadable). Sorted most-recently-opened first;
 	 * never-opened workspaces fall back to alphabetical order at the end.
 	 */
 	async listWorkspaces(): Promise<WorkspaceInfo[]> {
