@@ -51,20 +51,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		void window.workspace.openImagesFolder();
 	}, []);
 
-	const setEntries = useCallback(
-		(entries: FilesContextValue['entries']) => dispatch({ type: 'SET_ENTRIES', payload: entries }),
-		[]
-	);
-
-	const removeEntry = useCallback(
-		(id: string) => dispatch({ type: 'REMOVE_ENTRY', payload: id }),
-		[]
-	);
-
-	const setIsLoading = useCallback(
-		(loading: boolean) => dispatch({ type: 'SET_IS_LOADING', payload: loading }),
-		[]
-	);
+	const removeEntry = useCallback((id: string) => removeImage(id), [removeImage]);
 
 	const setSearchQuery = useCallback(
 		(query: string) => dispatch({ type: 'SET_SEARCH_QUERY', payload: query }),
@@ -125,7 +112,6 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		const ids = [...selected];
 		try {
 			await Promise.all(ids.map((id) => window.workspace.deleteImage(id)));
-			dispatch({ type: 'REMOVE_ENTRIES', payload: ids });
 			setSelected(new Set());
 			dispatch({ type: 'DELETE_SUCCESS' });
 		} catch {
@@ -134,41 +120,20 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, [selected, setSelected]);
 
 	useEffect(() => {
-		mountedRef.current = true;
-		void refreshImages();
-		const unsubscribeImages = window.workspace.onImagesChanged(() => {
-			void refreshImages();
-		});
-		const unsubscribeWorkspace = window.workspace.onChange((event) => {
-			if (event.currentPath) {
-				void refreshImages();
-				return;
-			}
-			dispatch({ type: 'RESET_ENTRIES' });
-			setSelected(new Set());
-		});
-		return () => {
-			mountedRef.current = false;
-			unsubscribeImages();
-			unsubscribeWorkspace();
-		};
-	}, [refreshImages, setSelected]);
-
-	useEffect(() => {
 		setSelected((current) => {
-			const entryIds = new Set(state.entries.map((entry) => entry.id));
+			const entryIds = new Set(images.map((entry) => entry.id));
 			const nextSelected = new Set([...current].filter((id) => entryIds.has(id)));
 			const hasChanged =
 				nextSelected.size !== current.size || [...current].some((id) => !entryIds.has(id));
 			return hasChanged ? nextSelected : current;
 		});
-	}, [state.entries, setSelected]);
+	}, [images, setSelected]);
 
 	useEffect(() => {
-		if (state.activeFile && !state.entries.some((entry) => entry.id === state.activeFile?.id)) {
+		if (state.activeFile && !images.some((entry) => entry.id === state.activeFile?.id)) {
 			dispatch({ type: 'CLOSE_FILE_DETAILS' });
 		}
-	}, [state.activeFile, state.entries]);
+	}, [state.activeFile, images]);
 
 	useEffect(() => {
 		const type = new URLSearchParams(location.search).get('type');
@@ -180,13 +145,11 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, [location.search]);
 
 	const value: FilesContextValue = {
-		entries: state.entries,
+		entries: images,
 		filteredEntries,
-		isLoading: state.isLoading,
+		isLoading,
 		uploading: state.uploading,
-		setEntries,
 		removeEntry,
-		setIsLoading,
 		searchQuery: state.searchQuery,
 		setSearchQuery,
 		viewMode: state.viewMode,
