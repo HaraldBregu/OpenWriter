@@ -57,6 +57,7 @@
 		"@fontsource/merriweather": "^5.2.11",
 		"@mistralai/mistralai": "^2.2.0",
 		"@reduxjs/toolkit": "^2.11.2",
+		"@tanstack/react-table": "^8.21.3",
 		"@tiptap/core": "3.22.3",
 		"@tiptap/extension-blockquote": "3.22.3",
 		"@tiptap/extension-bold": "3.22.3",
