@@ -483,9 +483,9 @@ export function OptionMenu(): React.JSX.Element | null {
 						<CardTitle className="text-xs font-semibold leading-tight">Blocks</CardTitle>
 					</CardHeader>
 
-					<div
+					<CardContent
 						ref={scrollContainerRef}
-						className="flex flex-col gap-1 p-1 max-h-[340px] overflow-y-auto"
+						className="flex flex-col gap-1 p-1! max-h-[340px] overflow-y-auto"
 					>
 						{sections.map((section, sIdx) => {
 							const baseOffset = sections
