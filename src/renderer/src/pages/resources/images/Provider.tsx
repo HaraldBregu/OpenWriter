@@ -40,6 +40,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
 			const items = await window.workspace.getImages();
+			console.log('Loaded images:', items);
 			if (!mountedRef.current) return;
 			dispatch({ type: 'SET_ENTRIES', payload: items });
 		} catch {
@@ -157,6 +158,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, [selected, setSelected]);
 
 	useEffect(() => {
+		void refreshImages();
 		const unsubscribeImages = window.workspace.onImagesChanged(() => {
 			void refreshImages();
 		});

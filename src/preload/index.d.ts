@@ -316,9 +316,6 @@ export interface WorkspaceApi {
 	/** Delete a file from contents/ by its ID. */
 	deleteContent: (id: string) => Promise<void>;
 	// -------------------------------------------------------------------------
-	// Files (workspace/files/)
-	// -------------------------------------------------------------------------
-	// -------------------------------------------------------------------------
 	// Images (workspace/images/)
 	// -------------------------------------------------------------------------
 	/** Load all images from the workspace images/ directory. */
