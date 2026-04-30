@@ -953,8 +953,6 @@ export class OutputFilesService implements Disposable {
 	 *   4. Empty: neither → return content: ''
 	 */
 	private async loadFolder(folderPath: string, outputType: OutputType): Promise<OutputFile> {
-		await this.ensureDocumentSupportDirectories(folderPath, outputType);
-
 		const configPath = path.join(folderPath, this.CONFIG_FILENAME);
 
 		const [configRaw, folderStat] = await Promise.all([
