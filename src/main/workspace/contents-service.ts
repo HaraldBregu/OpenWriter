@@ -50,6 +50,7 @@ export class ContentsService {
 		for (const entry of dirEntries) {
 			if (!entry.isFile()) continue;
 			if (entry.name.startsWith('.') || entry.name.endsWith('.tmp')) continue;
+			if (!entry.name.toLowerCase().endsWith('.md')) continue;
 
 			const filePath = path.join(contentsDir, entry.name);
 			try {
