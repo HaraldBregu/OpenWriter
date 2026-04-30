@@ -20,8 +20,6 @@ import type {
 	AgentTaskSnapshot,
 	AgentTaskLookupResult,
 	ResourceInfo,
-	FileEntry,
-	FileEntryChangeEvent,
 	FolderEntry,
 	ImageEntry,
 	ImageEntryChangeEvent,
