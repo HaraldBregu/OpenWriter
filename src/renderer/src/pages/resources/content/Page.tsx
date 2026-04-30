@@ -50,6 +50,54 @@ const SORT_COLUMNS: { key: SortKey; label: string; className: string }[] = [
 	{ key: 'modifiedAt', label: 'Modified', className: 'w-32 whitespace-nowrap' },
 ];
 
+const DUMMY_FOLDERS: FolderEntry[] = [
+	{
+		kind: 'folder',
+		id: 'research',
+		name: 'Research',
+		path: '/workspace/contents/Research',
+		relativePath: 'Research',
+		createdAt: Date.parse('2026-01-12T09:30:00Z'),
+		modifiedAt: Date.parse('2026-04-22T14:05:00Z'),
+	},
+	{
+		kind: 'folder',
+		id: 'drafts',
+		name: 'Drafts',
+		path: '/workspace/contents/Drafts',
+		relativePath: 'Drafts',
+		createdAt: Date.parse('2026-02-03T11:15:00Z'),
+		modifiedAt: Date.parse('2026-04-28T08:42:00Z'),
+	},
+	{
+		kind: 'file',
+		id: 'roadmap.md',
+		name: 'roadmap.md',
+		path: '/workspace/contents/roadmap.md',
+		relativePath: 'roadmap.md',
+		createdAt: Date.parse('2026-03-10T16:00:00Z'),
+		modifiedAt: Date.parse('2026-04-29T19:20:00Z'),
+	},
+	{
+		kind: 'file',
+		id: 'notes.md',
+		name: 'notes.md',
+		path: '/workspace/contents/notes.md',
+		relativePath: 'notes.md',
+		createdAt: Date.parse('2026-03-18T10:45:00Z'),
+		modifiedAt: Date.parse('2026-04-25T22:10:00Z'),
+	},
+	{
+		kind: 'file',
+		id: 'spec.pdf',
+		name: 'spec.pdf',
+		path: '/workspace/contents/spec.pdf',
+		relativePath: 'spec.pdf',
+		createdAt: Date.parse('2026-04-01T07:00:00Z'),
+		modifiedAt: Date.parse('2026-04-15T13:30:00Z'),
+	},
+];
+
 function formatShortDate(timestamp: number): string {
 	return new Date(timestamp).toLocaleDateString(undefined, {
 		month: 'short',

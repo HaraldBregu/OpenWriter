@@ -358,14 +358,6 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="/resources/data"
-														element={
-															<RouteWrapper>
-																<DataPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
 														path="/library"
 														element={<Navigate to="/resources/content" replace />}
 													/>
