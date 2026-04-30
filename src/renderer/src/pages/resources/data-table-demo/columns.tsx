@@ -93,13 +93,15 @@ export const columns: ColumnDef<Payment>[] = [
 						<MoreHorizontal className="h-4 w-4" />
 					</DropdownMenuTrigger>
 					<DropdownMenuContent align="end">
-						<DropdownMenuLabel>Actions</DropdownMenuLabel>
-						<DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
-							Copy payment ID
-						</DropdownMenuItem>
-						<DropdownMenuSeparator />
-						<DropdownMenuItem>View customer</DropdownMenuItem>
-						<DropdownMenuItem>View payment details</DropdownMenuItem>
+						<DropdownMenuGroup>
+							<DropdownMenuLabel>Actions</DropdownMenuLabel>
+							<DropdownMenuItem onClick={() => navigator.clipboard.writeText(payment.id)}>
+								Copy payment ID
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem>View customer</DropdownMenuItem>
+							<DropdownMenuItem>View payment details</DropdownMenuItem>
+						</DropdownMenuGroup>
 					</DropdownMenuContent>
 				</DropdownMenu>
 			);
