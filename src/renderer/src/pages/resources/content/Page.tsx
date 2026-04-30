@@ -155,7 +155,7 @@ function PageContent(): ReactElement {
 									<FileText className="h-4 w-4" />
 									Markdown
 								</DropdownMenuItem>
-								<DropdownMenuItem onClick={() => setFileDialogOpen(true)}>
+								<DropdownMenuItem disabled>
 									<Upload className="h-4 w-4" />
 									File
 								</DropdownMenuItem>
