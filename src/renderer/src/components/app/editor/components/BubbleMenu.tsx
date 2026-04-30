@@ -434,14 +434,20 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 						<Tooltip>
 							<TooltipTrigger
 								render={
-									<Button variant="ghost" size="icon" aria-label="Comment" disabled>
-										<MessageSquare className="h-3.5 w-3.5" />
+									<Button
+										variant={editor.isActive('codeBlock') ? 'default' : 'ghost'}
+										size="icon"
+										aria-label="Code block"
+										onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+									>
+										<Code2 className="h-3.5 w-3.5" />
 									</Button>
 								}
 							/>
 							<TooltipContent>
 								<div className="flex flex-col items-start gap-0.5">
-									<span>Comment</span>
+									<span>Code block</span>
+									<span className="text-[10px] opacity-70">{`${modKey} ${altKey} C`}</span>
 								</div>
 							</TooltipContent>
 						</Tooltip>
