@@ -1,8 +1,17 @@
 import type { ColumnDef } from '@tanstack/react-table';
-import { Eye, FileText, FolderOpen, Trash2 } from 'lucide-react';
+import { Eye, FileText, FolderOpen, MoreHorizontal, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/Button';
 import { Checkbox } from '@/components/ui/Checkbox';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuGroup,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/DropdownMenu';
 import type { ResourceInfo } from '../../../../../../shared/types';
 import { DataTableColumnHeader } from './DataTableColumnHeader';
 
