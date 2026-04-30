@@ -13,7 +13,6 @@ import { filesReducer } from './context/reducer';
 import { useSort } from './hooks/use-sort';
 import { useFilter } from './hooks/use-filter';
 import { useSelection } from './hooks/use-selection';
-import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { Context } from './Context';
 
 interface FilesProviderProps {
