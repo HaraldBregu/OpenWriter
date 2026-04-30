@@ -206,7 +206,6 @@ export class OutputFilesService implements Disposable {
 		const folderPath = path.join(documentsDir, folderName);
 
 		await this.ensureDirectory(folderPath);
-		await this.ensureDocumentSupportDirectories(folderPath, input.type);
 
 		const now = new Date(timestamp).toISOString();
 
