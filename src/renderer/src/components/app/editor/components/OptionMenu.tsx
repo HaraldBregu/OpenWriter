@@ -479,9 +479,9 @@ export function OptionMenu(): React.JSX.Element | null {
 						'shadow-[0_0_20px_0_rgba(0,0,0,0.12)]! dark:shadow-[0_0_24px_0_rgba(0,0,0,0.55)]!'
 					)}
 				>
-					<div className="px-3 py-1.5 border-b border-border/60">
-						<div className="text-xs font-semibold leading-tight">Blocks</div>
-					</div>
+					<CardHeader className="px-3 py-1.5 border-b border-border/60 gap-0">
+						<CardTitle className="text-xs font-semibold leading-tight">Blocks</CardTitle>
+					</CardHeader>
 
 					<div
 						ref={scrollContainerRef}
