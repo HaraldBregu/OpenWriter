@@ -99,16 +99,23 @@ function PageContent(): ReactElement {
 			</PageHeader>
 
 			<PageBody>
-				<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
-					{IMAGES.map((imageLink, index) => (
-						<img
-							key={index}
-							className="aspect-square w-full rounded-lg object-cover object-center"
-							src={imageLink}
-							alt={`image-photo-${index + 1}`}
-						/>
-					))}
-				</div>
+				{images.length === 0 ? (
+					<div className="flex flex-1 items-center justify-center py-16">
+						<p className="text-sm text-muted-foreground">No images yet.</p>
+					</div>
+				) : (
+					<div className="grid grid-cols-2 gap-4 p-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8">
+						{images.map((image) => (
+							<img
+								key={image.id}
+								className="aspect-square w-full rounded-lg object-cover object-center"
+								src={toLocalResourceUrl(image.path)}
+								alt={image.name}
+								title={image.name}
+							/>
+						))}
+					</div>
+				)}
 			</PageBody>
 
 			<ImageDialog />
