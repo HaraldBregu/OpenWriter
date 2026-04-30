@@ -197,9 +197,19 @@ app.whenReady().then(async () => {
 	// Serve local files via the local-resource:// protocol so the renderer
 	// can display images stored in document folders regardless of its origin.
 	protocol.handle('local-resource', (request) => {
-		const fileUrl = new URL(request.url);
-		fileUrl.protocol = 'file:';
-		return net.fetch(fileUrl.toString());
+		try {
+			const url = new URL(request.url);
+			let pathname = decodeURIComponent(url.pathname);
+			// On Windows, URL pathname is "/C:/foo"; strip the leading slash so
+			// pathToFileURL produces a canonical "file:///C:/foo".
+			if (process.platform === 'win32' && /^\/[A-Za-z]:/.test(pathname)) {
+				pathname = pathname.slice(1);
+			}
+			return net.fetch(pathToFileURL(pathname).toString());
+		} catch (err) {
+			logger.error('App', `local-resource fetch failed for ${request.url}`, err);
+			return new Response(null, { status: 500 });
+		}
 	});
 
 	// WORKSPACE MODE: Open workspace directly without launcher UI
