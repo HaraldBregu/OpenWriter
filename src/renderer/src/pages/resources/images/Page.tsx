@@ -45,6 +45,8 @@ function PageContent(): ReactElement {
 		handleConfirmDelete,
 	} = useContext();
 
+	const [preview, setPreview] = useState<{ src: string; alt: string } | null>(null);
+
 	const pageTitle = PAGE_TITLES[typeFilter];
 	const fileCount = selected.size;
 	const fileDescription =
