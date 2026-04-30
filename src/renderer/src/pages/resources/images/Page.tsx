@@ -12,43 +12,33 @@ import Gallery from '@/components/shadcn-studio/blocks/gallery-component-01/gall
 import Layout from './Layout';
 import type { FileTypeFilter } from 'src/shared';
 
-const UNSPLASH = (id: string, w = 1200): string =>
-	`https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=80`;
+const DEMO_IMAGE =
+	'https://images.unsplash.com/photo-1777026050794-a5e4ef7cd254?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D';
 
 const gallerySections = [
 	{
+		images: [{ src: DEMO_IMAGE, alt: 'Demo image' }],
+	},
+	{
+		type: 'grid',
 		images: [
-			{
-				src: UNSPLASH('1500530855697-b586d89ba3ee', 1600),
-				alt: 'Coastal cliffs and ocean view',
-			},
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
 		],
 	},
 	{
 		type: 'grid',
 		images: [
-			{ src: UNSPLASH('1507525428034-b723cf961d3e'), alt: 'Silhouettes on beach' },
-			{ src: UNSPLASH('1519681393784-d120267933ba'), alt: 'Snowy mountain peaks' },
-			{ src: UNSPLASH('1501785888041-af3ef285b470'), alt: 'Rolling green hills' },
-			{ src: UNSPLASH('1470770841072-f978cf4d019e'), alt: 'Sunset landscape' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
+			{ src: DEMO_IMAGE, alt: 'Demo image' },
 		],
 	},
 	{
-		type: 'grid',
-		images: [
-			{ src: UNSPLASH('1496947850313-7743325fa58c'), alt: 'Silhouettes on beach' },
-			{ src: UNSPLASH('1464822759023-fed622ff2c3b'), alt: 'Snowy mountain peaks' },
-			{ src: UNSPLASH('1500382017468-9049fed747ef'), alt: 'Rolling green hills' },
-			{ src: UNSPLASH('1472214103451-9374bd1c798e'), alt: 'Sunset landscape' },
-		],
-	},
-	{
-		images: [
-			{
-				src: UNSPLASH('1518791841217-8f162f1e1131', 1600),
-				alt: 'Coastal cliffs and ocean view',
-			},
-		],
+		images: [{ src: DEMO_IMAGE, alt: 'Demo image' }],
 	},
 ];
 
