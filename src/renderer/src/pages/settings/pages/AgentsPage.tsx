@@ -8,13 +8,14 @@ import {
 	SelectValue,
 } from '@/components/ui/Select';
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/Card';
-import { SettingRow } from '../components';
+	Item,
+	ItemActions,
+	ItemContent,
+	ItemDescription,
+	ItemFooter,
+	ItemGroup,
+	ItemTitle,
+} from '@/components/ui/Item';
 import { PROVIDERS } from '../../../../../shared/types';
 import type { AgentSettings, ProviderId, ProviderModelInfo } from '../../../../../shared/types';
 
