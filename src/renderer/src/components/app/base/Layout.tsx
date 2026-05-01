@@ -339,7 +339,7 @@ function Container({ children }: LayoutProps) {
 					navigate('/settings/system');
 					break;
 				case 'changeWorkspace':
-					navigate('/home');
+					navigate('/');
 					break;
 				default:
 					break;
