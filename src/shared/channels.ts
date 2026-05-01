@@ -168,6 +168,7 @@ export const AppChannels = {
 	updateAgent: 'app:update-agent',
 	getStartupInfo: 'app:get-startup-info',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
+	getModels: 'app:get-models',
 	// Logs
 	openLogsFolder: 'app:open-logs-folder',
 	// App data folder

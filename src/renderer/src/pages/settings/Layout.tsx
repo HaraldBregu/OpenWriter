@@ -49,20 +49,11 @@ export function Layout(): React.JSX.Element {
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/general" label={t('settings.tabs.general')} />
 						<NavItem to="/settings/workspace" label={t('settings.tabs.workspace')} />
-					</div>
-					<Separator className="my-2" />
-					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/providers" label={t('settings.tabs.providers')} />
 						<NavItem to="/settings/agents" label={t('settings.tabs.agents')} />
 						<NavItem to="/settings/skill" label={t('settings.tabs.skill')} />
-					</div>
-					<Separator className="my-2" />
-					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/editor" label={t('settings.tabs.editor')} />
 						<NavItem to="/settings/themes" label={t('settings.tabs.themes')} />
-					</div>
-					<Separator className="my-2" />
-					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/system" label={t('settings.tabs.system')} />
 						<NavItem to="/settings/developer" label={t('settings.tabs.developer')} />
 					</div>
