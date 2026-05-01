@@ -91,18 +91,18 @@ const ProvidersPage: React.FC = () => {
 	);
 
 	return (
-		<div className="w-full max-w-2xl">
-			<h1 className="text-lg font-normal mb-6">{t('settings.providers.title', 'Providers')}</h1>
-			<p className="text-sm text-muted-foreground -mt-4 mb-6">
-				{t(
-					'models.defaultProviders.subtitle',
-					'Configure API keys for the most important providers.'
-				)}
-			</p>
-
-			<SectionHeader title={t('settings.providers.llm', 'LLM Providers')} />
-
-			<FieldGroup>
+		<PageContainer>
+			<PageHeader>
+				<PageHeaderTitle>{t('settings.providers.title', 'Providers')}</PageHeaderTitle>
+				<PageHeaderDescription>
+					{t(
+						'models.defaultProviders.subtitle',
+						'Configure API keys for the most important providers.'
+					)}
+				</PageHeaderDescription>
+			</PageHeader>
+			<PageBody>
+				<FieldGroup className="max-w-2xl">
 				{PROVIDER_IDS.map((providerId) => {
 					const isSaving = saving.has(providerId);
 					const draftValue = drafts[providerId] ?? '';
