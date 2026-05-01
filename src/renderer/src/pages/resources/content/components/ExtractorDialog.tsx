@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import type { ReactElement } from 'react';
 import { ChevronDown, FileText, ImageIcon, Info, Play } from 'lucide-react';
-import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
+import type { ModelInfo } from '../../../../../../shared/types';
+
+const OCR_MODELS: readonly ModelInfo[] = [];
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import {
