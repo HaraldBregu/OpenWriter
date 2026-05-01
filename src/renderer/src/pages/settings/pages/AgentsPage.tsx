@@ -269,10 +269,13 @@ const AgentsPage: React.FC = () => {
 								</SettingRow>
 							</CardContent>
 							<CardFooter className="min-h-10 text-xs text-muted-foreground">
-								{isAgentSaving && t('settings.agents.saving', 'Saving...')}
-								{isAgentSaved && t('settings.agents.saved', 'Saved')}
-								{providerError && (
+								{providerError ? (
 									<span className="text-destructive">{providerError}</span>
+								) : (
+									<>
+										{isAgentSaving && t('settings.agents.saving', 'Saving...')}
+										{isAgentSaved && t('settings.agents.saved', 'Saved')}
+									</>
 								)}
 							</CardFooter>
 						</Card>
