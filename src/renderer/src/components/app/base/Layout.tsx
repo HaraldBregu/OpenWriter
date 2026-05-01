@@ -103,7 +103,6 @@ function Container({ children }: LayoutProps) {
 	const navigate = useNavigate();
 	const handleNavigateBack = useCallback(() => navigate(-1), [navigate]);
 	const handleNavigateForward = useCallback(() => navigate(1), [navigate]);
-	const workspaceNameFromPath = useAppSelector(selectWorkspaceName);
 	const projectName = useAppSelector(selectProjectName);
 	const currentWorkspacePath = useAppSelector(selectCurrentWorkspacePath);
 	const workspaces = useAppSelector(selectWorkspaces);
