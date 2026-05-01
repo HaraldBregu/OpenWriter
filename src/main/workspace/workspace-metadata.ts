@@ -5,7 +5,8 @@ import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
-import { DEFAULT_OCR_MODEL_ID } from '../../shared/models';
+
+const DEFAULT_OCR_MODEL_ID = '';
 
 // ---------------------------------------------------------------------------
 // Types
