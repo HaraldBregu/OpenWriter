@@ -56,6 +56,7 @@ import type {
 	AppStartupInfo,
 	AgentSettings,
 	IpcResult,
+	ProviderModelInfo,
 	Service,
 	ThemeMode,
 	CustomThemeInfo,
