@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import type { ReactElement } from 'react';
 import { PDFViewer } from '@embedpdf/react-pdf-viewer';
 import { ChevronDown, FileText, Info, Play } from 'lucide-react';
-import { OCR_MODELS } from '../../../../../../shared/models';
 import { getProvider } from '../../../../../../shared/providers';
-import type { ProviderId } from '../../../../../../shared/types';
+import type { ModelInfo, ProviderId } from '../../../../../../shared/types';
+
+const OCR_MODELS: readonly ModelInfo[] = [];
 import { Badge } from '@/components/ui/Badge';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
