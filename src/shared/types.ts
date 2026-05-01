@@ -160,12 +160,22 @@ export interface ProviderModelInfo {
 	ownedBy: string;
 }
 
-export type AgentModelRole = 'text' | 'image';
+/**
+ * One model assignment inside an agent. `apiKey` is filled from the configured
+ * Service for `providerId` at read time; renderers may pass it as an empty
+ * string when persisting.
+ */
+export interface AgentModel {
+	id: string;
+	providerId: string;
+	apiKey: string;
+	modelId: string;
+}
 
 export interface AgentSettings {
 	id: string;
 	name: string;
-	models: Partial<Record<AgentModelRole, string>>;
+	models: AgentModel[];
 }
 
 // ---- Logs -----------------------------------------------------------------
