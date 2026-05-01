@@ -50,9 +50,8 @@ export function Provider({ nodeViewProps, children }: ProviderProps): React.JSX.
 			files: (node.attrs.files as File[] | null) ?? [],
 			previewUrls: [],
 			isDragOver: false,
-			selectedImageModel: IMAGE_MODELS[0],
-			selectedTextModel:
-				TEXT_MODELS.find((m) => m.modelId === DEFAULT_TEXT_MODEL_ID) ?? TEXT_MODELS[0],
+			selectedImageModel: DEFAULT_IMAGE_MODEL,
+			selectedTextModel: DEFAULT_TEXT_MODEL,
 			selection: '',
 		})
 	);
