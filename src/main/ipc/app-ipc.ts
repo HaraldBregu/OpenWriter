@@ -26,13 +26,65 @@ import type {
 
 const execFileAsync = promisify(execFile);
 
-const PROVIDER_MODELS_URLS: Record<string, string> = {
-	openai: 'https://api.openai.com/v1/models',
-};
-
-interface ProviderModelsApiResponse {
-	data?: Array<{ id?: unknown; created?: unknown; owned_by?: unknown }>;
+/**
+ * Per-provider strategy for the `/models` endpoint. Each entry encapsulates
+ * the URL, auth header(s), and the parser that normalises the provider's
+ * response into ProviderModelInfo[].
+ */
+interface ProviderModelsStrategy {
+	url: string;
+	headers: (apiKey: string) => Record<string, string>;
+	parse: (body: unknown) => ProviderModelInfo[];
 }
+
+const PROVIDER_MODELS_STRATEGIES: Record<string, ProviderModelsStrategy> = {
+	openai: {
+		url: 'https://api.openai.com/v1/models',
+		headers: (apiKey) => ({ Authorization: `Bearer ${apiKey}` }),
+		parse: (body) => {
+			const items = Array.isArray((body as { data?: unknown[] })?.data)
+				? ((body as { data: unknown[] }).data as Array<Record<string, unknown>>)
+				: [];
+			return items
+				.filter((item) => typeof item.id === 'string')
+				.map((item) => {
+					const id = item.id as string;
+					const createdSec = typeof item.created === 'number' ? item.created : 0;
+					return {
+						id,
+						name: id,
+						createdAt: createdSec > 0 ? new Date(createdSec * 1000).toISOString() : '',
+						ownedBy: typeof item.owned_by === 'string' ? item.owned_by : 'openai',
+					};
+				});
+		},
+	},
+	anthropic: {
+		url: 'https://api.anthropic.com/v1/models',
+		headers: (apiKey) => ({
+			'x-api-key': apiKey,
+			'anthropic-version': '2023-06-01',
+		}),
+		parse: (body) => {
+			const items = Array.isArray((body as { data?: unknown[] })?.data)
+				? ((body as { data: unknown[] }).data as Array<Record<string, unknown>>)
+				: [];
+			return items
+				.filter((item) => typeof item.id === 'string')
+				.map((item) => {
+					const id = item.id as string;
+					return {
+						id,
+						name: typeof item.display_name === 'string' && item.display_name.length > 0
+							? (item.display_name as string)
+							: id,
+						createdAt: typeof item.created_at === 'string' ? (item.created_at as string) : '',
+						ownedBy: 'anthropic',
+					};
+				});
+		},
+	},
+};
 
 async function fetchProviderModels(
 	providerId: string,
@@ -43,8 +95,8 @@ async function fetchProviderModels(
 	}
 	const normalized = providerId.trim().toLowerCase();
 
-	const url = PROVIDER_MODELS_URLS[normalized];
-	if (!url) {
+	const strategy = PROVIDER_MODELS_STRATEGIES[normalized];
+	if (!strategy) {
 		throw new Error(`Provider "${providerId}" is not supported by getModels`);
 	}
 
@@ -53,9 +105,7 @@ async function fetchProviderModels(
 		throw new Error(`No API key configured for provider "${providerId}"`);
 	}
 
-	const response = await fetch(url, {
-		headers: { Authorization: `Bearer ${service.apiKey}` },
-	});
+	const response = await fetch(strategy.url, { headers: strategy.headers(service.apiKey) });
 
 	if (!response.ok) {
 		const body = await response.text().catch(() => '');
@@ -64,15 +114,8 @@ async function fetchProviderModels(
 		);
 	}
 
-	const json = (await response.json()) as ProviderModelsApiResponse;
-	const items = Array.isArray(json.data) ? json.data : [];
-	return items
-		.filter((item) => typeof item?.id === 'string')
-		.map((item) => ({
-			id: item.id as string,
-			created: typeof item.created === 'number' ? item.created : 0,
-			ownedBy: typeof item.owned_by === 'string' ? item.owned_by : '',
-		}));
+	const json = (await response.json()) as unknown;
+	return strategy.parse(json);
 }
 
 /**
