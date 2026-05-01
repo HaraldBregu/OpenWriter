@@ -116,49 +116,47 @@ const ProvidersPage: React.FC = () => {
 							}}
 						>
 							<Card>
-								<CardHeader>
-									<CardTitle>
+								<CardContent>
+									<Field>
 										<FieldLabel htmlFor={`provider-${providerId}`}>
 											{PROVIDER_LABELS[providerId]}
 										</FieldLabel>
-									</CardTitle>
-								</CardHeader>
-								<CardContent>
-									<InputGroup>
-										<InputGroupInput
-											id={`provider-${providerId}`}
-											type="password"
-											value={draftValue}
-											onChange={(e) =>
-												setDrafts((prev) => ({
-													...prev,
-													[providerId]: e.target.value,
-												}))
-											}
-											placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
-											autoComplete="off"
-											spellCheck={false}
-											disabled={isSaving}
-										/>
-										{isSaving && (
-											<InputGroupAddon align="inline-end">
-												<Spinner />
-											</InputGroupAddon>
-										)}
-									</InputGroup>
+										<InputGroup>
+											<InputGroupInput
+												id={`provider-${providerId}`}
+												type="password"
+												value={draftValue}
+												onChange={(e) =>
+													setDrafts((prev) => ({
+														...prev,
+														[providerId]: e.target.value,
+													}))
+												}
+												placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
+												autoComplete="off"
+												spellCheck={false}
+												disabled={isSaving}
+											/>
+											{isSaving && (
+												<InputGroupAddon align="inline-end">
+													<Spinner />
+												</InputGroupAddon>
+											)}
+										</InputGroup>
+										<Field orientation="horizontal" className="justify-end">
+											<Button
+												type="reset"
+												variant="outline"
+												disabled={!isDirty || isSaving}
+											>
+												{t('common.reset', 'Reset')}
+											</Button>
+											<Button type="submit" disabled={!isDirty || isSaving}>
+												{t('common.submit', 'Submit')}
+											</Button>
+										</Field>
+									</Field>
 								</CardContent>
-								<CardFooter className="justify-end gap-2">
-									<Button
-										type="reset"
-										variant="outline"
-										disabled={!isDirty || isSaving}
-									>
-										{t('common.reset', 'Reset')}
-									</Button>
-									<Button type="submit" disabled={!isDirty || isSaving}>
-										{t('common.submit', 'Submit')}
-									</Button>
-								</CardFooter>
 							</Card>
 						</form>
 					);
