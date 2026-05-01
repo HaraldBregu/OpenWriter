@@ -476,9 +476,27 @@ function PageContent(): ReactElement {
 						<Button variant="ghost" size="icon" title="Download" aria-label="Download">
 							<Download aria-hidden="true" />
 						</Button>
-						<Button variant="ghost" size="icon" title="Search" aria-label="Search">
-							<Search aria-hidden="true" />
-						</Button>
+						<Dialog>
+							<DialogTrigger
+								render={
+									<Button variant="ghost" size="icon" title="Search" aria-label="Search">
+										<Search aria-hidden="true" />
+									</Button>
+								}
+							/>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Search</DialogTitle>
+								</DialogHeader>
+								<InputGroup>
+									<InputGroupAddon>
+										<Search aria-hidden="true" />
+									</InputGroupAddon>
+									<InputGroupInput placeholder="Search in document..." />
+								</InputGroup>
+								<DialogFooter showCloseButton />
+							</DialogContent>
+						</Dialog>
 						<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
 							<Sparkles aria-hidden="true" />
 						</Button>
