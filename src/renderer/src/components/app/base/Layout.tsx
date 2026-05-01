@@ -286,9 +286,19 @@ function Container({ children }: LayoutProps) {
 
 	const accountMenuItems = [
 		{
-			value: 'settings',
-			label: t('menu.settings'),
+			value: 'general',
+			label: t('settings.tabs.general', 'General'),
 			icon: Settings,
+		},
+		{
+			value: 'workspace',
+			label: t('settings.tabs.workspace', 'Workspace'),
+			icon: GalleryVerticalEnd,
+		},
+		{
+			value: 'providers',
+			label: t('settings.tabs.providers', 'Providers'),
+			icon: Plug,
 		},
 		{
 			value: 'agents',
@@ -296,29 +306,14 @@ function Container({ children }: LayoutProps) {
 			icon: Sparkles,
 		},
 		{
+			value: 'editor',
+			label: t('settings.tabs.editor', 'Editor'),
+			icon: Pencil,
+		},
+		{
 			value: 'system',
 			label: t('settings.tabs.system', 'System'),
 			icon: Monitor,
-		},
-		{
-			value: 'language',
-			label: t('menu.language', 'Language'),
-			icon: Globe,
-		},
-		{
-			value: 'help',
-			label: t('menu.getHelp', 'Get help'),
-			icon: CircleHelp,
-		},
-		{
-			value: 'upgrade',
-			label: t('menu.upgradePlan', 'Upgrade plan'),
-			icon: CircleArrowUp,
-		},
-		{
-			value: 'learnMore',
-			label: t('menu.learnMore', 'Learn more'),
-			icon: Info,
 		},
 	] as const;
 
