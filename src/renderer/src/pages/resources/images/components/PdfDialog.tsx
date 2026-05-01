@@ -81,15 +81,8 @@ export function PdfDialog(): ReactElement | null {
 	const { activeFile, fileDetailsOpen, handleFileDetailsOpenChange } = useContext();
 	const [selectedModel, setSelectedModel] = useState(OCR_MODELS[0]?.modelId ?? '');
 
-	useEffect(() => {
-		window.workspace.getOcrModelId().then((modelId) => {
-			setSelectedModel(modelId);
-		});
-	}, []);
-
 	const handleModelChange = (modelId: string): void => {
 		setSelectedModel(modelId);
-		window.workspace.setOcrModelId(modelId);
 	};
 
 	const selectedModelEntry = OCR_MODELS.find((m) => m.modelId === selectedModel);
