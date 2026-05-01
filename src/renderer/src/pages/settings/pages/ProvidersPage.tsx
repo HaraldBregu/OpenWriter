@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Save } from 'lucide-react';
 import type { ProviderId, Service } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE, getProvider } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
