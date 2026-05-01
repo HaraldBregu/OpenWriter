@@ -227,25 +227,15 @@ export class StoreService {
 
 		const agents = this.store.get('agents').map(cloneAgent);
 		const index = agents.findIndex((entry) => entry.id === normalized.id);
-		const nextAgent =
-			normalized.id === 'assistant'
-				? {
-						...normalized,
-						models: {
-							text: normalized.models.text ?? DEFAULT_TEXT_MODEL_ID,
-							image: normalized.models.image ?? DEFAULT_IMAGE_MODEL_ID,
-						},
-					}
-				: normalized;
 
 		if (index >= 0) {
-			agents[index] = nextAgent;
+			agents[index] = normalized;
 		} else {
-			agents.push(nextAgent);
+			agents.push(normalized);
 		}
 
 		this.store.set('agents', normalizeAgents(agents));
-		return cloneAgent(nextAgent);
+		return cloneAgent(normalized);
 	}
 
 	// --- Workspace settings ---
