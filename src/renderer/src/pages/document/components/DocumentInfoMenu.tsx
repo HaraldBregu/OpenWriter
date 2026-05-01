@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Info, Download, Trash2, FolderOpen, Clock, CalendarDays } from 'lucide-react';
+import { SlidersHorizontal, Download, Trash2, FolderOpen, Clock, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	DropdownMenu,
