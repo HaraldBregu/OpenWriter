@@ -16,7 +16,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import HistoryMenu from './components/HistoryMenu';
-import DocumentInfoMenu from './components/DocumentInfoMenu';
+import DocumentSettings from './components/DocumentSettings';
 import {
 	useDispatch,
 	useHistory,
