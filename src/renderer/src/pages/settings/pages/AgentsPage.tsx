@@ -201,7 +201,7 @@ const AgentsPage: React.FC = () => {
 				)}
 			</p>
 
-			<div className="flex flex-col gap-4">
+			<ItemGroup>
 				{AGENT_DEFINITIONS.map((def) => {
 					const agent = agentsById[def.id] ?? defaultAgentSettings(def);
 					const providerId = providerByAgent[def.id] ?? null;
