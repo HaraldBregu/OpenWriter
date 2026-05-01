@@ -162,8 +162,9 @@ const ProvidersPage: React.FC = () => {
 						</form>
 					);
 				})}
-			</FieldGroup>
-		</div>
+				</FieldGroup>
+			</PageBody>
+		</PageContainer>
 	);
 };
 
