@@ -242,8 +242,8 @@ const AgentsPage: React.FC = () => {
 				{AGENT_DEFINITIONS.map((def) => {
 					const agent = agentsById[def.id] ?? defaultAgentSettings(def);
 					const providerId = deriveProviderFromAgent(def, agent);
-					const modelId = agent.models[def.role] ?? def.defaultModelId;
-					const availableModels = modelsForProvider(def.role, providerId);
+					const modelId = agent.models[def.role] ?? '';
+					const availableModels = providerId ? modelsForProvider(def.role, providerId) : [];
 					const isAgentSaving = status.type === 'saving' && status.agentId === def.id;
 					const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
 
