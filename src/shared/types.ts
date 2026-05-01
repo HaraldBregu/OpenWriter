@@ -150,8 +150,13 @@ export interface Service {
  * Shape is normalised across providers.
  */
 export interface ProviderModelInfo {
+	/** Provider's model identifier (e.g. `gpt-4o`, `claude-3-5-sonnet-20240620`). */
 	id: string;
-	created: number;
+	/** Human-readable name. Falls back to `id` when the provider has no display name. */
+	name: string;
+	/** ISO 8601 timestamp when the model was published. Empty string when unknown. */
+	createdAt: string;
+	/** Owner / publisher (e.g. `openai`, `anthropic`, organisation slug). */
 	ownedBy: string;
 }
 
