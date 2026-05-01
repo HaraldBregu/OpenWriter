@@ -26,7 +26,7 @@ function PageContent(): ReactElement {
 	return (
 		<PageContainer>
 			<PageBody>
-				<div className="mx-auto max-w-5xl space-y-10 px-8 py-12">
+				<div className="w-full space-y-10 px-8 py-12">
 					<div>
 						<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 							{t('home.dashboard', 'Dashboard')}
