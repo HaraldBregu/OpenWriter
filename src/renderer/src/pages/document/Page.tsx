@@ -54,6 +54,7 @@ function PageContent(): ReactElement {
 	const [content, setContent] = useReactState('');
 	const [contentVersion, setContentVersion] = useReactState(0);
 	const [loaded, setLoaded] = useReactState(false);
+	const [documentBasePath, setDocumentBasePath] = useReactState<string | null>(null);
 
 	const { t } = useTranslation();
 
