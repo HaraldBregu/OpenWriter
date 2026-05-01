@@ -320,14 +320,26 @@ function Container({ children }: LayoutProps) {
 	const handleAccountMenuValueChange = useCallback(
 		(value: string) => {
 			switch (value) {
-				case 'settings':
-					navigate('/settings');
+				case 'general':
+					navigate('/settings/general');
+					break;
+				case 'workspace':
+					navigate('/settings/workspace');
+					break;
+				case 'providers':
+					navigate('/settings/providers');
 					break;
 				case 'agents':
 					navigate('/settings/agents');
 					break;
+				case 'editor':
+					navigate('/settings/editor');
+					break;
 				case 'system':
 					navigate('/settings/system');
+					break;
+				case 'changeWorkspace':
+					navigate('/home');
 					break;
 				default:
 					break;
