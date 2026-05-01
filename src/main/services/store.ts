@@ -99,8 +99,18 @@ function cloneAgent(agent: AgentSettings): AgentSettings {
 	return {
 		id: agent.id,
 		name: agent.name,
-		models: { ...agent.models },
+		models: agent.models.map((m) => ({ ...m })),
 	};
+}
+
+function normalizeAgentModel(value: unknown): AgentModel | null {
+	if (!isRecord(value)) return null;
+	const id = typeof value.id === 'string' ? value.id.trim() : '';
+	const providerId = typeof value.providerId === 'string' ? value.providerId.trim() : '';
+	const modelId = typeof value.modelId === 'string' ? value.modelId.trim() : '';
+	const apiKey = typeof value.apiKey === 'string' ? value.apiKey : '';
+	if (!id || !providerId || !modelId) return null;
+	return { id, providerId, apiKey, modelId };
 }
 
 function normalizeAgentInput(value: unknown): AgentSettings | null {
@@ -110,22 +120,17 @@ function normalizeAgentInput(value: unknown): AgentSettings | null {
 
 	const id = typeof value.id === 'string' ? value.id.trim() : '';
 	const name = typeof value.name === 'string' ? value.name.trim() : '';
-	const models = isRecord(value.models) ? value.models : {};
-	const textModelId = typeof models.text === 'string' ? models.text.trim() : '';
-	const imageModelId = typeof models.image === 'string' ? models.image.trim() : '';
-
 	if (!id || !name) {
 		return null;
 	}
 
-	return {
-		id,
-		name,
-		models: {
-			...(textModelId ? { text: textModelId } : {}),
-			...(imageModelId ? { image: imageModelId } : {}),
-		},
-	};
+	const models = Array.isArray(value.models)
+		? value.models
+				.map(normalizeAgentModel)
+				.filter((m): m is AgentModel => m !== null)
+		: [];
+
+	return { id, name, models };
 }
 
 function normalizeAgents(value: unknown): AgentSettings[] {
