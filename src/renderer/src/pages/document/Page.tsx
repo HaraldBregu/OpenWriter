@@ -79,19 +79,22 @@ function PageContent(): ReactElement {
 		setLoaded(false);
 		setTitle('');
 		setContent('');
+		setDocumentBasePath(null);
 		dispatch({ type: 'METADATA_UPDATED', metadata: null });
 
 		async function load() {
 			try {
-				const [loadedContent, config] = await Promise.all([
+				const [loadedContent, config, docPath] = await Promise.all([
 					window.workspace.getDocumentContent(id!),
 					window.workspace.getDocumentConfig(id!),
+					window.workspace.getDocumentPath(id!),
 				]);
 
 				if (cancelled) return;
 
 				setTitle(config.title || '');
 				setContent(loadedContent);
+				setDocumentBasePath(docPath);
 
 				setLoaded(true);
 			} catch {
