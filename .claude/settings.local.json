@@ -164,7 +164,8 @@
       "Bash(yarn lint *)",
       "Bash(echo \"LINT_EXIT=$?\")",
       "Bash(yarn build *)",
-      "Bash(echo \"BUILD_EXIT=$?\")"
+      "Bash(echo \"BUILD_EXIT=$?\")",
+      "Bash(wait %1)"
     ],
     "deny": [
       "Bash(git push --force:*)",

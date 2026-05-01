@@ -17,7 +17,7 @@ import {
 } from '@/components/ui/Card';
 import { SettingRow } from '../components';
 import { PROVIDERS } from '../../../../../shared/types';
-import type { AgentSettings, ModelInfo, ProviderId } from '../../../../../shared/types';
+import type { AgentSettings, ProviderId, ProviderModelInfo } from '../../../../../shared/types';
 
 type SaveStatus =
 	| { type: 'idle' }
@@ -62,76 +62,6 @@ const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
 	},
 ];
 
-const TEXT_MODELS: readonly ModelInfo[] = [
-	{
-		providerId: 'openai',
-		modelId: 'gpt-5.4',
-		name: 'GPT-5.4',
-		type: 'multimodal',
-		contextWindow: 1050000,
-		maxOutputTokens: 128000,
-	},
-	{
-		providerId: 'openai',
-		modelId: 'gpt-5.4-mini',
-		name: 'GPT-5.4 Mini',
-		type: 'multimodal',
-		contextWindow: 400000,
-		maxOutputTokens: 128000,
-	},
-	{
-		providerId: 'openai',
-		modelId: 'gpt-4.1',
-		name: 'GPT-4.1',
-		type: 'multimodal',
-		contextWindow: 1047576,
-		maxOutputTokens: 32768,
-	},
-	{
-		providerId: 'anthropic',
-		modelId: 'claude-opus-4-6',
-		name: 'Claude Opus 4.6',
-		type: 'multimodal',
-		contextWindow: 1000000,
-		maxOutputTokens: 128000,
-	},
-	{
-		providerId: 'anthropic',
-		modelId: 'claude-sonnet-4-6',
-		name: 'Claude Sonnet 4.6',
-		type: 'multimodal',
-		contextWindow: 1000000,
-		maxOutputTokens: 64000,
-	},
-	{
-		providerId: 'anthropic',
-		modelId: 'claude-haiku-4-5-20251001',
-		name: 'Claude Haiku 4.5',
-		type: 'multimodal',
-		contextWindow: 200000,
-		maxOutputTokens: 64000,
-	},
-];
-
-const IMAGE_MODELS: readonly ModelInfo[] = [
-	{
-		providerId: 'openai',
-		modelId: 'gpt-image-1',
-		name: 'GPT Image 1',
-		type: 'image',
-		contextWindow: null,
-		maxOutputTokens: null,
-	},
-];
-
-function modelsForRole(role: AgentRole): readonly ModelInfo[] {
-	return role === 'image' ? IMAGE_MODELS : TEXT_MODELS;
-}
-
-function modelsForProvider(role: AgentRole, providerId: ProviderId): readonly ModelInfo[] {
-	return modelsForRole(role).filter((m) => m.providerId === providerId);
-}
-
 function defaultAgentSettings(def: AgentDefinition): AgentSettings {
 	return {
 		id: def.id,
@@ -140,19 +70,19 @@ function defaultAgentSettings(def: AgentDefinition): AgentSettings {
 	};
 }
 
-function deriveProviderFromAgent(def: AgentDefinition, agent: AgentSettings): ProviderId | null {
-	const modelId = agent.models[def.role];
-	if (!modelId) return null;
-	const found = modelsForRole(def.role).find((m) => m.modelId === modelId);
-	return found?.providerId ?? null;
-}
-
 const AgentsPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [agentsById, setAgentsById] = useState<Record<string, AgentSettings>>(() =>
 		Object.fromEntries(AGENT_DEFINITIONS.map((def) => [def.id, defaultAgentSettings(def)]))
 	);
 	const [status, setStatus] = useState<SaveStatus>({ type: 'loading' });
+
+	const [providerByAgent, setProviderByAgent] = useState<Record<string, ProviderId | null>>(() =>
+		Object.fromEntries(AGENT_DEFINITIONS.map((def) => [def.id, null]))
+	);
+	const [modelsCache, setModelsCache] = useState<Record<string, ProviderModelInfo[]>>({});
+	const [loadingByProvider, setLoadingByProvider] = useState<Record<string, boolean>>({});
+	const [errorByProvider, setErrorByProvider] = useState<Record<string, string | null>>({});
 
 	useEffect(() => {
 		let isMounted = true;
@@ -209,12 +139,45 @@ const AgentsPage: React.FC = () => {
 		}
 	};
 
-	const handleProviderChange = (def: AgentDefinition, providerId: ProviderId) => {
-		const candidate = modelsForProvider(def.role, providerId)[0];
+	const ensureModelsLoaded = async (providerId: ProviderId): Promise<ProviderModelInfo[]> => {
+		const cached = modelsCache[providerId];
+		if (cached) return cached;
+
+		setLoadingByProvider((prev) => ({ ...prev, [providerId]: true }));
+		setErrorByProvider((prev) => ({ ...prev, [providerId]: null }));
+		try {
+			const fetched = await window.app.getModels(providerId);
+			setModelsCache((prev) => ({ ...prev, [providerId]: fetched }));
+			return fetched;
+		} catch (error) {
+			const message =
+				error instanceof Error
+					? error.message
+					: t('settings.agents.modelsLoadError', 'Unable to load models.');
+			setErrorByProvider((prev) => ({ ...prev, [providerId]: message }));
+			return [];
+		} finally {
+			setLoadingByProvider((prev) => ({ ...prev, [providerId]: false }));
+		}
+	};
+
+	const handleProviderChange = async (def: AgentDefinition, providerId: ProviderId) => {
+		setProviderByAgent((prev) => ({ ...prev, [def.id]: providerId }));
 		const current = agentsById[def.id] ?? defaultAgentSettings(def);
-		void persistAgent({
+		// Clear previous model selection until the new provider's models load
+		await persistAgent({
 			...current,
-			models: { ...current.models, [def.role]: candidate?.modelId ?? '' },
+			models: { ...current.models, [def.role]: '' },
+		});
+
+		const models = await ensureModelsLoaded(providerId);
+		const candidate = models[0];
+		if (!candidate) return;
+
+		const latest = agentsById[def.id] ?? current;
+		void persistAgent({
+			...latest,
+			models: { ...latest.models, [def.role]: candidate.id },
 		});
 	};
 
@@ -241,9 +204,11 @@ const AgentsPage: React.FC = () => {
 			<div className="flex flex-col gap-4">
 				{AGENT_DEFINITIONS.map((def) => {
 					const agent = agentsById[def.id] ?? defaultAgentSettings(def);
-					const providerId = deriveProviderFromAgent(def, agent);
+					const providerId = providerByAgent[def.id] ?? null;
 					const modelId = agent.models[def.role] ?? '';
-					const availableModels = providerId ? modelsForProvider(def.role, providerId) : [];
+					const availableModels = providerId ? (modelsCache[providerId] ?? []) : [];
+					const isLoadingModels = providerId ? Boolean(loadingByProvider[providerId]) : false;
+					const providerError = providerId ? errorByProvider[providerId] : null;
 					const isAgentSaving = status.type === 'saving' && status.agentId === def.id;
 					const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
 
@@ -259,7 +224,7 @@ const AgentsPage: React.FC = () => {
 										<Select
 											value={providerId ?? ''}
 											onValueChange={(next) =>
-												next && handleProviderChange(def, next as ProviderId)
+												next && void handleProviderChange(def, next as ProviderId)
 											}
 											disabled={isBusy}
 										>
@@ -280,16 +245,20 @@ const AgentsPage: React.FC = () => {
 											<Select
 												value={modelId}
 												onValueChange={(next) => next && handleModelChange(def, next)}
-												disabled={isBusy || availableModels.length === 0}
+												disabled={isBusy || isLoadingModels || availableModels.length === 0}
 											>
 												<SelectTrigger className="h-8 w-44 text-sm">
 													<SelectValue
-														placeholder={t('settings.agents.modelPlaceholder', 'Select model')}
+														placeholder={
+															isLoadingModels
+																? t('settings.agents.modelsLoading', 'Loading…')
+																: t('settings.agents.modelPlaceholder', 'Select model')
+														}
 													/>
 												</SelectTrigger>
 												<SelectContent className="w-56">
 													{availableModels.map((model) => (
-														<SelectItem key={model.modelId} value={model.modelId}>
+														<SelectItem key={model.id} value={model.id}>
 															{model.name}
 														</SelectItem>
 													))}
@@ -302,6 +271,9 @@ const AgentsPage: React.FC = () => {
 							<CardFooter className="min-h-10 text-xs text-muted-foreground">
 								{isAgentSaving && t('settings.agents.saving', 'Saving...')}
 								{isAgentSaved && t('settings.agents.saved', 'Saved')}
+								{providerError && (
+									<span className="text-destructive">{providerError}</span>
+								)}
 							</CardFooter>
 						</Card>
 					);
