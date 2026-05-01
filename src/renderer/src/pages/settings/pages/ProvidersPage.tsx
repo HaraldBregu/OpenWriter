@@ -108,17 +108,13 @@ const ProvidersPage: React.FC = () => {
 									e.preventDefault();
 									void handleSaveOne(providerId);
 								}}
-								onReset={(e) => {
-									e.preventDefault();
-									handleResetOne(providerId);
-								}}
 							>
 								<Field>
 									<FieldLabel htmlFor={`provider-${providerId}`}>
 										{PROVIDER_LABELS[providerId]}
 									</FieldLabel>
-									<InputGroup>
-										<InputGroupInput
+									<Field orientation="horizontal">
+										<Input
 											id={`provider-${providerId}`}
 											type="password"
 											value={draftValue}
@@ -133,18 +129,8 @@ const ProvidersPage: React.FC = () => {
 											spellCheck={false}
 											disabled={isSaving}
 										/>
-										{isSaving && (
-											<InputGroupAddon align="inline-end">
-												<Spinner />
-											</InputGroupAddon>
-										)}
-									</InputGroup>
-									<Field orientation="horizontal" className="justify-end">
-										<Button type="reset" variant="outline" disabled={!isDirty || isSaving}>
-											{t('common.reset', 'Reset')}
-										</Button>
 										<Button type="submit" disabled={!isDirty || isSaving}>
-											{t('common.submit', 'Submit')}
+											{isSaving ? <Spinner /> : t('common.save', 'Save')}
 										</Button>
 									</Field>
 								</Field>
