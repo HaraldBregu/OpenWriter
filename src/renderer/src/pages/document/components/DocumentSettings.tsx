@@ -102,9 +102,6 @@ export default function DocumentSettings({
 						<FolderOpen className="text-muted-foreground" aria-hidden="true" />
 						<span className="truncate">{t('configSidebar.openFolder', 'Open folder')}</span>
 					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
-					</DropdownMenuItem>
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
