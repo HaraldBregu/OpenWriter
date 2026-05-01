@@ -41,10 +41,6 @@ import {
 	ChevronRight,
 	Search,
 	Globe,
-	CircleHelp,
-	CircleArrowUp,
-	Info,
-	LogOut,
 	LayoutDashboard,
 	Plus,
 	Sparkles,
@@ -59,6 +55,8 @@ import {
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
+	Plug,
+	ArrowLeftRight,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
