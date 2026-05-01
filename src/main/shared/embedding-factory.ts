@@ -7,9 +7,8 @@
 
 import OpenAI from 'openai';
 import type { EmbeddingModel } from './ai-types';
-import { DEFAULT_EMBEDDING_MODEL_ID } from '../../shared/models';
 
-const DEFAULT_EMBEDDING_MODEL = DEFAULT_EMBEDDING_MODEL_ID;
+const DEFAULT_EMBEDDING_MODEL = 'text-embedding-3-small';
 
 const PROVIDER_BASE_URLS: Record<string, string | undefined> = {
 	openai: undefined,
