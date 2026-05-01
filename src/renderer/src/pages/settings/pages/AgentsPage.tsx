@@ -33,8 +33,6 @@ interface AgentDefinition {
 	readonly name: string;
 	readonly description: string;
 	readonly role: AgentRole;
-	readonly defaultProviderId: ProviderId;
-	readonly defaultModelId: string;
 }
 
 const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
@@ -43,32 +41,24 @@ const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
 		name: 'Content Reviewer',
 		description: 'Reviews drafts for clarity, tone, and structural issues before publishing.',
 		role: 'text',
-		defaultProviderId: 'anthropic',
-		defaultModelId: 'claude-sonnet-4-6',
 	},
 	{
 		id: 'content-writer',
 		name: 'Content Writer',
 		description: 'Drafts long-form articles, posts, and structured documents from a prompt.',
 		role: 'text',
-		defaultProviderId: 'openai',
-		defaultModelId: 'gpt-5.4',
 	},
 	{
 		id: 'image-creator',
 		name: 'Image Creator',
 		description: 'Generates illustrations, hero images, and graphics from a text prompt.',
 		role: 'image',
-		defaultProviderId: 'openai',
-		defaultModelId: 'gpt-image-1',
 	},
 	{
 		id: 'assistant',
 		name: 'Personal Assistant',
 		description: 'Answers questions, summarises selections, and assists while you write.',
 		role: 'text',
-		defaultProviderId: 'openai',
-		defaultModelId: 'gpt-5.4-mini',
 	},
 ];
 
