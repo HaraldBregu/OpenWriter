@@ -130,8 +130,13 @@ const ProvidersPage: React.FC = () => {
 											spellCheck={false}
 											disabled={isSaving}
 										/>
-										<Button type="submit" disabled={!isDirty || isSaving}>
-											{isSaving ? <Spinner /> : t('common.save', 'Save')}
+										<Button
+											type="submit"
+											size="icon"
+											disabled={!isDirty || isSaving}
+											aria-label={t('common.save', 'Save')}
+										>
+											{isSaving ? <Spinner /> : <Save />}
 										</Button>
 									</Field>
 								</Field>
