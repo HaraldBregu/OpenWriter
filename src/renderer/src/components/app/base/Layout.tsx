@@ -9,7 +9,6 @@ import {
 	selectCurrentWorkspacePath,
 	selectProjectName,
 	selectWorkspaces,
-	selectWorkspaceName,
 } from '../../../store/workspace/selectors';
 import {
 	loadCurrentWorkspace,
