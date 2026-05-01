@@ -121,33 +121,39 @@ const ProvidersPage: React.FC = () => {
 								handleResetOne(providerId);
 							}}
 						>
-							<Field>
-								<FieldLabel htmlFor={`provider-${providerId}`}>
-									{PROVIDER_LABELS[providerId]}
-								</FieldLabel>
-								<InputGroup>
-									<InputGroupInput
-										id={`provider-${providerId}`}
-										type="password"
-										value={draftValue}
-										onChange={(e) =>
-											setDrafts((prev) => ({
-												...prev,
-												[providerId]: e.target.value,
-											}))
-										}
-										placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
-										autoComplete="off"
-										spellCheck={false}
-										disabled={isSaving}
-									/>
-									{isSaving && (
-										<InputGroupAddon align="inline-end">
-											<Spinner />
-										</InputGroupAddon>
-									)}
-								</InputGroup>
-								<Field orientation="horizontal">
+							<Card>
+								<CardHeader>
+									<CardTitle>
+										<FieldLabel htmlFor={`provider-${providerId}`}>
+											{PROVIDER_LABELS[providerId]}
+										</FieldLabel>
+									</CardTitle>
+								</CardHeader>
+								<CardContent>
+									<InputGroup>
+										<InputGroupInput
+											id={`provider-${providerId}`}
+											type="password"
+											value={draftValue}
+											onChange={(e) =>
+												setDrafts((prev) => ({
+													...prev,
+													[providerId]: e.target.value,
+												}))
+											}
+											placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
+											autoComplete="off"
+											spellCheck={false}
+											disabled={isSaving}
+										/>
+										{isSaving && (
+											<InputGroupAddon align="inline-end">
+												<Spinner />
+											</InputGroupAddon>
+										)}
+									</InputGroup>
+								</CardContent>
+								<CardFooter className="justify-end gap-2">
 									<Button
 										type="reset"
 										variant="outline"
@@ -158,8 +164,8 @@ const ProvidersPage: React.FC = () => {
 									<Button type="submit" disabled={!isDirty || isSaving}>
 										{t('common.submit', 'Submit')}
 									</Button>
-								</Field>
-							</Field>
+								</CardFooter>
+							</Card>
 						</form>
 					);
 				})}
