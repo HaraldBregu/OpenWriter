@@ -2,12 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ProviderId, Service } from '../../../../../shared/types';
 import { PROVIDER_IDS, getProvider } from '../../../../../shared/providers';
-import { ProviderRow, SectionHeader, SettingRow } from '../components';
+import { ProviderRow, SectionHeader } from '../components';
 
 const LLM_PROVIDER_IDS: readonly ProviderId[] = PROVIDER_IDS;
-
-const EMAIL_PROVIDERS = ['smtp', 'sendgrid', 'mailgun'] as const;
-const CLOUD_STORAGE_PROVIDERS = ['aws-s3', 'google-cloud', 'dropbox'] as const;
 
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
