@@ -214,8 +214,16 @@ const AgentsPage: React.FC = () => {
 					return (
 						<Card key={def.id}>
 							<CardHeader>
-								<CardTitle>{def.name}</CardTitle>
-								<CardDescription>{def.description}</CardDescription>
+								<div className="flex items-start justify-between gap-3">
+									<div className="min-w-0">
+										<CardTitle>{def.name}</CardTitle>
+										<CardDescription>{def.description}</CardDescription>
+									</div>
+									<span className="shrink-0 text-xs text-muted-foreground">
+										{isAgentSaving && t('settings.agents.saving', 'Saving...')}
+										{isAgentSaved && t('settings.agents.saved', 'Saved')}
+									</span>
+								</div>
 							</CardHeader>
 							<CardContent>
 								<SettingRow label={t('settings.agents.assignment', 'Provider & Model')}>
@@ -266,17 +274,10 @@ const AgentsPage: React.FC = () => {
 										)}
 									</div>
 								</SettingRow>
-							</CardContent>
-							<CardFooter className="min-h-10 text-xs text-muted-foreground">
-								{providerError ? (
-									<span className="text-destructive">{providerError}</span>
-								) : (
-									<>
-										{isAgentSaving && t('settings.agents.saving', 'Saving...')}
-										{isAgentSaved && t('settings.agents.saved', 'Saved')}
-									</>
+								{providerError && (
+									<p className="mt-2 text-xs text-destructive">{providerError}</p>
 								)}
-							</CardFooter>
+							</CardContent>
 						</Card>
 					);
 				})}
