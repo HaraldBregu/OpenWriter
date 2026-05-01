@@ -341,6 +341,12 @@ const Editor = React.memo(
 				editor.setEditable(!disabled);
 			}, [editor, disabled]);
 
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
+				const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+				if (storage.image) storage.image.documentBasePath = documentBasePath;
+			}, [editor, documentBasePath]);
+
 			const handleAiAction = useCallback((payload: PromptSubmitPayload) => {
 				onReviewPromptSubmitRef.current?.(payload);
 			}, []);
