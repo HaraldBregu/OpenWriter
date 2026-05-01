@@ -87,17 +87,32 @@ export class StoreValidators {
 		}
 		this.validateAgentName(agent.name);
 
-		if (typeof agent.models !== 'object' || agent.models === null) {
-			throw new Error('Agent models must be an object');
+		if (!Array.isArray(agent.models)) {
+			throw new Error('Agent models must be an array');
 		}
 
-		const modelIds = [agent.models.text, agent.models.image].filter(
-			(modelId): modelId is string => typeof modelId === 'string' && modelId.trim().length > 0
-		);
-
-		for (const modelId of modelIds) {
-			if (modelId.length > this.MAX_FIELD_LENGTH) {
-				throw new Error('Agent model ID exceeds maximum length');
+		for (const model of agent.models) {
+			if (typeof model !== 'object' || model === null) {
+				throw new Error('Agent model entry must be an object');
+			}
+			if (typeof model.id !== 'string' || model.id.trim().length === 0) {
+				throw new Error('Agent model id must be a non-empty string');
+			}
+			if (typeof model.providerId !== 'string' || model.providerId.trim().length === 0) {
+				throw new Error('Agent model providerId must be a non-empty string');
+			}
+			if (typeof model.modelId !== 'string' || model.modelId.trim().length === 0) {
+				throw new Error('Agent model modelId must be a non-empty string');
+			}
+			if (typeof model.apiKey !== 'string') {
+				throw new Error('Agent model apiKey must be a string');
+			}
+			if (
+				model.id.length > this.MAX_FIELD_LENGTH ||
+				model.providerId.length > this.MAX_FIELD_LENGTH ||
+				model.modelId.length > this.MAX_FIELD_LENGTH
+			) {
+				throw new Error('Agent model field exceeds maximum length');
 			}
 		}
 	}
