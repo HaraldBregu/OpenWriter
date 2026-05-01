@@ -492,26 +492,6 @@ export interface OutputUpdateParams {
 	metadata: Record<string, unknown>;
 }
 
-// ---- Directories ----------------------------------------------------------
-
-export interface DirectoryEntry {
-	id: string;
-	path: string;
-	addedAt: number;
-	isIndexed: boolean;
-	lastIndexedAt?: number;
-}
-
-export interface DirectoryAddManyResult {
-	added: DirectoryEntry[];
-	errors: Array<{ path: string; error: string }>;
-}
-
-export interface DirectoryValidationResult {
-	valid: boolean;
-	error?: string;
-}
-
 // ---- Context Menu ---------------------------------------------------------
 
 export interface WritingContextMenuAction {
