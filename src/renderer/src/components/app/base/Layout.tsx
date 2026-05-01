@@ -147,7 +147,7 @@ function Container({ children }: LayoutProps) {
 	);
 
 	const handleAddWorkspace = useCallback(() => {
-		navigate('/welcome');
+		navigate('/');
 	}, [navigate]);
 
 	const handleOpenSearch = useCallback(() => {
