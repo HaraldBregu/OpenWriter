@@ -248,66 +248,70 @@ const AgentsPage: React.FC = () => {
 				)}
 			</p>
 
-			{AGENT_DEFINITIONS.map((def) => {
-				const agent = agentsById[def.id] ?? defaultAgentSettings(def);
-				const providerId = deriveProviderFromAgent(def, agent);
-				const modelId = agent.models[def.role] ?? def.defaultModelId;
-				const availableModels = modelsForProvider(def.role, providerId);
-				const isAgentSaving = status.type === 'saving' && status.agentId === def.id;
-				const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
+			<div className="flex flex-col gap-4">
+				{AGENT_DEFINITIONS.map((def) => {
+					const agent = agentsById[def.id] ?? defaultAgentSettings(def);
+					const providerId = deriveProviderFromAgent(def, agent);
+					const modelId = agent.models[def.role] ?? def.defaultModelId;
+					const availableModels = modelsForProvider(def.role, providerId);
+					const isAgentSaving = status.type === 'saving' && status.agentId === def.id;
+					const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
 
-				return (
-					<div key={def.id}>
-						<SectionHeader title={def.name} />
-						<p className="text-sm text-muted-foreground -mt-1 mb-2">{def.description}</p>
+					return (
+						<Card key={def.id}>
+							<CardHeader>
+								<CardTitle>{def.name}</CardTitle>
+								<CardDescription>{def.description}</CardDescription>
+							</CardHeader>
+							<CardContent>
+								<SettingRow label={t('settings.agents.provider', 'Provider')}>
+									<Select
+										value={providerId}
+										onValueChange={(next) =>
+											next && handleProviderChange(def, next as ProviderId)
+										}
+										disabled={isBusy}
+									>
+										<SelectTrigger className="h-8 w-64 text-sm">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent className="w-72">
+											{PROVIDERS.map((provider) => (
+												<SelectItem key={provider.id} value={provider.id}>
+													{provider.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</SettingRow>
 
-						<SettingRow label={t('settings.agents.provider', 'Provider')}>
-							<Select
-								value={providerId}
-								onValueChange={(next) =>
-									next && handleProviderChange(def, next as ProviderId)
-								}
-								disabled={isBusy}
-							>
-								<SelectTrigger className="h-8 w-64 text-sm">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent className="w-72">
-									{PROVIDERS.map((provider) => (
-										<SelectItem key={provider.id} value={provider.id}>
-											{provider.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</SettingRow>
-
-						<SettingRow label={t('settings.agents.model', 'Model')}>
-							<Select
-								value={modelId}
-								onValueChange={(next) => next && handleModelChange(def, next)}
-								disabled={isBusy || availableModels.length === 0}
-							>
-								<SelectTrigger className="h-8 w-64 text-sm">
-									<SelectValue />
-								</SelectTrigger>
-								<SelectContent className="w-72">
-									{availableModels.map((model) => (
-										<SelectItem key={model.modelId} value={model.modelId}>
-											{model.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</SettingRow>
-
-						<div className="min-h-5 pt-2 text-xs text-muted-foreground">
-							{isAgentSaving && t('settings.agents.saving', 'Saving...')}
-							{isAgentSaved && t('settings.agents.saved', 'Saved')}
-						</div>
-					</div>
-				);
-			})}
+								<SettingRow label={t('settings.agents.model', 'Model')}>
+									<Select
+										value={modelId}
+										onValueChange={(next) => next && handleModelChange(def, next)}
+										disabled={isBusy || availableModels.length === 0}
+									>
+										<SelectTrigger className="h-8 w-64 text-sm">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent className="w-72">
+											{availableModels.map((model) => (
+												<SelectItem key={model.modelId} value={model.modelId}>
+													{model.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+								</SettingRow>
+							</CardContent>
+							<CardFooter className="min-h-10 text-xs text-muted-foreground">
+								{isAgentSaving && t('settings.agents.saving', 'Saving...')}
+								{isAgentSaved && t('settings.agents.saved', 'Saved')}
+							</CardFooter>
+						</Card>
+					);
+				})}
+			</div>
 
 			{status.type === 'error' && (
 				<div className="pt-3 text-xs text-destructive">{status.message}</div>

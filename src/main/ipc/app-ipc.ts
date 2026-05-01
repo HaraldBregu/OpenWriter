@@ -26,6 +26,55 @@ import type {
 
 const execFileAsync = promisify(execFile);
 
+const PROVIDER_MODELS_URLS: Record<string, string> = {
+	openai: 'https://api.openai.com/v1/models',
+};
+
+interface ProviderModelsApiResponse {
+	data?: Array<{ id?: unknown; created?: unknown; owned_by?: unknown }>;
+}
+
+async function fetchProviderModels(
+	providerId: string,
+	store: StoreService
+): Promise<ProviderModelInfo[]> {
+	if (typeof providerId !== 'string' || providerId.trim().length === 0) {
+		throw new Error('providerId must be a non-empty string');
+	}
+	const normalized = providerId.trim().toLowerCase();
+
+	const url = PROVIDER_MODELS_URLS[normalized];
+	if (!url) {
+		throw new Error(`Provider "${providerId}" is not supported by getModels`);
+	}
+
+	const service = store.getServiceByProviderId(normalized);
+	if (!service || !service.apiKey) {
+		throw new Error(`No API key configured for provider "${providerId}"`);
+	}
+
+	const response = await fetch(url, {
+		headers: { Authorization: `Bearer ${service.apiKey}` },
+	});
+
+	if (!response.ok) {
+		const body = await response.text().catch(() => '');
+		throw new Error(
+			`Failed to fetch models for "${providerId}": ${response.status} ${response.statusText}${body ? ` — ${body}` : ''}`
+		);
+	}
+
+	const json = (await response.json()) as ProviderModelsApiResponse;
+	const items = Array.isArray(json.data) ? json.data : [];
+	return items
+		.filter((item) => typeof item?.id === 'string')
+		.map((item) => ({
+			id: item.id as string,
+			created: typeof item.created === 'number' ? item.created : 0,
+			ownedBy: typeof item.owned_by === 'string' ? item.owned_by : '',
+		}));
+}
+
 /**
  * IPC handlers for custom application-specific operations.
  * Includes sound playback, context menu handling, and AI model store operations
