@@ -223,16 +223,9 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		key: 'workspaceManager',
 		factory: ({ globalContainer, windowContainer, workspaceService }) => {
 			const logger = globalContainer.get<LoggerService>('logger');
-			const metadata = windowContainer.get<WorkspaceMetadataService>('workspaceMetadata');
 			const outputFiles = windowContainer.get<OutputFilesService>('outputFiles');
 			const projectWorkspace = windowContainer.get<ProjectWorkspaceService>('projectWorkspace');
-			return new Workspace(
-				workspaceService,
-				metadata,
-				outputFiles,
-				projectWorkspace,
-				logger
-			);
+			return new Workspace(workspaceService, outputFiles, projectWorkspace, logger);
 		},
 	});
 
