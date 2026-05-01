@@ -4,7 +4,6 @@
  */
 
 import type { AgentSettings, Service } from '../../shared/types';
-import { findModelById } from '../../shared/models';
 import { isKnownProvider } from '../../shared/providers';
 
 export class StoreValidators {
