@@ -3,7 +3,6 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
 import type { WorkspaceService } from './workspace-service';
-import type { WorkspaceMetadataService } from './workspace-metadata';
 import type {
 	OutputFilesService,
 	OutputFile,
