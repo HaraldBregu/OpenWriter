@@ -48,6 +48,16 @@ function toLocalResourceUrl(filePath: string): string {
 	return `local-resource://localhost${urlPath}`;
 }
 
+function toRelativePath(fromDir: string, toFile: string): string {
+	const a = fromDir.replace(/\\/g, '/').replace(/\/$/, '').split('/').filter(Boolean);
+	const b = toFile.replace(/\\/g, '/').split('/').filter(Boolean);
+	let i = 0;
+	while (i < a.length && i < b.length && a[i] === b[i]) i++;
+	const ups = '../'.repeat(a.length - i);
+	const rest = b.slice(i).join('/');
+	return ups + rest || './';
+}
+
 type ItemKind = 'action' | 'submenu';
 
 type Item = {
