@@ -715,26 +715,15 @@ function Container({ children }: LayoutProps) {
 											</DropdownMenuSubContent>
 										</DropdownMenuSub>
 										<DropdownMenuSeparator />
-										<DropdownMenuGroup className="space-y-1">
-											{accountMenuItems.slice(4, 8).map(({ value, label, icon: Icon }) => (
-												<DropdownMenuItem
-													key={value}
-													className={ACCOUNT_MENU_ITEM_CLASS}
-													onClick={() => handleAccountMenuValueChange(value)}
-												>
-													<Icon />
-													<span className="flex-1">{label}</span>
-												</DropdownMenuItem>
-											))}
-										</DropdownMenuGroup>
-										<DropdownMenuSeparator />
 										<DropdownMenuGroup>
 											<DropdownMenuItem
 												className={ACCOUNT_MENU_ITEM_CLASS}
-												onClick={() => handleAccountMenuValueChange('logOut')}
+												onClick={() => handleAccountMenuValueChange('changeWorkspace')}
 											>
-												<LogOut />
-												<span className="flex-1">{t('menu.logOut', 'Log out')}</span>
+												<ArrowLeftRight />
+												<span className="flex-1">
+													{t('appLayout.changeWorkspace', 'Change workspace')}
+												</span>
 											</DropdownMenuItem>
 										</DropdownMenuGroup>
 									</DropdownMenuContent>
