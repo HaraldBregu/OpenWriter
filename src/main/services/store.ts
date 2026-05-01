@@ -216,7 +216,7 @@ export class StoreService {
 	// --- Agent settings ---
 
 	getAgents(): AgentSettings[] {
-		return this.store.get('agents').map(cloneAgent);
+		return this.store.get('agents').map((agent) => this.enrichAgent(cloneAgent(agent)));
 	}
 
 	getAgentById(agentId: string): AgentSettings | undefined {
@@ -240,7 +240,21 @@ export class StoreService {
 		}
 
 		this.store.set('agents', normalizeAgents(agents));
-		return cloneAgent(normalized);
+		return this.enrichAgent(cloneAgent(normalized));
+	}
+
+	/**
+	 * Fill `apiKey` on each AgentModel from the configured Service for its
+	 * providerId. Persisted apiKey is ignored — current Services are the truth.
+	 */
+	private enrichAgent(agent: AgentSettings): AgentSettings {
+		return {
+			...agent,
+			models: agent.models.map((m) => ({
+				...m,
+				apiKey: this.getServiceByProviderId(m.providerId)?.apiKey ?? '',
+			})),
+		};
 	}
 
 	// --- Workspace settings ---
