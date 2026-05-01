@@ -3,7 +3,8 @@ import { MAX_RECENT_WORKSPACES } from '../constants';
 import { getProvider, isKnownProvider, toServiceConfig } from '../../shared/providers';
 import type { AgentSettings, Provider, Service } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
-import { DEFAULT_IMAGE_MODEL_ID, DEFAULT_TEXT_MODEL_ID, findModelById } from '../../shared/models';
+const DEFAULT_TEXT_MODEL_ID = 'gpt-5.4-mini';
+const DEFAULT_IMAGE_MODEL_ID = 'gpt-image-1';
 
 export interface WorkspaceInfo {
 	path: string;
