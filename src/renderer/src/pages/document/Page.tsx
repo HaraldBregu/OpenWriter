@@ -530,6 +530,7 @@ function PageContent(): ReactElement {
 						onUndo={handleUndo}
 						onRedo={handleRedo}
 						onEditorReady={handleEditorReady}
+						documentBasePath={documentBasePath}
 					/>
 				)}
 			</PageBody>
