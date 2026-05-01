@@ -49,7 +49,7 @@ export default function DocumentSettings({
 			<DropdownMenuContent align="end" className="w-64">
 				<DropdownMenuGroup>
 					<DropdownMenuLabel className="truncate text-sm font-medium text-foreground">
-						{displayTitle}
+						Document settings
 					</DropdownMenuLabel>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
