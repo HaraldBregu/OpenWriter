@@ -74,4 +74,50 @@ const Blockquote = React.forwardRef<HTMLQuoteElement, React.HTMLAttributes<HTMLQ
 );
 Blockquote.displayName = 'Blockquote';
 
-export { H1, H2, H3, H4, P, Blockquote };
+const InlineCode = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
+	({ className, ...props }, ref) => (
+		<code
+			ref={ref}
+			className={cn(
+				'relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold',
+				className
+			)}
+			{...props}
+		/>
+	)
+);
+InlineCode.displayName = 'InlineCode';
+
+const Lead = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+	({ className, ...props }, ref) => (
+		<p ref={ref} className={cn('text-xl text-muted-foreground', className)} {...props} />
+	)
+);
+Lead.displayName = 'Lead';
+
+const Large = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
+	({ className, ...props }, ref) => (
+		<div ref={ref} className={cn('text-lg font-semibold', className)} {...props} />
+	)
+);
+Large.displayName = 'Large';
+
+const Small = React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
+	({ className, ...props }, ref) => (
+		<small
+			ref={ref}
+			className={cn('text-sm leading-none font-medium', className)}
+			{...props}
+		/>
+	)
+);
+Small.displayName = 'Small';
+
+const Muted = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
+	({ className, ...props }, ref) => (
+		<p ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
+	)
+);
+Muted.displayName = 'Muted';
+
+export { H1, H2, H3, H4, P, Blockquote, InlineCode, Lead, Large, Small, Muted };
