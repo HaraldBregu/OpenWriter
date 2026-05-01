@@ -227,6 +227,7 @@ export interface InvokeChannelMap {
 		args: [services: Service[]];
 		result: AppStartupInfo;
 	};
+	[AppChannels.getModels]: { args: [providerId: string]; result: ProviderModelInfo[] };
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
 	[WorkspaceChannels.setCurrent]: { args: [workspacePath: string]; result: void };
