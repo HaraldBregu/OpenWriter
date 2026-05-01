@@ -521,8 +521,6 @@
 		"dataDescription": "Ispeziona dati strutturati",
 		"searchDescription": "Cerca nel tuo workspace",
 		"settingsDescription": "Configura le preferenze",
-		"models": "Modelli",
-		"modelsDescription": "Configura i modelli AI",
 		"tasksDescription": "Visualizza i task in background",
 		"reduxDescription": "Ispeziona lo stato dell'applicazione",
 		"logs": "Log",
