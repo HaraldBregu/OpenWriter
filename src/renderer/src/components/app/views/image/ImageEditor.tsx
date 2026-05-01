@@ -32,7 +32,19 @@ import {
 	DropdownMenuItem,
 } from '@/components/ui/DropdownMenu';
 import { useImageCanvas } from './hooks';
-import { getProvider, IMAGE_MODELS } from '@shared/index';
+import { getProvider } from '@shared/index';
+import type { ModelInfo } from '@shared/index';
+
+const IMAGE_MODELS: readonly ModelInfo[] = [
+	{
+		providerId: 'openai',
+		modelId: 'gpt-image-1',
+		name: 'GPT Image 1',
+		type: 'image',
+		contextWindow: null,
+		maxOutputTokens: null,
+	},
+];
 
 const ACCEPTED_IMAGE_TYPES = 'image/jpeg,image/png,image/gif,image/webp,image/svg+xml,image/avif';
 const AI_PROCESSING_DELAY_MS = 300;
