@@ -365,10 +365,6 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.insertContents]: { args: [extensions?: string[]]; result: ResourceInfo[] };
 	[WorkspaceChannels.deleteContent]: { args: [id: string]; result: void };
 
-	// ---- OCR model preference (IpcResult-wrapped) ----
-	[WorkspaceChannels.getOcrModelId]: { args: []; result: string };
-	[WorkspaceChannels.setOcrModelId]: { args: [modelId: string]; result: void };
-
 	// ---- Files: workspace/files/ (IpcResult-wrapped) ----
 
 	// ---- Images: workspace/images/ (IpcResult-wrapped) ----
