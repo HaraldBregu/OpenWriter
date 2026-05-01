@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Select,
@@ -17,7 +17,12 @@ import {
 	ItemTitle,
 } from '@/components/ui/Item';
 import { PROVIDERS } from '../../../../../shared/types';
-import type { AgentSettings, ProviderId, ProviderModelInfo } from '../../../../../shared/types';
+import type {
+	AgentModel,
+	AgentSettings,
+	ProviderId,
+	ProviderModelInfo,
+} from '../../../../../shared/types';
 import { AGENT_DEFINITIONS } from '../../../../../shared/agents';
 import type { AgentDefinition } from '../../../../../shared/agents';
 
@@ -32,7 +37,7 @@ function defaultAgentSettings(def: AgentDefinition): AgentSettings {
 	return {
 		id: def.id,
 		name: def.name,
-		models: {},
+		models: [],
 	};
 }
 
@@ -43,9 +48,6 @@ const AgentsPage: React.FC = () => {
 	);
 	const [status, setStatus] = useState<SaveStatus>({ type: 'loading' });
 
-	const [providerByAgent, setProviderByAgent] = useState<Record<string, ProviderId | null>>(() =>
-		Object.fromEntries(AGENT_DEFINITIONS.map((def) => [def.id, null]))
-	);
 	const [modelsCache, setModelsCache] = useState<Record<string, ProviderModelInfo[]>>({});
 	const [loadingByProvider, setLoadingByProvider] = useState<Record<string, boolean>>({});
 	const [errorByProvider, setErrorByProvider] = useState<Record<string, string | null>>({});
@@ -105,53 +107,72 @@ const AgentsPage: React.FC = () => {
 		}
 	};
 
-	const ensureModelsLoaded = async (providerId: ProviderId): Promise<ProviderModelInfo[]> => {
-		const cached = modelsCache[providerId];
-		if (cached) return cached;
+	const ensureModelsLoaded = useCallback(
+		async (providerId: string): Promise<ProviderModelInfo[]> => {
+			const cached = modelsCache[providerId];
+			if (cached) return cached;
 
-		setLoadingByProvider((prev) => ({ ...prev, [providerId]: true }));
-		setErrorByProvider((prev) => ({ ...prev, [providerId]: null }));
-		try {
-			const fetched = await window.app.getModels(providerId);
-			setModelsCache((prev) => ({ ...prev, [providerId]: fetched }));
-			return fetched;
-		} catch (error) {
-			const message =
-				error instanceof Error
-					? error.message
-					: t('settings.agents.modelsLoadError', 'Unable to load models.');
-			setErrorByProvider((prev) => ({ ...prev, [providerId]: message }));
-			return [];
-		} finally {
-			setLoadingByProvider((prev) => ({ ...prev, [providerId]: false }));
-		}
-	};
+			setLoadingByProvider((prev) => ({ ...prev, [providerId]: true }));
+			setErrorByProvider((prev) => ({ ...prev, [providerId]: null }));
+			try {
+				const fetched = await window.app.getModels(providerId);
+				setModelsCache((prev) => ({ ...prev, [providerId]: fetched }));
+				return fetched;
+			} catch (error) {
+				const message =
+					error instanceof Error
+						? error.message
+						: t('settings.agents.modelsLoadError', 'Unable to load models.');
+				setErrorByProvider((prev) => ({ ...prev, [providerId]: message }));
+				return [];
+			} finally {
+				setLoadingByProvider((prev) => ({ ...prev, [providerId]: false }));
+			}
+		},
+		[modelsCache, t]
+	);
+
+	// Auto-fetch models for any provider already wired up on a stored agent
+	useEffect(() => {
+		const providerIds = new Set<string>();
+		Object.values(agentsById).forEach((agent) => {
+			agent.models.forEach((m) => {
+				if (m.providerId) providerIds.add(m.providerId);
+			});
+		});
+		providerIds.forEach((pid) => {
+			if (!modelsCache[pid] && !loadingByProvider[pid] && !errorByProvider[pid]) {
+				void ensureModelsLoaded(pid);
+			}
+		});
+	}, [agentsById, modelsCache, loadingByProvider, errorByProvider, ensureModelsLoaded]);
 
 	const handleProviderChange = async (def: AgentDefinition, providerId: ProviderId) => {
-		setProviderByAgent((prev) => ({ ...prev, [def.id]: providerId }));
 		const current = agentsById[def.id] ?? defaultAgentSettings(def);
-		// Clear previous model selection until the new provider's models load
-		await persistAgent({
+		const existingId = current.models[0]?.id ?? crypto.randomUUID();
+		const cleared: AgentSettings = {
 			...current,
-			models: { ...current.models, [def.role]: '' },
-		});
+			models: [{ id: existingId, providerId, apiKey: '', modelId: '' }],
+		};
+		await persistAgent(cleared);
 
-		const models = await ensureModelsLoaded(providerId);
-		const candidate = models[0];
+		const fetched = await ensureModelsLoaded(providerId);
+		const candidate = fetched[0];
 		if (!candidate) return;
 
-		const latest = agentsById[def.id] ?? current;
 		void persistAgent({
-			...latest,
-			models: { ...latest.models, [def.role]: candidate.id },
+			...cleared,
+			models: [{ id: existingId, providerId, apiKey: '', modelId: candidate.id }],
 		});
 	};
 
 	const handleModelChange = (def: AgentDefinition, modelId: string) => {
 		const current = agentsById[def.id] ?? defaultAgentSettings(def);
+		const existing: AgentModel | undefined = current.models[0];
+		if (!existing) return;
 		void persistAgent({
 			...current,
-			models: { ...current.models, [def.role]: modelId },
+			models: [{ ...existing, modelId }],
 		});
 	};
 
@@ -170,8 +191,9 @@ const AgentsPage: React.FC = () => {
 			<ItemGroup>
 				{AGENT_DEFINITIONS.map((def) => {
 					const agent = agentsById[def.id] ?? defaultAgentSettings(def);
-					const providerId = providerByAgent[def.id] ?? null;
-					const modelId = agent.models[def.role] ?? '';
+					const firstModel = agent.models[0];
+					const providerId = firstModel?.providerId ?? '';
+					const modelId = firstModel?.modelId ?? '';
 					const availableModels = providerId ? (modelsCache[providerId] ?? []) : [];
 					const isLoadingModels = providerId ? Boolean(loadingByProvider[providerId]) : false;
 					const providerError = providerId ? errorByProvider[providerId] : null;
@@ -186,7 +208,7 @@ const AgentsPage: React.FC = () => {
 							</ItemContent>
 							<ItemActions>
 								<Select
-									value={providerId ?? ''}
+									value={providerId}
 									onValueChange={(next) =>
 										next && void handleProviderChange(def, next as ProviderId)
 									}
