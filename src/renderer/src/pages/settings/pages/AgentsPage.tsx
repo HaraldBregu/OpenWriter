@@ -276,7 +276,7 @@ const AgentsPage: React.FC = () => {
 						</Item>
 					);
 				})}
-			</div>
+			</ItemGroup>
 
 			{status.type === 'error' && (
 				<div className="pt-3 text-xs text-destructive">{status.message}</div>
