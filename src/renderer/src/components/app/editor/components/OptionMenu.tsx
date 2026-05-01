@@ -234,11 +234,16 @@ export function OptionMenu(): React.JSX.Element | null {
 		(image: ImageEntry) => {
 			const ctx = deleteSlash();
 			if (!ctx) return;
+			const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
+			const basePath = (storage.image?.documentBasePath as string | null | undefined) ?? null;
+			const src = basePath
+				? toRelativePath(basePath, image.path)
+				: toLocalResourceUrl(image.path);
 			editor
 				.chain()
 				.focus()
 				.deleteRange({ from: ctx.slashPos, to: ctx.slashPos + 1 + ctx.queryLength })
-				.setImage({ src: toLocalResourceUrl(image.path), alt: image.name })
+				.setImage({ src, alt: image.name })
 				.run();
 		},
 		[editor, deleteSlash]
