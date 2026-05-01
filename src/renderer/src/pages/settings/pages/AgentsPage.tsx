@@ -7,7 +7,15 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/Select';
-import { SectionHeader, SettingRow } from '../components';
+import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
+import { SettingRow } from '../components';
 import { PROVIDERS } from '../../../../../shared/types';
 import type { AgentSettings, ModelInfo, ProviderId } from '../../../../../shared/types';
 

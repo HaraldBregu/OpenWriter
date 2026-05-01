@@ -257,6 +257,14 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.completeFirstRunConfiguration)
 		);
 
+		ipcMain.handle(
+			AppChannels.getModels,
+			wrapSimpleHandler(
+				(providerId: string) => fetchProviderModels(providerId, store),
+				AppChannels.getModels
+			)
+		);
+
 		// Open logs folder in system file explorer
 		ipcMain.handle(
 			AppChannels.openLogsFolder,
