@@ -49,6 +49,8 @@ export interface EditorProps {
 	onRedo?: () => void;
 	/** Called when the TipTap editor instance becomes available or is destroyed. */
 	onEditorReady?: (editor: TiptapEditor | null) => void;
+	/** Absolute path of the folder containing the markdown source, used to resolve relative image paths. */
+	documentBasePath?: string | null;
 }
 
 const Editor = React.memo(
