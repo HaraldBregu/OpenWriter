@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import type { ProviderId, Service } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE, getProvider } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
+import {
+	Card,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
+import { FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/InputGroup';
 import { Spinner } from '@/components/ui/Spinner';
 import { SectionHeader } from '../components';
