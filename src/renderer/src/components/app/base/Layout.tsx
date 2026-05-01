@@ -281,8 +281,8 @@ function Container({ children }: LayoutProps) {
 	const displayWorkspaceName = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
 	const sidebarTitle = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
 	const isLandingPage = location.pathname === '/';
-	const footerUserFirstName = 'Marco';
-	const footerUserLastName = 'Rossi';
+	const footerUserFirstName = 'Alex';
+	const footerUserLastName = 'Morgan';
 	const footerUserName = `${footerUserFirstName} ${footerUserLastName}`;
 	const footerUserInitial = footerUserFirstName.charAt(0).toUpperCase();
 
