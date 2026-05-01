@@ -435,42 +435,44 @@ function PageContent(): ReactElement {
 						placeholder={t('writing.titlePlaceholder')}
 						className="text-md! font-medium border-0 bg-transparent dark:bg-transparent rounded-none p-0 tracking-tight focus:ring-0 focus-visible:ring-0 disabled:cursor-not-allowed disabled:opacity-50"
 					/>
-					<Button
-						variant="ghost"
-						size="icon"
-						title="Undo"
-						aria-label="Undo"
-						onClick={handleUndo}
-						disabled={!canUndo}
-					>
-						<Undo2 aria-hidden="true" />
-					</Button>
-					<Button
-						variant="ghost"
-						size="icon"
-						title="Redo"
-						aria-label="Redo"
-						onClick={handleRedo}
-						disabled={!canRedo}
-					>
-						<Redo2 aria-hidden="true" />
-					</Button>
-					<HistoryMenu
-						entries={historyEntries}
-						currentEntryId={currentHistoryEntryId}
-						onRestoreEntry={handleRestoreHistoryEntry}
-						onReturnToLive={handleReturnToLive}
-					/>
-					<Button variant="ghost" size="icon" title="Download" aria-label="Download">
-						<Download aria-hidden="true" />
-					</Button>
-					<Button variant="ghost" size="icon" title="Search" aria-label="Search">
-						<Search aria-hidden="true" />
-					</Button>
-					<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
-						<Sparkles aria-hidden="true" />
-					</Button>
-					<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
+					<div className="flex items-center gap-1">
+						<Button
+							variant="ghost"
+							size="icon"
+							title="Undo"
+							aria-label="Undo"
+							onClick={handleUndo}
+							disabled={!canUndo}
+						>
+							<Undo2 aria-hidden="true" />
+						</Button>
+						<Button
+							variant="ghost"
+							size="icon"
+							title="Redo"
+							aria-label="Redo"
+							onClick={handleRedo}
+							disabled={!canRedo}
+						>
+							<Redo2 aria-hidden="true" />
+						</Button>
+						<HistoryMenu
+							entries={historyEntries}
+							currentEntryId={currentHistoryEntryId}
+							onRestoreEntry={handleRestoreHistoryEntry}
+							onReturnToLive={handleReturnToLive}
+						/>
+						<Button variant="ghost" size="icon" title="Download" aria-label="Download">
+							<Download aria-hidden="true" />
+						</Button>
+						<Button variant="ghost" size="icon" title="Search" aria-label="Search">
+							<Search aria-hidden="true" />
+						</Button>
+						<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
+							<Sparkles aria-hidden="true" />
+						</Button>
+						<DocumentInfoMenu documentId={id ?? null} title={title} content={content} />
+					</div>
 				</PageHeaderTitle>
 				{preexistingTaskActive && (
 					<PageHeaderDescription>
