@@ -23,7 +23,6 @@ interface DocumentSettingsProps {
 
 export default function DocumentSettings({
 	documentId,
-	title,
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
@@ -32,8 +31,6 @@ export default function DocumentSettings({
 		if (!documentId) return;
 		window.workspace.openDocumentFolder(documentId);
 	}, [documentId]);
-
-	const displayTitle = title.trim() || t('sidebar.untitledWriting', 'Untitled');
 
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
