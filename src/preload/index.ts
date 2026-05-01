@@ -112,6 +112,7 @@ const app: AppApi = {
 	completeFirstRunConfiguration: (services: Service[]) => {
 		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, services);
 	},
+	getModels: (providerId: string) => typedInvokeUnwrap(AppChannels.getModels, providerId),
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 	openAppDataFolder: () => typedInvokeUnwrap(AppChannels.openAppDataFolder),
