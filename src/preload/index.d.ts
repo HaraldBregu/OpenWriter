@@ -276,7 +276,7 @@ export interface WorkspaceApi {
 	// -------------------------------------------------------------------------
 	// OCR model preference
 	// -------------------------------------------------------------------------
-	/** Get the workspace's default OCR model ID. Falls back to DEFAULT_OCR_MODEL_ID. */
+	/** Get the workspace's default OCR model ID. */
 	getOcrModelId: () => Promise<string>;
 	/** Set the workspace's default OCR model ID. */
 	setOcrModelId: (modelId: string) => Promise<void>;
