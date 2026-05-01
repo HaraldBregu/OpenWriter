@@ -8,14 +8,81 @@ import {
 	SelectValue,
 } from '@/components/ui/Select';
 import { SectionHeader, SettingRow } from '../components';
-import {
-	DEFAULT_IMAGE_MODEL_ID,
-	DEFAULT_TEXT_MODEL_ID,
-	IMAGE_MODELS,
-	TEXT_MODELS,
-} from '../../../../../shared/models';
 import { getProvider } from '../../../../../shared/providers';
 import type { AgentSettings, ModelInfo } from '../../../../../shared/types';
+
+const DEFAULT_TEXT_MODEL_ID = 'gpt-5.4-mini';
+const DEFAULT_IMAGE_MODEL_ID = 'gpt-image-1';
+
+const TEXT_MODELS: readonly ModelInfo[] = [
+	{
+		providerId: 'openai',
+		modelId: 'gpt-5.4',
+		name: 'GPT-5.4',
+		type: 'multimodal',
+		contextWindow: 1050000,
+		maxOutputTokens: 128000,
+	},
+	{
+		providerId: 'openai',
+		modelId: 'gpt-5.4-mini',
+		name: 'GPT-5.4 Mini',
+		type: 'multimodal',
+		contextWindow: 400000,
+		maxOutputTokens: 128000,
+	},
+	{
+		providerId: 'openai',
+		modelId: 'gpt-5.2',
+		name: 'GPT-5.2',
+		type: 'multimodal',
+		contextWindow: null,
+		maxOutputTokens: null,
+	},
+	{
+		providerId: 'openai',
+		modelId: 'gpt-4.1',
+		name: 'GPT-4.1',
+		type: 'multimodal',
+		contextWindow: 1047576,
+		maxOutputTokens: 32768,
+	},
+	{
+		providerId: 'anthropic',
+		modelId: 'claude-opus-4-6',
+		name: 'Claude Opus 4.6',
+		type: 'multimodal',
+		contextWindow: 1000000,
+		maxOutputTokens: 128000,
+	},
+	{
+		providerId: 'anthropic',
+		modelId: 'claude-sonnet-4-6',
+		name: 'Claude Sonnet 4.6',
+		type: 'multimodal',
+		contextWindow: 1000000,
+		maxOutputTokens: 64000,
+	},
+	{
+		providerId: 'anthropic',
+		modelId: 'claude-haiku-4-5-20251001',
+		name: 'Claude Haiku 4.5',
+		type: 'multimodal',
+		contextWindow: 200000,
+		maxOutputTokens: 64000,
+	},
+];
+
+const IMAGE_MODELS: readonly ModelInfo[] = [
+	{
+		providerId: 'openai',
+		modelId: 'gpt-image-1',
+		name: 'GPT Image 1',
+		type: 'image',
+		contextWindow: null,
+		maxOutputTokens: null,
+	},
+];
 
 type SaveStatus =
 	| { type: 'idle' }
