@@ -293,24 +293,6 @@
 			"it": "Italiano",
 			"itDescription": "Usa l'italiano come lingua di visualizzazione"
 		},
-		"models": {
-			"title": "Modelli",
-			"description": "Seleziona il modello attivo per ogni provider AI.",
-			"comingSoon": "Configurazione modelli in arrivo.",
-			"apiKey": "Chiave API",
-			"enterApiKey": "Inserisci la chiave API di {{provider}}…",
-			"show": "Mostra",
-			"hide": "Nascondi",
-			"context": "{{window}} ctx",
-			"apiKeysSection": "Chiavi API",
-			"apiKeyPlaceholder": "Inserisci la chiave API…",
-			"showApiKey": "Mostra la chiave API",
-			"hideApiKey": "Nascondi la chiave API",
-			"save": "Salva",
-			"saving": "Salvataggio in corso…",
-			"saved": "Salvato!",
-			"saveError": "Errore"
-		},
 		"providers": {
 			"title": "Provider",
 			"registeredProviders": "Provider Registrati",
