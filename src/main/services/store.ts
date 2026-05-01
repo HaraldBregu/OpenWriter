@@ -20,23 +20,7 @@ export interface StoreSchema {
 
 const DEFAULTS: StoreSchema = {
 	services: [],
-	agents: [
-		{
-			id: 'assistant',
-			name: 'Assistant Agent',
-			models: {
-				text: DEFAULT_TEXT_MODEL_ID,
-				image: DEFAULT_IMAGE_MODEL_ID,
-			},
-		},
-		{
-			id: 'text-generator-v2',
-			name: 'Text Generator V2',
-			models: {
-				text: 'gpt-5.2',
-			},
-		},
-	],
+	agents: [],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
