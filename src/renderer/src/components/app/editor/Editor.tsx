@@ -69,6 +69,7 @@ const Editor = React.memo(
 				onUndo,
 				onRedo,
 				onEditorReady,
+				documentBasePath = null,
 			},
 			ref
 		) => {
