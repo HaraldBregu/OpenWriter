@@ -156,6 +156,50 @@ export default function DocumentInfoMenu({
 					</DropdownMenuGroup>
 					<DropdownMenuSeparator />
 					<DropdownMenuGroup>
+						<div className="px-1.5 py-1">
+							<div className="mb-1.5 flex items-center justify-between">
+								<span className="text-xs font-medium">Width</span>
+							</div>
+							<Slider defaultValue={50} />
+						</div>
+						<div className="px-1.5 py-1">
+							<div className="mb-1.5 flex items-center justify-between">
+								<span className="text-xs font-medium">Text size</span>
+							</div>
+							<Slider defaultValue={50} />
+						</div>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>Font</DropdownMenuLabel>
+						<DropdownMenuRadioGroup defaultValue="sans">
+							<DropdownMenuRadioItem value="sans">
+								<span className="font-sans">Sans</span>
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="serif">
+								<span className="font-serif">Serif</span>
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="mono">
+								<span className="font-mono">Mono</span>
+							</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
+						<DropdownMenuLabel>Theme</DropdownMenuLabel>
+						<DropdownMenuRadioGroup defaultValue="light">
+							<DropdownMenuRadioItem value="light">
+								<Sun className="text-muted-foreground" aria-hidden="true" />
+								<span>Light</span>
+							</DropdownMenuRadioItem>
+							<DropdownMenuRadioItem value="dark">
+								<Moon className="text-muted-foreground" aria-hidden="true" />
+								<span>Dark</span>
+							</DropdownMenuRadioItem>
+						</DropdownMenuRadioGroup>
+					</DropdownMenuGroup>
+					<DropdownMenuSeparator />
+					<DropdownMenuGroup>
 						<DropdownMenuItem onClick={handleOpenFolder} disabled={!documentId}>
 							<FolderOpen className="text-muted-foreground" aria-hidden="true" />
 							<span className="truncate">{t('configSidebar.openFolder', 'Open folder')}</span>
