@@ -46,7 +46,6 @@ const WORKSPACE_SUBFOLDERS = ['files', 'contents', 'data', 'images', 'documents'
 export class Workspace implements Disposable {
 	constructor(
 		private readonly workspace: WorkspaceService,
-		private readonly metadata: WorkspaceMetadataService,
 		private readonly outputFiles: OutputFilesService,
 		private readonly projectWorkspace: ProjectWorkspaceService,
 		private readonly logger: LoggerService
