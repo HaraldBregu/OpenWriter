@@ -293,24 +293,6 @@
 			"it": "Italiano",
 			"itDescription": "Use Italian as the display language"
 		},
-		"models": {
-			"title": "Models",
-			"description": "Select the active model for each AI provider.",
-			"comingSoon": "Model configuration coming soon.",
-			"apiKey": "API Key",
-			"enterApiKey": "Enter {{provider}} API key…",
-			"show": "Show",
-			"hide": "Hide",
-			"context": "{{window}} ctx",
-			"apiKeysSection": "API Keys",
-			"apiKeyPlaceholder": "Enter API key…",
-			"showApiKey": "Show API key",
-			"hideApiKey": "Hide API key",
-			"save": "Save",
-			"saving": "Saving…",
-			"saved": "Saved!",
-			"saveError": "Error"
-		},
 		"providers": {
 			"title": "Providers",
 			"registeredProviders": "Registered Providers",
