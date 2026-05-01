@@ -15,16 +15,16 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Slider } from '@/components/ui/Slider';
 
-interface DocumentInfoMenuProps {
+interface DocumentSettingsProps {
 	readonly documentId: string | null;
 	readonly title: string;
 	readonly content: string;
 }
 
-export default function DocumentInfoMenu({
+export default function DocumentSettings({
 	documentId,
 	title,
-}: DocumentInfoMenuProps): React.ReactElement {
+}: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
 
