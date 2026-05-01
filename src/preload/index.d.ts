@@ -109,6 +109,7 @@ export type {
 	DocumentImageChangeEvent,
 	ProjectWorkspaceInfo,
 	DocumentConfig,
+	ProviderModelInfo,
 	Service,
 	AppLogEntry,
 	AppStartupInfo,
