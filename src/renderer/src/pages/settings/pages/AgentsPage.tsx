@@ -136,14 +136,15 @@ function defaultAgentSettings(def: AgentDefinition): AgentSettings {
 	return {
 		id: def.id,
 		name: def.name,
-		models: { [def.role]: def.defaultModelId },
+		models: {},
 	};
 }
 
-function deriveProviderFromAgent(def: AgentDefinition, agent: AgentSettings): ProviderId {
+function deriveProviderFromAgent(def: AgentDefinition, agent: AgentSettings): ProviderId | null {
 	const modelId = agent.models[def.role];
+	if (!modelId) return null;
 	const found = modelsForRole(def.role).find((m) => m.modelId === modelId);
-	return found?.providerId ?? def.defaultProviderId;
+	return found?.providerId ?? null;
 }
 
 const AgentsPage: React.FC = () => {
