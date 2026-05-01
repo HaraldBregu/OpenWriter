@@ -18,6 +18,8 @@ import {
 } from '@/components/ui/Item';
 import { PROVIDERS } from '../../../../../shared/types';
 import type { AgentSettings, ProviderId, ProviderModelInfo } from '../../../../../shared/types';
+import { AGENT_DEFINITIONS } from '../../../../../shared/agents';
+import type { AgentDefinition } from '../../../../../shared/agents';
 
 type SaveStatus =
 	| { type: 'idle' }
