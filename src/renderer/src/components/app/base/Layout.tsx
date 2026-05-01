@@ -627,9 +627,6 @@ function Container({ children }: LayoutProps) {
 										<DropdownMenuGroup>
 											<DropdownMenuLabel className="flex flex-col gap-0.5 font-normal">
 												<span className="text-sm font-medium">{footerUserName}</span>
-												<span className="truncate text-xs text-muted-foreground">
-													{footerUserEmail}
-												</span>
 											</DropdownMenuLabel>
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
