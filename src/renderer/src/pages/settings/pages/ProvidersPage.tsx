@@ -63,24 +63,6 @@ const ProvidersPage: React.FC = () => {
 					/>
 				);
 			})}
-
-			<SectionHeader title={t('settings.providers.email', 'Email Providers')} />
-			{EMAIL_PROVIDERS.map((provider) => (
-				<SettingRow key={provider} label={provider}>
-					<span className="text-sm text-muted-foreground">
-						{t('settings.providers.comingSoon', 'Coming soon')}
-					</span>
-				</SettingRow>
-			))}
-
-			<SectionHeader title={t('settings.providers.cloudStorage', 'Cloud Storage')} />
-			{CLOUD_STORAGE_PROVIDERS.map((provider) => (
-				<SettingRow key={provider} label={provider}>
-					<span className="text-sm text-muted-foreground">
-						{t('settings.providers.comingSoon', 'Coming soon')}
-					</span>
-				</SettingRow>
-			))}
 		</div>
 	);
 };
