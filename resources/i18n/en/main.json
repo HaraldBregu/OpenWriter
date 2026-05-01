@@ -141,7 +141,6 @@
 		"tabs": {
 			"general": "General",
 			"workspace": "Workspace",
-			"models": "Models",
 			"providers": "Providers",
 			"agents": "Agents",
 			"skill": "Skill",
