@@ -3,19 +3,16 @@
  *
  * Centralises chunk token extraction, error classification, and user-facing
  * error messages so the individual handlers stay thin.
- *
- * Reasoning-model detection is delegated to the shared model constants module.
  */
 
-import { isReasoningModel as catalogueIsReasoningModel } from '../../shared/models';
-
-// ---------------------------------------------------------------------------
-// Re-export reasoning detection from the shared catalogue
-// ---------------------------------------------------------------------------
+const REASONING_PREFIXES = ['o1', 'o3', 'o4-mini', 'o3-mini', 'o1-mini', 'o1-preview'] as const;
 
 /** Returns `true` when `modelName` matches a known reasoning-only model. */
 export function isReasoningModel(modelName: string): boolean {
-	return catalogueIsReasoningModel(modelName);
+	const normalized = modelName.toLowerCase();
+	return REASONING_PREFIXES.some(
+		(prefix) => normalized === prefix || normalized.startsWith(`${prefix}-`)
+	);
 }
 
 /**
