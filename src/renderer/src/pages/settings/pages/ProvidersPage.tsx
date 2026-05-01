@@ -83,13 +83,6 @@ const ProvidersPage: React.FC = () => {
 		[drafts, existingKeys, loadServices, services]
 	);
 
-	const handleResetOne = useCallback(
-		(providerId: ProviderId) => {
-			setDrafts((prev) => ({ ...prev, [providerId]: existingKeys[providerId] }));
-		},
-		[existingKeys]
-	);
-
 	return (
 		<PageContainer>
 			<PageHeader className="px-0 border-none">
