@@ -140,8 +140,8 @@ function normalizeAgentInput(value: unknown): AgentSettings | null {
 		id,
 		name,
 		models: {
-			...(textModelId && findModelById(textModelId) ? { text: textModelId } : {}),
-			...(imageModelId && findModelById(imageModelId) ? { image: imageModelId } : {}),
+			...(textModelId ? { text: textModelId } : {}),
+			...(imageModelId ? { image: imageModelId } : {}),
 		},
 	};
 }
