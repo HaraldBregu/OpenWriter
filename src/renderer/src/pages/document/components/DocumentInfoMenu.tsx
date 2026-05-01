@@ -61,13 +61,13 @@ export default function DocumentInfoMenu({
 						<div className="mb-1.5 flex items-center justify-between">
 							<span className="text-xs font-medium">Width</span>
 						</div>
-						<Slider defaultValue={50} />
+						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
 					</div>
 					<div className="px-1.5 py-1">
 						<div className="mb-1.5 flex items-center justify-between">
 							<span className="text-xs font-medium">Text size</span>
 						</div>
-						<Slider defaultValue={50} />
+						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
 					</div>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
@@ -104,6 +104,9 @@ export default function DocumentInfoMenu({
 					<DropdownMenuItem onClick={handleOpenFolder} disabled={!documentId}>
 						<FolderOpen className="text-muted-foreground" aria-hidden="true" />
 						<span className="truncate">{t('configSidebar.openFolder', 'Open folder')}</span>
+					</DropdownMenuItem>
+					<DropdownMenuItem>
+						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
 					</DropdownMenuItem>
 				</DropdownMenuGroup>
 			</DropdownMenuContent>

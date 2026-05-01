@@ -14,6 +14,7 @@ import type { Editor as TiptapEditor } from '@tiptap/core';
 import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { Separator } from '@/components/ui/Separator';
 import HistoryMenu from './components/HistoryMenu';
 import DocumentInfoMenu from './components/DocumentInfoMenu';
 import {
