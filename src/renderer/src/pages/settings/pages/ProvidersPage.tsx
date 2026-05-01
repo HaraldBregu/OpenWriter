@@ -4,7 +4,7 @@ import type { ProviderId, Service } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE, getProvider } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
-import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/InputGroup';
+import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
 import {
 	PageBody,
@@ -92,7 +92,7 @@ const ProvidersPage: React.FC = () => {
 
 	return (
 		<PageContainer>
-			<PageHeader>
+			<PageHeader className="px-0 border-none">
 				<PageHeaderTitle>{t('settings.providers.title', 'Providers')}</PageHeaderTitle>
 				<PageHeaderDescription>
 					{t(
@@ -101,67 +101,63 @@ const ProvidersPage: React.FC = () => {
 					)}
 				</PageHeaderDescription>
 			</PageHeader>
-			<PageBody>
+			<PageBody className="px-0">
 				<FieldGroup className="max-w-2xl">
-				{PROVIDER_IDS.map((providerId) => {
-					const isSaving = saving.has(providerId);
-					const draftValue = drafts[providerId] ?? '';
-					const isDirty = draftValue.trim() !== existingKeys[providerId];
+					{PROVIDER_IDS.map((providerId) => {
+						const isSaving = saving.has(providerId);
+						const draftValue = drafts[providerId] ?? '';
+						const isDirty = draftValue.trim() !== existingKeys[providerId];
 
-					return (
-						<form
-							key={providerId}
-							onSubmit={(e) => {
-								e.preventDefault();
-								void handleSaveOne(providerId);
-							}}
-							onReset={(e) => {
-								e.preventDefault();
-								handleResetOne(providerId);
-							}}
-						>
-							<Field>
-								<FieldLabel htmlFor={`provider-${providerId}`}>
-									{PROVIDER_LABELS[providerId]}
-								</FieldLabel>
-								<InputGroup>
-									<InputGroupInput
-										id={`provider-${providerId}`}
-										type="password"
-										value={draftValue}
-										onChange={(e) =>
-											setDrafts((prev) => ({
-												...prev,
-												[providerId]: e.target.value,
-											}))
-										}
-										placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
-										autoComplete="off"
-										spellCheck={false}
-										disabled={isSaving}
-									/>
-									{isSaving && (
-										<InputGroupAddon align="inline-end">
-											<Spinner />
-										</InputGroupAddon>
-									)}
-								</InputGroup>
-								<Field orientation="horizontal" className="justify-end">
-									<Button
-										type="reset"
-										variant="outline"
-										disabled={!isDirty || isSaving}
-									>
-										{t('common.reset', 'Reset')}
-									</Button>
-									<Button type="submit" disabled={!isDirty || isSaving}>
-										{t('common.submit', 'Submit')}
-									</Button>
+						return (
+							<form
+								key={providerId}
+								onSubmit={(e) => {
+									e.preventDefault();
+									void handleSaveOne(providerId);
+								}}
+								onReset={(e) => {
+									e.preventDefault();
+									handleResetOne(providerId);
+								}}
+							>
+								<Field>
+									<FieldLabel htmlFor={`provider-${providerId}`}>
+										{PROVIDER_LABELS[providerId]}
+									</FieldLabel>
+									<InputGroup>
+										<InputGroupInput
+											id={`provider-${providerId}`}
+											type="password"
+											value={draftValue}
+											onChange={(e) =>
+												setDrafts((prev) => ({
+													...prev,
+													[providerId]: e.target.value,
+												}))
+											}
+											placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
+											autoComplete="off"
+											spellCheck={false}
+											disabled={isSaving}
+										/>
+										{isSaving && (
+											<InputGroupAddon align="inline-end">
+												<Spinner />
+											</InputGroupAddon>
+										)}
+									</InputGroup>
+									<Field orientation="horizontal" className="justify-end">
+										<Button type="reset" variant="outline" disabled={!isDirty || isSaving}>
+											{t('common.reset', 'Reset')}
+										</Button>
+										<Button type="submit" disabled={!isDirty || isSaving}>
+											{t('common.submit', 'Submit')}
+										</Button>
+									</Field>
 								</Field>
-							</Field>
-						</form>
-					);
-				})}
+							</form>
+						);
+					})}
 				</FieldGroup>
 			</PageBody>
 		</PageContainer>
