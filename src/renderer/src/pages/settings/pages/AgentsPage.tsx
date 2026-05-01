@@ -213,73 +213,67 @@ const AgentsPage: React.FC = () => {
 					const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
 
 					return (
-						<Card key={def.id}>
-							<CardHeader>
-								<div className="flex items-start justify-between gap-3">
-									<div className="min-w-0">
-										<CardTitle>{def.name}</CardTitle>
-										<CardDescription>{def.description}</CardDescription>
-									</div>
-									<span className="shrink-0 text-xs text-muted-foreground">
-										{isAgentSaving && t('settings.agents.saving', 'Saving...')}
-										{isAgentSaved && t('settings.agents.saved', 'Saved')}
-									</span>
-								</div>
-							</CardHeader>
-							<CardContent>
-								<SettingRow label={t('settings.agents.assignment', 'Provider & Model')}>
-									<div className="flex items-center gap-2">
-										<Select
-											value={providerId ?? ''}
-											onValueChange={(next) =>
-												next && void handleProviderChange(def, next as ProviderId)
-											}
-											disabled={isBusy}
-										>
-											<SelectTrigger className="h-8 w-44 text-sm">
-												<SelectValue
-													placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
-												/>
-											</SelectTrigger>
-											<SelectContent className="w-56">
-												{PROVIDERS.map((provider) => (
-													<SelectItem key={provider.id} value={provider.id}>
-														{provider.name}
-													</SelectItem>
-												))}
-											</SelectContent>
-										</Select>
-										{providerId && (
-											<Select
-												value={modelId}
-												onValueChange={(next) => next && handleModelChange(def, next)}
-												disabled={isBusy || isLoadingModels || availableModels.length === 0}
-											>
-												<SelectTrigger className="h-8 w-44 text-sm">
-													<SelectValue
-														placeholder={
-															isLoadingModels
-																? t('settings.agents.modelsLoading', 'Loading…')
-																: t('settings.agents.modelPlaceholder', 'Select model')
-														}
-													/>
-												</SelectTrigger>
-												<SelectContent className="w-56">
-													{availableModels.map((model) => (
-														<SelectItem key={model.id} value={model.id}>
-															{model.name}
-														</SelectItem>
-													))}
-												</SelectContent>
-											</Select>
-										)}
-									</div>
-								</SettingRow>
-								{providerError && (
-									<p className="mt-2 text-xs text-destructive">{providerError}</p>
+						<Item key={def.id} variant="outline">
+							<ItemContent>
+								<ItemTitle>{def.name}</ItemTitle>
+								<ItemDescription>{def.description}</ItemDescription>
+							</ItemContent>
+							<ItemActions>
+								<Select
+									value={providerId ?? ''}
+									onValueChange={(next) =>
+										next && void handleProviderChange(def, next as ProviderId)
+									}
+									disabled={isBusy}
+								>
+									<SelectTrigger className="h-8 w-44 text-sm">
+										<SelectValue
+											placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
+										/>
+									</SelectTrigger>
+									<SelectContent className="w-56">
+										{PROVIDERS.map((provider) => (
+											<SelectItem key={provider.id} value={provider.id}>
+												{provider.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+								{providerId && (
+									<Select
+										value={modelId}
+										onValueChange={(next) => next && handleModelChange(def, next)}
+										disabled={isBusy || isLoadingModels || availableModels.length === 0}
+									>
+										<SelectTrigger className="h-8 w-44 text-sm">
+											<SelectValue
+												placeholder={
+													isLoadingModels
+														? t('settings.agents.modelsLoading', 'Loading…')
+														: t('settings.agents.modelPlaceholder', 'Select model')
+												}
+											/>
+										</SelectTrigger>
+										<SelectContent className="w-56">
+											{availableModels.map((model) => (
+												<SelectItem key={model.id} value={model.id}>
+													{model.name}
+												</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
 								)}
-							</CardContent>
-						</Card>
+								<span className="ml-2 text-xs text-muted-foreground">
+									{isAgentSaving && t('settings.agents.saving', 'Saving...')}
+									{isAgentSaved && t('settings.agents.saved', 'Saved')}
+								</span>
+							</ItemActions>
+							{providerError && (
+								<ItemFooter>
+									<p className="text-xs text-destructive">{providerError}</p>
+								</ItemFooter>
+							)}
+						</Item>
 					);
 				})}
 			</div>
