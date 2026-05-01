@@ -636,7 +636,7 @@ function Container({ children }: LayoutProps) {
 										</DropdownMenuGroup>
 										<DropdownMenuSeparator />
 										<DropdownMenuGroup className="space-y-1">
-											{accountMenuItems.slice(0, 3).map(({ value, label, icon: Icon }) => (
+											{accountMenuItems.map(({ value, label, icon: Icon }) => (
 												<DropdownMenuItem
 													key={value}
 													className={ACCOUNT_MENU_ITEM_CLASS}
