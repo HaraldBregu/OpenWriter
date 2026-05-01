@@ -6,7 +6,13 @@ import { Button } from '@/components/ui/Button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { InputGroup, InputGroupInput, InputGroupAddon } from '@/components/ui/InputGroup';
 import { Spinner } from '@/components/ui/Spinner';
-import { SectionHeader } from '../components';
+import {
+	PageBody,
+	PageContainer,
+	PageHeader,
+	PageHeaderDescription,
+	PageHeaderTitle,
+} from '@/components/app/base/page';
 
 const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
 	(acc, id) => {
