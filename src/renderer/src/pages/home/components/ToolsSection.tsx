@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, Settings, Sparkles } from 'lucide-react';
+import { Search, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCommandModal } from '@/components/app/command-modals';
 import { CategoryCard } from './CategoryCard';
@@ -15,20 +15,13 @@ export function ToolsSection(): ReactElement {
 			<p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
 				{t('home.tools', 'Tools')}
 			</p>
-			<div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+			<div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
 				<CategoryCard
 					icon={Search}
 					labelKey="common.search"
 					descriptionKey="home.searchDescription"
 					accent="bg-foreground/8 text-foreground"
 					onClick={() => open('search')}
-				/>
-				<CategoryCard
-					icon={Sparkles}
-					labelKey="home.models"
-					descriptionKey="home.modelsDescription"
-					accent="bg-muted text-foreground"
-					onClick={() => navigate('/settings/models')}
 				/>
 				<CategoryCard
 					icon={Settings}
