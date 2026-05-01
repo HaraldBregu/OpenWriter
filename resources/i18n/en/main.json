@@ -521,8 +521,6 @@
 		"dataDescription": "Inspect structured data",
 		"searchDescription": "Find across your workspace",
 		"settingsDescription": "Configure preferences",
-		"models": "Models",
-		"modelsDescription": "Configure AI models",
 		"tasksDescription": "View background tasks",
 		"reduxDescription": "Inspect application state",
 		"logs": "Logs",
