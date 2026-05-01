@@ -27,9 +27,7 @@ const buildKeyMap = (services: ReadonlyArray<Service & { id: string }>) => {
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
 	const [services, setServices] = useState<Array<Service & { id: string }>>([]);
-	const [drafts, setDrafts] = useState<Record<ProviderId, string>>(
-		() => buildKeyMap([])
-	);
+	const [drafts, setDrafts] = useState<Record<ProviderId, string>>(() => buildKeyMap([]));
 	const [saving, setSaving] = useState<ReadonlySet<ProviderId>>(() => new Set());
 
 	const existingKeys = useMemo(() => buildKeyMap(services), [services]);
@@ -48,41 +46,40 @@ const ProvidersPage: React.FC = () => {
 		setDrafts(existingKeys);
 	}, [existingKeys]);
 
-	const handleSubmit = useCallback(
-		async (e: React.FormEvent<HTMLFormElement>) => {
-			e.preventDefault();
-			const dirty = PROVIDER_IDS.filter((id) => {
-				const next = (drafts[id] ?? '').trim();
-				return next.length > 0 && next !== existingKeys[id];
-			});
-			if (dirty.length === 0) return;
+	const handleSaveOne = useCallback(
+		async (providerId: ProviderId) => {
+			const apiKey = (drafts[providerId] ?? '').trim();
+			if (apiKey.length === 0 || apiKey === existingKeys[providerId]) return;
 
-			setSaving(new Set(dirty));
+			const provider = getProvider(providerId);
+			if (!provider) return;
+
+			setSaving((prev) => {
+				const next = new Set(prev);
+				next.add(providerId);
+				return next;
+			});
 			try {
-				await Promise.all(
-					dirty.map(async (providerId) => {
-						const provider = getProvider(providerId);
-						if (!provider) return;
-						const apiKey = drafts[providerId].trim();
-						const added = await window.app.addService({ provider, apiKey });
-						const stale = services.filter(
-							(entry) => entry.provider.id === providerId && entry.id !== added.id
-						);
-						await Promise.all(stale.map((entry) => window.app.deleteService(entry.id)));
-					})
+				const added = await window.app.addService({ provider, apiKey });
+				const stale = services.filter(
+					(entry) => entry.provider.id === providerId && entry.id !== added.id
 				);
+				await Promise.all(stale.map((entry) => window.app.deleteService(entry.id)));
 				await loadServices();
 			} finally {
-				setSaving(new Set());
+				setSaving((prev) => {
+					const next = new Set(prev);
+					next.delete(providerId);
+					return next;
+				});
 			}
 		},
 		[drafts, existingKeys, loadServices, services]
 	);
 
-	const handleReset = useCallback(
-		(e: React.FormEvent<HTMLFormElement>) => {
-			e.preventDefault();
-			setDrafts(existingKeys);
+	const handleResetOne = useCallback(
+		(providerId: ProviderId) => {
+			setDrafts((prev) => ({ ...prev, [providerId]: existingKeys[providerId] }));
 		},
 		[existingKeys]
 	);
@@ -99,12 +96,25 @@ const ProvidersPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.providers.llm', 'LLM Providers')} />
 
-			<form onSubmit={handleSubmit} onReset={handleReset}>
-				<FieldGroup>
-					{PROVIDER_IDS.map((providerId) => {
-						const isSaving = saving.has(providerId);
-						return (
-							<Field key={providerId}>
+			<FieldGroup>
+				{PROVIDER_IDS.map((providerId) => {
+					const isSaving = saving.has(providerId);
+					const draftValue = drafts[providerId] ?? '';
+					const isDirty = draftValue.trim() !== existingKeys[providerId];
+
+					return (
+						<form
+							key={providerId}
+							onSubmit={(e) => {
+								e.preventDefault();
+								void handleSaveOne(providerId);
+							}}
+							onReset={(e) => {
+								e.preventDefault();
+								handleResetOne(providerId);
+							}}
+						>
+							<Field>
 								<FieldLabel htmlFor={`provider-${providerId}`}>
 									{PROVIDER_LABELS[providerId]}
 								</FieldLabel>
@@ -112,7 +122,7 @@ const ProvidersPage: React.FC = () => {
 									<InputGroupInput
 										id={`provider-${providerId}`}
 										type="password"
-										value={drafts[providerId] ?? ''}
+										value={draftValue}
 										onChange={(e) =>
 											setDrafts((prev) => ({
 												...prev,
@@ -130,18 +140,23 @@ const ProvidersPage: React.FC = () => {
 										</InputGroupAddon>
 									)}
 								</InputGroup>
+								<Field orientation="horizontal">
+									<Button
+										type="reset"
+										variant="outline"
+										disabled={!isDirty || isSaving}
+									>
+										{t('common.reset', 'Reset')}
+									</Button>
+									<Button type="submit" disabled={!isDirty || isSaving}>
+										{t('common.submit', 'Submit')}
+									</Button>
+								</Field>
 							</Field>
-						);
-					})}
-
-					<Field orientation="horizontal">
-						<Button type="reset" variant="outline">
-							{t('common.reset', 'Reset')}
-						</Button>
-						<Button type="submit">{t('common.submit', 'Submit')}</Button>
-					</Field>
-				</FieldGroup>
-			</form>
+						</form>
+					);
+				})}
+			</FieldGroup>
 		</div>
 	);
 };
