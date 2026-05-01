@@ -52,6 +52,7 @@ import type {
 	SkillInfo,
 	Theme,
 	Service,
+	ProviderModelInfo,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
