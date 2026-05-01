@@ -475,27 +475,31 @@ function PageContent(): ReactElement {
 						<Button variant="ghost" size="icon" title="Download" aria-label="Download">
 							<Download aria-hidden="true" />
 						</Button>
-						<Dialog>
-							<DialogTrigger
+						<Popover>
+							<PopoverTrigger
 								render={
 									<Button variant="ghost" size="icon" title="Search" aria-label="Search">
 										<Search aria-hidden="true" />
 									</Button>
 								}
 							/>
-							<DialogContent>
-								<DialogHeader>
-									<DialogTitle>Search</DialogTitle>
-								</DialogHeader>
-								<InputGroup>
-									<InputGroupAddon>
-										<Search aria-hidden="true" />
-									</InputGroupAddon>
-									<InputGroupInput placeholder="Search in document..." />
-								</InputGroup>
-								<DialogFooter showCloseButton />
-							</DialogContent>
-						</Dialog>
+							<PopoverContent align="end" className="w-80 p-0">
+								<PopoverHeader className="px-4 py-3 border-b">
+									<PopoverTitle>Search</PopoverTitle>
+								</PopoverHeader>
+								<div className="p-4">
+									<InputGroup>
+										<InputGroupAddon>
+											<Search aria-hidden="true" />
+										</InputGroupAddon>
+										<InputGroupInput placeholder="Search in document..." />
+									</InputGroup>
+								</div>
+								<div className="flex items-center justify-end gap-2 border-t bg-muted/50 px-4 py-2 rounded-b-md">
+									<span className="text-xs text-muted-foreground">0 results</span>
+								</div>
+							</PopoverContent>
+						</Popover>
 						<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
 							<Sparkles aria-hidden="true" />
 						</Button>
