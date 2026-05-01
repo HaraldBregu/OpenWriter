@@ -323,14 +323,6 @@ const App: React.FC = () => {
 																</Suspense>
 															}
 														/>
-														<Route
-															path="models"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<ModelsPage />
-																</Suspense>
-															}
-														/>
 													</Route>
 													<Route
 														path="/content/:id"
