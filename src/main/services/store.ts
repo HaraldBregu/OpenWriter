@@ -129,29 +129,10 @@ function normalizeAgentInput(value: unknown): AgentSettings | null {
 }
 
 function normalizeAgents(value: unknown): AgentSettings[] {
-	const normalized = Array.isArray(value)
-		? value.map(normalizeAgentInput).filter((agent): agent is AgentSettings => agent !== null)
-		: [];
-	const next = normalized.map((agent) =>
-		agent.id === 'assistant'
-			? {
-					...agent,
-					name: agent.name || 'Assistant Agent',
-					models: {
-						text: agent.models.text ?? DEFAULT_TEXT_MODEL_ID,
-						image: agent.models.image ?? DEFAULT_IMAGE_MODEL_ID,
-					},
-				}
-			: agent
-	);
-
-	for (const fallback of DEFAULTS.agents) {
-		if (!next.some((agent) => agent.id === fallback.id)) {
-			next.push(cloneAgent(fallback));
-		}
-	}
-
-	return next;
+	if (!Array.isArray(value)) return [];
+	return value
+		.map(normalizeAgentInput)
+		.filter((agent): agent is AgentSettings => agent !== null);
 }
 
 export class StoreService {
