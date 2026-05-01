@@ -145,6 +145,16 @@ export interface Service {
 	apiKey: string;
 }
 
+/**
+ * Single model entry as returned by a provider's `/models` endpoint.
+ * Shape is normalised across providers.
+ */
+export interface ProviderModelInfo {
+	id: string;
+	created: number;
+	ownedBy: string;
+}
+
 export type AgentModelRole = 'text' | 'image';
 
 export interface AgentSettings {

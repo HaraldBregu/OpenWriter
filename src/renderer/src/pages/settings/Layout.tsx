@@ -11,7 +11,6 @@ import {
 } from '@/components/app/base/page';
 import { useLanguageMode } from '@/hooks/use-language-mode';
 import { Button } from '@/components/ui/Button';
-import { Separator } from '@/components/ui/Separator';
 
 interface NavItemProps {
 	readonly to: string;
