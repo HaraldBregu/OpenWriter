@@ -8,11 +8,61 @@ import {
 	SelectValue,
 } from '@/components/ui/Select';
 import { SectionHeader, SettingRow } from '../components';
-import { getProvider } from '../../../../../shared/providers';
-import type { AgentSettings, ModelInfo } from '../../../../../shared/types';
+import { PROVIDERS } from '../../../../../shared/types';
+import type { AgentSettings, ModelInfo, ProviderId } from '../../../../../shared/types';
 
-const DEFAULT_TEXT_MODEL_ID = 'gpt-5.4-mini';
-const DEFAULT_IMAGE_MODEL_ID = 'gpt-image-1';
+type SaveStatus =
+	| { type: 'idle' }
+	| { type: 'loading' }
+	| { type: 'saving'; agentId: string }
+	| { type: 'saved'; agentId: string }
+	| { type: 'error'; message: string };
+
+type AgentRole = 'text' | 'image';
+
+interface AgentDefinition {
+	readonly id: string;
+	readonly name: string;
+	readonly description: string;
+	readonly role: AgentRole;
+	readonly defaultProviderId: ProviderId;
+	readonly defaultModelId: string;
+}
+
+const AGENT_DEFINITIONS: readonly AgentDefinition[] = [
+	{
+		id: 'content-reviewer',
+		name: 'Content Reviewer',
+		description: 'Reviews drafts for clarity, tone, and structural issues before publishing.',
+		role: 'text',
+		defaultProviderId: 'anthropic',
+		defaultModelId: 'claude-sonnet-4-6',
+	},
+	{
+		id: 'content-writer',
+		name: 'Content Writer',
+		description: 'Drafts long-form articles, posts, and structured documents from a prompt.',
+		role: 'text',
+		defaultProviderId: 'openai',
+		defaultModelId: 'gpt-5.4',
+	},
+	{
+		id: 'image-creator',
+		name: 'Image Creator',
+		description: 'Generates illustrations, hero images, and graphics from a text prompt.',
+		role: 'image',
+		defaultProviderId: 'openai',
+		defaultModelId: 'gpt-image-1',
+	},
+	{
+		id: 'assistant',
+		name: 'Personal Assistant',
+		description: 'Answers questions, summarises selections, and assists while you write.',
+		role: 'text',
+		defaultProviderId: 'openai',
+		defaultModelId: 'gpt-5.4-mini',
+	},
+];
 
 const TEXT_MODELS: readonly ModelInfo[] = [
 	{
@@ -30,14 +80,6 @@ const TEXT_MODELS: readonly ModelInfo[] = [
 		type: 'multimodal',
 		contextWindow: 400000,
 		maxOutputTokens: 128000,
-	},
-	{
-		providerId: 'openai',
-		modelId: 'gpt-5.2',
-		name: 'GPT-5.2',
-		type: 'multimodal',
-		contextWindow: null,
-		maxOutputTokens: null,
 	},
 	{
 		providerId: 'openai',
@@ -84,73 +126,33 @@ const IMAGE_MODELS: readonly ModelInfo[] = [
 	},
 ];
 
-type SaveStatus =
-	| { type: 'idle' }
-	| { type: 'loading' }
-	| { type: 'saving' }
-	| { type: 'saved' }
-	| { type: 'error'; message: string };
-
-const ASSISTANT_AGENT_ID = 'assistant';
-
-const DEFAULT_ASSISTANT_AGENT: AgentSettings = {
-	id: ASSISTANT_AGENT_ID,
-	name: 'Assistant Agent',
-	models: {
-		text: DEFAULT_TEXT_MODEL_ID,
-		image: DEFAULT_IMAGE_MODEL_ID,
-	},
-};
-
-function modelLabel(model: ModelInfo): string {
-	const providerName = getProvider(model.providerId)?.name ?? model.providerId;
-	return `${model.name} (${providerName})`;
+function modelsForRole(role: AgentRole): readonly ModelInfo[] {
+	return role === 'image' ? IMAGE_MODELS : TEXT_MODELS;
 }
 
-function AgentModelSelect({
-	label,
-	value,
-	models,
-	disabled,
-	onChange,
-}: {
-	readonly label: string;
-	readonly value: string;
-	readonly models: readonly ModelInfo[];
-	readonly disabled: boolean;
-	readonly onChange: (modelId: string) => void;
-}): React.JSX.Element {
-	return (
-		<Select value={value} onValueChange={(next) => next && onChange(next)} disabled={disabled}>
-			<SelectTrigger className="h-8 w-64 text-sm" aria-label={label}>
-				<SelectValue />
-			</SelectTrigger>
-			<SelectContent className="w-72">
-				{models.map((model) => (
-					<SelectItem key={model.modelId} value={model.modelId}>
-						{modelLabel(model)}
-					</SelectItem>
-				))}
-			</SelectContent>
-		</Select>
-	);
+function modelsForProvider(role: AgentRole, providerId: ProviderId): readonly ModelInfo[] {
+	return modelsForRole(role).filter((m) => m.providerId === providerId);
 }
 
-function normalizeAssistantAgent(agent?: AgentSettings): AgentSettings {
+function defaultAgentSettings(def: AgentDefinition): AgentSettings {
 	return {
-		...(agent ?? DEFAULT_ASSISTANT_AGENT),
-		id: ASSISTANT_AGENT_ID,
-		name: agent?.name || DEFAULT_ASSISTANT_AGENT.name,
-		models: {
-			text: agent?.models.text ?? DEFAULT_TEXT_MODEL_ID,
-			image: agent?.models.image ?? DEFAULT_IMAGE_MODEL_ID,
-		},
+		id: def.id,
+		name: def.name,
+		models: { [def.role]: def.defaultModelId },
 	};
+}
+
+function deriveProviderFromAgent(def: AgentDefinition, agent: AgentSettings): ProviderId {
+	const modelId = agent.models[def.role];
+	const found = modelsForRole(def.role).find((m) => m.modelId === modelId);
+	return found?.providerId ?? def.defaultProviderId;
 }
 
 const AgentsPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [assistantAgent, setAssistantAgent] = useState<AgentSettings>(DEFAULT_ASSISTANT_AGENT);
+	const [agentsById, setAgentsById] = useState<Record<string, AgentSettings>>(() =>
+		Object.fromEntries(AGENT_DEFINITIONS.map((def) => [def.id, defaultAgentSettings(def)]))
+	);
 	const [status, setStatus] = useState<SaveStatus>({ type: 'loading' });
 
 	useEffect(() => {
@@ -158,13 +160,16 @@ const AgentsPage: React.FC = () => {
 
 		const loadAgents = async () => {
 			try {
-				const agents = await window.app.getAgents();
-				const assistant = normalizeAssistantAgent(
-					agents.find((agent) => agent.id === ASSISTANT_AGENT_ID)
+				const stored = await window.app.getAgents();
+				const storedById = new Map(stored.map((agent) => [agent.id, agent]));
+				const merged = Object.fromEntries(
+					AGENT_DEFINITIONS.map((def) => {
+						const existing = storedById.get(def.id);
+						return [def.id, existing ?? defaultAgentSettings(def)];
+					})
 				);
-
 				if (isMounted) {
-					setAssistantAgent(assistant);
+					setAgentsById(merged);
 					setStatus({ type: 'idle' });
 				}
 			} catch (error) {
@@ -187,22 +192,13 @@ const AgentsPage: React.FC = () => {
 		};
 	}, [t]);
 
-	const updateModel = async (role: 'text' | 'image', modelId: string) => {
-		const nextAgent = {
-			...assistantAgent,
-			models: {
-				...assistantAgent.models,
-				[role]: modelId,
-			},
-		};
-
-		setAssistantAgent(nextAgent);
-		setStatus({ type: 'saving' });
-
+	const persistAgent = async (next: AgentSettings) => {
+		setAgentsById((prev) => ({ ...prev, [next.id]: next }));
+		setStatus({ type: 'saving', agentId: next.id });
 		try {
-			const saved = await window.app.updateAgent(nextAgent);
-			setAssistantAgent(normalizeAssistantAgent(saved));
-			setStatus({ type: 'saved' });
+			const saved = await window.app.updateAgent(next);
+			setAgentsById((prev) => ({ ...prev, [saved.id]: saved }));
+			setStatus({ type: 'saved', agentId: next.id });
 		} catch (error) {
 			setStatus({
 				type: 'error',
@@ -214,9 +210,25 @@ const AgentsPage: React.FC = () => {
 		}
 	};
 
-	const isBusy = status.type === 'loading' || status.type === 'saving';
-	const textModel = assistantAgent.models.text ?? DEFAULT_TEXT_MODEL_ID;
-	const imageModel = assistantAgent.models.image ?? DEFAULT_IMAGE_MODEL_ID;
+	const handleProviderChange = (def: AgentDefinition, providerId: ProviderId) => {
+		const candidate = modelsForProvider(def.role, providerId)[0];
+		if (!candidate) return;
+		const current = agentsById[def.id] ?? defaultAgentSettings(def);
+		void persistAgent({
+			...current,
+			models: { ...current.models, [def.role]: candidate.modelId },
+		});
+	};
+
+	const handleModelChange = (def: AgentDefinition, modelId: string) => {
+		const current = agentsById[def.id] ?? defaultAgentSettings(def);
+		void persistAgent({
+			...current,
+			models: { ...current.models, [def.role]: modelId },
+		});
+	};
+
+	const isBusy = status.type === 'loading';
 
 	return (
 		<div className="w-full max-w-2xl">
@@ -228,45 +240,70 @@ const AgentsPage: React.FC = () => {
 				)}
 			</p>
 
-			<SectionHeader title={assistantAgent.name} />
+			{AGENT_DEFINITIONS.map((def) => {
+				const agent = agentsById[def.id] ?? defaultAgentSettings(def);
+				const providerId = deriveProviderFromAgent(def, agent);
+				const modelId = agent.models[def.role] ?? def.defaultModelId;
+				const availableModels = modelsForProvider(def.role, providerId);
+				const isAgentSaving = status.type === 'saving' && status.agentId === def.id;
+				const isAgentSaved = status.type === 'saved' && status.agentId === def.id;
 
-			<SettingRow
-				label={t('settings.agents.textModel', 'Text generation')}
-				description={t(
-					'settings.agents.textModelDescription',
-					'Used by the assistant for writing, chat, reasoning, and document edits.'
-				)}
-			>
-				<AgentModelSelect
-					label={t('settings.agents.textModel', 'Text generation')}
-					value={textModel}
-					models={TEXT_MODELS}
-					disabled={isBusy}
-					onChange={(modelId) => void updateModel('text', modelId)}
-				/>
-			</SettingRow>
+				return (
+					<div key={def.id}>
+						<SectionHeader title={def.name} />
+						<p className="text-sm text-muted-foreground -mt-1 mb-2">{def.description}</p>
 
-			<SettingRow
-				label={t('settings.agents.imageModel', 'Image generation')}
-				description={t(
-					'settings.agents.imageModelDescription',
-					'Used by the assistant when image generation tools are available.'
-				)}
-			>
-				<AgentModelSelect
-					label={t('settings.agents.imageModel', 'Image generation')}
-					value={imageModel}
-					models={IMAGE_MODELS}
-					disabled={isBusy}
-					onChange={(modelId) => void updateModel('image', modelId)}
-				/>
-			</SettingRow>
+						<SettingRow label={t('settings.agents.provider', 'Provider')}>
+							<Select
+								value={providerId}
+								onValueChange={(next) =>
+									next && handleProviderChange(def, next as ProviderId)
+								}
+								disabled={isBusy}
+							>
+								<SelectTrigger className="h-8 w-64 text-sm">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent className="w-72">
+									{PROVIDERS.map((provider) => (
+										<SelectItem key={provider.id} value={provider.id}>
+											{provider.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</SettingRow>
 
-			<div className="min-h-5 pt-3 text-xs text-muted-foreground">
-				{status.type === 'saving' && t('settings.agents.saving', 'Saving...')}
-				{status.type === 'saved' && t('settings.agents.saved', 'Saved')}
-				{status.type === 'error' && <span className="text-destructive">{status.message}</span>}
-			</div>
+						<SettingRow label={t('settings.agents.model', 'Model')}>
+							<Select
+								value={modelId}
+								onValueChange={(next) => next && handleModelChange(def, next)}
+								disabled={isBusy || availableModels.length === 0}
+							>
+								<SelectTrigger className="h-8 w-64 text-sm">
+									<SelectValue />
+								</SelectTrigger>
+								<SelectContent className="w-72">
+									{availableModels.map((model) => (
+										<SelectItem key={model.modelId} value={model.modelId}>
+											{model.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</SettingRow>
+
+						<div className="min-h-5 pt-2 text-xs text-muted-foreground">
+							{isAgentSaving && t('settings.agents.saving', 'Saving...')}
+							{isAgentSaved && t('settings.agents.saved', 'Saved')}
+						</div>
+					</div>
+				);
+			})}
+
+			{status.type === 'error' && (
+				<div className="pt-3 text-xs text-destructive">{status.message}</div>
+			)}
 		</div>
 	);
 };
