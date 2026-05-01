@@ -463,7 +463,7 @@ function PageContent(): ReactElement {
 							onRestoreEntry={handleRestoreHistoryEntry}
 							onReturnToLive={handleReturnToLive}
 						/>
-						<Separator orientation="vertical" className="mx-1 h-5" />
+						<Separator orientation="vertical" className="mx-1 h-5 self-center" />
 						<Button variant="ghost" size="icon" title="Download" aria-label="Download">
 							<Download aria-hidden="true" />
 						</Button>
