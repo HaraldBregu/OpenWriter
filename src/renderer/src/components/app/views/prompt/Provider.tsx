@@ -2,8 +2,26 @@ import React, { useReducer, useRef, useMemo, useCallback, useEffect } from 'reac
 import type { NodeViewProps } from '@tiptap/react';
 import { TextSelection } from '@tiptap/pm/state';
 import { contentGeneratorReducer } from './context/reducer';
-import { DEFAULT_TEXT_MODEL_ID, IMAGE_MODELS, TEXT_MODELS } from 'src/shared/models';
+import type { ModelInfo } from 'src/shared/types';
 import { usePromptActions, useTextareaSetup } from './hooks';
+
+const DEFAULT_IMAGE_MODEL: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'gpt-image-1',
+	name: 'GPT Image 1',
+	type: 'image',
+	contextWindow: null,
+	maxOutputTokens: null,
+};
+
+const DEFAULT_TEXT_MODEL: ModelInfo = {
+	providerId: 'openai',
+	modelId: 'gpt-5.4-mini',
+	name: 'GPT-5.4 Mini',
+	type: 'multimodal',
+	contextWindow: 400000,
+	maxOutputTokens: 128000,
+};
 import type { PromptOptions } from '../../editor/extensions/prompt-extension';
 import { Context, ContextValue, State } from './context';
 
