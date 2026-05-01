@@ -132,7 +132,7 @@ export default function DocumentInfoMenu({
 							title={t('configSidebar.documentInfo', 'Document info')}
 							aria-label={t('configSidebar.documentInfo', 'Document info')}
 						>
-							<Info aria-hidden="true" />
+							<SlidersHorizontal aria-hidden="true" />
 						</Button>
 					}
 				/>
