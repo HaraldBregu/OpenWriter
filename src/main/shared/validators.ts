@@ -99,9 +99,6 @@ export class StoreValidators {
 			if (modelId.length > this.MAX_FIELD_LENGTH) {
 				throw new Error('Agent model ID exceeds maximum length');
 			}
-			if (!findModelById(modelId)) {
-				throw new Error(`Unknown model: ${modelId}`);
-			}
 		}
 	}
 
