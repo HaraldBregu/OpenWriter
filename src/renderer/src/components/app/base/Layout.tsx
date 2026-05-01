@@ -280,8 +280,8 @@ function Container({ children }: LayoutProps) {
 		});
 	}, [createWriting]);
 
-	const displayWorkspaceName = projectName || workspaceNameFromPath || 'OpenWriter';
-	const sidebarTitle = projectName || workspaceNameFromPath || 'OpenWriter';
+	const displayWorkspaceName = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
+	const sidebarTitle = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
 	const isLandingPage = location.pathname === '/';
 	const footerUserName = 'User';
 	const footerUserEmail = 'user@example.com';
