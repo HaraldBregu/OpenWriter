@@ -254,44 +254,49 @@ const AgentsPage: React.FC = () => {
 								<CardDescription>{def.description}</CardDescription>
 							</CardHeader>
 							<CardContent>
-								<SettingRow label={t('settings.agents.provider', 'Provider')}>
-									<Select
-										value={providerId}
-										onValueChange={(next) =>
-											next && handleProviderChange(def, next as ProviderId)
-										}
-										disabled={isBusy}
-									>
-										<SelectTrigger className="h-8 w-64 text-sm">
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent className="w-72">
-											{PROVIDERS.map((provider) => (
-												<SelectItem key={provider.id} value={provider.id}>
-													{provider.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</SettingRow>
-
-								<SettingRow label={t('settings.agents.model', 'Model')}>
-									<Select
-										value={modelId}
-										onValueChange={(next) => next && handleModelChange(def, next)}
-										disabled={isBusy || availableModels.length === 0}
-									>
-										<SelectTrigger className="h-8 w-64 text-sm">
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent className="w-72">
-											{availableModels.map((model) => (
-												<SelectItem key={model.modelId} value={model.modelId}>
-													{model.name}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
+								<SettingRow label={t('settings.agents.assignment', 'Provider & Model')}>
+									<div className="flex items-center gap-2">
+										<Select
+											value={providerId ?? ''}
+											onValueChange={(next) =>
+												next && handleProviderChange(def, next as ProviderId)
+											}
+											disabled={isBusy}
+										>
+											<SelectTrigger className="h-8 w-44 text-sm">
+												<SelectValue
+													placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
+												/>
+											</SelectTrigger>
+											<SelectContent className="w-56">
+												{PROVIDERS.map((provider) => (
+													<SelectItem key={provider.id} value={provider.id}>
+														{provider.name}
+													</SelectItem>
+												))}
+											</SelectContent>
+										</Select>
+										{providerId && (
+											<Select
+												value={modelId}
+												onValueChange={(next) => next && handleModelChange(def, next)}
+												disabled={isBusy || availableModels.length === 0}
+											>
+												<SelectTrigger className="h-8 w-44 text-sm">
+													<SelectValue
+														placeholder={t('settings.agents.modelPlaceholder', 'Select model')}
+													/>
+												</SelectTrigger>
+												<SelectContent className="w-56">
+													{availableModels.map((model) => (
+														<SelectItem key={model.modelId} value={model.modelId}>
+															{model.name}
+														</SelectItem>
+													))}
+												</SelectContent>
+											</Select>
+										)}
+									</div>
 								</SettingRow>
 							</CardContent>
 							<CardFooter className="min-h-10 text-xs text-muted-foreground">
