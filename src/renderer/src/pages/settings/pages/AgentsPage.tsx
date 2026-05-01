@@ -211,11 +211,10 @@ const AgentsPage: React.FC = () => {
 
 	const handleProviderChange = (def: AgentDefinition, providerId: ProviderId) => {
 		const candidate = modelsForProvider(def.role, providerId)[0];
-		if (!candidate) return;
 		const current = agentsById[def.id] ?? defaultAgentSettings(def);
 		void persistAgent({
 			...current,
-			models: { ...current.models, [def.role]: candidate.modelId },
+			models: { ...current.models, [def.role]: candidate?.modelId ?? '' },
 		});
 	};
 
