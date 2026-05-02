@@ -407,5 +407,6 @@ declare global {
 		app: AppApi;
 		workspace: WorkspaceApi;
 		task: TaskApi;
+		assistant: AssistantApi;
 	}
 }

@@ -5,7 +5,6 @@ import {
 	WindowChannels,
 	WorkspaceChannels,
 	TaskChannels,
-	LogChannels,
 	AssistantChannels,
 } from '../shared/channels';
 import type { AssistantResponseEvent } from '../shared/channels';
