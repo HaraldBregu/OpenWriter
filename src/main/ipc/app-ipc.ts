@@ -19,6 +19,7 @@ import type {
 	ContextMenuDescriptor,
 	Provider,
 	ProviderModelInfo,
+	UserProfile,
 	ThemeMode,
 	WritingContextMenuAction,
 } from '../../shared/types';
