@@ -9,3 +9,4 @@ export { TaskManagerIpc } from './task-manager-ipc';
 export { WorkspaceIpc } from './workspace-ipc';
 export { WindowIpc } from './window-ipc';
 export { LogsIpc } from './logs-ipc';
+export { AssistantIpc } from './assistant-ipc';
