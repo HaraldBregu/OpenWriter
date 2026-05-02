@@ -443,4 +443,5 @@ export interface EventChannelMap {
 	[AppChannels.openCronDialog]: { data: undefined };
 	// ---- Images watcher events ----
 	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
+	[AssistantChannels.response]: { data: AssistantResponseEvent };
 }
