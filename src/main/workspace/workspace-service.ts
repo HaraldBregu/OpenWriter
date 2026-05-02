@@ -8,6 +8,7 @@ import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
 import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
 
+const APP_FOLDER = 'OpenWriter';
 const WORKSPACES_FOLDER = 'workspaces';
 
 /**
