@@ -222,7 +222,7 @@ export interface InvokeChannelMap {
 	[AppChannels.updateAgent]: { args: [agent: AgentSettings]; result: AgentSettings };
 	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
 	[AppChannels.completeFirstRunConfiguration]: {
-		args: [providers: Provider[]];
+		args: [profile: UserProfile, providers: Provider[]];
 		result: AppStartupInfo;
 	};
 	[AppChannels.getModels]: { args: [providerId: string]; result: ProviderModelInfo[] };
