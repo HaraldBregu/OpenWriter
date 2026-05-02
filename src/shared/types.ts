@@ -161,14 +161,12 @@ export interface ProviderModelInfo {
 }
 
 /**
- * One model assignment inside an agent. `apiKey` is filled from the configured
- * Service for `providerId` at read time; renderers may pass it as an empty
- * string when persisting.
+ * One model assignment inside an agent. The API key is not stored here — look
+ * it up via the Service registered for `providerId`.
  */
 export interface AgentModel {
 	id: string;
 	providerId: string;
-	apiKey: string;
 	modelId: string;
 }
 
