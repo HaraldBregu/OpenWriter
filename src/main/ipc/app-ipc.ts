@@ -353,6 +353,12 @@ export class AppIpc implements IpcModule {
 			)
 		);
 
+		// Recent in-memory logs
+		ipcMain.handle(
+			AppChannels.getLogs,
+			wrapSimpleHandler((limit?: number) => logger.getRecentLogs(limit), AppChannels.getLogs)
+		);
+
 		// Open logs folder in system file explorer
 		ipcMain.handle(
 			AppChannels.openLogsFolder,
