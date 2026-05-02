@@ -1,7 +1,7 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import { getProvider, isKnownProvider, toServiceConfig } from '../../shared/providers';
-import type { AgentModel, AgentSettings, Provider, Service } from '../../shared/types';
+import { getProvider } from '../../shared/providers';
+import type { AgentModel, AgentSettings, Provider } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 
 export interface WorkspaceInfo {
@@ -10,7 +10,7 @@ export interface WorkspaceInfo {
 }
 
 export interface StoreSchema {
-	services: Service[];
+	providers: Provider[];
 	agents: AgentSettings[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
@@ -19,7 +19,7 @@ export interface StoreSchema {
 }
 
 const DEFAULTS: StoreSchema = {
-	services: [],
+	providers: [],
 	agents: [],
 	currentWorkspace: null,
 	recentWorkspaces: [],
@@ -39,29 +39,33 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null;
 }
 
-function resolveProvider(value: unknown): Provider | null {
-	if (isRecord(value) && typeof value.id === 'string') {
-		const known = getProvider(value.id);
-		if (known) return known;
+/**
+ * Parse a Provider entry from arbitrary input. Accepts both the new flat shape
+ * `{ id, name, apiKey }` and the legacy `{ provider: { id, name }, apiKey }`
+ * shape so existing settings files migrate cleanly.
+ */
+function normalizeProviderInput(value: unknown): Provider | null {
+	if (!isRecord(value)) return null;
+
+	let id: string | undefined;
+	let name: string | undefined;
+
+	if (typeof value.id === 'string' && value.id.trim().length > 0) {
+		id = value.id.trim();
 		if (typeof value.name === 'string' && value.name.trim().length > 0) {
-			return { id: value.id, name: value.name };
+			name = value.name.trim();
+		}
+	} else if (isRecord(value.provider) && typeof value.provider.id === 'string') {
+		id = value.provider.id.trim();
+		if (typeof value.provider.name === 'string' && value.provider.name.trim().length > 0) {
+			name = value.provider.name.trim();
 		}
 	}
-	if (typeof value === 'string') {
-		return getProvider(value.trim().toLowerCase()) ?? null;
-	}
-	return null;
-}
 
-function normalizeServiceInput(value: unknown): Service | null {
-	if (!isRecord(value)) {
-		return null;
-	}
+	if (!id) return null;
 
-	const provider = resolveProvider(value.provider) ?? resolveProvider(value.name);
-	if (!provider) {
-		return null;
-	}
+	const known = getProvider(id);
+	const resolvedName = name ?? known?.name ?? id;
 
 	const apiKey =
 		typeof value.apiKey === 'string'
@@ -70,29 +74,24 @@ function normalizeServiceInput(value: unknown): Service | null {
 				? value.apikey
 				: '';
 
-	return { provider, apiKey };
+	return { id, name: resolvedName, apiKey };
 }
 
-function normalizeServices(value: unknown): Service[] {
-	if (!Array.isArray(value)) {
-		return [];
+function normalizeProviders(value: unknown): Provider[] {
+	if (!Array.isArray(value)) return [];
+	const seen = new Set<string>();
+	const out: Provider[] = [];
+	for (const entry of value) {
+		const provider = normalizeProviderInput(entry);
+		if (!provider || seen.has(provider.id)) continue;
+		seen.add(provider.id);
+		out.push(provider);
 	}
-
-	const normalized: Service[] = [];
-
-	value.forEach((entry) => {
-		const service = normalizeServiceInput(entry);
-		if (!service) {
-			return;
-		}
-		normalized.push(service);
-	});
-
-	return normalized;
+	return out;
 }
 
-function cloneService(service: Service): Service {
-	return { provider: { ...service.provider }, apiKey: service.apiKey };
+function cloneProvider(provider: Provider): Provider {
+	return { id: provider.id, name: provider.name, apiKey: provider.apiKey };
 }
 
 function cloneAgent(agent: AgentSettings): AgentSettings {
@@ -124,9 +123,7 @@ function normalizeAgentInput(value: unknown): AgentSettings | null {
 	}
 
 	const models = Array.isArray(value.models)
-		? value.models
-				.map(normalizeAgentModel)
-				.filter((m): m is AgentModel => m !== null)
+		? value.models.map(normalizeAgentModel).filter((m): m is AgentModel => m !== null)
 		: [];
 
 	return { id, name, models };
@@ -149,40 +146,47 @@ export class StoreService {
 			accessPropertiesByDotNotation: false,
 		}) as unknown as SettingsStore;
 
-		this.migrateLegacyServiceSettings();
-		this.normalizeStoredServices();
+		this.migrateLegacyProviderSettings();
+		this.normalizeStoredProviders();
 		this.normalizeStoredAgents();
 		this.reconcileStartupState();
 		this.incrementStartupCount();
 	}
 
-	// --- Service methods ---
+	// --- Provider methods ---
 
-	getServices(): Service[] {
-		return this.store.get('services').map(cloneService);
+	getProviders(): Provider[] {
+		return this.store.get('providers').map(cloneProvider);
 	}
 
-	getServiceByProviderId(providerId: string): Service | undefined {
+	getProviderById(providerId: string): Provider | undefined {
 		const normalized = providerId.trim();
-		return this.getServices().find((service) => service.provider.id === normalized);
+		return this.getProviders().find((p) => p.id === normalized);
 	}
 
-	addService(service: Service): Service & { id: string } {
-		const services = this.store.get('services').map(cloneService);
-		const newService: Service = {
-			provider: service.provider,
-			apiKey: service.apiKey,
-		};
-		services.push(newService);
-		this.store.set('services', services);
-		return toServiceConfig(newService, services.length - 1);
+	/**
+	 * Upsert a provider entry by its `id` (one entry per providerId).
+	 */
+	addProvider(provider: Provider): Provider {
+		const incoming = normalizeProviderInput(provider);
+		if (!incoming) {
+			throw new Error('Invalid provider');
+		}
+		const providers = this.store.get('providers').map(cloneProvider);
+		const index = providers.findIndex((p) => p.id === incoming.id);
+		if (index >= 0) {
+			providers[index] = incoming;
+		} else {
+			providers.push(incoming);
+		}
+		this.store.set('providers', providers);
+		return cloneProvider(incoming);
 	}
 
-	deleteService(id: string): void {
-		const services = this.store
-			.get('services')
-			.filter((service, index) => toServiceConfig(service, index).id !== id);
-		this.store.set('services', services);
+	deleteProvider(providerId: string): void {
+		const normalized = providerId.trim();
+		const providers = this.store.get('providers').filter((p) => p.id !== normalized);
+		this.store.set('providers', providers);
 	}
 
 	getStartupInfo(): AppStartupInfo {
@@ -194,19 +198,15 @@ export class StoreService {
 		};
 	}
 
-	completeFirstRunConfiguration(services: Service[]): AppStartupInfo {
-		const preservedCustomServices = this.store
-			.get('services')
-			.filter((service) => !isKnownProvider(service.provider.id))
-			.map(cloneService);
-		const configuredDefaultServices = normalizeServices(services)
-			.map((service) => ({
-				provider: service.provider,
-				apiKey: service.apiKey.trim(),
-			}))
-			.filter((service) => service.apiKey.length > 0);
+	completeFirstRunConfiguration(providers: Provider[]): AppStartupInfo {
+		const incoming = normalizeProviders(providers).filter((p) => p.apiKey.trim().length > 0);
+		const incomingIds = new Set(incoming.map((p) => p.id));
+		const preserved = this.store
+			.get('providers')
+			.filter((p) => !incomingIds.has(p.id))
+			.map(cloneProvider);
 
-		this.store.set('services', [...preservedCustomServices, ...configuredDefaultServices]);
+		this.store.set('providers', [...preserved, ...incoming]);
 		this.store.set('isInitialized', true);
 
 		return this.getStartupInfo();
@@ -276,49 +276,37 @@ export class StoreService {
 		return this.store;
 	}
 
-	private migrateLegacyServiceSettings(): void {
-		const legacyModels = this.rawStore.get('modelSettings');
-		if (legacyModels !== undefined) {
-			const migrated = normalizeServices(legacyModels);
-			if (migrated.length > 0) {
-				this.store.set('services', migrated);
-			}
-			this.rawStore.delete('modelSettings');
-		}
-
-		const legacyModelsKey = this.rawStore.get('models');
-		if (legacyModelsKey !== undefined && this.rawStore.get('services') === undefined) {
-			const migrated = normalizeServices(legacyModelsKey);
-			if (migrated.length > 0) {
-				this.store.set('services', migrated);
-			}
-		}
-		this.rawStore.delete('models');
-
-		const legacyProviders = this.rawStore.get('providers');
-		if (legacyProviders !== undefined) {
-			const current = this.rawStore.get('services');
-			if (current === undefined || (Array.isArray(current) && current.length === 0)) {
-				const migrated = normalizeServices(legacyProviders);
+	/**
+	 * Migrate legacy keys (`modelSettings`, `models`, `services`) into the
+	 * current `providers` array, flattening `{ provider: {...}, apiKey }`
+	 * entries into the new `{ id, name, apiKey }` shape.
+	 */
+	private migrateLegacyProviderSettings(): void {
+		const legacyKeys = ['modelSettings', 'models', 'services'] as const;
+		for (const key of legacyKeys) {
+			const raw = this.rawStore.get(key);
+			if (raw === undefined) continue;
+			const current = this.rawStore.get('providers');
+			const isEmpty =
+				current === undefined || (Array.isArray(current) && current.length === 0);
+			if (isEmpty) {
+				const migrated = normalizeProviders(raw);
 				if (migrated.length > 0) {
-					this.store.set('services', migrated);
+					this.store.set('providers', migrated);
 				}
 			}
-			this.rawStore.delete('providers');
+			this.rawStore.delete(key);
 		}
 	}
 
-	private normalizeStoredServices(): void {
-		const normalized = normalizeServices(this.rawStore.get('services'));
-		const current = this.store.get('services');
+	private normalizeStoredProviders(): void {
+		const normalized = normalizeProviders(this.rawStore.get('providers'));
+		const current = this.store.get('providers');
 		const needsRewrite =
 			current.length !== normalized.length ||
-			current.some(
-				(service, index) => JSON.stringify(service) !== JSON.stringify(normalized[index])
-			);
-
+			current.some((p, i) => JSON.stringify(p) !== JSON.stringify(normalized[i]));
 		if (needsRewrite) {
-			this.store.set('services', normalized);
+			this.store.set('providers', normalized);
 		}
 	}
 
@@ -339,11 +327,12 @@ export class StoreService {
 			return;
 		}
 
-		const hasServices = this.store.get('services').length > 0;
+		const hasProviders = this.store.get('providers').length > 0;
 		const hasWorkspaceHistory =
-			this.store.get('currentWorkspace') !== null || this.store.get('recentWorkspaces').length > 0;
+			this.store.get('currentWorkspace') !== null ||
+			this.store.get('recentWorkspaces').length > 0;
 
-		if (!hasServices && !hasWorkspaceHistory) {
+		if (!hasProviders && !hasWorkspaceHistory) {
 			return;
 		}
 
