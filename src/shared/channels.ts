@@ -150,6 +150,18 @@ export const LogChannels = {
 	getLogs: 'log:get-logs',
 } as const;
 
+export const AssistantChannels = {
+	send: 'assistant:send',
+	reset: 'assistant:reset',
+	response: 'assistant:response',
+} as const;
+
+export interface AssistantResponseEvent {
+	assistantId: string;
+	userMessage: string;
+	response: string;
+}
+
 export const AppChannels = {
 	playSound: 'play-sound',
 	setTheme: 'set-theme',
