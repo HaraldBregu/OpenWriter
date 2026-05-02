@@ -43,7 +43,7 @@ import {
 
 // IPC modules
 import type { IpcModule } from './ipc';
-import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc, LogsIpc } from './ipc';
+import { AppIpc, WorkspaceIpc, TaskManagerIpc, WindowIpc, LogsIpc, AssistantIpc } from './ipc';
 
 export interface BootstrapResult {
 	container: ServiceContainer;
