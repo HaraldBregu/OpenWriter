@@ -132,18 +132,14 @@ export interface ModelInfo {
 export interface Provider {
 	id: string;
 	name: string;
+	apiKey: string;
 }
 
 /** Canonical list of known providers. Source of truth for ProviderId and ProviderName. */
 export const PROVIDERS = [
-	{ id: 'openai', name: 'OpenAI' },
-	{ id: 'anthropic', name: 'Anthropic' },
+	{ id: 'openai', name: 'OpenAI', apiKey: '' },
+	{ id: 'anthropic', name: 'Anthropic', apiKey: '' },
 ] as const satisfies readonly Provider[];
-
-export interface Service {
-	provider: Provider;
-	apiKey: string;
-}
 
 /**
  * Single model entry as returned by a provider's `/models` endpoint.
