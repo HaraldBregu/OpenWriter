@@ -3,5 +3,18 @@ export interface AssistantReply {
 }
 
 export async function sendMessage(prompt: string): Promise<AssistantReply> {
-	return { content: `Echo: ${prompt}` };
+	const content = await window.assistant.send(prompt);
+	return { content };
+}
+
+export function resetConversation(): Promise<void> {
+	return window.assistant.reset();
+}
+
+export function onAssistantResponse(
+	callback: (reply: AssistantReply) => void
+): () => void {
+	return window.assistant.onResponse((event) => {
+		callback({ content: event.response });
+	});
 }
