@@ -19,6 +19,8 @@ import { isThemeMode } from '../../shared/theme';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
+	CronJobInfo,
+	CronTickEvent,
 	Provider,
 	ProviderModelInfo,
 	UserProfile,
