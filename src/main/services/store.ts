@@ -16,7 +16,7 @@ export interface StoreSchema {
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
 	isInitialized: boolean;
-	profile: UserProfile;
+	profile: UserProfile | null;
 }
 
 const DEFAULTS: StoreSchema = {
@@ -26,7 +26,7 @@ const DEFAULTS: StoreSchema = {
 	recentWorkspaces: [],
 	startupCount: 0,
 	isInitialized: false,
-	profile: { firstName: '', lastName: '' },
+	profile: null,
 };
 
 type SettingsStore = {
