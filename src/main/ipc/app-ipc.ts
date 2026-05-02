@@ -334,6 +334,11 @@ export class AppIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
+			AppChannels.getProfile,
+			wrapSimpleHandler(() => store.getProfile(), AppChannels.getProfile)
+		);
+
+		ipcMain.handle(
 			AppChannels.completeFirstRunConfiguration,
 			wrapSimpleHandler((profile: UserProfile, providers: Provider[]) => {
 				StoreValidators.validateProviders(providers);
