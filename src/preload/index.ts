@@ -89,16 +89,16 @@ const app: AppApi = {
 		return typedOn(AppChannels.writingContextMenuAction, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Service management
+	// Provider management
 	// -------------------------------------------------------------------------
-	getServices: (): Promise<Array<Service & { id: string }>> => {
-		return typedInvokeUnwrap(AppChannels.getServices);
+	getProviders: (): Promise<Provider[]> => {
+		return typedInvokeUnwrap(AppChannels.getProviders);
 	},
-	addService: (service: Service): Promise<Service & { id: string }> => {
-		return typedInvokeUnwrap(AppChannels.addService, service);
+	addProvider: (provider: Provider): Promise<Provider> => {
+		return typedInvokeUnwrap(AppChannels.addProvider, provider);
 	},
-	deleteService: (id: string): Promise<void> => {
-		return typedInvokeUnwrap(AppChannels.deleteService, id);
+	deleteProvider: (id: string): Promise<void> => {
+		return typedInvokeUnwrap(AppChannels.deleteProvider, id);
 	},
 	getAgents: (): Promise<AgentSettings[]> => {
 		return typedInvokeUnwrap(AppChannels.getAgents);
@@ -109,8 +109,8 @@ const app: AppApi = {
 	getStartupInfo: () => {
 		return typedInvokeUnwrap(AppChannels.getStartupInfo);
 	},
-	completeFirstRunConfiguration: (services: Service[]) => {
-		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, services);
+	completeFirstRunConfiguration: (providers: Provider[]) => {
+		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, providers);
 	},
 	getModels: (providerId: string) => typedInvokeUnwrap(AppChannels.getModels, providerId),
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
