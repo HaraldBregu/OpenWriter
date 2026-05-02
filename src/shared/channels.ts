@@ -53,6 +53,7 @@ import type {
 	Theme,
 	Provider,
 	ProviderModelInfo,
+	UserProfile,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
