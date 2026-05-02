@@ -4,10 +4,11 @@ import { ArrowRight, Loader2 } from 'lucide-react';
 import { AppIconOpenWriter } from '@/components/app';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
+import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/Field';
+import { Separator } from '@/components/ui/Separator';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
-import type { Provider, ProviderId, AppStartupInfo } from '../../../../shared/types';
+import type { Provider, ProviderId, AppStartupInfo, UserProfile } from '../../../../shared/types';
 
 interface ConfigPageProps {
 	onConfigured: (startupInfo: AppStartupInfo) => void;
@@ -23,6 +24,7 @@ const PROVIDER_LABELS = Object.fromEntries(
 
 const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 	const { t } = useTranslation();
+	const [profile, setProfile] = useState<UserProfile>({ firstName: '', lastName: '' });
 	const [tokens, setTokens] = useState<Record<ProviderId, string>>(EMPTY_TOKENS);
 	const [isSaving, setIsSaving] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -49,7 +51,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 					},
 				];
 			});
-			const startupInfo = await window.app.completeFirstRunConfiguration(providers);
+			const startupInfo = await window.app.completeFirstRunConfiguration(profile, providers);
 			onConfigured(startupInfo);
 		} catch (error) {
 			setErrorMessage(
@@ -63,6 +65,12 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 		} finally {
 			setIsSaving(false);
 		}
+	};
+
+	const updateProfile = (field: keyof UserProfile) => (e: React.ChangeEvent<HTMLInputElement>) => {
+		const value = e.target.value;
+		setProfile((current) => ({ ...current, [field]: value }));
+		if (errorMessage) setErrorMessage(null);
 	};
 
 	return (
@@ -81,54 +89,97 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 						role="img"
 					/>
 					<h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
-						{t('startup.firstTime.title', 'Connect your providers')}
+						{t('startup.firstTime.title', 'Welcome to OpenWriter')}
 					</h1>
 					<p className="text-sm text-muted-foreground text-center max-w-md leading-relaxed">
 						{t(
 							'startup.firstTime.description',
-							'Add API tokens for the providers you want to use. You can leave any blank and configure them later in Settings.'
+							'Tell us a bit about you and connect your providers. You can change anything later in Settings.'
 						)}
 					</p>
 				</div>
 
-				<form onSubmit={handleSubmit} className="w-full max-w-md flex flex-col gap-5" noValidate>
-					{PROVIDER_IDS.map((providerId) => (
-						<div key={providerId} className="grid gap-2">
-							<Label htmlFor={`first-run-${providerId}`}>{PROVIDER_LABELS[providerId]}</Label>
-							<Input
-								id={`first-run-${providerId}`}
-								type="password"
-								value={tokens[providerId]}
-								onChange={(event) => {
-									const value = event.target.value;
-									setTokens((current) => ({ ...current, [providerId]: value }));
-									if (errorMessage) setErrorMessage(null);
-								}}
-								placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
-								autoComplete="off"
-								spellCheck={false}
-								className="font-mono"
-							/>
-						</div>
-					))}
+				<form onSubmit={handleSubmit} className="w-full max-w-md" noValidate>
+					<FieldGroup>
+						<FieldSet>
+							<FieldLegend>
+								{t('startup.firstTime.profileSection', 'Your profile')}
+							</FieldLegend>
+							<FieldGroup>
+								<Field>
+									<FieldLabel htmlFor="first-run-firstName">
+										{t('settings.profile.firstName', 'First name')}
+									</FieldLabel>
+									<Input
+										id="first-run-firstName"
+										value={profile.firstName}
+										onChange={updateProfile('firstName')}
+										placeholder={t('settings.profile.firstNamePlaceholder', 'First name')}
+										autoComplete="given-name"
+									/>
+								</Field>
+								<Field>
+									<FieldLabel htmlFor="first-run-lastName">
+										{t('settings.profile.lastName', 'Last name')}
+									</FieldLabel>
+									<Input
+										id="first-run-lastName"
+										value={profile.lastName}
+										onChange={updateProfile('lastName')}
+										placeholder={t('settings.profile.lastNamePlaceholder', 'Last name')}
+										autoComplete="family-name"
+									/>
+								</Field>
+							</FieldGroup>
+						</FieldSet>
 
-					{errorMessage && (
-						<p className="text-xs text-destructive">{errorMessage}</p>
-					)}
+						<Separator />
 
-					<Button type="submit" className="mt-2" disabled={isSaving}>
-						{isSaving ? (
-							<>
-								<Loader2 className="animate-spin" />
-								{t('startup.firstTime.saving', 'Saving...')}
-							</>
-						) : (
-							<>
-								{t('startup.firstTime.save', 'Save and Continue')}
-								<ArrowRight />
-							</>
-						)}
-					</Button>
+						<FieldSet>
+							<FieldLegend>
+								{t('startup.firstTime.providersSection', 'Provider tokens')}
+							</FieldLegend>
+							<FieldGroup>
+								{PROVIDER_IDS.map((providerId) => (
+									<Field key={providerId}>
+										<FieldLabel htmlFor={`first-run-${providerId}`}>
+											{PROVIDER_LABELS[providerId]}
+										</FieldLabel>
+										<Input
+											id={`first-run-${providerId}`}
+											type="password"
+											value={tokens[providerId]}
+											onChange={(event) => {
+												const value = event.target.value;
+												setTokens((current) => ({ ...current, [providerId]: value }));
+												if (errorMessage) setErrorMessage(null);
+											}}
+											placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
+											autoComplete="off"
+											spellCheck={false}
+											className="font-mono"
+										/>
+									</Field>
+								))}
+							</FieldGroup>
+						</FieldSet>
+
+						{errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
+
+						<Button type="submit" disabled={isSaving}>
+							{isSaving ? (
+								<>
+									<Loader2 className="animate-spin" />
+									{t('startup.firstTime.saving', 'Saving...')}
+								</>
+							) : (
+								<>
+									{t('startup.firstTime.save', 'Save and Continue')}
+									<ArrowRight />
+								</>
+							)}
+						</Button>
+					</FieldGroup>
 				</form>
 			</div>
 		</div>
