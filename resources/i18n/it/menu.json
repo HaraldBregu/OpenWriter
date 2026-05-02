@@ -36,6 +36,7 @@
 	"tasks": "Attività",
 	"logs": "Log",
 	"redux": "Stato Redux",
+	"cron": "Cron",
 	"showConsole": "Mostra Console",
 	"refresh": "Ricarica"
 }
