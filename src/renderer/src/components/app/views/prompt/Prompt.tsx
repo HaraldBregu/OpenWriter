@@ -73,7 +73,7 @@ function PromptContainer(): React.JSX.Element {
 							spread={80}
 							glow={true}
 							disabled={false}
-							proximity={164}
+							proximity={64}
 							inactiveZone={0.01}
 						/>
 						<Card className="relative w-full shadow-none!">
