@@ -118,47 +118,87 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 												{t('startup.firstTime.profileSection', 'About you')}
 											</FieldLegend>
 											<FieldGroup>
-												<form.Field name="firstName">
-													{(field) => (
-														<Field>
-															<FieldLabel htmlFor={field.name}>
-																{t('settings.profile.firstName', 'First name')}
-															</FieldLabel>
-															<Input
-																id={field.name}
-																name={field.name}
-																value={field.state.value}
-																onBlur={field.handleBlur}
-																onChange={(e) => {
-																	field.handleChange(e.target.value);
-																	if (errorMessage) setErrorMessage(null);
-																}}
-																placeholder="Ada"
-																autoComplete="given-name"
-															/>
-														</Field>
-													)}
+												<form.Field
+													name="firstName"
+													validators={{
+														onChange: ({ value }) =>
+															value.trim().length === 0
+																? t(
+																		'startup.firstTime.firstNameRequired',
+																		'First name is required'
+																	)
+																: undefined,
+													}}
+												>
+													{(field) => {
+														const showError =
+															field.state.meta.isTouched &&
+															field.state.meta.errors.length > 0;
+														return (
+															<Field data-invalid={showError || undefined}>
+																<FieldLabel htmlFor={field.name}>
+																	{t('settings.profile.firstName', 'First name')}
+																</FieldLabel>
+																<Input
+																	id={field.name}
+																	name={field.name}
+																	value={field.state.value}
+																	onBlur={field.handleBlur}
+																	onChange={(e) => {
+																		field.handleChange(e.target.value);
+																		if (errorMessage) setErrorMessage(null);
+																	}}
+																	placeholder="Ada"
+																	autoComplete="given-name"
+																	aria-invalid={showError}
+																/>
+																{showError && (
+																	<FieldError>{String(field.state.meta.errors[0])}</FieldError>
+																)}
+															</Field>
+														);
+													}}
 												</form.Field>
-												<form.Field name="lastName">
-													{(field) => (
-														<Field>
-															<FieldLabel htmlFor={field.name}>
-																{t('settings.profile.lastName', 'Last name')}
-															</FieldLabel>
-															<Input
-																id={field.name}
-																name={field.name}
-																value={field.state.value}
-																onBlur={field.handleBlur}
-																onChange={(e) => {
-																	field.handleChange(e.target.value);
-																	if (errorMessage) setErrorMessage(null);
-																}}
-																placeholder="Lovelace"
-																autoComplete="family-name"
-															/>
-														</Field>
-													)}
+												<form.Field
+													name="lastName"
+													validators={{
+														onChange: ({ value }) =>
+															value.trim().length === 0
+																? t(
+																		'startup.firstTime.lastNameRequired',
+																		'Last name is required'
+																	)
+																: undefined,
+													}}
+												>
+													{(field) => {
+														const showError =
+															field.state.meta.isTouched &&
+															field.state.meta.errors.length > 0;
+														return (
+															<Field data-invalid={showError || undefined}>
+																<FieldLabel htmlFor={field.name}>
+																	{t('settings.profile.lastName', 'Last name')}
+																</FieldLabel>
+																<Input
+																	id={field.name}
+																	name={field.name}
+																	value={field.state.value}
+																	onBlur={field.handleBlur}
+																	onChange={(e) => {
+																		field.handleChange(e.target.value);
+																		if (errorMessage) setErrorMessage(null);
+																	}}
+																	placeholder="Lovelace"
+																	autoComplete="family-name"
+																	aria-invalid={showError}
+																/>
+																{showError && (
+																	<FieldError>{String(field.state.meta.errors[0])}</FieldError>
+																)}
+															</Field>
+														);
+													}}
 												</form.Field>
 												<FieldDescription>
 													{t(
