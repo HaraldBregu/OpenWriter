@@ -190,6 +190,13 @@ export class Menu {
 							if (win) win.webContents.send('app:open-redux-dialog');
 						},
 					},
+					{
+						label: m.cron,
+						click: (): void => {
+							const win = BrowserWindow.getFocusedWindow();
+							if (win) win.webContents.send('app:open-cron-dialog');
+						},
+					},
 					{ type: 'separator' as const },
 					{
 						label: m.showConsole,
