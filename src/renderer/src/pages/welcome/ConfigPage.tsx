@@ -113,7 +113,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 					<FieldGroup>
 						<FieldSet>
 							<FieldLegend>{t('startup.firstTime.profileSection', 'Your profile')}</FieldLegend>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="flex flex-col gap-4">
 								<form.Field name="firstName">
 									{(field) => (
 										<Field>
@@ -165,7 +165,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							<FieldLegend>
 								{t('startup.firstTime.providersSection', 'Provider tokens')}
 							</FieldLegend>
-							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+							<div className="flex flex-col gap-4">
 								{PROVIDER_IDS.map((providerId) => (
 									<form.Field key={providerId} name={`tokens.${providerId}` as const}>
 										{(field) => (
