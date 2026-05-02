@@ -301,14 +301,6 @@ const App: React.FC = () => {
 															}
 														/>
 														<Route
-															path="skill"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<SkillPage />
-																</Suspense>
-															}
-														/>
-														<Route
 															path="themes"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
