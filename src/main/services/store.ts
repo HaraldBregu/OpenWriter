@@ -191,6 +191,12 @@ export class StoreService {
 		this.store.set('providers', providers);
 	}
 
+	getProfile(): UserProfile | null {
+		const profile = this.store.get('profile');
+		if (!profile) return null;
+		return { firstName: profile.firstName, lastName: profile.lastName };
+	}
+
 	getStartupInfo(): AppStartupInfo {
 		const startupCount = this.store.get('startupCount');
 		return {
