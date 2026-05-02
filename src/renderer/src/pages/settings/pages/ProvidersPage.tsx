@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save } from 'lucide-react';
-import type { ProviderId, Service } from '../../../../../shared/types';
+import type { Provider, ProviderId } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE, getProvider } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
@@ -23,31 +23,31 @@ const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
 	{} as Record<ProviderId, string>
 );
 
-const buildKeyMap = (services: ReadonlyArray<Service & { id: string }>) => {
+const buildKeyMap = (providers: ReadonlyArray<Provider>) => {
 	const map = {} as Record<ProviderId, string>;
 	for (const id of PROVIDER_IDS) {
-		map[id] = services.find((s) => s.provider.id === id)?.apiKey ?? '';
+		map[id] = providers.find((p) => p.id === id)?.apiKey ?? '';
 	}
 	return map;
 };
 
 const ProvidersPage: React.FC = () => {
 	const { t } = useTranslation();
-	const [services, setServices] = useState<Array<Service & { id: string }>>([]);
+	const [providers, setProviders] = useState<Provider[]>([]);
 	const [drafts, setDrafts] = useState<Record<ProviderId, string>>(() => buildKeyMap([]));
 	const [saving, setSaving] = useState<ReadonlySet<ProviderId>>(() => new Set());
 
-	const existingKeys = useMemo(() => buildKeyMap(services), [services]);
+	const existingKeys = useMemo(() => buildKeyMap(providers), [providers]);
 
-	const loadServices = useCallback(async () => {
-		const loaded = await window.app.getServices();
-		setServices(loaded);
+	const loadProviders = useCallback(async () => {
+		const loaded = await window.app.getProviders();
+		setProviders(loaded);
 		return loaded;
 	}, []);
 
 	useEffect(() => {
-		loadServices().catch(() => setServices([]));
-	}, [loadServices]);
+		loadProviders().catch(() => setProviders([]));
+	}, [loadProviders]);
 
 	useEffect(() => {
 		setDrafts(existingKeys);
@@ -58,8 +58,8 @@ const ProvidersPage: React.FC = () => {
 			const apiKey = (drafts[providerId] ?? '').trim();
 			if (apiKey.length === 0 || apiKey === existingKeys[providerId]) return;
 
-			const provider = getProvider(providerId);
-			if (!provider) return;
+			const catalog = getProvider(providerId);
+			if (!catalog) return;
 
 			setSaving((prev) => {
 				const next = new Set(prev);
@@ -67,12 +67,8 @@ const ProvidersPage: React.FC = () => {
 				return next;
 			});
 			try {
-				const added = await window.app.addService({ provider, apiKey });
-				const stale = services.filter(
-					(entry) => entry.provider.id === providerId && entry.id !== added.id
-				);
-				await Promise.all(stale.map((entry) => window.app.deleteService(entry.id)));
-				await loadServices();
+				await window.app.addProvider({ id: catalog.id, name: catalog.name, apiKey });
+				await loadProviders();
 			} finally {
 				setSaving((prev) => {
 					const next = new Set(prev);
@@ -81,7 +77,7 @@ const ProvidersPage: React.FC = () => {
 				});
 			}
 		},
-		[drafts, existingKeys, loadServices, services]
+		[drafts, existingKeys, loadProviders]
 	);
 
 	return (
