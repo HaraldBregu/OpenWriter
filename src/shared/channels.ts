@@ -322,7 +322,7 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.fsListDir]: { args: [params: FsListDirParams]; result: FsListDirEntry[] };
 
 	// ---- Logs (IpcResult-wrapped) ----
-	[LogChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
+	[AppChannels.getLogs]: { args: [limit?: number]; result: AppLogEntry[] };
 	[AppChannels.openLogsFolder]: { args: []; result: void };
 
 	// ---- App data folder (IpcResult-wrapped) ----
