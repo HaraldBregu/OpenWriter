@@ -75,14 +75,29 @@ async function fetchProviderModels(
 	}
 	const normalized = providerId.trim().toLowerCase();
 
-	const strategy = PROVIDER_MODELS_STRATEGIES[normalized];
-	if (!strategy) {
-		throw new Error(`Provider "${providerId}" is not supported by getModels`);
-	}
-
 	const provider = store.getProviderById(normalized);
 	if (!provider || !provider.apiKey) {
 		throw new Error(`No API key configured for provider "${providerId}"`);
+	}
+
+	if (normalized === 'openai') {
+		const openai = new OpenAI({ apiKey: provider.apiKey });
+		const result: ProviderModelInfo[] = [];
+		const list = await openai.models.list();
+		for await (const model of list) {
+			result.push({
+				id: model.id,
+				name: model.id,
+				createdAt: model.created > 0 ? new Date(model.created * 1000).toISOString() : '',
+				ownedBy: model.owned_by ?? 'openai',
+			});
+		}
+		return result;
+	}
+
+	const strategy = PROVIDER_MODELS_STRATEGIES[normalized];
+	if (!strategy) {
+		throw new Error(`Provider "${providerId}" is not supported by getModels`);
 	}
 
 	const response = await fetch(strategy.url, { headers: strategy.headers(provider.apiKey) });
