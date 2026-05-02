@@ -66,6 +66,7 @@ import type {
 	Theme,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
+import type { AssistantResponseEvent } from '../shared/channels';
 
 // ---------------------------------------------------------------------------
 // Re-export shared types so renderer code can import them from the preload
