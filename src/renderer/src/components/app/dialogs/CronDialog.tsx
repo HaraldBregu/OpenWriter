@@ -217,6 +217,16 @@ export function CronDialog({ open, onOpenChange }: CronDialogProps) {
 											<td className="px-4 py-1.5 text-muted-foreground break-all">
 												{job.expression}
 											</td>
+											<td className="px-2 py-1.5 text-right">
+												<Button
+													variant="ghost"
+													size="icon-xs"
+													onClick={() => handleUnschedule(job.id)}
+													aria-label={t('debug.cronUnschedule', 'Unschedule')}
+												>
+													<Trash2 />
+												</Button>
+											</td>
 										</tr>
 									))
 								)}
