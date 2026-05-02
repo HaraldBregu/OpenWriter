@@ -68,7 +68,7 @@ export class ContentReviewerTaskHandler
 
 			const agentInput: ContentReviewerAgentInput = {
 				prompt: input.prompt,
-				providerId: service.provider.id,
+				providerId: service.id,
 				apiKey: service.apiKey,
 				modelName: model.modelId,
 			};
