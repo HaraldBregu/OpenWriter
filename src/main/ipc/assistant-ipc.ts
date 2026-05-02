@@ -1,0 +1,41 @@
+import { BrowserWindow } from 'electron';
+import { registerCommand } from './ipc-gateway';
+import type { IpcModule } from './ipc-module';
+import type { ServiceContainer } from '../core/service-container';
+import type { EventBus } from '../core/event-bus';
+import type { LoggerService } from '../services/logger';
+import { AssistantChannels, type AssistantResponseEvent } from '../../shared/channels';
+import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
+
+/**
+ * IPC for the assistant subsystem.
+ *  - assistant:send  (invoke) -- send a message, returns assistant text
+ *  - assistant:reset (invoke) -- clear conversation history
+ *  - assistant:response (event) -- pushed to all renderers when a reply lands
+ */
+export class AssistantIpc implements IpcModule {
+	readonly name = 'AssistantIpc';
+
+	register(container: ServiceContainer, _eventBus: EventBus): void {
+		const logger = container.get<LoggerService>('logger');
+		const registry = container.get<AssistantRegistry>('assistantRegistry');
+
+		registerCommand(AssistantChannels.send, async (message: string, assistantId?: string) => {
+			const id = assistantId ?? DEFAULT_ASSISTANT_ID;
+			const assistant = registry.get(id);
+			const response = await assistant.send(message);
+
+			const event: AssistantResponseEvent = { assistantId: id, userMessage: message, response };
+			for (const win of BrowserWindow.getAllWindows()) {
+				win.webContents.send(AssistantChannels.response, event);
+			}
+			return response;
+		});
+
+		registerCommand(AssistantChannels.reset, async (assistantId?: string) => {
+			registry.get(assistantId ?? DEFAULT_ASSISTANT_ID).reset();
+		});
+
+		logger.info('AssistantIpc', `Registered ${this.name} module`);
+	}
+}
