@@ -104,8 +104,7 @@ export type ModelType =
 	| 'embedding'
 	| 'audio'
 	| 'code'
-	| 'reasoning'
-	| 'ocr';
+	| 'reasoning';
 
 export interface ModelInfo {
 	readonly providerId: ProviderId;
