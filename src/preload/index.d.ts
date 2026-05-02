@@ -158,15 +158,15 @@ export interface AppApi {
 	/** Subscribe to writing context-menu action events. */
 	onWritingAction: (callback: (data: WritingContextMenuAction) => void) => () => void;
 	// ---------------------------------------------------------------------------
-	// Service management
+	// Provider management
 	// ---------------------------------------------------------------------------
-	getServices: () => Promise<Array<Service & { id: string }>>;
-	addService: (service: Service) => Promise<Service & { id: string }>;
-	deleteService: (id: string) => Promise<void>;
+	getProviders: () => Promise<Provider[]>;
+	addProvider: (provider: Provider) => Promise<Provider>;
+	deleteProvider: (id: string) => Promise<void>;
 	getAgents: () => Promise<AgentSettings[]>;
 	updateAgent: (agent: AgentSettings) => Promise<AgentSettings>;
 	getStartupInfo: () => Promise<AppStartupInfo>;
-	completeFirstRunConfiguration: (services: Service[]) => Promise<AppStartupInfo>;
+	completeFirstRunConfiguration: (providers: Provider[]) => Promise<AppStartupInfo>;
 	/** Fetch the available models from a provider's `/models` endpoint using the stored API key. */
 	getModels: (providerId: string) => Promise<ProviderModelInfo[]>;
 	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */
