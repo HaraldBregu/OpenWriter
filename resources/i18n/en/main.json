@@ -140,6 +140,7 @@
 		"description": "Configure your application preferences",
 		"tabs": {
 			"general": "General",
+			"account": "Account",
 			"workspace": "Workspace",
 			"providers": "Providers",
 			"agents": "Agents",
