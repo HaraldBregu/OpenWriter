@@ -19,6 +19,12 @@ export function CronDialog({ open, onOpenChange }: CronDialogProps) {
 	const [jobs, setJobs] = useState<CronJobInfo[]>([]);
 	const [ticks, setTicks] = useState<CronTickEvent[]>([]);
 	const [loading, setLoading] = useState(false);
+	const [formId, setFormId] = useState('');
+	const [formExpr, setFormExpr] = useState('');
+	const [formTz, setFormTz] = useState('');
+	const [formRunOnStart, setFormRunOnStart] = useState(false);
+	const [submitting, setSubmitting] = useState(false);
+	const [formError, setFormError] = useState<string | null>(null);
 	const unsubRef = useRef<(() => void) | null>(null);
 
 	const fetchJobs = useCallback(async () => {
