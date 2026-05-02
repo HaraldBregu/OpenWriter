@@ -340,9 +340,9 @@ export class AppIpc implements IpcModule {
 
 		ipcMain.handle(
 			AppChannels.completeFirstRunConfiguration,
-			wrapSimpleHandler((providers: Provider[]) => {
+			wrapSimpleHandler((profile: UserProfile, providers: Provider[]) => {
 				StoreValidators.validateProviders(providers);
-				return store.completeFirstRunConfiguration(providers);
+				return store.completeFirstRunConfiguration(profile, providers);
 			}, AppChannels.completeFirstRunConfiguration)
 		);
 
