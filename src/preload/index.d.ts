@@ -235,6 +235,8 @@ export interface AppApi {
 	onOpenLogsDialog: (callback: () => void) => () => void;
 	/** Subscribe to open-redux-dialog events emitted from the Developer menu. */
 	onOpenReduxDialog: (callback: () => void) => () => void;
+	/** Subscribe to open-cron-dialog events emitted from the Developer menu. */
+	onOpenCronDialog: (callback: () => void) => () => void;
 }
 
 /** Managed workspaces under `{userData}/workspaces/`, plus document/output management */
