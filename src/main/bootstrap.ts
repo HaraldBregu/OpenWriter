@@ -165,11 +165,10 @@ export function bootstrapIpcModules(container: ServiceContainer, eventBus: Event
 
 	const ipcModules: IpcModule[] = [
 		new AppIpc(),
-		new WorkspaceIpc(),
-		new TaskManagerIpc(),
-		new WindowIpc(),
-		new LogsIpc(),
 		new AssistantIpc(),
+		new TaskIpc(),
+		new WindowIpc(),
+		new WorkspaceIpc(),
 	];
 
 	for (const module of ipcModules) {
