@@ -10,6 +10,7 @@ import type { EventBus } from '../core/event-bus';
 import type { StoreService } from '../services/store';
 import type { LoggerService } from '../services/logger';
 import type { ThemeService } from '../services/theme-service';
+import type { CronService } from '../services/cron-service';
 import type { SkillsStoreService } from '../services/skills-store-service';
 import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
