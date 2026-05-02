@@ -1,45 +1,45 @@
-import type { Service } from '../../shared/types';
+import type { Provider } from '../../shared/types';
 import type { StoreService } from '../services/store';
 
 /**
- * ServiceResolver -- resolves a configured Service (provider + apiKey) from StoreService.
+ * ProviderResolver — resolves a configured Provider (with apiKey) from StoreService.
  *
  * Resolution order (first match wins):
  *   1. Exact match by providerId
- *   2. First configured service in StoreService
+ *   2. First configured provider in StoreService
  *
- * Validates that an API key exists for the resolved service.
+ * Validates that an API key exists for the resolved provider.
  */
-export class ServiceResolver {
+export class ProviderResolver {
 	constructor(private readonly storeService: StoreService) {}
 
 	/**
-	 * Resolve a Service from StoreService with fallback chain.
+	 * Resolve a Provider from StoreService with fallback chain.
 	 *
 	 * @param options - Optional providerId override
-	 * @returns The resolved Service
-	 * @throws Error if no services are configured or no API key is set
+	 * @returns The resolved Provider
+	 * @throws Error if no providers are configured or no API key is set
 	 */
-	resolve(options?: { providerId?: string }): Service {
+	resolve(options?: { providerId?: string }): Provider {
 		const providerId = options?.providerId?.trim();
 
 		const found = providerId
-			? this.storeService.getServiceByProviderId(providerId)
-			: this.storeService.getServices()[0];
+			? this.storeService.getProviderById(providerId)
+			: this.storeService.getProviders()[0];
 
 		if (!found) {
-			throw new Error('No services configured. Please add a service in the Providers page.');
+			throw new Error('No providers configured. Please add a provider in the Providers page.');
 		}
 
 		const apiKey = found.apiKey.trim();
 
 		if (!apiKey) {
 			throw new Error(
-				`No API key configured for provider "${found.provider.name}". ` +
+				`No API key configured for provider "${found.name}". ` +
 					'Please configure the API key in the Providers page.'
 			);
 		}
 
-		return { provider: found.provider, apiKey };
+		return { id: found.id, name: found.name, apiKey };
 	}
 }
