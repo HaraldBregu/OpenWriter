@@ -44,7 +44,7 @@ function toTaskInfo(t: ActiveTask): TaskInfo {
  * Security notes:
  *  - windowId is always stamped from event.sender.id in task:submit, never trusted from payload.
  */
-export class TaskManagerIpc implements IpcModule {
+export class TaskIpc implements IpcModule {
 	readonly name = 'task';
 
 	register(container: ServiceContainer, eventBus: EventBus): void {

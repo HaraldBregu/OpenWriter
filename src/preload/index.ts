@@ -388,6 +388,21 @@ const task: TaskApi = {
 } satisfies TaskApi;
 
 // ---------------------------------------------------------------------------
+// window.assistant — Conversational AI assistant
+// ---------------------------------------------------------------------------
+const assistant: AssistantApi = {
+	send: (message: string, assistantId?: string): Promise<string> => {
+		return typedInvokeUnwrap(AssistantChannels.send, message, assistantId);
+	},
+	reset: (assistantId?: string): Promise<void> => {
+		return typedInvokeUnwrap(AssistantChannels.reset, assistantId);
+	},
+	onResponse: (callback: (event: AssistantResponseEvent) => void): (() => void) => {
+		return typedOn(AssistantChannels.response, callback);
+	},
+} satisfies AssistantApi;
+
+// ---------------------------------------------------------------------------
 // Registration — expose all namespaces via contextBridge
 // ---------------------------------------------------------------------------
 if (process.contextIsolated) {
