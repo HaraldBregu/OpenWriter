@@ -42,6 +42,7 @@ import {
 	Search,
 	Globe,
 	LayoutDashboard,
+	Bot,
 	Plus,
 	Sparkles,
 	Sun,
