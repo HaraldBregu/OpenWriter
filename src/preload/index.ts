@@ -164,6 +164,9 @@ const app: AppApi = {
 	onOpenReduxDialog: (callback: () => void): (() => void) => {
 		return typedOn(AppChannels.openReduxDialog, callback);
 	},
+	onOpenCronDialog: (callback: () => void): (() => void) => {
+		return typedOn(AppChannels.openCronDialog, callback);
+	},
 } satisfies AppApi;
 
 // ---------------------------------------------------------------------------
