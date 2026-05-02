@@ -12,6 +12,7 @@ import type {
 	AgentSettings,
 	ContextMenuDescriptor,
 	Provider,
+	UserProfile,
 	ThemeMode,
 	WorkspaceInfo,
 	CreateWorkspaceParams,
