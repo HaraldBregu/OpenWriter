@@ -2482,12 +2482,52 @@
     postcss "^8.5.6"
     tailwindcss "4.2.4"
 
+"@tanstack/devtools-event-client@^0.4.1":
+  version "0.4.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/devtools-event-client/-/devtools-event-client-0.4.3.tgz#bfa2e68f5e06a8bb8934c7bd96912adf2d96571d"
+  integrity sha512-OZI6QyULw0FI0wjgmeYzCIfbgPsOEzwJtCpa69XrfLMtNXLGnz3d/dIabk7frg0TmHo+Ah49w5I4KC7Tufwsvw==
+
+"@tanstack/form-core@1.29.1":
+  version "1.29.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/form-core/-/form-core-1.29.1.tgz#2703b903272ddf6fcf1667226ed86f74293f3dc0"
+  integrity sha512-NIYPO36eEu7nSWvMpbFDQaBWyVtnH/C8fsZ3/XpJUT4uOWgmxsiUvHGbTbDNIQTXAKIkhwEl0sUrqBNn2SfUnw==
+  dependencies:
+    "@tanstack/devtools-event-client" "^0.4.1"
+    "@tanstack/pacer-lite" "^0.1.1"
+    "@tanstack/store" "^0.9.1"
+
+"@tanstack/pacer-lite@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/pacer-lite/-/pacer-lite-0.1.1.tgz#431d3b0ac871280e8326fdbf156bb171d9bb0aa3"
+  integrity sha512-y/xtNPNt/YeyoVxE/JCx+T7yjEzpezmbb+toK8DDD1P4m7Kzs5YR956+7OKexG3f8aXgC3rLZl7b1V+yNUSy5w==
+
+"@tanstack/react-form@^1.29.1":
+  version "1.29.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-form/-/react-form-1.29.1.tgz#80644619b7347057c999e0180e973532cdde2246"
+  integrity sha512-hVHk4g0phd0HxRsv2ry6Xt8BqmalT55Q3cokhJBCC1St0hcGZhgwJJbohm9atao45BPG9e55DGvtbwExqZe35g==
+  dependencies:
+    "@tanstack/form-core" "1.29.1"
+    "@tanstack/react-store" "^0.9.1"
+
+"@tanstack/react-store@^0.9.1":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-store/-/react-store-0.9.3.tgz#4d19d982a4612cc21cedf5ab25a62617323509c9"
+  integrity sha512-y2iHd/N9OkoQbFJLUX1T9vbc2O9tjH0pQRgTcx1/Nz4IlwLvkgpuglXUx+mXt0g5ZDFrEeDnONPqkbfxXJKwRg==
+  dependencies:
+    "@tanstack/store" "0.9.3"
+    use-sync-external-store "^1.6.0"
+
 "@tanstack/react-table@^8.21.3":
   version "8.21.3"
   resolved "https://registry.yarnpkg.com/@tanstack/react-table/-/react-table-8.21.3.tgz#2c38c747a5731c1a07174fda764b9c2b1fb5e91b"
   integrity sha512-5nNMTSETP4ykGegmVkhjcS8tTLW6Vl4axfEGQN3v0zdHYbK4UfoqfPChclTrJ4EoK9QynqAu9oUf8VEmrpZ5Ww==
   dependencies:
     "@tanstack/table-core" "8.21.3"
+
+"@tanstack/store@0.9.3", "@tanstack/store@^0.9.1":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@tanstack/store/-/store-0.9.3.tgz#0f9ebca34d194442fe559afce1e8a7327f6d3eb4"
+  integrity sha512-8reSzl/qGWGGVKhBoxXPMWzATSbZLZFWhwBAFO9NAyp0TxzfBP0mIrGb8CP8KrQTmvzXlR/vFPPUrHTLBGyFyw==
 
 "@tanstack/table-core@8.21.3":
   version "8.21.3"

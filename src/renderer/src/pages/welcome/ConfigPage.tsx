@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useForm } from '@tanstack/react-form';
 import { ArrowRight, Loader2 } from 'lucide-react';
 import { AppIconOpenWriter } from '@/components/app';
 import { Button } from '@/components/ui/Button';
@@ -8,11 +9,17 @@ import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/componen
 import { Separator } from '@/components/ui/Separator';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
-import type { Provider, ProviderId, AppStartupInfo, UserProfile } from '../../../../shared/types';
+import type { Provider, ProviderId, AppStartupInfo } from '../../../../shared/types';
 
 interface ConfigPageProps {
 	onConfigured: (startupInfo: AppStartupInfo) => void;
 }
+
+type FormValues = {
+	firstName: string;
+	lastName: string;
+	tokens: Record<ProviderId, string>;
+};
 
 const EMPTY_TOKENS = Object.fromEntries(
 	PROVIDER_IDS.map((providerId) => [providerId, ''])
@@ -22,56 +29,50 @@ const PROVIDER_LABELS = Object.fromEntries(
 	PROVIDER_CATALOGUE.map((provider) => [provider.id, provider.name])
 ) as Record<ProviderId, string>;
 
+const DEFAULT_VALUES: FormValues = {
+	firstName: '',
+	lastName: '',
+	tokens: EMPTY_TOKENS,
+};
+
 const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 	const { t } = useTranslation();
-	const [profile, setProfile] = useState<UserProfile>({ firstName: '', lastName: '' });
-	const [tokens, setTokens] = useState<Record<ProviderId, string>>(EMPTY_TOKENS);
-	const [isSaving, setIsSaving] = useState(false);
 	const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-	const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
-		if (isSaving || typeof window.app?.completeFirstRunConfiguration !== 'function') {
-			return;
-		}
-
-		setIsSaving(true);
-		setErrorMessage(null);
-
-		try {
-			const providers: Provider[] = PROVIDER_IDS.flatMap((providerId) => {
-				const catalog = getProvider(providerId);
-				if (!catalog) return [];
-				return [
-					{
-						id: catalog.id,
-						name: catalog.name,
-						apiKey: tokens[providerId].trim(),
-					},
-				];
-			});
-			const startupInfo = await window.app.completeFirstRunConfiguration(profile, providers);
-			onConfigured(startupInfo);
-		} catch (error) {
-			setErrorMessage(
-				error instanceof Error
-					? error.message
-					: t(
-							'startup.firstTime.error',
-							'Unable to save your provider tokens right now. Please try again.'
-						)
-			);
-		} finally {
-			setIsSaving(false);
-		}
-	};
-
-	const updateProfile = (field: keyof UserProfile) => (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		setProfile((current) => ({ ...current, [field]: value }));
-		if (errorMessage) setErrorMessage(null);
-	};
+	const form = useForm({
+		defaultValues: DEFAULT_VALUES,
+		onSubmit: async ({ value }) => {
+			if (typeof window.app?.completeFirstRunConfiguration !== 'function') return;
+			setErrorMessage(null);
+			try {
+				const providers: Provider[] = PROVIDER_IDS.flatMap((providerId) => {
+					const catalog = getProvider(providerId);
+					if (!catalog) return [];
+					return [
+						{
+							id: catalog.id,
+							name: catalog.name,
+							apiKey: value.tokens[providerId].trim(),
+						},
+					];
+				});
+				const startupInfo = await window.app.completeFirstRunConfiguration(
+					{ firstName: value.firstName, lastName: value.lastName },
+					providers
+				);
+				onConfigured(startupInfo);
+			} catch (error) {
+				setErrorMessage(
+					error instanceof Error
+						? error.message
+						: t(
+								'startup.firstTime.error',
+								'Unable to save your provider tokens right now. Please try again.'
+							)
+				);
+			}
+		},
+	});
 
 	return (
 		<div className="flex flex-col h-screen bg-background">
@@ -91,7 +92,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 					<h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
 						{t('startup.firstTime.title', 'Welcome to OpenWriter')}
 					</h1>
-					<p className="text-sm text-muted-foreground text-center max-w-md leading-relaxed">
+					<p className="text-sm text-muted-foreground text-center max-w-2xl leading-relaxed">
 						{t(
 							'startup.firstTime.description',
 							'Tell us a bit about you and connect your providers. You can change anything later in Settings.'
@@ -99,38 +100,62 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 					</p>
 				</div>
 
-				<form onSubmit={handleSubmit} className="w-full max-w-md" noValidate>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						form.handleSubmit();
+					}}
+					className="w-full max-w-2xl"
+					noValidate
+				>
 					<FieldGroup>
 						<FieldSet>
-							<FieldLegend>
-								{t('startup.firstTime.profileSection', 'Your profile')}
-							</FieldLegend>
-							<FieldGroup>
-								<Field>
-									<FieldLabel htmlFor="first-run-firstName">
-										{t('settings.profile.firstName', 'First name')}
-									</FieldLabel>
-									<Input
-										id="first-run-firstName"
-										value={profile.firstName}
-										onChange={updateProfile('firstName')}
-										placeholder={t('settings.profile.firstNamePlaceholder', 'First name')}
-										autoComplete="given-name"
-									/>
-								</Field>
-								<Field>
-									<FieldLabel htmlFor="first-run-lastName">
-										{t('settings.profile.lastName', 'Last name')}
-									</FieldLabel>
-									<Input
-										id="first-run-lastName"
-										value={profile.lastName}
-										onChange={updateProfile('lastName')}
-										placeholder={t('settings.profile.lastNamePlaceholder', 'Last name')}
-										autoComplete="family-name"
-									/>
-								</Field>
-							</FieldGroup>
+							<FieldLegend>{t('startup.firstTime.profileSection', 'Your profile')}</FieldLegend>
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+								<form.Field name="firstName">
+									{(field) => (
+										<Field>
+											<FieldLabel htmlFor={field.name}>
+												{t('settings.profile.firstName', 'First name')}
+											</FieldLabel>
+											<Input
+												id={field.name}
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(e) => {
+													field.handleChange(e.target.value);
+													if (errorMessage) setErrorMessage(null);
+												}}
+												placeholder={t('settings.profile.firstNamePlaceholder', 'First name')}
+												autoComplete="given-name"
+											/>
+										</Field>
+									)}
+								</form.Field>
+								<form.Field name="lastName">
+									{(field) => (
+										<Field>
+											<FieldLabel htmlFor={field.name}>
+												{t('settings.profile.lastName', 'Last name')}
+											</FieldLabel>
+											<Input
+												id={field.name}
+												name={field.name}
+												value={field.state.value}
+												onBlur={field.handleBlur}
+												onChange={(e) => {
+													field.handleChange(e.target.value);
+													if (errorMessage) setErrorMessage(null);
+												}}
+												placeholder={t('settings.profile.lastNamePlaceholder', 'Last name')}
+												autoComplete="family-name"
+											/>
+										</Field>
+									)}
+								</form.Field>
+							</div>
 						</FieldSet>
 
 						<Separator />
@@ -139,46 +164,54 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							<FieldLegend>
 								{t('startup.firstTime.providersSection', 'Provider tokens')}
 							</FieldLegend>
-							<FieldGroup>
+							<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 								{PROVIDER_IDS.map((providerId) => (
-									<Field key={providerId}>
-										<FieldLabel htmlFor={`first-run-${providerId}`}>
-											{PROVIDER_LABELS[providerId]}
-										</FieldLabel>
-										<Input
-											id={`first-run-${providerId}`}
-											type="password"
-											value={tokens[providerId]}
-											onChange={(event) => {
-												const value = event.target.value;
-												setTokens((current) => ({ ...current, [providerId]: value }));
-												if (errorMessage) setErrorMessage(null);
-											}}
-											placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
-											autoComplete="off"
-											spellCheck={false}
-											className="font-mono"
-										/>
-									</Field>
+									<form.Field key={providerId} name={`tokens.${providerId}` as const}>
+										{(field) => (
+											<Field>
+												<FieldLabel htmlFor={`first-run-${providerId}`}>
+													{PROVIDER_LABELS[providerId]}
+												</FieldLabel>
+												<Input
+													id={`first-run-${providerId}`}
+													type="password"
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(e) => {
+														field.handleChange(e.target.value);
+														if (errorMessage) setErrorMessage(null);
+													}}
+													placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
+													autoComplete="off"
+													spellCheck={false}
+													className="font-mono"
+												/>
+											</Field>
+										)}
+									</form.Field>
 								))}
-							</FieldGroup>
+							</div>
 						</FieldSet>
 
 						{errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
 
-						<Button type="submit" disabled={isSaving}>
-							{isSaving ? (
-								<>
-									<Loader2 className="animate-spin" />
-									{t('startup.firstTime.saving', 'Saving...')}
-								</>
-							) : (
-								<>
-									{t('startup.firstTime.save', 'Save and Continue')}
-									<ArrowRight />
-								</>
+						<form.Subscribe selector={(s) => s.isSubmitting}>
+							{(isSubmitting) => (
+								<Button type="submit" disabled={isSubmitting} className="self-start">
+									{isSubmitting ? (
+										<>
+											<Loader2 className="animate-spin" />
+											{t('startup.firstTime.saving', 'Saving...')}
+										</>
+									) : (
+										<>
+											{t('startup.firstTime.save', 'Save and Continue')}
+											<ArrowRight />
+										</>
+									)}
+								</Button>
 							)}
-						</Button>
+						</form.Subscribe>
 					</FieldGroup>
 				</form>
 			</div>
