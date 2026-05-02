@@ -184,6 +184,11 @@ export interface AppLogEntry {
 	message: string;
 }
 
+export interface UserProfile {
+	firstName: string;
+	lastName: string;
+}
+
 export interface AppStartupInfo {
 	startupCount: number;
 	isFirstRun: boolean;
