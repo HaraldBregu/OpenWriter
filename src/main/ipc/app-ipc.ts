@@ -73,6 +73,20 @@ async function fetchProviderModels(
 		return result;
 	}
 
+	if (normalized === 'anthropic') {
+		const anthropic = new Anthropic({ apiKey: provider.apiKey });
+		const result: ProviderModelInfo[] = [];
+		for await (const model of anthropic.beta.models.list()) {
+			result.push({
+				id: model.id,
+				name: model.display_name && model.display_name.length > 0 ? model.display_name : model.id,
+				createdAt: typeof model.created_at === 'string' ? model.created_at : '',
+				ownedBy: 'anthropic',
+			});
+		}
+		return result;
+	}
+
 	const strategy = PROVIDER_MODELS_STRATEGIES[normalized];
 	if (!strategy) {
 		throw new Error(`Provider "${providerId}" is not supported by getModels`);
