@@ -88,6 +88,9 @@ export function bootstrapServices(): BootstrapResult {
 	// Theme management service
 	container.register('themeService', new ThemeService(logger));
 
+	// Cron job scheduler
+	container.register('cronService', new CronService(logger));
+
 	// Skills management service (user-installed skills under userData/skills/)
 	container.register('skillsStoreService', new SkillsStoreService(logger));
 
