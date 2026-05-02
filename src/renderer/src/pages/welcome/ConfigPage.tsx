@@ -300,9 +300,14 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							<div className="flex size-16 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
 								<AppIconOpenWriter className="size-9" aria-hidden="true" />
 							</div>
-							<span className="text-2xl font-semibold tracking-tight text-sidebar-foreground">
-								OpenWriter
-							</span>
+							<div className="flex flex-col">
+								<span className="text-2xl font-semibold tracking-tight text-sidebar-foreground leading-tight">
+									OpenWriter
+								</span>
+								<span className="text-xs text-sidebar-foreground/60 tracking-wide">
+									{t('startup.firstTime.slogan', 'Write freely. Own everything.')}
+								</span>
+							</div>
 						</div>
 
 						<div className="flex flex-1 flex-col justify-center gap-6 max-w-md">
