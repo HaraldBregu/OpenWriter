@@ -65,17 +65,18 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 		setErrorMessage(null);
 
 		try {
-			const services: Service[] = PROVIDER_IDS.flatMap((providerId) => {
-				const provider = getProvider(providerId);
-				if (!provider) return [];
+			const providers: Provider[] = PROVIDER_IDS.flatMap((providerId) => {
+				const catalog = getProvider(providerId);
+				if (!catalog) return [];
 				return [
 					{
-						provider,
+						id: catalog.id,
+						name: catalog.name,
 						apiKey: tokens[providerId].trim(),
 					},
 				];
 			});
-			const startupInfo = await window.app.completeFirstRunConfiguration(services);
+			const startupInfo = await window.app.completeFirstRunConfiguration(providers);
 			onConfigured(startupInfo);
 		} catch (error) {
 			setErrorMessage(
