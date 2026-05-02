@@ -76,10 +76,10 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 	});
 
 	return (
-		<div className="flex flex-col h-screen bg-background">
+		<PageContainer className="h-screen">
 			<TitleBar title="OpenWriter" />
 
-			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-y-auto">
+			<PageBody className="items-center px-8 py-12">
 				<div className="flex flex-col items-center mb-10">
 					<AppIconOpenWriter
 						className="mb-5 text-foreground"
