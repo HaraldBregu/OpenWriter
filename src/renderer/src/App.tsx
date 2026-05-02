@@ -261,6 +261,14 @@ const App: React.FC = () => {
 															}
 														/>
 														<Route
+															path="account"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<AccountPage />
+																</Suspense>
+															}
+														/>
+														<Route
 															path="workspace"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>

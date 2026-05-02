@@ -167,6 +167,8 @@ export interface AppApi {
 	getAgents: () => Promise<AgentSettings[]>;
 	updateAgent: (agent: AgentSettings) => Promise<AgentSettings>;
 	getStartupInfo: () => Promise<AppStartupInfo>;
+	/** Get the persisted user profile, or null if not set. */
+	getProfile: () => Promise<UserProfile | null>;
 	completeFirstRunConfiguration: (profile: UserProfile, providers: Provider[]) => Promise<AppStartupInfo>;
 	/** Fetch the available models from a provider's `/models` endpoint using the stored API key. */
 	getModels: (providerId: string) => Promise<ProviderModelInfo[]>;
