@@ -79,28 +79,29 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 		<PageContainer className="h-screen">
 			<TitleBar title="OpenWriter" />
 
-			<PageBody className="items-center px-8 py-12">
-				<div className="flex flex-col items-center mb-10">
+			<PageBody className="p-0 flex-row">
+				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-1/2 px-10 py-12 border-r bg-muted/30">
 					<AppIconOpenWriter
-						className="mb-5 text-foreground"
+						className="text-foreground"
 						style={{
-							width: 'clamp(80px, min(14vw, 14vh), 140px)',
-							height: 'clamp(80px, min(14vw, 14vh), 140px)',
+							width: 'clamp(96px, min(16vw, 16vh), 160px)',
+							height: 'clamp(96px, min(16vw, 16vh), 160px)',
 						}}
 						aria-label={t('appTitle')}
 						role="img"
 					/>
-					<h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
+					<h1 className="text-3xl font-semibold text-foreground tracking-tight text-center">
 						{t('startup.firstTime.title', 'Welcome to OpenWriter')}
 					</h1>
-					<p className="text-sm text-muted-foreground text-center max-w-2xl leading-relaxed">
+					<p className="text-sm text-muted-foreground text-center max-w-sm leading-relaxed">
 						{t(
 							'startup.firstTime.description',
 							'Tell us a bit about you and connect your providers. You can change anything later in Settings.'
 						)}
 					</p>
-				</div>
+				</aside>
 
+				<div className="flex flex-1 justify-center overflow-y-auto px-8 py-12">
 				<form
 					onSubmit={(e) => {
 						e.preventDefault();
