@@ -66,15 +66,17 @@ function PromptContainer(): React.JSX.Element {
 						aria-hidden="true"
 						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
 					/>
-					<MovingBorderButton
-						as="div"
-						borderRadius="0.75rem"
-						duration={6200}
-						containerClassName="h-auto w-full text-sm"
-						borderClassName="h-96 w-260 bg-[radial-gradient(ellipse_50%_50%_at_center,_#38bdf8_8%,_#34d399_28%,_#fb7185_50%,_transparent_75%)] opacity-[0.92]"
-						className="block border-none bg-transparent p-0 text-inherit backdrop-blur-none"
-					>
-						<Card className="w-full shadow-none!">
+					<div className="relative rounded-xl">
+						<GlowingEffect
+							blur={0}
+							borderWidth={3}
+							spread={80}
+							glow={true}
+							disabled={false}
+							proximity={64}
+							inactiveZone={0.01}
+						/>
+						<Card className="relative w-full shadow-none!">
 							<PromptHeader />
 							<CardContent>
 								<Textarea
