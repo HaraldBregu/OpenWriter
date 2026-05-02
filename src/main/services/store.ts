@@ -200,7 +200,7 @@ export class StoreService {
 		};
 	}
 
-	completeFirstRunConfiguration(providers: Provider[]): AppStartupInfo {
+	completeFirstRunConfiguration(profile: UserProfile, providers: Provider[]): AppStartupInfo {
 		const incoming = normalizeProviders(providers).filter((p) => p.apiKey.trim().length > 0);
 		const incomingIds = new Set(incoming.map((p) => p.id));
 		const preserved = this.store
@@ -209,6 +209,10 @@ export class StoreService {
 			.map(cloneProvider);
 
 		this.store.set('providers', [...preserved, ...incoming]);
+		this.store.set('profile', {
+			firstName: profile.firstName.trim(),
+			lastName: profile.lastName.trim(),
+		});
 		this.store.set('isInitialized', true);
 
 		return this.getStartupInfo();
