@@ -126,28 +126,26 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 			)}
 
 			<div className="flex flex-col items-center flex-1 px-8 py-12 overflow-y-auto">
-				<div className="flex flex-col items-center mb-10">
+				<div className="flex flex-col items-center mb-8">
 					<AppIconOpenWriter
-						className="mb-5 text-foreground"
+						className="mb-3 text-foreground"
 						style={{
-							width: 'clamp(104px, min(18vw, 18vh), 196px)',
-							height: 'clamp(104px, min(18vw, 18vh), 196px)',
+							width: 'clamp(48px, min(8vw, 8vh), 72px)',
+							height: 'clamp(48px, min(8vw, 8vh), 72px)',
 						}}
 						aria-label={t('appTitle')}
 						role="img"
 					/>
-					<h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">
-						{t('appTitle')}
-					</h1>
-					<p className="text-sm text-muted-foreground text-center max-w-xs leading-relaxed">
+					<H4 className="mb-1 text-foreground">{t('appTitle')}</H4>
+					<Muted className="text-center max-w-xs leading-relaxed">
 						{t('welcome.tagline')}
-					</p>
-					<p className="mt-3 text-xs text-muted-foreground">
+					</Muted>
+					<Small className="mt-2 font-normal text-muted-foreground">
 						{t('welcome.freePlan')} &bull;{' '}
 						<span className="text-primary cursor-pointer hover:underline">
 							{t('welcome.upgradeToPro')}
 						</span>
-					</p>
+					</Small>
 				</div>
 
 				<div className="w-full max-w-2xl mb-8">
