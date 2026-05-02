@@ -1,5 +1,5 @@
 /**
- * Agent — strategy interface for feature agents (text, image, rag, ocr, ...).
+ * Agent — strategy interface for feature agents.
  *
  * Agents encapsulate a single AI capability and share a common execution
  * contract. They are registered in the AgentRegistry and dispatched by type.
