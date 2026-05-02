@@ -320,21 +320,21 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							</p>
 							<ul className="flex flex-col gap-3 text-sm text-sidebar-foreground/80">
 								<li className="flex gap-2">
-									<span aria-hidden="true">→</span>
+									<span aria-hidden="true" className="text-sidebar-primary">→</span>
 									{t(
 										'startup.firstTime.leftBullet1',
 										'Encrypted local storage. No accounts, no cloud sync.'
 									)}
 								</li>
 								<li className="flex gap-2">
-									<span aria-hidden="true">→</span>
+									<span aria-hidden="true" className="text-sidebar-primary">→</span>
 									{t(
 										'startup.firstTime.leftBullet2',
 										'Switch providers per document. Compare answers side-by-side.'
 									)}
 								</li>
 								<li className="flex gap-2">
-									<span aria-hidden="true">→</span>
+									<span aria-hidden="true" className="text-sidebar-primary">→</span>
 									{t(
 										'startup.firstTime.leftBullet3',
 										'Works offline once your keys are configured.'
