@@ -119,7 +119,6 @@ export type {
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
-	SkillInfo,
 };
 export type { ShortcutId } from '../shared/shortcuts';
 
