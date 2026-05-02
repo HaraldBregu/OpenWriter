@@ -42,33 +42,7 @@ interface ProviderModelsStrategy {
 	parse: (body: unknown) => ProviderModelInfo[];
 }
 
-const PROVIDER_MODELS_STRATEGIES: Record<string, ProviderModelsStrategy> = {
-	anthropic: {
-		url: 'https://api.anthropic.com/v1/models',
-		headers: (apiKey) => ({
-			'x-api-key': apiKey,
-			'anthropic-version': '2023-06-01',
-		}),
-		parse: (body) => {
-			const items = Array.isArray((body as { data?: unknown[] })?.data)
-				? ((body as { data: unknown[] }).data as Array<Record<string, unknown>>)
-				: [];
-			return items
-				.filter((item) => typeof item.id === 'string')
-				.map((item) => {
-					const id = item.id as string;
-					return {
-						id,
-						name: typeof item.display_name === 'string' && item.display_name.length > 0
-							? (item.display_name as string)
-							: id,
-						createdAt: typeof item.created_at === 'string' ? (item.created_at as string) : '',
-						ownedBy: 'anthropic',
-					};
-				});
-		},
-	},
-};
+const PROVIDER_MODELS_STRATEGIES: Record<string, ProviderModelsStrategy> = {};
 
 async function fetchProviderModels(
 	providerId: string,
