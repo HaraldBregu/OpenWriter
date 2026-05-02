@@ -13,6 +13,7 @@ import {
 	FieldLabel,
 	FieldSet,
 } from '@/components/ui/Field';
+import { H1, H3, H4, Muted, Small } from '@/components/ui/Typography';
 import { PageBody, PageContainer } from '@/components/app/base/page';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
@@ -196,12 +197,6 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 														);
 													}}
 												</form.Field>
-												<FieldDescription>
-													{t(
-														'startup.firstTime.profileHint',
-														'Stays on this device.'
-													)}
-												</FieldDescription>
 											</FieldGroup>
 										</FieldSet>
 
