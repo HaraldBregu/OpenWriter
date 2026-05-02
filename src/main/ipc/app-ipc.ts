@@ -4,6 +4,7 @@ import { promisify } from 'node:util';
 import path from 'node:path';
 import { is } from '@electron-toolkit/utils';
 import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
