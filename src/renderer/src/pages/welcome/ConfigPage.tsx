@@ -102,15 +102,13 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 								>
 									<FieldGroup>
 										<div className="flex flex-col gap-2 text-left">
-											<h1 className="text-2xl font-semibold tracking-tight">
-												{t('startup.firstTime.title', 'Get started')}
-											</h1>
-											<p className="text-sm text-muted-foreground">
-												{t(
-													'startup.firstTime.description',
-													'Add your name and at least one API key.'
-												)}
-											</p>
+											<H3>{t('startup.firstTime.title', 'Get started')}</H3>
+											<Muted>
+														{t(
+															'startup.firstTime.description',
+															'Add your name and at least one API key.'
+														)}
+													</Muted>
 										</div>
 
 										<FieldSet>
@@ -290,28 +288,24 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 								aria-hidden="true"
 							/>
 							<div className="flex flex-col">
-								<span className="text-2xl font-semibold tracking-tight text-sidebar-foreground leading-tight">
-									OpenWriter
-								</span>
-								<span className="text-xs text-sidebar-foreground/60 tracking-wide">
-									{t('startup.firstTime.slogan', 'Write freely. Own everything.')}
-								</span>
+								<H4 className="text-sidebar-foreground leading-tight">OpenWriter</H4>
+								<Small className="text-sidebar-foreground/60 font-normal tracking-wide">{t('startup.firstTime.slogan', 'Write freely. Own everything.')}</Small>
 							</div>
 						</div>
 
 						<div className="flex flex-1 flex-col justify-center gap-6 max-w-md">
-							<h2 className="text-4xl font-semibold tracking-tight leading-tight text-sidebar-foreground">
+							<H1 className="text-left text-4xl font-semibold leading-tight text-sidebar-foreground">
 								{t(
 									'startup.firstTime.leftTitle',
 									'Your writing, your models, your machine.'
 								)}
-							</h2>
-							<p className="text-sm text-sidebar-foreground/70 leading-relaxed">
+							</H1>
+							<Muted className="text-sidebar-foreground/70 leading-relaxed">
 								{t(
 									'startup.firstTime.leftDescription',
 									'OpenWriter is a local-first writing studio. Bring your own keys for OpenAI, Anthropic, Google, and more — drafts and credentials never leave your device.'
 								)}
-							</p>
+							</Muted>
 							<ul className="flex flex-col gap-3 text-sm text-sidebar-foreground/80">
 								<li className="flex gap-2">
 									<span aria-hidden="true" className="text-sidebar-primary">→</span>
@@ -338,12 +332,11 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 						</div>
 
 						<footer className="flex flex-col gap-2 text-xs text-sidebar-foreground/60 max-w-md">
-							<p>
-								{t(
+							<Small className="font-normal">{t(
 									'startup.firstTime.leftFooterTagline',
 									'Built by writers, for writers. Free and open source.'
 								)}
-							</p>
+							</Small>
 							<div className="flex gap-4">
 								<a href="#" className="hover:underline">
 									{t('startup.firstTime.leftFooterPrivacy', 'Privacy')}

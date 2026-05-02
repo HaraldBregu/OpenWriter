@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { Label } from '@/components/ui/Label';
+import { H4, Muted, Small } from '@/components/ui/Typography';
 import {
 	Dialog,
 	DialogContent,
