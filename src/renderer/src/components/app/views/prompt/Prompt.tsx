@@ -69,8 +69,8 @@ function PromptContainer(): React.JSX.Element {
 					<div className="relative rounded-xl">
 						<GlowingEffect
 							blur={0}
-							borderWidth={3}
-							spread={80}
+							borderWidth={1}
+							spread={180}
 							glow={true}
 							disabled={false}
 							proximity={64}
