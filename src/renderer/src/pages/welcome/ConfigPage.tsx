@@ -216,6 +216,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 						</form.Subscribe>
 					</FieldGroup>
 				</form>
+				</div>
 			</PageBody>
 		</PageContainer>
 	);
