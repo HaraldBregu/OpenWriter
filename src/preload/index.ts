@@ -123,7 +123,7 @@ const app: AppApi = {
 		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, profile, providers);
 	},
 	getModels: (providerId: string) => typedInvokeUnwrap(AppChannels.getModels, providerId),
-	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
+	getLogs: (limit?: number) => typedInvokeUnwrap(AppChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 	openAppDataFolder: () => typedInvokeUnwrap(AppChannels.openAppDataFolder),
 	getAppDataFolder: () => typedInvokeUnwrap(AppChannels.getAppDataFolder),
