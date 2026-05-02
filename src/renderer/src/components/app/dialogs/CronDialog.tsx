@@ -124,6 +124,65 @@ export function CronDialog({ open, onOpenChange }: CronDialogProps) {
 					</Button>
 				</div>
 
+				<form
+					onSubmit={handleSchedule}
+					className="flex flex-wrap items-end gap-2 px-4 py-3 border-b shrink-0 bg-muted/20"
+				>
+					<div className="flex flex-col gap-1 flex-1 min-w-[160px]">
+						<label className="text-xs font-medium text-muted-foreground">
+							{t('debug.cronId', 'Job ID')}
+						</label>
+						<Input
+							type="text"
+							value={formId}
+							onChange={(e) => setFormId(e.target.value)}
+							placeholder="my-job"
+							className="h-8 text-sm"
+							disabled={submitting}
+						/>
+					</div>
+					<div className="flex flex-col gap-1 flex-1 min-w-[180px]">
+						<label className="text-xs font-medium text-muted-foreground">
+							{t('debug.cronExpression', 'Expression')}
+						</label>
+						<Input
+							type="text"
+							value={formExpr}
+							onChange={(e) => setFormExpr(e.target.value)}
+							placeholder="*/5 * * * *"
+							className="h-8 text-sm font-mono"
+							disabled={submitting}
+						/>
+					</div>
+					<div className="flex flex-col gap-1 w-[180px]">
+						<label className="text-xs font-medium text-muted-foreground">
+							{t('debug.cronTimezone', 'Timezone (optional)')}
+						</label>
+						<Input
+							type="text"
+							value={formTz}
+							onChange={(e) => setFormTz(e.target.value)}
+							placeholder="UTC"
+							className="h-8 text-sm"
+							disabled={submitting}
+						/>
+					</div>
+					<label className="flex items-center gap-2 h-8 text-xs text-muted-foreground">
+						<Checkbox
+							checked={formRunOnStart}
+							onCheckedChange={(v) => setFormRunOnStart(v === true)}
+							disabled={submitting}
+						/>
+						{t('debug.cronRunOnStart', 'Run on start')}
+					</label>
+					<Button type="submit" size="sm" disabled={submitting}>
+						{t('debug.cronSchedule', 'Schedule')}
+					</Button>
+					{formError && (
+						<div className="basis-full text-xs text-destructive">{formError}</div>
+					)}
+				</form>
+
 				<div className="flex flex-1 min-h-0">
 					<div className="flex-1 min-w-0 overflow-auto border-r font-mono text-xs">
 						<table className="w-full text-left border-collapse">
