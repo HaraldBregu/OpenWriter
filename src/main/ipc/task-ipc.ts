@@ -89,12 +89,12 @@ export class TaskIpc implements IpcModule {
 			const cancelledCount = executor.cancelByWindow(windowId);
 			if (cancelledCount > 0) {
 				logger.info(
-					'TaskManagerIpc',
+					'TaskIpc',
 					`Cancelled ${cancelledCount} task(s) for closed window ${windowId}`
 				);
 			}
 		});
 
-		logger.info('TaskManagerIpc', `Registered ${this.name} module`);
+		logger.info('TaskIpc', `Registered ${this.name} module`);
 	}
 }
