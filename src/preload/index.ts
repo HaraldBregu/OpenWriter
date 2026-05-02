@@ -139,6 +139,18 @@ const app: AppApi = {
 	openSystemScreenRecording: () => typedInvokeUnwrap(AppChannels.openSystemScreenRecording),
 	setTrayEnabled: (enabled: boolean) => typedInvokeUnwrap(AppChannels.setTrayEnabled, enabled),
 	getTrayEnabled: () => typedInvokeUnwrap(AppChannels.getTrayEnabled),
+	cronSchedule: (params: {
+		id: string;
+		expression: string;
+		timezone?: string;
+		runOnStart?: boolean;
+	}): Promise<CronJobInfo> => typedInvokeUnwrap(AppChannels.cronSchedule, params),
+	cronUnschedule: (id: string): Promise<void> => typedInvokeUnwrap(AppChannels.cronUnschedule, id),
+	cronListJobs: (): Promise<CronJobInfo[]> => typedInvokeUnwrap(AppChannels.cronListJobs),
+	cronHasJob: (id: string): Promise<boolean> => typedInvokeUnwrap(AppChannels.cronHasJob, id),
+	onCronTick: (callback: (event: CronTickEvent) => void): (() => void) => {
+		return typedOn(AppChannels.cronTick, callback);
+	},
 	getPathForFile: (file: File): string => webUtils.getPathForFile(file),
 	onShortcut: (callback: (id: ShortcutId) => void): (() => void) => {
 		return typedOn(AppChannels.shortcut, callback);
