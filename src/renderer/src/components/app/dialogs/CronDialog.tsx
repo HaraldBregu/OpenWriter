@@ -194,13 +194,14 @@ export function CronDialog({ open, onOpenChange }: CronDialogProps) {
 									<th className="px-4 py-2 font-sans text-xs font-medium text-muted-foreground uppercase tracking-wider">
 										{t('debug.cronExpression', 'Expression')}
 									</th>
+									<th className="px-4 py-2 w-[48px]" />
 								</tr>
 							</thead>
 							<tbody>
 								{jobs.length === 0 ? (
 									<tr>
 										<td
-											colSpan={2}
+											colSpan={3}
 											className="px-4 py-8 text-center text-muted-foreground font-sans"
 										>
 											{t('debug.cronNoJobs', 'No scheduled jobs')}
