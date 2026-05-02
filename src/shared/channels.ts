@@ -394,6 +394,10 @@ export interface InvokeChannelMap {
 	[WorkspaceChannels.getImages]: { args: []; result: ImageEntry[] };
 	[WorkspaceChannels.insertImages]: { args: [extensions?: string[]]; result: ImageEntry[] };
 	[WorkspaceChannels.deleteImage]: { args: [id: string]; result: void };
+
+	// ---- Assistant (IpcResult-wrapped) ----
+	[AssistantChannels.send]: { args: [message: string, assistantId?: string]; result: string };
+	[AssistantChannels.reset]: { args: [assistantId?: string]; result: void };
 }
 
 /**
