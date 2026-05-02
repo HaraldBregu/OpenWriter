@@ -167,7 +167,7 @@ export interface AppApi {
 	getAgents: () => Promise<AgentSettings[]>;
 	updateAgent: (agent: AgentSettings) => Promise<AgentSettings>;
 	getStartupInfo: () => Promise<AppStartupInfo>;
-	completeFirstRunConfiguration: (providers: Provider[]) => Promise<AppStartupInfo>;
+	completeFirstRunConfiguration: (profile: UserProfile, providers: Provider[]) => Promise<AppStartupInfo>;
 	/** Fetch the available models from a provider's `/models` endpoint using the stored API key. */
 	getModels: (providerId: string) => Promise<ProviderModelInfo[]>;
 	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */
