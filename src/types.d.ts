@@ -18,3 +18,7 @@
 // ---------------------------------------------------------------------------
 
 // (Add cross-context global augmentations here when needed.)
+
+declare module "marked-terminal" {
+  export function markedTerminal(opts?: unknown): unknown;
+}

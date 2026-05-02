@@ -165,7 +165,8 @@
       "Bash(echo \"LINT_EXIT=$?\")",
       "Bash(yarn build *)",
       "Bash(echo \"BUILD_EXIT=$?\")",
-      "Bash(wait %1)"
+      "Bash(wait %1)",
+      "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)"
     ],
     "deny": [
       "Bash(git push --force:*)",
