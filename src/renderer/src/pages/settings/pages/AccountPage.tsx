@@ -27,16 +27,9 @@ const EditableName: React.FC<EditableNameProps> = ({
 	onCancel,
 }) => {
 	const [draft, setDraft] = useState(value);
-	const inputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		if (editing) {
-			setDraft(value);
-			requestAnimationFrame(() => {
-				inputRef.current?.focus();
-				inputRef.current?.select();
-			});
-		}
+		if (editing) setDraft(value);
 	}, [editing, value]);
 
 	if (!editing) {
@@ -52,7 +45,8 @@ const EditableName: React.FC<EditableNameProps> = ({
 
 	return (
 		<Input
-			ref={inputRef}
+			autoFocus
+			onFocus={(e) => e.currentTarget.select()}
 			value={draft}
 			onChange={(e) => setDraft(e.target.value)}
 			onBlur={() => onCommit(draft)}
