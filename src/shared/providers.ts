@@ -56,7 +56,7 @@ export function isKnownProvider(providerId: string): providerId is ProviderId {
 }
 
 // ---------------------------------------------------------------------------
-// Service helpers
+// Configured-provider helpers
 // ---------------------------------------------------------------------------
 
 function slugify(segment: string): string {
