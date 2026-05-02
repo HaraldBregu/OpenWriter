@@ -167,13 +167,13 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 
 				<div className="w-full max-w-2xl flex flex-col min-h-0">
 					<div className="flex items-center justify-between mb-3">
-						<h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+						<Small className="uppercase tracking-widest text-muted-foreground">
 							{t('welcome.yourWorkspaces')}
-						</h2>
+						</Small>
 						{workspaces.length > 5 && (
-							<span className="text-xs text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
+							<Small className="font-normal text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
 								{t('welcome.viewAll')}
-							</span>
+							</Small>
 						)}
 					</div>
 
