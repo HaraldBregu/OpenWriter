@@ -375,6 +375,16 @@ export interface WorkspaceApi {
 	listDir: (params: FsListDirParams) => Promise<FsListDirEntry[]>;
 }
 
+/** Conversational AI assistant */
+export interface AssistantApi {
+	/** Send a message to an assistant. Defaults to the 'main' assistant. */
+	send: (message: string, assistantId?: string) => Promise<string>;
+	/** Reset an assistant's conversation history. */
+	reset: (assistantId?: string) => Promise<void>;
+	/** Subscribe to assistant responses (fires every time a reply lands). */
+	onResponse: (callback: (event: AssistantResponseEvent) => void) => () => void;
+}
+
 /** Background task queue */
 export interface TaskApi {
 	submit: (action: TaskAction) => Promise<IpcResult<TaskActionReturn>>;
