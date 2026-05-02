@@ -1,7 +1,7 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
 import { getProvider } from '../../shared/providers';
-import type { AgentModel, AgentSettings, Provider } from '../../shared/types';
+import type { AgentModel, AgentSettings, Provider, UserProfile } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 
 export interface WorkspaceInfo {
