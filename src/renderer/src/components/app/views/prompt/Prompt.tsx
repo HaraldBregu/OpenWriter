@@ -70,7 +70,7 @@ function PromptContainer(): React.JSX.Element {
 						<GlowingEffect
 							blur={0}
 							borderWidth={1}
-							spread={180}
+							spread={80}
 							glow={true}
 							disabled={false}
 							proximity={64}

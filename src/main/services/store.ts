@@ -197,6 +197,15 @@ export class StoreService {
 		return { firstName: profile.firstName, lastName: profile.lastName };
 	}
 
+	setProfile(profile: UserProfile): UserProfile {
+		const next: UserProfile = {
+			firstName: profile.firstName.trim(),
+			lastName: profile.lastName.trim(),
+		};
+		this.store.set('profile', next);
+		return next;
+	}
+
 	getStartupInfo(): AppStartupInfo {
 		const startupCount = this.store.get('startupCount');
 		return {
