@@ -182,6 +182,7 @@
 			"signedIn": "Accesso effettuato",
 			"firstName": "Nome",
 			"lastName": "Cognome",
+			"editHint": "Doppio click per modificare",
 			"signIn": "Accedi",
 			"signInDescription": "Accedi per sincronizzare le impostazioni tra dispositivi"
 		},
