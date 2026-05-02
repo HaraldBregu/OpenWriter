@@ -426,46 +426,6 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Skills management handlers (userData/skills/)
-		// -----------------------------------------------------------------------
-
-		ipcMain.handle(
-			AppChannels.getSkills,
-			wrapSimpleHandler(() => skillsStoreService.listSkills(), AppChannels.getSkills)
-		);
-
-		ipcMain.handle(
-			AppChannels.openSkillsFolder,
-			wrapSimpleHandler(async () => {
-				const dir = skillsStoreService.getSkillsDirectory();
-				await shell.openPath(dir);
-			}, AppChannels.openSkillsFolder)
-		);
-
-		ipcMain.handle(
-			AppChannels.importSkill,
-			wrapSimpleHandler(async () => {
-				const result = await dialog.showOpenDialog({
-					properties: ['openDirectory'],
-					title: 'Select Skill Folder',
-					buttonLabel: 'Import Skill',
-				});
-				if (result.canceled || result.filePaths.length === 0) {
-					return [];
-				}
-				return skillsStoreService.importSkillsFromPath(result.filePaths[0]);
-			}, AppChannels.importSkill)
-		);
-
-		ipcMain.handle(
-			AppChannels.deleteSkill,
-			wrapSimpleHandler(
-				(id: string) => skillsStoreService.deleteSkill(id),
-				AppChannels.deleteSkill
-			)
-		);
-
-		// -----------------------------------------------------------------------
 		// System settings handlers (macOS)
 		// -----------------------------------------------------------------------
 

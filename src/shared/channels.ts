@@ -51,7 +51,6 @@ import type {
 	CustomThemeInfo,
 	CronJobInfo,
 	CronTickEvent,
-	SkillInfo,
 	Theme,
 	Provider,
 	ProviderModelInfo,
