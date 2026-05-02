@@ -151,12 +151,8 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 				<div className="w-full max-w-2xl mb-8">
 					<div className="rounded-xl border border-border p-6 flex items-center justify-between gap-6">
 						<div className="flex flex-col gap-2">
-							<h2 className="text-lg font-semibold text-foreground">
-								{t('welcome.createWorkspace')}
-							</h2>
-							<p className="text-sm text-muted-foreground">
-								{t('welcome.createWorkspaceDescription')}
-							</p>
+							<H4 className="text-foreground">{t('welcome.createWorkspace')}</H4>
+							<Muted>{t('welcome.createWorkspaceDescription')}</Muted>
 						</div>
 
 						<Button
