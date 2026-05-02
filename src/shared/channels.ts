@@ -146,10 +146,6 @@ export const TaskChannels = {
 	findForDocument: 'task:find-for-document',
 } as const;
 
-export const LogChannels = {
-	getLogs: 'log:get-logs',
-} as const;
-
 export const AssistantChannels = {
 	send: 'assistant:send',
 	reset: 'assistant:reset',
