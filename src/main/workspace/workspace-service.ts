@@ -162,11 +162,11 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
-	 * Resolve the managed workspaces root: `{userData}/workspaces/`.
+	 * Resolve the managed workspaces root: `{home}/OpenWriter/workspaces/`.
 	 * Created on first access if missing.
 	 */
 	getWorkspacesRoot(): string {
-		const root = path.join(app.getPath('userData'), WORKSPACES_FOLDER);
+		const root = path.join(app.getPath('home'), APP_FOLDER, WORKSPACES_FOLDER);
 		if (!fs.existsSync(root)) {
 			fs.mkdirSync(root, { recursive: true });
 		}
