@@ -343,7 +343,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							</ul>
 						</div>
 
-						<footer className="flex flex-col gap-2 text-xs text-primary-foreground/70 max-w-md">
+						<footer className="flex flex-col gap-2 text-xs text-sidebar-foreground/60 max-w-md">
 							<p>
 								{t(
 									'startup.firstTime.leftFooterTagline',
