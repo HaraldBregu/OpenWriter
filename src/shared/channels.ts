@@ -183,6 +183,7 @@ export const AppChannels = {
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	getModels: 'app:get-models',
 	// Logs
+	getLogs: 'app:get-logs',
 	openLogsFolder: 'app:open-logs-folder',
 	// App data folder
 	openAppDataFolder: 'app:open-app-data-folder',
