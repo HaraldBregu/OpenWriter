@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Clock, RefreshCw } from 'lucide-react';
+import { Clock, RefreshCw, Trash2 } from 'lucide-react';
 import type { CronJobInfo, CronTickEvent } from '../../../../../shared/types';
 import { Button } from '@/components/ui/Button';
+import { Input } from '@/components/ui/Input';
+import { Checkbox } from '@/components/ui/Checkbox';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/Dialog';
 
 const MAX_TICKS = 200;
