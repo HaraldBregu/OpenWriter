@@ -297,10 +297,10 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 					</div>
 					<div className="relative hidden bg-sidebar text-sidebar-foreground lg:flex lg:flex-col lg:order-1 p-10 gap-10 border-r border-sidebar-border">
 						<div className="flex items-center gap-3">
-							<div className="flex size-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
-								<AppIconOpenWriter className="size-5" aria-hidden="true" />
+							<div className="flex size-16 items-center justify-center rounded-xl bg-sidebar-primary text-sidebar-primary-foreground shadow-sm">
+								<AppIconOpenWriter className="size-9" aria-hidden="true" />
 							</div>
-							<span className="text-lg font-semibold tracking-tight text-sidebar-foreground">
+							<span className="text-2xl font-semibold tracking-tight text-sidebar-foreground">
 								OpenWriter
 							</span>
 						</div>
