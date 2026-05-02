@@ -1,5 +1,5 @@
 /**
- * Shared AI types used across agents and RAG subsystems.
+ * Shared AI types used across agents.
  *
  * Replaces @langchain/core message types, BaseChatModel,
  * EmbeddingsInterface, and Document with plain TypeScript interfaces
