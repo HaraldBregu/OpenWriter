@@ -132,6 +132,16 @@ export function bootstrapServices(): BootstrapResult {
 	agentRegistry.register(contentReviewerAgent);
 	container.register('agentRegistry', agentRegistry);
 
+	// Assistant registry -- conversational OpenAI assistants. One default
+	// assistant ('main') is registered eagerly so window.assistant.send works
+	// without any renderer-side init.
+	const assistantRegistry = new AssistantRegistry();
+	assistantRegistry.create({
+		id: DEFAULT_ASSISTANT_ID,
+		systemPrompt: 'You are a helpful assistant inside the OpenWriter desktop app.',
+	});
+	container.register('assistantRegistry', assistantRegistry);
+
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
 	const taskReactionRegistry = new TaskReactionRegistry(logger);
