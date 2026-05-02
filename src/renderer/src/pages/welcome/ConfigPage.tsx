@@ -80,23 +80,47 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 			<TitleBar title="OpenWriter" />
 
 			<PageBody className="p-0 flex-row">
-				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-3/5 px-10 py-12 border-r bg-muted/30">
-					<AppIconOpenWriter
-						className="text-foreground"
-						style={{
-							width: 'clamp(96px, min(16vw, 16vh), 160px)',
-							height: 'clamp(96px, min(16vw, 16vh), 160px)',
-						}}
-						aria-label={t('appTitle')}
-						role="img"
-					/>
-					<h1 className="text-3xl font-semibold text-foreground tracking-tight text-center">
-						{t('startup.firstTime.title', 'Welcome to OpenWriter')}
-					</h1>
-					<p className="text-sm text-muted-foreground text-center max-w-sm leading-relaxed">
+				<aside className="hidden md:flex flex-col justify-between gap-10 w-3/5 px-12 py-12 border-r bg-muted/30">
+					<div className="flex items-center gap-3">
+						<AppIconOpenWriter
+							className="text-foreground"
+							style={{ width: 40, height: 40 }}
+							aria-label={t('appTitle')}
+							role="img"
+						/>
+						<span className="text-base font-semibold tracking-tight">OpenWriter</span>
+					</div>
+
+					<div className="flex flex-col gap-4 max-w-lg">
+						<h1 className="text-4xl font-semibold text-foreground tracking-tight leading-tight">
+							{t('startup.firstTime.title', 'Write with the models you trust.')}
+						</h1>
+						<p className="text-sm text-muted-foreground leading-relaxed">
+							{t(
+								'startup.firstTime.description',
+								'OpenWriter is a local-first writing companion. Bring your own API keys, keep your drafts on your machine, and switch between providers without lock-in.'
+							)}
+						</p>
+						<ul className="flex flex-col gap-2 text-sm text-muted-foreground">
+							<li className="flex gap-2">
+								<span className="text-foreground">•</span>
+								{t('startup.firstTime.bullet1', 'API keys stored locally, encrypted at rest.')}
+							</li>
+							<li className="flex gap-2">
+								<span className="text-foreground">•</span>
+								{t('startup.firstTime.bullet2', 'No telemetry. No accounts. No cloud sync.')}
+							</li>
+							<li className="flex gap-2">
+								<span className="text-foreground">•</span>
+								{t('startup.firstTime.bullet3', 'Switch providers anytime from Settings.')}
+							</li>
+						</ul>
+					</div>
+
+					<p className="text-xs text-muted-foreground max-w-lg leading-relaxed">
 						{t(
-							'startup.firstTime.description',
-							'Tell us a bit about you and connect your providers. You can change anything later in Settings.'
+							'startup.firstTime.privacy',
+							'By continuing you agree to the Terms of Use and acknowledge the Privacy Policy. Tokens you paste are sent only to the provider you configured.'
 						)}
 					</p>
 				</aside>
