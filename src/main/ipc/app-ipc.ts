@@ -39,27 +39,6 @@ interface ProviderModelsStrategy {
 }
 
 const PROVIDER_MODELS_STRATEGIES: Record<string, ProviderModelsStrategy> = {
-	openai: {
-		url: 'https://api.openai.com/v1/models',
-		headers: (apiKey) => ({ Authorization: `Bearer ${apiKey}` }),
-		parse: (body) => {
-			const items = Array.isArray((body as { data?: unknown[] })?.data)
-				? ((body as { data: unknown[] }).data as Array<Record<string, unknown>>)
-				: [];
-			return items
-				.filter((item) => typeof item.id === 'string')
-				.map((item) => {
-					const id = item.id as string;
-					const createdSec = typeof item.created === 'number' ? item.created : 0;
-					return {
-						id,
-						name: id,
-						createdAt: createdSec > 0 ? new Date(createdSec * 1000).toISOString() : '',
-						ownedBy: typeof item.owned_by === 'string' ? item.owned_by : 'openai',
-					};
-				});
-		},
-	},
 	anthropic: {
 		url: 'https://api.anthropic.com/v1/models',
 		headers: (apiKey) => ({
