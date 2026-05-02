@@ -22,7 +22,7 @@ import { Label } from '@/components/ui/Label';
 import { Separator } from '@/components/ui/Separator';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
-import type { ProviderId, Service } from '../../../../shared/types';
+import type { Provider, ProviderId } from '../../../../shared/types';
 import type { AppStartupInfo } from '../../../../shared/types';
 
 interface ConfigPageProps {
