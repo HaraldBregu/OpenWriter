@@ -238,6 +238,14 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
+														path="/assistant"
+														element={
+															<RouteWrapper>
+																<AssistantPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route
 														path="/settings/*"
 														element={
 															<RouteWrapper>
