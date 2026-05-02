@@ -3,7 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { AgentSettings, Service } from '../../shared/types';
+import type { AgentSettings, Provider } from '../../shared/types';
 import { isKnownProvider } from '../../shared/providers';
 
 export class StoreValidators {
@@ -11,42 +11,38 @@ export class StoreValidators {
 	private static readonly MAX_FIELD_LENGTH = 200;
 	private static readonly DANGEROUS_CHARS = /[<>;"'`]/;
 
-	static validateServiceId(id: string): void {
+	static validateProviderId(id: string): void {
 		if (typeof id !== 'string' || id.trim().length === 0) {
-			throw new Error('Service ID must be a non-empty string');
+			throw new Error('Provider id must be a non-empty string');
 		}
 		if (id.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Service ID exceeds maximum length');
+			throw new Error('Provider id exceeds maximum length');
 		}
 	}
 
-	static validateService(service: Service): void {
-		if (typeof service !== 'object' || service === null) {
-			throw new Error('Service must be an object');
-		}
-
-		const { provider, apiKey } = service;
+	static validateProvider(provider: Provider): void {
 		if (typeof provider !== 'object' || provider === null) {
-			throw new Error('Service provider is required');
+			throw new Error('Provider must be an object');
 		}
 		if (typeof provider.id !== 'string' || provider.id.trim().length === 0) {
-			throw new Error('Service provider id is required');
+			throw new Error('Provider id is required');
 		}
 		if (provider.id.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Service provider id exceeds maximum length');
+			throw new Error('Provider id exceeds maximum length');
 		}
 		if (!isKnownProvider(provider.id)) {
 			throw new Error(`Unknown provider: ${provider.id}`);
 		}
 		if (typeof provider.name !== 'string' || provider.name.trim().length === 0) {
-			throw new Error('Service provider name is required');
+			throw new Error('Provider name is required');
 		}
 		if (provider.name.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Service provider name exceeds maximum length');
+			throw new Error('Provider name exceeds maximum length');
 		}
 
+		const { apiKey } = provider;
 		if (typeof apiKey !== 'string') {
-			throw new Error('Service apiKey must be a string');
+			throw new Error('Provider apiKey must be a string');
 		}
 		if (apiKey.length > this.MAX_TOKEN_LENGTH) {
 			throw new Error(`API key exceeds maximum length of ${this.MAX_TOKEN_LENGTH} characters`);
@@ -56,14 +52,11 @@ export class StoreValidators {
 		}
 	}
 
-	static validateServices(services: Service[]): void {
-		if (!Array.isArray(services)) {
-			throw new Error('Services must be an array');
+	static validateProviders(providers: Provider[]): void {
+		if (!Array.isArray(providers)) {
+			throw new Error('Providers must be an array');
 		}
-
-		services.forEach((service) => {
-			this.validateService(service);
-		});
+		providers.forEach((provider) => this.validateProvider(provider));
 	}
 
 	static validateAgentName(agentName: string): void {
