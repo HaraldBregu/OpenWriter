@@ -117,7 +117,7 @@ export class Workspace implements Disposable {
 			};
 		} catch (err) {
 			// Roll back the empty folder if metadata write fails so we don't leave
-			// orphan workspaces under {userData}/workspaces/.
+			// orphan workspaces under {home}/OpenWriter/workspaces/.
 			await fsPromises.rm(workspacePath, { recursive: true, force: true }).catch(() => undefined);
 			throw err;
 		}
