@@ -1,0 +1,73 @@
+import Document from '@tiptap/extension-document';
+import Text from '@tiptap/extension-text';
+import Paragraph from '@tiptap/extension-paragraph';
+import Heading from '@tiptap/extension-heading';
+import Bold from '@tiptap/extension-bold';
+import Italic from '@tiptap/extension-italic';
+import Underline from '@tiptap/extension-underline';
+import Strike from '@tiptap/extension-strike';
+import Blockquote from '@tiptap/extension-blockquote';
+import CodeBlock from '@tiptap/extension-code-block';
+import HorizontalRule from '@tiptap/extension-horizontal-rule';
+import BulletList from '@tiptap/extension-bullet-list';
+import OrderedList from '@tiptap/extension-ordered-list';
+import ListItem from '@tiptap/extension-list-item';
+import { ListKeymap } from '@tiptap/extension-list';
+import Dropcursor from '@tiptap/extension-dropcursor';
+import Gapcursor from '@tiptap/extension-gapcursor';
+import { Placeholder } from '@tiptap/extensions';
+import { SearchExtension } from './search-extension';
+import { PromptExtension } from './prompt-extension';
+import { ImageExtension } from './image-extension';
+import { UndoRedoKeymapExtension } from './undo-redo-keymap';
+import { Markdown } from '@tiptap/markdown';
+import { ImagePlaceholderExtension } from './image-placeholder-extension';
+import { SelectionMarkerExtension } from './selection-marker-extension';
+export function createExtensions(handlers) {
+    return [
+        Document,
+        Text,
+        Paragraph,
+        Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
+        UndoRedoKeymapExtension.configure({
+            onUndo: handlers.onUndo,
+            onRedo: handlers.onRedo,
+        }),
+        Bold,
+        Italic,
+        Underline,
+        Strike,
+        Blockquote,
+        CodeBlock,
+        HorizontalRule,
+        BulletList,
+        OrderedList,
+        ListItem,
+        ListKeymap,
+        Dropcursor,
+        Gapcursor,
+        ImageExtension.configure({ onImageInsert: handlers.onImageInsert }),
+        ImagePlaceholderExtension.configure({ onImageInsert: handlers.onImageInsert }),
+        SearchExtension,
+        SelectionMarkerExtension,
+        PromptExtension.configure({
+            onPromptSubmit: handlers.onPromptSubmit,
+        }),
+        Markdown.configure({
+            markedOptions: { gfm: true },
+        }),
+        Placeholder.configure({
+            placeholder: ({ editor, node }) => {
+                if (!editor.isFocused)
+                    return '';
+                if (node.type.name === 'paragraph') {
+                    return 'Type `space` for AI or `/` for commands';
+                }
+                if (node.type.name === 'heading') {
+                    return `Heading ${node.attrs.level}`;
+                }
+                return '';
+            },
+        }),
+    ];
+}

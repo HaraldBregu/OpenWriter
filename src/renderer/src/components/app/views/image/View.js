@@ -1,0 +1,20 @@
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+import { useTranslation } from 'react-i18next';
+import { Sparkles, Pencil, Trash2, ImageOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/Button';
+import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/Empty';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/Tooltip';
+import { ImagePreviewDialog } from '../../dialogs/ImagePreviewDialog';
+import { ImageProvider } from './Provider';
+import { ImageEditor } from './ImageEditor';
+import { useImage } from './hooks/use-image';
+const TOOLTIP_DELAY_MS = 300;
+function ImageInner() {
+    const { t } = useTranslation();
+    const { state, resolvedSrc, alt, title, showToolbar, handleError, handleLoad, handleDelete, handleAskAI, handleEdit, handleImageClick, handleKeyDown, handleEditorSave, handleEditorCancel, setHovered, setFocused, setPreviewing, } = useImage();
+    return (_jsxs(_Fragment, { children: [state.editing && resolvedSrc ? (_jsx(ImageEditor, { src: resolvedSrc, alt: alt, initialMode: state.editInitialMode, onSave: handleEditorSave, onCancel: handleEditorCancel })) : (_jsx("div", { className: "inline-block max-w-full bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring", onMouseEnter: () => setHovered(true), onMouseLeave: () => setHovered(false), onFocus: () => setFocused(true), onBlur: () => setFocused(false), onKeyDown: handleKeyDown, tabIndex: state.loadError || !resolvedSrc ? -1 : 0, role: "img", "aria-label": alt ?? t('imageNode.imageLabel'), children: _jsxs("div", { className: "relative", children: [_jsx(TooltipProvider, { delay: TOOLTIP_DELAY_MS, children: _jsxs("div", { className: cn('absolute top-2 right-2 z-10', 'flex items-center gap-0.5', 'border border-border/80 bg-popover/95', 'backdrop-blur-md shadow-lg', 'pointer-events-none opacity-0', 'transition-all duration-200 ease-out', '-translate-y-1 scale-95', showToolbar && 'pointer-events-auto opacity-100 translate-y-0 scale-100'), role: "toolbar", "aria-label": t('imageNode.imageToolbar'), children: [_jsxs(Button, { variant: "ghost", size: "icon-xs", "aria-label": t('imageNode.askAI'), onClick: handleAskAI, className: "flex h-5 w-auto items-center gap-1 px-1.5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3", children: [_jsx(Sparkles, {}), _jsx("span", { className: "text-xs font-medium", children: "Ask AI" })] }), _jsx("div", { className: "h-4 w-px bg-border/50" }), _jsxs(Tooltip, { children: [_jsx(TooltipTrigger, { render: _jsx(Button, { variant: "ghost", size: "icon-xs", "aria-label": t('imageNode.edit'), onClick: handleEdit, className: "h-5 w-5 text-muted-foreground hover:text-foreground [&_svg]:h-3 [&_svg]:w-3", children: _jsx(Pencil, {}) }) }), _jsx(TooltipContent, { side: "top", sideOffset: 4, className: "px-2 py-1 text-xs", children: t('imageNode.edit') })] }), _jsx(Button, { variant: "ghost", size: "icon-xs", onClick: handleDelete, "aria-label": t('imageNode.delete'), className: "h-5 w-5 text-muted-foreground hover:text-destructive [&_svg]:h-3 [&_svg]:w-3", children: _jsx(Trash2, {}) })] }) }), state.loadError || !resolvedSrc ? (_jsx(Empty, { className: "h-32 w-64", role: "img", "aria-label": alt ?? t('imageNode.notFound'), children: _jsxs(EmptyHeader, { children: [_jsx(EmptyMedia, { variant: "icon", children: _jsx(ImageOff, {}) }), _jsx(EmptyTitle, { children: alt ?? t('imageNode.notFound') })] }) })) : (_jsx("img", { src: resolvedSrc, alt: alt ?? '', title: title ?? undefined, onError: handleError, onLoad: handleLoad, onClick: handleImageClick, draggable: false, className: "block max-w-full cursor-pointer" }))] }) })), _jsx(ImagePreviewDialog, { open: state.previewing, onOpenChange: setPreviewing, src: resolvedSrc, alt: alt })] }));
+}
+export function ImageView({ nodeViewProps }) {
+    return (_jsx(ImageProvider, { nodeViewProps: nodeViewProps, children: _jsx(ImageInner, {}) }));
+}

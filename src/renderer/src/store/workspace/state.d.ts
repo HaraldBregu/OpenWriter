@@ -1,0 +1,33 @@
+/** Workspace slice initial state and state type definition. */
+import type { IndexingInfo, ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
+import type { DocumentItem } from './types';
+export type ResourcesStatus = 'idle' | 'loading' | 'ready' | 'error';
+export type DocumentsStatus = 'idle' | 'loading' | 'ready' | 'error';
+export interface WorkspaceState {
+    currentPath: string | null;
+    /** Project name from workspace metadata (workspace.json `project` block) */
+    projectName: string | null;
+    /** Project description from workspace metadata (workspace.json `project` block) */
+    projectDescription: string | null;
+    /** Every managed workspace under `{userData}/workspaces/`. */
+    workspaces: WorkspaceInfo[];
+    status: 'idle' | 'loading' | 'ready' | 'error';
+    error: string | null;
+    /** Set when the workspace folder is externally deleted/moved while the app is open */
+    deletionReason: string | null;
+    /** Resources imported into the workspace */
+    resources: ResourceInfo[];
+    resourcesStatus: ResourcesStatus;
+    resourcesError: string | null;
+    /** Whether a file import operation is in progress */
+    importing: boolean;
+    /** Indexing metadata from the last successful indexing run */
+    indexingInfo: IndexingInfo | null;
+    /** Document items produced inside the workspace (outputs of type 'documents'). */
+    documentItems: DocumentItem[];
+    selectedDocumentId: string | null;
+    documentsStatus: DocumentsStatus;
+    documentsError: string | null;
+}
+export type { WorkspaceState as WorkspaceStateType };
+export declare const initialState: WorkspaceState;

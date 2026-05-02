@@ -139,6 +139,7 @@ export function bootstrapServices(): BootstrapResult {
 	assistantRegistry.create({
 		id: DEFAULT_ASSISTANT_ID,
 		systemPrompt: 'You are a helpful assistant inside the OpenWriter desktop app.',
+		getApiKey: () => storeService.getProviderById('openai')?.apiKey,
 	});
 	container.register('assistantRegistry', assistantRegistry);
 

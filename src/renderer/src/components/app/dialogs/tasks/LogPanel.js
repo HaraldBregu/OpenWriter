@@ -1,0 +1,8 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useTranslation } from 'react-i18next';
+import { X } from 'lucide-react';
+import { formatEventTime } from './task-helpers';
+export function LogPanel({ task, onClose }) {
+    const { t } = useTranslation();
+    return (_jsxs("div", { className: "flex flex-col border-l bg-muted/20 w-80 shrink-0 h-full", children: [_jsxs("div", { className: "flex items-center justify-between px-4 py-3 border-b shrink-0", children: [_jsxs("div", { className: "min-w-0", children: [_jsx("p", { className: "text-sm font-medium truncate", children: task.type || t('debug.unknown') }), _jsxs("p", { className: "text-xs text-muted-foreground font-mono", children: [task.taskId.slice(0, 12), "\u2026"] })] }), _jsx("button", { type: "button", onClick: onClose, className: "ml-2 shrink-0 p-1 rounded hover:bg-accent transition-colors", title: t('debug.closeLogs'), children: _jsx(X, { className: "h-4 w-4" }) })] }), _jsx("div", { className: "flex-1 overflow-y-auto p-3 space-y-1.5", children: task.events.length === 0 ? (_jsx("p", { className: "text-xs text-muted-foreground text-center py-8", children: t('debug.noEventsYet') })) : ([...task.events].reverse().map((ev, i) => (_jsxs("div", { className: "rounded border bg-background p-2 text-xs", children: [_jsxs("div", { className: "flex items-center justify-between mb-1 gap-2", children: [_jsx("span", { className: "font-medium shrink-0", children: ev.state }), _jsx("span", { className: "text-muted-foreground shrink-0", children: formatEventTime(ev.receivedAt) })] }), _jsx("pre", { className: "text-muted-foreground overflow-x-auto whitespace-pre-wrap break-all text-[10px] leading-relaxed", children: JSON.stringify(ev.data, null, 2) })] }, i)))) })] }));
+}
