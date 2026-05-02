@@ -203,7 +203,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 												<FieldDescription>
 													{t(
 														'startup.firstTime.profileHint',
-														'Used to personalize prompts and signatures. Stays on this device.'
+														'Stays on this device.'
 													)}
 												</FieldDescription>
 											</FieldGroup>
