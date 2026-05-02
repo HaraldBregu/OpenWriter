@@ -48,6 +48,7 @@ export function Layout(): React.JSX.Element {
 				<PageSidebar className="w-64 border-r-0">
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/general" label={t('settings.tabs.general')} />
+						<NavItem to="/settings/account" label={t('settings.tabs.account')} />
 						<NavItem to="/settings/workspace" label={t('settings.tabs.workspace')} />
 						<NavItem to="/settings/providers" label={t('settings.tabs.providers')} />
 						<NavItem to="/settings/agents" label={t('settings.tabs.agents')} />

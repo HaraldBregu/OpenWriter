@@ -279,10 +279,19 @@ function Container({ children }: LayoutProps) {
 	const displayWorkspaceName = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
 	const sidebarTitle = projectName || t('appLayout.untitledWorkspace', 'Untitled workspace');
 	const isLandingPage = location.pathname === '/';
-	const footerUserFirstName = 'Alex';
-	const footerUserLastName = 'Morgan';
-	const footerUserName = `${footerUserFirstName} ${footerUserLastName}`;
-	const footerUserInitial = footerUserFirstName.charAt(0).toUpperCase();
+	const [profile, setProfile] = useState<{ firstName: string; lastName: string } | null>(null);
+	useEffect(() => {
+		let cancelled = false;
+		window.app.getProfile().then((p) => {
+			if (!cancelled) setProfile(p);
+		}).catch(() => {});
+		return () => { cancelled = true; };
+	}, []);
+	const footerUserFirstName = profile?.firstName ?? '';
+	const footerUserLastName = profile?.lastName ?? '';
+	const footerUserName = `${footerUserFirstName} ${footerUserLastName}`.trim()
+		|| t('appLayout.unknownUser', 'User');
+	const footerUserInitial = (footerUserFirstName || footerUserName).charAt(0).toUpperCase();
 
 	const accountMenuItems = [
 		{
