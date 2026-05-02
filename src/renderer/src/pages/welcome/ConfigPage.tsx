@@ -80,7 +80,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 			<TitleBar title="OpenWriter" />
 
 			<PageBody className="p-0 flex-row">
-				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-2/5 lg:w-1/3 px-10 py-12 border-r bg-muted/30">
+				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-2/3 px-10 py-12 border-r bg-muted/30">
 					<AppIconOpenWriter
 						className="text-foreground"
 						style={{
@@ -102,120 +102,120 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 				</aside>
 
 				<div className="flex flex-1 justify-center overflow-y-auto px-8 py-12">
-				<form
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						form.handleSubmit();
-					}}
-					className="w-full max-w-md"
-					noValidate
-				>
-					<FieldGroup>
-						<FieldSet>
-							<FieldLegend>{t('startup.firstTime.profileSection', 'Your profile')}</FieldLegend>
-							<div className="flex flex-col gap-4">
-								<form.Field name="firstName">
-									{(field) => (
-										<Field>
-											<FieldLabel htmlFor={field.name}>
-												{t('settings.profile.firstName', 'First name')}
-											</FieldLabel>
-											<Input
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												onChange={(e) => {
-													field.handleChange(e.target.value);
-													if (errorMessage) setErrorMessage(null);
-												}}
-												placeholder={t('settings.profile.firstNamePlaceholder', 'First name')}
-												autoComplete="given-name"
-											/>
-										</Field>
-									)}
-								</form.Field>
-								<form.Field name="lastName">
-									{(field) => (
-										<Field>
-											<FieldLabel htmlFor={field.name}>
-												{t('settings.profile.lastName', 'Last name')}
-											</FieldLabel>
-											<Input
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												onChange={(e) => {
-													field.handleChange(e.target.value);
-													if (errorMessage) setErrorMessage(null);
-												}}
-												placeholder={t('settings.profile.lastNamePlaceholder', 'Last name')}
-												autoComplete="family-name"
-											/>
-										</Field>
-									)}
-								</form.Field>
-							</div>
-						</FieldSet>
-
-						<Separator />
-
-						<FieldSet>
-							<FieldLegend>
-								{t('startup.firstTime.providersSection', 'Provider tokens')}
-							</FieldLegend>
-							<div className="flex flex-col gap-4">
-								{PROVIDER_IDS.map((providerId) => (
-									<form.Field key={providerId} name={`tokens.${providerId}` as const}>
+					<form
+						onSubmit={(e) => {
+							e.preventDefault();
+							e.stopPropagation();
+							form.handleSubmit();
+						}}
+						className="w-full max-w-md"
+						noValidate
+					>
+						<FieldGroup>
+							<FieldSet>
+								<FieldLegend>{t('startup.firstTime.profileSection', 'Your profile')}</FieldLegend>
+								<div className="flex flex-col gap-4">
+									<form.Field name="firstName">
 										{(field) => (
 											<Field>
-												<FieldLabel htmlFor={`first-run-${providerId}`}>
-													{PROVIDER_LABELS[providerId]}
+												<FieldLabel htmlFor={field.name}>
+													{t('settings.profile.firstName', 'First name')}
 												</FieldLabel>
 												<Input
-													id={`first-run-${providerId}`}
-													type="password"
+													id={field.name}
+													name={field.name}
 													value={field.state.value}
 													onBlur={field.handleBlur}
 													onChange={(e) => {
 														field.handleChange(e.target.value);
 														if (errorMessage) setErrorMessage(null);
 													}}
-													placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
-													autoComplete="off"
-													spellCheck={false}
-													className="font-mono"
+													placeholder={t('settings.profile.firstNamePlaceholder', 'First name')}
+													autoComplete="given-name"
 												/>
 											</Field>
 										)}
 									</form.Field>
-								))}
-							</div>
-						</FieldSet>
+									<form.Field name="lastName">
+										{(field) => (
+											<Field>
+												<FieldLabel htmlFor={field.name}>
+													{t('settings.profile.lastName', 'Last name')}
+												</FieldLabel>
+												<Input
+													id={field.name}
+													name={field.name}
+													value={field.state.value}
+													onBlur={field.handleBlur}
+													onChange={(e) => {
+														field.handleChange(e.target.value);
+														if (errorMessage) setErrorMessage(null);
+													}}
+													placeholder={t('settings.profile.lastNamePlaceholder', 'Last name')}
+													autoComplete="family-name"
+												/>
+											</Field>
+										)}
+									</form.Field>
+								</div>
+							</FieldSet>
 
-						{errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
+							<Separator />
 
-						<form.Subscribe selector={(s) => s.isSubmitting}>
-							{(isSubmitting) => (
-								<Button type="submit" disabled={isSubmitting} className="self-start">
-									{isSubmitting ? (
-										<>
-											<Loader2 className="animate-spin" />
-											{t('startup.firstTime.saving', 'Saving...')}
-										</>
-									) : (
-										<>
-											{t('startup.firstTime.save', 'Save and Continue')}
-											<ArrowRight />
-										</>
-									)}
-								</Button>
-							)}
-						</form.Subscribe>
-					</FieldGroup>
-				</form>
+							<FieldSet>
+								<FieldLegend>
+									{t('startup.firstTime.providersSection', 'Provider tokens')}
+								</FieldLegend>
+								<div className="flex flex-col gap-4">
+									{PROVIDER_IDS.map((providerId) => (
+										<form.Field key={providerId} name={`tokens.${providerId}` as const}>
+											{(field) => (
+												<Field>
+													<FieldLabel htmlFor={`first-run-${providerId}`}>
+														{PROVIDER_LABELS[providerId]}
+													</FieldLabel>
+													<Input
+														id={`first-run-${providerId}`}
+														type="password"
+														value={field.state.value}
+														onBlur={field.handleBlur}
+														onChange={(e) => {
+															field.handleChange(e.target.value);
+															if (errorMessage) setErrorMessage(null);
+														}}
+														placeholder={t('startup.firstTime.tokenPlaceholder', 'Paste API token')}
+														autoComplete="off"
+														spellCheck={false}
+														className="font-mono"
+													/>
+												</Field>
+											)}
+										</form.Field>
+									))}
+								</div>
+							</FieldSet>
+
+							{errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
+
+							<form.Subscribe selector={(s) => s.isSubmitting}>
+								{(isSubmitting) => (
+									<Button type="submit" disabled={isSubmitting} className="self-start">
+										{isSubmitting ? (
+											<>
+												<Loader2 className="animate-spin" />
+												{t('startup.firstTime.saving', 'Saving...')}
+											</>
+										) : (
+											<>
+												{t('startup.firstTime.save', 'Save and Continue')}
+												<ArrowRight />
+											</>
+										)}
+									</Button>
+								)}
+							</form.Subscribe>
+						</FieldGroup>
+					</form>
 				</div>
 			</PageBody>
 		</PageContainer>
