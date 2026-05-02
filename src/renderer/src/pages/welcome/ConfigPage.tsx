@@ -103,12 +103,12 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 									<FieldGroup>
 										<div className="flex flex-col gap-2 text-left">
 											<h1 className="text-2xl font-semibold tracking-tight">
-												{t('startup.firstTime.title', 'Set up your workspace')}
+												{t('startup.firstTime.title', 'Get started')}
 											</h1>
-											<p className="text-sm text-muted-foreground leading-relaxed">
+											<p className="text-sm text-muted-foreground">
 												{t(
 													'startup.firstTime.description',
-													'Takes about a minute. Add your name and at least one provider key — you can edit everything later from Settings.'
+													'Add your name and at least one API key.'
 												)}
 											</p>
 										</div>
