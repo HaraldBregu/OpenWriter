@@ -152,7 +152,7 @@ const AgentsPage: React.FC = () => {
 		const existingId = current.models[0]?.id ?? crypto.randomUUID();
 		const cleared: AgentSettings = {
 			...current,
-			models: [{ id: existingId, providerId, apiKey: '', modelId: '' }],
+			models: [{ id: existingId, providerId, modelId: '' }],
 		};
 		await persistAgent(cleared);
 
