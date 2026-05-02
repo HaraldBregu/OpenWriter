@@ -104,9 +104,6 @@ export class StoreValidators {
 			if (typeof model.modelId !== 'string' || model.modelId.trim().length === 0) {
 				throw new Error('Agent model modelId must be a non-empty string');
 			}
-			if (typeof model.apiKey !== 'string') {
-				throw new Error('Agent model apiKey must be a string');
-			}
 			if (
 				model.id.length > this.MAX_FIELD_LENGTH ||
 				model.providerId.length > this.MAX_FIELD_LENGTH ||
