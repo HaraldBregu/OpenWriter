@@ -346,6 +346,15 @@ export interface InvokeChannelMap {
 	[AppChannels.setTrayEnabled]: { args: [enabled: boolean]; result: void };
 	[AppChannels.getTrayEnabled]: { args: []; result: boolean };
 
+	// ---- Cron jobs (IpcResult-wrapped) ----
+	[AppChannels.cronSchedule]: {
+		args: [params: { id: string; expression: string; timezone?: string; runOnStart?: boolean }];
+		result: CronJobInfo;
+	};
+	[AppChannels.cronUnschedule]: { args: [id: string]; result: void };
+	[AppChannels.cronListJobs]: { args: []; result: CronJobInfo[] };
+	[AppChannels.cronHasJob]: { args: [id: string]; result: boolean };
+
 	// ---- Project Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getProjectInfo]: { args: []; result: ProjectWorkspaceInfo | null };
 	[WorkspaceChannels.updateProjectName]: { args: [name: string]; result: ProjectWorkspaceInfo };
