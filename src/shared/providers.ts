@@ -6,7 +6,7 @@
 // ---------------------------------------------------------------------------
 
 import { PROVIDERS } from './types';
-import type { Provider, ProviderId, Service } from './types';
+import type { Provider, ProviderId } from './types';
 
 // ---------------------------------------------------------------------------
 // Provider constants — sourced from PROVIDERS tuple in ./types
