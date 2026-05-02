@@ -108,9 +108,8 @@ function normalizeAgentModel(value: unknown): AgentModel | null {
 	const id = typeof value.id === 'string' ? value.id.trim() : '';
 	const providerId = typeof value.providerId === 'string' ? value.providerId.trim() : '';
 	const modelId = typeof value.modelId === 'string' ? value.modelId.trim() : '';
-	const apiKey = typeof value.apiKey === 'string' ? value.apiKey : '';
 	if (!id || !providerId || !modelId) return null;
-	return { id, providerId, apiKey, modelId };
+	return { id, providerId, modelId };
 }
 
 function normalizeAgentInput(value: unknown): AgentSettings | null {
