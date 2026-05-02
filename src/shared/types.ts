@@ -803,7 +803,7 @@ export interface AssistantTaskMetadata {
 
 /** Renderer-facing payload for the `task:submit` input when `type === 'agent'`. */
 export interface AgentTaskSubmitInput {
-	agentType: 'assistant' | 'text-writer' | 'text-generator-v2' | 'rag' | 'ocr';
+	agentType: 'assistant' | 'text-writer' | 'text-generator-v2';
 	input: {
 		prompt?: string;
 		raw?: string;
