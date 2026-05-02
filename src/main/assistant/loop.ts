@@ -1,119 +1,108 @@
-import OpenAI from "openai";
-import chalk from "chalk";
-import { marked } from "marked";
-import { markedTerminal } from "marked-terminal";
+import type OpenAI from 'openai';
 import type {
-  ChatCompletionMessageParam,
-  ChatCompletionTool,
-  ChatCompletionMessageToolCall,
-} from "openai/resources/chat/completions";
-import { Tool } from "./tools/base";
+	ChatCompletionMessageParam,
+	ChatCompletionTool,
+	ChatCompletionMessageToolCall,
+	ChatCompletionMessageFunctionToolCall,
+} from 'openai/resources/chat/completions';
+import type { Tool } from './tools/base';
 
-export const MODEL = "gpt-5.4";
-const MAX_ITERATIONS = 20;
+const DEFAULT_MAX_ITERATIONS = 20;
 
-marked.use(markedTerminal() as any);
-
-export const client = new OpenAI({
-  apiKey: process.env.OPENROUTER_API_KEY,
-});
-
-function fmtArgs(args: Record<string, unknown>): string {
-  return Object.entries(args)
-    .map(([k, v]) => `${chalk.dim(`${k}=`)}${chalk.white(String(v).slice(0, 60))}`)
-    .join("  ");
-}
-
-function panel(title: string, body: string, color: "green" | "red"): string {
-  const c = color === "green" ? chalk.green : chalk.red;
-  const line = c("─".repeat(60));
-  return `${c("┌─")} ${chalk.bold(c(title))} ${line}\n${body}\n${c("└")}${line}`;
+export interface RunAgentParams {
+	client: OpenAI;
+	model: string;
+	userMessage: string;
+	tools: Tool[];
+	history?: ChatCompletionMessageParam[];
+	systemPrompt?: string;
+	maxIterations?: number;
 }
 
 export interface RunResult {
-  text: string;
-  newMessages: ChatCompletionMessageParam[];
+	text: string;
+	newMessages: ChatCompletionMessageParam[];
 }
 
-export async function runAgent(
-  userMessage: string,
-  tools: Tool[],
-  history: ChatCompletionMessageParam[] = [],
-  systemPrompt?: string,
-): Promise<RunResult> {
-  const toolMap = new Map(tools.map((t) => [t.name, t]));
-  const toolSchemas = tools.map((t) => t.schema() as ChatCompletionTool);
+function isFunctionToolCall(
+	tc: ChatCompletionMessageToolCall
+): tc is ChatCompletionMessageFunctionToolCall {
+	return (tc as { type?: string }).type === 'function' || 'function' in tc;
+}
 
-  const messages: ChatCompletionMessageParam[] = [];
-  if (systemPrompt) messages.push({ role: "system", content: systemPrompt });
-  messages.push(...history);
-  if (userMessage) messages.push({ role: "user", content: userMessage });
+/**
+ * ReAct-style loop: model proposes tool calls, we execute, feed results back,
+ * repeat until the model returns a plain text answer or we hit maxIterations.
+ */
+export async function runAgent(params: RunAgentParams): Promise<RunResult> {
+	const {
+		client,
+		model,
+		userMessage,
+		tools,
+		history = [],
+		systemPrompt,
+		maxIterations = DEFAULT_MAX_ITERATIONS,
+	} = params;
 
-  const newMessages: ChatCompletionMessageParam[] = [];
-  if (userMessage) newMessages.push({ role: "user", content: userMessage });
+	const toolMap = new Map(tools.map((t) => [t.name, t]));
+	const toolSchemas = tools.map((t) => t.schema() as ChatCompletionTool);
 
-  for (let i = 0; i < MAX_ITERATIONS; i++) {
-    const response = await client.chat.completions.create({
-      model: MODEL,
-      messages,
-      tools: toolSchemas.length ? toolSchemas : undefined,
-    });
+	const messages: ChatCompletionMessageParam[] = [];
+	if (systemPrompt) messages.push({ role: 'system', content: systemPrompt });
+	messages.push(...history);
+	if (userMessage) messages.push({ role: 'user', content: userMessage });
 
-    const msg = response.choices[0].message;
+	const newMessages: ChatCompletionMessageParam[] = [];
+	if (userMessage) newMessages.push({ role: 'user', content: userMessage });
 
-    const assistantMsg: ChatCompletionMessageParam = {
-      role: "assistant",
-      content: msg.content ?? "",
-    };
-    if (msg.tool_calls && msg.tool_calls.length) {
-      (assistantMsg as any).tool_calls = msg.tool_calls.map((tc: ChatCompletionMessageToolCall) => ({
-        id: tc.id,
-        type: "function",
-        function: {
-          name: tc.function.name,
-          arguments: tc.function.arguments,
-        },
-      }));
-    }
+	for (let i = 0; i < maxIterations; i++) {
+		const response = await client.chat.completions.create({
+			model,
+			messages,
+			tools: toolSchemas.length ? toolSchemas : undefined,
+		});
 
-    messages.push(assistantMsg);
-    newMessages.push(assistantMsg);
+		const msg = response.choices[0].message;
 
-    if (!msg.tool_calls || msg.tool_calls.length === 0) {
-      const text = msg.content ?? "";
-      const rendered = (await marked.parse(text)).toString().trimEnd();
-      console.log(panel("assistant", rendered, "green"));
-      return { text, newMessages };
-    }
+		const assistantMsg: ChatCompletionMessageParam = {
+			role: 'assistant',
+			content: msg.content ?? '',
+		};
+		if (msg.tool_calls && msg.tool_calls.length) {
+			(assistantMsg as { tool_calls?: ChatCompletionMessageToolCall[] }).tool_calls =
+				msg.tool_calls;
+		}
 
-    for (const tc of msg.tool_calls) {
-      const fnName = tc.function.name;
-      let fnArgs: Record<string, unknown> = {};
-      try {
-        fnArgs = JSON.parse(tc.function.arguments);
-      } catch {
-        fnArgs = {};
-      }
+		messages.push(assistantMsg);
+		newMessages.push(assistantMsg);
 
-      console.log(`  ${chalk.bold.magenta(`⚡ ${fnName}`)}  ${fmtArgs(fnArgs)}`);
+		if (!msg.tool_calls || msg.tool_calls.length === 0) {
+			return { text: msg.content ?? '', newMessages };
+		}
 
-      const tool = toolMap.get(fnName);
-      const result = tool ? await tool.execute(fnArgs) : `Error: unknown tool '${fnName}'`;
+		for (const tc of msg.tool_calls) {
+			if (!isFunctionToolCall(tc)) continue;
+			const fnName = tc.function.name;
+			let fnArgs: Record<string, unknown> = {};
+			try {
+				fnArgs = JSON.parse(tc.function.arguments);
+			} catch {
+				fnArgs = {};
+			}
 
-      const preview = result.length > 50 ? result.slice(0, 50) + "..." : result;
-      console.log(`  ${chalk.green("✓")} ${chalk.dim(preview)}\n`);
+			const tool = toolMap.get(fnName);
+			const result = tool ? await tool.execute(fnArgs) : `Error: unknown tool '${fnName}'`;
 
-      const toolResultMsg: ChatCompletionMessageParam = {
-        role: "tool",
-        tool_call_id: tc.id,
-        content: result,
-      };
-      messages.push(toolResultMsg);
-      newMessages.push(toolResultMsg);
-    }
-  }
+			const toolResultMsg: ChatCompletionMessageParam = {
+				role: 'tool',
+				tool_call_id: tc.id,
+				content: result,
+			};
+			messages.push(toolResultMsg);
+			newMessages.push(toolResultMsg);
+		}
+	}
 
-  const error = "Error: max iterations reached";
-  console.log(panel("error", error, "red"));
-  return { text: error, newMessages };
+	return { text: 'Error: max iterations reached', newMessages };
 }
