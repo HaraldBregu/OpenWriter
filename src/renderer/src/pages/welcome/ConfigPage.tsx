@@ -80,7 +80,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 			<TitleBar title="OpenWriter" />
 
 			<PageBody className="p-0 flex-row">
-				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-3/4 px-10 py-12 border-r bg-muted/30">
+				<aside className="hidden md:flex flex-col items-center justify-center gap-5 w-3/5 px-10 py-12 border-r bg-muted/30">
 					<AppIconOpenWriter
 						className="text-foreground"
 						style={{
