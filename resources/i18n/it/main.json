@@ -179,6 +179,9 @@
 			"section": "Account",
 			"guest": "Ospite",
 			"notSignedIn": "Non hai effettuato l'accesso",
+			"signedIn": "Accesso effettuato",
+			"firstName": "Nome",
+			"lastName": "Cognome",
 			"signIn": "Accedi",
 			"signInDescription": "Accedi per sincronizzare le impostazioni tra dispositivi"
 		},
