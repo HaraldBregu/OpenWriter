@@ -22,7 +22,6 @@ import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { ThemeService } from './services/theme-service';
 import { CronService } from './services/cron-service';
-import { SkillsStoreService } from './services/skills-store-service';
 import { StreamLoggerService } from './services/stream-logger';
 import { FileManager } from './shared/file_manager';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
@@ -33,12 +32,10 @@ import { ServiceResolver } from './shared/service-resolver';
 import { ModelResolver } from './shared/model-resolver';
 import {
 	AgentRegistry,
-	AssistantAgent,
 	ContentWriterAgent,
 	ContentReviewerAgent,
 	RagAgent,
 	OcrAgent,
-	TranscriptionAgent,
 } from './agents';
 import {
 	ContentWriterTaskHandler,
@@ -91,9 +88,6 @@ export function bootstrapServices(): BootstrapResult {
 	// Cron job scheduler
 	container.register('cronService', new CronService(logger));
 
-	// Skills management service (user-installed skills under userData/skills/)
-	container.register('skillsStoreService', new SkillsStoreService(logger));
-
 	// Per-task agent stream logger (userData/stream-logs/<taskId>.jsonl)
 	container.register('streamLogger', new StreamLoggerService(logger));
 
@@ -135,12 +129,10 @@ export function bootstrapServices(): BootstrapResult {
 	// Each agent is a strategy object registered by type; add new agents by
 	// dropping a folder under src/main/agents and registering it here.
 	const agentRegistry = new AgentRegistry();
-	agentRegistry.register(new AssistantAgent());
 	agentRegistry.register(contentWriterAgent);
 	agentRegistry.register(contentReviewerAgent);
 	agentRegistry.register(new RagAgent());
 	agentRegistry.register(new OcrAgent());
-	agentRegistry.register(new TranscriptionAgent());
 	container.register('agentRegistry', agentRegistry);
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle

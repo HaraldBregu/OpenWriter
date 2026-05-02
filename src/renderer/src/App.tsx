@@ -39,7 +39,6 @@ const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
 const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
 const AgentsPage = lazy(() => import('./pages/settings/pages/AgentsPage'));
-const SkillPage = lazy(() => import('./pages/settings/pages/SkillPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
 const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));

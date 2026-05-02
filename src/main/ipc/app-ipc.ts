@@ -12,7 +12,6 @@ import type { StoreService } from '../services/store';
 import type { LoggerService } from '../services/logger';
 import type { ThemeService } from '../services/theme-service';
 import type { CronService } from '../services/cron-service';
-import type { SkillsStoreService } from '../services/skills-store-service';
 import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
@@ -429,8 +428,6 @@ export class AppIpc implements IpcModule {
 		// -----------------------------------------------------------------------
 		// Skills management handlers (userData/skills/)
 		// -----------------------------------------------------------------------
-
-		const skillsStoreService = container.get<SkillsStoreService>('skillsStoreService');
 
 		ipcMain.handle(
 			AppChannels.getSkills,

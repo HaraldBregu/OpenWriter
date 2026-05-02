@@ -7,8 +7,6 @@
  */
 
 export * from './core';
-export { AssistantAgent } from './assistant';
-export type { AssistantAgentInput, AssistantAgentOutput } from './assistant';
 export { ContentWriterAgent } from './content-writer';
 export type {
 	ContentWriterAgentInput,
@@ -37,39 +35,3 @@ export type {
 } from './rag';
 export { OcrAgent } from './ocr';
 export type { OcrAgentInput, OcrAgentOutput, OcrPage, OcrSourceKind } from './ocr';
-export { TranscriptionAgent } from './transcription';
-export type {
-	TranscriptionAgentInput,
-	TranscriptionAgentOutput,
-	TranscriptionSegment,
-	TranscriptionSourceKind,
-	TranscriptionResponseFormat,
-} from './transcription';
-export {
-	SkillRegistry,
-	SkillError,
-	SkillLoadError,
-	SkillNotFoundError,
-	SkillValidationError,
-	SkillParser,
-	FileSystemSkillSource,
-	FileSystemSkillRepository,
-	buildSkillsPrompt,
-	buildSkillsSnapshot,
-	renderSkillInstructions,
-} from './skills';
-export type {
-	Skill,
-	SkillEntry,
-	SkillMetadata,
-	SkillExposure,
-	SkillScope,
-	SkillSnapshot,
-	SkillSource,
-	SkillLoadRecord,
-	SkillRepository,
-	ParsedSkill,
-	ParseSkillOptions,
-	FileSystemSkillSourceOptions,
-	FileSystemSkillRepositoryOptions,
-} from './skills';
