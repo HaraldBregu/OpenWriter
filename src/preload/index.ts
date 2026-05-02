@@ -6,8 +6,10 @@ import {
 	WorkspaceChannels,
 	TaskChannels,
 	LogChannels,
+	AssistantChannels,
 } from '../shared/channels';
-import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
+import type { AssistantResponseEvent } from '../shared/channels';
+import type { AppApi, WindowApi, WorkspaceApi, TaskApi, AssistantApi } from './index.d';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
