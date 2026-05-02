@@ -11,7 +11,6 @@ import {
 	FieldError,
 	FieldGroup,
 	FieldLabel,
-	FieldLegend,
 	FieldSet,
 } from '@/components/ui/Field';
 import { PageBody, PageContainer } from '@/components/app/base/page';
@@ -114,9 +113,6 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										</div>
 
 										<FieldSet>
-											<FieldLegend variant="label">
-												{t('startup.firstTime.profileSection', 'Your name')}
-											</FieldLegend>
 											<FieldGroup>
 												<form.Field
 													name="firstName"
@@ -210,9 +206,6 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										</FieldSet>
 
 										<FieldSet>
-											<FieldLegend variant="label">
-												{t('startup.firstTime.providersSection', 'Connect a provider')}
-											</FieldLegend>
 											<FieldGroup>
 												{PROVIDER_IDS.map((providerId) => (
 													<form.Field
