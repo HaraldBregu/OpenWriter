@@ -469,6 +469,18 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
+											render={<Link to="/assistant" />}
+											className="group/btn h-9 px-3"
+											isActive={location.pathname === '/assistant'}
+										>
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent">
+												<Bot className="h-3.5 w-3.5" />
+											</span>
+											<span className="flex-1 truncate">{t('menu.assistant', 'Assistant')}</span>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+									<SidebarMenuItem>
+										<SidebarMenuButton
 											className="group/btn h-9 px-3"
 											onClick={createWriting}
 											disabled={creatingWriting}
