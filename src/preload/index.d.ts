@@ -58,6 +58,7 @@ import type {
 	IpcResult,
 	Provider,
 	ProviderModelInfo,
+	UserProfile,
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
