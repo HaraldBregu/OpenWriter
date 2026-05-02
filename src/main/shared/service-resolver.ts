@@ -2,7 +2,7 @@ import type { Provider } from '../../shared/types';
 import type { StoreService } from '../services/store';
 
 /**
- * ProviderResolver — resolves a configured Provider (with apiKey) from StoreService.
+ * ServiceResolver — resolves a configured Provider (with apiKey) from StoreService.
  *
  * Resolution order (first match wins):
  *   1. Exact match by providerId
@@ -10,7 +10,7 @@ import type { StoreService } from '../services/store';
  *
  * Validates that an API key exists for the resolved provider.
  */
-export class ProviderResolver {
+export class ServiceResolver {
 	constructor(private readonly storeService: StoreService) {}
 
 	/**
