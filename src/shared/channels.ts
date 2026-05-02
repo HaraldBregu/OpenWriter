@@ -161,10 +161,10 @@ export const AppChannels = {
 	// Writing context menu (formerly ContextMenuChannels)
 	showWritingContextMenu: 'context-menu:writing',
 	writingContextMenuAction: 'context-menu:writing-action',
-	// Store / Service management
-	getServices: 'app:get-services',
-	addService: 'app:add-service',
-	deleteService: 'app:delete-service',
+	// Store / Provider management
+	getProviders: 'app:get-providers',
+	addProvider: 'app:add-provider',
+	deleteProvider: 'app:delete-provider',
 	getAgents: 'app:get-agents',
 	updateAgent: 'app:update-agent',
 	getStartupInfo: 'app:get-startup-info',
