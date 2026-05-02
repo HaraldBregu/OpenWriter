@@ -37,6 +37,50 @@ export function CronDialog({ open, onOpenChange }: CronDialogProps) {
 		}
 	}, []);
 
+	const handleSchedule = useCallback(
+		async (e: React.FormEvent) => {
+			e.preventDefault();
+			setFormError(null);
+			const id = formId.trim();
+			const expression = formExpr.trim();
+			if (!id || !expression) {
+				setFormError(t('debug.cronFormRequired', 'Job ID and expression are required'));
+				return;
+			}
+			setSubmitting(true);
+			try {
+				await window.app.cronSchedule({
+					id,
+					expression,
+					timezone: formTz.trim() || undefined,
+					runOnStart: formRunOnStart,
+				});
+				setFormId('');
+				setFormExpr('');
+				setFormTz('');
+				setFormRunOnStart(false);
+				await fetchJobs();
+			} catch (err) {
+				setFormError(err instanceof Error ? err.message : String(err));
+			} finally {
+				setSubmitting(false);
+			}
+		},
+		[formId, formExpr, formTz, formRunOnStart, fetchJobs, t]
+	);
+
+	const handleUnschedule = useCallback(
+		async (id: string) => {
+			try {
+				await window.app.cronUnschedule(id);
+				await fetchJobs();
+			} catch (err) {
+				setFormError(err instanceof Error ? err.message : String(err));
+			}
+		},
+		[fetchJobs]
+	);
+
 	useEffect(() => {
 		if (!open) return;
 		fetchJobs();
