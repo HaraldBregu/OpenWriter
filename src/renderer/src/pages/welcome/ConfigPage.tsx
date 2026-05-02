@@ -115,7 +115,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 
 										<FieldSet>
 											<FieldLegend variant="label">
-												{t('startup.firstTime.profileSection', 'About you')}
+												{t('startup.firstTime.profileSection', 'Your name')}
 											</FieldLegend>
 											<FieldGroup>
 												<form.Field
