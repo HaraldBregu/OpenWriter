@@ -1,45 +1,72 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+import { MemoryManager } from './memory';
+import { SessionManager } from './session';
+import { buildSystemPrompt } from './context';
+import { runAgent } from './loop';
+import type { Tool } from './tools/base';
+import { ReadFileTool, WriteFileTool } from './tools/filesystem';
+import { ExecTool } from './tools/exec';
 
-// TODO: lift to per-assistant config / model selection UI.
 const HARDCODED_MODEL = 'gpt-4o-mini';
 
 export interface AssistantOptions {
 	id: string;
 	model?: string;
-	/** Resolves the OpenAI API key at send-time so updates in settings take effect. */
 	getApiKey: () => string | undefined;
-	systemPrompt?: string;
+	/** Defaults to all built-in tools (read_file, write_file, exec). Pass `[]` to disable. */
+	tools?: Tool[];
+	/** Defaults to `assistant:<id>`. */
+	sessionKey?: string;
+	maxIterations?: number;
 }
 
 /**
- * One conversational assistant. Owns its OpenAI client and message history.
- * The API key is resolved per-send via `getApiKey` so changes to the store
- * propagate without re-creating the assistant.
+ * Conversational assistant with memory, persistent session history, and tools.
+ * Mirrors the Kaioh CLI assistant: MemoryManager + SessionManager + runAgent.
+ *
+ * Lazy-init: memory/session bootstrap happens on first send().
  */
 export class Assistant {
 	readonly id: string;
 	readonly model: string;
+	readonly memory: MemoryManager;
+	readonly session: SessionManager;
+	private readonly tools: Tool[];
+	private readonly maxIterations: number;
 	private readonly getApiKey: () => string | undefined;
-	private readonly history: ChatCompletionMessageParam[] = [];
+	private history: ChatCompletionMessageParam[] = [];
 	private cachedKey: string | null = null;
 	private cachedClient: OpenAI | null = null;
+	private initialized = false;
+	private initPromise: Promise<void> | null = null;
 
 	constructor(opts: AssistantOptions) {
 		this.id = opts.id;
 		this.model = opts.model ?? HARDCODED_MODEL;
 		this.getApiKey = opts.getApiKey;
-		if (opts.systemPrompt) {
-			this.history.push({ role: 'system', content: opts.systemPrompt });
-		}
+		this.memory = new MemoryManager(opts.id);
+		this.session = new SessionManager(opts.sessionKey ?? `assistant:${opts.id}`);
+		this.tools = opts.tools ?? [new ReadFileTool(), new WriteFileTool(), new ExecTool()];
+		this.maxIterations = opts.maxIterations ?? 20;
+	}
+
+	async init(): Promise<void> {
+		if (this.initialized) return;
+		if (this.initPromise) return this.initPromise;
+		this.initPromise = (async () => {
+			await this.memory.init();
+			await this.session.init();
+			this.history = await this.session.load();
+			this.initialized = true;
+		})();
+		return this.initPromise;
 	}
 
 	private client(): OpenAI {
 		const key = this.getApiKey();
 		if (!key) {
-			throw new Error(
-				'OpenAI API key not configured. Add an OpenAI provider in Settings.'
-			);
+			throw new Error('OpenAI API key not configured. Add an OpenAI provider in Settings.');
 		}
 		if (key !== this.cachedKey) {
 			this.cachedKey = key;
@@ -49,19 +76,25 @@ export class Assistant {
 	}
 
 	async send(userMessage: string): Promise<string> {
-		this.history.push({ role: 'user', content: userMessage });
-		const response = await this.client().chat.completions.create({
+		await this.init();
+		const systemPrompt = await buildSystemPrompt(this.memory);
+		const { text, newMessages } = await runAgent({
+			client: this.client(),
 			model: this.model,
-			messages: this.history,
+			userMessage,
+			tools: this.tools,
+			history: this.history,
+			systemPrompt,
+			maxIterations: this.maxIterations,
 		});
-		const text = response.choices[0]?.message?.content ?? '';
-		this.history.push({ role: 'assistant', content: text });
+		await this.session.append(newMessages);
+		this.history.push(...newMessages);
 		return text;
 	}
 
-	reset(): void {
-		const sys = this.history.find((m) => m.role === 'system');
-		this.history.length = 0;
-		if (sys) this.history.push(sys);
+	async reset(): Promise<void> {
+		await this.init();
+		await this.session.clear();
+		this.history = [];
 	}
 }
