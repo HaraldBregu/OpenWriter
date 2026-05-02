@@ -162,7 +162,7 @@ const AgentsPage: React.FC = () => {
 
 		void persistAgent({
 			...cleared,
-			models: [{ id: existingId, providerId, apiKey: '', modelId: candidate.id }],
+			models: [{ id: existingId, providerId, modelId: candidate.id }],
 		});
 	};
 
