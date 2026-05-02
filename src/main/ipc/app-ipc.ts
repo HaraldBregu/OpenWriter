@@ -295,31 +295,28 @@ export class AppIpc implements IpcModule {
 		);
 
 		// -----------------------------------------------------------------------
-		// Service management handlers
+		// Provider management handlers
 		// -----------------------------------------------------------------------
 
 		ipcMain.handle(
-			AppChannels.getServices,
-			wrapSimpleHandler(
-				() => store.getServices().map((service, index) => toServiceConfig(service, index)),
-				AppChannels.getServices
-			)
+			AppChannels.getProviders,
+			wrapSimpleHandler(() => store.getProviders(), AppChannels.getProviders)
 		);
 
 		ipcMain.handle(
-			AppChannels.addService,
-			wrapSimpleHandler((service: Service) => {
-				StoreValidators.validateService(service);
-				return store.addService(service);
-			}, AppChannels.addService)
+			AppChannels.addProvider,
+			wrapSimpleHandler((provider: Provider) => {
+				StoreValidators.validateProvider(provider);
+				return store.addProvider(provider);
+			}, AppChannels.addProvider)
 		);
 
 		ipcMain.handle(
-			AppChannels.deleteService,
+			AppChannels.deleteProvider,
 			wrapSimpleHandler((id: string) => {
-				StoreValidators.validateServiceId(id);
-				return store.deleteService(id);
-			}, AppChannels.deleteService)
+				StoreValidators.validateProviderId(id);
+				return store.deleteProvider(id);
+			}, AppChannels.deleteProvider)
 		);
 
 		ipcMain.handle(
