@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Field, FieldGroup, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/Field';
 import { Separator } from '@/components/ui/Separator';
+import { PageBody, PageContainer } from '@/components/app/base/page';
 import { TitleBar } from '@/components/app/titlebar/TitleBar';
 import { PROVIDER_CATALOGUE, PROVIDER_IDS, getProvider } from '../../../../shared/providers';
 import type { Provider, ProviderId, AppStartupInfo } from '../../../../shared/types';
