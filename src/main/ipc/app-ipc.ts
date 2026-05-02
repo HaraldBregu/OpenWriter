@@ -524,6 +524,63 @@ export class AppIpc implements IpcModule {
 			}, AppChannels.getTrayEnabled)
 		);
 
+		// -----------------------------------------------------------------------
+		// Cron job handlers
+		// -----------------------------------------------------------------------
+
+		const cronService = container.get<CronService>('cronService');
+
+		const broadcastCronTick = (id: string): void => {
+			const event: CronTickEvent = { id, firedAt: new Date().toISOString() };
+			BrowserWindow.getAllWindows().forEach((win) => {
+				if (!win.isDestroyed()) {
+					win.webContents.send(AppChannels.cronTick, event);
+				}
+			});
+		};
+
+		ipcMain.handle(
+			AppChannels.cronSchedule,
+			wrapSimpleHandler(
+				(params: {
+					id: string;
+					expression: string;
+					timezone?: string;
+					runOnStart?: boolean;
+				}): CronJobInfo => {
+					if (typeof params?.id !== 'string' || params.id.trim().length === 0) {
+						throw new Error('id must be a non-empty string');
+					}
+					if (typeof params.expression !== 'string' || params.expression.trim().length === 0) {
+						throw new Error('expression must be a non-empty string');
+					}
+					cronService.schedule(
+						params.id,
+						params.expression,
+						() => broadcastCronTick(params.id),
+						{ timezone: params.timezone, runOnStart: params.runOnStart }
+					);
+					return { id: params.id, expression: params.expression };
+				},
+				AppChannels.cronSchedule
+			)
+		);
+
+		ipcMain.handle(
+			AppChannels.cronUnschedule,
+			wrapSimpleHandler((id: string) => cronService.unschedule(id), AppChannels.cronUnschedule)
+		);
+
+		ipcMain.handle(
+			AppChannels.cronListJobs,
+			wrapSimpleHandler(() => cronService.listJobs(), AppChannels.cronListJobs)
+		);
+
+		ipcMain.handle(
+			AppChannels.cronHasJob,
+			wrapSimpleHandler((id: string) => cronService.has(id), AppChannels.cronHasJob)
+		);
+
 		logger.info('AppIpc', `Registered ${this.name} module`);
 	}
 }
