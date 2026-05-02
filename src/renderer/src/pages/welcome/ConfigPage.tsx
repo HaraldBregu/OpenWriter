@@ -81,14 +81,14 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 
 			<PageBody className="p-0 flex-row">
 				<aside className="hidden md:flex flex-col justify-between gap-10 w-3/5 px-12 py-12 border-r bg-muted/30">
-					<div className="flex items-center gap-3">
+					<div className="flex items-center gap-4">
 						<AppIconOpenWriter
 							className="text-foreground"
-							style={{ width: 40, height: 40 }}
+							style={{ width: 72, height: 72 }}
 							aria-label={t('appTitle')}
 							role="img"
 						/>
-						<span className="text-base font-semibold tracking-tight">OpenWriter</span>
+						<span className="text-2xl font-semibold tracking-tight">OpenWriter</span>
 					</div>
 
 					<div className="flex flex-col gap-4 max-w-lg">
