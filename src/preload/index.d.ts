@@ -64,7 +64,6 @@ import type {
 	CronJobInfo,
 	CronTickEvent,
 	Theme,
-	SkillInfo,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
