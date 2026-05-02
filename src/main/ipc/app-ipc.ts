@@ -18,8 +18,8 @@ import { isThemeMode } from '../../shared/theme';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
+	Provider,
 	ProviderModelInfo,
-	Service,
 	ThemeMode,
 	WritingContextMenuAction,
 } from '../../shared/types';
