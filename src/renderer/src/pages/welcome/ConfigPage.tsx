@@ -108,21 +108,21 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 									noValidate
 								>
 									<FieldGroup>
-										<div className="flex flex-col items-center gap-1 text-center">
-											<h1 className="text-2xl font-bold">
-												{t('startup.firstTime.title', 'Welcome to OpenWriter')}
+										<div className="flex flex-col gap-2 text-left">
+											<h1 className="text-2xl font-semibold tracking-tight">
+												{t('startup.firstTime.title', 'Set up your workspace')}
 											</h1>
-											<p className="text-sm text-balance text-muted-foreground">
+											<p className="text-sm text-muted-foreground leading-relaxed">
 												{t(
 													'startup.firstTime.description',
-													'Tell us about you and connect your providers to get started.'
+													'Takes about a minute. Add your name and at least one provider key — you can edit everything later from Settings.'
 												)}
 											</p>
 										</div>
 
 										<FieldSet>
 											<FieldLegend variant="label">
-												{t('startup.firstTime.profileSection', 'Your profile')}
+												{t('startup.firstTime.profileSection', 'About you')}
 											</FieldLegend>
 											<FieldGroup>
 												<form.Field name="firstName">
@@ -140,7 +140,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 																	field.handleChange(e.target.value);
 																	if (errorMessage) setErrorMessage(null);
 																}}
-																placeholder="John"
+																placeholder="Ada"
 																autoComplete="given-name"
 															/>
 														</Field>
@@ -161,18 +161,24 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 																	field.handleChange(e.target.value);
 																	if (errorMessage) setErrorMessage(null);
 																}}
-																placeholder="Doe"
+																placeholder="Lovelace"
 																autoComplete="family-name"
 															/>
 														</Field>
 													)}
 												</form.Field>
+												<FieldDescription>
+													{t(
+														'startup.firstTime.profileHint',
+														'Used to personalize prompts and signatures. Stays on this device.'
+													)}
+												</FieldDescription>
 											</FieldGroup>
 										</FieldSet>
 
 										<FieldSet>
 											<FieldLegend variant="label">
-												{t('startup.firstTime.providersSection', 'Provider tokens')}
+												{t('startup.firstTime.providersSection', 'Connect a provider')}
 											</FieldLegend>
 											<FieldGroup>
 												{PROVIDER_IDS.map((providerId) => (
@@ -184,6 +190,9 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 															<Field>
 																<FieldLabel htmlFor={`first-run-${providerId}`}>
 																	{PROVIDER_LABELS[providerId]}
+																	<span className="ml-1 text-xs font-normal text-muted-foreground">
+																		{t('startup.firstTime.optional', '(optional)')}
+																	</span>
 																</FieldLabel>
 																<Input
 																	id={`first-run-${providerId}`}
@@ -196,7 +205,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 																	}}
 																	placeholder={t(
 																		'startup.firstTime.tokenPlaceholder',
-																		'Paste API token'
+																		'sk-•••••••••••••••••••••'
 																	)}
 																	autoComplete="off"
 																	spellCheck={false}
@@ -209,7 +218,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 												<FieldDescription>
 													{t(
 														'startup.firstTime.tokensHint',
-														'Leave any field blank to skip and configure later in Settings.'
+														'Add at least one to start writing. Keys are encrypted with your OS keychain — never synced, never logged.'
 													)}
 												</FieldDescription>
 											</FieldGroup>
@@ -222,25 +231,25 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										<Field>
 											<form.Subscribe selector={(s) => s.isSubmitting}>
 												{(isSubmitting) => (
-													<Button type="submit" disabled={isSubmitting}>
+													<Button type="submit" disabled={isSubmitting} className="w-full">
 														{isSubmitting ? (
 															<>
 																<Loader2 className="animate-spin" />
-																{t('startup.firstTime.saving', 'Saving...')}
+																{t('startup.firstTime.saving', 'Setting things up…')}
 															</>
 														) : (
 															<>
-																{t('startup.firstTime.save', 'Save and Continue')}
+																{t('startup.firstTime.save', 'Enter OpenWriter')}
 																<ArrowRight />
 															</>
 														)}
 													</Button>
 												)}
 											</form.Subscribe>
-											<FieldDescription className="px-6 text-center">
+											<FieldDescription className="text-center">
 												{t(
 													'startup.firstTime.privacy',
-													'Tokens stay on your machine and are sent only to the provider you configured.'
+													'By continuing you agree to the Terms and Privacy Policy.'
 												)}
 											</FieldDescription>
 										</Field>
