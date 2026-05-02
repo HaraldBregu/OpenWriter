@@ -182,6 +182,7 @@
 			"signedIn": "Signed in",
 			"firstName": "First Name",
 			"lastName": "Last Name",
+			"editHint": "Double-click to edit",
 			"signIn": "Sign In",
 			"signInDescription": "Sign in to sync your settings across devices"
 		},
