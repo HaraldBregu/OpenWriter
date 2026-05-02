@@ -218,17 +218,6 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
-	 * Get the vector store directory path for the current workspace.
-	 * Returns null if no workspace is set.
-	 */
-	getVectorStorePath(): string | null {
-		if (!this.currentPath) {
-			return null;
-		}
-		return path.join(this.currentPath, 'data', 'vector_store');
-	}
-
-	/**
 	 * Cleanup on shutdown.
 	 */
 	destroy(): void {
