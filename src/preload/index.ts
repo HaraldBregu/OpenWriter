@@ -11,7 +11,7 @@ import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
-	Service,
+	Provider,
 	ThemeMode,
 	WorkspaceInfo,
 	CreateWorkspaceParams,
