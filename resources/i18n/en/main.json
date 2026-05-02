@@ -144,7 +144,6 @@
 			"workspace": "Workspace",
 			"providers": "Providers",
 			"agents": "Agents",
-			"skill": "Skill",
 			"media": "Media",
 			"devices": "Devices",
 			"tools": "Tools",
