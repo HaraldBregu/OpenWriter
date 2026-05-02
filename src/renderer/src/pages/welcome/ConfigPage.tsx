@@ -262,9 +262,13 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 										)}
 
 										<Field>
-											<form.Subscribe selector={(s) => s.isSubmitting}>
-												{(isSubmitting) => (
-													<Button type="submit" disabled={isSubmitting} className="w-full">
+											<form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting] as const}>
+												{([canSubmit, isSubmitting]) => (
+													<Button
+														type="submit"
+														disabled={!canSubmit || isSubmitting}
+														className="w-full"
+													>
 														{isSubmitting ? (
 															<>
 																<Loader2 className="animate-spin" />
