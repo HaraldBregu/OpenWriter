@@ -11,6 +11,8 @@ import type { AppApi, WindowApi, WorkspaceApi, TaskApi } from './index.d';
 import type {
 	AgentSettings,
 	ContextMenuDescriptor,
+	CronJobInfo,
+	CronTickEvent,
 	Provider,
 	UserProfile,
 	ThemeMode,
