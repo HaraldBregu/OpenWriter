@@ -210,6 +210,21 @@ export interface AppApi {
 	setTrayEnabled: (enabled: boolean) => Promise<void>;
 	/** Check whether the menu bar tray icon is currently enabled. */
 	getTrayEnabled: () => Promise<boolean>;
+	/** Schedule a recurring cron job. Renderer receives ticks via `onCronTick`. */
+	cronSchedule: (params: {
+		id: string;
+		expression: string;
+		timezone?: string;
+		runOnStart?: boolean;
+	}) => Promise<CronJobInfo>;
+	/** Stop and remove a scheduled cron job by id. */
+	cronUnschedule: (id: string) => Promise<void>;
+	/** List all currently scheduled cron jobs. */
+	cronListJobs: () => Promise<CronJobInfo[]>;
+	/** Check whether a cron job with the given id is scheduled. */
+	cronHasJob: (id: string) => Promise<boolean>;
+	/** Subscribe to cron tick events. Fires for any scheduled job each time it runs. */
+	onCronTick: (callback: (event: CronTickEvent) => void) => () => void;
 	/** Resolve the absolute filesystem path for a File from a native drag/drop or <input type="file">. */
 	getPathForFile: (file: File) => string;
 	/** Subscribe to app-level keyboard shortcut events emitted from the main process. */
