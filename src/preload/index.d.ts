@@ -61,6 +61,8 @@ import type {
 	UserProfile,
 	ThemeMode,
 	CustomThemeInfo,
+	CronJobInfo,
+	CronTickEvent,
 	Theme,
 	SkillInfo,
 } from '../shared/types';
