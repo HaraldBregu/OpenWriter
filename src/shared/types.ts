@@ -95,6 +95,22 @@ export interface SkillInfo {
 	readonly filePath?: string;
 }
 
+/**
+ * Information about a scheduled cron job.
+ */
+export interface CronJobInfo {
+	readonly id: string;
+	readonly expression: string;
+}
+
+/**
+ * Tick event fired when a scheduled cron job runs.
+ */
+export interface CronTickEvent {
+	readonly id: string;
+	readonly firedAt: string;
+}
+
 export type ProviderId = (typeof PROVIDERS)[number]['id'];
 export type ProviderName = (typeof PROVIDERS)[number]['name'];
 
