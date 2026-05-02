@@ -209,6 +209,7 @@ export const AppChannels = {
 	openTasksDialog: 'app:open-tasks-dialog',
 	openLogsDialog: 'app:open-logs-dialog',
 	openReduxDialog: 'app:open-redux-dialog',
+	openCronDialog: 'app:open-cron-dialog',
 } as const;
 
 // ===========================================================================
