@@ -178,8 +178,8 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 					</div>
 
 					{workspaces.length === 0 ? (
-						<div className="rounded-xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
-							{t('welcome.noWorkspaces')}
+						<div className="rounded-xl border border-dashed border-border px-4 py-8 text-center">
+							<Muted>{t('welcome.noWorkspaces')}</Muted>
 						</div>
 					) : (
 						<div className="rounded-xl border border-border overflow-y-auto max-h-96">
