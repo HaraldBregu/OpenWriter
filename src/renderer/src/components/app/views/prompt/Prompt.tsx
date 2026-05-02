@@ -69,11 +69,11 @@ function PromptContainer(): React.JSX.Element {
 					<div className="relative rounded-xl">
 						<GlowingEffect
 							blur={0}
-							borderWidth={1}
+							borderWidth={2}
 							spread={80}
 							glow={true}
 							disabled={false}
-							proximity={64}
+							proximity={164}
 							inactiveZone={0.01}
 						/>
 						<Card className="relative w-full shadow-none!">
