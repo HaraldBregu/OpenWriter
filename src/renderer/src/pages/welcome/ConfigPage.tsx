@@ -295,28 +295,30 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							</div>
 						</div>
 					</div>
-					<div className="relative hidden bg-primary text-primary-foreground lg:flex lg:flex-col lg:order-1 p-10 gap-10">
+					<div className="relative hidden bg-sidebar text-sidebar-foreground lg:flex lg:flex-col lg:order-1 p-10 gap-10 border-r border-sidebar-border">
 						<div className="flex items-center gap-3">
-							<div className="flex size-9 items-center justify-center rounded-md bg-primary-foreground/15">
+							<div className="flex size-9 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
 								<AppIconOpenWriter className="size-5" aria-hidden="true" />
 							</div>
-							<span className="text-lg font-semibold tracking-tight">OpenWriter</span>
+							<span className="text-lg font-semibold tracking-tight text-sidebar-foreground">
+								OpenWriter
+							</span>
 						</div>
 
 						<div className="flex flex-1 flex-col justify-center gap-6 max-w-md">
-							<h2 className="text-4xl font-semibold tracking-tight leading-tight">
+							<h2 className="text-4xl font-semibold tracking-tight leading-tight text-sidebar-foreground">
 								{t(
 									'startup.firstTime.leftTitle',
 									'Your writing, your models, your machine.'
 								)}
 							</h2>
-							<p className="text-sm text-primary-foreground/80 leading-relaxed">
+							<p className="text-sm text-sidebar-foreground/70 leading-relaxed">
 								{t(
 									'startup.firstTime.leftDescription',
 									'OpenWriter is a local-first writing studio. Bring your own keys for OpenAI, Anthropic, Google, and more — drafts and credentials never leave your device.'
 								)}
 							</p>
-							<ul className="flex flex-col gap-3 text-sm text-primary-foreground/85">
+							<ul className="flex flex-col gap-3 text-sm text-sidebar-foreground/80">
 								<li className="flex gap-2">
 									<span aria-hidden="true">→</span>
 									{t(
