@@ -87,7 +87,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 
 			<PageBody className="p-0">
 				<div className="grid min-h-full lg:grid-cols-2">
-					<div className="flex flex-col gap-4 p-6 md:p-10 overflow-y-auto">
+					<div className="flex flex-col gap-4 p-6 md:p-10 overflow-y-auto lg:order-2">
 						<div className="flex justify-center gap-2 md:justify-start">
 							<a href="#" className="flex items-center gap-2 font-medium">
 								<div className="flex size-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
