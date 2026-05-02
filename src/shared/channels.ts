@@ -197,6 +197,12 @@ export const AppChannels = {
 	// Tray
 	setTrayEnabled: 'app:set-tray-enabled',
 	getTrayEnabled: 'app:get-tray-enabled',
+	// Cron jobs
+	cronSchedule: 'app:cron-schedule',
+	cronUnschedule: 'app:cron-unschedule',
+	cronListJobs: 'app:cron-list-jobs',
+	cronHasJob: 'app:cron-has-job',
+	cronTick: 'app:cron-tick',
 	// Global keyboard shortcuts (main → renderer)
 	shortcut: 'app:shortcut',
 	// Developer dialogs (main → renderer)
