@@ -229,17 +229,6 @@ export class WorkspaceService implements Disposable {
 	}
 
 	/**
-	 * Get the document index directory path for the current workspace.
-	 * Returns null if no workspace is set.
-	 */
-	getDocumentIndexPath(): string | null {
-		if (!this.currentPath) {
-			return null;
-		}
-		return path.join(this.currentPath, 'data', 'rag_index');
-	}
-
-	/**
 	 * Cleanup on shutdown.
 	 */
 	destroy(): void {
