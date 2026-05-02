@@ -175,6 +175,13 @@
 			"editor": "Editor",
 			"developer": "Developer"
 		},
+		"account": {
+			"section": "Account",
+			"guest": "Guest",
+			"notSignedIn": "Not signed in",
+			"signIn": "Sign In",
+			"signInDescription": "Sign in to sync your settings across devices"
+		},
 		"profile": {
 			"firstName": "First Name",
 			"firstNamePlaceholder": "Enter your first name",
