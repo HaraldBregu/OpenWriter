@@ -249,7 +249,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 							</div>
 						</div>
 					</div>
-					<div className="relative hidden bg-muted lg:flex lg:items-center lg:justify-center">
+					<div className="relative hidden bg-muted lg:flex lg:items-center lg:justify-center lg:order-1">
 						<AppIconOpenWriter
 							className="text-foreground/80"
 							style={{ width: 'clamp(160px, 22vw, 280px)', height: 'clamp(160px, 22vw, 280px)' }}
