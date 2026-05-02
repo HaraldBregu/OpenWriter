@@ -107,7 +107,7 @@ const ConfigPage: React.FC<ConfigPageProps> = ({ onConfigured }) => {
 						e.stopPropagation();
 						form.handleSubmit();
 					}}
-					className="w-full max-w-2xl"
+					className="w-full max-w-md"
 					noValidate
 				>
 					<FieldGroup>
