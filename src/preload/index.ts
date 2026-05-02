@@ -110,8 +110,8 @@ const app: AppApi = {
 	getStartupInfo: () => {
 		return typedInvokeUnwrap(AppChannels.getStartupInfo);
 	},
-	completeFirstRunConfiguration: (providers: Provider[]) => {
-		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, providers);
+	completeFirstRunConfiguration: (profile: UserProfile, providers: Provider[]) => {
+		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, profile, providers);
 	},
 	getModels: (providerId: string) => typedInvokeUnwrap(AppChannels.getModels, providerId),
 	getLogs: (limit?: number) => typedInvokeUnwrap(LogChannels.getLogs, limit),
