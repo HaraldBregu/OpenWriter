@@ -100,12 +100,12 @@ async function fetchProviderModels(
 		throw new Error(`Provider "${providerId}" is not supported by getModels`);
 	}
 
-	const service = store.getServiceByProviderId(normalized);
-	if (!service || !service.apiKey) {
+	const provider = store.getProviderById(normalized);
+	if (!provider || !provider.apiKey) {
 		throw new Error(`No API key configured for provider "${providerId}"`);
 	}
 
-	const response = await fetch(strategy.url, { headers: strategy.headers(service.apiKey) });
+	const response = await fetch(strategy.url, { headers: strategy.headers(provider.apiKey) });
 
 	if (!response.ok) {
 		const body = await response.text().catch(() => '');
