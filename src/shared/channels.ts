@@ -170,6 +170,7 @@ export const AppChannels = {
 	updateAgent: 'app:update-agent',
 	getStartupInfo: 'app:get-startup-info',
 	getProfile: 'app:get-profile',
+	setProfile: 'app:set-profile',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	getModels: 'app:get-models',
 	// Logs
