@@ -1,7 +1,14 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/Switch';
-import { SectionHeader, SettingRow } from '../components';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+	ItemRowDescription,
+} from '@/components/ui/ItemRow';
+import { SectionHeader } from '../components';
 
 const DeveloperPage: React.FC = () => {
 	const { t } = useTranslation();
@@ -17,12 +24,17 @@ const DeveloperPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.developer')} />
 
-			<SettingRow
-				label={t('settings.developer.mode')}
-				description={t('settings.developer.modeDescription')}
-			>
-				<Switch checked={developerMode} onCheckedChange={handleToggle} />
-			</SettingRow>
+			<div className="flex flex-col gap-2">
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.developer.mode')}</ItemRowTitle>
+						<ItemRowDescription>{t('settings.developer.modeDescription')}</ItemRowDescription>
+					</ItemRowContent>
+					<ItemRowActions>
+						<Switch checked={developerMode} onCheckedChange={handleToggle} />
+					</ItemRowActions>
+				</ItemRow>
+			</div>
 		</div>
 	);
 };
