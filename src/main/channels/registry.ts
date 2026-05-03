@@ -136,6 +136,8 @@ export class ChannelRegistry {
 		try {
 			const assistant = this.assistantRegistry.get(DEFAULT_ASSISTANT_ID);
 			const reply = await assistant.send(msg.text);
+			const rendered = (await marked.parse(reply)).toString().trimEnd();
+			console.log(panel('assistant', rendered, 'green'));
 			await this.send({ type: msg.type, to: msg.chatId, text: reply });
 		} catch (err) {
 			this.logger.error('ChannelRegistry', `Assistant failed for ${msg.type}`, err);
