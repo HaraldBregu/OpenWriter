@@ -186,6 +186,9 @@ export const AppChannels = {
 	setProfile: 'app:set-profile',
 	completeFirstRunConfiguration: 'app:complete-first-run-configuration',
 	getModels: 'app:get-models',
+	// Channels (messaging adapters)
+	getChannel: 'app:get-channel',
+	setChannelProperties: 'app:set-channel-properties',
 	// Logs
 	getLogs: 'app:get-logs',
 	openLogsFolder: 'app:open-logs-folder',
