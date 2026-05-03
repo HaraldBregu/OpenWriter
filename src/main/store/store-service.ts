@@ -4,15 +4,13 @@ import type { AgentSettings, Provider, UserProfile } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 import { DEFAULTS, type SettingsStore, type StoreSchema, type WorkspaceInfo } from './types';
 import {
-	cloneProvider,
-	normalizeProviderInput,
-	normalizeProviders,
-} from './providers';
-import {
 	cloneAgent,
+	cloneProvider,
 	normalizeAgentInput,
 	normalizeAgents,
-} from './agents';
+	normalizeProviderInput,
+	normalizeProviders,
+} from './utils';
 
 export class StoreService {
 	private store: SettingsStore;
