@@ -169,17 +169,14 @@ export class StoreService {
 			| DiscordChannelProperties
 	): Channel {
 		const current = this.store.get('channel');
-		const base: Channel = current
-			? {
-				telegram: { ...current.telegram, allowFrom: [...current.telegram.allowFrom] },
-				whatsapp: { ...current.whatsapp, allowFrom: [...current.whatsapp.allowFrom] },
-				discord: { ...current.discord, allowFrom: [...current.discord.allowFrom] },
-			}
-			: {
-				telegram: { token: '', allowFrom: [] },
-				whatsapp: { token: '', allowFrom: [] },
-				discord: { token: '', allowFrom: [] },
-			};
+		const baseTelegram = current?.telegram ?? { token: '', allowFrom: [] };
+		const baseWhatsapp = current?.whatsapp ?? { token: '', allowFrom: [] };
+		const baseDiscord = current?.discord ?? { token: '', allowFrom: [] };
+		const base: Channel = {
+			telegram: { ...baseTelegram, allowFrom: [...baseTelegram.allowFrom] },
+			whatsapp: { ...baseWhatsapp, allowFrom: [...baseWhatsapp.allowFrom] },
+			discord: { ...baseDiscord, allowFrom: [...baseDiscord.allowFrom] },
+		};
 		const next: Channel = {
 			...base,
 			[type]: { token: properties.token, allowFrom: [...properties.allowFrom] },

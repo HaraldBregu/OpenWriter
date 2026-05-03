@@ -128,6 +128,8 @@ export type {
 	Theme,
 	Channel,
 	ChannelType,
+	ChannelStatusEvent,
+	DiscordChannelProperties,
 	TelegramChannelProperties,
 	WhatsappChannelProperties,
 };
