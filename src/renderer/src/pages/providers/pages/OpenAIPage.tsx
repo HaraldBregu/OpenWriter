@@ -3,12 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
+import {
 	Field,
 	FieldDescription,
 	FieldGroup,
 	FieldLabel,
-	FieldLegend,
-	FieldSet,
 } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
@@ -25,20 +31,23 @@ export default function OpenAIPage(): ReactElement {
 
 	return (
 		<form
+			className="w-full max-w-lg"
 			onSubmit={(e) => {
 				e.preventDefault();
 				void handleSave('openai');
 			}}
 		>
-			<FieldGroup className="w-full max-w-lg">
-				<FieldSet>
-					<FieldLegend>{t('providers.openai', 'OpenAI')}</FieldLegend>
-					<FieldDescription>
+			<Card>
+				<CardHeader>
+					<CardTitle>{t('providers.openai', 'OpenAI')}</CardTitle>
+					<CardDescription>
 						{t(
 							'providers.openaiDescription',
 							'Configure your OpenAI API key to use GPT models.'
 						)}
-					</FieldDescription>
+					</CardDescription>
+				</CardHeader>
+				<CardContent>
 					<FieldGroup>
 						<Field>
 							<FieldLabel htmlFor="provider-openai-key">
@@ -63,14 +72,14 @@ export default function OpenAIPage(): ReactElement {
 							</FieldDescription>
 						</Field>
 					</FieldGroup>
-				</FieldSet>
-				<Field orientation="horizontal">
+				</CardContent>
+				<CardFooter>
 					<Button type="submit" disabled={!isDirty || isSaving}>
 						{isSaving ? <Spinner /> : <Save />}
 						{t('common.save', 'Save')}
 					</Button>
-				</Field>
-			</FieldGroup>
+				</CardFooter>
+			</Card>
 		</form>
 	);
 }
