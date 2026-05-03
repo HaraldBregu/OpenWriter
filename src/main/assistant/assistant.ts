@@ -12,8 +12,10 @@ export interface AssistantOptions {
 	id: string;
 	model?: string;
 	getApiKey: () => string | undefined;
-	/** Defaults to all built-in tools (read_file, write_file, exec). Pass `[]` to disable. */
+	/** Defaults to all built-in tools (read_file, write_file, exec, plus cron_* if `cron` provided). Pass `[]` to disable. */
 	tools?: Tool[];
+	/** When provided, cron_add/cron_list/cron_remove tools are added to defaults. Ignored if `tools` is set. */
+	cron?: CronService;
 	/** Defaults to `assistant:<id>`. */
 	sessionKey?: string;
 	maxIterations?: number;
