@@ -21,7 +21,7 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 import { StoreService } from './services/store';
 import { LoggerService } from './services/logger';
 import { ThemeService } from './services/theme-service';
-import { CronService } from './services/cron-service';
+import { CronService } from './cron';
 import { StreamLoggerService } from './services/stream-logger';
 import { FileManager } from './shared/file_manager';
 import { TaskHandlerRegistry } from './task/task-handler-registry';
