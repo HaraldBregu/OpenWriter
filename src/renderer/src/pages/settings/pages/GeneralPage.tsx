@@ -99,6 +99,16 @@ const GeneralPage: React.FC = () => {
 					{t('settings.application.openAppData')}
 				</Button>
 			</SettingRow>
+
+			<ItemRow variant="outline">
+				<ItemRowMedia variant="icon">
+					<Inbox />
+				</ItemRowMedia>
+				<ItemRowContent>
+					<ItemRowTitle>Default Size</ItemRowTitle>
+					<ItemRowDescription>The standard size for most use cases.</ItemRowDescription>
+				</ItemRowContent>
+			</ItemRow>
 		</div>
 	);
 };
