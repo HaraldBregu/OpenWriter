@@ -132,12 +132,19 @@ const app: AppApi = {
 	getChannel: (): Promise<Channel | null> => typedInvokeUnwrap(AppChannels.getChannel),
 	setChannelProperties: <K extends ChannelType>(
 		type: K,
-		properties: K extends 'telegram' ? TelegramChannelProperties : WhatsappChannelProperties
+		properties: K extends 'telegram'
+			? TelegramChannelProperties
+			: K extends 'whatsapp'
+				? WhatsappChannelProperties
+				: DiscordChannelProperties
 	): Promise<Channel> =>
 		typedInvokeUnwrap(
 			AppChannels.setChannelProperties,
 			type,
-			properties as TelegramChannelProperties | WhatsappChannelProperties
+			properties as
+				| TelegramChannelProperties
+				| WhatsappChannelProperties
+				| DiscordChannelProperties
 		),
 	getLogs: (limit?: number) => typedInvokeUnwrap(AppChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
