@@ -17,7 +17,7 @@ export class TelegramAdapter {
     this.bot = new Bot(opts.token);
     this.allowFrom = new Set(opts.allowFrom.map(String));
     registerTextHandler(this.bot, this.allowFrom, ({ from, chatId, text }) => {
-      const msg: ChannelInboundMessage = { type: "TELEGRAM", from, chatId, text };
+      const msg: ChannelInboundMessage = { type: "telegram", from, chatId, text };
       for (const h of this.handlers) h(msg);
     });
   }
