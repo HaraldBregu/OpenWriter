@@ -18,7 +18,7 @@ import path from 'node:path';
 import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManager } from './core';
 
 // Services
-import { StoreService } from './services/store';
+import { StoreService } from './store';
 import { LoggerService } from './services/logger';
 import { ThemeService } from './services/theme-service';
 import { CronService } from './cron';
