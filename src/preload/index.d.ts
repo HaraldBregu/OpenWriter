@@ -64,6 +64,10 @@ import type {
 	CronJobInfo,
 	CronTickEvent,
 	Theme,
+	Channel,
+	ChannelType,
+	TelegramChannelProperties,
+	WhatsappChannelProperties,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 import type { AssistantResponseEvent } from '../shared/channels';
