@@ -77,7 +77,7 @@ export class WhatsAppAdapter {
     });
 
     registerTextHandler(sock, this.allowFrom, ({ from, chatId, text }) => {
-      const msg: ChannelInboundMessage = { type: "WHATSAPP", from, chatId, text };
+      const msg: ChannelInboundMessage = { type: "whatsapp", from, chatId, text };
       for (const h of this.handlers) h(msg);
     });
   }
