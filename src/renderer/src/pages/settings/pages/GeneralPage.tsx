@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Inbox } from 'lucide-react';
 import { SectionHeader, SettingRow } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
+import {
+	ItemRow,
+	ItemRowMedia,
+	ItemRowContent,
+	ItemRowTitle,
+	ItemRowDescription,
+} from '@/components/ui/ItemRow';
 
 const GeneralPage: React.FC = () => {
 	const { t } = useTranslation();
