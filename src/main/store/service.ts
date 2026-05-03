@@ -137,6 +137,12 @@ export class StoreService {
 		return cloneAgent(normalized);
 	}
 
+	// --- Channel methods ---
+
+	getChannels(): Channel[] {
+		return this.store.get('channels').map((ch) => ({ ...ch, allowFrom: [...ch.allowFrom] }));
+	}
+
 	// --- Workspace settings ---
 
 	getCurrentWorkspace(): string | null {
