@@ -12,6 +12,7 @@ import type { StoreService } from '../store';
 import type { LoggerService } from '../logger';
 import type { ThemeService } from '../theme';
 import type { CronService } from '../cron';
+import type { ChannelRegistry } from '../channels';
 import { StoreValidators } from '../shared/validators';
 import { wrapSimpleHandler } from './ipc-error-handler';
 import { AppChannels } from '../../shared/channels';
