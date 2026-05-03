@@ -53,7 +53,7 @@ const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 };
 
 function toDraft(
-	props: TelegramChannelProperties | WhatsappChannelProperties
+	props: TelegramChannelProperties | WhatsappChannelProperties | DiscordChannelProperties
 ): DraftProperties {
 	return { token: props.token, allowFrom: props.allowFrom.join(', ') };
 }
