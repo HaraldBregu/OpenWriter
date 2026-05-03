@@ -356,9 +356,8 @@ app.whenReady().then(async () => {
 	});
 
 	// Start configured messaging channels (Telegram, WhatsApp, ...)
-	const storeService = container.get<StoreService>('store');
 	const channelRegistry = container.get<ChannelRegistry>('channelRegistry');
-	channelRegistry.startAll(storeService.getChannels()).catch((err) => {
+	channelRegistry.startAll().catch((err) => {
 		logger.error('App', 'Failed to start channels', err);
 	});
 
