@@ -37,12 +37,18 @@ const ChannelsLayout = lazy(() => import('./pages/channels/Layout'));
 const TelegramPage = lazy(() => import('./pages/channels/pages/TelegramPage'));
 const WhatsappPage = lazy(() => import('./pages/channels/pages/WhatsappPage'));
 const DiscordPage = lazy(() => import('./pages/channels/pages/DiscordPage'));
+const AgentsLayout = lazy(() => import('./pages/agents/Layout'));
+const ContentReviewerAgentPage = lazy(
+	() => import('./pages/agents/pages/ContentReviewerPage')
+);
+const ContentWriterAgentPage = lazy(() => import('./pages/agents/pages/ContentWriterPage'));
+const ImageCreatorAgentPage = lazy(() => import('./pages/agents/pages/ImageCreatorPage'));
+const AssistantAgentPage = lazy(() => import('./pages/agents/pages/AssistantPage'));
 
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
 const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
-const AgentsPage = lazy(() => import('./pages/settings/pages/AgentsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
 const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
