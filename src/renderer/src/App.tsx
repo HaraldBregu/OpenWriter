@@ -51,7 +51,6 @@ const AnthropicProviderPage = lazy(() => import('./pages/providers/pages/Anthrop
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
-const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
 const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
