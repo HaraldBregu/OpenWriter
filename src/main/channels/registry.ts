@@ -53,12 +53,17 @@ export class ChannelRegistry {
 
 		try {
 			const adapter = factory(channel);
+			adapter.onMessage((msg) => this.handleMessage(msg));
 			await adapter.start();
 			this.adapters.set(type, adapter);
 			this.logger.info('ChannelRegistry', `Started ${type} channel`);
 		} catch (err) {
 			this.logger.error('ChannelRegistry', `Failed to start ${type} channel`, err);
 		}
+	}
+
+	private handleMessage(msg: ChannelMessage): void {
+		console.log('[ChannelRegistry] message received', msg);
 	}
 
 	async stopAll(): Promise<void> {
