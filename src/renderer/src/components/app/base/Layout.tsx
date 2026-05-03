@@ -44,7 +44,6 @@ import {
 	LayoutDashboard,
 	Bot,
 	Plus,
-	Sparkles,
 	Sun,
 	Monitor,
 	Moon,
