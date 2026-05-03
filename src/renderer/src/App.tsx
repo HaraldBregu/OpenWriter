@@ -384,6 +384,35 @@ const App: React.FC = () => {
 														/>
 													</Route>
 													<Route
+														path="/providers/*"
+														element={
+															<RouteWrapper>
+																<ProvidersLayout />
+															</RouteWrapper>
+														}
+													>
+														<Route
+															index
+															element={<Navigate to="/providers/openai" replace />}
+														/>
+														<Route
+															path="openai"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<OpenAIProviderPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="anthropic"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<AnthropicProviderPage />
+																</Suspense>
+															}
+														/>
+													</Route>
+													<Route
 														path="/channels/*"
 														element={
 															<RouteWrapper>
