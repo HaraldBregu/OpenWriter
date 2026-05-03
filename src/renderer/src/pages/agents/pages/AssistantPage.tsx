@@ -1,14 +1,13 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/Card';
-import { Label } from '@/components/ui/Label';
+	Field,
+	FieldDescription,
+	FieldGroup,
+	FieldLabel,
+	FieldLegend,
+	FieldSet,
+} from '@/components/ui/Field';
 import {
 	Select,
 	SelectContent,
@@ -49,26 +48,24 @@ export default function AssistantPage(): ReactElement {
 	const isSaved = saved.has(DEFINITION.id);
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>{DEFINITION.name}</CardTitle>
-				<CardDescription>{DEFINITION.description}</CardDescription>
+		<FieldGroup className="w-full max-w-lg">
+			<FieldSet>
+				<FieldLegend>{DEFINITION.name}</FieldLegend>
+				<FieldDescription>{DEFINITION.description}</FieldDescription>
 				{(isSaving || isSaved) && (
-					<CardAction>
-						<span className="text-xs text-muted-foreground">
+					<Field orientation="horizontal">
+						<FieldLabel className="font-normal text-muted-foreground">
 							{isSaving
 								? t('settings.agents.saving', 'Saving...')
 								: t('settings.agents.saved', 'Saved')}
-						</span>
-					</CardAction>
+						</FieldLabel>
+					</Field>
 				)}
-			</CardHeader>
-			<CardContent>
-				<div className="flex flex-col gap-6">
-					<div className="grid gap-2">
-						<Label htmlFor="agent-assistant-provider">
+				<FieldGroup>
+					<Field>
+						<FieldLabel htmlFor="agent-assistant-provider">
 							{t('settings.agents.provider', 'Provider')}
-						</Label>
+						</FieldLabel>
 						<Select
 							value={providerId}
 							onValueChange={(next) =>
@@ -89,12 +86,12 @@ export default function AssistantPage(): ReactElement {
 								))}
 							</SelectContent>
 						</Select>
-					</div>
+					</Field>
 					{providerId && (
-						<div className="grid gap-2">
-							<Label htmlFor="agent-assistant-model">
+						<Field>
+							<FieldLabel htmlFor="agent-assistant-model">
 								{t('settings.agents.model', 'Model')}
-							</Label>
+							</FieldLabel>
 							<Select
 								value={modelId}
 								onValueChange={(next) => next && void handleModelChange(DEFINITION, next)}
@@ -117,11 +114,15 @@ export default function AssistantPage(): ReactElement {
 									))}
 								</SelectContent>
 							</Select>
-						</div>
+						</Field>
 					)}
-					{providerError && <p className="text-sm text-destructive">{providerError}</p>}
-				</div>
-			</CardContent>
-		</Card>
+					{providerError && (
+						<Field>
+							<FieldDescription className="text-destructive">{providerError}</FieldDescription>
+						</Field>
+					)}
+				</FieldGroup>
+			</FieldSet>
+		</FieldGroup>
 	);
 }
