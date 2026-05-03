@@ -1,12 +1,17 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
+import {
 	Field,
 	FieldDescription,
 	FieldGroup,
 	FieldLabel,
-	FieldLegend,
-	FieldSet,
 } from '@/components/ui/Field';
 import {
 	Select,
@@ -48,81 +53,85 @@ export default function AssistantPage(): ReactElement {
 	const isSaved = saved.has(DEFINITION.id);
 
 	return (
-		<FieldGroup className="w-full max-w-lg">
-			<FieldSet>
-				<FieldLegend>{DEFINITION.name}</FieldLegend>
-				<FieldDescription>{DEFINITION.description}</FieldDescription>
-				{(isSaving || isSaved) && (
-					<Field orientation="horizontal">
-						<FieldLabel className="font-normal text-muted-foreground">
-							{isSaving
-								? t('settings.agents.saving', 'Saving...')
-								: t('settings.agents.saved', 'Saved')}
-						</FieldLabel>
-					</Field>
-				)}
-				<FieldGroup>
-					<Field>
-						<FieldLabel htmlFor="agent-assistant-provider">
-							{t('settings.agents.provider', 'Provider')}
-						</FieldLabel>
-						<Select
-							value={providerId}
-							onValueChange={(next) =>
-								next && void handleProviderChange(DEFINITION, next as ProviderId)
-							}
-							disabled={isBusy}
-						>
-							<SelectTrigger id="agent-assistant-provider">
-								<SelectValue
-									placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
-								/>
-							</SelectTrigger>
-							<SelectContent>
-								{PROVIDERS.map((provider) => (
-									<SelectItem key={provider.id} value={provider.id}>
-										{provider.name}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-					</Field>
-					{providerId && (
+		<div className="w-full max-w-lg">
+			<Card>
+				<CardHeader>
+					<CardTitle>{DEFINITION.name}</CardTitle>
+					<CardDescription>{DEFINITION.description}</CardDescription>
+				</CardHeader>
+				<CardContent>
+					<FieldGroup>
+						{(isSaving || isSaved) && (
+							<Field orientation="horizontal">
+								<FieldLabel className="font-normal text-muted-foreground">
+									{isSaving
+										? t('settings.agents.saving', 'Saving...')
+										: t('settings.agents.saved', 'Saved')}
+								</FieldLabel>
+							</Field>
+						)}
 						<Field>
-							<FieldLabel htmlFor="agent-assistant-model">
-								{t('settings.agents.model', 'Model')}
+							<FieldLabel htmlFor="agent-assistant-provider">
+								{t('settings.agents.provider', 'Provider')}
 							</FieldLabel>
 							<Select
-								value={modelId}
-								onValueChange={(next) => next && void handleModelChange(DEFINITION, next)}
-								disabled={isBusy || isLoadingModels || availableModels.length === 0}
+								value={providerId}
+								onValueChange={(next) =>
+									next && void handleProviderChange(DEFINITION, next as ProviderId)
+								}
+								disabled={isBusy}
 							>
-								<SelectTrigger id="agent-assistant-model">
+								<SelectTrigger id="agent-assistant-provider">
 									<SelectValue
-										placeholder={
-											isLoadingModels
-												? t('settings.agents.modelsLoading', 'Loading…')
-												: t('settings.agents.modelPlaceholder', 'Select model')
-										}
+										placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
 									/>
 								</SelectTrigger>
 								<SelectContent>
-									{availableModels.map((model) => (
-										<SelectItem key={model.id} value={model.id}>
-											{model.name}
+									{PROVIDERS.map((provider) => (
+										<SelectItem key={provider.id} value={provider.id}>
+											{provider.name}
 										</SelectItem>
 									))}
 								</SelectContent>
 							</Select>
 						</Field>
-					)}
-					{providerError && (
-						<Field>
-							<FieldDescription className="text-destructive">{providerError}</FieldDescription>
-						</Field>
-					)}
-				</FieldGroup>
-			</FieldSet>
-		</FieldGroup>
+						{providerId && (
+							<Field>
+								<FieldLabel htmlFor="agent-assistant-model">
+									{t('settings.agents.model', 'Model')}
+								</FieldLabel>
+								<Select
+									value={modelId}
+									onValueChange={(next) => next && void handleModelChange(DEFINITION, next)}
+									disabled={isBusy || isLoadingModels || availableModels.length === 0}
+								>
+									<SelectTrigger id="agent-assistant-model">
+										<SelectValue
+											placeholder={
+												isLoadingModels
+													? t('settings.agents.modelsLoading', 'Loading…')
+													: t('settings.agents.modelPlaceholder', 'Select model')
+											}
+										/>
+									</SelectTrigger>
+									<SelectContent>
+										{availableModels.map((model) => (
+											<SelectItem key={model.id} value={model.id}>
+												{model.name}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</Field>
+						)}
+						{providerError && (
+							<Field>
+								<FieldDescription className="text-destructive">{providerError}</FieldDescription>
+							</Field>
+						)}
+					</FieldGroup>
+				</CardContent>
+			</Card>
+		</div>
 	);
 }
