@@ -8,7 +8,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
-import type { StoreService } from '../services/store';
+import type { StoreService } from '../store';
 import type { LoggerService } from '../services/logger';
 import type { ThemeService } from '../services/theme-service';
 import type { CronService } from '../cron';
