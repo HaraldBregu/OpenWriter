@@ -624,60 +624,56 @@ function Container({ children }: LayoutProps) {
 							</SidebarMenu>
 						</SidebarGroup>
 
-						{open && (
-							<Collapsible defaultOpen className="py-0">
-								<SidebarGroup className="py-0">
-									<SidebarGroupLabel
-										className="px-3"
+						<SidebarGroup>
+							<SidebarMenu className="gap-1">
+								<Collapsible
+									defaultOpen
+									className="group/collapsible"
+									render={<SidebarMenuItem />}
+								>
+									<CollapsibleTrigger
 										render={
-											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+											<SidebarMenuButton
+												tooltip={t('appLayout.channels', 'Channels')}
+												className="group/btn h-9 px-3"
+											/>
 										}
 									>
-										{t('appLayout.channels', 'Channels')}
-										<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
-									</SidebarGroupLabel>
+										<Plug />
+										<span>{t('appLayout.channels', 'Channels')}</span>
+										<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
+									</CollapsibleTrigger>
 									<CollapsibleContent>
-										<SidebarGroupContent>
-											<SidebarMenu className="gap-1">
-												<SidebarMenuItem>
-													<SidebarMenuButton
-														render={<Link to="/channels/telegram" />}
-														className="group/btn h-9 px-3"
-														tooltip={t('appLayout.telegram', 'Telegram')}
-														isActive={location.pathname === '/channels/telegram'}
-													>
-														<Send />
-														<span>{t('appLayout.telegram', 'Telegram')}</span>
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-												<SidebarMenuItem>
-													<SidebarMenuButton
-														render={<Link to="/channels/whatsapp" />}
-														className="group/btn h-9 px-3"
-														tooltip={t('appLayout.whatsapp', 'WhatsApp')}
-														isActive={location.pathname === '/channels/whatsapp'}
-													>
-														<MessageCircle />
-														<span>{t('appLayout.whatsapp', 'WhatsApp')}</span>
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-												<SidebarMenuItem>
-													<SidebarMenuButton
-														render={<Link to="/channels/discord" />}
-														className="group/btn h-9 px-3"
-														tooltip={t('appLayout.discord', 'Discord')}
-														isActive={location.pathname === '/channels/discord'}
-													>
-														<Hash />
-														<span>{t('appLayout.discord', 'Discord')}</span>
-													</SidebarMenuButton>
-												</SidebarMenuItem>
-											</SidebarMenu>
-										</SidebarGroupContent>
+										<SidebarMenuSub>
+											<SidebarMenuSubItem>
+												<SidebarMenuSubButton
+													render={<Link to="/channels/telegram" />}
+													isActive={location.pathname === '/channels/telegram'}
+												>
+													<span>{t('appLayout.telegram', 'Telegram')}</span>
+												</SidebarMenuSubButton>
+											</SidebarMenuSubItem>
+											<SidebarMenuSubItem>
+												<SidebarMenuSubButton
+													render={<Link to="/channels/whatsapp" />}
+													isActive={location.pathname === '/channels/whatsapp'}
+												>
+													<span>{t('appLayout.whatsapp', 'WhatsApp')}</span>
+												</SidebarMenuSubButton>
+											</SidebarMenuSubItem>
+											<SidebarMenuSubItem>
+												<SidebarMenuSubButton
+													render={<Link to="/channels/discord" />}
+													isActive={location.pathname === '/channels/discord'}
+												>
+													<span>{t('appLayout.discord', 'Discord')}</span>
+												</SidebarMenuSubButton>
+											</SidebarMenuSubItem>
+										</SidebarMenuSub>
 									</CollapsibleContent>
-								</SidebarGroup>
-							</Collapsible>
-						)}
+								</Collapsible>
+							</SidebarMenu>
+						</SidebarGroup>
 					</SidebarContent>
 
 					<SidebarFooter>
