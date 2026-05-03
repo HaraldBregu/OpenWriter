@@ -19,7 +19,7 @@ export interface StoreSchema {
 export const DEFAULTS: StoreSchema = {
 	providers: [],
 	agents: [],
-	channels: [],
+	channel: null,
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
