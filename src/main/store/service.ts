@@ -1,6 +1,14 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import type { AgentSettings, Channel, Provider, UserProfile } from '../../shared/types';
+import type {
+	AgentSettings,
+	Channel,
+	ChannelType,
+	Provider,
+	TelegramChannelProperties,
+	UserProfile,
+	WhatsappChannelProperties,
+} from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 import { DEFAULTS, type SettingsStore, type StoreSchema, type WorkspaceInfo } from './types';
 import {
