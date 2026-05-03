@@ -5,16 +5,13 @@ const TELEGRAM_MAX_LENGTH = 4096;
 export class TelegramAdapter {
   private bot: Bot;
   private allowFrom: Set<string>;
-  private queue: AsyncQueue<InboundMessage>;
 
   constructor(opts: {
     bot_token: string;
     allow_from: string[];
-    queue: AsyncQueue<InboundMessage>;
   }) {
     this.bot = new Bot(opts.bot_token);
     this.allowFrom = new Set(opts.allow_from.map(String));
-    this.queue = opts.queue;
 
     // plain text only — no commands, photos, stickers, etc.
     this.bot.on("message:text", async (ctx) => {
@@ -26,13 +23,6 @@ export class TelegramAdapter {
         console.warn(`Ignored message from unauthorized user ${senderId}`);
         return;
       }
-
-      this.queue.put({
-        channel: "telegram",
-        chat_id: String(ctx.chat.id),
-        sender_id: senderId,
-        text,
-      });
     });
   }
 
