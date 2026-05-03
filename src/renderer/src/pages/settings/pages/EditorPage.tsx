@@ -7,7 +7,14 @@ import {
 	SelectContent,
 	SelectItem,
 } from '@/components/ui/Select';
-import { SectionHeader, SettingRow } from '../components';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+	ItemRowDescription,
+} from '@/components/ui/ItemRow';
+import { SectionHeader } from '../components';
 
 interface FontOption {
 	readonly value: string;
@@ -34,23 +41,31 @@ const EditorPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.editor')} />
 
-			<SettingRow
-				label={t('settings.editor.font')}
-				description={t('settings.editor.fontDescription')}
-			>
-				<Select value={font} onValueChange={handleFontChange}>
-					<SelectTrigger className="w-44 h-8 text-sm" aria-label={t('settings.editor.font')}>
-						<SelectValue />
-					</SelectTrigger>
-					<SelectContent>
-						{FONT_OPTIONS.map((option) => (
-							<SelectItem key={option.value} value={option.value}>
-								{t(option.labelKey)}
-							</SelectItem>
-						))}
-					</SelectContent>
-				</Select>
-			</SettingRow>
+			<div className="flex flex-col gap-2">
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.editor.font')}</ItemRowTitle>
+						<ItemRowDescription>{t('settings.editor.fontDescription')}</ItemRowDescription>
+					</ItemRowContent>
+					<ItemRowActions>
+						<Select value={font} onValueChange={handleFontChange}>
+							<SelectTrigger
+								className="w-44 h-8 text-sm"
+								aria-label={t('settings.editor.font')}
+							>
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{FONT_OPTIONS.map((option) => (
+									<SelectItem key={option.value} value={option.value}>
+										{t(option.labelKey)}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</ItemRowActions>
+				</ItemRow>
+			</div>
 		</div>
 	);
 };
