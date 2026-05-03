@@ -249,6 +249,11 @@ export interface InvokeChannelMap {
 		result: AppStartupInfo;
 	};
 	[AppChannels.getModels]: { args: [providerId: string]; result: ProviderModelInfo[] };
+	[AppChannels.getChannel]: { args: []; result: Channel | null };
+	[AppChannels.setChannelProperties]: {
+		args: [type: ChannelType, properties: TelegramChannelProperties | WhatsappChannelProperties];
+		result: Channel;
+	};
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
 	[WorkspaceChannels.setCurrent]: { args: [workspacePath: string]; result: void };
