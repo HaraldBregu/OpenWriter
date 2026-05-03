@@ -28,7 +28,7 @@ interface DraftProperties {
 
 const EMPTY_DRAFT: DraftProperties = { token: '', allowFrom: '' };
 
-const VISIBLE_TYPES: readonly ChannelType[] = ['telegram', 'whatsapp'] as const;
+const VISIBLE_TYPES: readonly ChannelType[] = ['telegram', 'whatsapp', 'discord'] as const;
 
 const CHANNEL_LABELS: Record<ChannelType, string> = {
 	telegram: 'Telegram',
