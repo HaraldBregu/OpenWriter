@@ -136,6 +136,7 @@ export function bootstrapServices(): BootstrapResult {
 	assistantRegistry.create({
 		id: DEFAULT_ASSISTANT_ID,
 		getApiKey: () => storeService.getProviderById('openai')?.apiKey,
+		cron: container.get<CronService>('cronService'),
 	});
 	container.register('assistantRegistry', assistantRegistry);
 
