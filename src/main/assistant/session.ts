@@ -48,7 +48,7 @@ export class SessionManager {
 				// skip malformed line
 			}
 		}
-		return messages.slice(-n);
+		return sanitizeHistory(messages.slice(-n));
 	}
 
 	async append(messages: ChatCompletionMessageParam[]): Promise<void> {
