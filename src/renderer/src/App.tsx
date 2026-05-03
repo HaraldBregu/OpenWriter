@@ -33,7 +33,10 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const AssistantPage = lazy(() => import('./pages/assistant/Page'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
 const ImagesPage = lazy(() => import('./pages/resources/images/Page'));
-const ChannelsPage = lazy(() => import('./pages/channels/Page'));
+const ChannelsLayout = lazy(() => import('./pages/channels/Layout'));
+const TelegramPage = lazy(() => import('./pages/channels/pages/TelegramPage'));
+const WhatsappPage = lazy(() => import('./pages/channels/pages/WhatsappPage'));
+const DiscordPage = lazy(() => import('./pages/channels/pages/DiscordPage'));
 
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
