@@ -151,10 +151,13 @@ export class StoreService {
 	getChannel(): Channel | null {
 		const channel = this.store.get('channel');
 		if (!channel) return null;
+		const telegram = channel.telegram ?? { token: '', allowFrom: [] };
+		const whatsapp = channel.whatsapp ?? { token: '', allowFrom: [] };
+		const discord = channel.discord ?? { token: '', allowFrom: [] };
 		return {
-			telegram: { ...channel.telegram, allowFrom: [...channel.telegram.allowFrom] },
-			whatsapp: { ...channel.whatsapp, allowFrom: [...channel.whatsapp.allowFrom] },
-			discord: { ...channel.discord, allowFrom: [...channel.discord.allowFrom] },
+			telegram: { ...telegram, allowFrom: [...telegram.allowFrom] },
+			whatsapp: { ...whatsapp, allowFrom: [...whatsapp.allowFrom] },
+			discord: { ...discord, allowFrom: [...discord.allowFrom] },
 		};
 	}
 
