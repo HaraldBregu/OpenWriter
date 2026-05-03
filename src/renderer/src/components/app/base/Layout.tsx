@@ -326,9 +326,6 @@ function Container({ children }: LayoutProps) {
 				case 'workspace':
 					navigate('/settings/workspace');
 					break;
-				case 'providers':
-					navigate('/settings/providers');
-					break;
 				case 'editor':
 					navigate('/settings/editor');
 					break;
