@@ -33,13 +33,13 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const AssistantPage = lazy(() => import('./pages/assistant/Page'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
 const ImagesPage = lazy(() => import('./pages/resources/images/Page'));
+const ChannelsPage = lazy(() => import('./pages/channels/Page'));
 
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
 const ProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
 const AgentsPage = lazy(() => import('./pages/settings/pages/AgentsPage'));
-const ChannelsPage = lazy(() => import('./pages/settings/pages/ChannelsPage'));
 const WorkspacePage = lazy(() => import('./pages/settings/pages/WorkspacePage'));
 const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
