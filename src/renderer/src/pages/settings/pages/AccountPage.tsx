@@ -2,9 +2,16 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserCircle } from 'lucide-react';
 import type { UserProfile } from '../../../../../shared/types';
-import { SectionHeader, SettingRow } from '../components';
+import { SectionHeader } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+	ItemRowDescription,
+} from '@/components/ui/ItemRow';
 import { Large, Muted, Small } from '@/components/ui/Typography';
 
 type EditingField = 'firstName' | 'lastName' | null;
@@ -120,50 +127,63 @@ const AccountPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.account.section')} />
 
-			<div className="flex items-start gap-4 py-4 border-b">
-				<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
-					<UserCircle className="h-5 w-5 text-muted-foreground" />
-				</div>
-				<div className="flex flex-1 flex-col">
-					<Small>{displayName}</Small>
-					<Muted className="text-xs">{subtitle}</Muted>
-				</div>
+			<div className="flex flex-col gap-2">
+				<ItemRow variant="bottom-bordered" size="none">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
+						<UserCircle className="h-5 w-5 text-muted-foreground" />
+					</div>
+					<ItemRowContent>
+						<ItemRowTitle>{displayName}</ItemRowTitle>
+						<ItemRowDescription>
+							<Muted className="text-xs">{subtitle}</Muted>
+						</ItemRowDescription>
+					</ItemRowContent>
+				</ItemRow>
+
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.account.firstName')}</ItemRowTitle>
+						<ItemRowDescription>{t('settings.account.editHint')}</ItemRowDescription>
+					</ItemRowContent>
+					<ItemRowActions>
+						<EditableName
+							value={profile.firstName}
+							editing={editing === 'firstName'}
+							onStartEdit={() => setEditing('firstName')}
+							onCommit={(v) => persist('firstName', v)}
+							onCancel={() => setEditing(null)}
+						/>
+					</ItemRowActions>
+				</ItemRow>
+
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.account.lastName')}</ItemRowTitle>
+						<ItemRowDescription>{t('settings.account.editHint')}</ItemRowDescription>
+					</ItemRowContent>
+					<ItemRowActions>
+						<EditableName
+							value={profile.lastName}
+							editing={editing === 'lastName'}
+							onStartEdit={() => setEditing('lastName')}
+							onCommit={(v) => persist('lastName', v)}
+							onCancel={() => setEditing(null)}
+						/>
+					</ItemRowActions>
+				</ItemRow>
+
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.account.signIn')}</ItemRowTitle>
+						<ItemRowDescription>{t('settings.account.signInDescription')}</ItemRowDescription>
+					</ItemRowContent>
+					<ItemRowActions>
+						<Button variant="outline" size="sm" disabled>
+							{t('settings.account.signIn')}
+						</Button>
+					</ItemRowActions>
+				</ItemRow>
 			</div>
-
-			<SettingRow
-				label={t('settings.account.firstName')}
-				description={t('settings.account.editHint')}
-			>
-				<EditableName
-					value={profile.firstName}
-					editing={editing === 'firstName'}
-					onStartEdit={() => setEditing('firstName')}
-					onCommit={(v) => persist('firstName', v)}
-					onCancel={() => setEditing(null)}
-				/>
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.account.lastName')}
-				description={t('settings.account.editHint')}
-			>
-				<EditableName
-					value={profile.lastName}
-					editing={editing === 'lastName'}
-					onStartEdit={() => setEditing('lastName')}
-					onCommit={(v) => persist('lastName', v)}
-					onCancel={() => setEditing(null)}
-				/>
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.account.signIn')}
-				description={t('settings.account.signInDescription')}
-			>
-				<Button variant="outline" size="sm" disabled>
-					{t('settings.account.signIn')}
-				</Button>
-			</SettingRow>
 		</div>
 	);
 };
