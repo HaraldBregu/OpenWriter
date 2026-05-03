@@ -1,6 +1,16 @@
 import type { Bot } from "grammy";
 
-export function registerTextHandler(bot: Bot, allowFrom: Set<string>): void {
+export type TelegramMessageEmit = (msg: {
+  from: string;
+  chatId: string;
+  text: string;
+}) => void;
+
+export function registerTextHandler(
+  bot: Bot,
+  allowFrom: Set<string>,
+  emit: TelegramMessageEmit,
+): void {
   // plain text only — no commands, photos, stickers, etc.
   bot.on("message:text", async (ctx) => {
     const text = ctx.message.text;
@@ -12,11 +22,6 @@ export function registerTextHandler(bot: Bot, allowFrom: Set<string>): void {
       return;
     }
 
-    console.log("[telegram] message received", {
-      chatId: ctx.chat.id,
-      from: senderId,
-      username: ctx.from?.username,
-      text,
-    });
+    emit({ from: senderId, chatId: String(ctx.chat.id), text });
   });
 }
