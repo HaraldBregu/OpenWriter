@@ -921,3 +921,13 @@ export function withTaskStatusText(
 
 	return Object.keys(next).length > 0 ? next : undefined;
 }
+
+// ---- Channels (messaging adapters) -----------------------------------------
+
+export type ChannelType = 'TELEGRAM' | 'WHATSAPP';
+
+export interface Channel {
+	type: ChannelType;
+	token: string;
+	allowFrom: string[];
+}
