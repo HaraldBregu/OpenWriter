@@ -4,18 +4,27 @@ import { app } from 'electron';
 
 const TEMPLATE_FILES = ['AGENTS.md', 'BOOTSTRAP.md', 'HEARTBEAT.md', 'MEMORY.md', 'SOUL.md', 'USER.md'];
 
+// Bundled at build time by Vite — keys are template filenames, values are file contents.
+const TEMPLATES: Record<string, string> = Object.fromEntries(
+	Object.entries(
+		import.meta.glob('./templates/*.md', {
+			query: '?raw',
+			eager: true,
+			import: 'default',
+		}) as Record<string, string>
+	).map(([p, content]) => [path.basename(p), content])
+);
+
 /**
  * Per-assistant markdown memory. Lives in userData/assistant-workspace/<id>/.
- * Seeds template files from src/main/assistant/templates on first init when
- * the source directory is reachable; otherwise starts empty.
+ * Templates are bundled into the main process build and seeded on first init;
+ * BOOTSTRAP.md is re-seeded only when the workspace is fresh (no SOUL.md yet).
  */
 export class MemoryManager {
 	readonly workspace: string;
-	private readonly templatesDir: string;
 
 	constructor(assistantId: string) {
 		this.workspace = path.join(app.getPath('userData'), 'assistant-workspace', assistantId);
-		this.templatesDir = path.join(__dirname, 'templates');
 	}
 
 	async init(): Promise<void> {
@@ -24,18 +33,12 @@ export class MemoryManager {
 	}
 
 	private async seedTemplates(): Promise<void> {
-		let entries: string[];
-		try {
-			entries = await fs.readdir(this.templatesDir);
-		} catch {
-			return;
-		}
 		const isFresh = !(await this.exists(path.join(this.workspace, 'SOUL.md')));
-		for (const filename of entries) {
+		for (const [filename, content] of Object.entries(TEMPLATES)) {
 			if (filename === 'BOOTSTRAP.md' && !isFresh) continue;
 			const dest = path.join(this.workspace, filename);
 			if (!(await this.exists(dest))) {
-				await fs.copyFile(path.join(this.templatesDir, filename), dest);
+				await fs.writeFile(dest, content);
 			}
 		}
 	}
