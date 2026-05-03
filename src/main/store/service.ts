@@ -156,6 +156,28 @@ export class StoreService {
 		};
 	}
 
+	setChannelProperties(
+		type: ChannelType,
+		properties: TelegramChannelProperties | WhatsappChannelProperties
+	): Channel {
+		const current = this.store.get('channel');
+		const base: Channel = current
+			? {
+				telegram: { ...current.telegram, allowFrom: [...current.telegram.allowFrom] },
+				whatsapp: { ...current.whatsapp, allowFrom: [...current.whatsapp.allowFrom] },
+			}
+			: {
+				telegram: { token: '', allowFrom: [] },
+				whatsapp: { token: '', allowFrom: [] },
+			};
+		const next: Channel = {
+			...base,
+			[type]: { token: properties.token, allowFrom: [...properties.allowFrom] },
+		};
+		this.store.set('channel', next);
+		return next;
+	}
+
 	// --- Workspace settings ---
 
 	getCurrentWorkspace(): string | null {
