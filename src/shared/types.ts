@@ -926,6 +926,19 @@ export function withTaskStatusText(
 
 export type ChannelType = 'TELEGRAM' | 'WHATSAPP';
 
+export interface ChannelProperties {
+	token: string;
+}
+
+export interface TelegramProperties extends ChannelProperties {}
+
+export interface WhatsappProperties extends ChannelProperties {}
+
+export interface ChannelMap {
+	TELEGRAM: TelegramProperties;
+	WHATSAPP: WhatsappProperties;
+}
+
 export interface Channel {
 	type: ChannelType;
 	token: string;

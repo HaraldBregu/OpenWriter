@@ -8,8 +8,8 @@ export class TelegramAdapter {
   private allowFrom: Set<string>;
 
   constructor(opts: TelegramAdapterOptions) {
-    this.bot = new Bot(opts.bot_token);
-    this.allowFrom = new Set(opts.allow_from.map(String));
+    this.bot = new Bot(opts.token);
+    this.allowFrom = new Set(opts.allowFrom.map(String));
     registerTextHandler(this.bot, this.allowFrom);
   }
 

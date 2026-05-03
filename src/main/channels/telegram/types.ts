@@ -1,4 +1,4 @@
 export interface TelegramAdapterOptions {
-  bot_token: string;
-  allow_from: string[];
+  token: string;
+  allowFrom: string[];
 }

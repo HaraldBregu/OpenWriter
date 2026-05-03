@@ -18,8 +18,8 @@ export class ChannelRegistry {
 		this.factories = {
 			TELEGRAM: (ch) =>
 				new TelegramAdapter({
-					bot_token: ch.token,
-					allow_from: ch.allowFrom,
+					token: ch.token,
+					allowFrom: ch.allowFrom,
 				}),
 			WHATSAPP: (ch) =>
 				new WhatsAppAdapter({
