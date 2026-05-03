@@ -1,5 +1,4 @@
 import { Bot } from "grammy";
-import type { AsyncQueue, InboundMessage } from "../types.js";
 
 const TELEGRAM_MAX_LENGTH = 4096;
 
