@@ -356,6 +356,26 @@ export class AppIpc implements IpcModule {
 			)
 		);
 
+		// -----------------------------------------------------------------------
+		// Channel (messaging adapters)
+		// -----------------------------------------------------------------------
+
+		ipcMain.handle(
+			AppChannels.getChannel,
+			wrapSimpleHandler(() => store.getChannel(), AppChannels.getChannel)
+		);
+
+		ipcMain.handle(
+			AppChannels.setChannelProperties,
+			wrapSimpleHandler(
+				(
+					type: ChannelType,
+					properties: TelegramChannelProperties | WhatsappChannelProperties
+				) => store.setChannelProperties(type, properties),
+				AppChannels.setChannelProperties
+			)
+		);
+
 		// Recent in-memory logs
 		ipcMain.handle(
 			AppChannels.getLogs,

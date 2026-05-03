@@ -7,23 +7,21 @@ import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
 import type { ChannelAdapter, ChannelAdapterFactory } from './types';
 
-type ChannelType = 'TELEGRAM' | 'WHATSAPP';
-
 export class ChannelRegistry {
-	private adapters = new Map<ChannelType, ChannelAdapter>();
-	private factories: Record<ChannelType, ChannelAdapterFactory>;
+	private adapters = new Map<keyof Channel, ChannelAdapter>();
+	private factories: Record<keyof Channel, ChannelAdapterFactory>;
 
 	constructor(
 		private store: StoreService,
 		private logger: LoggerService
 	) {
 		this.factories = {
-			TELEGRAM: (ch) =>
+			telegram: (ch) =>
 				new TelegramAdapter({
 					token: ch.telegram.token,
 					allowFrom: ch.telegram.allowFrom,
 				}),
-			WHATSAPP: (ch) =>
+			whatsapp: (ch) =>
 				new WhatsAppAdapter({
 					auth_dir: path.join(
 						app.getPath('userData'),
@@ -39,12 +37,12 @@ export class ChannelRegistry {
 	async startAll(): Promise<void> {
 		const channel = this.store.getChannel();
 		if (!channel) return;
-		for (const type of Object.keys(this.factories) as ChannelType[]) {
+		for (const type of Object.keys(this.factories) as (keyof Channel)[]) {
 			await this.start(type, channel);
 		}
 	}
 
-	async start(type: ChannelType, channel: Channel): Promise<void> {
+	async start(type: keyof Channel, channel: Channel): Promise<void> {
 		if (this.adapters.has(type)) return;
 
 		const factory = this.factories[type];
@@ -74,7 +72,7 @@ export class ChannelRegistry {
 		this.adapters.clear();
 	}
 
-	get(type: ChannelType): ChannelAdapter | undefined {
+	get(type: keyof Channel): ChannelAdapter | undefined {
 		return this.adapters.get(type);
 	}
 
