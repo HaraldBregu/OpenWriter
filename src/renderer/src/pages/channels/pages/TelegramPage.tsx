@@ -47,7 +47,7 @@ export default function TelegramPage(): ReactElement {
 		draft.token !== persistedDraft.token || draft.allowFrom !== persistedDraft.allowFrom;
 
 	return (
-		<Card className="w-full max-w-sm">
+		<Card>
 			<CardHeader>
 				<CardTitle>Telegram</CardTitle>
 				<CardDescription>
