@@ -4,8 +4,13 @@ import { Save } from 'lucide-react';
 import type { Provider, ProviderId } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE, getProvider } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+} from '@/components/ui/ItemRow';
 import { Spinner } from '@/components/ui/Spinner';
 import {
 	PageBody,
@@ -92,25 +97,29 @@ const ProvidersPage: React.FC = () => {
 				</PageHeaderDescription>
 			</PageHeader>
 			<PageBody className="px-0">
-				<FieldGroup className="max-w-2xl">
+				<div className="flex flex-col gap-2 max-w-2xl">
 					{PROVIDER_IDS.map((providerId) => {
 						const isSaving = saving.has(providerId);
 						const draftValue = drafts[providerId] ?? '';
 						const isDirty = draftValue.trim() !== existingKeys[providerId];
 
 						return (
-							<form
-								key={providerId}
-								onSubmit={(e) => {
-									e.preventDefault();
-									void handleSaveOne(providerId);
-								}}
-							>
-								<Field>
-									<FieldLabel htmlFor={`provider-${providerId}`}>
-										{PROVIDER_LABELS[providerId]}
-									</FieldLabel>
-									<Field orientation="horizontal">
+							<ItemRow key={providerId} variant="bottom-bordered" size="none">
+								<ItemRowContent>
+									<ItemRowTitle>
+										<label htmlFor={`provider-${providerId}`}>
+											{PROVIDER_LABELS[providerId]}
+										</label>
+									</ItemRowTitle>
+								</ItemRowContent>
+								<ItemRowActions>
+									<form
+										className="flex items-center gap-2"
+										onSubmit={(e) => {
+											e.preventDefault();
+											void handleSaveOne(providerId);
+										}}
+									>
 										<Input
 											id={`provider-${providerId}`}
 											type="password"
@@ -125,6 +134,7 @@ const ProvidersPage: React.FC = () => {
 											autoComplete="off"
 											spellCheck={false}
 											disabled={isSaving}
+											className="h-8 w-56 text-sm"
 										/>
 										<Button
 											type="submit"
@@ -134,12 +144,12 @@ const ProvidersPage: React.FC = () => {
 										>
 											{isSaving ? <Spinner /> : <Save />}
 										</Button>
-									</Field>
-								</Field>
-							</form>
+									</form>
+								</ItemRowActions>
+							</ItemRow>
 						);
 					})}
-				</FieldGroup>
+				</div>
 			</PageBody>
 		</PageContainer>
 	);
