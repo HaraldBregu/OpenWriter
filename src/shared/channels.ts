@@ -256,7 +256,13 @@ export interface InvokeChannelMap {
 	[AppChannels.getModels]: { args: [providerId: string]; result: ProviderModelInfo[] };
 	[AppChannels.getChannel]: { args: []; result: Channel | null };
 	[AppChannels.setChannelProperties]: {
-		args: [type: ChannelType, properties: TelegramChannelProperties | WhatsappChannelProperties];
+		args: [
+			type: ChannelType,
+			properties:
+				| TelegramChannelProperties
+				| WhatsappChannelProperties
+				| DiscordChannelProperties,
+		];
 		result: Channel;
 	};
 	[AppChannels.getChannelStatus]: {
