@@ -639,6 +639,18 @@ function Container({ children }: LayoutProps) {
 										<ChevronRight className="ml-auto" />
 									</SidebarMenuButton>
 								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										render={<Link to="/providers" />}
+										tooltip={t('appLayout.providers', 'Providers')}
+										className="group/btn h-9 px-3"
+										isActive={location.pathname.startsWith('/providers')}
+									>
+										<Plug />
+										<span>{t('appLayout.providers', 'Providers')}</span>
+										<ChevronRight className="ml-auto" />
+									</SidebarMenuButton>
+								</SidebarMenuItem>
 							</SidebarMenu>
 						</SidebarGroup>
 					</SidebarContent>
