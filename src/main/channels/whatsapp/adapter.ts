@@ -40,7 +40,6 @@ export class WhatsAppAdapter {
 
   private async connect(): Promise<void> {
     const { state, saveCreds } = await useMultiFileAuthState(this.authDir);
-    this.saveCreds = saveCreds;
 
     const sock = makeWASocket({ auth: state });
     this.sock = sock;
