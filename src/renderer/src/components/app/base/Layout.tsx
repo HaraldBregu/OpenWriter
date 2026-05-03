@@ -623,6 +623,61 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenuItem>
 							</SidebarMenu>
 						</SidebarGroup>
+
+						{open && (
+							<Collapsible defaultOpen className="py-0">
+								<SidebarGroup className="py-0">
+									<SidebarGroupLabel
+										className="px-3"
+										render={
+											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										}
+									>
+										{t('appLayout.channels', 'Channels')}
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
+									</SidebarGroupLabel>
+									<CollapsibleContent>
+										<SidebarGroupContent>
+											<SidebarMenu className="gap-1">
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/channels/telegram" />}
+														className="group/btn h-9 px-3"
+														tooltip={t('appLayout.telegram', 'Telegram')}
+														isActive={location.pathname === '/channels/telegram'}
+													>
+														<Send />
+														<span>{t('appLayout.telegram', 'Telegram')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/channels/whatsapp" />}
+														className="group/btn h-9 px-3"
+														tooltip={t('appLayout.whatsapp', 'WhatsApp')}
+														isActive={location.pathname === '/channels/whatsapp'}
+													>
+														<MessageCircle />
+														<span>{t('appLayout.whatsapp', 'WhatsApp')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/channels/discord" />}
+														className="group/btn h-9 px-3"
+														tooltip={t('appLayout.discord', 'Discord')}
+														isActive={location.pathname === '/channels/discord'}
+													>
+														<Hash />
+														<span>{t('appLayout.discord', 'Discord')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</SidebarMenu>
+										</SidebarGroupContent>
+									</CollapsibleContent>
+								</SidebarGroup>
+							</Collapsible>
+						)}
 					</SidebarContent>
 
 					<SidebarFooter>
