@@ -934,9 +934,15 @@ export interface WhatsappChannelProperties {
 	allowFrom: string[];
 }
 
+export interface DiscordChannelProperties {
+	token: string;
+	allowFrom: string[];
+}
+
 export interface Channel {
 	telegram: TelegramChannelProperties;
 	whatsapp: WhatsappChannelProperties;
+	discord: DiscordChannelProperties;
 }
 
 export type ChannelType = keyof Channel;

@@ -143,7 +143,7 @@ export function bootstrapServices(): BootstrapResult {
 	// instantiated lazily from store.channels and started after app is ready.
 	container.register(
 		'channelRegistry',
-		new ChannelRegistry(storeService, logger, assistantRegistry)
+		new ChannelRegistry(storeService, logger, eventBus, assistantRegistry)
 	);
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
