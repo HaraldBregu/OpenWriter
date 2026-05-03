@@ -1,5 +1,5 @@
 import type { AgentModel, AgentSettings } from '../../shared/types';
-import { isRecord } from './utils';
+import { isRecord, trimmedString } from './utils';
 
 export function cloneAgent(agent: AgentSettings): AgentSettings {
 	return {
@@ -11,9 +11,9 @@ export function cloneAgent(agent: AgentSettings): AgentSettings {
 
 export function normalizeAgentModel(value: unknown): AgentModel | null {
 	if (!isRecord(value)) return null;
-	const id = typeof value.id === 'string' ? value.id.trim() : '';
-	const providerId = typeof value.providerId === 'string' ? value.providerId.trim() : '';
-	const modelId = typeof value.modelId === 'string' ? value.modelId.trim() : '';
+	const id = trimmedString(value.id);
+	const providerId = trimmedString(value.providerId);
+	const modelId = trimmedString(value.modelId);
 	if (!id || !providerId || !modelId) return null;
 	return { id, providerId, modelId };
 }
@@ -23,8 +23,8 @@ export function normalizeAgentInput(value: unknown): AgentSettings | null {
 		return null;
 	}
 
-	const id = typeof value.id === 'string' ? value.id.trim() : '';
-	const name = typeof value.name === 'string' ? value.name.trim() : '';
+	const id = trimmedString(value.id);
+	const name = trimmedString(value.name);
 	if (!id || !name) {
 		return null;
 	}
