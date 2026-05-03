@@ -55,6 +55,10 @@ import type {
 	Provider,
 	ProviderModelInfo,
 	UserProfile,
+	Channel,
+	ChannelType,
+	TelegramChannelProperties,
+	WhatsappChannelProperties,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
