@@ -1,7 +1,7 @@
 import { app } from 'electron';
 import fs from 'node:fs';
 import path from 'node:path';
-import type { LoggerService } from './logger';
+import type { LoggerService } from '../logger';
 import type { Theme, CustomThemeInfo, ThemeData } from '../../shared/types';
 
 const THEME_FILE_NAME = 'theme.json';
