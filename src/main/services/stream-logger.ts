@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import type { Disposable } from '../core/service-container';
 import type { AgentEvent } from '../agents/core/agent';
-import type { LoggerService } from './logger';
+import type { LoggerService } from '../logger';
 
 export type StreamType = 'text-generation' | 'image-generation';
 
