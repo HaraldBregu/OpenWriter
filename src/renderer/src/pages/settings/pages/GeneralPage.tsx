@@ -104,6 +104,11 @@ const GeneralPage: React.FC = () => {
 					<ItemRowTitle>Default Size</ItemRowTitle>
 					<ItemRowDescription>The standard size for most use cases.</ItemRowDescription>
 				</ItemRowContent>
+				<ItemRowActions>
+					<Button variant="outline" size="sm">
+						Action
+					</Button>
+				</ItemRowActions>
 			</ItemRow>
 		</div>
 	);
