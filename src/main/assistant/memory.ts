@@ -25,6 +25,7 @@ export class MemoryManager {
 
 	constructor(assistantId: string) {
 		this.workspace = path.join(app.getPath('userData'), 'assistant-workspace', assistantId);
+		console.log(`MemoryManager initialized with workspace: ${this.workspace}`);
 	}
 
 	async init(): Promise<void> {
@@ -67,4 +68,32 @@ export class MemoryManager {
 		}
 		return result;
 	}
+}
+
+/**
+ * Renders the assistant's memory state as a system prompt: ambient context
+ * (date, workspace) followed by tag-wrapped sections for each populated
+ * memory file.
+ */
+export async function buildSystemPrompt(
+	memory: MemoryManager,
+	channel?: string,
+	chatId?: string
+): Promise<string> {
+	const now = new Date().toISOString().replace('T', ' ').slice(0, 16) + ' UTC';
+	const parts = [
+		'You are a personal AI assistant.',
+		`Current date/time: ${now}`,
+		`Workspace: ${memory.workspace}`,
+		`Always use absolute paths when reading or writing files. Your workspace is ${memory.workspace}.`,
+	];
+	if (channel) parts.push(`Channel: ${channel}`);
+	if (chatId) parts.push(`Chat ID: ${chatId}`);
+
+	const sections = [parts.join('\n')];
+	const all = await memory.readAll();
+	for (const [tag, content] of Object.entries(all)) {
+		sections.push(`<${tag}>\n${content}\n</${tag}>`);
+	}
+	return sections.join('\n\n');
 }
