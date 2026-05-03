@@ -5,7 +5,7 @@ import type { LoggerService } from '../logger';
 import type { StoreService } from '../store';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
-import type { ChannelAdapter, ChannelAdapterFactory } from './types';
+import type { ChannelAdapter, ChannelAdapterFactory, ChannelMessage } from './types';
 
 export class ChannelRegistry {
 	private adapters = new Map<keyof Channel, ChannelAdapter>();
