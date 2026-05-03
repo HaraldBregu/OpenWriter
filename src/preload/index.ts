@@ -11,12 +11,16 @@ import type { AssistantResponseEvent } from '../shared/channels';
 import type { AppApi, WindowApi, WorkspaceApi, TaskApi, AssistantApi } from './index.d';
 import type {
 	AgentSettings,
+	Channel,
+	ChannelType,
 	ContextMenuDescriptor,
 	CronJobInfo,
 	CronTickEvent,
 	Provider,
+	TelegramChannelProperties,
 	UserProfile,
 	ThemeMode,
+	WhatsappChannelProperties,
 	WorkspaceInfo,
 	CreateWorkspaceParams,
 	DocumentConfig,
