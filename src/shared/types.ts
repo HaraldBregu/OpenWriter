@@ -942,3 +942,18 @@ export interface Channel {
 export type ChannelType = keyof Channel;
 
 export type ChannelPropertiesFor<K extends ChannelType> = Channel[K];
+
+export type ChannelConnectionStatus =
+	| 'connecting'
+	| 'qr'
+	| 'connected'
+	| 'disconnected'
+	| 'error';
+
+export interface ChannelStatusEvent {
+	type: ChannelType;
+	status: ChannelConnectionStatus;
+	qrDataUrl?: string;
+	error?: string;
+	timestamp: number;
+}
