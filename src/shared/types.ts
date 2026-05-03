@@ -938,3 +938,7 @@ export interface Channel {
 	telegram: TelegramChannelProperties;
 	whatsapp: WhatsappChannelProperties;
 }
+
+export type ChannelType = keyof Channel;
+
+export type ChannelPropertiesFor<K extends ChannelType> = Channel[K];
