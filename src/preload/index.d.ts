@@ -124,6 +124,10 @@ export type {
 	ThemeMode,
 	CustomThemeInfo,
 	Theme,
+	Channel,
+	ChannelType,
+	TelegramChannelProperties,
+	WhatsappChannelProperties,
 };
 export type { ShortcutId } from '../shared/shortcuts';
 
