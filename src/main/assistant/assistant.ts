@@ -4,6 +4,7 @@ import { MemoryManager, buildSystemPrompt } from './memory';
 import { SessionManager } from './session';
 import { runAgent } from './loop';
 import { defaultTools, type Tool } from './tools';
+import type { CronService } from '../cron';
 
 const HARDCODED_MODEL = 'gpt-4o-mini';
 
