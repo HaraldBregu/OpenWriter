@@ -190,6 +190,9 @@ export const AppChannels = {
 	// Channels (messaging adapters)
 	getChannel: 'app:get-channel',
 	setChannelProperties: 'app:set-channel-properties',
+	getChannelStatus: 'app:get-channel-status',
+	restartChannel: 'app:restart-channel',
+	channelStatusChanged: 'app:channel-status-changed',
 	// Logs
 	getLogs: 'app:get-logs',
 	openLogsFolder: 'app:open-logs-folder',
