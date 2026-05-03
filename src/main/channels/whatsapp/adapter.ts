@@ -13,7 +13,6 @@ export class WhatsAppAdapter {
   private authDir: string;
   private allowFrom: Set<string>;
   private sock: WASocket | null = null;
-  private saveCreds: (() => Promise<void>) | null = null;
   private stopping = false;
 
   constructor(opts: WhatsAppAdapterOptions) {
