@@ -7,19 +7,48 @@ import {
 	Card,
 	CardAction,
 	CardContent,
+	CardDescription,
 	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/Card';
-import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
+import {
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+} from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
 import { useChannelsContext } from '../Provider';
 
-const CHANNEL_LABELS: Record<ChannelType, string> = {
-	telegram: 'Telegram',
-	whatsapp: 'WhatsApp',
-	discord: 'Discord',
+interface ChannelMeta {
+	readonly title: string;
+	readonly description: string;
+	readonly tokenPlaceholder: string;
+	readonly allowFromPlaceholder: string;
+}
+
+const CHANNEL_META: Record<ChannelType, ChannelMeta> = {
+	telegram: {
+		title: 'Telegram',
+		description: 'Connect a Telegram bot using a token from @BotFather.',
+		tokenPlaceholder: '123456:ABC-DEF…',
+		allowFromPlaceholder: 'e.g. @user1, @user2',
+	},
+	whatsapp: {
+		title: 'WhatsApp',
+		description: 'Pair a WhatsApp account by scanning a QR code.',
+		tokenPlaceholder: '',
+		allowFromPlaceholder: 'e.g. 1234567890@s.whatsapp.net',
+	},
+	discord: {
+		title: 'Discord',
+		description: 'Connect a Discord bot using its bot token.',
+		tokenPlaceholder: 'MTk4NjIy…',
+		allowFromPlaceholder: 'e.g. user1, user2',
+	},
 };
 
 const STATUS_LABELS: Record<ChannelStatusEvent['status'], string> = {
@@ -55,6 +84,7 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 		handleRestart,
 	} = useChannelsContext();
 
+	const meta = CHANNEL_META[channelType];
 	const draft = drafts[channelType];
 	const persistedForType = persisted[channelType];
 	const status = statuses[channelType];
@@ -72,13 +102,15 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 					void handleSave(channelType);
 				}}
 			>
-				<CardHeader>
-					<CardTitle>{CHANNEL_LABELS[channelType]}</CardTitle>
+				<CardHeader className="border-b">
+					<CardTitle>{meta.title}</CardTitle>
+					<CardDescription>{meta.description}</CardDescription>
 					{status && (
 						<CardAction>
 							<span className="flex items-center gap-2 text-xs text-muted-foreground">
 								<span
 									className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status.status]}`}
+									aria-hidden="true"
 								/>
 								{STATUS_LABELS[status.status]}
 							</span>
@@ -86,7 +118,7 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 					)}
 				</CardHeader>
 
-				<CardContent>
+				<CardContent className="py-4">
 					<FieldGroup>
 						{!isWhatsapp && (
 							<Field>
@@ -98,30 +130,40 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 									type="password"
 									value={draft.token}
 									onChange={(e) => patchDraft(channelType, { token: e.target.value })}
-									placeholder={t('settings.channels.tokenPlaceholder', 'Enter token…')}
+									placeholder={meta.tokenPlaceholder}
 									autoComplete="off"
 									spellCheck={false}
 									disabled={isSaving}
 								/>
+								<FieldDescription>
+									{t(
+										'settings.channels.tokenDescription',
+										'Stored encrypted in your OS keychain.'
+									)}
+								</FieldDescription>
 							</Field>
 						)}
 
 						<Field>
 							<FieldLabel htmlFor={`channel-${channelType}-allow`}>
-								{t('settings.channels.allowFrom', 'Allowed senders (comma-separated)')}
+								{t('settings.channels.allowFrom', 'Allowed senders')}
 							</FieldLabel>
 							<Input
 								id={`channel-${channelType}-allow`}
 								type="text"
 								value={draft.allowFrom}
 								onChange={(e) => patchDraft(channelType, { allowFrom: e.target.value })}
-								placeholder={
-									isWhatsapp ? 'e.g. 1234567890@s.whatsapp.net' : 'e.g. user1, user2'
-								}
+								placeholder={meta.allowFromPlaceholder}
 								autoComplete="off"
 								spellCheck={false}
 								disabled={isSaving}
 							/>
+							<FieldDescription>
+								{t(
+									'settings.channels.allowFromDescription',
+									'Comma-separated list. Leave empty to allow all.'
+								)}
+							</FieldDescription>
 						</Field>
 
 						{isWhatsapp && status?.status === 'qr' && status.qrDataUrl && (
@@ -132,16 +174,18 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 										'Open WhatsApp → Linked devices → Link a device, then scan:'
 									)}
 								</FieldLabel>
-								<img
-									src={status.qrDataUrl}
-									alt="WhatsApp pairing QR"
-									className="h-56 w-56 rounded border border-border bg-white p-2"
-								/>
+								<div className="flex justify-center">
+									<img
+										src={status.qrDataUrl}
+										alt="WhatsApp pairing QR"
+										className="h-48 w-48 rounded-md border border-border bg-white p-2"
+									/>
+								</div>
 							</Field>
 						)}
 
 						{status?.status === 'error' && status.error && (
-							<span className="text-xs text-red-500">{status.error}</span>
+							<FieldError>{status.error}</FieldError>
 						)}
 					</FieldGroup>
 				</CardContent>
@@ -155,20 +199,14 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 							disabled={isRestarting}
 							onClick={() => void handleRestart('whatsapp')}
 						>
-							{isRestarting ? (
-								<Spinner />
-							) : (
-								<>
-									<RefreshCw className="mr-1 h-3 w-3" />
-									{status?.status === 'connected'
-										? t('settings.channels.reconnect', 'Reconnect')
-										: t('settings.channels.pair', 'Pair / Connect')}
-								</>
-							)}
+							{isRestarting ? <Spinner /> : <RefreshCw />}
+							{status?.status === 'connected'
+								? t('settings.channels.reconnect', 'Reconnect')
+								: t('settings.channels.pair', 'Pair / Connect')}
 						</Button>
 					)}
 					<Button type="submit" size="sm" disabled={!isDirty || isSaving}>
-						{isSaving ? <Spinner /> : <Save className="mr-1 h-3 w-3" />}
+						{isSaving ? <Spinner /> : <Save />}
 						{t('common.save', 'Save')}
 					</Button>
 				</CardFooter>
