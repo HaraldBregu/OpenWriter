@@ -583,7 +583,7 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarGroup className="mt-auto">
+						<SidebarGroup>
 							<SidebarGroupLabel className="px-3">
 								{t('appLayout.resources', 'Resources')}
 							</SidebarGroupLabel>
@@ -613,7 +613,7 @@ function Container({ children }: LayoutProps) {
 							</SidebarMenu>
 						</SidebarGroup>
 
-						<SidebarGroup>
+						<SidebarGroup className="mt-auto">
 							<SidebarMenu className="gap-1">
 								<SidebarMenuItem>
 									<SidebarMenuButton
