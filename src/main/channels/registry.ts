@@ -3,17 +3,25 @@ import path from 'node:path';
 import type { Channel } from '../../shared/types';
 import type { LoggerService } from '../logger';
 import type { StoreService } from '../store';
+import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
-import type { ChannelAdapter, ChannelAdapterFactory, ChannelMessage } from './types';
+import type {
+	ChannelAdapter,
+	ChannelAdapterFactory,
+	ChannelInboundMessage,
+	ChannelMessageType,
+	ChannelOutboundMessage,
+} from './types';
 
 export class ChannelRegistry {
-	private adapters = new Map<keyof Channel, ChannelAdapter>();
-	private factories: Record<keyof Channel, ChannelAdapterFactory>;
+	private adapters = new Map<ChannelMessageType, ChannelAdapter>();
+	private factories: Record<ChannelMessageType, ChannelAdapterFactory>;
 
 	constructor(
 		private store: StoreService,
-		private logger: LoggerService
+		private logger: LoggerService,
+		private assistantRegistry: AssistantRegistry
 	) {
 		this.factories = {
 			telegram: (ch) =>
@@ -37,12 +45,12 @@ export class ChannelRegistry {
 	async startAll(): Promise<void> {
 		const channel = this.store.getChannel();
 		if (!channel) return;
-		for (const type of Object.keys(this.factories) as (keyof Channel)[]) {
+		for (const type of Object.keys(this.factories) as ChannelMessageType[]) {
 			await this.start(type, channel);
 		}
 	}
 
-	async start(type: keyof Channel, channel: Channel): Promise<void> {
+	async start(type: ChannelMessageType, channel: Channel): Promise<void> {
 		if (this.adapters.has(type)) return;
 
 		const factory = this.factories[type];
@@ -53,7 +61,9 @@ export class ChannelRegistry {
 
 		try {
 			const adapter = factory(channel);
-			adapter.onMessage((msg) => this.handleMessage(msg));
+			adapter.onMessage((msg) => {
+				void this.handleMessage(msg);
+			});
 			await adapter.start();
 			this.adapters.set(type, adapter);
 			this.logger.info('ChannelRegistry', `Started ${type} channel`);
@@ -62,8 +72,23 @@ export class ChannelRegistry {
 		}
 	}
 
-	private handleMessage(msg: ChannelMessage): void {
+	async send(msg: ChannelOutboundMessage): Promise<void> {
+		const adapter = this.adapters.get(msg.type);
+		if (!adapter) {
+			throw new Error(`No active adapter for channel type: ${msg.type}`);
+		}
+		await adapter.send(msg);
+	}
+
+	private async handleMessage(msg: ChannelInboundMessage): Promise<void> {
 		console.log('[ChannelRegistry] message received', msg);
+		try {
+			const assistant = this.assistantRegistry.get(DEFAULT_ASSISTANT_ID);
+			const reply = await assistant.send(msg.text);
+			await this.send({ type: msg.type, to: msg.chatId, text: reply });
+		} catch (err) {
+			this.logger.error('ChannelRegistry', `Assistant failed for ${msg.type}`, err);
+		}
 	}
 
 	async stopAll(): Promise<void> {
@@ -77,7 +102,7 @@ export class ChannelRegistry {
 		this.adapters.clear();
 	}
 
-	get(type: keyof Channel): ChannelAdapter | undefined {
+	get(type: ChannelMessageType): ChannelAdapter | undefined {
 		return this.adapters.get(type);
 	}
 
