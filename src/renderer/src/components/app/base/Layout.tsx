@@ -626,52 +626,18 @@ function Container({ children }: LayoutProps) {
 
 						<SidebarGroup>
 							<SidebarMenu className="gap-1">
-								<Collapsible
-									defaultOpen
-									className="group/collapsible"
-									render={<SidebarMenuItem />}
-								>
-									<CollapsibleTrigger
-										render={
-											<SidebarMenuButton
-												tooltip={t('appLayout.channels', 'Channels')}
-												className="group/btn h-9 px-3"
-											/>
-										}
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										render={<Link to="/channels" />}
+										tooltip={t('appLayout.channels', 'Channels')}
+										className="group/btn h-9 px-3"
+										isActive={location.pathname.startsWith('/channels')}
 									>
 										<Plug />
 										<span>{t('appLayout.channels', 'Channels')}</span>
-										<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
-									</CollapsibleTrigger>
-									<CollapsibleContent>
-										<SidebarMenuSub>
-											<SidebarMenuSubItem>
-												<SidebarMenuSubButton
-													render={<Link to="/channels/telegram" />}
-													isActive={location.pathname === '/channels/telegram'}
-												>
-													<span>{t('appLayout.telegram', 'Telegram')}</span>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-											<SidebarMenuSubItem>
-												<SidebarMenuSubButton
-													render={<Link to="/channels/whatsapp" />}
-													isActive={location.pathname === '/channels/whatsapp'}
-												>
-													<span>{t('appLayout.whatsapp', 'WhatsApp')}</span>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-											<SidebarMenuSubItem>
-												<SidebarMenuSubButton
-													render={<Link to="/channels/discord" />}
-													isActive={location.pathname === '/channels/discord'}
-												>
-													<span>{t('appLayout.discord', 'Discord')}</span>
-												</SidebarMenuSubButton>
-											</SidebarMenuSubItem>
-										</SidebarMenuSub>
-									</CollapsibleContent>
-								</Collapsible>
+										<ChevronRight className="ml-auto" />
+									</SidebarMenuButton>
+								</SidebarMenuItem>
 							</SidebarMenu>
 						</SidebarGroup>
 					</SidebarContent>
