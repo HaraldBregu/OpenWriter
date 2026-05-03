@@ -1,142 +1,18 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import { getProvider } from '../../shared/providers';
-import type { AgentModel, AgentSettings, Provider, UserProfile } from '../../shared/types';
+import type { AgentSettings, Provider, UserProfile } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
-
-export interface WorkspaceInfo {
-	path: string;
-	lastOpened: number;
-}
-
-export interface StoreSchema {
-	providers: Provider[];
-	agents: AgentSettings[];
-	currentWorkspace: string | null;
-	recentWorkspaces: WorkspaceInfo[];
-	startupCount: number;
-	isInitialized: boolean;
-	profile: UserProfile | null;
-}
-
-const DEFAULTS: StoreSchema = {
-	providers: [],
-	agents: [],
-	currentWorkspace: null,
-	recentWorkspaces: [],
-	startupCount: 0,
-	isInitialized: false,
-	profile: null,
-};
-
-type SettingsStore = {
-	get<TKey extends keyof StoreSchema>(key: TKey): StoreSchema[TKey];
-	get(key: string): unknown;
-	set<TKey extends keyof StoreSchema>(key: TKey, value: StoreSchema[TKey]): void;
-	set(key: string, value: unknown): void;
-	delete: (key: string) => void;
-};
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null;
-}
-
-/**
- * Parse a Provider entry from arbitrary input. Accepts both the new flat shape
- * `{ id, name, apiKey }` and the legacy `{ provider: { id, name }, apiKey }`
- * shape so existing settings files migrate cleanly.
- */
-function normalizeProviderInput(value: unknown): Provider | null {
-	if (!isRecord(value)) return null;
-
-	let id: string | undefined;
-	let name: string | undefined;
-
-	if (typeof value.id === 'string' && value.id.trim().length > 0) {
-		id = value.id.trim();
-		if (typeof value.name === 'string' && value.name.trim().length > 0) {
-			name = value.name.trim();
-		}
-	} else if (isRecord(value.provider) && typeof value.provider.id === 'string') {
-		id = value.provider.id.trim();
-		if (typeof value.provider.name === 'string' && value.provider.name.trim().length > 0) {
-			name = value.provider.name.trim();
-		}
-	}
-
-	if (!id) return null;
-
-	const known = getProvider(id);
-	const resolvedName = name ?? known?.name ?? id;
-
-	const apiKey =
-		typeof value.apiKey === 'string'
-			? value.apiKey
-			: typeof value.apikey === 'string'
-				? value.apikey
-				: '';
-
-	return { id, name: resolvedName, apiKey };
-}
-
-function normalizeProviders(value: unknown): Provider[] {
-	if (!Array.isArray(value)) return [];
-	const seen = new Set<string>();
-	const out: Provider[] = [];
-	for (const entry of value) {
-		const provider = normalizeProviderInput(entry);
-		if (!provider || seen.has(provider.id)) continue;
-		seen.add(provider.id);
-		out.push(provider);
-	}
-	return out;
-}
-
-function cloneProvider(provider: Provider): Provider {
-	return { id: provider.id, name: provider.name, apiKey: provider.apiKey };
-}
-
-function cloneAgent(agent: AgentSettings): AgentSettings {
-	return {
-		id: agent.id,
-		name: agent.name,
-		models: agent.models.map((m) => ({ ...m })),
-	};
-}
-
-function normalizeAgentModel(value: unknown): AgentModel | null {
-	if (!isRecord(value)) return null;
-	const id = typeof value.id === 'string' ? value.id.trim() : '';
-	const providerId = typeof value.providerId === 'string' ? value.providerId.trim() : '';
-	const modelId = typeof value.modelId === 'string' ? value.modelId.trim() : '';
-	if (!id || !providerId || !modelId) return null;
-	return { id, providerId, modelId };
-}
-
-function normalizeAgentInput(value: unknown): AgentSettings | null {
-	if (!isRecord(value)) {
-		return null;
-	}
-
-	const id = typeof value.id === 'string' ? value.id.trim() : '';
-	const name = typeof value.name === 'string' ? value.name.trim() : '';
-	if (!id || !name) {
-		return null;
-	}
-
-	const models = Array.isArray(value.models)
-		? value.models.map(normalizeAgentModel).filter((m): m is AgentModel => m !== null)
-		: [];
-
-	return { id, name, models };
-}
-
-function normalizeAgents(value: unknown): AgentSettings[] {
-	if (!Array.isArray(value)) return [];
-	return value
-		.map(normalizeAgentInput)
-		.filter((agent): agent is AgentSettings => agent !== null);
-}
+import { DEFAULTS, type SettingsStore, type StoreSchema, type WorkspaceInfo } from './types';
+import {
+	cloneProvider,
+	normalizeProviderInput,
+	normalizeProviders,
+} from './providers';
+import {
+	cloneAgent,
+	normalizeAgentInput,
+	normalizeAgents,
+} from './agents';
 
 export class StoreService {
 	private store: SettingsStore;
