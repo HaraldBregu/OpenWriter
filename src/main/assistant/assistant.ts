@@ -1,12 +1,9 @@
 import OpenAI from 'openai';
 import type { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
-import { MemoryManager } from './memory';
+import { MemoryManager, buildSystemPrompt } from './memory';
 import { SessionManager } from './session';
-import { buildSystemPrompt } from './context';
 import { runAgent } from './loop';
-import type { Tool } from './tools/base';
-import { ReadFileTool, WriteFileTool } from './tools/filesystem';
-import { ExecTool } from './tools/exec';
+import { defaultTools, type Tool } from './tools';
 
 const HARDCODED_MODEL = 'gpt-4o-mini';
 
