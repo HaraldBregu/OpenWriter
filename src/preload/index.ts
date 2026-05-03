@@ -127,6 +127,16 @@ const app: AppApi = {
 		return typedInvokeUnwrap(AppChannels.completeFirstRunConfiguration, profile, providers);
 	},
 	getModels: (providerId: string) => typedInvokeUnwrap(AppChannels.getModels, providerId),
+	getChannel: (): Promise<Channel | null> => typedInvokeUnwrap(AppChannels.getChannel),
+	setChannelProperties: <K extends ChannelType>(
+		type: K,
+		properties: K extends 'telegram' ? TelegramChannelProperties : WhatsappChannelProperties
+	): Promise<Channel> =>
+		typedInvokeUnwrap(
+			AppChannels.setChannelProperties,
+			type,
+			properties as TelegramChannelProperties | WhatsappChannelProperties
+		),
 	getLogs: (limit?: number) => typedInvokeUnwrap(AppChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 	openAppDataFolder: () => typedInvokeUnwrap(AppChannels.openAppDataFolder),
