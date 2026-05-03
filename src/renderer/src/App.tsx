@@ -336,6 +336,51 @@ const App: React.FC = () => {
 														/>
 													</Route>
 													<Route
+														path="/agents/*"
+														element={
+															<RouteWrapper>
+																<AgentsLayout />
+															</RouteWrapper>
+														}
+													>
+														<Route
+															index
+															element={<Navigate to="/agents/content-reviewer" replace />}
+														/>
+														<Route
+															path="content-reviewer"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<ContentReviewerAgentPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="content-writer"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<ContentWriterAgentPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="image-creator"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<ImageCreatorAgentPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="assistant"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<AssistantAgentPage />
+																</Suspense>
+															}
+														/>
+													</Route>
+													<Route
 														path="/channels/*"
 														element={
 															<RouteWrapper>
