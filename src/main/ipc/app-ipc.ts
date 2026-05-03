@@ -376,6 +376,21 @@ export class AppIpc implements IpcModule {
 			)
 		);
 
+		const channelRegistry = container.get<ChannelRegistry>('channelRegistry');
+
+		ipcMain.handle(
+			AppChannels.getChannelStatus,
+			wrapSimpleHandler(() => channelRegistry.getStatus(), AppChannels.getChannelStatus)
+		);
+
+		ipcMain.handle(
+			AppChannels.restartChannel,
+			wrapSimpleHandler(
+				(type: ChannelType) => channelRegistry.restart(type),
+				AppChannels.restartChannel
+			)
+		);
+
 		// Recent in-memory logs
 		ipcMain.handle(
 			AppChannels.getLogs,

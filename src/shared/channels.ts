@@ -60,6 +60,7 @@ import type {
 	ChannelStatusEvent,
 	TelegramChannelProperties,
 	WhatsappChannelProperties,
+	DiscordChannelProperties,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
