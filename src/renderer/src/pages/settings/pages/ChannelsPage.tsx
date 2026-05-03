@@ -155,7 +155,7 @@ const ChannelsPage: React.FC = () => {
 				<PageHeaderDescription>
 					{t(
 						'settings.channels.subtitle',
-						'Configure messaging channels (Telegram, WhatsApp).'
+						'Configure messaging channels (Telegram, WhatsApp, Discord).'
 					)}
 				</PageHeaderDescription>
 			</PageHeader>
