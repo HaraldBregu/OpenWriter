@@ -58,6 +58,9 @@ import {
 	EllipsisVertical,
 	Plug,
 	ArrowLeftRight,
+	Send,
+	MessageCircle,
+	Hash,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
