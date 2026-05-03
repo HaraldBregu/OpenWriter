@@ -53,7 +53,7 @@ export default function TelegramPage(): ReactElement {
 				void handleSave('telegram');
 			}}
 		>
-			<FieldGroup>
+			<FieldGroup className="w-full max-w-lg">
 				<FieldSet>
 					<FieldLegend>Telegram</FieldLegend>
 					<FieldDescription>
