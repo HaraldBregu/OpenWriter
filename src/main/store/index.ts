@@ -1,2 +1,2 @@
-export { StoreService } from './store';
-export type { WorkspaceInfo, StoreSchema } from './store';
+export { StoreService } from './store-service';
+export type { WorkspaceInfo, StoreSchema } from './types';
