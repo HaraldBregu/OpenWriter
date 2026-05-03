@@ -44,6 +44,11 @@ export class ChannelRegistry {
 					),
 					allow_from: ch.whatsapp.allowFrom,
 				}),
+			discord: (ch) =>
+				new DiscordAdapter({
+					token: ch.discord.token,
+					allowFrom: ch.discord.allowFrom,
+				}),
 		};
 	}
 
