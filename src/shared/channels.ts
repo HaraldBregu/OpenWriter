@@ -55,7 +55,6 @@ import type {
 	Provider,
 	ProviderModelInfo,
 	UserProfile,
-	Channel,
 } from './types';
 import type { ShortcutId } from './shortcuts';
 
@@ -176,10 +175,6 @@ export const AppChannels = {
 	getProviders: 'app:get-providers',
 	addProvider: 'app:add-provider',
 	deleteProvider: 'app:delete-provider',
-	// Channels (messaging integrations)
-	getChannels: 'app:get-channels',
-	addChannel: 'app:add-channel',
-	deleteChannel: 'app:delete-channel',
 	getAgents: 'app:get-agents',
 	updateAgent: 'app:update-agent',
 	getStartupInfo: 'app:get-startup-info',
@@ -237,9 +232,6 @@ export interface InvokeChannelMap {
 	[AppChannels.getProviders]: { args: []; result: Provider[] };
 	[AppChannels.addProvider]: { args: [provider: Provider]; result: Provider };
 	[AppChannels.deleteProvider]: { args: [id: string]; result: void };
-	[AppChannels.getChannels]: { args: []; result: Channel[] };
-	[AppChannels.addChannel]: { args: [channel: Channel]; result: Channel };
-	[AppChannels.deleteChannel]: { args: [id: string]; result: void };
 	[AppChannels.getAgents]: { args: []; result: AgentSettings[] };
 	[AppChannels.updateAgent]: { args: [agent: AgentSettings]; result: AgentSettings };
 	[AppChannels.getStartupInfo]: { args: []; result: AppStartupInfo };
