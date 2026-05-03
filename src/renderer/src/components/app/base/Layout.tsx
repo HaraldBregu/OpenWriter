@@ -617,6 +617,18 @@ function Container({ children }: LayoutProps) {
 							<SidebarMenu className="gap-1">
 								<SidebarMenuItem>
 									<SidebarMenuButton
+										render={<Link to="/agents" />}
+										tooltip={t('appLayout.agents', 'Agents')}
+										className="group/btn h-9 px-3"
+										isActive={location.pathname.startsWith('/agents')}
+									>
+										<Bot />
+										<span>{t('appLayout.agents', 'Agents')}</span>
+										<ChevronRight className="ml-auto" />
+									</SidebarMenuButton>
+								</SidebarMenuItem>
+								<SidebarMenuItem>
+									<SidebarMenuButton
 										render={<Link to="/channels" />}
 										tooltip={t('appLayout.channels', 'Channels')}
 										className="group/btn h-9 px-3"
