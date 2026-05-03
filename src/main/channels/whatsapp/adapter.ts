@@ -8,16 +8,25 @@ import { Boom } from "@hapi/boom";
 import { registerTextHandler } from "./receive";
 import { sendChunked } from "./send";
 import type { WhatsAppAdapterOptions } from "./types";
+import type { ChannelMessage, ChannelMessageHandler } from "../types";
 
 export class WhatsAppAdapter {
   private authDir: string;
   private allowFrom: Set<string>;
   private sock: WASocket | null = null;
   private stopping = false;
+  private handlers = new Set<ChannelMessageHandler>();
 
   constructor(opts: WhatsAppAdapterOptions) {
     this.authDir = opts.auth_dir;
     this.allowFrom = new Set(opts.allow_from.map(String));
+  }
+
+  onMessage(handler: ChannelMessageHandler): () => void {
+    this.handlers.add(handler);
+    return () => {
+      this.handlers.delete(handler);
+    };
   }
 
   async send(jid: string, text: string): Promise<void> {
