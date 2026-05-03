@@ -9,10 +9,10 @@ import {
 	ItemRow,
 	ItemRowActions,
 	ItemRowContent,
-	ItemRowTitle,
 	ItemRowDescription,
+	ItemRowMedia,
+	ItemRowTitle,
 } from '@/components/ui/ItemRow';
-import { Large, Muted, Small } from '@/components/ui/Typography';
 
 type EditingField = 'firstName' | 'lastName' | null;
 
@@ -41,12 +41,13 @@ const EditableName: React.FC<EditableNameProps> = ({
 
 	if (!editing) {
 		return (
-			<Small
-				onDoubleClick={onStartEdit}
-				className="cursor-text select-none"
+			<button
+				type="button"
+				onClick={onStartEdit}
+				className="text-sm cursor-text hover:underline underline-offset-2"
 			>
 				{value || '—'}
-			</Small>
+			</button>
 		);
 	}
 
@@ -123,20 +124,20 @@ const AccountPage: React.FC = () => {
 
 	return (
 		<div className="w-full max-w-2xl">
-			<Large className="mb-6 font-normal">{t('settings.tabs.account')}</Large>
+			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.account')}</h1>
 
 			<SectionHeader title={t('settings.account.section')} />
 
 			<div className="flex flex-col gap-2">
 				<ItemRow variant="bottom-bordered" size="none">
-					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
-						<UserCircle className="h-5 w-5 text-muted-foreground" />
-					</div>
+					<ItemRowMedia>
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
+							<UserCircle className="h-5 w-5 text-muted-foreground" />
+						</div>
+					</ItemRowMedia>
 					<ItemRowContent>
 						<ItemRowTitle>{displayName}</ItemRowTitle>
-						<ItemRowDescription>
-							<Muted className="text-xs">{subtitle}</Muted>
-						</ItemRowDescription>
+						<ItemRowDescription className="text-xs">{subtitle}</ItemRowDescription>
 					</ItemRowContent>
 				</ItemRow>
 
