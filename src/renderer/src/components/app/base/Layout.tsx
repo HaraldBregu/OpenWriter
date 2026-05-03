@@ -631,7 +631,7 @@ function Container({ children }: LayoutProps) {
 										className="group/btn h-9 px-3"
 										isActive={location.pathname.startsWith('/channels')}
 									>
-										<Plug />
+										<Radio />
 										<span>{t('appLayout.channels', 'Channels')}</span>
 										<ChevronRight className="ml-auto" />
 									</SidebarMenuButton>
