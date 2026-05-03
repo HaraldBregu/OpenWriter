@@ -8,7 +8,7 @@ import type {
 	TelegramChannelProperties,
 	WhatsappChannelProperties,
 	DiscordChannelProperties,
-} from '../../../../../shared/types';
+} from '../../../../shared/types';
 import { Button } from '@/components/ui/Button';
 import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
