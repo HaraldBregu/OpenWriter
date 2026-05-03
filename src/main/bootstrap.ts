@@ -141,7 +141,7 @@ export function bootstrapServices(): BootstrapResult {
 
 	// Channel registry -- messaging adapters (Telegram, WhatsApp). Adapters are
 	// instantiated lazily from store.channels and started after app is ready.
-	container.register('channelRegistry', new ChannelRegistry(logger));
+	container.register('channelRegistry', new ChannelRegistry(storeService, logger));
 
 	// Task reaction layer -- main-process observer that receives TaskExecutor lifecycle
 	// AppEvents and fan-outs to registered TaskReactionHandlers by task type.
