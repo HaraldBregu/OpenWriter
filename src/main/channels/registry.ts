@@ -2,6 +2,7 @@ import { app } from 'electron';
 import path from 'node:path';
 import type { Channel, ChannelType } from '../../shared/types';
 import type { LoggerService } from '../logger';
+import type { StoreService } from '../store';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
 import type { ChannelAdapter, ChannelAdapterFactory } from './types';
@@ -10,7 +11,10 @@ export class ChannelRegistry {
 	private adapters = new Map<string, ChannelAdapter>();
 	private factories: Record<ChannelType, ChannelAdapterFactory>;
 
-	constructor(private logger: LoggerService) {
+	constructor(
+		private store: StoreService,
+		private logger: LoggerService
+	) {
 		this.factories = {
 			TELEGRAM: (ch) =>
 				new TelegramAdapter({
@@ -30,8 +34,8 @@ export class ChannelRegistry {
 		};
 	}
 
-	async startAll(channels: Channel[]): Promise<void> {
-		for (const ch of channels) {
+	async startAll(): Promise<void> {
+		for (const ch of this.store.getChannels()) {
 			await this.start(ch);
 		}
 	}
