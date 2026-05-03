@@ -119,7 +119,9 @@ const ChannelsPage: React.FC = () => {
 				const next =
 					type === 'telegram'
 						? await window.app.setChannelProperties('telegram', properties)
-						: await window.app.setChannelProperties('whatsapp', properties);
+						: type === 'whatsapp'
+							? await window.app.setChannelProperties('whatsapp', properties)
+							: await window.app.setChannelProperties('discord', properties);
 				setChannel(next);
 				await window.app.restartChannel(type);
 			} finally {
