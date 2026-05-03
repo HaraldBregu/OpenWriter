@@ -8,6 +8,7 @@ import type { EventBus } from '../core/event-bus';
 import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
+import { DiscordAdapter } from './discord';
 import type {
 	ChannelAdapter,
 	ChannelAdapterFactory,
