@@ -1,14 +1,16 @@
 import { app } from 'electron';
 import path from 'node:path';
-import type { Channel, ChannelType } from '../../shared/types';
+import type { Channel } from '../../shared/types';
 import type { LoggerService } from '../logger';
 import type { StoreService } from '../store';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
 import type { ChannelAdapter, ChannelAdapterFactory } from './types';
 
+type ChannelType = 'TELEGRAM' | 'WHATSAPP';
+
 export class ChannelRegistry {
-	private adapters = new Map<string, ChannelAdapter>();
+	private adapters = new Map<ChannelType, ChannelAdapter>();
 	private factories: Record<ChannelType, ChannelAdapterFactory>;
 
 	constructor(
@@ -18,8 +20,8 @@ export class ChannelRegistry {
 		this.factories = {
 			TELEGRAM: (ch) =>
 				new TelegramAdapter({
-					token: ch.token,
-					allowFrom: ch.allowFrom,
+					token: ch.telegram.token,
+					allowFrom: ch.telegram.allowFrom,
 				}),
 			WHATSAPP: (ch) =>
 				new WhatsAppAdapter({
@@ -27,59 +29,56 @@ export class ChannelRegistry {
 						app.getPath('userData'),
 						'channels',
 						'whatsapp',
-						ch.token || 'default'
+						ch.whatsapp.token || 'default'
 					),
-					allow_from: ch.allowFrom,
+					allow_from: ch.whatsapp.allowFrom,
 				}),
 		};
 	}
 
 	async startAll(): Promise<void> {
-		for (const ch of this.store.getChannels()) {
-			await this.start(ch);
+		const channel = this.store.getChannel();
+		if (!channel) return;
+		for (const type of Object.keys(this.factories) as ChannelType[]) {
+			await this.start(type, channel);
 		}
 	}
 
-	async start(channel: Channel): Promise<void> {
-		const key = this.keyFor(channel);
-		if (this.adapters.has(key)) return;
+	async start(type: ChannelType, channel: Channel): Promise<void> {
+		if (this.adapters.has(type)) return;
 
-		const factory = this.factories[channel.type];
+		const factory = this.factories[type];
 		if (!factory) {
-			this.logger.warn('ChannelRegistry', `Unknown channel type: ${channel.type}`);
+			this.logger.warn('ChannelRegistry', `Unknown channel type: ${type}`);
 			return;
 		}
 
 		try {
 			const adapter = factory(channel);
 			await adapter.start();
-			this.adapters.set(key, adapter);
-			this.logger.info('ChannelRegistry', `Started ${channel.type} channel`);
+			this.adapters.set(type, adapter);
+			this.logger.info('ChannelRegistry', `Started ${type} channel`);
 		} catch (err) {
-			this.logger.error('ChannelRegistry', `Failed to start ${channel.type} channel`, err);
+			this.logger.error('ChannelRegistry', `Failed to start ${type} channel`, err);
 		}
 	}
 
 	async stopAll(): Promise<void> {
-		for (const [key, adapter] of this.adapters) {
+		for (const [type, adapter] of this.adapters) {
 			try {
 				await adapter.stop();
 			} catch (err) {
-				this.logger.error('ChannelRegistry', `Failed to stop ${key}`, err);
+				this.logger.error('ChannelRegistry', `Failed to stop ${type}`, err);
 			}
 		}
 		this.adapters.clear();
 	}
 
-	get(channel: Channel): ChannelAdapter | undefined {
-		return this.adapters.get(this.keyFor(channel));
+	get(type: ChannelType): ChannelAdapter | undefined {
+		return this.adapters.get(type);
 	}
 
 	destroy(): void {
 		void this.stopAll();
-	}
-
-	private keyFor(ch: Channel): string {
-		return `${ch.type}:${ch.token}`;
 	}
 }

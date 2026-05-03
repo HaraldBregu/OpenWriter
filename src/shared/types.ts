@@ -529,18 +529,18 @@ export interface WritingContextMenuAction {
 export type ContextMenuDescriptor =
 	| { type: 'separator' }
 	| {
-			type?: 'item';
-			/** Stable id returned to the renderer when this item is clicked. */
-			id: string;
-			/** Visible label. */
-			label: string;
-			/** Optional accelerator, e.g. 'CmdOrCtrl+Backspace'. */
-			accelerator?: string;
-			/** Defaults to true. */
-			enabled?: boolean;
-			/** Renders the item in a destructive style where the platform supports it. */
-			destructive?: boolean;
-	  };
+		type?: 'item';
+		/** Stable id returned to the renderer when this item is clicked. */
+		id: string;
+		/** Visible label. */
+		label: string;
+		/** Optional accelerator, e.g. 'CmdOrCtrl+Backspace'. */
+		accelerator?: string;
+		/** Defaults to true. */
+		enabled?: boolean;
+		/** Renders the item in a destructive style where the platform supports it. */
+		destructive?: boolean;
+	};
 
 // ---- Common ---------------------------------------------------------------
 
@@ -924,23 +924,17 @@ export function withTaskStatusText(
 
 // ---- Channels (messaging adapters) -----------------------------------------
 
-export type ChannelType = 'TELEGRAM' | 'WHATSAPP';
-
-export interface ChannelProperties {
+export interface TelegramChannelProperties {
 	token: string;
+	allowFrom: string[];
 }
 
-export interface TelegramProperties extends ChannelProperties {}
-
-export interface WhatsappProperties extends ChannelProperties {}
-
-export interface ChannelMap {
-	TELEGRAM: TelegramProperties;
-	WHATSAPP: WhatsappProperties;
+export interface WhatsappChannelProperties {
+	token: string;
+	allowFrom: string[];
 }
 
 export interface Channel {
-	type: ChannelType;
-	token: string;
-	allowFrom: string[];
+	telegram: TelegramChannelProperties;
+	whatsapp: WhatsappChannelProperties;
 }
