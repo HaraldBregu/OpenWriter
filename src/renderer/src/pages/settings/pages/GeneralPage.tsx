@@ -98,7 +98,7 @@ const GeneralPage: React.FC = () => {
 				</Button>
 			</SettingRow>
 
-			<ItemRow variant="outline">
+			<ItemRow variant="bottom-bordered" size="none">
 				<ItemRowContent>
 					<ItemRowTitle>Default Size</ItemRowTitle>
 					<ItemRowDescription>The standard size for most use cases.</ItemRowDescription>
