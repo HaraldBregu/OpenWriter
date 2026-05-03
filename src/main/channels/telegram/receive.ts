@@ -11,5 +11,12 @@ export function registerTextHandler(bot: Bot, allowFrom: Set<string>): void {
       console.warn(`Ignored message from unauthorized user ${senderId}`);
       return;
     }
+
+    console.log("[telegram] message received", {
+      chatId: ctx.chat.id,
+      from: senderId,
+      username: ctx.from?.username,
+      text,
+    });
   });
 }
