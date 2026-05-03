@@ -3,8 +3,7 @@
  * Used by AppIpc (store handlers) to validate user inputs.
  */
 
-import type { AgentSettings, Channel, Provider } from '../../shared/types';
-import { isKnownChannelType } from '../../shared/types';
+import type { AgentSettings, Provider } from '../../shared/types';
 import { isKnownProvider } from '../../shared/providers';
 
 export class StoreValidators {
@@ -114,71 +113,6 @@ export class StoreValidators {
 		}
 		if (providerName.length > this.MAX_FIELD_LENGTH) {
 			throw new Error('Provider name exceeds maximum length');
-		}
-	}
-}
-
-/**
- * Input validators for Channel store operations.
- */
-export class ChannelValidators {
-	private static readonly MAX_TOKEN_LENGTH = 500;
-	private static readonly MAX_FIELD_LENGTH = 200;
-	private static readonly DANGEROUS_CHARS = /[<>;"'`]/;
-	private static readonly ID_PATTERN = /^[a-zA-Z0-9\-_]+$/;
-
-	static validateChannelId(id: string): void {
-		if (typeof id !== 'string' || id.trim().length === 0) {
-			throw new Error('Channel id must be a non-empty string');
-		}
-		if (id.length > this.MAX_FIELD_LENGTH) {
-			throw new Error('Channel id exceeds maximum length');
-		}
-		if (!this.ID_PATTERN.test(id)) {
-			throw new Error('Channel id contains invalid characters');
-		}
-	}
-
-	static validateChannel(channel: Channel): void {
-		if (typeof channel !== 'object' || channel === null) {
-			throw new Error('Channel must be an object');
-		}
-		this.validateChannelId(channel.id);
-
-		if (!isKnownChannelType(channel.type)) {
-			throw new Error(`Unknown channel type: ${String(channel.type)}`);
-		}
-
-		if (typeof channel.enabled !== 'boolean') {
-			throw new Error('Channel enabled must be a boolean');
-		}
-
-		if (typeof channel.token !== 'string') {
-			throw new Error('Channel token must be a string');
-		}
-		if (channel.token.length > this.MAX_TOKEN_LENGTH) {
-			throw new Error(`Channel token exceeds maximum length of ${this.MAX_TOKEN_LENGTH}`);
-		}
-		if (channel.token.length > 0 && this.DANGEROUS_CHARS.test(channel.token)) {
-			throw new Error('Channel token contains invalid characters');
-		}
-		if (channel.enabled && channel.token.trim().length === 0) {
-			throw new Error('Enabled channel must have a non-empty token');
-		}
-
-		if (!Array.isArray(channel.allowFrom)) {
-			throw new Error('Channel allowFrom must be an array');
-		}
-		for (const sender of channel.allowFrom) {
-			if (typeof sender !== 'string' || sender.trim().length === 0) {
-				throw new Error('Channel allowFrom entries must be non-empty strings');
-			}
-			if (sender.length > this.MAX_FIELD_LENGTH) {
-				throw new Error('Channel allowFrom entry exceeds maximum length');
-			}
-			if (!this.ID_PATTERN.test(sender)) {
-				throw new Error('Channel allowFrom entry contains invalid characters');
-			}
 		}
 	}
 }

@@ -1,11 +1,6 @@
 import Store from 'electron-store';
 import { MAX_RECENT_WORKSPACES } from '../constants';
-import type {
-	AgentSettings,
-	Channel,
-	Provider,
-	UserProfile,
-} from '../../shared/types';
+import type { AgentSettings, Provider, UserProfile } from '../../shared/types';
 import type { AppStartupInfo } from '../../shared/types';
 import { DEFAULTS, type SettingsStore, type StoreSchema, type WorkspaceInfo } from './types';
 import {
@@ -18,11 +13,6 @@ import {
 	normalizeAgentInput,
 	normalizeAgents,
 } from './agents';
-import {
-	cloneChannel,
-	normalizeChannelInput,
-	normalizeChannels,
-} from './channels';
 
 export class StoreService {
 	private store: SettingsStore;
@@ -37,7 +27,6 @@ export class StoreService {
 		this.migrateLegacyProviderSettings();
 		this.normalizeStoredProviders();
 		this.normalizeStoredAgents();
-		this.normalizeStoredChannels();
 		this.reconcileStartupState();
 		this.incrementStartupCount();
 	}
@@ -76,42 +65,6 @@ export class StoreService {
 		const normalized = providerId.trim();
 		const providers = this.store.get('providers').filter((p) => p.id !== normalized);
 		this.store.set('providers', providers);
-	}
-
-	// --- Channel methods ---
-
-	getChannels(): Channel[] {
-		return this.store.get('channels').map(cloneChannel);
-	}
-
-	getChannelById(channelId: string): Channel | undefined {
-		const normalized = channelId.trim();
-		return this.getChannels().find((c) => c.id === normalized);
-	}
-
-	/**
-	 * Upsert a channel entry by its `id` (one entry per channel id).
-	 */
-	addChannel(channel: Channel): Channel {
-		const incoming = normalizeChannelInput(channel);
-		if (!incoming) {
-			throw new Error('Invalid channel');
-		}
-		const channels = this.store.get('channels').map(cloneChannel);
-		const index = channels.findIndex((c) => c.id === incoming.id);
-		if (index >= 0) {
-			channels[index] = incoming;
-		} else {
-			channels.push(incoming);
-		}
-		this.store.set('channels', channels);
-		return cloneChannel(incoming);
-	}
-
-	deleteChannel(channelId: string): void {
-		const normalized = channelId.trim();
-		const channels = this.store.get('channels').filter((c) => c.id !== normalized);
-		this.store.set('channels', channels);
 	}
 
 	getProfile(): UserProfile | null {
@@ -263,17 +216,6 @@ export class StoreService {
 
 		if (needsRewrite) {
 			this.store.set('agents', normalized);
-		}
-	}
-
-	private normalizeStoredChannels(): void {
-		const normalized = normalizeChannels(this.rawStore.get('channels'));
-		const current = this.store.get('channels');
-		const needsRewrite =
-			current.length !== normalized.length ||
-			current.some((c, i) => JSON.stringify(c) !== JSON.stringify(normalized[i]));
-		if (needsRewrite) {
-			this.store.set('channels', normalized);
 		}
 	}
 
