@@ -139,8 +139,13 @@ export class StoreService {
 
 	// --- Channel methods ---
 
-	getChannels(): Channel[] {
-		return this.store.get('channels').map((ch) => ({ ...ch, allowFrom: [...ch.allowFrom] }));
+	getChannel(): Channel | null {
+		const channel = this.store.get('channel');
+		if (!channel) return null;
+		return {
+			telegram: { ...channel.telegram, allowFrom: [...channel.telegram.allowFrom] },
+			whatsapp: { ...channel.whatsapp, allowFrom: [...channel.whatsapp.allowFrom] },
+		};
 	}
 
 	// --- Workspace settings ---
