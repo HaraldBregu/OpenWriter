@@ -312,11 +312,6 @@ function Container({ children }: LayoutProps) {
 			icon: Plug,
 		},
 		{
-			value: 'agents',
-			label: t('settings.tabs.agents', 'Agents'),
-			icon: Sparkles,
-		},
-		{
 			value: 'editor',
 			label: t('settings.tabs.editor', 'Editor'),
 			icon: Pencil,
