@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SectionHeader, SettingRow } from '../components';
+import { SectionHeader } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
 import {
@@ -43,70 +43,101 @@ const GeneralPage: React.FC = () => {
 
 			<SectionHeader title={t('settings.sections.application')} />
 
-
-
-			<SettingRow label={t('settings.application.name')}>
-				<span className="text-sm">{__APP_NAME__}</span>
-			</SettingRow>
-
-			<SettingRow label={t('settings.application.description')}>
-				<span className="text-sm text-muted-foreground">{__APP_DESCRIPTION__}</span>
-			</SettingRow>
-
-			<SettingRow label={t('settings.application.version')}>
-				<span className="font-mono text-sm">{__APP_VERSION__}</span>
-			</SettingRow>
-
-			<SettingRow label={t('settings.application.author')}>
-				<span className="text-sm">{__APP_AUTHOR__}</span>
-			</SettingRow>
-
-			<SettingRow label={t('settings.application.license')}>
-				<span className="text-sm">{__APP_LICENSE__}</span>
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.application.accessibility')}
-				description={t('settings.application.accessibilityDescription')}
-			>
-				<Button variant="outline" size="sm" onClick={handleOpenAccessibility}>
-					{t('settings.application.openAccessibility')}
-				</Button>
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.application.screenRecording')}
-				description={t('settings.application.screenRecordingDescription')}
-			>
-				<Button variant="outline" size="sm" onClick={handleOpenScreenRecording}>
-					{t('settings.application.openScreenRecording')}
-				</Button>
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.application.menuBar')}
-				description={t('settings.application.menuBarDescription')}
-			>
-				<Switch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
-			</SettingRow>
-
-			<SettingRow
-				label={t('settings.application.appData')}
-				description={t('settings.application.appDataDescription')}
-			>
-				<Button variant="outline" size="sm" onClick={handleOpenAppDataFolder}>
-					{t('settings.application.openAppData')}
-				</Button>
-			</SettingRow>
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.name')}</ItemRowTitle>
+				</ItemRowContent>
+				<ItemRowActions>
+					<span className="text-sm">{__APP_NAME__}</span>
+				</ItemRowActions>
+			</ItemRow>
 
 			<ItemRow variant="bottom-bordered" size="none">
 				<ItemRowContent>
-					<ItemRowTitle>Default Size</ItemRowTitle>
-					<ItemRowDescription>The standard size for most use cases.</ItemRowDescription>
+					<ItemRowTitle>{t('settings.application.description')}</ItemRowTitle>
 				</ItemRowContent>
 				<ItemRowActions>
-					<Button variant="outline" size="sm">
-						Action
+					<span className="text-sm text-muted-foreground">{__APP_DESCRIPTION__}</span>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.version')}</ItemRowTitle>
+				</ItemRowContent>
+				<ItemRowActions>
+					<span className="font-mono text-sm">{__APP_VERSION__}</span>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.author')}</ItemRowTitle>
+				</ItemRowContent>
+				<ItemRowActions>
+					<span className="text-sm">{__APP_AUTHOR__}</span>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.license')}</ItemRowTitle>
+				</ItemRowContent>
+				<ItemRowActions>
+					<span className="text-sm">{__APP_LICENSE__}</span>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.accessibility')}</ItemRowTitle>
+					<ItemRowDescription>
+						{t('settings.application.accessibilityDescription')}
+					</ItemRowDescription>
+				</ItemRowContent>
+				<ItemRowActions>
+					<Button variant="outline" size="sm" onClick={handleOpenAccessibility}>
+						{t('settings.application.openAccessibility')}
+					</Button>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.screenRecording')}</ItemRowTitle>
+					<ItemRowDescription>
+						{t('settings.application.screenRecordingDescription')}
+					</ItemRowDescription>
+				</ItemRowContent>
+				<ItemRowActions>
+					<Button variant="outline" size="sm" onClick={handleOpenScreenRecording}>
+						{t('settings.application.openScreenRecording')}
+					</Button>
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.menuBar')}</ItemRowTitle>
+					<ItemRowDescription>
+						{t('settings.application.menuBarDescription')}
+					</ItemRowDescription>
+				</ItemRowContent>
+				<ItemRowActions>
+					<Switch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
+				</ItemRowActions>
+			</ItemRow>
+
+			<ItemRow variant="bottom-bordered" size="none">
+				<ItemRowContent>
+					<ItemRowTitle>{t('settings.application.appData')}</ItemRowTitle>
+					<ItemRowDescription>
+						{t('settings.application.appDataDescription')}
+					</ItemRowDescription>
+				</ItemRowContent>
+				<ItemRowActions>
+					<Button variant="outline" size="sm" onClick={handleOpenAppDataFolder}>
+						{t('settings.application.openAppData')}
 					</Button>
 				</ItemRowActions>
 			</ItemRow>
