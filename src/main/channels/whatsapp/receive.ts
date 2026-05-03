@@ -1,5 +1,11 @@
 import type { WASocket } from "@whiskeysockets/baileys";
 
+export type WhatsAppMessageEmit = (msg: {
+  from: string;
+  chatId: string;
+  text: string;
+}) => void;
+
 function extractText(msg: {
   message?: {
     conversation?: string | null;
@@ -14,6 +20,7 @@ function extractText(msg: {
 export function registerTextHandler(
   sock: WASocket,
   allowFrom: Set<string>,
+  emit: WhatsAppMessageEmit,
 ): void {
   // plain text only — skip status broadcasts, own messages, commands
   sock.ev.on("messages.upsert", ({ messages, type }) => {
@@ -31,6 +38,8 @@ export function registerTextHandler(
         console.warn(`Ignored message from unauthorized user ${senderId}`);
         continue;
       }
+
+      emit({ from: senderId, chatId: senderId, text });
     }
   });
 }
