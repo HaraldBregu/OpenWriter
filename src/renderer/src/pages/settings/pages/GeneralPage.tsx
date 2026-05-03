@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
 import {
 	ItemRow,
+	ItemRowActions,
 	ItemRowContent,
 	ItemRowTitle,
 	ItemRowDescription,
