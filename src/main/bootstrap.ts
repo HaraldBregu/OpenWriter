@@ -86,9 +86,6 @@ export function bootstrapServices(): BootstrapResult {
 	// Cron job scheduler
 	container.register('cronService', new CronService(logger));
 
-	// Per-task agent stream logger (userData/stream-logs/<taskId>.jsonl)
-	container.register('streamLogger', new StreamLoggerService(logger));
-
 	// Create WindowFactory with logger access
 	const windowFactory = new WindowFactory(logger);
 	container.register('windowFactory', windowFactory);
