@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { Tool } from "./base.js";
-import { CronService } from "../../cron/index.js";
+import { Tool } from "./base";
+import { CronService } from "../../cron/index";
 
 export class CronAddTool extends Tool {
   name = "cron_add";
