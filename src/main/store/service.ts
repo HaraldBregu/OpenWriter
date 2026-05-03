@@ -4,6 +4,7 @@ import type {
 	AgentSettings,
 	Channel,
 	ChannelType,
+	DiscordChannelProperties,
 	Provider,
 	TelegramChannelProperties,
 	UserProfile,
