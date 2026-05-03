@@ -1,0 +1,1 @@
+export const WHATSAPP_MAX_LENGTH = 65536;
