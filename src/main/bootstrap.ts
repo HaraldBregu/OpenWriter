@@ -35,6 +35,7 @@ import {
 	ContentReviewerAgent,
 } from './agents';
 import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from './assistant';
+import { ChannelRegistry } from './channels';
 import {
 	ContentWriterTaskHandler,
 	ContentReviewerTaskHandler,
