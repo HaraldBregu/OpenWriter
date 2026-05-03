@@ -1,4 +1,4 @@
-import type { AgentSettings, Provider, UserProfile } from '../../shared/types';
+import type { AgentSettings, Channel, Provider, UserProfile } from '../../shared/types';
 
 export interface WorkspaceInfo {
 	path: string;
@@ -8,6 +8,7 @@ export interface WorkspaceInfo {
 export interface StoreSchema {
 	providers: Provider[];
 	agents: AgentSettings[];
+	channels: Channel[];
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
@@ -18,6 +19,7 @@ export interface StoreSchema {
 export const DEFAULTS: StoreSchema = {
 	providers: [],
 	agents: [],
+	channels: [],
 	currentWorkspace: null,
 	recentWorkspaces: [],
 	startupCount: 0,
