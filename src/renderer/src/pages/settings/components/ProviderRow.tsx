@@ -5,7 +5,12 @@ import type { ProviderId } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { SettingRow } from './SettingRow';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+} from '@/components/ui/ItemRow';
 
 const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
 	(acc, providerId) => {
@@ -17,7 +22,7 @@ const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
 	{} as Record<ProviderId, string>
 );
 
-const MASKED_API_KEY = '\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022' as const;
+const MASKED_API_KEY = '••••••••' as const;
 
 interface ProviderRowProps {
 	readonly provider: ProviderId;
@@ -61,63 +66,70 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 	}, [draft, onSave, provider, saving]);
 
 	return (
-		<SettingRow label={PROVIDER_LABELS[provider]} labelFor={editing ? inputId : undefined}>
-			{editing ? (
-				<div className="flex items-center gap-1.5">
-					<Input
-						id={inputId}
-						type="password"
-						value={draft}
-						onChange={(e) => setDraft(e.target.value)}
-						placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key\u2026')}
-						autoComplete="off"
-						spellCheck={false}
-						autoFocus
-						className="h-7 w-48 text-xs font-mono"
-						onKeyDown={(e) => {
-							if (e.key === 'Enter') void handleConfirm();
-							if (e.key === 'Escape') handleCancel();
-						}}
-					/>
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon-xs"
-						aria-label={t('models.form.save', 'Save')}
-						disabled={draft.trim().length === 0 || saving}
-						onClick={() => void handleConfirm()}
-					>
-						{saving ? <Loader2 className="animate-spin" /> : <Check />}
-					</Button>
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon-xs"
-						aria-label={t('common.cancel', 'Cancel')}
-						disabled={saving}
-						onClick={handleCancel}
-						className="text-muted-foreground hover:text-destructive"
-					>
-						<X />
-					</Button>
-				</div>
-			) : (
-				<div className="flex items-center gap-1.5">
-					<span className="text-sm font-mono text-muted-foreground">
-						{hasKey ? MASKED_API_KEY : t('models.form.notSet', 'Not set')}
-					</span>
-					<Button
-						type="button"
-						variant="ghost"
-						size="icon-xs"
-						aria-label={t('common.edit', 'Edit')}
-						onClick={handleEdit}
-						className="text-muted-foreground hover:text-foreground"
-					>
-						<Pencil />
-					</Button>
-				</div>
-			)}
-		</SettingRow>
+		<ItemRow variant="bottom-bordered" size="none">
+			<ItemRowContent>
+				<ItemRowTitle>
+					<label htmlFor={editing ? inputId : undefined}>{PROVIDER_LABELS[provider]}</label>
+				</ItemRowTitle>
+			</ItemRowContent>
+			<ItemRowActions>
+				{editing ? (
+					<>
+						<Input
+							id={inputId}
+							type="password"
+							value={draft}
+							onChange={(e) => setDraft(e.target.value)}
+							placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
+							autoComplete="off"
+							spellCheck={false}
+							autoFocus
+							className="h-7 w-48 text-xs font-mono"
+							onKeyDown={(e) => {
+								if (e.key === 'Enter') void handleConfirm();
+								if (e.key === 'Escape') handleCancel();
+							}}
+						/>
+						<Button
+							type="button"
+							variant="ghost"
+							size="icon-xs"
+							aria-label={t('models.form.save', 'Save')}
+							disabled={draft.trim().length === 0 || saving}
+							onClick={() => void handleConfirm()}
+						>
+							{saving ? <Loader2 className="animate-spin" /> : <Check />}
+						</Button>
+						<Button
+							type="button"
+							variant="ghost"
+							size="icon-xs"
+							aria-label={t('common.cancel', 'Cancel')}
+							disabled={saving}
+							onClick={handleCancel}
+							className="text-muted-foreground hover:text-destructive"
+						>
+							<X />
+						</Button>
+					</>
+				) : (
+					<>
+						<span className="text-sm font-mono text-muted-foreground">
+							{hasKey ? MASKED_API_KEY : t('models.form.notSet', 'Not set')}
+						</span>
+						<Button
+							type="button"
+							variant="ghost"
+							size="icon-xs"
+							aria-label={t('common.edit', 'Edit')}
+							onClick={handleEdit}
+							className="text-muted-foreground hover:text-foreground"
+						>
+							<Pencil />
+						</Button>
+					</>
+				)}
+			</ItemRowActions>
+		</ItemRow>
 	);
 };
