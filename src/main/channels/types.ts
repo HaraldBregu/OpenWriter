@@ -1,6 +1,6 @@
 import type { Channel } from '../../shared/types';
 
-export type ChannelMessageType = 'TELEGRAM' | 'WHATSAPP';
+export type ChannelMessageType = keyof Channel;
 
 export interface ChannelInboundMessage {
 	type: ChannelMessageType;
