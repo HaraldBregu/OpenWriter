@@ -3,7 +3,15 @@ import { useTranslation } from 'react-i18next';
 import { Save, RefreshCw } from 'lucide-react';
 import type { ChannelStatusEvent, ChannelType } from '../../../../../shared/types';
 import { Button } from '@/components/ui/Button';
-import { Field, FieldLabel } from '@/components/ui/Field';
+import {
+	Card,
+	CardAction,
+	CardContent,
+	CardFooter,
+	CardHeader,
+	CardTitle,
+} from '@/components/ui/Card';
+import { Field, FieldGroup, FieldLabel } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
 import { useChannelsContext } from '../Provider';
@@ -54,74 +62,92 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 	const isRestarting = restarting.has(channelType);
 	const isDirty =
 		draft.token !== persistedForType.token || draft.allowFrom !== persistedForType.allowFrom;
+	const isWhatsapp = channelType === 'whatsapp';
 
 	return (
-		<form
-			onSubmit={(e) => {
-				e.preventDefault();
-				void handleSave(channelType);
-			}}
-			className="border-b py-4"
-		>
-			<div className="mb-2 flex items-center justify-between">
-				<FieldLabel className="block text-sm font-medium">{CHANNEL_LABELS[channelType]}</FieldLabel>
-				{status && (
-					<span className="flex items-center gap-2 text-xs text-muted-foreground">
-						<span
-							className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status.status]}`}
-						/>
-						{STATUS_LABELS[status.status]}
-					</span>
-				)}
-			</div>
+		<Card>
+			<form
+				onSubmit={(e) => {
+					e.preventDefault();
+					void handleSave(channelType);
+				}}
+			>
+				<CardHeader>
+					<CardTitle>{CHANNEL_LABELS[channelType]}</CardTitle>
+					{status && (
+						<CardAction>
+							<span className="flex items-center gap-2 text-xs text-muted-foreground">
+								<span
+									className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status.status]}`}
+								/>
+								{STATUS_LABELS[status.status]}
+							</span>
+						</CardAction>
+					)}
+				</CardHeader>
 
-			{channelType === 'whatsapp' ? (
-				<>
-					<Field>
-						<FieldLabel htmlFor={`channel-${channelType}-allow`}>
-							{t('settings.channels.allowFrom', 'Allowed senders (comma-separated)')}
-						</FieldLabel>
-						<Field orientation="horizontal">
+				<CardContent>
+					<FieldGroup>
+						{!isWhatsapp && (
+							<Field>
+								<FieldLabel htmlFor={`channel-${channelType}-token`}>
+									{t('settings.channels.token', 'Token')}
+								</FieldLabel>
+								<Input
+									id={`channel-${channelType}-token`}
+									type="password"
+									value={draft.token}
+									onChange={(e) => patchDraft(channelType, { token: e.target.value })}
+									placeholder={t('settings.channels.tokenPlaceholder', 'Enter token…')}
+									autoComplete="off"
+									spellCheck={false}
+									disabled={isSaving}
+								/>
+							</Field>
+						)}
+
+						<Field>
+							<FieldLabel htmlFor={`channel-${channelType}-allow`}>
+								{t('settings.channels.allowFrom', 'Allowed senders (comma-separated)')}
+							</FieldLabel>
 							<Input
 								id={`channel-${channelType}-allow`}
 								type="text"
 								value={draft.allowFrom}
 								onChange={(e) => patchDraft(channelType, { allowFrom: e.target.value })}
-								placeholder="e.g. 1234567890@s.whatsapp.net"
+								placeholder={
+									isWhatsapp ? 'e.g. 1234567890@s.whatsapp.net' : 'e.g. user1, user2'
+								}
 								autoComplete="off"
 								spellCheck={false}
 								disabled={isSaving}
 							/>
-							<Button
-								type="submit"
-								size="icon"
-								disabled={!isDirty || isSaving}
-								aria-label={t('common.save', 'Save')}
-							>
-								{isSaving ? <Spinner /> : <Save />}
-							</Button>
 						</Field>
-					</Field>
 
-					<div className="mt-4 flex flex-col items-start gap-3">
-						{status?.status === 'qr' && status.qrDataUrl && (
-							<div className="flex flex-col items-start gap-2">
-								<span className="text-xs text-muted-foreground">
+						{isWhatsapp && status?.status === 'qr' && status.qrDataUrl && (
+							<Field>
+								<FieldLabel>
 									{t(
 										'settings.channels.scanQr',
 										'Open WhatsApp → Linked devices → Link a device, then scan:'
 									)}
-								</span>
+								</FieldLabel>
 								<img
 									src={status.qrDataUrl}
 									alt="WhatsApp pairing QR"
 									className="h-56 w-56 rounded border border-border bg-white p-2"
 								/>
-							</div>
+							</Field>
 						)}
+
 						{status?.status === 'error' && status.error && (
 							<span className="text-xs text-red-500">{status.error}</span>
 						)}
+					</FieldGroup>
+				</CardContent>
+
+				<CardFooter className="justify-end gap-2">
+					{isWhatsapp && (
 						<Button
 							type="button"
 							variant="outline"
@@ -140,55 +166,13 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 								</>
 							)}
 						</Button>
-					</div>
-				</>
-			) : (
-				<>
-					<Field>
-						<FieldLabel htmlFor={`channel-${channelType}-token`}>
-							{t('settings.channels.token', 'Token')}
-						</FieldLabel>
-						<Input
-							id={`channel-${channelType}-token`}
-							type="password"
-							value={draft.token}
-							onChange={(e) => patchDraft(channelType, { token: e.target.value })}
-							placeholder={t('settings.channels.tokenPlaceholder', 'Enter token…')}
-							autoComplete="off"
-							spellCheck={false}
-							disabled={isSaving}
-						/>
-					</Field>
-					<Field>
-						<FieldLabel htmlFor={`channel-${channelType}-allow`}>
-							{t('settings.channels.allowFrom', 'Allowed senders (comma-separated)')}
-						</FieldLabel>
-						<Field orientation="horizontal">
-							<Input
-								id={`channel-${channelType}-allow`}
-								type="text"
-								value={draft.allowFrom}
-								onChange={(e) => patchDraft(channelType, { allowFrom: e.target.value })}
-								placeholder="e.g. user1, user2"
-								autoComplete="off"
-								spellCheck={false}
-								disabled={isSaving}
-							/>
-							<Button
-								type="submit"
-								size="icon"
-								disabled={!isDirty || isSaving}
-								aria-label={t('common.save', 'Save')}
-							>
-								{isSaving ? <Spinner /> : <Save />}
-							</Button>
-						</Field>
-					</Field>
-					{status?.status === 'error' && status.error && (
-						<span className="mt-2 block text-xs text-red-500">{status.error}</span>
 					)}
-				</>
-			)}
-		</form>
+					<Button type="submit" size="sm" disabled={!isDirty || isSaving}>
+						{isSaving ? <Spinner /> : <Save className="mr-1 h-3 w-3" />}
+						{t('common.save', 'Save')}
+					</Button>
+				</CardFooter>
+			</form>
+		</Card>
 	);
 }
