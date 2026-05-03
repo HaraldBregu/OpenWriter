@@ -303,14 +303,6 @@ const App: React.FC = () => {
 															}
 														/>
 														<Route
-															path="agents"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<AgentsPage />
-																</Suspense>
-															}
-														/>
-														<Route
 															path="themes"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
