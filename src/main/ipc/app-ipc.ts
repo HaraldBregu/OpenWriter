@@ -371,7 +371,10 @@ export class AppIpc implements IpcModule {
 			wrapSimpleHandler(
 				(
 					type: ChannelType,
-					properties: TelegramChannelProperties | WhatsappChannelProperties
+					properties:
+						| TelegramChannelProperties
+						| WhatsappChannelProperties
+						| DiscordChannelProperties
 				) => store.setChannelProperties(type, properties),
 				AppChannels.setChannelProperties
 			)
