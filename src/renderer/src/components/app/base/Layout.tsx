@@ -306,11 +306,6 @@ function Container({ children }: LayoutProps) {
 			icon: GalleryVerticalEnd,
 		},
 		{
-			value: 'providers',
-			label: t('settings.tabs.providers', 'Providers'),
-			icon: Plug,
-		},
-		{
 			value: 'editor',
 			label: t('settings.tabs.editor', 'Editor'),
 			icon: Pencil,
