@@ -1,6 +1,6 @@
 import { getProvider } from '../../shared/providers';
 import type { Provider } from '../../shared/types';
-import { isRecord } from './utils';
+import { isRecord, nonEmptyTrimmed, stringOrEmpty, trimmedString } from './utils';
 
 /**
  * Parse a Provider entry from arbitrary input. Accepts both the new flat shape
@@ -13,15 +13,15 @@ export function normalizeProviderInput(value: unknown): Provider | null {
 	let id: string | undefined;
 	let name: string | undefined;
 
-	if (typeof value.id === 'string' && value.id.trim().length > 0) {
-		id = value.id.trim();
-		if (typeof value.name === 'string' && value.name.trim().length > 0) {
-			name = value.name.trim();
-		}
-	} else if (isRecord(value.provider) && typeof value.provider.id === 'string') {
-		id = value.provider.id.trim();
-		if (typeof value.provider.name === 'string' && value.provider.name.trim().length > 0) {
-			name = value.provider.name.trim();
+	const directId = nonEmptyTrimmed(value.id);
+	if (directId) {
+		id = directId;
+		name = nonEmptyTrimmed(value.name);
+	} else if (isRecord(value.provider)) {
+		const providerId = trimmedString(value.provider.id);
+		if (providerId) {
+			id = providerId;
+			name = nonEmptyTrimmed(value.provider.name);
 		}
 	}
 
@@ -30,12 +30,7 @@ export function normalizeProviderInput(value: unknown): Provider | null {
 	const known = getProvider(id);
 	const resolvedName = name ?? known?.name ?? id;
 
-	const apiKey =
-		typeof value.apiKey === 'string'
-			? value.apiKey
-			: typeof value.apikey === 'string'
-				? value.apikey
-				: '';
+	const apiKey = stringOrEmpty(value.apiKey) || stringOrEmpty(value.apikey);
 
 	return { id, name: resolvedName, apiKey };
 }
