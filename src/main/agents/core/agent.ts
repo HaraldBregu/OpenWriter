@@ -11,7 +11,7 @@
  *   - Progress and streaming are optional orthogonal concerns.
  */
 
-import type { LoggerService } from '../../services/logger';
+import type { LoggerService } from '../../logger';
 
 export type AgentProgressReporter = (percent: number, message?: string) => void;
 

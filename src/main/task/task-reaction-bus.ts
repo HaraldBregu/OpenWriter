@@ -16,7 +16,7 @@
 
 import type { Disposable } from '../core/service-container';
 import type { EventBus, AppEvent } from '../core/event-bus';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { TaskReactionRegistry } from './task-reaction-registry';
 import type {
 	TaskReactionHandler,

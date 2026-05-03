@@ -5,7 +5,7 @@ import { app } from 'electron';
 import type { StoreService } from '../store';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import { WORKSPACE_VALIDATION_INTERVAL_MS } from '../constants';
 
 const APP_FOLDER = 'OpenWriter';

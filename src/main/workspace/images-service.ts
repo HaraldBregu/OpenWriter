@@ -2,7 +2,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import { IMAGES_EXTENSIONS, type ImageEntry } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 
 const IMAGES_SUBFOLDER = 'images';
 

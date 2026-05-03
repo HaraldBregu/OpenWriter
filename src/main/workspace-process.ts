@@ -14,7 +14,7 @@
 
 import { spawn } from 'node:child_process';
 import { app } from 'electron';
-import type { LoggerService } from './services/logger';
+import type { LoggerService } from './logger';
 
 export interface WorkspaceProcessOptions {
 	workspacePath: string;

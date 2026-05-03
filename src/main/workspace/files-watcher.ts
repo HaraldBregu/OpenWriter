@@ -3,7 +3,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { FileEntryChangeEvent } from '../../shared/types';
 
 const FILES_SUBFOLDER = 'files';

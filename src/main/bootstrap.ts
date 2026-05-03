@@ -19,8 +19,8 @@ import { ServiceContainer, EventBus, WindowFactory, AppState, WindowContextManag
 
 // Services
 import { StoreService } from './store';
-import { LoggerService } from './services/logger';
-import { ThemeService } from './services/theme-service';
+import { LoggerService } from './logger';
+import { ThemeService } from './theme';
 import { CronService } from './cron';
 import { StreamLoggerService } from './services/stream-logger';
 import { FileManager } from './shared/file_manager';

@@ -1,5 +1,5 @@
 import type { TaskHandler, Emit } from '../task-handler';
-import type { LoggerService } from '../../services/logger';
+import type { LoggerService } from '../../logger';
 import type { ServiceResolver } from '../../shared/service-resolver';
 import type { ModelResolver } from '../../shared/model-resolver';
 import type {

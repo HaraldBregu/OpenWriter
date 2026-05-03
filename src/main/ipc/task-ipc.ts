@@ -2,7 +2,7 @@ import { BrowserWindow } from 'electron';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { TaskExecutor } from '../task/task-executor';
 import type { TaskOptions, ActiveTask } from '../task/task-descriptor';
 import type { TaskAction, TaskInfo } from '../../shared/types';

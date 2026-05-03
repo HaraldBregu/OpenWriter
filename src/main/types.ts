@@ -19,7 +19,7 @@ export type { IpcModule } from './ipc/ipc-module';
 
 // ---- Service types -------------------------------------------------------
 export type { WorkspaceState } from './workspace/workspace-service';
-export type { LogLevel, LoggerOptions } from './services/logger';
+export type { LogLevel, LoggerOptions } from './logger';
 export type { WorkspaceInfo, StoreSchema } from './store';
 
 // ---- File utility types --------------------------------------------------

@@ -5,7 +5,7 @@ import path from 'node:path';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { Workspace } from '../workspace';
 import type { ContentsService } from '../workspace/contents-service';
 import type { FilesService } from '../workspace/files-service';

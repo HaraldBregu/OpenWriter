@@ -3,7 +3,7 @@ import { registerCommand } from './ipc-gateway';
 import type { IpcModule } from './ipc-module';
 import type { ServiceContainer } from '../core/service-container';
 import type { EventBus } from '../core/event-bus';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import { AssistantChannels, type AssistantResponseEvent } from '../../shared/channels';
 import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
 

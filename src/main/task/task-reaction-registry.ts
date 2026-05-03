@@ -6,7 +6,7 @@
  * Wildcard handlers (taskType = '*') receive every lifecycle event.
  */
 
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { TaskReactionHandler } from './task-reaction-handler';
 
 export class TaskReactionRegistry {

@@ -2,7 +2,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import { FILES_EXTENSIONS, type FileEntry } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 
 const FILES_SUBFOLDER = 'files';
 

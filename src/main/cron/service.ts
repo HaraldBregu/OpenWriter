@@ -1,6 +1,6 @@
 import cron from 'node-cron';
 import type { Disposable } from '../core/service-container';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { CronJobOptions, RegisteredJob } from './types';
 
 /**

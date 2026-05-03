@@ -166,7 +166,8 @@
       "Bash(yarn build *)",
       "Bash(echo \"BUILD_EXIT=$?\")",
       "Bash(wait %1)",
-      "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)"
+      "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)",
+      "Bash(xargs sed *)"
     ],
     "deny": [
       "Bash(git push --force:*)",

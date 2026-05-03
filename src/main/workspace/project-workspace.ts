@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { app } from 'electron';
 import type { ProjectWorkspaceInfo } from '../../shared/types';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 import type { WorkspaceService } from './workspace-service';
 import type { WorkspaceMetadataService } from './workspace-metadata';
 

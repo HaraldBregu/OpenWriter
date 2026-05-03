@@ -2,7 +2,7 @@ import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import type { FolderEntry, ResourceInfo } from '../../shared/types';
 import type { FileManager } from '../shared/file_manager';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 
 const CONTENTS_SUBFOLDER = 'contents';
 

@@ -6,7 +6,7 @@ import chokidar, { type FSWatcher } from 'chokidar';
 import type { EventBus } from '../core/event-bus';
 import type { Disposable } from '../core/service-container';
 import type { WorkspaceService } from './workspace-service';
-import type { LoggerService } from '../services/logger';
+import type { LoggerService } from '../logger';
 
 // ---------------------------------------------------------------------------
 // Types
