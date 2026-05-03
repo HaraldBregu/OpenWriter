@@ -57,6 +57,7 @@ import type {
 	UserProfile,
 	Channel,
 	ChannelType,
+	ChannelStatusEvent,
 	TelegramChannelProperties,
 	WhatsappChannelProperties,
 } from './types';
