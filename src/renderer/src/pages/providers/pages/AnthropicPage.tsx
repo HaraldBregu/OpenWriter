@@ -73,7 +73,7 @@ export default function AnthropicPage(): ReactElement {
 						</Field>
 					</FieldGroup>
 				</CardContent>
-				<CardFooter>
+				<CardFooter className="justify-end">
 					<Button type="submit" disabled={!isDirty || isSaving}>
 						{isSaving ? <Spinner /> : <Save />}
 						{t('common.save', 'Save')}
