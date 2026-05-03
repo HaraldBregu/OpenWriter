@@ -146,6 +146,13 @@ const app: AppApi = {
 				| WhatsappChannelProperties
 				| DiscordChannelProperties
 		),
+	getChannelStatus: (): Promise<Partial<Record<ChannelType, ChannelStatusEvent>>> =>
+		typedInvokeUnwrap(AppChannels.getChannelStatus),
+	restartChannel: (type: ChannelType): Promise<void> =>
+		typedInvokeUnwrap(AppChannels.restartChannel, type),
+	onChannelStatus: (callback: (event: ChannelStatusEvent) => void): (() => void) => {
+		return typedOn(AppChannels.channelStatusChanged, callback);
+	},
 	getLogs: (limit?: number) => typedInvokeUnwrap(AppChannels.getLogs, limit),
 	openLogsFolder: () => typedInvokeUnwrap(AppChannels.openLogsFolder),
 	openAppDataFolder: () => typedInvokeUnwrap(AppChannels.openAppDataFolder),

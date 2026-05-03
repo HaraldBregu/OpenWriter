@@ -28,6 +28,7 @@ import type {
 	UserProfile,
 	ThemeMode,
 	WhatsappChannelProperties,
+	DiscordChannelProperties,
 	WritingContextMenuAction,
 } from '../../shared/types';
 
