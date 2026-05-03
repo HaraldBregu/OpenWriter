@@ -138,6 +138,29 @@ export const PROVIDERS = [
 	{ id: 'anthropic', name: 'Anthropic', apiKey: '' },
 ] as const satisfies readonly Provider[];
 
+// ---- Channels --------------------------------------------------------------
+
+export type ChannelType = 'TELEGRAM' | 'WHATSAPP';
+
+export interface Channel {
+	id: string;
+	type: ChannelType;
+	enabled: boolean;
+	token: string;
+	allowFrom: string[];
+}
+
+export const CHANNEL_TYPES = [
+	{ id: 'TELEGRAM', name: 'Telegram' },
+	{ id: 'WHATSAPP', name: 'WhatsApp' },
+] as const;
+
+export function isKnownChannelType(value: unknown): value is ChannelType {
+	return (
+		typeof value === 'string' && CHANNEL_TYPES.some((t) => t.id === value)
+	);
+}
+
 /**
  * Single model entry as returned by a provider's `/models` endpoint.
  * Shape is normalised across providers.
