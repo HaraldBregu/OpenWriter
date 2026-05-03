@@ -1,4 +1,4 @@
-import type { AgentSettings, Channel, Provider, UserProfile } from '../../shared/types';
+import type { AgentSettings, ChannelMap, Provider, UserProfile } from '../../shared/types';
 
 export interface WorkspaceInfo {
 	path: string;
