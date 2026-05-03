@@ -2,7 +2,14 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload, AlertCircle, X, CheckCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { SectionHeader, SettingRow } from '../components';
+import {
+	ItemRow,
+	ItemRowActions,
+	ItemRowContent,
+	ItemRowTitle,
+	ItemRowDescription,
+} from '@/components/ui/ItemRow';
+import { SectionHeader } from '../components';
 import type { CustomThemeInfo } from '../../../../../shared/types';
 
 type ImportStatus = 'idle' | 'success' | 'error';
@@ -132,49 +139,69 @@ const ThemesPage: React.FC = () => {
 			)}
 
 			<SectionHeader title={t('settings.themes.actions')} />
-			<div className="flex gap-2 py-3 border-b">
-				<Button variant="outline" size="sm" onClick={handleOpenFolder}>
-					<FolderOpen size={14} className="mr-1.5" />
-					{t('settings.themes.openFolder')}
-				</Button>
-				<Button variant="outline" size="sm" onClick={handleImport}>
-					<Upload size={14} className="mr-1.5" />
-					{t('settings.themes.import')}
-				</Button>
+			<div className="flex flex-col gap-2">
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.themes.openFolder')}</ItemRowTitle>
+					</ItemRowContent>
+					<ItemRowActions>
+						<Button variant="outline" size="sm" onClick={handleOpenFolder}>
+							<FolderOpen size={14} className="mr-1.5" />
+							{t('settings.themes.openFolder')}
+						</Button>
+					</ItemRowActions>
+				</ItemRow>
+				<ItemRow variant="bottom-bordered" size="none">
+					<ItemRowContent>
+						<ItemRowTitle>{t('settings.themes.import')}</ItemRowTitle>
+					</ItemRowContent>
+					<ItemRowActions>
+						<Button variant="outline" size="sm" onClick={handleImport}>
+							<Upload size={14} className="mr-1.5" />
+							{t('settings.themes.import')}
+						</Button>
+					</ItemRowActions>
+				</ItemRow>
 			</div>
 
 			<SectionHeader title={t('settings.themes.installed')} />
 			{themes.length === 0 ? (
 				<p className="text-sm text-muted-foreground py-3">{t('settings.themes.noThemes')}</p>
 			) : (
-				themes.map((theme) => {
-					const isConfirming = confirmDeleteId === theme.id;
-					return (
-						<SettingRow
-							key={theme.id}
-							label={theme.name}
-							description={`${theme.author} · v${theme.version}`}
-						>
-							{isConfirming ? (
-								<button
-									type="button"
-									onClick={() => handleDelete(theme.id)}
-									className="text-sm text-destructive hover:text-destructive/80 transition-colors"
-								>
-									{t('settings.themes.confirmDelete')}
-								</button>
-							) : (
-								<button
-									type="button"
-									onClick={() => setConfirmDeleteId(theme.id)}
-									className="text-muted-foreground hover:text-destructive transition-colors"
-								>
-									<Trash2 size={14} />
-								</button>
-							)}
-						</SettingRow>
-					);
-				})
+				<div className="flex flex-col gap-2">
+					{themes.map((theme) => {
+						const isConfirming = confirmDeleteId === theme.id;
+						return (
+							<ItemRow key={theme.id} variant="bottom-bordered" size="none">
+								<ItemRowContent>
+									<ItemRowTitle>{theme.name}</ItemRowTitle>
+									<ItemRowDescription>
+										{theme.author} · v{theme.version}
+									</ItemRowDescription>
+								</ItemRowContent>
+								<ItemRowActions>
+									{isConfirming ? (
+										<button
+											type="button"
+											onClick={() => handleDelete(theme.id)}
+											className="text-sm text-destructive hover:text-destructive/80 transition-colors"
+										>
+											{t('settings.themes.confirmDelete')}
+										</button>
+									) : (
+										<button
+											type="button"
+											onClick={() => setConfirmDeleteId(theme.id)}
+											className="text-muted-foreground hover:text-destructive transition-colors"
+										>
+											<Trash2 size={14} />
+										</button>
+									)}
+								</ItemRowActions>
+							</ItemRow>
+						);
+					})}
+				</div>
 			)}
 		</div>
 	);
