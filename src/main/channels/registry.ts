@@ -1,8 +1,10 @@
 import { app } from 'electron';
 import path from 'node:path';
-import type { Channel } from '../../shared/types';
+import type { Channel, ChannelStatusEvent, ChannelType } from '../../shared/types';
+import { AppChannels } from '../../shared/channels';
 import type { LoggerService } from '../logger';
 import type { StoreService } from '../store';
+import type { EventBus } from '../core/event-bus';
 import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
@@ -10,17 +12,19 @@ import type {
 	ChannelAdapter,
 	ChannelAdapterFactory,
 	ChannelInboundMessage,
-	ChannelMessageType,
 	ChannelOutboundMessage,
+	ChannelStatusUpdate,
 } from './types';
 
 export class ChannelRegistry {
-	private adapters = new Map<ChannelMessageType, ChannelAdapter>();
-	private factories: Record<ChannelMessageType, ChannelAdapterFactory>;
+	private adapters = new Map<ChannelType, ChannelAdapter>();
+	private factories: Record<ChannelType, ChannelAdapterFactory>;
+	private statusCache = new Map<ChannelType, ChannelStatusEvent>();
 
 	constructor(
 		private store: StoreService,
 		private logger: LoggerService,
+		private eventBus: EventBus,
 		private assistantRegistry: AssistantRegistry
 	) {
 		this.factories = {
@@ -45,12 +49,12 @@ export class ChannelRegistry {
 	async startAll(): Promise<void> {
 		const channel = this.store.getChannel();
 		if (!channel) return;
-		for (const type of Object.keys(this.factories) as ChannelMessageType[]) {
+		for (const type of Object.keys(this.factories) as ChannelType[]) {
 			await this.start(type, channel);
 		}
 	}
 
-	async start(type: ChannelMessageType, channel: Channel): Promise<void> {
+	async start(type: ChannelType, channel: Channel): Promise<void> {
 		if (this.adapters.has(type)) return;
 
 		const factory = this.factories[type];
@@ -64,12 +68,35 @@ export class ChannelRegistry {
 			adapter.onMessage((msg) => {
 				void this.handleMessage(msg);
 			});
+			adapter.onStatus((update) => this.handleStatus(type, update));
 			await adapter.start();
 			this.adapters.set(type, adapter);
 			this.logger.info('ChannelRegistry', `Started ${type} channel`);
 		} catch (err) {
 			this.logger.error('ChannelRegistry', `Failed to start ${type} channel`, err);
+			this.handleStatus(type, { status: 'error', error: String(err) });
 		}
+	}
+
+	async restart(type: ChannelType): Promise<void> {
+		const existing = this.adapters.get(type);
+		if (existing) {
+			try {
+				await existing.stop();
+			} catch (err) {
+				this.logger.error('ChannelRegistry', `Failed to stop ${type} during restart`, err);
+			}
+			this.adapters.delete(type);
+		}
+		const channel = this.store.getChannel();
+		if (!channel) return;
+		await this.start(type, channel);
+	}
+
+	getStatus(): Partial<Record<ChannelType, ChannelStatusEvent>> {
+		const out: Partial<Record<ChannelType, ChannelStatusEvent>> = {};
+		for (const [type, evt] of this.statusCache) out[type] = evt;
+		return out;
 	}
 
 	async send(msg: ChannelOutboundMessage): Promise<void> {
@@ -78,6 +105,18 @@ export class ChannelRegistry {
 			throw new Error(`No active adapter for channel type: ${msg.type}`);
 		}
 		await adapter.send(msg);
+	}
+
+	private handleStatus(type: ChannelType, update: ChannelStatusUpdate): void {
+		const event: ChannelStatusEvent = {
+			type,
+			status: update.status,
+			qrDataUrl: update.qrDataUrl,
+			error: update.error,
+			timestamp: Date.now(),
+		};
+		this.statusCache.set(type, event);
+		this.eventBus.broadcast(AppChannels.channelStatusChanged, event);
 	}
 
 	private async handleMessage(msg: ChannelInboundMessage): Promise<void> {
@@ -102,7 +141,7 @@ export class ChannelRegistry {
 		this.adapters.clear();
 	}
 
-	get(type: ChannelMessageType): ChannelAdapter | undefined {
+	get(type: ChannelType): ChannelAdapter | undefined {
 		return this.adapters.get(type);
 	}
 
