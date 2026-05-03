@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { Save, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
-	Card,
-	CardAction,
-	CardContent,
-	CardDescription,
-	CardFooter,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/Card';
+	Field,
+	FieldDescription,
+	FieldError,
+	FieldGroup,
+	FieldLabel,
+	FieldLegend,
+	FieldSeparator,
+	FieldSet,
+} from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
 import { Spinner } from '@/components/ui/Spinner';
 import type { ChannelStatusEvent } from '../../../../../shared/types';
 import { useChannelsContext } from '../Provider';
@@ -47,35 +47,32 @@ export default function DiscordPage(): ReactElement {
 		draft.token !== persistedDraft.token || draft.allowFrom !== persistedDraft.allowFrom;
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle>Discord</CardTitle>
-				<CardDescription>Connect a Discord bot using its bot token.</CardDescription>
-				{status && (
-					<CardAction>
-						<span className="flex items-center gap-2 text-xs text-muted-foreground">
+		<form
+			onSubmit={(e) => {
+				e.preventDefault();
+				void handleSave('discord');
+			}}
+		>
+			<FieldGroup className="w-full max-w-lg">
+				<FieldSet>
+					<FieldLegend>Discord</FieldLegend>
+					<FieldDescription>Connect a Discord bot using its bot token.</FieldDescription>
+					{status && (
+						<Field orientation="horizontal">
 							<span
 								className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status.status]}`}
 								aria-hidden="true"
 							/>
-							{STATUS_LABELS[status.status]}
-						</span>
-					</CardAction>
-				)}
-			</CardHeader>
-			<CardContent>
-				<form
-					id="discord-form"
-					onSubmit={(e) => {
-						e.preventDefault();
-						void handleSave('discord');
-					}}
-				>
-					<div className="flex flex-col gap-6">
-						<div className="grid gap-2">
-							<Label htmlFor="channel-discord-token">
+							<FieldLabel className="font-normal text-muted-foreground">
+								{STATUS_LABELS[status.status]}
+							</FieldLabel>
+						</Field>
+					)}
+					<FieldGroup>
+						<Field>
+							<FieldLabel htmlFor="channel-discord-token">
 								{t('settings.channels.token', 'Token')}
-							</Label>
+							</FieldLabel>
 							<Input
 								id="channel-discord-token"
 								type="password"
@@ -87,16 +84,17 @@ export default function DiscordPage(): ReactElement {
 								disabled={isSaving}
 								required
 							/>
-						</div>
-						<div className="grid gap-2">
-							<div className="flex items-center">
-								<Label htmlFor="channel-discord-allow">
-									{t('settings.channels.allowFrom', 'Allowed senders')}
-								</Label>
-								<span className="ml-auto text-sm text-muted-foreground">
-									{t('settings.channels.optional', 'Optional')}
-								</span>
-							</div>
+							<FieldDescription>
+								{t(
+									'settings.channels.tokenDescription',
+									'Stored encrypted in your OS keychain.'
+								)}
+							</FieldDescription>
+						</Field>
+						<Field>
+							<FieldLabel htmlFor="channel-discord-allow">
+								{t('settings.channels.allowFrom', 'Allowed senders')}
+							</FieldLabel>
 							<Input
 								id="channel-discord-allow"
 								type="text"
@@ -107,34 +105,37 @@ export default function DiscordPage(): ReactElement {
 								spellCheck={false}
 								disabled={isSaving}
 							/>
-						</div>
-						{status?.status === 'error' && status.error && (
-							<p className="text-sm text-destructive">{status.error}</p>
-						)}
-					</div>
-				</form>
-			</CardContent>
-			<CardFooter className="flex-col gap-2">
-				<Button
-					type="submit"
-					form="discord-form"
-					className="w-full"
-					disabled={!isDirty || isSaving}
-				>
-					{isSaving ? <Spinner /> : <Save />}
-					{t('common.save', 'Save')}
-				</Button>
-				<Button
-					type="button"
-					variant="outline"
-					className="w-full"
-					disabled={isRestarting}
-					onClick={() => void handleRestart('discord')}
-				>
-					{isRestarting ? <Spinner /> : <RefreshCw />}
-					{t('settings.channels.reconnect', 'Reconnect')}
-				</Button>
-			</CardFooter>
-		</Card>
+							<FieldDescription>
+								{t(
+									'settings.channels.allowFromDescription',
+									'Comma-separated list. Leave empty to allow all.'
+								)}
+							</FieldDescription>
+						</Field>
+					</FieldGroup>
+				</FieldSet>
+				{status?.status === 'error' && status.error && (
+					<>
+						<FieldSeparator />
+						<FieldError>{status.error}</FieldError>
+					</>
+				)}
+				<Field orientation="horizontal">
+					<Button type="submit" disabled={!isDirty || isSaving}>
+						{isSaving ? <Spinner /> : <Save />}
+						{t('common.save', 'Save')}
+					</Button>
+					<Button
+						variant="outline"
+						type="button"
+						disabled={isRestarting}
+						onClick={() => void handleRestart('discord')}
+					>
+						{isRestarting ? <Spinner /> : <RefreshCw />}
+						{t('settings.channels.reconnect', 'Reconnect')}
+					</Button>
+				</Field>
+			</FieldGroup>
+		</form>
 	);
 }
