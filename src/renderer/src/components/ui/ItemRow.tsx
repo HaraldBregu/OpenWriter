@@ -39,11 +39,13 @@ const itemRowVariants = cva(
 				default: 'border-transparent',
 				outline: 'border-border',
 				muted: 'border-transparent bg-muted/50',
+				'bottom-bordered': 'rounded-none border-transparent border-b-border',
 			},
 			size: {
 				default: 'gap-2.5 px-3 py-2.5',
 				sm: 'gap-2.5 px-3 py-2.5',
 				xs: 'gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0',
+				none: 'gap-2.5 p-0',
 			},
 		},
 		defaultVariants: {

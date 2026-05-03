@@ -101,9 +101,6 @@ const GeneralPage: React.FC = () => {
 			</SettingRow>
 
 			<ItemRow variant="outline">
-				<ItemRowMedia variant="icon">
-					<Inbox />
-				</ItemRowMedia>
 				<ItemRowContent>
 					<ItemRowTitle>Default Size</ItemRowTitle>
 					<ItemRowDescription>The standard size for most use cases.</ItemRowDescription>
