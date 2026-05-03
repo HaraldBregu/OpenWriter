@@ -455,6 +455,7 @@ export interface EventChannelMap {
 	[AppChannels.writingContextMenuAction]: { data: WritingContextMenuAction };
 	[AppChannels.shortcut]: { data: ShortcutId };
 	[AppChannels.cronTick]: { data: CronTickEvent };
+	[AppChannels.channelStatusChanged]: { data: ChannelStatusEvent };
 	[AppChannels.openTasksDialog]: { data: undefined };
 	[AppChannels.openLogsDialog]: { data: undefined };
 	[AppChannels.openReduxDialog]: { data: undefined };
