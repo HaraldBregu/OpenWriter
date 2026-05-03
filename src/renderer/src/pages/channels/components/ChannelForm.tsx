@@ -118,7 +118,7 @@ export function ChannelForm({ channelType }: ChannelFormProps): ReactElement {
 					)}
 				</CardHeader>
 
-				<CardContent className="py-4">
+				<CardContent>
 					<FieldGroup>
 						{!isWhatsapp && (
 							<Field>
