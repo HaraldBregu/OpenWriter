@@ -15,7 +15,7 @@ export class MemoryManager {
 
 	constructor(assistantId: string) {
 		this.workspace = path.join(app.getPath('userData'), 'assistant-workspace', assistantId);
-		this.templatesDir = path.join(app.getAppPath(), 'src/main/assistant/templates');
+		this.templatesDir = path.join(__dirname, 'templates');
 	}
 
 	async init(): Promise<void> {
