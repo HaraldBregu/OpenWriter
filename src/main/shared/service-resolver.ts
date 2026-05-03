@@ -1,5 +1,5 @@
 import type { Provider } from '../../shared/types';
-import type { StoreService } from '../services/store';
+import type { StoreService } from '../store';
 
 /**
  * ServiceResolver — resolves a configured Provider (with apiKey) from StoreService.
