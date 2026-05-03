@@ -6,6 +6,8 @@ import type {
   ChannelInboundHandler,
   ChannelInboundMessage,
   ChannelOutboundMessage,
+  ChannelStatusHandler,
+  ChannelStatusUpdate,
 } from "../types";
 
 export class DiscordAdapter {
@@ -13,6 +15,7 @@ export class DiscordAdapter {
   private token: string;
   private allowFrom: Set<string>;
   private handlers = new Set<ChannelInboundHandler>();
+  private statusHandlers = new Set<ChannelStatusHandler>();
 
   constructor(opts: DiscordAdapterOptions) {
     this.token = opts.token;
@@ -30,6 +33,12 @@ export class DiscordAdapter {
       const msg: ChannelInboundMessage = { type: "discord", from, chatId, text };
       for (const h of this.handlers) h(msg);
     });
+    this.client.on("error", (err) => {
+      this.emitStatus({ status: "error", error: String(err) });
+    });
+    this.client.on("shardDisconnect", () => {
+      this.emitStatus({ status: "disconnected" });
+    });
   }
 
   onMessage(handler: ChannelInboundHandler): () => void {
@@ -39,15 +48,34 @@ export class DiscordAdapter {
     };
   }
 
+  onStatus(handler: ChannelStatusHandler): () => void {
+    this.statusHandlers.add(handler);
+    return () => {
+      this.statusHandlers.delete(handler);
+    };
+  }
+
+  private emitStatus(update: ChannelStatusUpdate): void {
+    for (const h of this.statusHandlers) h(update);
+  }
+
   async send(msg: ChannelOutboundMessage): Promise<void> {
     await sendChunked(this.client, msg.to, msg.text);
   }
 
   async start(): Promise<void> {
-    await this.client.login(this.token);
+    this.emitStatus({ status: "connecting" });
+    try {
+      await this.client.login(this.token);
+      this.emitStatus({ status: "connected" });
+    } catch (e) {
+      this.emitStatus({ status: "error", error: String(e) });
+      throw e;
+    }
   }
 
   async stop(): Promise<void> {
     await this.client.destroy();
+    this.emitStatus({ status: "disconnected" });
   }
 }
