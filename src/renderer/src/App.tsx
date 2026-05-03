@@ -297,14 +297,6 @@ const App: React.FC = () => {
 															}
 														/>
 														<Route
-															path="providers"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<ProvidersPage />
-																</Suspense>
-															}
-														/>
-														<Route
 															path="themes"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
