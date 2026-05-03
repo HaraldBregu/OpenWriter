@@ -21,6 +21,7 @@ import type {
 	UserProfile,
 	ThemeMode,
 	WhatsappChannelProperties,
+	DiscordChannelProperties,
 	WorkspaceInfo,
 	CreateWorkspaceParams,
 	DocumentConfig,

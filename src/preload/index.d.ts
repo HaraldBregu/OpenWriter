@@ -189,11 +189,21 @@ export interface AppApi {
 	getModels: (providerId: string) => Promise<ProviderModelInfo[]>;
 	/** Get the persisted messaging channel configuration, or null if not set. */
 	getChannel: () => Promise<Channel | null>;
-	/** Set the token + allowFrom properties for a single channel provider (telegram | whatsapp). */
+	/** Set the token + allowFrom properties for a single channel provider. */
 	setChannelProperties: <K extends ChannelType>(
 		type: K,
-		properties: K extends 'telegram' ? TelegramChannelProperties : WhatsappChannelProperties
+		properties: K extends 'telegram'
+			? TelegramChannelProperties
+			: K extends 'whatsapp'
+				? WhatsappChannelProperties
+				: DiscordChannelProperties
 	) => Promise<Channel>;
+	/** Get current connection status for each channel adapter. */
+	getChannelStatus: () => Promise<Partial<Record<ChannelType, ChannelStatusEvent>>>;
+	/** Stop and re-start the adapter for the given channel type. */
+	restartChannel: (type: ChannelType) => Promise<void>;
+	/** Subscribe to channel connection status updates. */
+	onChannelStatus: (callback: (event: ChannelStatusEvent) => void) => () => void;
 	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */
 	getLogs: (limit?: number) => Promise<AppLogEntry[]>;
 	/** Open the application logs folder in the system file explorer. */
