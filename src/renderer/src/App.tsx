@@ -335,6 +335,14 @@ const App: React.FC = () => {
 														/>
 													</Route>
 													<Route
+														path="/channels/*"
+														element={
+															<RouteWrapper>
+																<ChannelsPage />
+															</RouteWrapper>
+														}
+													/>
+													<Route
 														path="/content/:id"
 														element={
 															<RouteWrapper>
