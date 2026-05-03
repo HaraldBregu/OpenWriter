@@ -1,17 +1,7 @@
-import cron, { type ScheduledTask } from 'node-cron';
+import cron from 'node-cron';
 import type { Disposable } from '../core/service-container';
 import type { LoggerService } from '../services/logger';
-
-export interface CronJobOptions {
-	timezone?: string;
-	runOnStart?: boolean;
-}
-
-interface RegisteredJob {
-	id: string;
-	expression: string;
-	task: ScheduledTask;
-}
+import type { CronJobOptions, RegisteredJob } from './types';
 
 /**
  * Service responsible for scheduling and managing recurring jobs
