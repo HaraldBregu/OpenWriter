@@ -1,5 +1,7 @@
 import { app } from 'electron';
 import path from 'node:path';
+import { marked } from 'marked';
+import { markedTerminal } from 'marked-terminal';
 import type { Channel, ChannelStatusEvent, ChannelType } from '../../shared/types';
 import { AppChannels } from '../../shared/channels';
 import type { LoggerService } from '../logger';
@@ -9,6 +11,9 @@ import { AssistantRegistry, DEFAULT_ASSISTANT_ID } from '../assistant';
 import { TelegramAdapter } from './telegram';
 import { WhatsAppAdapter } from './whatsapp';
 import { DiscordAdapter } from './discord';
+import { panel } from './panel';
+
+marked.use(markedTerminal() as Parameters<typeof marked.use>[0]);
 import type {
 	ChannelAdapter,
 	ChannelAdapterFactory,
