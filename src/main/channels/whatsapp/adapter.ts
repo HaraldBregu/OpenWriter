@@ -5,6 +5,7 @@ import {
   type WASocket,
 } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
+import QRCode from "qrcode";
 import { registerTextHandler } from "./receive";
 import { sendChunked } from "./send";
 import type { WhatsAppAdapterOptions } from "./types";
@@ -12,6 +13,8 @@ import type {
   ChannelInboundHandler,
   ChannelInboundMessage,
   ChannelOutboundMessage,
+  ChannelStatusHandler,
+  ChannelStatusUpdate,
 } from "../types";
 
 export class WhatsAppAdapter {
@@ -20,6 +23,7 @@ export class WhatsAppAdapter {
   private sock: WASocket | null = null;
   private stopping = false;
   private handlers = new Set<ChannelInboundHandler>();
+  private statusHandlers = new Set<ChannelStatusHandler>();
 
   constructor(opts: WhatsAppAdapterOptions) {
     this.authDir = opts.auth_dir;
@@ -33,6 +37,17 @@ export class WhatsAppAdapter {
     };
   }
 
+  onStatus(handler: ChannelStatusHandler): () => void {
+    this.statusHandlers.add(handler);
+    return () => {
+      this.statusHandlers.delete(handler);
+    };
+  }
+
+  private emitStatus(update: ChannelStatusUpdate): void {
+    for (const h of this.statusHandlers) h(update);
+  }
+
   async send(msg: ChannelOutboundMessage): Promise<void> {
     if (!this.sock) throw new Error("WhatsApp socket not started");
     await sendChunked(this.sock, msg.to, msg.text);
@@ -40,6 +55,7 @@ export class WhatsAppAdapter {
 
   async start(): Promise<void> {
     this.stopping = false;
+    this.emitStatus({ status: "connecting" });
     await this.connect();
   }
 
@@ -49,6 +65,7 @@ export class WhatsAppAdapter {
       await this.sock.logout().catch(() => undefined);
       this.sock = null;
     }
+    this.emitStatus({ status: "disconnected" });
   }
 
   private async connect(): Promise<void> {
@@ -62,16 +79,28 @@ export class WhatsAppAdapter {
     sock.ev.on("connection.update", (update) => {
       const { connection, lastDisconnect, qr } = update;
       if (qr) {
-        console.log("[WhatsApp] scan QR code (raw):", qr);
+        QRCode.toDataURL(qr)
+          .then((dataUrl) => this.emitStatus({ status: "qr", qrDataUrl: dataUrl }))
+          .catch((e) => {
+            console.error("[WhatsApp] QR encode failed:", e);
+            this.emitStatus({ status: "error", error: String(e) });
+          });
+      }
+      if (connection === "open") {
+        this.emitStatus({ status: "connected" });
       }
       if (connection === "close") {
         const statusCode = (lastDisconnect?.error as Boom | undefined)?.output
           ?.statusCode;
         const loggedOut = statusCode === DisconnectReason.loggedOut;
-        if (!loggedOut && !this.stopping) {
-          this.connect().catch((e) =>
-            console.error("[WhatsApp] reconnect failed:", e),
-          );
+        if (loggedOut || this.stopping) {
+          this.emitStatus({ status: "disconnected" });
+        } else {
+          this.emitStatus({ status: "connecting" });
+          this.connect().catch((e) => {
+            console.error("[WhatsApp] reconnect failed:", e);
+            this.emitStatus({ status: "error", error: String(e) });
+          });
         }
       }
     });
