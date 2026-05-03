@@ -19,7 +19,7 @@ function PageContent(): ReactElement {
 
 	return (
 		<PageContainer>
-			<PageHeader className="px-0 border-none">
+			<PageHeader>
 				<PageHeaderTitle>{t('settings.channels.title', 'Channels')}</PageHeaderTitle>
 				<PageHeaderDescription>
 					{t(
@@ -28,7 +28,7 @@ function PageContent(): ReactElement {
 					)}
 				</PageHeaderDescription>
 			</PageHeader>
-			<PageBody className="px-0">
+			<PageBody>
 				<FieldGroup className="max-w-2xl">
 					{VISIBLE_TYPES.map((channelType) => (
 						<ChannelForm key={channelType} channelType={channelType} />

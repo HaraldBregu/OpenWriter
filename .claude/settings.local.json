@@ -167,7 +167,8 @@
       "Bash(echo \"BUILD_EXIT=$?\")",
       "Bash(wait %1)",
       "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)",
-      "Bash(xargs sed *)"
+      "Bash(xargs sed *)",
+      "Read(//Users/haraldbregu/.claude/**)"
     ],
     "deny": [
       "Bash(git push --force:*)",
