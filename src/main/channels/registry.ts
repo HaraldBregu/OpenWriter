@@ -56,6 +56,7 @@ export class ChannelRegistry {
 		const channel = this.store.getChannel();
 		if (!channel) return;
 		for (const type of Object.keys(this.factories) as ChannelType[]) {
+			if (type === 'whatsapp') continue;
 			await this.start(type, channel);
 		}
 	}
