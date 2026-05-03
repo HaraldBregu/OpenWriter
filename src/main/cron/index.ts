@@ -1,2 +1,2 @@
-export { CronService } from './cron-service';
+export { CronService } from './service';
 export type { CronJobOptions, RegisteredJob } from './types';
