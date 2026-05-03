@@ -44,7 +44,7 @@ export class Assistant {
 		this.getApiKey = opts.getApiKey;
 		this.memory = new MemoryManager(opts.id);
 		this.session = new SessionManager(opts.sessionKey ?? `assistant:${opts.id}`);
-		this.tools = opts.tools ?? [new ReadFileTool(), new WriteFileTool(), new ExecTool()];
+		this.tools = opts.tools ?? defaultTools();
 		this.maxIterations = opts.maxIterations ?? 20;
 	}
 
