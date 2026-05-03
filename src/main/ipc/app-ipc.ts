@@ -18,13 +18,16 @@ import { AppChannels } from '../../shared/channels';
 import { isThemeMode } from '../../shared/theme';
 import type {
 	AgentSettings,
+	ChannelType,
 	ContextMenuDescriptor,
 	CronJobInfo,
 	CronTickEvent,
 	Provider,
 	ProviderModelInfo,
+	TelegramChannelProperties,
 	UserProfile,
 	ThemeMode,
+	WhatsappChannelProperties,
 	WritingContextMenuAction,
 } from '../../shared/types';
 
