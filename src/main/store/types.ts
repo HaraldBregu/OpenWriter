@@ -8,7 +8,7 @@ export interface WorkspaceInfo {
 export interface StoreSchema {
 	providers: Provider[];
 	agents: AgentSettings[];
-	channels: Channel[];
+	channels: Partial<ChannelMap>;
 	currentWorkspace: string | null;
 	recentWorkspaces: WorkspaceInfo[];
 	startupCount: number;
