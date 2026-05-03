@@ -22,6 +22,7 @@ import type {
 	ThemeMode,
 	WhatsappChannelProperties,
 	DiscordChannelProperties,
+	ChannelStatusEvent,
 	WorkspaceInfo,
 	CreateWorkspaceParams,
 	DocumentConfig,
