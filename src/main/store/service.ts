@@ -170,17 +170,23 @@ export class StoreService {
 	): Channel {
 		const current = this.store.get('channel');
 		const baseTelegram = current?.telegram ?? { token: '', allowFrom: [] };
-		const baseWhatsapp = current?.whatsapp ?? { phoneNumber: '' };
+		const baseWhatsapp = current?.whatsapp ?? { phoneNumber: '', token: '' };
 		const baseDiscord = current?.discord ?? { token: '', allowFrom: [] };
 		const base: Channel = {
 			telegram: { ...baseTelegram, allowFrom: [...baseTelegram.allowFrom] },
-			whatsapp: { phoneNumber: baseWhatsapp.phoneNumber ?? '' },
+			whatsapp: {
+				phoneNumber: baseWhatsapp.phoneNumber ?? '',
+				token: baseWhatsapp.token ?? '',
+			},
 			discord: { ...baseDiscord, allowFrom: [...baseDiscord.allowFrom] },
 		};
 		let next: Channel;
 		if (type === 'whatsapp') {
 			const props = properties as WhatsappChannelProperties;
-			next = { ...base, whatsapp: { phoneNumber: props.phoneNumber } };
+			next = {
+				...base,
+				whatsapp: { phoneNumber: props.phoneNumber, token: props.token ?? '' },
+			};
 		} else {
 			const props = properties as TelegramChannelProperties | DiscordChannelProperties;
 			next = {
