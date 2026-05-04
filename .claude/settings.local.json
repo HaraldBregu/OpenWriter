@@ -168,7 +168,8 @@
       "Bash(wait %1)",
       "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)",
       "Bash(xargs sed *)",
-      "Read(//Users/haraldbregu/.claude/**)"
+      "Read(//Users/haraldbregu/.claude/**)",
+      "Bash(echo \"PRE_EXIT=$?\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
