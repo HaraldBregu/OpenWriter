@@ -52,8 +52,13 @@ export default function WhatsappPage(): ReactElement {
 		>
 			<Card>
 				<CardHeader>
-					<CardTitle>WhatsApp</CardTitle>
-					<CardDescription>Pair a WhatsApp account by scanning a QR code.</CardDescription>
+					<CardTitle>{t('channels.whatsapp', 'WhatsApp')}</CardTitle>
+					<CardDescription>
+						{t(
+							'channels.whatsappDescription',
+							'Pair a WhatsApp account by scanning a QR code.'
+						)}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<FieldGroup>
