@@ -39,7 +39,7 @@ const GeneralPage: React.FC = () => {
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.title')}</h1>
 
-			<div className="pb-2">
+			<div className="pt-6 pb-2 first:pt-0">
 				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
 					{t('settings.sections.application')}
 				</h2>
