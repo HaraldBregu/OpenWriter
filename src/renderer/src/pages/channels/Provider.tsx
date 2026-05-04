@@ -107,7 +107,8 @@ export function ChannelsProvider({ children }: ChannelsProviderProps): ReactElem
 
 			const isWhatsapp = channelType === 'whatsapp';
 			const isDirty = isWhatsapp
-				? draft.phoneNumber !== persistedForType.phoneNumber
+				? draft.phoneNumber !== persistedForType.phoneNumber ||
+					draft.token !== persistedForType.token
 				: draft.token !== persistedForType.token ||
 					draft.allowFrom !== persistedForType.allowFrom;
 			if (!isDirty) return;
@@ -117,6 +118,7 @@ export function ChannelsProvider({ children }: ChannelsProviderProps): ReactElem
 				const next = isWhatsapp
 					? await window.app.setChannelProperties('whatsapp', {
 							phoneNumber: sanitizePhoneNumber(draft.phoneNumber),
+							token: draft.token.trim(),
 						})
 					: channelType === 'telegram'
 						? await window.app.setChannelProperties('telegram', {
