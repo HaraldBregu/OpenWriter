@@ -1,10 +1,18 @@
 import {
   DisconnectReason,
+  fetchLatestBaileysVersion,
+  makeCacheableSignalKeyStore,
   makeWASocket,
+  proto,
   useMultiFileAuthState,
+  type CacheStore,
+  type WAMessageContent,
+  type WAMessageKey,
   type WASocket,
 } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
+import NodeCache from "@cacheable/node-cache";
+import pino from "pino";
 import { registerTextHandler } from "./receive";
 import { sendChunked } from "./send";
 import type { WhatsAppAdapterOptions } from "./types";
@@ -25,8 +33,11 @@ export class WhatsAppAdapter {
   private phoneNumber: string;
   private sock: WASocket | null = null;
   private stopping = false;
+  private pairingRequested = false;
   private handlers = new Set<ChannelInboundHandler>();
   private statusHandlers = new Set<ChannelStatusHandler>();
+  private msgRetryCounterCache: CacheStore = new NodeCache() as unknown as CacheStore;
+  private logger = pino({ level: "silent" });
 
   constructor(opts: WhatsAppAdapterOptions) {
     this.authDir = opts.auth_dir;
@@ -61,6 +72,7 @@ export class WhatsAppAdapter {
       throw new Error("WhatsApp phone number is required for pairing-code login");
     }
     this.stopping = false;
+    this.pairingRequested = false;
     this.emitStatus({ status: "connecting" });
     await this.connect();
   }
@@ -80,46 +92,71 @@ export class WhatsAppAdapter {
 
   private async connect(): Promise<void> {
     const { state, saveCreds } = await useMultiFileAuthState(this.authDir);
+    const { version } = await fetchLatestBaileysVersion();
 
-    const sock = makeWASocket({ auth: state, printQRInTerminal: false });
+    const sock = makeWASocket({
+      version,
+      logger: this.logger,
+      auth: {
+        creds: state.creds,
+        keys: makeCacheableSignalKeyStore(state.keys, this.logger),
+      },
+      msgRetryCounterCache: this.msgRetryCounterCache,
+      generateHighQualityLinkPreview: true,
+      getMessage: this.getMessage,
+    });
     this.sock = sock;
 
-    sock.ev.on("creds.update", saveCreds);
-
-    sock.ev.on("connection.update", (update) => {
-      const { connection, lastDisconnect } = update;
-      if (connection === "open") {
-        this.emitStatus({ status: "connected" });
+    sock.ev.process(async (events) => {
+      if (events["creds.update"]) {
+        await saveCreds();
       }
-      if (connection === "close") {
-        const statusCode = (lastDisconnect?.error as Boom | undefined)?.output
-          ?.statusCode;
-        const loggedOut = statusCode === DisconnectReason.loggedOut;
-        if (loggedOut || this.stopping) {
-          this.emitStatus({ status: "disconnected" });
-        } else {
-          this.emitStatus({ status: "connecting" });
-          this.connect().catch((e) => {
-            console.error("[WhatsApp] reconnect failed:", e);
+
+      if (events["connection.update"]) {
+        const update = events["connection.update"];
+        const { connection, lastDisconnect, qr } = update;
+
+        if (qr && !sock.authState.creds.registered && !this.pairingRequested) {
+          this.pairingRequested = true;
+          try {
+            const code = await sock.requestPairingCode(this.phoneNumber);
+            this.emitStatus({ status: "pairing_code", pairingCode: code });
+          } catch (e) {
+            console.error("[WhatsApp] pairing code request failed:", e);
             this.emitStatus({ status: "error", error: String(e) });
-          });
+          }
+        }
+
+        if (connection === "open") {
+          this.emitStatus({ status: "connected" });
+        }
+
+        if (connection === "close") {
+          const statusCode = (lastDisconnect?.error as Boom | undefined)?.output
+            ?.statusCode;
+          const loggedOut = statusCode === DisconnectReason.loggedOut;
+          if (loggedOut || this.stopping) {
+            this.emitStatus({ status: "disconnected" });
+          } else {
+            this.emitStatus({ status: "connecting" });
+            this.connect().catch((e) => {
+              console.error("[WhatsApp] reconnect failed:", e);
+              this.emitStatus({ status: "error", error: String(e) });
+            });
+          }
         }
       }
     });
-
-    if (!sock.authState.creds.registered) {
-      try {
-        const code = await sock.requestPairingCode(this.phoneNumber);
-        this.emitStatus({ status: "pairing_code", pairingCode: code });
-      } catch (e) {
-        console.error("[WhatsApp] pairing code request failed:", e);
-        this.emitStatus({ status: "error", error: String(e) });
-      }
-    }
 
     registerTextHandler(sock, ({ from, chatId, text }) => {
       const msg: ChannelInboundMessage = { type: "whatsapp", from, chatId, text };
       for (const h of this.handlers) h(msg);
     });
   }
+
+  private getMessage = async (
+    _key: WAMessageKey,
+  ): Promise<WAMessageContent | undefined> => {
+    return proto.Message.create({ conversation: "" });
+  };
 }
