@@ -271,6 +271,10 @@ export interface InvokeChannelMap {
 		result: Partial<Record<ChannelType, ChannelStatusEvent>>;
 	};
 	[AppChannels.restartChannel]: { args: [type: ChannelType]; result: void };
+	[AppChannels.requestWhatsappPairingCode]: {
+		args: [phoneNumber: string];
+		result: string;
+	};
 	// ---- Workspace (IpcResult-wrapped) ----
 	[WorkspaceChannels.getCurrent]: { args: []; result: string | null };
 	[WorkspaceChannels.setCurrent]: { args: [workspacePath: string]; result: void };
