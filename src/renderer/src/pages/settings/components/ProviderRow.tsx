@@ -126,7 +126,7 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 						</Button>
 					</>
 				)}
-			</ItemRowActions>
-		</ItemRow>
+			</div>
+		</div>
 	);
 };
