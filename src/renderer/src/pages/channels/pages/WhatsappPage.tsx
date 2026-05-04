@@ -17,11 +17,17 @@ import { useChannelsContext } from '../Provider';
 
 const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 	connecting: 'bg-yellow-500',
-	qr: 'bg-blue-500',
+	pairing_code: 'bg-blue-500',
 	connected: 'bg-green-500',
 	disconnected: 'bg-gray-400',
 	error: 'bg-red-500',
 };
+
+function formatPairingCode(raw: string): string {
+	const compact = raw.replace(/\s+/g, '').toUpperCase();
+	if (compact.length === 8) return `${compact.slice(0, 4)}-${compact.slice(4)}`;
+	return compact;
+}
 
 export default function WhatsappPage(): ReactElement {
 	const { t } = useTranslation();
@@ -33,7 +39,7 @@ export default function WhatsappPage(): ReactElement {
 	const status = statuses.whatsapp;
 	const isSaving = saving.has('whatsapp');
 	const isRestarting = restarting.has('whatsapp');
-	const isDirty = draft.allowFrom !== persistedDraft.allowFrom;
+	const isDirty = draft.phoneNumber !== persistedDraft.phoneNumber;
 
 	return (
 		<form
@@ -48,7 +54,7 @@ export default function WhatsappPage(): ReactElement {
 				<Muted>
 					{t(
 						'channels.whatsappDescription',
-						'Pair a WhatsApp account by scanning a QR code.'
+						'Pair a WhatsApp account with an 8-character code shown on this screen.'
 					)}
 				</Muted>
 			</div>
@@ -65,40 +71,40 @@ export default function WhatsappPage(): ReactElement {
 					</Field>
 				)}
 				<Field>
-					<FieldLabel htmlFor="channel-whatsapp-allow">
-						{t('settings.channels.allowFrom', 'Allowed senders')}
+					<FieldLabel htmlFor="channel-whatsapp-phone">
+						{t('settings.channels.phoneNumber', 'Phone number')}
 					</FieldLabel>
 					<Input
-						id="channel-whatsapp-allow"
-						type="text"
-						value={draft.allowFrom}
-						onChange={(e) => patchDraft('whatsapp', { allowFrom: e.target.value })}
-						placeholder="e.g. 1234567890@s.whatsapp.net"
+						id="channel-whatsapp-phone"
+						type="tel"
+						inputMode="tel"
+						value={draft.phoneNumber}
+						onChange={(e) => patchDraft('whatsapp', { phoneNumber: e.target.value })}
+						placeholder="e.g. 393331234567"
 						autoComplete="off"
 						spellCheck={false}
 						disabled={isSaving}
+						required
 					/>
 					<FieldDescription>
 						{t(
-							'settings.channels.allowFromDescription',
-							'Comma-separated list. Leave empty to allow all.'
+							'settings.channels.phoneNumberDescription',
+							'Digits only, including country code (no +, no spaces).'
 						)}
 					</FieldDescription>
 				</Field>
-				{status?.status === 'qr' && status.qrDataUrl && (
+				{status?.status === 'pairing_code' && status.pairingCode && (
 					<Field>
 						<FieldLabel>
 							{t(
-								'settings.channels.scanQr',
-								'Open WhatsApp → Linked devices → Link a device, then scan:'
+								'settings.channels.enterPairingCode',
+								'Open WhatsApp → Linked devices → Link with phone number, then enter:'
 							)}
 						</FieldLabel>
 						<div className="flex justify-center">
-							<img
-								src={status.qrDataUrl}
-								alt="WhatsApp pairing QR"
-								className="h-48 w-48 rounded-md border border-border bg-white p-2"
-							/>
+							<code className="rounded-md border border-border bg-muted px-4 py-3 font-mono text-2xl tracking-[0.4em] select-all">
+								{formatPairingCode(status.pairingCode)}
+							</code>
 						</div>
 					</Field>
 				)}
@@ -110,7 +116,7 @@ export default function WhatsappPage(): ReactElement {
 				<Button
 					variant="outline"
 					type="button"
-					disabled={isRestarting}
+					disabled={isRestarting || !persistedDraft.phoneNumber}
 					onClick={() => void handleRestart('whatsapp')}
 				>
 					{isRestarting ? <Spinner /> : <RefreshCw />}
