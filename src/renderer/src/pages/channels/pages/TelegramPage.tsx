@@ -53,9 +53,12 @@ export default function TelegramPage(): ReactElement {
 		>
 			<Card>
 				<CardHeader>
-					<CardTitle>Telegram</CardTitle>
+					<CardTitle>{t('channels.telegram', 'Telegram')}</CardTitle>
 					<CardDescription>
-						Connect a Telegram bot using a token from @BotFather.
+						{t(
+							'channels.telegramDescription',
+							'Connect a Telegram bot using a token from @BotFather.'
+						)}
 					</CardDescription>
 				</CardHeader>
 				<CardContent>
