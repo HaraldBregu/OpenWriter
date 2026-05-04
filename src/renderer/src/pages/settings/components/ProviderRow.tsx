@@ -60,13 +60,16 @@ export const ProviderRow: React.FC<ProviderRowProps> = ({ provider, existingKey,
 	}, [draft, onSave, provider, saving]);
 
 	return (
-		<ItemRow variant="bottom-bordered" size="none">
-			<ItemRowContent>
-				<ItemRowTitle>
-					<label htmlFor={editing ? inputId : undefined}>{PROVIDER_LABELS[provider]}</label>
-				</ItemRowTitle>
-			</ItemRowContent>
-			<ItemRowActions>
+		<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+			<div className="flex flex-1 flex-col gap-1">
+				<label
+					htmlFor={editing ? inputId : undefined}
+					className="text-sm leading-snug font-medium"
+				>
+					{PROVIDER_LABELS[provider]}
+				</label>
+			</div>
+			<div className="flex items-center gap-2">
 				{editing ? (
 					<>
 						<Input
