@@ -466,6 +466,43 @@
 		"openFolder": "Open folder",
 		"search": "Search"
 	},
+	"providers": {
+		"title": "Providers",
+		"openai": "OpenAI",
+		"anthropic": "Anthropic",
+		"openaiDescription": "Configure your OpenAI API key to use GPT models.",
+		"anthropicDescription": "Configure your Anthropic API key to use Claude models.",
+		"apiKey": "API key",
+		"apiKeyDescription": "Stored encrypted in your OS keychain."
+	},
+	"agents": {
+		"title": "Agents",
+		"contentReviewer": "Content Reviewer",
+		"contentWriter": "Content Writer",
+		"imageCreator": "Image Creator",
+		"assistant": "Assistant"
+	},
+	"channels": {
+		"title": "Channels",
+		"telegram": "Telegram",
+		"whatsapp": "WhatsApp",
+		"discord": "Discord",
+		"telegramDescription": "Connect a Telegram bot using a token from @BotFather.",
+		"whatsappDescription": "Pair a WhatsApp account by scanning a QR code.",
+		"discordDescription": "Connect a Discord bot using its bot token.",
+		"status": {
+			"connecting": "Connecting…",
+			"qr": "Scan QR",
+			"connected": "Connected",
+			"disconnected": "Disconnected",
+			"error": "Error"
+		}
+	},
+	"models": {
+		"form": {
+			"apiKeyPlaceholder": "Enter API key…"
+		}
+	},
 	"sidebar": {
 		"write": "Write",
 		"newPost": "New Post",
