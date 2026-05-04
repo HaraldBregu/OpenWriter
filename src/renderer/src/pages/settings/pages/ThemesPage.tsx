@@ -2,14 +2,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FolderOpen, Upload, AlertCircle, X, CheckCircle, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
-import { SectionHeader } from '../components';
 import type { CustomThemeInfo } from '../../../../../shared/types';
 
 type ImportStatus = 'idle' | 'success' | 'error';
