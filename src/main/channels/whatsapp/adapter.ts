@@ -68,7 +68,11 @@ export class WhatsAppAdapter {
   async stop(): Promise<void> {
     this.stopping = true;
     if (this.sock) {
-      await this.sock.logout().catch(() => undefined);
+      try {
+        this.sock.end(undefined);
+      } catch {
+        // ignore
+      }
       this.sock = null;
     }
     this.emitStatus({ status: "disconnected" });
