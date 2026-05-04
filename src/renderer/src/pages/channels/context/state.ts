@@ -3,9 +3,10 @@ import type { Channel, ChannelStatusEvent, ChannelType } from '../../../../../sh
 export interface DraftProperties {
 	readonly token: string;
 	readonly allowFrom: string;
+	readonly phoneNumber: string;
 }
 
-export const EMPTY_DRAFT: DraftProperties = { token: '', allowFrom: '' };
+export const EMPTY_DRAFT: DraftProperties = { token: '', allowFrom: '', phoneNumber: '' };
 
 export interface ChannelsState {
 	channel: Channel | null;
