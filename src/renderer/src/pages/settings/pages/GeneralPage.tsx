@@ -3,13 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { SectionHeader } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
 
 const GeneralPage: React.FC = () => {
 	const { t } = useTranslation();
@@ -37,6 +30,12 @@ const GeneralPage: React.FC = () => {
 		window.app.openAppDataFolder();
 	}, []);
 
+	const rowClass = 'flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm';
+	const contentClass = 'flex flex-1 flex-col gap-1';
+	const titleClass = 'text-sm leading-snug font-medium';
+	const descriptionClass = 'text-sm leading-normal text-muted-foreground';
+	const actionsClass = 'flex items-center gap-2';
+
 	return (
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.title')}</h1>
@@ -44,104 +43,104 @@ const GeneralPage: React.FC = () => {
 			<SectionHeader title={t('settings.sections.application')} />
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.name')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.name')}</h3>
+					</div>
+					<div className={actionsClass}>
 						<span className="text-sm">{__APP_NAME__}</span>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.description')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.description')}</h3>
+					</div>
+					<div className={actionsClass}>
 						<span className="text-sm text-muted-foreground">{__APP_DESCRIPTION__}</span>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.version')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.version')}</h3>
+					</div>
+					<div className={actionsClass}>
 						<span className="font-mono text-sm">{__APP_VERSION__}</span>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.author')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.author')}</h3>
+					</div>
+					<div className={actionsClass}>
 						<span className="text-sm">{__APP_AUTHOR__}</span>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.license')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.license')}</h3>
+					</div>
+					<div className={actionsClass}>
 						<span className="text-sm">{__APP_LICENSE__}</span>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.accessibility')}</ItemRowTitle>
-						<ItemRowDescription>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.accessibility')}</h3>
+						<p className={descriptionClass}>
 							{t('settings.application.accessibilityDescription')}
-						</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+						</p>
+					</div>
+					<div className={actionsClass}>
 						<Button variant="outline" size="sm" onClick={handleOpenAccessibility}>
 							{t('settings.application.openAccessibility')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.screenRecording')}</ItemRowTitle>
-						<ItemRowDescription>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.screenRecording')}</h3>
+						<p className={descriptionClass}>
 							{t('settings.application.screenRecordingDescription')}
-						</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+						</p>
+					</div>
+					<div className={actionsClass}>
 						<Button variant="outline" size="sm" onClick={handleOpenScreenRecording}>
 							{t('settings.application.openScreenRecording')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.menuBar')}</ItemRowTitle>
-						<ItemRowDescription>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.menuBar')}</h3>
+						<p className={descriptionClass}>
 							{t('settings.application.menuBarDescription')}
-						</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+						</p>
+					</div>
+					<div className={actionsClass}>
 						<Switch checked={trayEnabled} onCheckedChange={handleTrayToggle} />
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.application.appData')}</ItemRowTitle>
-						<ItemRowDescription>
+				<div className={rowClass}>
+					<div className={contentClass}>
+						<h3 className={titleClass}>{t('settings.application.appData')}</h3>
+						<p className={descriptionClass}>
 							{t('settings.application.appDataDescription')}
-						</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+						</p>
+					</div>
+					<div className={actionsClass}>
 						<Button variant="outline" size="sm" onClick={handleOpenAppDataFolder}>
 							{t('settings.application.openAppData')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
