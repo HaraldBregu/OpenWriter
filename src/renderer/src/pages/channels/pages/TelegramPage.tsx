@@ -17,7 +17,7 @@ import { useChannelsContext } from '../Provider';
 
 const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 	connecting: 'bg-yellow-500',
-	qr: 'bg-blue-500',
+	pairing_code: 'bg-blue-500',
 	connected: 'bg-green-500',
 	disconnected: 'bg-gray-400',
 	error: 'bg-red-500',
