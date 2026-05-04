@@ -49,6 +49,7 @@
 	"dependencies": {
 		"@anthropic-ai/sdk": "^0.92.0",
 		"@base-ui/react": "^1.2.0",
+		"@cacheable/node-cache": "^1.4.0",
 		"@electron-toolkit/preload": "^3.0.1",
 		"@electron-toolkit/utils": "^4.0.0",
 		"@embedpdf/react-pdf-viewer": "^2.14.0",
