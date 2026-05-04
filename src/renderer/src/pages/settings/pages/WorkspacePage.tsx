@@ -146,15 +146,21 @@ const WorkspacePage: React.FC = () => {
 				</p>
 			)}
 
-			<SectionHeader title={t('workspacePage.sections.baseInfo')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('workspacePage.sections.baseInfo')}
+				</h2>
+			</div>
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('workspacePage.path')}</ItemRowTitle>
-						<ItemRowDescription>{t('workspacePage.pathDescription')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('workspacePage.path')}</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('workspacePage.pathDescription')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<span
 							className="font-mono text-xs truncate max-w-xs inline-block text-muted-foreground"
 							title={currentWorkspace ?? t('workspacePage.notSet')}
@@ -176,17 +182,19 @@ const WorkspacePage: React.FC = () => {
 								<FolderOpen className="h-3.5 w-3.5" aria-hidden="true" />
 							</button>
 						)}
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
 				{!isLoading && currentWorkspace && projectInfo && (
 					<>
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.name')}</ItemRowTitle>
-								<ItemRowDescription>{t('workspacePage.nameDescription')}</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">{t('workspacePage.name')}</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
+									{t('workspacePage.nameDescription')}
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								{editingField === 'name' ? (
 									<Input
 										autoFocus
@@ -213,17 +221,19 @@ const WorkspacePage: React.FC = () => {
 										)}
 									</button>
 								)}
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.descriptionLabel')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.descriptionLabel')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.descriptionDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								{editingField === 'description' ? (
 									<Input
 										ref={descriptionInputRef}
@@ -250,78 +260,92 @@ const WorkspacePage: React.FC = () => {
 										)}
 									</button>
 								)}
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.projectId')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.projectId')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.projectIdDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								<span className="font-mono text-xs text-muted-foreground truncate max-w-[14rem] inline-block">
 									{projectInfo.projectId}
 								</span>
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 					</>
 				)}
 			</div>
 
 			{!isLoading && currentWorkspace && projectInfo && (
 				<>
-					<SectionHeader title={t('workspacePage.sections.versioning')} />
+					<div className="pt-6 pb-2 first:pt-0">
+						<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+							{t('workspacePage.sections.versioning')}
+						</h2>
+					</div>
 
 					<div className="flex flex-col gap-2">
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.schemaVersion')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.schemaVersion')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.schemaVersionDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								<span className="font-mono text-sm">{projectInfo.version}</span>
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.appVersion')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.appVersion')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.appVersionDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								<span className="font-mono text-sm">{projectInfo.appVersion}</span>
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.createdAt')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.createdAt')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.createdAtDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								<span className="text-sm">{formatDate(projectInfo.createdAt)}</span>
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 
-						<ItemRow variant="bottom-bordered" size="none">
-							<ItemRowContent>
-								<ItemRowTitle>{t('workspacePage.updatedAt')}</ItemRowTitle>
-								<ItemRowDescription>
+						<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+							<div className="flex flex-1 flex-col gap-1">
+								<h3 className="text-sm leading-snug font-medium">
+									{t('workspacePage.updatedAt')}
+								</h3>
+								<p className="text-sm leading-normal text-muted-foreground">
 									{t('workspacePage.updatedAtDescription')}
-								</ItemRowDescription>
-							</ItemRowContent>
-							<ItemRowActions>
+								</p>
+							</div>
+							<div className="flex items-center gap-2">
 								<span className="text-sm">{formatDate(projectInfo.updatedAt)}</span>
-							</ItemRowActions>
-						</ItemRow>
+							</div>
+						</div>
 					</div>
 				</>
 			)}
