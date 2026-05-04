@@ -293,7 +293,10 @@
 			"description": "Configure the AI model and parameters for each agent.",
 			"subtitle": "Configure the model assignments each agent uses for its work.",
 			"provider": "Provider",
+			"providerPlaceholder": "Select provider",
 			"model": "Model",
+			"modelPlaceholder": "Select model",
+			"modelsLoading": "Loading…",
 			"textModel": "Text generation",
 			"textModelDescription": "Used by the assistant for writing, chat, reasoning, and document edits.",
 			"imageModel": "Image generation",
@@ -305,6 +308,15 @@
 			"saved": "Saved",
 			"loadError": "Unable to load agent settings.",
 			"saveError": "Unable to save agent settings."
+		},
+		"channels": {
+			"token": "Token",
+			"tokenDescription": "Stored encrypted in your OS keychain.",
+			"allowFrom": "Allowed senders",
+			"allowFromDescription": "Comma-separated list. Leave empty to allow all.",
+			"reconnect": "Reconnect",
+			"pair": "Pair / Connect",
+			"scanQr": "Open WhatsApp → Linked devices → Link a device, then scan:"
 		},
 		"themes": {
 			"title": "Themes",
