@@ -53,8 +53,10 @@ export default function DiscordPage(): ReactElement {
 		>
 			<Card>
 				<CardHeader>
-					<CardTitle>Discord</CardTitle>
-					<CardDescription>Connect a Discord bot using its bot token.</CardDescription>
+					<CardTitle>{t('channels.discord', 'Discord')}</CardTitle>
+					<CardDescription>
+						{t('channels.discordDescription', 'Connect a Discord bot using its bot token.')}
+					</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<FieldGroup>
