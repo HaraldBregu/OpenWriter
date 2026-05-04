@@ -45,9 +45,9 @@ export class ChannelRegistry {
 						app.getPath('userData'),
 						'channels',
 						'whatsapp',
-						ch.whatsapp.token || 'default'
+						ch.whatsapp.phoneNumber || 'default'
 					),
-					allow_from: ch.whatsapp.allowFrom,
+					phone_number: ch.whatsapp.phoneNumber,
 				}),
 			discord: (ch) =>
 				new DiscordAdapter({
