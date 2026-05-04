@@ -5,7 +5,6 @@ import {
   type WASocket,
 } from "@whiskeysockets/baileys";
 import { Boom } from "@hapi/boom";
-import QRCode from "qrcode";
 import { registerTextHandler } from "./receive";
 import { sendChunked } from "./send";
 import type { WhatsAppAdapterOptions } from "./types";
@@ -17,9 +16,13 @@ import type {
   ChannelStatusUpdate,
 } from "../types";
 
+function sanitizePhoneNumber(raw: string): string {
+  return raw.replace(/[^\d]/g, "");
+}
+
 export class WhatsAppAdapter {
   private authDir: string;
-  private allowFrom: Set<string>;
+  private phoneNumber: string;
   private sock: WASocket | null = null;
   private stopping = false;
   private handlers = new Set<ChannelInboundHandler>();
@@ -27,7 +30,7 @@ export class WhatsAppAdapter {
 
   constructor(opts: WhatsAppAdapterOptions) {
     this.authDir = opts.auth_dir;
-    this.allowFrom = new Set(opts.allow_from.map(String));
+    this.phoneNumber = sanitizePhoneNumber(opts.phone_number);
   }
 
   onMessage(handler: ChannelInboundHandler): () => void {
@@ -54,6 +57,9 @@ export class WhatsAppAdapter {
   }
 
   async start(): Promise<void> {
+    if (!this.phoneNumber) {
+      throw new Error("WhatsApp phone number is required for pairing-code login");
+    }
     this.stopping = false;
     this.emitStatus({ status: "connecting" });
     await this.connect();
@@ -71,21 +77,13 @@ export class WhatsAppAdapter {
   private async connect(): Promise<void> {
     const { state, saveCreds } = await useMultiFileAuthState(this.authDir);
 
-    const sock = makeWASocket({ auth: state });
+    const sock = makeWASocket({ auth: state, printQRInTerminal: false });
     this.sock = sock;
 
     sock.ev.on("creds.update", saveCreds);
 
     sock.ev.on("connection.update", (update) => {
-      const { connection, lastDisconnect, qr } = update;
-      if (qr) {
-        QRCode.toDataURL(qr)
-          .then((dataUrl) => this.emitStatus({ status: "qr", qrDataUrl: dataUrl }))
-          .catch((e) => {
-            console.error("[WhatsApp] QR encode failed:", e);
-            this.emitStatus({ status: "error", error: String(e) });
-          });
-      }
+      const { connection, lastDisconnect } = update;
       if (connection === "open") {
         this.emitStatus({ status: "connected" });
       }
@@ -105,7 +103,17 @@ export class WhatsAppAdapter {
       }
     });
 
-    registerTextHandler(sock, this.allowFrom, ({ from, chatId, text }) => {
+    if (!sock.authState.creds.registered) {
+      try {
+        const code = await sock.requestPairingCode(this.phoneNumber);
+        this.emitStatus({ status: "pairing_code", pairingCode: code });
+      } catch (e) {
+        console.error("[WhatsApp] pairing code request failed:", e);
+        this.emitStatus({ status: "error", error: String(e) });
+      }
+    }
+
+    registerTextHandler(sock, ({ from, chatId, text }) => {
       const msg: ChannelInboundMessage = { type: "whatsapp", from, chatId, text };
       for (const h of this.handlers) h(msg);
     });
