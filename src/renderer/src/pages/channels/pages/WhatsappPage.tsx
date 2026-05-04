@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
+import { useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Save, RefreshCw } from 'lucide-react';
+import { Save, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	Field,
@@ -23,23 +23,41 @@ const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 	error: 'bg-red-500',
 };
 
-function formatPairingCode(raw: string): string {
-	const compact = raw.replace(/\s+/g, '').toUpperCase();
-	if (compact.length === 8) return `${compact.slice(0, 4)}-${compact.slice(4)}`;
-	return compact;
+function sanitizePhone(raw: string): string {
+	return raw.replace(/[^\d]/g, '');
 }
 
 export default function WhatsappPage(): ReactElement {
 	const { t } = useTranslation();
-	const { drafts, persisted, statuses, saving, restarting, patchDraft, handleSave, handleRestart } =
-		useChannelsContext();
+	const { drafts, persisted, statuses, saving, patchDraft, handleSave } = useChannelsContext();
 
 	const draft = drafts.whatsapp;
 	const persistedDraft = persisted.whatsapp;
 	const status = statuses.whatsapp;
 	const isSaving = saving.has('whatsapp');
-	const isRestarting = restarting.has('whatsapp');
-	const isDirty = draft.phoneNumber !== persistedDraft.phoneNumber;
+	const isDirty =
+		draft.phoneNumber !== persistedDraft.phoneNumber || draft.token !== persistedDraft.token;
+
+	const [requesting, setRequesting] = useState(false);
+	const [requestError, setRequestError] = useState<string | null>(null);
+
+	const canRequest = sanitizePhone(draft.phoneNumber).length > 0 && !requesting && !isSaving;
+	const hasCode = draft.token.length > 0;
+
+	const handleRequest = async (): Promise<void> => {
+		setRequestError(null);
+		setRequesting(true);
+		try {
+			const code = await window.app.requestWhatsappPairingCode(
+				sanitizePhone(draft.phoneNumber)
+			);
+			patchDraft('whatsapp', { token: code });
+		} catch (err) {
+			setRequestError(err instanceof Error ? err.message : String(err));
+		} finally {
+			setRequesting(false);
+		}
+	};
 
 	return (
 		<form
@@ -83,7 +101,7 @@ export default function WhatsappPage(): ReactElement {
 						placeholder="e.g. 393331234567"
 						autoComplete="off"
 						spellCheck={false}
-						disabled={isSaving}
+						disabled={isSaving || requesting}
 						required
 					/>
 					<FieldDescription>
@@ -93,37 +111,49 @@ export default function WhatsappPage(): ReactElement {
 						)}
 					</FieldDescription>
 				</Field>
-				{status?.status === 'pairing_code' && status.pairingCode && (
+				<div>
+					<Button
+						type="button"
+						variant="outline"
+						disabled={!canRequest}
+						onClick={() => void handleRequest()}
+					>
+						{requesting ? <Spinner /> : <KeyRound />}
+						{t('settings.channels.requestPairingCode', 'Request pairing code')}
+					</Button>
+				</div>
+				{(hasCode || requesting) && (
 					<Field>
-						<FieldLabel>
-							{t(
-								'settings.channels.enterPairingCode',
-								'Open WhatsApp → Linked devices → Link with phone number, then enter:'
-							)}
+						<FieldLabel htmlFor="channel-whatsapp-token">
+							{t('settings.channels.pairingCode', 'Pairing code')}
 						</FieldLabel>
-						<div className="flex justify-center">
-							<code className="rounded-md border border-border bg-muted px-4 py-3 font-mono text-2xl tracking-[0.4em] select-all">
-								{formatPairingCode(status.pairingCode)}
-							</code>
-						</div>
+						<Input
+							id="channel-whatsapp-token"
+							type="text"
+							value={draft.token}
+							onChange={(e) =>
+								patchDraft('whatsapp', { token: e.target.value.toUpperCase() })
+							}
+							placeholder="XXXX-XXXX"
+							autoComplete="off"
+							spellCheck={false}
+							disabled={isSaving || requesting}
+							className="font-mono tracking-[0.4em]"
+						/>
+						<FieldDescription>
+							{t(
+								'settings.channels.pairingCodeDescription',
+								'Open WhatsApp → Linked devices → Link with phone number, then enter this code.'
+							)}
+						</FieldDescription>
 					</Field>
 				)}
+				{requestError && <FieldError>{requestError}</FieldError>}
 				{status?.status === 'error' && status.error && (
 					<FieldError>{status.error}</FieldError>
 				)}
 			</FieldGroup>
 			<div className="flex items-center justify-end gap-2">
-				<Button
-					variant="outline"
-					type="button"
-					disabled={isRestarting || !persistedDraft.phoneNumber}
-					onClick={() => void handleRestart('whatsapp')}
-				>
-					{isRestarting ? <Spinner /> : <RefreshCw />}
-					{status?.status === 'connected'
-						? t('settings.channels.reconnect', 'Reconnect')
-						: t('settings.channels.pair', 'Pair / Connect')}
-				</Button>
 				<Button type="submit" disabled={!isDirty || isSaving}>
 					{isSaving ? <Spinner /> : <Save />}
 					{t('common.save', 'Save')}
