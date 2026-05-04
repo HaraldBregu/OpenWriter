@@ -70,7 +70,7 @@ export default function TelegramPage(): ReactElement {
 									aria-hidden="true"
 								/>
 								<FieldLabel className="font-normal text-muted-foreground">
-									{STATUS_LABELS[status.status]}
+									{t(`channels.status.${status.status}`, status.status)}
 								</FieldLabel>
 							</Field>
 						)}
