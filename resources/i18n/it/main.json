@@ -466,6 +466,43 @@
 		"openFolder": "Apri cartella",
 		"search": "Cerca"
 	},
+	"providers": {
+		"title": "Provider",
+		"openai": "OpenAI",
+		"anthropic": "Anthropic",
+		"openaiDescription": "Configura la tua chiave API OpenAI per usare i modelli GPT.",
+		"anthropicDescription": "Configura la tua chiave API Anthropic per usare i modelli Claude.",
+		"apiKey": "Chiave API",
+		"apiKeyDescription": "Archiviata cifrata nel portachiavi del sistema operativo."
+	},
+	"agents": {
+		"title": "Agenti",
+		"contentReviewer": "Revisore Contenuti",
+		"contentWriter": "Scrittore Contenuti",
+		"imageCreator": "Creatore Immagini",
+		"assistant": "Assistente"
+	},
+	"channels": {
+		"title": "Canali",
+		"telegram": "Telegram",
+		"whatsapp": "WhatsApp",
+		"discord": "Discord",
+		"telegramDescription": "Collega un bot Telegram usando un token di @BotFather.",
+		"whatsappDescription": "Abbina un account WhatsApp scansionando un codice QR.",
+		"discordDescription": "Collega un bot Discord usando il suo token.",
+		"status": {
+			"connecting": "Connessione…",
+			"qr": "Scansiona QR",
+			"connected": "Connesso",
+			"disconnected": "Disconnesso",
+			"error": "Errore"
+		}
+	},
+	"models": {
+		"form": {
+			"apiKeyPlaceholder": "Inserisci chiave API…"
+		}
+	},
 	"sidebar": {
 		"write": "Scrivi",
 		"newPost": "Nuovo Post",
