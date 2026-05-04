@@ -130,7 +130,9 @@ export function ChannelsProvider({ children }: ChannelsProviderProps): ReactElem
 								allowFrom: parseAllowFrom(draft.allowFrom),
 							});
 				dispatch({ type: 'SET_CHANNEL', payload: next });
-				await window.app.restartChannel(channelType);
+				if (!isWhatsapp) {
+					await window.app.restartChannel(channelType);
+				}
 			} finally {
 				dispatch({ type: 'SET_SAVING', channelType, payload: false });
 			}
