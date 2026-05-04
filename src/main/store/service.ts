@@ -152,11 +152,11 @@ export class StoreService {
 		const channel = this.store.get('channel');
 		if (!channel) return null;
 		const telegram = channel.telegram ?? { token: '', allowFrom: [] };
-		const whatsapp = channel.whatsapp ?? { token: '', allowFrom: [] };
+		const whatsapp = channel.whatsapp ?? { phoneNumber: '' };
 		const discord = channel.discord ?? { token: '', allowFrom: [] };
 		return {
 			telegram: { ...telegram, allowFrom: [...telegram.allowFrom] },
-			whatsapp: { ...whatsapp, allowFrom: [...whatsapp.allowFrom] },
+			whatsapp: { phoneNumber: whatsapp.phoneNumber ?? '' },
 			discord: { ...discord, allowFrom: [...discord.allowFrom] },
 		};
 	}
@@ -170,17 +170,24 @@ export class StoreService {
 	): Channel {
 		const current = this.store.get('channel');
 		const baseTelegram = current?.telegram ?? { token: '', allowFrom: [] };
-		const baseWhatsapp = current?.whatsapp ?? { token: '', allowFrom: [] };
+		const baseWhatsapp = current?.whatsapp ?? { phoneNumber: '' };
 		const baseDiscord = current?.discord ?? { token: '', allowFrom: [] };
 		const base: Channel = {
 			telegram: { ...baseTelegram, allowFrom: [...baseTelegram.allowFrom] },
-			whatsapp: { ...baseWhatsapp, allowFrom: [...baseWhatsapp.allowFrom] },
+			whatsapp: { phoneNumber: baseWhatsapp.phoneNumber ?? '' },
 			discord: { ...baseDiscord, allowFrom: [...baseDiscord.allowFrom] },
 		};
-		const next: Channel = {
-			...base,
-			[type]: { token: properties.token, allowFrom: [...properties.allowFrom] },
-		};
+		let next: Channel;
+		if (type === 'whatsapp') {
+			const props = properties as WhatsappChannelProperties;
+			next = { ...base, whatsapp: { phoneNumber: props.phoneNumber } };
+		} else {
+			const props = properties as TelegramChannelProperties | DiscordChannelProperties;
+			next = {
+				...base,
+				[type]: { token: props.token, allowFrom: [...props.allowFrom] },
+			};
+		}
 		this.store.set('channel', next);
 		return next;
 	}
