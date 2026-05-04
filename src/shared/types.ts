@@ -951,7 +951,7 @@ export type ChannelPropertiesFor<K extends ChannelType> = Channel[K];
 
 export type ChannelConnectionStatus =
 	| 'connecting'
-	| 'qr'
+	| 'pairing_code'
 	| 'connected'
 	| 'disconnected'
 	| 'error';
@@ -959,7 +959,7 @@ export type ChannelConnectionStatus =
 export interface ChannelStatusEvent {
 	type: ChannelType;
 	status: ChannelConnectionStatus;
-	qrDataUrl?: string;
+	pairingCode?: string;
 	error?: string;
 	timestamp: number;
 }
