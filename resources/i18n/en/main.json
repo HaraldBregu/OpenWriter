@@ -314,9 +314,11 @@
 			"tokenDescription": "Stored encrypted in your OS keychain.",
 			"allowFrom": "Allowed senders",
 			"allowFromDescription": "Comma-separated list. Leave empty to allow all.",
+			"phoneNumber": "Phone number",
+			"phoneNumberDescription": "Digits only, including country code (no +, no spaces).",
 			"reconnect": "Reconnect",
 			"pair": "Pair / Connect",
-			"scanQr": "Open WhatsApp → Linked devices → Link a device, then scan:"
+			"enterPairingCode": "Open WhatsApp → Linked devices → Link with phone number, then enter:"
 		},
 		"themes": {
 			"title": "Themes",
