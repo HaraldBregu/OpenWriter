@@ -104,25 +104,29 @@ export function ChannelsProvider({ children }: ChannelsProviderProps): ReactElem
 		async (channelType: ChannelType) => {
 			const draft = state.drafts[channelType];
 			const persistedForType = persisted[channelType];
-			if (
-				draft.token === persistedForType.token &&
-				draft.allowFrom === persistedForType.allowFrom
-			) {
-				return;
-			}
+
+			const isWhatsapp = channelType === 'whatsapp';
+			const isDirty = isWhatsapp
+				? draft.phoneNumber !== persistedForType.phoneNumber
+				: draft.token !== persistedForType.token ||
+					draft.allowFrom !== persistedForType.allowFrom;
+			if (!isDirty) return;
 
 			dispatch({ type: 'SET_SAVING', channelType, payload: true });
 			try {
-				const properties = {
-					token: draft.token.trim(),
-					allowFrom: parseAllowFrom(draft.allowFrom),
-				};
-				const next =
-					channelType === 'telegram'
-						? await window.app.setChannelProperties('telegram', properties)
-						: channelType === 'whatsapp'
-							? await window.app.setChannelProperties('whatsapp', properties)
-							: await window.app.setChannelProperties('discord', properties);
+				const next = isWhatsapp
+					? await window.app.setChannelProperties('whatsapp', {
+							phoneNumber: sanitizePhoneNumber(draft.phoneNumber),
+						})
+					: channelType === 'telegram'
+						? await window.app.setChannelProperties('telegram', {
+								token: draft.token.trim(),
+								allowFrom: parseAllowFrom(draft.allowFrom),
+							})
+						: await window.app.setChannelProperties('discord', {
+								token: draft.token.trim(),
+								allowFrom: parseAllowFrom(draft.allowFrom),
+							});
 				dispatch({ type: 'SET_CHANNEL', payload: next });
 				await window.app.restartChannel(channelType);
 			} finally {
