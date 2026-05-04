@@ -396,6 +396,14 @@ export class AppIpc implements IpcModule {
 			)
 		);
 
+		ipcMain.handle(
+			AppChannels.requestWhatsappPairingCode,
+			wrapSimpleHandler(
+				(phoneNumber: string) => channelRegistry.requestWhatsappPairingCode(phoneNumber),
+				AppChannels.requestWhatsappPairingCode
+			)
+		);
+
 		// Recent in-memory logs
 		ipcMain.handle(
 			AppChannels.getLogs,
