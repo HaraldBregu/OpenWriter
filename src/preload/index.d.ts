@@ -202,6 +202,11 @@ export interface AppApi {
 	getChannelStatus: () => Promise<Partial<Record<ChannelType, ChannelStatusEvent>>>;
 	/** Stop and re-start the adapter for the given channel type. */
 	restartChannel: (type: ChannelType) => Promise<void>;
+	/**
+	 * Persist the WhatsApp phone number, (re)start the adapter, and resolve
+	 * with the pairing code emitted by Baileys. Rejects on error or timeout.
+	 */
+	requestWhatsappPairingCode: (phoneNumber: string) => Promise<string>;
 	/** Subscribe to channel connection status updates. */
 	onChannelStatus: (callback: (event: ChannelStatusEvent) => void) => () => void;
 	/** Fetch the most recent log entries from the main-process ring buffer. `limit` defaults to 200, max 1000. */
