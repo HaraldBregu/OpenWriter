@@ -2,17 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UserCircle } from 'lucide-react';
 import type { UserProfile } from '../../../../../shared/types';
-import { SectionHeader } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowDescription,
-	ItemRowMedia,
-	ItemRowTitle,
-} from '@/components/ui/ItemRow';
 
 type EditingField = 'firstName' | 'lastName' | null;
 
