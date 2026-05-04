@@ -1,5 +1,6 @@
 import { app } from 'electron';
 import path from 'node:path';
+import fs from 'node:fs/promises';
 import { marked } from 'marked';
 import { markedTerminal } from 'marked-terminal';
 import type { Channel, ChannelStatusEvent, ChannelType } from '../../shared/types';
