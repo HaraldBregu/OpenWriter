@@ -150,6 +150,8 @@ const app: AppApi = {
 		typedInvokeUnwrap(AppChannels.getChannelStatus),
 	restartChannel: (type: ChannelType): Promise<void> =>
 		typedInvokeUnwrap(AppChannels.restartChannel, type),
+	requestWhatsappPairingCode: (phoneNumber: string): Promise<string> =>
+		typedInvokeUnwrap(AppChannels.requestWhatsappPairingCode, phoneNumber),
 	onChannelStatus: (callback: (event: ChannelStatusEvent) => void): (() => void) => {
 		return typedOn(AppChannels.channelStatusChanged, callback);
 	},
