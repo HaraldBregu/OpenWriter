@@ -314,9 +314,11 @@
 			"tokenDescription": "Archiviato cifrato nel portachiavi del sistema operativo.",
 			"allowFrom": "Mittenti consentiti",
 			"allowFromDescription": "Lista separata da virgole. Lascia vuoto per consentire tutti.",
+			"phoneNumber": "Numero di telefono",
+			"phoneNumberDescription": "Solo cifre, con prefisso internazionale (senza + né spazi).",
 			"reconnect": "Riconnetti",
 			"pair": "Abbina / Connetti",
-			"scanQr": "Apri WhatsApp → Dispositivi collegati → Collega un dispositivo, poi scansiona:"
+			"enterPairingCode": "Apri WhatsApp → Dispositivi collegati → Collega con numero di telefono, poi inserisci:"
 		},
 		"themes": {
 			"title": "Temi",
