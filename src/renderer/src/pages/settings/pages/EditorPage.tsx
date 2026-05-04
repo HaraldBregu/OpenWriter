@@ -7,14 +7,6 @@ import {
 	SelectContent,
 	SelectItem,
 } from '@/components/ui/Select';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
-import { SectionHeader } from '../components';
 
 interface FontOption {
 	readonly value: string;
@@ -39,15 +31,21 @@ const EditorPage: React.FC = () => {
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.editor')}</h1>
 
-			<SectionHeader title={t('settings.sections.editor')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.sections.editor')}
+				</h2>
+			</div>
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.editor.font')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.editor.fontDescription')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('settings.editor.font')}</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.editor.fontDescription')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<Select value={font} onValueChange={handleFontChange}>
 							<SelectTrigger
 								className="w-44 h-8 text-sm"
@@ -63,8 +61,8 @@ const EditorPage: React.FC = () => {
 								))}
 							</SelectContent>
 						</Select>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
