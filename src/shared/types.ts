@@ -932,6 +932,8 @@ export interface TelegramChannelProperties {
 export interface WhatsappChannelProperties {
 	/** E.164 phone number without the leading `+` (digits only). Empty = unconfigured. */
 	phoneNumber: string;
+	/** Pairing code returned by Baileys after `requestPairingCode`. Empty until first request. */
+	token: string;
 }
 
 export interface DiscordChannelProperties {
