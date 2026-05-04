@@ -22,14 +22,6 @@ import { Spinner } from '@/components/ui/Spinner';
 import type { ChannelStatusEvent } from '../../../../../shared/types';
 import { useChannelsContext } from '../Provider';
 
-const STATUS_LABELS: Record<ChannelStatusEvent['status'], string> = {
-	connecting: 'Connecting…',
-	qr: 'Scan QR',
-	connected: 'Connected',
-	disconnected: 'Disconnected',
-	error: 'Error',
-};
-
 const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 	connecting: 'bg-yellow-500',
 	qr: 'bg-blue-500',
