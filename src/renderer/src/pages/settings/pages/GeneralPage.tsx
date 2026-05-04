@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SectionHeader } from '../components';
 import { Button } from '@/components/ui/Button';
 import { Switch } from '@/components/ui/Switch';
 
