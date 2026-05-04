@@ -94,15 +94,21 @@ const SystemPage: React.FC = () => {
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.system')}</h1>
 
-			<SectionHeader title={t('settings.sections.layout')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.sections.layout')}
+				</h2>
+			</div>
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.theme.title')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.theme.description')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('settings.theme.title')}</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.theme.description')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<ButtonGroup>
 							<Button
 								variant={themeMode === 'light' ? 'outline-selected' : 'outline'}
@@ -132,15 +138,17 @@ const SystemPage: React.FC = () => {
 								<Moon className="size-3.5" />
 							</Button>
 						</ButtonGroup>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.appTheme.title')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.appTheme.description')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('settings.appTheme.title')}</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.appTheme.description')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<Select value={activeThemeId} onValueChange={handleThemeStyleChange}>
 							<SelectTrigger
 								className="w-32 h-8 text-sm"
@@ -159,15 +167,17 @@ const SystemPage: React.FC = () => {
 								))}
 							</SelectContent>
 						</Select>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.language.title')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.language.description')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('settings.language.title')}</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.language.description')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<Select value={language} onValueChange={handleLanguageChange}>
 							<SelectTrigger
 								className="w-32 h-8 text-sm"
@@ -183,8 +193,8 @@ const SystemPage: React.FC = () => {
 								))}
 							</SelectContent>
 						</Select>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
