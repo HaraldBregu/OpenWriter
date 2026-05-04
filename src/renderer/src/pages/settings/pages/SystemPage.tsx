@@ -9,15 +9,7 @@ import {
 } from '@/components/ui/Select';
 import { Button } from '@/components/ui/Button';
 import { ButtonGroup } from '@/components/ui/ButtonGroup';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
 import { Moon, Monitor, Sun } from 'lucide-react';
-import { SectionHeader } from '../components';
 import type { AppLanguage } from '../../../contexts';
 import type { ThemeMode } from '../../../../../shared/types';
 import type { CustomThemeInfo } from '../../../../../shared/types';
