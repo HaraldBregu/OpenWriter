@@ -90,6 +90,71 @@ export class ChannelRegistry {
 		}
 	}
 
+	/**
+	 * Persist the WhatsApp phone number, restart the adapter, and resolve with
+	 * the pairing code emitted by Baileys. Rejects on adapter error, on the
+	 * socket connecting before a code is available, or after a 30s timeout.
+	 */
+	async requestWhatsappPairingCode(phoneNumber: string): Promise<string> {
+		const trimmed = phoneNumber.replace(/[^\d]/g, '');
+		if (!trimmed) throw new Error('phoneNumber is required');
+
+		const persisted = this.store.setChannelProperties('whatsapp', {
+			phoneNumber: trimmed,
+			token: '',
+		});
+
+		const existing = this.adapters.get('whatsapp');
+		if (existing) {
+			try {
+				await existing.stop();
+			} catch (err) {
+				this.logger.error('ChannelRegistry', 'Failed to stop whatsapp before pairing', err);
+			}
+			this.adapters.delete('whatsapp');
+		}
+
+		const factory = this.factories.whatsapp;
+		const adapter = factory(persisted);
+		adapter.onMessage((msg) => {
+			void this.handleMessage(msg);
+		});
+
+		return new Promise<string>((resolve, reject) => {
+			let settled = false;
+			const settle = (fn: () => void): void => {
+				if (settled) return;
+				settled = true;
+				fn();
+			};
+
+			adapter.onStatus((update) => {
+				this.handleStatus('whatsapp', update);
+				if (settled) return;
+				if (update.status === 'pairing_code' && update.pairingCode) {
+					settle(() => resolve(update.pairingCode as string));
+				} else if (update.status === 'connected') {
+					settle(() => reject(new Error('WhatsApp already paired — no code needed')));
+				} else if (update.status === 'error' && update.error) {
+					settle(() => reject(new Error(update.error)));
+				}
+			});
+
+			adapter
+				.start()
+				.then(() => {
+					this.adapters.set('whatsapp', adapter);
+				})
+				.catch((err) => {
+					settle(() => reject(err instanceof Error ? err : new Error(String(err))));
+				});
+
+			setTimeout(() => {
+				settle(() => reject(new Error('Pairing code request timed out')));
+			}, 30_000);
+		});
+	}
+
 	async restart(type: ChannelType): Promise<void> {
 		const existing = this.adapters.get(type);
 		if (existing) {
