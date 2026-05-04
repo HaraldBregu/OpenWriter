@@ -37,10 +37,14 @@ export function useChannelsContext(): ChannelsContextValue {
 	return context;
 }
 
-function toDraft(
-	props: TelegramChannelProperties | WhatsappChannelProperties | DiscordChannelProperties
+function telegramOrDiscordToDraft(
+	props: TelegramChannelProperties | DiscordChannelProperties
 ): DraftProperties {
-	return { token: props.token, allowFrom: props.allowFrom.join(', ') };
+	return { token: props.token, allowFrom: props.allowFrom.join(', '), phoneNumber: '' };
+}
+
+function whatsappToDraft(props: WhatsappChannelProperties): DraftProperties {
+	return { token: '', allowFrom: '', phoneNumber: props.phoneNumber };
 }
 
 function parseAllowFrom(raw: string): string[] {
@@ -48,6 +52,10 @@ function parseAllowFrom(raw: string): string[] {
 		.split(',')
 		.map((s) => s.trim())
 		.filter((s) => s.length > 0);
+}
+
+function sanitizePhoneNumber(raw: string): string {
+	return raw.replace(/[^\d]/g, '');
 }
 
 interface ChannelsProviderProps {
