@@ -19,7 +19,6 @@ function extractText(msg: {
 
 export function registerTextHandler(
   sock: WASocket,
-  allowFrom: Set<string>,
   emit: WhatsAppMessageEmit,
 ): void {
   // plain text only — skip status broadcasts, own messages, commands
@@ -33,11 +32,6 @@ export function registerTextHandler(
 
       const text = extractText(msg);
       if (!text || text.startsWith("/")) continue;
-
-      if (allowFrom.size > 0 && !allowFrom.has(senderId)) {
-        console.warn(`Ignored message from unauthorized user ${senderId}`);
-        continue;
-      }
 
       emit({ from: senderId, chatId: senderId, text });
     }
