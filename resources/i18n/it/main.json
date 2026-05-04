@@ -490,11 +490,11 @@
 		"whatsapp": "WhatsApp",
 		"discord": "Discord",
 		"telegramDescription": "Collega un bot Telegram usando un token di @BotFather.",
-		"whatsappDescription": "Abbina un account WhatsApp scansionando un codice QR.",
+		"whatsappDescription": "Abbina un account WhatsApp con un codice di 8 caratteri mostrato in questa schermata.",
 		"discordDescription": "Collega un bot Discord usando il suo token.",
 		"status": {
 			"connecting": "Connessione…",
-			"qr": "Scansiona QR",
+			"pairing_code": "Inserisci il codice",
 			"connected": "Connesso",
 			"disconnected": "Disconnesso",
 			"error": "Errore"
