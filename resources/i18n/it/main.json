@@ -293,7 +293,10 @@
 			"description": "Configura il modello AI e i parametri per ogni agente.",
 			"subtitle": "Configura le assegnazioni dei modelli che ogni agente usa per il suo lavoro.",
 			"provider": "Provider",
+			"providerPlaceholder": "Seleziona provider",
 			"model": "Modello",
+			"modelPlaceholder": "Seleziona modello",
+			"modelsLoading": "Caricamento…",
 			"textModel": "Generazione testo",
 			"textModelDescription": "Usato dall'assistente per scrittura, chat, ragionamento e modifiche ai documenti.",
 			"imageModel": "Generazione immagini",
@@ -305,6 +308,15 @@
 			"saved": "Salvato",
 			"loadError": "Impossibile caricare le impostazioni degli agenti.",
 			"saveError": "Impossibile salvare le impostazioni degli agenti."
+		},
+		"channels": {
+			"token": "Token",
+			"tokenDescription": "Archiviato cifrato nel portachiavi del sistema operativo.",
+			"allowFrom": "Mittenti consentiti",
+			"allowFromDescription": "Lista separata da virgole. Lascia vuoto per consentire tutti.",
+			"reconnect": "Riconnetti",
+			"pair": "Abbina / Connetti",
+			"scanQr": "Apri WhatsApp → Dispositivi collegati → Collega un dispositivo, poi scansiona:"
 		},
 		"themes": {
 			"title": "Temi",
