@@ -115,6 +115,19 @@ export class ChannelRegistry {
 			this.adapters.delete('whatsapp');
 		}
 
+		// Wipe the auth dir so requestPairingCode is always invoked (creds.registered
+		// stays true locally even after server-side logout, which would otherwise
+		// cause the adapter to skip the pairing block and hang).
+		const authDir = path.join(
+			app.getPath('userData'),
+			'channels',
+			'whatsapp',
+			trimmed
+		);
+		await fs.rm(authDir, { recursive: true, force: true }).catch((err) => {
+			this.logger.warn('ChannelRegistry', 'Failed to wipe whatsapp auth dir', err);
+		});
+
 		const factory = this.factories.whatsapp;
 		const adapter = factory(persisted);
 		adapter.onMessage((msg) => {
