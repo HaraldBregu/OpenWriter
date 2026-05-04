@@ -117,27 +117,33 @@ const AccountPage: React.FC = () => {
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.account')}</h1>
 
-			<SectionHeader title={t('settings.account.section')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.account.section')}
+				</h2>
+			</div>
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowMedia>
-						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
-							<UserCircle className="h-5 w-5 text-muted-foreground" />
-						</div>
-					</ItemRowMedia>
-					<ItemRowContent>
-						<ItemRowTitle>{displayName}</ItemRowTitle>
-						<ItemRowDescription className="text-xs">{subtitle}</ItemRowDescription>
-					</ItemRowContent>
-				</ItemRow>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-input bg-background">
+						<UserCircle className="h-5 w-5 text-muted-foreground" />
+					</div>
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{displayName}</h3>
+						<p className="text-xs leading-normal text-muted-foreground">{subtitle}</p>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.account.firstName')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.account.editHint')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">
+							{t('settings.account.firstName')}
+						</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.account.editHint')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<EditableName
 							value={profile.firstName}
 							editing={editing === 'firstName'}
@@ -145,15 +151,19 @@ const AccountPage: React.FC = () => {
 							onCommit={(v) => persist('firstName', v)}
 							onCancel={() => setEditing(null)}
 						/>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.account.lastName')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.account.editHint')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">
+							{t('settings.account.lastName')}
+						</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.account.editHint')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<EditableName
 							value={profile.lastName}
 							editing={editing === 'lastName'}
@@ -161,20 +171,24 @@ const AccountPage: React.FC = () => {
 							onCommit={(v) => persist('lastName', v)}
 							onCancel={() => setEditing(null)}
 						/>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.account.signIn')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.account.signInDescription')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">
+							{t('settings.account.signIn')}
+						</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.account.signInDescription')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<Button variant="outline" size="sm" disabled>
 							{t('settings.account.signIn')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
