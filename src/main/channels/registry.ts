@@ -136,9 +136,11 @@ export class ChannelRegistry {
 
 		return new Promise<string>((resolve, reject) => {
 			let settled = false;
+			let timer: NodeJS.Timeout | null = null;
 			const settle = (fn: () => void): void => {
 				if (settled) return;
 				settled = true;
+				if (timer) clearTimeout(timer);
 				fn();
 			};
 
@@ -163,7 +165,7 @@ export class ChannelRegistry {
 					settle(() => reject(err instanceof Error ? err : new Error(String(err))));
 				});
 
-			setTimeout(() => {
+			timer = setTimeout(() => {
 				settle(() => reject(new Error('Pairing code request timed out')));
 			}, 30_000);
 		});
