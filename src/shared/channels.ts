@@ -193,6 +193,7 @@ export const AppChannels = {
 	setChannelProperties: 'app:set-channel-properties',
 	getChannelStatus: 'app:get-channel-status',
 	restartChannel: 'app:restart-channel',
+	requestWhatsappPairingCode: 'app:request-whatsapp-pairing-code',
 	channelStatusChanged: 'app:channel-status-changed',
 	// Logs
 	getLogs: 'app:get-logs',
