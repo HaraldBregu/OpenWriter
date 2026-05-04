@@ -44,7 +44,7 @@ function telegramOrDiscordToDraft(
 }
 
 function whatsappToDraft(props: WhatsappChannelProperties): DraftProperties {
-	return { token: '', allowFrom: '', phoneNumber: props.phoneNumber };
+	return { token: props.token, allowFrom: '', phoneNumber: props.phoneNumber };
 }
 
 function parseAllowFrom(raw: string): string[] {
