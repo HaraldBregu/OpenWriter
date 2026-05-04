@@ -1,13 +1,6 @@
 import type { ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Card,
-	CardContent,
-	CardDescription,
-	CardHeader,
-	CardTitle,
-} from '@/components/ui/Card';
-import {
 	Field,
 	FieldDescription,
 	FieldGroup,
@@ -53,85 +46,81 @@ export default function ImageCreatorPage(): ReactElement {
 	const isSaved = saved.has(DEFINITION.id);
 
 	return (
-		<div className="w-full max-w-lg">
-			<Card>
-				<CardHeader>
-					<CardTitle>{DEFINITION.name}</CardTitle>
-					<CardDescription>{DEFINITION.description}</CardDescription>
-				</CardHeader>
-				<CardContent>
-					<FieldGroup>
-						{(isSaving || isSaved) && (
-							<Field orientation="horizontal">
-								<FieldLabel className="font-normal text-muted-foreground">
-									{isSaving
-										? t('settings.agents.saving', 'Saving...')
-										: t('settings.agents.saved', 'Saved')}
-								</FieldLabel>
-							</Field>
-						)}
-						<Field>
-							<FieldLabel htmlFor="agent-image-creator-provider">
-								{t('settings.agents.provider', 'Provider')}
-							</FieldLabel>
-							<Select
-								value={providerId}
-								onValueChange={(next) =>
-									next && void handleProviderChange(DEFINITION, next as ProviderId)
-								}
-								disabled={isBusy}
-							>
-								<SelectTrigger id="agent-image-creator-provider">
-									<SelectValue
-										placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
-									/>
-								</SelectTrigger>
-								<SelectContent>
-									{PROVIDERS.map((provider) => (
-										<SelectItem key={provider.id} value={provider.id}>
-											{provider.name}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
-						</Field>
-						{providerId && (
-							<Field>
-								<FieldLabel htmlFor="agent-image-creator-model">
-									{t('settings.agents.model', 'Model')}
-								</FieldLabel>
-								<Select
-									value={modelId}
-									onValueChange={(next) => next && void handleModelChange(DEFINITION, next)}
-									disabled={isBusy || isLoadingModels || availableModels.length === 0}
-								>
-									<SelectTrigger id="agent-image-creator-model">
-										<SelectValue
-											placeholder={
-												isLoadingModels
-													? t('settings.agents.modelsLoading', 'Loading…')
-													: t('settings.agents.modelPlaceholder', 'Select model')
-											}
-										/>
-									</SelectTrigger>
-									<SelectContent>
-										{availableModels.map((model) => (
-											<SelectItem key={model.id} value={model.id}>
-												{model.name}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</Field>
-						)}
-						{providerError && (
-							<Field>
-								<FieldDescription className="text-destructive">{providerError}</FieldDescription>
-							</Field>
-						)}
-					</FieldGroup>
-				</CardContent>
-			</Card>
+		<div className="w-full max-w-lg flex flex-col gap-6">
+			<div className="flex flex-col gap-1.5">
+				<h2 className="text-lg font-semibold">{DEFINITION.name}</h2>
+				<p className="text-sm text-muted-foreground">{DEFINITION.description}</p>
+			</div>
+			<FieldGroup>
+				{(isSaving || isSaved) && (
+					<Field orientation="horizontal">
+						<FieldLabel className="font-normal text-muted-foreground">
+							{isSaving
+								? t('settings.agents.saving', 'Saving...')
+								: t('settings.agents.saved', 'Saved')}
+						</FieldLabel>
+					</Field>
+				)}
+				<Field>
+					<FieldLabel htmlFor="agent-image-creator-provider">
+						{t('settings.agents.provider', 'Provider')}
+					</FieldLabel>
+					<Select
+						value={providerId}
+						onValueChange={(next) =>
+							next && void handleProviderChange(DEFINITION, next as ProviderId)
+						}
+						disabled={isBusy}
+					>
+						<SelectTrigger id="agent-image-creator-provider">
+							<SelectValue
+								placeholder={t('settings.agents.providerPlaceholder', 'Select provider')}
+							/>
+						</SelectTrigger>
+						<SelectContent>
+							{PROVIDERS.map((provider) => (
+								<SelectItem key={provider.id} value={provider.id}>
+									{provider.name}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</Field>
+				{providerId && (
+					<Field>
+						<FieldLabel htmlFor="agent-image-creator-model">
+							{t('settings.agents.model', 'Model')}
+						</FieldLabel>
+						<Select
+							value={modelId}
+							onValueChange={(next) => next && void handleModelChange(DEFINITION, next)}
+							disabled={isBusy || isLoadingModels || availableModels.length === 0}
+						>
+							<SelectTrigger id="agent-image-creator-model">
+								<SelectValue
+									placeholder={
+										isLoadingModels
+											? t('settings.agents.modelsLoading', 'Loading…')
+											: t('settings.agents.modelPlaceholder', 'Select model')
+									}
+								/>
+							</SelectTrigger>
+							<SelectContent>
+								{availableModels.map((model) => (
+									<SelectItem key={model.id} value={model.id}>
+										{model.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</Field>
+				)}
+				{providerError && (
+					<Field>
+						<FieldDescription className="text-destructive">{providerError}</FieldDescription>
+					</Field>
+				)}
+			</FieldGroup>
 		</div>
 	);
 }
