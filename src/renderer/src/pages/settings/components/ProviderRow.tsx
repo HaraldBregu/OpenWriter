@@ -5,12 +5,6 @@ import type { ProviderId } from '../../../../../shared/types';
 import { PROVIDER_IDS, PROVIDER_CATALOGUE } from '../../../../../shared/providers';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-} from '@/components/ui/ItemRow';
 
 const PROVIDER_LABELS = PROVIDER_IDS.reduce<Record<ProviderId, string>>(
 	(acc, providerId) => {
