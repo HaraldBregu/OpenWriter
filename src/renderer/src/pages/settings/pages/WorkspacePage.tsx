@@ -3,16 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { FolderOpen } from 'lucide-react';
 import type { ProjectWorkspaceInfo } from '../../../../../shared/types';
 import { Input } from '@/components/ui/Input';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
 import { useAppDispatch } from '@/store';
 import { loadProjectName } from '@/store/workspace/actions';
-import { SectionHeader } from '../components';
 
 // ---------------------------------------------------------------------------
 // Helpers
