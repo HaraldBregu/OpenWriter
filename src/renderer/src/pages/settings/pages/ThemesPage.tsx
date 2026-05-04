@@ -130,33 +130,43 @@ const ThemesPage: React.FC = () => {
 				</div>
 			)}
 
-			<SectionHeader title={t('settings.themes.actions')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.themes.actions')}
+				</h2>
+			</div>
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.themes.openFolder')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">
+							{t('settings.themes.openFolder')}
+						</h3>
+					</div>
+					<div className="flex items-center gap-2">
 						<Button variant="outline" size="sm" onClick={handleOpenFolder}>
 							<FolderOpen size={14} className="mr-1.5" />
 							{t('settings.themes.openFolder')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.themes.import')}</ItemRowTitle>
-					</ItemRowContent>
-					<ItemRowActions>
+					</div>
+				</div>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">{t('settings.themes.import')}</h3>
+					</div>
+					<div className="flex items-center gap-2">
 						<Button variant="outline" size="sm" onClick={handleImport}>
 							<Upload size={14} className="mr-1.5" />
 							{t('settings.themes.import')}
 						</Button>
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 
-			<SectionHeader title={t('settings.themes.installed')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.themes.installed')}
+				</h2>
+			</div>
 			{themes.length === 0 ? (
 				<p className="text-sm text-muted-foreground py-3">{t('settings.themes.noThemes')}</p>
 			) : (
@@ -164,14 +174,17 @@ const ThemesPage: React.FC = () => {
 					{themes.map((theme) => {
 						const isConfirming = confirmDeleteId === theme.id;
 						return (
-							<ItemRow key={theme.id} variant="bottom-bordered" size="none">
-								<ItemRowContent>
-									<ItemRowTitle>{theme.name}</ItemRowTitle>
-									<ItemRowDescription>
+							<div
+								key={theme.id}
+								className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm"
+							>
+								<div className="flex flex-1 flex-col gap-1">
+									<h3 className="text-sm leading-snug font-medium">{theme.name}</h3>
+									<p className="text-sm leading-normal text-muted-foreground">
 										{theme.author} · v{theme.version}
-									</ItemRowDescription>
-								</ItemRowContent>
-								<ItemRowActions>
+									</p>
+								</div>
+								<div className="flex items-center gap-2">
 									{isConfirming ? (
 										<button
 											type="button"
@@ -189,8 +202,8 @@ const ThemesPage: React.FC = () => {
 											<Trash2 size={14} />
 										</button>
 									)}
-								</ItemRowActions>
-							</ItemRow>
+								</div>
+							</div>
 						);
 					})}
 				</div>
