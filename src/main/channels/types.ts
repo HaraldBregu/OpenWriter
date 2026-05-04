@@ -17,7 +17,7 @@ export interface ChannelOutboundMessage {
 
 export interface ChannelStatusUpdate {
 	status: ChannelConnectionStatus;
-	qrDataUrl?: string;
+	pairingCode?: string;
 	error?: string;
 }
 
