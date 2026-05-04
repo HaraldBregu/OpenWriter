@@ -67,9 +67,9 @@ export function ChannelsProvider({ children }: ChannelsProviderProps): ReactElem
 
 	const persisted = useMemo<Record<ChannelType, DraftProperties>>(
 		() => ({
-			telegram: state.channel ? toDraft(state.channel.telegram) : EMPTY_DRAFT,
-			whatsapp: state.channel ? toDraft(state.channel.whatsapp) : EMPTY_DRAFT,
-			discord: state.channel ? toDraft(state.channel.discord) : EMPTY_DRAFT,
+			telegram: state.channel ? telegramOrDiscordToDraft(state.channel.telegram) : EMPTY_DRAFT,
+			whatsapp: state.channel ? whatsappToDraft(state.channel.whatsapp) : EMPTY_DRAFT,
+			discord: state.channel ? telegramOrDiscordToDraft(state.channel.discord) : EMPTY_DRAFT,
 		}),
 		[state.channel]
 	);
