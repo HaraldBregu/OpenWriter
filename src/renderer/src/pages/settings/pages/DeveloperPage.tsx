@@ -1,14 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Switch } from '@/components/ui/Switch';
-import {
-	ItemRow,
-	ItemRowActions,
-	ItemRowContent,
-	ItemRowTitle,
-	ItemRowDescription,
-} from '@/components/ui/ItemRow';
-import { SectionHeader } from '../components';
 
 const DeveloperPage: React.FC = () => {
 	const { t } = useTranslation();
@@ -22,18 +14,26 @@ const DeveloperPage: React.FC = () => {
 		<div className="w-full max-w-2xl">
 			<h1 className="text-lg font-normal mb-6">{t('settings.tabs.developer')}</h1>
 
-			<SectionHeader title={t('settings.sections.developer')} />
+			<div className="pt-6 pb-2 first:pt-0">
+				<h2 className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+					{t('settings.sections.developer')}
+				</h2>
+			</div>
 
 			<div className="flex flex-col gap-2">
-				<ItemRow variant="bottom-bordered" size="none">
-					<ItemRowContent>
-						<ItemRowTitle>{t('settings.developer.mode')}</ItemRowTitle>
-						<ItemRowDescription>{t('settings.developer.modeDescription')}</ItemRowDescription>
-					</ItemRowContent>
-					<ItemRowActions>
+				<div className="flex w-full flex-wrap items-center gap-2.5 border-b border-border py-2 text-sm">
+					<div className="flex flex-1 flex-col gap-1">
+						<h3 className="text-sm leading-snug font-medium">
+							{t('settings.developer.mode')}
+						</h3>
+						<p className="text-sm leading-normal text-muted-foreground">
+							{t('settings.developer.modeDescription')}
+						</p>
+					</div>
+					<div className="flex items-center gap-2">
 						<Switch checked={developerMode} onCheckedChange={handleToggle} />
-					</ItemRowActions>
-				</ItemRow>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
