@@ -152,11 +152,11 @@ export class StoreService {
 		const channel = this.store.get('channel');
 		if (!channel) return null;
 		const telegram = channel.telegram ?? { token: '', allowFrom: [] };
-		const whatsapp = channel.whatsapp ?? { phoneNumber: '' };
+		const whatsapp = channel.whatsapp ?? { phoneNumber: '', token: '' };
 		const discord = channel.discord ?? { token: '', allowFrom: [] };
 		return {
 			telegram: { ...telegram, allowFrom: [...telegram.allowFrom] },
-			whatsapp: { phoneNumber: whatsapp.phoneNumber ?? '' },
+			whatsapp: { phoneNumber: whatsapp.phoneNumber ?? '', token: whatsapp.token ?? '' },
 			discord: { ...discord, allowFrom: [...discord.allowFrom] },
 		};
 	}
