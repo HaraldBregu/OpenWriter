@@ -123,7 +123,7 @@ export class ChannelRegistry {
 		const event: ChannelStatusEvent = {
 			type,
 			status: update.status,
-			qrDataUrl: update.qrDataUrl,
+			pairingCode: update.pairingCode,
 			error: update.error,
 			timestamp: Date.now(),
 		};
