@@ -96,7 +96,7 @@ function TelegramSection(): ReactElement {
 
 	return (
 		<form
-			className="flex w-full max-w-md flex-col gap-6"
+			className="flex w-full max-w-2xl flex-col gap-6"
 			onSubmit={(e) => {
 				e.preventDefault();
 				void handleSave('telegram');
@@ -113,46 +113,48 @@ function TelegramSection(): ReactElement {
 			</div>
 			<FieldGroup>
 				<StatusRow status={status} />
-				<Field>
-					<FieldLabel htmlFor="channel-telegram-token">
-						{t('settings.channels.token', 'Token')}
-					</FieldLabel>
-					<Input
-						id="channel-telegram-token"
-						type="password"
-						value={draft.token}
-						onChange={(e) => patchDraft('telegram', { token: e.target.value })}
-						placeholder="123456:ABC-DEF…"
-						autoComplete="off"
-						spellCheck={false}
-						disabled={isSaving}
-						required
-					/>
-					<FieldDescription>
-						{t('settings.channels.tokenDescription', 'Stored encrypted in your OS keychain.')}
-					</FieldDescription>
-				</Field>
-				<Field>
-					<FieldLabel htmlFor="channel-telegram-allow">
-						{t('settings.channels.allowFrom', 'Allowed senders')}
-					</FieldLabel>
-					<Input
-						id="channel-telegram-allow"
-						type="text"
-						value={draft.allowFrom}
-						onChange={(e) => patchDraft('telegram', { allowFrom: e.target.value })}
-						placeholder="e.g. @user1, @user2"
-						autoComplete="off"
-						spellCheck={false}
-						disabled={isSaving}
-					/>
-					<FieldDescription>
-						{t(
-							'settings.channels.allowFromDescription',
-							'Comma-separated list. Leave empty to allow all.'
-						)}
-					</FieldDescription>
-				</Field>
+				<div className="grid grid-cols-1 gap-4 @md/field-group:grid-cols-2">
+					<Field>
+						<FieldLabel htmlFor="channel-telegram-token">
+							{t('settings.channels.token', 'Token')}
+						</FieldLabel>
+						<Input
+							id="channel-telegram-token"
+							type="password"
+							value={draft.token}
+							onChange={(e) => patchDraft('telegram', { token: e.target.value })}
+							placeholder="123456:ABC-DEF…"
+							autoComplete="off"
+							spellCheck={false}
+							disabled={isSaving}
+							required
+						/>
+						<FieldDescription>
+							{t('settings.channels.tokenDescription', 'Stored encrypted in your OS keychain.')}
+						</FieldDescription>
+					</Field>
+					<Field>
+						<FieldLabel htmlFor="channel-telegram-allow">
+							{t('settings.channels.allowFrom', 'Allowed senders')}
+						</FieldLabel>
+						<Input
+							id="channel-telegram-allow"
+							type="text"
+							value={draft.allowFrom}
+							onChange={(e) => patchDraft('telegram', { allowFrom: e.target.value })}
+							placeholder="e.g. @user1, @user2"
+							autoComplete="off"
+							spellCheck={false}
+							disabled={isSaving}
+						/>
+						<FieldDescription>
+							{t(
+								'settings.channels.allowFromDescription',
+								'Comma-separated list. Leave empty to allow all.'
+							)}
+						</FieldDescription>
+					</Field>
+				</div>
 				{status?.status === 'error' && status.error && <FieldError>{status.error}</FieldError>}
 			</FieldGroup>
 			<div className="flex items-center justify-end gap-2">
