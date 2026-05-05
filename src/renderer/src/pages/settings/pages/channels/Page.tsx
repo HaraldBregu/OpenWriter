@@ -136,8 +136,14 @@ function TelegramSection(): ReactElement {
 				<StatusRow status={status} />
 				<div className="grid grid-cols-1 gap-4 @md/field-group:grid-cols-2">
 					<Field>
-						<FieldLabel htmlFor="channel-telegram-token">
+						<FieldLabel htmlFor="channel-telegram-token" className="flex items-center gap-1.5">
 							{t('settings.channels.token', 'Token')}
+							<InfoHint
+								text={t(
+									'settings.channels.tokenTooltip',
+									'Bot token from @BotFather. Stored encrypted in your OS keychain.'
+								)}
+							/>
 						</FieldLabel>
 						<Input
 							id="channel-telegram-token"
@@ -155,8 +161,14 @@ function TelegramSection(): ReactElement {
 						</FieldDescription>
 					</Field>
 					<Field>
-						<FieldLabel htmlFor="channel-telegram-allow">
+						<FieldLabel htmlFor="channel-telegram-allow" className="flex items-center gap-1.5">
 							{t('settings.channels.allowFrom', 'Allowed senders')}
+							<InfoHint
+								text={t(
+									'settings.channels.allowFromTooltip',
+									'Comma-separated Telegram usernames or IDs allowed to message the bot. Empty allows all.'
+								)}
+							/>
 						</FieldLabel>
 						<Input
 							id="channel-telegram-allow"
