@@ -275,27 +275,11 @@ export interface InvokeChannelMap {
 		result: AgentTaskLookupResult | null;
 	};
 
-	// ---- Indexing (IpcResult-wrapped) ----
-	[WorkspaceChannels.getIndexingInfo]: { args: []; result: IndexingInfo | null };
-
 	// ---- Shell (IpcResult-wrapped) ----
 	[WorkspaceChannels.openWorkspaceFolder]: { args: []; result: void };
-	[WorkspaceChannels.openDataFolder]: { args: []; result: void };
-	[WorkspaceChannels.openContentsFolder]: { args: []; result: void };
-	[WorkspaceChannels.openFilesFolder]: { args: []; result: void };
-	[WorkspaceChannels.openImagesFolder]: { args: []; result: void };
+	[WorkspaceChannels.openResourcesFolder]: { args: []; result: void };
 	[WorkspaceChannels.openDocumentFolder]: { args: [documentId: string]; result: void };
 	[WorkspaceChannels.getDocumentPath]: { args: [documentId: string]; result: string };
-
-	// ---- Document images (IpcResult-wrapped) ----
-	[WorkspaceChannels.saveDocumentImage]: {
-		args: [params: SaveDocumentImageParams];
-		result: SaveDocumentImageResult;
-	};
-	[WorkspaceChannels.listDocumentImages]: {
-		args: [documentId: string];
-		result: DocumentImageInfo[];
-	};
 
 	// ---- Output (IpcResult-wrapped) ----
 	[WorkspaceChannels.outputSave]: { args: [input: SaveOutputInput]; result: SaveOutputResult };
