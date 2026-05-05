@@ -95,7 +95,7 @@ interface AgentFormProps {
 	readonly icon: LucideIcon;
 }
 
-function AgentForm({ definition, icon: Icon }: AgentFormProps): ReactElement {
+export function AgentForm({ definition, icon: Icon }: AgentFormProps): ReactElement {
 	const { t } = useTranslation();
 	const {
 		agentsById,
