@@ -149,10 +149,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 		}
 	}, [dispatch, selected]);
 
-	const handleOpenDataFolder = useCallback(() => {
-		window.workspace.openDataFolder();
-	}, []);
-
 	const handleOpenResourcesFolder = useCallback(() => {
 		window.workspace.openWorkspaceFolder();
 	}, []);
