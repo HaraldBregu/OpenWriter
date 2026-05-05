@@ -48,7 +48,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	}, []);
 
 	const handleOpenFolder = useCallback(() => {
-		void window.workspace.openImagesFolder();
+		void window.workspace.openResourcesFolder();
 	}, []);
 
 	const removeEntry = useCallback((id: string) => removeImage(id), [removeImage]);
