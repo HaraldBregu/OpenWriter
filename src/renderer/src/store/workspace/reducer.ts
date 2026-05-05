@@ -12,7 +12,6 @@ import {
 	clearWorkspace,
 	loadResources,
 	removeResources,
-	loadIndexingInfo,
 	loadProjectName,
 } from './actions';
 
