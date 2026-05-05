@@ -1,13 +1,11 @@
 import { useEffect, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Save } from 'lucide-react';
 import {
 	PageBody,
 	PageContainer,
 	PageHeader,
 	PageHeaderTitle,
 } from '@/components/app/base/page';
-import { Button } from '@/components/ui/Button';
 import {
 	Field,
 	FieldDescription,
@@ -19,6 +17,8 @@ import { Spinner } from '@/components/ui/Spinner';
 import type { Provider, ProviderId } from '../../../../shared/types';
 import { PROVIDER_CATALOGUE } from '../../../../shared/providers';
 import { ProvidersProvider, useProvidersContext } from './Provider';
+
+const AUTOSAVE_DELAY_MS = 600;
 
 function Bootstrap(): null {
 	const { setProviders, setDrafts, persisted } = useProvidersContext();
@@ -60,14 +60,16 @@ function ProviderForm({ provider }: ProviderFormProps): ReactElement {
 	const isDirty = draft.apiKey.trim() !== persistedDraft.apiKey;
 	const inputId = `provider-${id}-key`;
 
+	useEffect(() => {
+		if (!isDirty || isSaving) return;
+		const timer = setTimeout(() => {
+			void handleSave(id);
+		}, AUTOSAVE_DELAY_MS);
+		return () => clearTimeout(timer);
+	}, [draft.apiKey, isDirty, isSaving, handleSave, id]);
+
 	return (
-		<form
-			className="w-full flex flex-col gap-6"
-			onSubmit={(e) => {
-				e.preventDefault();
-				void handleSave(id);
-			}}
-		>
+		<div className="w-full flex flex-col gap-6">
 			<div className="flex flex-col gap-1.5">
 				<h2 className="text-lg font-semibold">{t(`providers.${id}`, provider.name)}</h2>
 				<p className="text-sm text-muted-foreground">
@@ -76,7 +78,10 @@ function ProviderForm({ provider }: ProviderFormProps): ReactElement {
 			</div>
 			<FieldGroup>
 				<Field>
-					<FieldLabel htmlFor={inputId}>{t('providers.apiKey', 'API key')}</FieldLabel>
+					<FieldLabel htmlFor={inputId} className="flex items-center gap-2">
+						{t('providers.apiKey', 'API key')}
+						{isSaving && <Spinner className="size-3" />}
+					</FieldLabel>
 					<Input
 						id={inputId}
 						type="password"
@@ -85,21 +90,13 @@ function ProviderForm({ provider }: ProviderFormProps): ReactElement {
 						placeholder={t('models.form.apiKeyPlaceholder', 'Enter API key…')}
 						autoComplete="off"
 						spellCheck={false}
-						disabled={isSaving}
-						required
 					/>
 					<FieldDescription>
 						{t('providers.apiKeyDescription', 'Stored encrypted in your OS keychain.')}
 					</FieldDescription>
 				</Field>
 			</FieldGroup>
-			<div className="flex justify-end">
-				<Button type="submit" disabled={!isDirty || isSaving}>
-					{isSaving ? <Spinner /> : <Save />}
-					{t('common.save', 'Save')}
-				</Button>
-			</div>
-		</form>
+		</div>
 	);
 }
 
