@@ -67,7 +67,7 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 					createWorkspace({ name: trimmedName, description: description.trim() })
 				).unwrap();
 				setCreateOpen(false);
-				navigate('/home');
+				navigate('/assistant');
 			} catch (err) {
 				setSubmitError(err instanceof Error ? err.message : String(err));
 			} finally {
@@ -81,7 +81,7 @@ const WelcomePage: React.FC<WelcomePageProps> = () => {
 		async (path: string) => {
 			try {
 				await dispatch(selectWorkspace(path)).unwrap();
-				navigate('/home');
+				navigate('/assistant');
 			} catch (error) {
 				console.error('Failed to open workspace:', error);
 			}
