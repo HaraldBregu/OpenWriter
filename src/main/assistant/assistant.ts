@@ -93,8 +93,11 @@ export class Assistant {
 	}
 
 	async reset(): Promise<void> {
-		await this.init();
 		await this.session.clear();
+		await this.memory.clear();
 		this.history = [];
+		this.initialized = false;
+		this.initPromise = null;
+		await this.init();
 	}
 }
