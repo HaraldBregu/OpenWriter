@@ -53,7 +53,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 
 	const [indexingTaskId, setIndexingTaskId] = useState<string | null>(null);
 	const [indexingStatus, setIndexingStatus] = useState<TaskState | null>(null);
-	const indexingTaskCompleted = indexingStatus === 'finished';
 	const indexingTaskActive =
 		indexingStatus === 'queued' || indexingStatus === 'started' || indexingStatus === 'running';
 
