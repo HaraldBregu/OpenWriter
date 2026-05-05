@@ -67,14 +67,10 @@ function PromptContainer(): React.JSX.Element {
 						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
 					/>
 					<div className="relative rounded-xl">
-						<GlowingEffect
-							blur={0}
+						<ShineBorder
 							borderWidth={2}
-							spread={80}
-							glow={true}
-							disabled={false}
-							proximity={64}
-							inactiveZone={0.01}
+							duration={14}
+							shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
 						/>
 						<Card className="relative w-full shadow-none!">
 							<PromptHeader />
