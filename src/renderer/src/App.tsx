@@ -333,7 +333,7 @@ const App: React.FC = () => {
 														/>
 													</Route>
 													<Route
-														path="/content/:id"
+														path="/document/:id"
 														element={
 															<RouteWrapper>
 																<DocumentPage />
