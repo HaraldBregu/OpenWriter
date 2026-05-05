@@ -36,7 +36,7 @@ export function QuickActions(): ReactElement {
 					labelKey="common.agents"
 					descriptionKey="home.chatDescription"
 					accent="bg-secondary text-foreground"
-					onClick={() => navigate('/agents')}
+					onClick={() => navigate('/settings/agents')}
 				/>
 			</div>
 		</section>
