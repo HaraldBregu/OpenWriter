@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Save, RefreshCw, KeyRound } from 'lucide-react';
+import { Save, RefreshCw, KeyRound, Info } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	Field,
@@ -12,6 +12,12 @@ import {
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import { Spinner } from '@/components/ui/Spinner';
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from '@/components/ui/Tooltip';
 import { H3, Muted } from '@/components/ui/Typography';
 import type { ChannelStatusEvent } from '../../../../../../shared/types';
 import { ChannelsProvider, useChannelsContext } from './Provider';
