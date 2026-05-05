@@ -53,6 +53,10 @@ export class MemoryManager {
 		}
 	}
 
+	async clear(): Promise<void> {
+		await fs.rm(this.workspace, { recursive: true, force: true });
+	}
+
 	async readAll(): Promise<Record<string, string>> {
 		const result: Record<string, string> = {};
 		for (const filename of TEMPLATE_FILES) {
