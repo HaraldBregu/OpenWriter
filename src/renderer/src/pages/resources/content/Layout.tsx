@@ -13,9 +13,9 @@ function Bootstrap(): null {
 		const loadContents = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
-				const items = await window.workspace.getContents();
+				const items = await window.workspace.getResources();
 				if (!active) return;
-				setContents(items);
+				setContents(items.filter((r) => r.name.toLowerCase().endsWith('.md')));
 			} catch {
 				if (!active) return;
 				setContents([]);
