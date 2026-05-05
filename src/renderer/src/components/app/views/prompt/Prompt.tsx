@@ -66,64 +66,58 @@ function PromptContainer(): React.JSX.Element {
 						aria-hidden="true"
 						className="pointer-events-none absolute inset-x-6 top-8 bottom-0 -z-10 rounded-full bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.26),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.28),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.24),transparent_32%)] opacity-70 blur-2xl dark:bg-[radial-gradient(circle_at_12%_50%,hsl(195_96%_61%/0.22),transparent_32%),radial-gradient(circle_at_50%_100%,hsl(30_95%_61%/0.26),transparent_38%),radial-gradient(circle_at_88%_45%,hsl(270_91%_68%/0.26),transparent_32%)]"
 					/>
-					<div className="relative rounded-xl">
-						<ShineBorder
-							borderWidth={2}
-							duration={14}
-							shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]}
-						/>
-						<Card className="relative w-full shadow-none!">
-							<PromptHeader />
-							<CardContent>
-								<Textarea
-									ref={textareaRef}
-									value={state.prompt}
-									onChange={(e) => {
-										handlePromptChange(e.target.value);
-										resizeTextarea();
-									}}
-									disabled={!enable}
-									aria-label={inputLabel}
-									className={cn(
-										'disabled:bg-transparent! disabled:focus:bg-transparent!',
-										'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
-										'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
-										'disabled:cursor-not-allowed disabled:opacity-60'
-									)}
-									placeholder={t('assistantNode.placeholder', 'What can i write for you?')}
-									rows={1}
-								/>
-							</CardContent>
-							<CardFooter className="bg-transparent border-none">
-								<FileUploadTrigger
-									render={
-										<Button
-											type="button"
-											variant="outline"
-											size="icon"
-											title={t('assistantNode.addAttachment', 'Add attachment')}
-											aria-label={t('assistantNode.addAttachment', 'Add attachment')}
-										/>
-									}
-								>
-									<Paperclip />
-								</FileUploadTrigger>
-								<Button
-									variant="default"
-									className="ml-auto shrink-0"
-									disabled={isSubmitDisabled}
-									onMouseDown={(e) => e.preventDefault()}
-									onClick={() => {
-										if (!loading) submitRef.current?.();
-									}}
-									aria-label={t('agenticPanel.submit', 'Submit')}
-								>
-									{loading ? <LoaderCircle className="animate-spin" /> : <SendHorizontal />}
-									<span>{t('agenticPanel.submit', 'Submit')}</span>
-								</Button>
-							</CardFooter>
-						</Card>
-					</div>
+					<Card className="relative w-full shadow-none! overflow-hidden">
+						<ShineBorder shineColor={["#A07CFE", "#FE8FB5", "#FFBE7B"]} />
+						<PromptHeader />
+						<CardContent>
+							<Textarea
+								ref={textareaRef}
+								value={state.prompt}
+								onChange={(e) => {
+									handlePromptChange(e.target.value);
+									resizeTextarea();
+								}}
+								disabled={!enable}
+								aria-label={inputLabel}
+								className={cn(
+									'disabled:bg-transparent! disabled:focus:bg-transparent!',
+									'p-0 rounded-none w-full resize-none border-none bg-transparent dark:bg-transparent focus:bg-transparent text-[15px] leading-7 text-foreground shadow-none focus-visible:ring-0 focus-visible:ring-offset-0',
+									'placeholder:text-foreground/42 dark:placeholder:text-muted-foreground/78',
+									'disabled:cursor-not-allowed disabled:opacity-60'
+								)}
+								placeholder={t('assistantNode.placeholder', 'What can i write for you?')}
+								rows={1}
+							/>
+						</CardContent>
+						<CardFooter className="bg-transparent border-none">
+							<FileUploadTrigger
+								render={
+									<Button
+										type="button"
+										variant="outline"
+										size="icon"
+										title={t('assistantNode.addAttachment', 'Add attachment')}
+										aria-label={t('assistantNode.addAttachment', 'Add attachment')}
+									/>
+								}
+							>
+								<Paperclip />
+							</FileUploadTrigger>
+							<Button
+								variant="default"
+								className="ml-auto shrink-0"
+								disabled={isSubmitDisabled}
+								onMouseDown={(e) => e.preventDefault()}
+								onClick={() => {
+									if (!loading) submitRef.current?.();
+								}}
+								aria-label={t('agenticPanel.submit', 'Submit')}
+							>
+								{loading ? <LoaderCircle className="animate-spin" /> : <SendHorizontal />}
+								<span>{t('agenticPanel.submit', 'Submit')}</span>
+							</Button>
+						</CardFooter>
+					</Card>
 				</div>
 			</FileUploadDropzone>
 		</FileUpload>
