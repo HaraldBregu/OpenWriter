@@ -195,15 +195,15 @@ const Editor = React.memo(
 				const el = rootRef.current!;
 				return Object.assign(el, {
 					setContent(
-						markdown: string,
+						value: string,
 						options: { preventEditorUpdate?: boolean } = {
 							preventEditorUpdate: false,
 						}
 					) {
 						if (!editor || editor.isDestroyed) return;
-						editor.commands.setContent(markdown, {
+						editor.commands.setContent(parseDocOrEmpty(value), {
 							emitUpdate: !(options.preventEditorUpdate ?? false),
-							contentType: 'markdown',
+							contentType: 'doc',
 						});
 					},
 					insertText(
@@ -225,44 +225,6 @@ const Editor = React.memo(
 
 						const tr = editor.state.tr
 							.delete(from, to)
-							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
-						editor.view.dispatch(tr);
-					},
-					insertMarkdown(
-						markdown: string,
-						options: { from?: number; preventEditorUpdate?: boolean } = {}
-					) {
-						if (!editor || editor.isDestroyed) return;
-						const from = options.from ?? editor.state.selection.from;
-						const to = editor.state.doc.content.size;
-
-						const json = editor.markdown?.parse(markdown);
-						if (!json) return;
-
-						const doc = editor.schema.nodeFromJSON(json);
-						const slice = new Slice(doc.content, 0, 0);
-
-						const tr = editor.state.tr
-							.replace(from, to, slice)
-							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
-						editor.view.dispatch(tr);
-					},
-					insertMarkdownText(
-						markdown: string,
-						options: { from?: number; to?: number; preventEditorUpdate?: boolean } = {}
-					) {
-						if (!editor || editor.isDestroyed) return;
-						const from = options.from ?? editor.state.selection.from;
-						const to = options.to ?? from;
-
-						const json = editor.markdown?.parse(markdown);
-						if (!json) return;
-
-						const doc = editor.schema.nodeFromJSON(json);
-						const slice = new Slice(doc.content, 0, 0);
-
-						const tr = editor.state.tr
-							.replaceRange(from, to, slice)
 							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
 						editor.view.dispatch(tr);
 					},
