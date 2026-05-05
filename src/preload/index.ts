@@ -314,29 +314,21 @@ const workspace: WorkspaceApi = {
 	updateDocumentContent: (documentId: string, content: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateDocumentContent, documentId, content),
 	// -------------------------------------------------------------------------
-	// Contents (workspace/contents/)
+	// Resources (workspace/resources/)
 	// -------------------------------------------------------------------------
-	getContents: () => typedInvokeUnwrap(WorkspaceChannels.getContents),
-	getContentsFolders: () => typedInvokeUnwrap(WorkspaceChannels.getContentsFolders),
-	insertContents: (extensions?: string[]) =>
-		typedInvokeUnwrap(WorkspaceChannels.insertContents, extensions),
-	deleteContent: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteContent, id),
-	// -------------------------------------------------------------------------
-	// Images (workspace/images/)
-	// -------------------------------------------------------------------------
-	getImages: () => typedInvokeUnwrap(WorkspaceChannels.getImages),
-	insertImages: (extensions?: string[]) =>
-		typedInvokeUnwrap(WorkspaceChannels.insertImages, extensions),
-	deleteImage: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteImage, id),
-	onImagesChanged: (
+	getResources: () => typedInvokeUnwrap(WorkspaceChannels.getResources),
+	insertResources: (extensions?: string[]) =>
+		typedInvokeUnwrap(WorkspaceChannels.insertResources, extensions),
+	deleteResource: (id: string) => typedInvokeUnwrap(WorkspaceChannels.deleteResource, id),
+	onResourcesChanged: (
 		callback: (event: {
 			type: 'added' | 'changed' | 'removed';
-			imageId: string;
-			imagePath: string;
+			resourceId: string;
+			resourcePath: string;
 			timestamp: number;
 		}) => void
 	): (() => void) => {
-		return typedOn(WorkspaceChannels.imagesChanged, callback);
+		return typedOn(WorkspaceChannels.resourcesChanged, callback);
 	},
 	// -------------------------------------------------------------------------
 	// Filesystem
