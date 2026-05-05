@@ -59,9 +59,7 @@ import {
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
-	Plug,
 	ArrowLeftRight,
-	Radio,
 } from 'lucide-react';
 import { SidebarPageContainer, SidebarPageInset } from '../sidebar/Sidebar';
 import { DeleteConfirmDialog } from '../dialogs/DeleteConfirmDialog';
