@@ -267,11 +267,6 @@ export const workspaceSlice = createSlice({
 			state.projectName = action.payload.name;
 			state.projectDescription = action.payload.description;
 		});
-
-		// loadIndexingInfo
-		builder.addCase(loadIndexingInfo.fulfilled, (state, action) => {
-			state.indexingInfo = action.payload;
-		});
 	},
 });
 
