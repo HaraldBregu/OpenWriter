@@ -89,20 +89,6 @@ export const loadProjectName = createAsyncThunk<{
 });
 
 // ---------------------------------------------------------------------------
-// Indexing thunks
-// ---------------------------------------------------------------------------
-
-/**
- * Load the indexing info (last indexed timestamp, counts) from the workspace.
- */
-export const loadIndexingInfo = createAsyncThunk<IndexingInfo | null>(
-	'workspace/loadIndexingInfo',
-	async () => {
-		return await window.workspace.getIndexingInfo();
-	}
-);
-
-// ---------------------------------------------------------------------------
 // Resource thunks
 // ---------------------------------------------------------------------------
 
@@ -112,7 +98,7 @@ export const loadIndexingInfo = createAsyncThunk<IndexingInfo | null>(
 export const loadResources = createAsyncThunk<ResourceInfo[]>(
 	'workspace/loadResources',
 	async () => {
-		return await window.workspace.loadDocuments();
+		return await window.workspace.getResources();
 	}
 );
 
@@ -122,8 +108,8 @@ export const loadResources = createAsyncThunk<ResourceInfo[]>(
 export const removeResources = createAsyncThunk<ResourceInfo[], string[]>(
 	'workspace/removeResources',
 	async (ids) => {
-		await Promise.all(ids.map((id) => window.workspace.deleteDocument(id)));
-		return await window.workspace.loadDocuments();
+		await Promise.all(ids.map((id) => window.workspace.deleteResource(id)));
+		return await window.workspace.getResources();
 	}
 );
 
