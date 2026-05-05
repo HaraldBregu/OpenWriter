@@ -592,58 +592,6 @@ export interface FsListDirEntry {
 	isDirectory: boolean;
 }
 
-// ---- Document Image --------------------------------------------------------
-
-/**
- * Payload for saving an image file into a document's folder.
- */
-export interface SaveDocumentImageParams {
-	/** Document UUID. */
-	documentId: string;
-	/** Desired file name (e.g. "photo.png"). */
-	fileName: string;
-	/** Base-64 encoded image data (without the data-URI prefix). */
-	base64: string;
-}
-
-/**
- * Result returned after saving a document image.
- */
-export interface SaveDocumentImageResult {
-	/** The file name as written to disk. */
-	fileName: string;
-	/** Absolute path of the saved file on disk. */
-	filePath: string;
-}
-
-/**
- * Event payload emitted when a file inside a document's images/ folder changes.
- */
-export interface DocumentImageChangeEvent {
-	/** Whether the image was added, modified, or removed. */
-	type: 'added' | 'changed' | 'removed';
-	/** The document UUID that owns the image. */
-	documentId: string;
-	/** File name of the changed image (e.g. "photo.jpg"). */
-	fileName: string;
-	/** Absolute path to the image file. */
-	filePath: string;
-	/** Unix timestamp (ms). */
-	timestamp: number;
-}
-
-/**
- * Info about a single image file inside a document's images/ folder.
- */
-export interface DocumentImageInfo {
-	/** File name (e.g. "photo.png"). */
-	fileName: string;
-	/** Absolute path on disk. */
-	filePath: string;
-	/** File size in bytes. */
-	size: number;
-}
-
 // ---- Document Config -------------------------------------------------------
 
 /**
