@@ -126,7 +126,6 @@ function AgentForm({ definition, icon: Icon }: AgentFormProps): ReactElement {
 
 	const providerSelectId = `agent-${definition.id}-provider`;
 	const modelSelectId = `agent-${definition.id}-model`;
-	const Icon = AGENT_ICONS[definition.id] ?? Sparkles;
 
 	return (
 		<div className="w-full flex flex-col gap-6">
