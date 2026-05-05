@@ -100,16 +100,14 @@ export default function Page(): ReactElement {
 	return (
 		<ProvidersProvider>
 			<Bootstrap />
-			<PageContainer>
-				<PageHeader>
-					<PageHeaderTitle>{t('providers.title', 'Providers')}</PageHeaderTitle>
-				</PageHeader>
-				<PageBody className="flex flex-col gap-10">
+			<div className="w-full max-w-2xl">
+				<h1 className="text-lg font-normal mb-6">{t('settings.tabs.providers', 'Providers')}</h1>
+				<div className="flex flex-col gap-10">
 					{PROVIDER_CATALOGUE.map((provider) => (
 						<ProviderForm key={provider.id} provider={provider} />
 					))}
-				</PageBody>
-			</PageContainer>
+				</div>
+			</div>
 		</ProvidersProvider>
 	);
 }
