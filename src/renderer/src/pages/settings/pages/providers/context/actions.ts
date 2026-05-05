@@ -1,4 +1,4 @@
-import type { Provider, ProviderId } from '../../../../../shared/types';
+import type { Provider, ProviderId } from '../../../../../../../shared/types';
 import type { DraftProperties, DraftsByProvider } from './state';
 
 export type ProvidersAction =

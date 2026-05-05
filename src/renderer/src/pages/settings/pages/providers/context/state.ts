@@ -1,5 +1,5 @@
-import type { Provider, ProviderId } from '../../../../../../shared/types';
-import { PROVIDER_IDS } from '../../../../../../shared/providers';
+import type { Provider, ProviderId } from '../../../../../../../shared/types';
+import { PROVIDER_IDS } from '../../../../../../../shared/providers';
 
 export interface DraftProperties {
 	readonly apiKey: string;

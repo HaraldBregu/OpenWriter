@@ -14,8 +14,8 @@ import {
 } from '@/components/ui/Field';
 import { Input } from '@/components/ui/Input';
 import { Spinner } from '@/components/ui/Spinner';
-import type { Provider, ProviderId } from '../../../../shared/types';
-import { PROVIDER_CATALOGUE } from '../../../../shared/providers';
+import type { Provider, ProviderId } from '../../../../../../shared/types';
+import { PROVIDER_CATALOGUE } from '../../../../../../shared/providers';
 import { ProvidersProvider, useProvidersContext } from './Provider';
 
 const AUTOSAVE_DELAY_MS = 600;

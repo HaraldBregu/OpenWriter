@@ -4,9 +4,9 @@ import type {
 	AgentSettings,
 	ProviderId,
 	ProviderModelInfo,
-} from '../../../../../shared/types';
-import { AGENT_DEFINITIONS } from '../../../../../shared/agents';
-import type { AgentDefinition } from '../../../../../shared/agents';
+} from '../../../../../../shared/types';
+import { AGENT_DEFINITIONS } from '../../../../../../shared/agents';
+import type { AgentDefinition } from '../../../../../../shared/agents';
 import { agentsReducer } from './context/reducer';
 import { initialState, type LoadStatus } from './context/state';
 

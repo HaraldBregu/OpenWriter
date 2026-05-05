@@ -1,4 +1,4 @@
-import type { ProviderId } from '../../../../../../shared/types';
+import type { ProviderId } from '../../../../../../../shared/types';
 import type { ProvidersState } from './state';
 import type { ProvidersAction } from './actions';
 

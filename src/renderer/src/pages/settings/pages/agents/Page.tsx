@@ -8,12 +8,6 @@ import {
 	type LucideIcon,
 } from 'lucide-react';
 import {
-	PageBody,
-	PageContainer,
-	PageHeader,
-	PageHeaderTitle,
-} from '@/components/app/base/page';
-import {
 	Field,
 	FieldDescription,
 	FieldGroup,
@@ -26,8 +20,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/Select';
-import { PROVIDERS } from '../../../../shared/types';
-import type { ProviderId } from '../../../../shared/types';
+import { PROVIDERS } from '../../../../../../shared/types';
+import type { ProviderId } from '../../../../../../shared/types';
 import {
 	AGENT_DEFINITIONS,
 	AgentsProvider,

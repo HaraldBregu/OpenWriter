@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useReducer } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import type { Provider, ProviderId } from '../../../../shared/types';
-import { PROVIDER_IDS, getProvider } from '../../../../shared/providers';
+import type { Provider, ProviderId } from '../../../../../../shared/types';
+import { PROVIDER_IDS, getProvider } from '../../../../../../shared/providers';
 import { providersReducer } from './context/reducer';
 import {
 	EMPTY_DRAFT,

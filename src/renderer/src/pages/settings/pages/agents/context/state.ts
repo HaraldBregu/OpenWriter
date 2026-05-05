@@ -1,6 +1,6 @@
-import type { AgentSettings, ProviderModelInfo } from '../../../../../../shared/types';
-import { AGENT_DEFINITIONS } from '../../../../../../shared/agents';
-import type { AgentDefinition } from '../../../../../../shared/agents';
+import type { AgentSettings, ProviderModelInfo } from '../../../../../../../shared/types';
+import { AGENT_DEFINITIONS } from '../../../../../../../shared/agents';
+import type { AgentDefinition } from '../../../../../../../shared/agents';
 
 export type LoadStatus =
 	| { type: 'idle' }

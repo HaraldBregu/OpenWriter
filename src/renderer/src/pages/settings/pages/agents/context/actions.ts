@@ -1,4 +1,4 @@
-import type { AgentSettings, ProviderModelInfo } from '../../../../../../shared/types';
+import type { AgentSettings, ProviderModelInfo } from '../../../../../../../shared/types';
 import type { LoadStatus } from './state';
 
 export type AgentsAction =
