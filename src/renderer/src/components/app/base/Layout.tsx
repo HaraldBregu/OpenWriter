@@ -633,10 +633,10 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton
-										render={<Link to="/channels" />}
+										render={<Link to="/settings/channels" />}
 										tooltip={t('appLayout.channels', 'Channels')}
 										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/channels')}
+										isActive={location.pathname.startsWith('/settings/channels')}
 									>
 										<Radio />
 										<span>{t('appLayout.channels', 'Channels')}</span>
