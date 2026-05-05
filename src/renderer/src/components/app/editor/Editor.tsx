@@ -126,28 +126,14 @@ const Editor = React.memo(
 						const initial = initialValueRef.current;
 						if (!initial) return;
 						lastEmittedRef.current = initial;
+						const doc = parseDocOrEmpty(initial);
 						requestAnimationFrame(() => {
 							requestAnimationFrame(() => {
 								if (ed.isDestroyed) return;
-								const t0 = performance.now();
-								const json = ed.markdown?.parse(initial);
-								const t1 = performance.now();
-								console.log(
-									`[Editor] marked.parse: ${(t1 - t0).toFixed(0)}ms (chars=${initial.length})`
-								);
-								if (!json) {
-									ed.commands.setContent(initial, {
-										emitUpdate: false,
-										contentType: 'markdown',
-									});
-									return;
-								}
-								ed.commands.setContent(json, {
+								ed.commands.setContent(doc, {
 									emitUpdate: false,
 									contentType: 'doc',
 								});
-								const t2 = performance.now();
-								console.log(`[Editor] setContent(doc): ${(t2 - t1).toFixed(0)}ms`);
 							});
 						});
 					},
@@ -162,9 +148,9 @@ const Editor = React.memo(
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
 							if (ed.isDestroyed) return;
-							const md = ed.getMarkdown();
-							lastEmittedRef.current = md;
-							onChangeRef.current(md);
+							const json = JSON.stringify(ed.state.doc.toJSON());
+							lastEmittedRef.current = json;
+							onChangeRef.current(json);
 						}, 100);
 					},
 					editorProps: {
