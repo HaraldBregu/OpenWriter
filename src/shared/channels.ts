@@ -374,18 +374,10 @@ export interface InvokeChannelMap {
 		result: void;
 	};
 
-	// ---- Contents: workspace/contents/ (IpcResult-wrapped) ----
-	[WorkspaceChannels.getContents]: { args: []; result: ResourceInfo[] };
-	[WorkspaceChannels.getContentsFolders]: { args: []; result: FolderEntry[] };
-	[WorkspaceChannels.insertContents]: { args: [extensions?: string[]]; result: ResourceInfo[] };
-	[WorkspaceChannels.deleteContent]: { args: [id: string]; result: void };
-
-	// ---- Files: workspace/files/ (IpcResult-wrapped) ----
-
-	// ---- Images: workspace/images/ (IpcResult-wrapped) ----
-	[WorkspaceChannels.getImages]: { args: []; result: ImageEntry[] };
-	[WorkspaceChannels.insertImages]: { args: [extensions?: string[]]; result: ImageEntry[] };
-	[WorkspaceChannels.deleteImage]: { args: [id: string]; result: void };
+	// ---- Resources: workspace/resources/ (IpcResult-wrapped) ----
+	[WorkspaceChannels.getResources]: { args: []; result: ResourceInfo[] };
+	[WorkspaceChannels.insertResources]: { args: [extensions?: string[]]; result: ResourceInfo[] };
+	[WorkspaceChannels.deleteResource]: { args: [id: string]; result: void };
 
 	// ---- Assistant (IpcResult-wrapped) ----
 	[AssistantChannels.send]: { args: [message: string, assistantId?: string]; result: string };
