@@ -17,8 +17,6 @@ import { Slider } from '@/components/ui/Slider';
 
 interface DocumentSettingsProps {
 	readonly documentId: string | null;
-	readonly title: string;
-	readonly content: string;
 }
 
 export default function DocumentSettings({
