@@ -11,17 +11,8 @@ export { WorkspaceMetadataService } from './workspace-metadata';
 // Project workspace file management
 export { ProjectWorkspaceService } from './project-workspace';
 
-// File watching
-export { FilesWatcherService } from './files-watcher';
-
-// Contents service (workspace/contents/)
-export { ContentsService } from './contents-service';
-
-// Files service (workspace/files/)
-export { FilesService } from './files-service';
-
-// Images service (workspace/images/)
-export { ImagesService } from './images-service';
+// Resources service (workspace/resources/)
+export { ResourcesService } from './resources-service';
 
 // Output file management
 export type {
