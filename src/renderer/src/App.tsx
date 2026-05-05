@@ -48,6 +48,8 @@ const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
 const EditorPage = lazy(() => import('./pages/settings/pages/EditorPage'));
 const DeveloperPage = lazy(() => import('./pages/settings/pages/DeveloperPage'));
+const SettingsAgentsPage = lazy(() => import('./pages/settings/pages/AgentsPage'));
+const SettingsProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,
