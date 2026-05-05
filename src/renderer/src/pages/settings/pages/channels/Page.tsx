@@ -433,7 +433,7 @@ export default function Page(): ReactElement {
 		<ChannelsProvider>
 			<Bootstrap />
 			<div className="w-full max-w-2xl">
-				<h1 className="text-2xl font-semibold mb-6">{t('settings.tabs.channels', 'Channels')}</h1>
+				<H1 className="mb-6">{t('settings.tabs.channels', 'Channels')}</H1>
 				<div className="flex flex-col gap-10">
 					<TelegramSection />
 					<Separator />
