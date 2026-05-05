@@ -1,7 +1,7 @@
 import type { ResourceInfo } from '../../../../../shared/types';
 
-export interface ContentState {
-	contents: ResourceInfo[];
+export interface ResourcesState {
+	resources: ResourceInfo[];
 	isLoading: boolean;
 	uploading: boolean;
 	searchQuery: string;
@@ -10,8 +10,8 @@ export interface ContentState {
 	removing: boolean;
 }
 
-export const initialState: ContentState = {
-	contents: [],
+export const initialState: ResourcesState = {
+	resources: [],
 	isLoading: true,
 	uploading: false,
 	searchQuery: '',
