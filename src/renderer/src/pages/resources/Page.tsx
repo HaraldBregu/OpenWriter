@@ -36,7 +36,6 @@ import {
 	DropdownMenuCheckboxItem,
 	DropdownMenuContent,
 	DropdownMenuGroup,
-	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
@@ -57,10 +56,8 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/Table';
-import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 import { DeleteConfirmDialog } from '@/components/app/dialogs';
-import { useContentContext } from './Provider';
-import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
+import { useResourcesContext } from './Provider';
 import { MarkdownPreviewDialog } from './components/MarkdownPreviewDialog';
 import { buildColumns } from './components/columns';
 import type { ResourceInfo } from '../../../../shared/types';
@@ -69,16 +66,14 @@ import { Label } from '@/components/ui/Label';
 
 function PageContent(): ReactElement {
 	const { t } = useTranslation();
-	const section = RESOURCE_SECTIONS.content;
-	const [fileDialogOpen, setFileDialogOpen] = useState(false);
 	const [previewItem, setPreviewItem] = useState<ResourceInfo | null>(null);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
 	const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
 	const [rowSelection, setRowSelection] = React.useState({});
 	const {
-		contents,
-		filteredContents,
+		resources,
+		filteredResources,
 		isLoading,
 		uploading,
 		handleUpload,
@@ -89,14 +84,18 @@ function PageContent(): ReactElement {
 		confirmOpen,
 		setConfirmOpen,
 		handleConfirmDelete,
-	} = useContentContext();
+	} = useResourcesContext();
 
-	const hasContents = contents.length > 0;
+	const hasResources = resources.length > 0;
 
 	const columns = useMemo(
 		() =>
 			buildColumns({
-				onPreview: setPreviewItem,
+				onPreview: (item) => {
+					if (item.name.toLowerCase().endsWith('.md')) {
+						setPreviewItem(item);
+					}
+				},
 				onOpenInFinder: handleOpenResourcesFolder,
 				onDelete: handleDeleteOne,
 			}),
@@ -104,7 +103,7 @@ function PageContent(): ReactElement {
 	);
 
 	const table = useReactTable({
-		data: filteredContents,
+		data: filteredResources,
 		columns,
 		onSortingChange: setSorting,
 		onColumnFiltersChange: setColumnFilters,
@@ -122,46 +121,24 @@ function PageContent(): ReactElement {
 		setRowSelection({});
 	};
 
-	const handleExtractorRun = async (payload: ExtractorRunPayload): Promise<void> => {
-		const { filePath, modelId } = payload;
-		if (!filePath || !modelId) return;
-		const result = await window.task.submit({
-			type: 'ocr',
-			input: { url: filePath, modelId, inputType: 'url' },
-			metadata: {},
-		});
-		if (!result.success) {
-			console.error('[ContentPage] OCR submit failed:', result.error.message);
-			return;
-		}
-		setFileDialogOpen(false);
-	};
-
 	return (
 		<PageContainer>
 			<PageHeader>
 				<PageHeaderTitle>
-					<Label className="w-full text-left text-sm font-medium">{t(section.titleKey)}</Label>
-					<DropdownMenu>
-						<DropdownMenuTrigger
-							render={<Button variant="outline" size="md" title="Upload" aria-label="Upload" />}
-						>
-							<Upload aria-hidden="true" />
-							<span>Upload</span>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent align="end">
-							<DropdownMenuGroup>
-								<DropdownMenuItem onClick={() => handleUpload(['.md'])}>
-									<FileText className="h-4 w-4" />
-									Markdown
-								</DropdownMenuItem>
-								<DropdownMenuItem disabled>
-									<Upload className="h-4 w-4" />
-									File
-								</DropdownMenuItem>
-							</DropdownMenuGroup>
-						</DropdownMenuContent>
-					</DropdownMenu>
+					<Label className="w-full text-left text-sm font-medium">
+						{t('appLayout.resources')}
+					</Label>
+					<Button
+						variant="outline"
+						size="md"
+						title="Upload"
+						aria-label="Upload"
+						onClick={() => handleUpload()}
+						disabled={uploading}
+					>
+						<Upload aria-hidden="true" />
+						<span>Upload</span>
+					</Button>
 					<Button
 						variant="outline"
 						size="md"
@@ -177,26 +154,26 @@ function PageContent(): ReactElement {
 			<PageBody>
 				{isLoading && (
 					<div className="flex flex-1 items-center justify-center py-16">
-						<p className="text-sm text-muted-foreground">{t(section.loadingKey)}</p>
+						<p className="text-sm text-muted-foreground">{t('library.loading')}</p>
 					</div>
 				)}
 
-				{!isLoading && !hasContents && (
+				{!isLoading && !hasResources && (
 					<div className="flex flex-1 flex-col items-center justify-center gap-4 py-16 text-center">
 						<div className="flex h-14 w-14 items-center justify-center rounded-full bg-muted">
 							<FileText className="h-7 w-7 text-muted-foreground" />
 						</div>
 						<div className="space-y-1">
-							<p className="font-medium text-sm">{t(section.emptyKey)}</p>
+							<p className="font-medium text-sm">{t('library.empty')}</p>
 						</div>
-						<Button onClick={() => handleUpload(['.md'])} disabled={uploading} size="sm">
+						<Button onClick={() => handleUpload()} disabled={uploading} size="sm">
 							<Upload />
-							{t(section.uploadKey)}
+							{t('library.upload')}
 						</Button>
 					</div>
 				)}
 
-				{!isLoading && hasContents && (
+				{!isLoading && hasResources && (
 					<div className="space-y-4">
 						<div className="flex items-center gap-2">
 							<Input
@@ -386,11 +363,6 @@ function PageContent(): ReactElement {
 				description={t('resources.removeConfirm', { count: selected.size })}
 				onConfirm={handleConfirmDeleteAndReset}
 				confirmLabel={t('resources.remove')}
-			/>
-			<ExtractorDialog
-				open={fileDialogOpen}
-				onOpenChange={setFileDialogOpen}
-				onRun={handleExtractorRun}
 			/>
 			<MarkdownPreviewDialog
 				item={previewItem}

@@ -228,14 +228,6 @@ const App: React.FC = () => {
 											<Suspense fallback={<PageLoadingSkeleton />}>
 												<Routes>
 													<Route
-														path="/home"
-														element={
-															<RouteWrapper>
-																<HomePage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
 														path="/assistant"
 														element={
 															<RouteWrapper>
