@@ -506,9 +506,9 @@ function Container({ children }: LayoutProps) {
 												{documents.map((w) => (
 													<SidebarMenuItem key={w.id}>
 														<SidebarMenuButton
-															render={<Link to={`/content/${w.id}`} />}
+															render={<Link to={`/document/${w.id}`} />}
 															className="h-9 px-3"
-															isActive={location.pathname === `/content/${w.id}`}
+															isActive={location.pathname === `/document/${w.id}`}
 															onKeyDown={(event) =>
 																handleDocumentKeyDown(event, { id: w.id, title: w.title })
 															}
@@ -567,44 +567,17 @@ function Container({ children }: LayoutProps) {
 
 						<SidebarGroup className="mt-auto">
 							<SidebarMenu className="gap-1">
-								<Collapsible defaultOpen className="group/collapsible">
-									<SidebarMenuItem>
-										<CollapsibleTrigger
-											render={
-												<SidebarMenuButton
-													tooltip={t('appLayout.resources', 'Resources')}
-													className="group/btn h-9 px-3"
-												>
-													<Folder />
-													<span>{t('appLayout.resources', 'Resources')}</span>
-													<ChevronRight className="ml-auto transition-transform duration-200 group-data-[panel-open]/collapsible:rotate-90" />
-												</SidebarMenuButton>
-											}
-										/>
-										<CollapsibleContent>
-											<SidebarMenuSub>
-												<SidebarMenuSubItem>
-													<SidebarMenuSubButton
-														render={<Link to="/resources/content" />}
-														isActive={location.pathname === '/resources/content'}
-													>
-														<FileText />
-														<span>{t('appLayout.contents', 'Contents')}</span>
-													</SidebarMenuSubButton>
-												</SidebarMenuSubItem>
-												<SidebarMenuSubItem>
-													<SidebarMenuSubButton
-														render={<Link to="/resources/images" />}
-														isActive={location.pathname === '/resources/images'}
-													>
-														<FileImage />
-														<span>{t('appLayout.images', 'Images')}</span>
-													</SidebarMenuSubButton>
-												</SidebarMenuSubItem>
-											</SidebarMenuSub>
-										</CollapsibleContent>
-									</SidebarMenuItem>
-								</Collapsible>
+								<SidebarMenuItem>
+									<SidebarMenuButton
+										render={<Link to="/resources" />}
+										tooltip={t('appLayout.resources', 'Resources')}
+										className="group/btn h-9 px-3"
+										isActive={location.pathname === '/resources'}
+									>
+										<Folder />
+										<span>{t('appLayout.resources', 'Resources')}</span>
+									</SidebarMenuButton>
+								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton
 										render={<Link to="/settings" />}
