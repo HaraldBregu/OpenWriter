@@ -96,18 +96,13 @@ export function useContentWriterTask(opts: UseContentWriterTaskOptions): UseCont
 						const range = extractTaskSelection(event.metadata.selection);
 						if (range) {
 							const { from, to } = range;
-							const json = ed.markdown?.parse(responseText);
-							if (json) {
-								const node = ed.schema.nodeFromJSON(json);
-								const slice = new Slice(node.content, 0, 0);
-								const tr = ed.state.tr.replaceRange(from, to, slice);
-								ed.view.dispatch(tr);
-								ed.view.focus();
-							} else {
-								ed.chain().focus().insertContentAt({ from, to }, responseText).run();
-							}
+							const html = marked.parse(responseText, {
+								gfm: true,
+								async: false,
+							}) as string;
+							ed.chain().focus().insertContentAt({ from, to }, html).run();
 						}
-						onMarkdownChangedRef.current(ed.getMarkdown());
+						onMarkdownChangedRef.current(JSON.stringify(ed.state.doc.toJSON()));
 					}
 				} else if (event.data.error.length > 0) {
 					setTaskError(event.data.error);
