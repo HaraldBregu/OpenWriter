@@ -32,7 +32,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const handleUpload = useCallback(async () => {
 		dispatch({ type: 'SET_UPLOADING', payload: true });
 		try {
-			await window.workspace.insertImages([
+			await window.workspace.insertResources([
 				'.png',
 				'.jpg',
 				'.jpeg',
