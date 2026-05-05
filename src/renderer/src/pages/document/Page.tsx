@@ -9,9 +9,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
+import { marked } from 'marked';
 import { Undo2, Redo2, Loader2, X, Check, Plus, Download, Search, Sparkles } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
