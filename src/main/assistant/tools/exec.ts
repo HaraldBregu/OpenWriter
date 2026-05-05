@@ -1,6 +1,6 @@
 import { spawn } from "node:child_process";
+import { promises as fs } from "node:fs";
 import os from "node:os";
-import path from "node:path";
 import { Tool } from "./base.js";
 
 const DANGEROUS_PATTERNS: RegExp[] = [
@@ -10,8 +10,6 @@ const DANGEROUS_PATTERNS: RegExp[] = [
   /:\(\)\s*\{.*\}/, // fork bomb
   />\s*\/dev\/sd/,
 ];
-
-const WORKSPACE = path.join(os.homedir(), ".ai-assistant", "workspace");
 
 export class ExecTool extends Tool {
   name = "exec";
@@ -29,10 +27,12 @@ export class ExecTool extends Tool {
   };
 
   private timeoutMs: number;
+  private cwd: string;
 
-  constructor(timeoutSeconds = 60) {
+  constructor(opts: { workspace?: string; timeoutSeconds?: number } = {}) {
     super();
-    this.timeoutMs = timeoutSeconds * 1000;
+    this.timeoutMs = (opts.timeoutSeconds ?? 60) * 1000;
+    this.cwd = opts.workspace ?? os.homedir();
   }
 
   async execute(args: Record<string, unknown>): Promise<string> {
@@ -44,10 +44,12 @@ export class ExecTool extends Tool {
       }
     }
 
+    await fs.mkdir(this.cwd, { recursive: true });
+
     return new Promise((resolve) => {
       const proc = spawn(command, {
         shell: true,
-        cwd: WORKSPACE,
+        cwd: this.cwd,
         stdio: ["ignore", "pipe", "pipe"],
       });
 
