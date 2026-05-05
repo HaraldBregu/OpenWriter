@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
-import type { Editor as TiptapEditor } from '@tiptap/core';
+import type { Content, Editor as TiptapEditor } from '@tiptap/core';
 import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
@@ -9,12 +9,12 @@ import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
 
-const EMPTY_DOC = { type: 'doc', content: [{ type: 'paragraph' }] };
+const EMPTY_DOC: Content = { type: 'doc', content: [{ type: 'paragraph' }] };
 
-function parseDocOrEmpty(value: string): unknown {
+function parseDocOrEmpty(value: string): Content {
 	if (!value) return EMPTY_DOC;
 	try {
-		return JSON.parse(value);
+		return JSON.parse(value) as Content;
 	} catch {
 		return EMPTY_DOC;
 	}
