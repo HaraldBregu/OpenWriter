@@ -312,27 +312,16 @@ export interface WorkspaceApi {
 	/** Write a document's content to disk. */
 	updateDocumentContent: (documentId: string, content: string) => Promise<void>;
 	// -------------------------------------------------------------------------
-	// Contents (workspace/contents/)
+	// Resources (workspace/resources/)
 	// -------------------------------------------------------------------------
-	/** Load all files from the workspace contents/ directory. */
-	getContents: () => Promise<ResourceInfo[]>;
-	/** Load all sub-folders from the workspace contents/ directory. */
-	getContentsFolders: () => Promise<FolderEntry[]>;
-	/** Open a file picker, copy selected files into contents/, return the new entries. */
-	insertContents: (extensions?: string[]) => Promise<ResourceInfo[]>;
-	/** Delete a file from contents/ by its ID. */
-	deleteContent: (id: string) => Promise<void>;
-	// -------------------------------------------------------------------------
-	// Images (workspace/images/)
-	// -------------------------------------------------------------------------
-	/** Load all images from the workspace images/ directory. */
-	getImages: () => Promise<ImageEntry[]>;
-	/** Open a file picker and copy selected images into images/. */
-	insertImages: (extensions?: string[]) => Promise<ImageEntry[]>;
-	/** Delete an image entry from images/ by its id (basename). */
-	deleteImage: (id: string) => Promise<void>;
-	/** Subscribe to image change events in images/. */
-	onImagesChanged: (callback: (event: ImageEntryChangeEvent) => void) => () => void;
+	/** Load all files from the workspace resources/ directory. */
+	getResources: () => Promise<ResourceInfo[]>;
+	/** Open a file picker, copy selected files into resources/, return the new entries. */
+	insertResources: (extensions?: string[]) => Promise<ResourceInfo[]>;
+	/** Delete a file from resources/ by its ID. */
+	deleteResource: (id: string) => Promise<void>;
+	/** Subscribe to resource change events in resources/. */
+	onResourcesChanged: (callback: (event: ResourceEntryChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Filesystem
 	// -------------------------------------------------------------------------
