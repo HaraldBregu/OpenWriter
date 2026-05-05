@@ -22,6 +22,26 @@ import { H3, Muted } from '@/components/ui/Typography';
 import type { ChannelStatusEvent } from '../../../../../../shared/types';
 import { ChannelsProvider, useChannelsContext } from './Provider';
 
+function InfoHint({ text }: { readonly text: string }): ReactElement {
+	return (
+		<Tooltip>
+			<TooltipTrigger
+				render={
+					<span
+						role="button"
+						tabIndex={0}
+						aria-label={text}
+						className="inline-flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
+					/>
+				}
+			>
+				<Info className="size-3.5" />
+			</TooltipTrigger>
+			<TooltipContent>{text}</TooltipContent>
+		</Tooltip>
+	);
+}
+
 const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
 	connecting: 'bg-yellow-500',
 	pairing_code: 'bg-blue-500',
