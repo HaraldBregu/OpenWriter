@@ -266,12 +266,9 @@ export function OptionMenu(): React.JSX.Element | null {
 
 			try {
 				const text = await window.workspace.readFile({ filePath: content.path });
-				const json = editor.markdown?.parse(text);
-				if (json) {
-					editor.chain().focus().insertContent(json).run();
-				} else {
-					editor.chain().focus().insertContent(text).run();
-				}
+				const { marked } = await import('marked');
+				const html = marked.parse(text, { gfm: true, async: false }) as string;
+				editor.chain().focus().insertContent(html).run();
 			} catch (err) {
 				console.error('[OptionMenu] readFile failed:', err);
 			}
