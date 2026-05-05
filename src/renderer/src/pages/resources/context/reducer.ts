@@ -1,10 +1,10 @@
-import type { ContentState } from './state';
-import type { ContentAction } from './actions';
+import type { ResourcesState } from './state';
+import type { ResourcesAction } from './actions';
 
-export function contentReducer(state: ContentState, action: ContentAction): ContentState {
+export function resourcesReducer(state: ResourcesState, action: ResourcesAction): ResourcesState {
 	switch (action.type) {
-		case 'SET_CONTENTS':
-			return { ...state, contents: action.payload };
+		case 'SET_RESOURCES':
+			return { ...state, resources: action.payload };
 		case 'SET_IS_LOADING':
 			return { ...state, isLoading: action.payload };
 		case 'SET_UPLOADING':
