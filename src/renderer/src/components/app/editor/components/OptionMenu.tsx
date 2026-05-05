@@ -231,7 +231,7 @@ export function OptionMenu(): React.JSX.Element | null {
 	}, [editor, deleteSlash]);
 
 	const runImageFromWorkspace = useCallback(
-		(image: ImageEntry) => {
+		(image: ResourceInfo) => {
 			const ctx = deleteSlash();
 			if (!ctx) return;
 			const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
