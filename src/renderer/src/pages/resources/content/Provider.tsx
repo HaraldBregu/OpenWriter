@@ -87,8 +87,11 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	const refreshContents = useCallback(async () => {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
-			const next = await window.workspace.getContents();
-			dispatch({ type: 'SET_CONTENTS', payload: next });
+			const next = await window.workspace.getResources();
+			dispatch({
+				type: 'SET_CONTENTS',
+				payload: next.filter((r) => r.name.toLowerCase().endsWith('.md')),
+			});
 		} catch {
 			dispatch({ type: 'SET_CONTENTS', payload: [] });
 		} finally {
@@ -100,7 +103,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		async (extensions?: string[]) => {
 			dispatch({ type: 'SET_UPLOADING', payload: true });
 			try {
-				const imported = await window.workspace.insertContents(
+				const imported = await window.workspace.insertResources(
 					extensions ?? section.uploadExtensions
 				);
 				if (imported.length > 0) {
