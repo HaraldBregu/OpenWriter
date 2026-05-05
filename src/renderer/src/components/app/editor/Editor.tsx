@@ -293,17 +293,15 @@ const Editor = React.memo(
 				}
 				lastExternalValueVersionRef.current = externalValueVersion;
 
-				const current = editor.getMarkdown();
-				const incoming = value || '';
-				if (current !== incoming) {
-					queueMicrotask(() => {
-						if (editor.isDestroyed) return;
-						editor.commands.setContent(incoming, {
-							emitUpdate: false,
-							contentType: 'markdown',
-						});
+				lastEmittedRef.current = value;
+				const doc = parseDocOrEmpty(value);
+				queueMicrotask(() => {
+					if (editor.isDestroyed) return;
+					editor.commands.setContent(doc, {
+						emitUpdate: false,
+						contentType: 'doc',
 					});
-				}
+				});
 			}, [value, editor, externalValueVersion]);
 
 			useEffect(() => {
