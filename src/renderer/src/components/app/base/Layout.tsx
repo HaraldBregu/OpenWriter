@@ -250,18 +250,18 @@ function Container({ children }: LayoutProps) {
 		const { id } = pendingDelete;
 		setPendingDelete(null);
 		await window.workspace.deleteOutput({ type: 'documents', id });
-		if (location.pathname === `/content/${id}`) {
+		if (location.pathname === `/document/${id}`) {
 			const nextDocument = documents.find((doc) => doc.id !== id);
 			if (nextDocument) {
-				navigate(`/content/${nextDocument.id}`, { replace: true });
+				navigate(`/document/${nextDocument.id}`, { replace: true });
 				requestAnimationFrame(() => {
 					const target = document.querySelector<HTMLAnchorElement>(
-						`a[href="/content/${nextDocument.id}"]`
+						`a[href="/document/${nextDocument.id}"]`
 					);
 					target?.focus();
 				});
 			} else {
-				navigate('/home', { replace: true });
+				navigate('/assistant', { replace: true });
 			}
 		}
 	}, [pendingDelete, documents, location.pathname, navigate]);

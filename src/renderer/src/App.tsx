@@ -28,10 +28,10 @@ import './index.css';
 
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
+const HomePage = lazy(() => import('./pages/home/Page'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
 const AssistantPage = lazy(() => import('./pages/assistant/Page'));
-const ContentPage = lazy(() => import('./pages/resources/content/Page'));
-const ImagesPage = lazy(() => import('./pages/resources/images/Page'));
+const ResourcesPage = lazy(() => import('./pages/resources/Page'));
 const ChannelsPage = lazy(() => import('./pages/settings/pages/channels/Page'));
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
