@@ -85,18 +85,17 @@ function Bootstrap(): null {
 	return null;
 }
 
-const AGENT_ICONS: Record<string, LucideIcon> = {
-	'content-reviewer': ClipboardCheck,
-	'content-writer': PenLine,
-	'image-creator': ImageIcon,
-	assistant: Bot,
-};
+const CONTENT_REVIEWER = AGENT_DEFINITIONS.find((d) => d.id === 'content-reviewer')!;
+const CONTENT_WRITER = AGENT_DEFINITIONS.find((d) => d.id === 'content-writer')!;
+const IMAGE_CREATOR = AGENT_DEFINITIONS.find((d) => d.id === 'image-creator')!;
+const ASSISTANT = AGENT_DEFINITIONS.find((d) => d.id === 'assistant')!;
 
 interface AgentFormProps {
 	readonly definition: AgentDefinition;
+	readonly icon: LucideIcon;
 }
 
-function AgentForm({ definition }: AgentFormProps): ReactElement {
+function AgentForm({ definition, icon: Icon }: AgentFormProps): ReactElement {
 	const { t } = useTranslation();
 	const {
 		agentsById,
