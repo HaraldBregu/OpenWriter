@@ -84,10 +84,25 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		],
 	});
 
+	const sigRef = useRef('');
 	useEffect(() => {
 		const handler = (): void => {
-			forceRender();
 			const { from, to } = editor.state.selection;
+			const sig =
+				`${from}|${to}|` +
+				(editor.isActive('bold') ? 'b' : '') +
+				(editor.isActive('italic') ? 'i' : '') +
+				(editor.isActive('underline') ? 'u' : '') +
+				(editor.isActive('strike') ? 's' : '') +
+				(editor.isActive('paragraph') ? 'p' : '') +
+				(editor.isActive('bulletList') ? 'l' : '') +
+				(editor.isActive('orderedList') ? 'o' : '') +
+				(editor.isActive('codeBlock') ? 'c' : '') +
+				(editor.isActive('blockquote') ? 'q' : '');
+			if (sig !== sigRef.current) {
+				sigRef.current = sig;
+				forceRender();
+			}
 			if (from !== to) {
 				update();
 			}
