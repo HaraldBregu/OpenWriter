@@ -323,7 +323,7 @@ const App: React.FC = () => {
 															path="agents"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<SettingsAgentsPage />
+																	<AgentsPage />
 																</Suspense>
 															}
 														/>
@@ -331,31 +331,11 @@ const App: React.FC = () => {
 															path="providers"
 															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<SettingsProvidersPage />
+																	<ProvidersPage />
 																</Suspense>
 															}
 														/>
 													</Route>
-													<Route
-														path="/agents"
-														element={
-															<RouteWrapper>
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<AgentsPage />
-																</Suspense>
-															</RouteWrapper>
-														}
-													/>
-													<Route
-														path="/providers"
-														element={
-															<RouteWrapper>
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<ProvidersPage />
-																</Suspense>
-															</RouteWrapper>
-														}
-													/>
 													<Route
 														path="/channels/*"
 														element={
