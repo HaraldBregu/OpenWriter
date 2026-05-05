@@ -67,14 +67,18 @@ export function ProvidersProvider({ children }: ProvidersProviderProps): ReactEl
 			const draft = state.drafts[providerId];
 			const persistedForId = persisted[providerId];
 			const apiKey = draft.apiKey.trim();
-			if (apiKey.length === 0 || apiKey === persistedForId.apiKey) return;
+			if (apiKey === persistedForId.apiKey) return;
 
 			const catalog = getProvider(providerId);
 			if (!catalog) return;
 
 			dispatch({ type: 'SET_SAVING', providerId, payload: true });
 			try {
-				await window.app.addProvider({ id: catalog.id, name: catalog.name, apiKey });
+				if (apiKey.length === 0) {
+					await window.app.deleteProvider(catalog.id);
+				} else {
+					await window.app.addProvider({ id: catalog.id, name: catalog.name, apiKey });
+				}
 				const reloaded = await window.app.getProviders();
 				dispatch({ type: 'SET_PROVIDERS', payload: reloaded });
 			} finally {
