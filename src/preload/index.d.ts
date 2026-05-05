@@ -258,36 +258,16 @@ export interface WorkspaceApi {
 	/** Subscribe to workspace deletion events (folder deleted/moved while app is open) */
 	onDeleted: (callback: (event: WorkspaceDeletedEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
-	// Deprecated resources API — main-side removed, renderer surface kept.
-	// Every call rejects at runtime; listeners are no-ops returning unsubscribe.
-	// -------------------------------------------------------------------------
-	importFiles: (extensions?: string[]) => Promise<ResourceInfo[]>;
-	loadDocuments: () => Promise<ResourceInfo[]>;
-	deleteDocument: (id: string) => Promise<void>;
-	onDocumentFileChange: (callback: (event: DocumentFileChangeEvent) => void) => () => void;
-	// -------------------------------------------------------------------------
-	// Indexing info
-	// -------------------------------------------------------------------------
-	getIndexingInfo: () => Promise<IndexingInfo | null>;
-	// -------------------------------------------------------------------------
 	// Shell
 	// -------------------------------------------------------------------------
 	/** Open the current workspace root folder in the system file explorer. */
 	openWorkspaceFolder: () => Promise<void>;
-	openDataFolder: () => Promise<void>;
-	openContentsFolder: () => Promise<void>;
-	openFilesFolder: () => Promise<void>;
-	openImagesFolder: () => Promise<void>;
+	/** Open the workspace `resources/` folder in the system file explorer. */
+	openResourcesFolder: () => Promise<void>;
 	/** Open the folder for a specific document by its ID in the system file explorer. */
 	openDocumentFolder: (documentId: string) => Promise<void>;
 	/** Get the filesystem path of a document's folder given its ID. */
 	getDocumentPath: (documentId: string) => Promise<string>;
-	/** Save an image file into a document's folder and return the saved file name. */
-	saveDocumentImage: (params: SaveDocumentImageParams) => Promise<SaveDocumentImageResult>;
-	/** List all image files in a document's images/ folder. */
-	listDocumentImages: (documentId: string) => Promise<DocumentImageInfo[]>;
-	/** Subscribe to image file changes (add/modify/delete) inside a document's images/ folder. */
-	onDocumentImageChange: (callback: (event: DocumentImageChangeEvent) => void) => () => void;
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
 	// -------------------------------------------------------------------------
