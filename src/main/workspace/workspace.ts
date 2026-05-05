@@ -372,14 +372,12 @@ export class Workspace implements Disposable {
 	// -------------------------------------------------------------------------
 
 	/**
-	 * Ensure all top-level workspace sub-folders exist.
+	 * Ensure the documents/ and resources/ sub-folders exist.
 	 * Called when a workspace is opened or set.
 	 */
 	private async ensureWorkspaceSubfolders(workspacePath: string): Promise<void> {
-		for (const subfolder of WORKSPACE_SUBFOLDERS) {
-			const subDir = path.join(workspacePath, subfolder);
-			await fsPromises.mkdir(subDir, { recursive: true });
-		}
+		await fsPromises.mkdir(path.join(workspacePath, 'documents'), { recursive: true });
+		await fsPromises.mkdir(path.join(workspacePath, 'resources'), { recursive: true });
 		this.logger.info('Workspace', `Ensured workspace sub-folders at: ${workspacePath}`);
 	}
 
