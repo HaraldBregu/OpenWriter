@@ -334,14 +334,6 @@ const App: React.FC = () => {
 															</RouteWrapper>
 														}
 													/>
-													<Route
-														path="/library"
-														element={<Navigate to="/resources" replace />}
-													/>
-													<Route
-														path="/resources/*"
-														element={<Navigate to="/resources" replace />}
-													/>
 												</Routes>
 											</Suspense>
 										</Layout>
