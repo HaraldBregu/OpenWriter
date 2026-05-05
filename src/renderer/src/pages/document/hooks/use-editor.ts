@@ -43,13 +43,6 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 		[editorRef]
 	);
 
-	const insertMarkdownText = useCallback<EditorActions['insertMarkdownText']>(
-		(text, options) => {
-			editorRef.current?.insertMarkdownText(text, options);
-		},
-		[editorRef]
-	);
-
 	return useMemo(
 		() => ({
 			showLoading,
@@ -59,17 +52,7 @@ export function useEditor(editorRef: RefObject<EditorElement | null>): EditorAct
 			closePrompt,
 			insertPromptView,
 			insertText,
-			insertMarkdownText,
 		}),
-		[
-			showLoading,
-			hideLoading,
-			enable,
-			disable,
-			closePrompt,
-			insertPromptView,
-			insertText,
-			insertMarkdownText,
-		]
+		[showLoading, hideLoading, enable, disable, closePrompt, insertPromptView, insertText]
 	);
 }
