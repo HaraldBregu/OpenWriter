@@ -44,7 +44,6 @@ import {
 	ChevronRight,
 	Search,
 	Globe,
-	LayoutDashboard,
 	Bot,
 	Plus,
 	Sun,

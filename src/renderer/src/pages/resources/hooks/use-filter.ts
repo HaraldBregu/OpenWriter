@@ -25,8 +25,8 @@ export function useFilter({
 		if (sortDirection !== 'none') {
 			result.sort((a, b) => {
 				let cmp: number;
-				if (sortKey === 'name') {
-					cmp = a.name.localeCompare(b.name);
+				if (sortKey === 'name' || sortKey === 'mimeType') {
+					cmp = a[sortKey].localeCompare(b[sortKey]);
 				} else {
 					cmp = a[sortKey] - b[sortKey];
 				}
