@@ -150,10 +150,7 @@ export function usePromptActions({
 
 		const { from, to } = editor.state.selection;
 		const selectedText =
-			from === to
-				? ''
-				: (editor.markdown?.serialize(editor.state.doc.cut(from, to).toJSON()) ??
-					editor.state.doc.textBetween(from, to, '\n\n'));
+			from === to ? '' : editor.state.doc.textBetween(from, to, '\n\n');
 
 		options.onPromptSubmit({ prompt: trimmedPrompt, selectedText, files: [], editor });
 	}, [editor, prompt, deleteNode, options, updateAttributes]);
