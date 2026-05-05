@@ -5,10 +5,7 @@ import type { LoggerService } from '../logger';
 import {
 	Workspace,
 	WorkspaceMetadataService,
-	ContentsService,
-	FilesWatcherService,
-	FilesService,
-	ImagesService,
+	ResourcesService,
 	OutputFilesService,
 	ProjectWorkspaceService,
 } from '../workspace';
