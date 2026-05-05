@@ -50,7 +50,7 @@ function sanitizeHistory(msgs: ChatCompletionMessageParam[]): ChatCompletionMess
 
 /**
  * Append-only JSONL conversation history per session key.
- * Lives in userData/assistant-sessions/<sessionKey>.jsonl.
+ * Lives in userData/assistant/sessions/<sessionKey>.jsonl.
  */
 export class SessionManager {
 	readonly sessionKey: string;
