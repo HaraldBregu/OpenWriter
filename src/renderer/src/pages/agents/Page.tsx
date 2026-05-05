@@ -5,7 +5,6 @@ import {
 	ClipboardCheck,
 	ImageIcon,
 	PenLine,
-	Sparkles,
 	type LucideIcon,
 } from 'lucide-react';
 import {
