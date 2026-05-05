@@ -54,6 +54,7 @@ export function Layout(): React.JSX.Element {
 						<NavItem to="/settings/themes" label={t('settings.tabs.themes')} />
 						<NavItem to="/settings/agents" label={t('settings.tabs.agents', 'Agents')} />
 						<NavItem to="/settings/providers" label={t('settings.tabs.providers', 'Providers')} />
+						<NavItem to="/settings/channels" label={t('settings.tabs.channels', 'Channels')} />
 						<NavItem to="/settings/system" label={t('settings.tabs.system')} />
 						<NavItem to="/settings/developer" label={t('settings.tabs.developer')} />
 					</div>
