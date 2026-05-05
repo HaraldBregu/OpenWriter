@@ -180,14 +180,6 @@ const App: React.FC = () => {
 						<WorkspaceEventBridge />
 						<Router>
 							<Routes>
-								<Route
-									path="/splash"
-									element={
-										<RouteWrapper>
-											<SplashPage />
-										</RouteWrapper>
-									}
-								/>
 								<Route path="/">
 									<Route
 										index
