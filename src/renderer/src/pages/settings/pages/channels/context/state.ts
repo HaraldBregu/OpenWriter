@@ -1,4 +1,4 @@
-import type { Channel, ChannelStatusEvent, ChannelType } from '../../../../../shared/types';
+import type { Channel, ChannelStatusEvent, ChannelType } from '../../../../../../../shared/types';
 
 export interface DraftProperties {
 	readonly token: string;

@@ -7,7 +7,7 @@ import type {
 	DiscordChannelProperties,
 	TelegramChannelProperties,
 	WhatsappChannelProperties,
-} from '../../../../shared/types';
+} from '../../../../../../shared/types';
 import { channelsReducer } from './context/reducer';
 import { EMPTY_DRAFT, initialState, type DraftProperties } from './context/state';
 

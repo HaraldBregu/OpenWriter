@@ -1,12 +1,6 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Save, RefreshCw, KeyRound } from 'lucide-react';
-import {
-	PageBody,
-	PageContainer,
-	PageHeader,
-	PageHeaderTitle,
-} from '@/components/app/base/page';
 import { Button } from '@/components/ui/Button';
 import {
 	Field,
@@ -19,7 +13,7 @@ import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
 import { Spinner } from '@/components/ui/Spinner';
 import { H3, Muted } from '@/components/ui/Typography';
-import type { ChannelStatusEvent } from '../../../../shared/types';
+import type { ChannelStatusEvent } from '../../../../../../shared/types';
 import { ChannelsProvider, useChannelsContext } from './Provider';
 
 const STATUS_COLORS: Record<ChannelStatusEvent['status'], string> = {
