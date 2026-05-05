@@ -37,9 +37,6 @@ const ChannelsLayout = lazy(() => import('./pages/channels/Layout'));
 const TelegramPage = lazy(() => import('./pages/channels/pages/TelegramPage'));
 const WhatsappPage = lazy(() => import('./pages/channels/pages/WhatsappPage'));
 const DiscordPage = lazy(() => import('./pages/channels/pages/DiscordPage'));
-const AgentsPage = lazy(() => import('./pages/agents/Page'));
-const ProvidersPage = lazy(() => import('./pages/providers/Page'));
-
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
@@ -48,8 +45,8 @@ const SystemPage = lazy(() => import('./pages/settings/pages/SystemPage'));
 const ThemesPage = lazy(() => import('./pages/settings/pages/ThemesPage'));
 const EditorPage = lazy(() => import('./pages/settings/pages/EditorPage'));
 const DeveloperPage = lazy(() => import('./pages/settings/pages/DeveloperPage'));
-const SettingsAgentsPage = lazy(() => import('./pages/settings/pages/AgentsPage'));
-const SettingsProvidersPage = lazy(() => import('./pages/settings/pages/ProvidersPage'));
+const AgentsPage = lazy(() => import('./pages/settings/pages/agents/Page'));
+const ProvidersPage = lazy(() => import('./pages/settings/pages/providers/Page'));
 
 const FALLBACK_STARTUP_INFO: AppStartupInfo = {
 	startupCount: 0,

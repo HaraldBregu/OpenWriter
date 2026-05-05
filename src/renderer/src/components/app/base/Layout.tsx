@@ -575,35 +575,49 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarGroup>
-							<SidebarGroupLabel className="px-3">
-								{t('appLayout.resources', 'Resources')}
-							</SidebarGroupLabel>
-							<SidebarMenu className="gap-1">
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										render={<Link to="/resources/content" />}
-										className="group/btn h-9 px-3"
-										tooltip={t('appLayout.contents', 'Contents')}
-										isActive={location.pathname === '/resources/content'}
+						{open && (
+							<Collapsible defaultOpen className="py-0">
+								<SidebarGroup className="py-0">
+									<SidebarGroupLabel
+										className="px-3"
+										render={
+											<CollapsibleTrigger className="group/label cursor-pointer select-none hover:text-sidebar-foreground transition-colors" />
+										}
 									>
-										<FileText />
-										<span>{t('appLayout.contents', 'Contents')}</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										render={<Link to="/resources/images" />}
-										className="group/btn h-9 px-3"
-										tooltip={t('appLayout.images', 'Images')}
-										isActive={location.pathname === '/resources/images'}
-									>
-										<FileImage />
-										<span>{t('appLayout.images', 'Images')}</span>
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-							</SidebarMenu>
-						</SidebarGroup>
+										{t('appLayout.resources', 'Resources')}
+										<ChevronRight className="h-3.5 w-3.5 shrink-0 opacity-0 group-hover/label:opacity-100 transition-all duration-200 group-data-[panel-open]/label:rotate-90" />
+									</SidebarGroupLabel>
+									<CollapsibleContent>
+										<SidebarGroupContent>
+											<SidebarMenu className="gap-1">
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/resources/content" />}
+														className="group/btn h-9 px-3"
+														tooltip={t('appLayout.contents', 'Contents')}
+														isActive={location.pathname === '/resources/content'}
+													>
+														<FileText />
+														<span>{t('appLayout.contents', 'Contents')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+												<SidebarMenuItem>
+													<SidebarMenuButton
+														render={<Link to="/resources/images" />}
+														className="group/btn h-9 px-3"
+														tooltip={t('appLayout.images', 'Images')}
+														isActive={location.pathname === '/resources/images'}
+													>
+														<FileImage />
+														<span>{t('appLayout.images', 'Images')}</span>
+													</SidebarMenuButton>
+												</SidebarMenuItem>
+											</SidebarMenu>
+										</SidebarGroupContent>
+									</CollapsibleContent>
+								</SidebarGroup>
+							</Collapsible>
+						)}
 
 						<SidebarGroup className="mt-auto">
 							<SidebarMenu className="gap-1">
