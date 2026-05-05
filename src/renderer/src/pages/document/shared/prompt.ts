@@ -3,10 +3,6 @@ import type { DocumentSelection } from '../context/state';
 
 const TASK_PROMPT_MARKER = '⬢';
 
-function stripHtmlTags(text: string): string {
-	return text.replace(/<[^>]*>/g, '');
-}
-
 export function getSelectedEditorText(
 	editor: Editor | null,
 	selection: DocumentSelection | null
@@ -23,14 +19,7 @@ export function getSelectedEditorText(
 		return null;
 	}
 
-	const storage = editor.storage as unknown as Record<string, Record<string, unknown>>;
-	const serializer = storage.markdown?.serializer as
-		| { serialize: (node: unknown) => string }
-		| undefined;
-	const rawSelection =
-		serializer?.serialize(editor.state.doc.cut(from, to)) ??
-		editor.state.doc.textBetween(from, to, '\n\n');
-	const selectedText = stripHtmlTags(rawSelection).trim();
+	const selectedText = editor.state.doc.textBetween(from, to, '\n\n').trim();
 
 	return selectedText.length > 0 ? selectedText : null;
 }

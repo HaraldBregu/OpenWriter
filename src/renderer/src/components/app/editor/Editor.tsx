@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
-import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Slice } from '@tiptap/pm/model';
+import type { Content, Editor as TiptapEditor } from '@tiptap/core';
 import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
@@ -10,18 +9,22 @@ import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
 
+const EMPTY_DOC: Content = { type: 'doc', content: [{ type: 'paragraph' }] };
+
+function parseDocOrEmpty(value: string): Content {
+	if (!value) return EMPTY_DOC;
+	try {
+		return JSON.parse(value) as Content;
+	} catch {
+		return EMPTY_DOC;
+	}
+}
+
 export interface EditorElement extends HTMLDivElement {
-	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
+	/** Replace document content. `value` is a JSON-stringified ProseMirror doc. */
+	setContent: (value: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
-	insertMarkdown: (
-		markdown: string,
-		options?: { from?: number; preventEditorUpdate?: boolean }
-	) => void;
-	insertMarkdownText: (
-		markdown: string,
-		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
-	) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 	removeAssistant: () => void;
@@ -36,6 +39,7 @@ export interface EditorElement extends HTMLDivElement {
 }
 
 export interface EditorProps {
+	/** JSON-stringified ProseMirror doc. Empty string = empty document. */
 	value: string;
 	onChange: (value: string) => void;
 	onSelectionChange?: (selection: { from: number; to: number } | null) => void;
@@ -122,15 +126,13 @@ const Editor = React.memo(
 						const initial = initialValueRef.current;
 						if (!initial) return;
 						lastEmittedRef.current = initial;
+						const doc = parseDocOrEmpty(initial);
 						requestAnimationFrame(() => {
 							requestAnimationFrame(() => {
 								if (ed.isDestroyed) return;
-								console.time('[Editor] initial setContent');
-								ed.commands.setContent(initial, {
+								ed.commands.setContent(doc, {
 									emitUpdate: false,
-									contentType: 'markdown',
 								});
-								console.timeEnd('[Editor] initial setContent');
 							});
 						});
 					},
@@ -145,9 +147,9 @@ const Editor = React.memo(
 						if (emitTimerRef.current) clearTimeout(emitTimerRef.current);
 						emitTimerRef.current = setTimeout(() => {
 							if (ed.isDestroyed) return;
-							const md = ed.getMarkdown();
-							lastEmittedRef.current = md;
-							onChangeRef.current(md);
+							const json = JSON.stringify(ed.state.doc.toJSON());
+							lastEmittedRef.current = json;
+							onChangeRef.current(json);
 						}, 100);
 					},
 					editorProps: {
@@ -192,15 +194,14 @@ const Editor = React.memo(
 				const el = rootRef.current!;
 				return Object.assign(el, {
 					setContent(
-						markdown: string,
+						value: string,
 						options: { preventEditorUpdate?: boolean } = {
 							preventEditorUpdate: false,
 						}
 					) {
 						if (!editor || editor.isDestroyed) return;
-						editor.commands.setContent(markdown, {
+						editor.commands.setContent(parseDocOrEmpty(value), {
 							emitUpdate: !(options.preventEditorUpdate ?? false),
-							contentType: 'markdown',
 						});
 					},
 					insertText(
@@ -222,44 +223,6 @@ const Editor = React.memo(
 
 						const tr = editor.state.tr
 							.delete(from, to)
-							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
-						editor.view.dispatch(tr);
-					},
-					insertMarkdown(
-						markdown: string,
-						options: { from?: number; preventEditorUpdate?: boolean } = {}
-					) {
-						if (!editor || editor.isDestroyed) return;
-						const from = options.from ?? editor.state.selection.from;
-						const to = editor.state.doc.content.size;
-
-						const json = editor.markdown?.parse(markdown);
-						if (!json) return;
-
-						const doc = editor.schema.nodeFromJSON(json);
-						const slice = new Slice(doc.content, 0, 0);
-
-						const tr = editor.state.tr
-							.replace(from, to, slice)
-							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
-						editor.view.dispatch(tr);
-					},
-					insertMarkdownText(
-						markdown: string,
-						options: { from?: number; to?: number; preventEditorUpdate?: boolean } = {}
-					) {
-						if (!editor || editor.isDestroyed) return;
-						const from = options.from ?? editor.state.selection.from;
-						const to = options.to ?? from;
-
-						const json = editor.markdown?.parse(markdown);
-						if (!json) return;
-
-						const doc = editor.schema.nodeFromJSON(json);
-						const slice = new Slice(doc.content, 0, 0);
-
-						const tr = editor.state.tr
-							.replaceRange(from, to, slice)
 							.setMeta('preventEditorUpdate', options.preventEditorUpdate ?? false);
 						editor.view.dispatch(tr);
 					},
@@ -328,17 +291,14 @@ const Editor = React.memo(
 				}
 				lastExternalValueVersionRef.current = externalValueVersion;
 
-				const current = editor.getMarkdown();
-				const incoming = value || '';
-				if (current !== incoming) {
-					queueMicrotask(() => {
-						if (editor.isDestroyed) return;
-						editor.commands.setContent(incoming, {
-							emitUpdate: false,
-							contentType: 'markdown',
-						});
+				lastEmittedRef.current = value;
+				const doc = parseDocOrEmpty(value);
+				queueMicrotask(() => {
+					if (editor.isDestroyed) return;
+					editor.commands.setContent(doc, {
+						emitUpdate: false,
 					});
-				}
+				});
 			}, [value, editor, externalValueVersion]);
 
 			useEffect(() => {

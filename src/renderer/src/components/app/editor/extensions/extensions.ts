@@ -22,7 +22,6 @@ import { PromptExtension } from './prompt-extension';
 import { ImageExtension } from './image-extension';
 import { UndoRedoKeymapExtension } from './undo-redo-keymap';
 import type { ImageInsertHandler } from '../plugins/image-drop-paste-plugin';
-import { Markdown } from '@tiptap/markdown';
 import type { PromptSubmitPayload } from '../types';
 import { ImagePlaceholderExtension } from './image-placeholder-extension';
 import { SelectionMarkerExtension } from './selection-marker-extension';
@@ -63,9 +62,6 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		SelectionMarkerExtension,
 		PromptExtension.configure({
 			onPromptSubmit: handlers.onPromptSubmit,
-		}),
-		Markdown.configure({
-			markedOptions: { gfm: true },
 		}),
 		Placeholder.configure({
 			placeholder: ({ editor, node }) => {

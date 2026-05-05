@@ -9,9 +9,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { debounce } from 'lodash';
+import { marked } from 'marked';
 import { Undo2, Redo2, Loader2, X, Check, Plus, Download, Search, Sparkles } from 'lucide-react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Slice } from '@tiptap/pm/model';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Separator } from '@/components/ui/Separator';
@@ -93,14 +93,11 @@ function PageContent(): ReactElement {
 
 		async function load() {
 			try {
-				console.time('[Page] IPC fetch');
 				const [loadedContent, config, docPath] = await Promise.all([
 					window.workspace.getDocumentContent(id!),
 					window.workspace.getDocumentConfig(id!),
 					window.workspace.getDocumentPath(id!),
 				]);
-				console.timeEnd('[Page] IPC fetch');
-				console.log('[Page] content length:', loadedContent.length);
 
 				if (cancelled) return;
 
@@ -410,28 +407,23 @@ function PageContent(): ReactElement {
 		if (!preexistingTaskContent) return;
 		if (!editor || editor.isDestroyed) return;
 
-		const json = editor.markdown?.parse(preexistingTaskContent);
+		const html = marked.parse(preexistingTaskContent, {
+			gfm: true,
+			async: false,
+		}) as string;
 		const docSize = editor.state.doc.content.size;
 		const fallbackFrom = editor.state.selection.from;
 		const fallbackTo = editor.state.selection.to;
 		const from = Math.min(preexistingTaskSelection?.from ?? fallbackFrom, docSize);
 		const to = Math.min(preexistingTaskSelection?.to ?? fallbackTo, docSize);
 
-		if (json) {
-			const node = editor.schema.nodeFromJSON(json);
-			const slice = new Slice(node.content, 0, 0);
-			const tr = editor.state.tr.replaceRange(from, to, slice);
-			editor.view.dispatch(tr);
-			editor.view.focus();
+		const chain = editor.chain().focus();
+		if (preexistingTaskSelection) {
+			chain.insertContentAt({ from, to }, html);
 		} else {
-			const chain = editor.chain().focus();
-			if (preexistingTaskSelection) {
-				chain.insertContentAt({ from, to }, preexistingTaskContent);
-			} else {
-				chain.insertContent(preexistingTaskContent);
-			}
-			chain.run();
+			chain.insertContent(html);
 		}
+		chain.run();
 
 		await handleCancelPreexistingTask();
 	}, [preexistingTaskContent, preexistingTaskSelection, editor, handleCancelPreexistingTask]);

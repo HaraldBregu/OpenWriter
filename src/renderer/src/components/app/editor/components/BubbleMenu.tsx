@@ -145,10 +145,7 @@ export const BubbleMenu = React.memo(function BubbleMenu({
 		(prompt: string) => {
 			const { from, to } = editor.state.selection;
 			if (from === to) return;
-			const slicedDoc = editor.state.doc.cut(from, to);
-			const selectedText =
-				editor.markdown?.serialize(slicedDoc.toJSON()) ??
-				editor.state.doc.textBetween(from, to, '\n\n');
+			const selectedText = editor.state.doc.textBetween(from, to, '\n\n');
 			onPromptSubmit?.({
 				prompt,
 				selectedText,
