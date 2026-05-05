@@ -2941,13 +2941,6 @@
   resolved "https://registry.yarnpkg.com/@tiptap/extensions/-/extensions-3.22.3.tgz#d37c36feec7b2e982f9e1c38781bbc2c3829f131"
   integrity sha512-s5eiMq0m5N6N+W7dU6rd60KgZyyCD7FvtPNNswISfPr12EQwJBfbjWwTqd0UKNzA4fNrhQEERXnzORkykttPeA==
 
-"@tiptap/markdown@3.22.3":
-  version "3.22.3"
-  resolved "https://registry.yarnpkg.com/@tiptap/markdown/-/markdown-3.22.3.tgz#dda3dbc67eb58b0512b79e0d208727d5728aab07"
-  integrity sha512-Ajw8AkAae7IET1sxZqNv+dhZQSuLY0AHWocowTny1azyiBtmRRKygkGK0ysVA+k6UxmBD6K+tvnbpjQ0/ACl4A==
-  dependencies:
-    marked "^17.0.1"
-
 "@tiptap/pm@3.22.3":
   version "3.22.3"
   resolved "https://registry.yarnpkg.com/@tiptap/pm/-/pm-3.22.3.tgz#e911150e900d52b2e5ccd596b32187da46f924d6"
@@ -7836,11 +7829,6 @@ marked-terminal@^7.3.0:
     cli-table3 "^0.6.5"
     node-emoji "^2.2.0"
     supports-hyperlinks "^3.1.0"
-
-marked@^17.0.1:
-  version "17.0.6"
-  resolved "https://registry.yarnpkg.com/marked/-/marked-17.0.6.tgz#2a97586a272d3be5880f198e020b74ad27cf86ba"
-  integrity sha512-gB0gkNafnonOw0obSTEGZTT86IuhILt2Wfx0mWH/1Au83kybTayroZ/V6nS25mN7u8ASy+5fMhgB3XPNrOZdmA==
 
 marked@^18.0.3:
   version "18.0.3"
