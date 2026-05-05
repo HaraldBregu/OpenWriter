@@ -70,21 +70,12 @@ export const WorkspaceChannels = {
 	clear: 'workspace-clear',
 	changed: 'workspace:changed',
 	deleted: 'workspace:deleted',
-	// Indexing
-	getIndexingInfo: 'indexing:get-info',
 	// Shell
 	openWorkspaceFolder: 'workspace:open-workspace-folder',
-	openDataFolder: 'workspace:open-data-folder',
-	openContentsFolder: 'workspace:open-contents-folder',
-	openFilesFolder: 'workspace:open-files-folder',
-	openImagesFolder: 'workspace:open-images-folder',
+	openResourcesFolder: 'workspace:open-resources-folder',
 	openDocumentFolder: 'workspace:open-document-folder',
 	getDocumentPath: 'workspace:get-document-path',
-	// Document images
-	saveDocumentImage: 'output:save-document-image',
-	listDocumentImages: 'output:list-document-images',
-	documentImageChanged: 'output:document-image-changed',
-	// Output
+	// Output (documents)
 	outputSave: 'output:save',
 	outputLoadAll: 'output:load-all',
 	loadByType: 'output:load-by-type',
@@ -105,23 +96,17 @@ export const WorkspaceChannels = {
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
 	updateProjectDescription: 'project-workspace:update-description',
-	// Document config + content (merged writer)
+	// Document config + content
 	getDocumentConfig: 'workspace:get-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
 	getDocumentContent: 'workspace:get-document-content',
 	updateDocumentContent: 'workspace:update-document-content',
 	updateDocumentConfig: 'workspace:update-document-config',
-	// Contents (workspace/contents/)
-	getContents: 'contents:get-all',
-	getContentsFolders: 'contents:get-folders',
-	insertContents: 'contents:insert',
-	deleteContent: 'contents:delete',
-	// Files (workspace/files/)
-	// Images (workspace/images/)
-	getImages: 'images:get-all',
-	insertImages: 'images:insert',
-	deleteImage: 'images:delete',
-	imagesChanged: 'images:changed',
+	// Resources (workspace/resources/)
+	getResources: 'resources:get-all',
+	insertResources: 'resources:insert',
+	deleteResource: 'resources:delete',
+	resourcesChanged: 'resources:changed',
 } as const;
 
 export const WindowChannels = {
