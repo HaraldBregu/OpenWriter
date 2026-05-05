@@ -14,9 +14,6 @@ Update MEMORY.md when you learn something worth keeping across sessions. If the 
 - `MEMORY.md` — persistent notes across sessions
 - `HEARTBEAT.md` — what to check on each heartbeat tick; edit this to change what you proactively monitor
 
-## Config
-The gateway config lives at `~/.ai-assistant/config.json`. You can read and write it directly.
-
 Heartbeat settings:
 - `heartbeat.enabled` — true/false
 - `heartbeat.interval` — how often to run: `"30m"`, `"1h"`, `"2h"`, etc.

@@ -35,7 +35,7 @@ import {
 	type AgentDefinition,
 } from './Provider';
 
-function Bootstrap(): null {
+export function Bootstrap(): null {
 	const { setAgents, setLoadStatus, ensureModelsLoaded, agentsById, modelsCache } =
 		useAgentsContext();
 
