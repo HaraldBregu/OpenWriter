@@ -232,68 +232,19 @@ const workspace: WorkspaceApi = {
 		return typedOn(WorkspaceChannels.deleted, callback);
 	},
 	// -------------------------------------------------------------------------
-	// Deprecated resources API — main-side removed. Stubs kept so the
-	// renderer surface still compiles; calls reject at runtime.
-	// -------------------------------------------------------------------------
-	importFiles: (): Promise<never> =>
-		Promise.reject(new Error('resources API removed from main process')),
-	loadDocuments: (): Promise<never> =>
-		Promise.reject(new Error('resources API removed from main process')),
-	deleteDocument: (): Promise<never> =>
-		Promise.reject(new Error('resources API removed from main process')),
-	onDocumentFileChange: (): (() => void) => () => { },
-	// -------------------------------------------------------------------------
-	// Indexing info
-	// -------------------------------------------------------------------------
-	getIndexingInfo: () => {
-		return typedInvokeUnwrap(WorkspaceChannels.getIndexingInfo);
-	},
-	// -------------------------------------------------------------------------
 	// Shell
 	// -------------------------------------------------------------------------
 	openWorkspaceFolder: (): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openWorkspaceFolder);
 	},
-	openDataFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openDataFolder);
-	},
-	openContentsFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openContentsFolder);
-	},
-	openFilesFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openFilesFolder);
-	},
-	openImagesFolder: (): Promise<void> => {
-		return typedInvokeUnwrap(WorkspaceChannels.openImagesFolder);
+	openResourcesFolder: (): Promise<void> => {
+		return typedInvokeUnwrap(WorkspaceChannels.openResourcesFolder);
 	},
 	openDocumentFolder: (documentId: string): Promise<void> => {
 		return typedInvokeUnwrap(WorkspaceChannels.openDocumentFolder, documentId);
 	},
 	getDocumentPath: (documentId: string): Promise<string> => {
 		return typedInvokeUnwrap(WorkspaceChannels.getDocumentPath, documentId);
-	},
-	saveDocumentImage: (params: {
-		documentId: string;
-		fileName: string;
-		base64: string;
-	}): Promise<{ fileName: string; filePath: string }> => {
-		return typedInvokeUnwrap(WorkspaceChannels.saveDocumentImage, params);
-	},
-	listDocumentImages: (
-		documentId: string
-	): Promise<{ fileName: string; filePath: string; size: number }[]> => {
-		return typedInvokeUnwrap(WorkspaceChannels.listDocumentImages, documentId);
-	},
-	onDocumentImageChange: (
-		callback: (event: {
-			type: 'added' | 'changed' | 'removed';
-			documentId: string;
-			fileName: string;
-			filePath: string;
-			timestamp: number;
-		}) => void
-	): (() => void) => {
-		return typedOn(WorkspaceChannels.documentImageChanged, callback);
 	},
 	// -------------------------------------------------------------------------
 	// Output file management (documents)
