@@ -8,10 +8,28 @@ import {
 	type ReactElement,
 	type ReactNode,
 } from 'react';
-import type { ImageEntry } from '../../../shared/types';
+import type { ResourceInfo } from '../../../shared/types';
+
+const IMAGE_EXTENSIONS = new Set([
+	'.jpg',
+	'.jpeg',
+	'.png',
+	'.gif',
+	'.webp',
+	'.svg',
+	'.avif',
+	'.bmp',
+]);
+
+function isImage(entry: ResourceInfo): boolean {
+	if (entry.mimeType.startsWith('image/')) return true;
+	const dot = entry.name.lastIndexOf('.');
+	if (dot === -1) return false;
+	return IMAGE_EXTENSIONS.has(entry.name.slice(dot).toLowerCase());
+}
 
 export interface ImagesContextValue {
-	images: ImageEntry[];
+	images: ResourceInfo[];
 	isLoading: boolean;
 	refresh: () => Promise<void>;
 	removeImage: (id: string) => void;
@@ -24,7 +42,7 @@ interface ImagesProviderProps {
 }
 
 export function ImagesProvider({ children }: ImagesProviderProps): ReactElement {
-	const [images, setImages] = useState<ImageEntry[]>([]);
+	const [images, setImages] = useState<ResourceInfo[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const mountedRef = useRef(true);
 
@@ -32,11 +50,11 @@ export function ImagesProvider({ children }: ImagesProviderProps): ReactElement 
 		if (!mountedRef.current) return;
 		setIsLoading(true);
 		try {
-			const items = await window.workspace.getImages();
+			const items = await window.workspace.getResources();
 			if (!mountedRef.current) return;
-			setImages(items);
+			setImages(items.filter(isImage));
 		} catch (err) {
-			console.error('[ImagesProvider] getImages failed:', err);
+			console.error('[ImagesProvider] getResources failed:', err);
 			if (!mountedRef.current) return;
 			setImages([]);
 		} finally {
@@ -51,7 +69,7 @@ export function ImagesProvider({ children }: ImagesProviderProps): ReactElement 
 	useEffect(() => {
 		mountedRef.current = true;
 		void refresh();
-		const unsubscribeImages = window.workspace.onImagesChanged(() => {
+		const unsubscribeResources = window.workspace.onResourcesChanged(() => {
 			void refresh();
 		});
 		const unsubscribeWorkspace = window.workspace.onChange((event) => {
@@ -63,7 +81,7 @@ export function ImagesProvider({ children }: ImagesProviderProps): ReactElement 
 		});
 		return () => {
 			mountedRef.current = false;
-			unsubscribeImages();
+			unsubscribeResources();
 			unsubscribeWorkspace();
 		};
 	}, [refresh]);
