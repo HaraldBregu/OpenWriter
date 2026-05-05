@@ -9,7 +9,6 @@ import {
 import {
 	loadResources,
 	loadDocuments,
-	loadIndexingInfo,
 	loadProjectName,
 	selectWorkspace,
 	createWorkspace,
