@@ -341,28 +341,20 @@ const App: React.FC = () => {
 														}
 													/>
 													<Route
-														path="/resources/images"
+														path="/resources"
 														element={
 															<RouteWrapper>
-																<ImagesPage />
-															</RouteWrapper>
-														}
-													/>
-													<Route
-														path="/resources/content"
-														element={
-															<RouteWrapper>
-																<ContentPage />
+																<ResourcesPage />
 															</RouteWrapper>
 														}
 													/>
 													<Route
 														path="/library"
-														element={<Navigate to="/resources/content" replace />}
+														element={<Navigate to="/resources" replace />}
 													/>
 													<Route
-														path="/resources"
-														element={<Navigate to="/resources/documents" replace />}
+														path="/resources/*"
+														element={<Navigate to="/resources" replace />}
 													/>
 												</Routes>
 											</Suspense>
