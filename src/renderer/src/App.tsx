@@ -322,6 +322,22 @@ const App: React.FC = () => {
 																</Suspense>
 															}
 														/>
+														<Route
+															path="agents"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<SettingsAgentsPage />
+																</Suspense>
+															}
+														/>
+														<Route
+															path="providers"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<SettingsProvidersPage />
+																</Suspense>
+															}
+														/>
 													</Route>
 													<Route
 														path="/agents"
