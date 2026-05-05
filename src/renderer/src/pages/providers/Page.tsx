@@ -20,7 +20,7 @@ import { ProvidersProvider, useProvidersContext } from './Provider';
 
 const AUTOSAVE_DELAY_MS = 600;
 
-function Bootstrap(): null {
+export function Bootstrap(): null {
 	const { setProviders, setDrafts, persisted } = useProvidersContext();
 
 	useEffect(() => {
