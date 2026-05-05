@@ -83,14 +83,14 @@ function WorkspaceEventBridge(): null {
 	}, []);
 
 	useEffect(() => {
-		if (typeof window.workspace?.onDocumentFileChange !== 'function') {
+		if (typeof window.workspace?.onResourcesChanged !== 'function') {
 			return;
 		}
 
 		store.dispatch(loadResources());
-		const unsubscribe = window.workspace.onDocumentFileChange((event) => {
+		const unsubscribe = window.workspace.onResourcesChanged((event) => {
 			if (event.type === 'removed') {
-				store.dispatch(resourceRemoved(event.fileId));
+				store.dispatch(resourceRemoved(event.resourceId));
 			} else {
 				store.dispatch(loadResources());
 			}
