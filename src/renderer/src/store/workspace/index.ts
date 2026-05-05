@@ -56,7 +56,6 @@ export {
 	selectResourcesError,
 	selectResourcesIsLoading,
 	selectImporting,
-	selectIndexingInfo,
 	selectAllDocuments,
 	selectSelectedDocument,
 	selectSelectedDocumentId,
