@@ -55,6 +55,7 @@ import {
 	Trash2,
 	FileImage,
 	FileText,
+	Folder,
 	Copy,
 	GalleryVerticalEnd,
 	EllipsisVertical,
