@@ -16,7 +16,7 @@ const TEMPLATES: Record<string, string> = Object.fromEntries(
 );
 
 /**
- * Per-assistant markdown memory. Lives in userData/assistant-workspace/<id>/.
+ * Per-assistant markdown memory. Lives in userData/assistant/workspaces/<id>/.
  * Templates are bundled into the main process build and seeded on first init;
  * BOOTSTRAP.md is re-seeded only when the workspace is fresh (no SOUL.md yet).
  */
