@@ -32,11 +32,11 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		if (!mountedRef.current) return;
 		setIsLoading(true);
 		try {
-			const items = await window.workspace.getContents();
+			const items = await window.workspace.getResources();
 			if (!mountedRef.current) return;
-			setContents(items);
+			setContents(items.filter((r) => r.name.toLowerCase().endsWith('.md')));
 		} catch (err) {
-			console.error('[ContentProvider] getContents failed:', err);
+			console.error('[ContentProvider] getResources failed:', err);
 			if (!mountedRef.current) return;
 			setContents([]);
 		} finally {
