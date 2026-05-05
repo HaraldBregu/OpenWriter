@@ -3,21 +3,21 @@ import type { ResourceInfo } from '../../../../../shared/types';
 import type { SortDirection, SortKey } from '../shared/types';
 
 interface UseFilterParams {
-	contents: ResourceInfo[];
+	resources: ResourceInfo[];
 	searchQuery: string;
 	sortKey: SortKey;
 	sortDirection: SortDirection;
 }
 
 export function useFilter({
-	contents,
+	resources,
 	searchQuery,
 	sortKey,
 	sortDirection,
 }: UseFilterParams): ResourceInfo[] {
 	return useMemo(() => {
 		const query = searchQuery.trim().toLowerCase();
-		const result = contents.filter((item) => {
+		const result = resources.filter((item) => {
 			if (query && !item.name.toLowerCase().includes(query)) return false;
 			return true;
 		});
@@ -35,5 +35,5 @@ export function useFilter({
 		}
 
 		return result;
-	}, [contents, searchQuery, sortDirection, sortKey]);
+	}, [resources, searchQuery, sortDirection, sortKey]);
 }
