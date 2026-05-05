@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useImperativeHandle, useMemo, useRef } from 'react';
 import { useEditor, EditorContent, type UseEditorOptions } from '@tiptap/react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Slice } from '@tiptap/pm/model';
 import { Transaction } from '@tiptap/pm/state';
 
 import { createExtensions } from './extensions/extensions';
@@ -10,18 +9,22 @@ import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
 
+const EMPTY_DOC = { type: 'doc', content: [{ type: 'paragraph' }] };
+
+function parseDocOrEmpty(value: string): unknown {
+	if (!value) return EMPTY_DOC;
+	try {
+		return JSON.parse(value);
+	} catch {
+		return EMPTY_DOC;
+	}
+}
+
 export interface EditorElement extends HTMLDivElement {
-	setContent: (markdown: string, options?: { preventEditorUpdate?: boolean }) => void;
+	/** Replace document content. `value` is a JSON-stringified ProseMirror doc. */
+	setContent: (value: string, options?: { preventEditorUpdate?: boolean }) => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
 	deleteText: (from: number, to: number, options?: { preventEditorUpdate?: boolean }) => void;
-	insertMarkdown: (
-		markdown: string,
-		options?: { from?: number; preventEditorUpdate?: boolean }
-	) => void;
-	insertMarkdownText: (
-		markdown: string,
-		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
-	) => void;
 	setSearch: (query: string) => void;
 	clearSearch: () => void;
 	removeAssistant: () => void;
@@ -36,6 +39,7 @@ export interface EditorElement extends HTMLDivElement {
 }
 
 export interface EditorProps {
+	/** JSON-stringified ProseMirror doc. Empty string = empty document. */
 	value: string;
 	onChange: (value: string) => void;
 	onSelectionChange?: (selection: { from: number; to: number } | null) => void;
