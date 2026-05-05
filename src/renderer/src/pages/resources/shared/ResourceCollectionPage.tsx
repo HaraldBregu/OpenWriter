@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FolderOpen, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { PageContainer } from '@/components/app';
 import {
 	AlertDialog,
@@ -12,16 +12,13 @@ import {
 	AlertDialogHeader,
 	AlertDialogTitle,
 } from '@/components/ui/AlertDialog';
-import { Button } from '@/components/ui/Button';
 import type { TaskEvent, TaskState } from '../../../../../shared/types';
 import { useAppDispatch, useAppSelector } from '@/store';
 import {
 	importResourcesRequested,
-	loadIndexingInfo,
 	removeResources,
 	selectCurrentWorkspacePath,
 	selectImporting,
-	selectIndexingInfo,
 	selectResources,
 	selectResourcesError,
 	selectResourcesStatus,
