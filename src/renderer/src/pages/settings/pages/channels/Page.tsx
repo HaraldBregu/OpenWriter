@@ -17,7 +17,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/components/ui/Tooltip';
-import { H1, H3, Muted } from '@/components/ui/Typography';
+import { H3, Muted } from '@/components/ui/Typography';
 import type { ChannelStatusEvent } from '../../../../../../shared/types';
 import { ChannelsProvider, useChannelsContext } from './Provider';
 
@@ -427,13 +427,10 @@ function DiscordSection(): ReactElement {
 }
 
 export default function Page(): ReactElement {
-	const { t } = useTranslation();
-
 	return (
 		<ChannelsProvider>
 			<Bootstrap />
 			<div className="w-full max-w-2xl">
-				<H1 className="text-left mb-6">{t('settings.tabs.channels', 'Channels')}</H1>
 				<div className="flex flex-col gap-10">
 					<TelegramSection />
 					<Separator />
