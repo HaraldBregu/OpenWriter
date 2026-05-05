@@ -49,7 +49,7 @@ interface ProviderFormProps {
 	readonly provider: Provider;
 }
 
-function ProviderForm({ provider }: ProviderFormProps): ReactElement {
+export function ProviderForm({ provider }: ProviderFormProps): ReactElement {
 	const { t } = useTranslation();
 	const { drafts, persisted, saving, patchDraft, handleSave } = useProvidersContext();
 
