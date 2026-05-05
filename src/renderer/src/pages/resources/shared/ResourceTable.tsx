@@ -23,15 +23,15 @@ import { formatBytes, formatDate } from './resource-utils';
 
 const ALL_TYPES_VALUE = 'all';
 
-type SortKey = 'name' | 'mimeType' | 'size' | 'importedAt' | 'lastModified';
+type SortKey = 'name' | 'mimeType' | 'size' | 'createdAt' | 'modifiedAt';
 type SortDirection = 'none' | 'asc' | 'desc';
 
 const COLUMN_KEYS: { key: SortKey; i18nKey: string; className?: string }[] = [
 	{ key: 'name', i18nKey: 'library.name' },
 	{ key: 'mimeType', i18nKey: 'library.type' },
 	{ key: 'size', i18nKey: 'library.size', className: 'text-right' },
-	{ key: 'importedAt', i18nKey: 'library.imported' },
-	{ key: 'lastModified', i18nKey: 'library.lastModified' },
+	{ key: 'createdAt', i18nKey: 'library.imported' },
+	{ key: 'modifiedAt', i18nKey: 'library.lastModified' },
 ];
 
 function compareResources(
