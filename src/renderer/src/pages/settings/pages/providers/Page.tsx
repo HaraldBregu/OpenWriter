@@ -1,12 +1,6 @@
 import { useEffect, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	PageBody,
-	PageContainer,
-	PageHeader,
-	PageHeaderTitle,
-} from '@/components/app/base/page';
-import {
 	Field,
 	FieldDescription,
 	FieldGroup,
