@@ -204,7 +204,7 @@ export default function Page(): ReactElement {
 				<PageHeader>
 					<PageHeaderTitle>{t('agents.title', 'Agents')}</PageHeaderTitle>
 				</PageHeader>
-				<PageBody className="flex flex-col gap-10">
+				<PageBody className="grid grid-cols-1 gap-10 lg:grid-cols-2">
 					{AGENT_DEFINITIONS.map((definition) => (
 						<AgentForm key={definition.id} definition={definition} />
 					))}
