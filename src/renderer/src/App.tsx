@@ -37,13 +37,7 @@ const ChannelsLayout = lazy(() => import('./pages/channels/Layout'));
 const TelegramPage = lazy(() => import('./pages/channels/pages/TelegramPage'));
 const WhatsappPage = lazy(() => import('./pages/channels/pages/WhatsappPage'));
 const DiscordPage = lazy(() => import('./pages/channels/pages/DiscordPage'));
-const AgentsLayout = lazy(() => import('./pages/agents/Layout'));
-const ContentReviewerAgentPage = lazy(
-	() => import('./pages/agents/pages/ContentReviewerPage')
-);
-const ContentWriterAgentPage = lazy(() => import('./pages/agents/pages/ContentWriterPage'));
-const ImageCreatorAgentPage = lazy(() => import('./pages/agents/pages/ImageCreatorPage'));
-const AssistantAgentPage = lazy(() => import('./pages/agents/pages/AssistantPage'));
+const AgentsPage = lazy(() => import('./pages/agents/Page'));
 const ProvidersPage = lazy(() => import('./pages/providers/Page'));
 
 // Lazy-loaded settings pages
