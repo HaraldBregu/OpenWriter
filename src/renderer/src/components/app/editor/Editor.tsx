@@ -121,6 +121,7 @@ const Editor = React.memo(
 					onCreate: ({ editor: ed }: { editor: TiptapEditor }) => {
 						const initial = initialValueRef.current;
 						if (!initial) return;
+						lastEmittedRef.current = initial;
 						queueMicrotask(() => {
 							if (ed.isDestroyed) return;
 							ed.commands.setContent(initial, {
