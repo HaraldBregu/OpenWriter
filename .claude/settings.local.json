@@ -169,7 +169,8 @@
       "Read(//Users/haraldbregu/Documents/9Spartans/apps/Kaioh/src/**)",
       "Bash(xargs sed *)",
       "Read(//Users/haraldbregu/.claude/**)",
-      "Bash(echo \"PRE_EXIT=$?\")"
+      "Bash(echo \"PRE_EXIT=$?\")",
+      "Bash(pkill -f \"tsc -p tsconfig.web\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
