@@ -122,11 +122,15 @@ const Editor = React.memo(
 						const initial = initialValueRef.current;
 						if (!initial) return;
 						lastEmittedRef.current = initial;
-						queueMicrotask(() => {
-							if (ed.isDestroyed) return;
-							ed.commands.setContent(initial, {
-								emitUpdate: false,
-								contentType: 'markdown',
+						requestAnimationFrame(() => {
+							requestAnimationFrame(() => {
+								if (ed.isDestroyed) return;
+								console.time('[Editor] initial setContent');
+								ed.commands.setContent(initial, {
+									emitUpdate: false,
+									contentType: 'markdown',
+								});
+								console.timeEnd('[Editor] initial setContent');
 							});
 						});
 					},
