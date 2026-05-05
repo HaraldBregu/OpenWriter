@@ -8,7 +8,7 @@ import {
 	useTransitionStyles,
 } from '@floating-ui/react';
 import { Card } from '@/components/ui/Card';
-import type { ImageEntry } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 
 function toLocalResourceUrl(filePath: string): string {
 	const normalized = filePath.replace(/\\/g, '/');
@@ -19,10 +19,10 @@ function toLocalResourceUrl(filePath: string): string {
 export interface ImagesMenuProps {
 	open: boolean;
 	anchor: HTMLElement | null;
-	images: ImageEntry[];
+	images: ResourceInfo[];
 	selectedIndex: number;
 	onSelectIndex: (index: number) => void;
-	onPick: (image: ImageEntry) => void;
+	onPick: (image: ResourceInfo) => void;
 	onMouseEnter?: () => void;
 }
 
