@@ -3,7 +3,6 @@ import {
 	Code2,
 	FileText,
 	FolderOpen,
-	Home,
 	LibraryBig,
 	MonitorCog,
 	Palette,
@@ -133,7 +132,7 @@ export const APP_SEARCH_ACTIONS: AppSearchActionDefinition[] = [
 ];
 
 export const APP_SEARCH_SECTION_ICONS = {
-	actions: Home,
+	actions: Sparkles,
 	documents: FolderOpen,
 	resources: LibraryBig,
 } as const;

@@ -1,6 +1,5 @@
 import { FolderOpen, LibraryBig } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { getResourceSection, RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
 import { useAppSelector } from '@/store';
 import { selectAllDocuments, selectResources } from '@/store/workspace';
 import { APP_SEARCH_ACTIONS } from './constants';
@@ -19,22 +18,17 @@ export function useAppSearchResults(query: string) {
 			path: document.path,
 			updatedAt: document.updatedAt,
 		})),
-		resources: resources.map((resource) => {
-			const sectionId = getResourceSection(resource);
-			const section = RESOURCE_SECTIONS[sectionId];
-
-			return {
-				id: resource.id,
-				name: resource.name,
-				path: resource.path,
-				mimeType: resource.mimeType,
-				importedAt: resource.createdAt,
-				lastModified: resource.modifiedAt,
-				href: section.route,
-				categoryLabel: t(section.titleKey),
-				icon: section.icon,
-			};
-		}),
+		resources: resources.map((resource) => ({
+			id: resource.id,
+			name: resource.name,
+			path: resource.path,
+			mimeType: resource.mimeType,
+			importedAt: resource.createdAt,
+			lastModified: resource.modifiedAt,
+			href: '/resources',
+			categoryLabel: t('appLayout.resources', 'Resources'),
+			icon: LibraryBig,
+		})),
 		actions: APP_SEARCH_ACTIONS,
 		icons: {
 			document: FolderOpen,
