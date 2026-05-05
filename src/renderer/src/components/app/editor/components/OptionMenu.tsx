@@ -38,7 +38,7 @@ import {
 import { useEditor } from '../hooks';
 import { ImagesMenu } from './ImagesMenu';
 import { ContentsMenu } from './ContentsMenu';
-import { ImageEntry, ResourceInfo } from '@shared/types';
+import { ResourceInfo } from '@shared/types';
 
 const pluginKey = new PluginKey('optionMenu');
 
