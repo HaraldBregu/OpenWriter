@@ -62,7 +62,7 @@ function ProviderForm({ provider }: ProviderFormProps): ReactElement {
 
 	return (
 		<form
-			className="w-full max-w-lg flex flex-col gap-6"
+			className="w-full flex flex-col gap-6"
 			onSubmit={(e) => {
 				e.preventDefault();
 				void handleSave(id);
