@@ -158,7 +158,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 
 		dispatch({ type: 'SET_REMOVING', payload: true });
 		try {
-			await Promise.all(ids.map((id) => window.workspace.deleteContent(id)));
+			await Promise.all(ids.map((id) => window.workspace.deleteResource(id)));
 			await refreshContents();
 			setSelected(new Set());
 		} finally {
