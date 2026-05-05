@@ -29,7 +29,7 @@ startAppListening({
 	effect: async (action, listenerApi) => {
 		const extensions = action.payload;
 		try {
-			const imported = await window.workspace.importFiles(extensions);
+			const imported = await window.workspace.insertResources(extensions);
 			if (imported.length > 0) {
 				await listenerApi.dispatch(loadResources());
 			}
