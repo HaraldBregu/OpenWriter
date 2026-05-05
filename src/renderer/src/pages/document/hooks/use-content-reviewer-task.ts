@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Editor as TiptapEditor } from '@tiptap/core';
-import { Slice } from '@tiptap/pm/model';
+import { marked } from 'marked';
 import type { TaskEvent } from '../../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
 
