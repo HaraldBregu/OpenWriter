@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import type {
-	FileEntry,
 	FileTypeFilter,
 	FilesSortDirection as SortDirection,
 	FilesSortKey as SortKey,
 } from '../../../../../../shared/types';
+import type { FileEntry } from '../context/types';
 import { matchesTypeFilter } from '../shared/file-utils';
 
 interface UseFilterParams {
