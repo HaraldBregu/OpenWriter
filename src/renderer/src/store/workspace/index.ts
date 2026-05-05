@@ -13,7 +13,6 @@ export {
 	clearWorkspace,
 	loadResources,
 	removeResources,
-	loadIndexingInfo,
 	loadProjectName,
 	loadDocuments,
 	refreshDocument,
