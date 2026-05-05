@@ -1,5 +1,5 @@
 /** Workspace slice initial state and state type definition. */
-import type { IndexingInfo, ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
+import type { ResourceInfo, WorkspaceInfo } from '../../../../shared/types';
 import type { DocumentItem } from './types';
 
 // ---------------------------------------------------------------------------
