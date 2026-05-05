@@ -53,7 +53,7 @@ export function useCreateWriting(options?: UseCreateWritingOptions): UseCreateWr
 			// can be updated optimistically without waiting for the file watcher.
 			optionsRef.current?.onCreated?.(result);
 
-			navigate(`/content/${result.id}`);
+			navigate(`/document/${result.id}`);
 		} catch (err) {
 			const message = err instanceof Error ? err.message : 'Failed to create writing.';
 			setError(message);
