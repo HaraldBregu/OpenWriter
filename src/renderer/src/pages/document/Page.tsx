@@ -410,28 +410,23 @@ function PageContent(): ReactElement {
 		if (!preexistingTaskContent) return;
 		if (!editor || editor.isDestroyed) return;
 
-		const json = editor.markdown?.parse(preexistingTaskContent);
+		const html = marked.parse(preexistingTaskContent, {
+			gfm: true,
+			async: false,
+		}) as string;
 		const docSize = editor.state.doc.content.size;
 		const fallbackFrom = editor.state.selection.from;
 		const fallbackTo = editor.state.selection.to;
 		const from = Math.min(preexistingTaskSelection?.from ?? fallbackFrom, docSize);
 		const to = Math.min(preexistingTaskSelection?.to ?? fallbackTo, docSize);
 
-		if (json) {
-			const node = editor.schema.nodeFromJSON(json);
-			const slice = new Slice(node.content, 0, 0);
-			const tr = editor.state.tr.replaceRange(from, to, slice);
-			editor.view.dispatch(tr);
-			editor.view.focus();
+		const chain = editor.chain().focus();
+		if (preexistingTaskSelection) {
+			chain.insertContentAt({ from, to }, html);
 		} else {
-			const chain = editor.chain().focus();
-			if (preexistingTaskSelection) {
-				chain.insertContentAt({ from, to }, preexistingTaskContent);
-			} else {
-				chain.insertContent(preexistingTaskContent);
-			}
-			chain.run();
+			chain.insertContent(html);
 		}
+		chain.run();
 
 		await handleCancelPreexistingTask();
 	}, [preexistingTaskContent, preexistingTaskSelection, editor, handleCancelPreexistingTask]);
