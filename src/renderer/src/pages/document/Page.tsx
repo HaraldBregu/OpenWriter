@@ -110,7 +110,7 @@ function PageContent(): ReactElement {
 				if (!cancelled) {
 					documentDeletedRef.current = true;
 					setLoaded(true);
-					navigate('/home', { replace: true });
+					navigate('/assistant', { replace: true });
 				}
 			}
 		}
@@ -129,7 +129,7 @@ function PageContent(): ReactElement {
 
 			if (event.type === 'removed') {
 				documentDeletedRef.current = true;
-				navigate('/home', { replace: true });
+				navigate('/assistant', { replace: true });
 			}
 		});
 
