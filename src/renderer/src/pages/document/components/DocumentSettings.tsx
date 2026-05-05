@@ -24,6 +24,8 @@ export default function DocumentSettings({
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
+	const [width, setWidth] = useState<number[]>([75]);
+	const [textSize, setTextSize] = useState<number[]>([75]);
 
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
