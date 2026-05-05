@@ -579,12 +579,9 @@ function Container({ children }: LayoutProps) {
 							</Collapsible>
 						)}
 
-						<SidebarGroup>
+						<SidebarGroup className="mt-auto">
 							<SidebarMenu className="gap-1">
-								<Collapsible
-									defaultOpen
-									className="group/collapsible"
-								>
+								<Collapsible defaultOpen className="group/collapsible">
 									<SidebarMenuItem>
 										<CollapsibleTrigger
 											render={
@@ -622,11 +619,6 @@ function Container({ children }: LayoutProps) {
 										</CollapsibleContent>
 									</SidebarMenuItem>
 								</Collapsible>
-							</SidebarMenu>
-						</SidebarGroup>
-
-						<SidebarGroup className="mt-auto">
-							<SidebarMenu className="gap-1">
 								<SidebarMenuItem>
 									<SidebarMenuButton
 										render={<Link to="/settings/agents" />}

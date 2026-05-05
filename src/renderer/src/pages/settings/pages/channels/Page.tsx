@@ -398,18 +398,16 @@ export default function Page(): ReactElement {
 	return (
 		<ChannelsProvider>
 			<Bootstrap />
-			<PageContainer>
-				<PageHeader>
-					<PageHeaderTitle>{t('channels.title', 'Channels')}</PageHeaderTitle>
-				</PageHeader>
-				<PageBody className="flex flex-col gap-10">
+			<div className="w-full max-w-2xl">
+				<h1 className="text-lg font-normal mb-6">{t('settings.tabs.channels', 'Channels')}</h1>
+				<div className="flex flex-col gap-10">
 					<TelegramSection />
 					<Separator />
 					<WhatsappSection />
 					<Separator />
 					<DiscordSection />
-				</PageBody>
-			</PageContainer>
+				</div>
+			</div>
 		</ChannelsProvider>
 	);
 }
