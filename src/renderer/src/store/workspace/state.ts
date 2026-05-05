@@ -27,8 +27,6 @@ export interface WorkspaceState {
 	resourcesError: string | null;
 	/** Whether a file import operation is in progress */
 	importing: boolean;
-	/** Indexing metadata from the last successful indexing run */
-	indexingInfo: IndexingInfo | null;
 	/** Document items produced inside the workspace (outputs of type 'documents'). */
 	documentItems: DocumentItem[];
 	selectedDocumentId: string | null;
