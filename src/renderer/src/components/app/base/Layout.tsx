@@ -53,8 +53,6 @@ import {
 	MoreHorizontal,
 	Pencil,
 	Trash2,
-	FileImage,
-	FileText,
 	Folder,
 	Copy,
 	GalleryVerticalEnd,
