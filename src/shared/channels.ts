@@ -414,7 +414,6 @@ export interface EventChannelMap {
 	[WorkspaceChannels.deleted]: { data: WorkspaceDeletedEvent };
 	[TaskChannels.event]: { data: TaskEvent };
 	[WorkspaceChannels.outputFileChanged]: { data: OutputFileChangeEvent };
-	[WorkspaceChannels.documentImageChanged]: { data: DocumentImageChangeEvent };
 	[WorkspaceChannels.documentConfigChanged]: {
 		data: { documentId: string; config: DocumentConfig };
 	};
