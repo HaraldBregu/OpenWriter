@@ -63,9 +63,6 @@ export function createExtensions(handlers: ExtensionHandlers): AnyExtension[] {
 		PromptExtension.configure({
 			onPromptSubmit: handlers.onPromptSubmit,
 		}),
-		Markdown.configure({
-			markedOptions: { gfm: true },
-		}),
 		Placeholder.configure({
 			placeholder: ({ editor, node }) => {
 				if (!editor.isFocused) return '';
