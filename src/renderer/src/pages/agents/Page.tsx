@@ -86,6 +86,13 @@ function Bootstrap(): null {
 	return null;
 }
 
+const AGENT_ICONS: Record<string, LucideIcon> = {
+	'content-reviewer': ClipboardCheck,
+	'content-writer': PenLine,
+	'image-creator': ImageIcon,
+	assistant: Bot,
+};
+
 interface AgentFormProps {
 	readonly definition: AgentDefinition;
 }
