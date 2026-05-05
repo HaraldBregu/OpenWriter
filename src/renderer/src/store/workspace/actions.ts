@@ -2,7 +2,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type {
 	CreateWorkspaceParams,
-	IndexingInfo,
 	ResourceInfo,
 	WorkspaceInfo,
 } from '../../../../shared/types';
