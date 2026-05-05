@@ -121,28 +121,8 @@ export class Workspace implements Disposable {
 	}
 
 	// -------------------------------------------------------------------------
-	// Indexing info
+	// Document folder
 	// -------------------------------------------------------------------------
-
-	async getIndexingInfo(): Promise<IndexingInfo | null> {
-		const currentWorkspace = this.requireWorkspace();
-		const infoPath = path.join(currentWorkspace, DATA_DIR, INDEXING_INFO_FILE);
-		try {
-			const content = await fsPromises.readFile(infoPath, 'utf-8');
-			return JSON.parse(content);
-		} catch {
-			return null;
-		}
-	}
-
-	getDataFolderPath(): string {
-		const currentWorkspace = this.requireWorkspace();
-		const dataDir = path.join(currentWorkspace, DATA_DIR);
-		if (!fs.existsSync(dataDir)) {
-			fs.mkdirSync(dataDir, { recursive: true });
-		}
-		return dataDir;
-	}
 
 	getDocumentFolderPath(documentId: string): string {
 		if (!documentId || typeof documentId !== 'string') {
