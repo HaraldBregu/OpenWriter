@@ -45,7 +45,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	const error = useAppSelector(selectResourcesError);
 	const uploading = useAppSelector(selectImporting);
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
-	const indexingInfo = useAppSelector(selectIndexingInfo);
 
 	const resources = useMemo(
 		() => filterResourcesBySection(allResources, sectionId),
