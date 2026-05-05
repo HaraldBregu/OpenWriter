@@ -28,7 +28,6 @@ import './index.css';
 
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
-const HomePage = lazy(() => import('./pages/home/Page'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
 const AssistantPage = lazy(() => import('./pages/assistant/Page'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
