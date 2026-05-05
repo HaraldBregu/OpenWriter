@@ -19,7 +19,7 @@ export interface UseCreateWritingResult {
  *   1. Calls window.workspace.saveOutput to persist the folder on disk.
  *   2. Invokes options.onCreated with the result (if provided) so callers
  *      can optimistically update their UI before the file-watcher fires.
- *   3. Navigates to /content/:id on success.
+ *   3. Navigates to /document/:id on success.
  *
  * Uses a ref-based in-flight guard so rapid successive clicks are ignored
  * without requiring the caller to track the loading state in their own
