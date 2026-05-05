@@ -1,16 +1,17 @@
 import type {
-	FileEntry,
+	ResourceInfo,
 	FileTypeFilter,
 	FilesSortDirection as SortDirection,
 	FilesSortKey as SortKey,
 	FilesViewMode as ViewMode,
 } from '../../../../../../shared/types';
 
-export type { FileEntry, FileTypeFilter, SortDirection, SortKey, ViewMode };
+export type { FileTypeFilter, SortDirection, SortKey, ViewMode };
+export type FileEntry = ResourceInfo;
 
 export interface FilesContextValue {
-	entries: FileEntry[];
-	filteredEntries: FileEntry[];
+	entries: ResourceInfo[];
+	filteredEntries: ResourceInfo[];
 	isLoading: boolean;
 	uploading: boolean;
 	removeEntry: (id: string) => void;
@@ -28,9 +29,9 @@ export interface FilesContextValue {
 	someChecked: boolean;
 	handleToggleAll: () => void;
 	handleToggleRow: (id: string) => void;
-	activeFile: FileEntry | null;
+	activeFile: ResourceInfo | null;
 	fileDetailsOpen: boolean;
-	handleOpenFileDetails: (file: FileEntry) => void;
+	handleOpenFileDetails: (file: ResourceInfo) => void;
 	handleFileDetailsOpenChange: (open: boolean) => void;
 	handleUpload: () => void;
 	handleOpenFolder: () => void;
