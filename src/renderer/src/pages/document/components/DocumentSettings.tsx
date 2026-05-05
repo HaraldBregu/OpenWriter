@@ -54,17 +54,31 @@ export default function DocumentSettings({
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<div className="px-1.5 py-1">
-						<div className="mb-1.5 flex items-center justify-between">
+					<div className="px-2 py-2">
+						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Width</span>
+							<span className="text-xs tabular-nums text-muted-foreground">{width[0]}%</span>
 						</div>
-						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
+						<Slider
+							value={width}
+							onValueChange={(v) => setWidth(Array.isArray(v) ? v : [v])}
+							max={100}
+							step={1}
+							className="w-full"
+						/>
 					</div>
-					<div className="px-1.5 py-1">
-						<div className="mb-1.5 flex items-center justify-between">
+					<div className="px-2 py-2">
+						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Text size</span>
+							<span className="text-xs tabular-nums text-muted-foreground">{textSize[0]}%</span>
 						</div>
-						<Slider defaultValue={[75]} max={100} step={1} className="mx-auto w-full max-w-xs" />
+						<Slider
+							value={textSize}
+							onValueChange={(v) => setTextSize(Array.isArray(v) ? v : [v])}
+							max={100}
+							step={1}
+							className="w-full"
+						/>
 					</div>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
