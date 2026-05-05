@@ -72,15 +72,6 @@ export const selectResourcesIsLoading = createSelector(
 export const selectImporting = createSelector(selectWorkspaceState, (state) => state.importing);
 
 // ---------------------------------------------------------------------------
-// Indexing selectors
-// ---------------------------------------------------------------------------
-
-export const selectIndexingInfo = createSelector(
-	selectWorkspaceState,
-	(state) => state.indexingInfo
-);
-
-// ---------------------------------------------------------------------------
 // Document item selectors (merged from former documents slice)
 // ---------------------------------------------------------------------------
 
