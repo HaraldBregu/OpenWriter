@@ -126,7 +126,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 	}, [state.editing, setSelected]);
 
 	const handleOpenResourcesFolder = useCallback(() => {
-		window.workspace.openContentsFolder();
+		window.workspace.openResourcesFolder();
 	}, []);
 
 	const handleDelete = useCallback(() => {
