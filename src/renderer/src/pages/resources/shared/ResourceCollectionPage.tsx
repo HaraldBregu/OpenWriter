@@ -180,35 +180,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 				</div>
 			)}
 
-			{section.supportsIndexing && !indexing && indexingInfo && (
-				<div className="border-b px-6 py-3 shrink-0">
-					<div className="flex items-center gap-4 text-xs text-muted-foreground">
-						<span>
-							{t('library.lastIndexed')} {new Date(indexingInfo.lastIndexedAt).toLocaleString()}
-						</span>
-						<span>
-							{indexingInfo.indexedCount} {t('library.documents')}
-						</span>
-						<span>
-							{indexingInfo.totalChunks} {t('library.chunks')}
-						</span>
-						{indexingInfo.failedCount > 0 && (
-							<span className="text-destructive">
-								{indexingInfo.failedCount} {t('library.failed')}
-							</span>
-						)}
-						<Button
-							variant="ghost"
-							size="icon-xs"
-							className="ml-auto"
-							onClick={handleOpenDataFolder}
-						>
-							<FolderOpen />
-						</Button>
-					</div>
-				</div>
-			)}
-
 			<div className="flex flex-1 min-h-0 flex-col overflow-y-auto p-6">
 				{loading && (
 					<div className="flex items-center gap-2 text-sm text-muted-foreground">
