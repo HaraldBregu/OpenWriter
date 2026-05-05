@@ -297,7 +297,6 @@ const Editor = React.memo(
 					if (editor.isDestroyed) return;
 					editor.commands.setContent(doc, {
 						emitUpdate: false,
-						contentType: 'doc',
 					});
 				});
 			}, [value, editor, externalValueVersion]);
