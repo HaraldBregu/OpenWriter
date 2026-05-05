@@ -85,10 +85,10 @@ export function Bootstrap(): null {
 	return null;
 }
 
-const CONTENT_REVIEWER = AGENT_DEFINITIONS.find((d) => d.id === 'content-reviewer')!;
-const CONTENT_WRITER = AGENT_DEFINITIONS.find((d) => d.id === 'content-writer')!;
-const IMAGE_CREATOR = AGENT_DEFINITIONS.find((d) => d.id === 'image-creator')!;
-const ASSISTANT = AGENT_DEFINITIONS.find((d) => d.id === 'assistant')!;
+export const CONTENT_REVIEWER = AGENT_DEFINITIONS.find((d) => d.id === 'content-reviewer')!;
+export const CONTENT_WRITER = AGENT_DEFINITIONS.find((d) => d.id === 'content-writer')!;
+export const IMAGE_CREATOR = AGENT_DEFINITIONS.find((d) => d.id === 'image-creator')!;
+export const ASSISTANT = AGENT_DEFINITIONS.find((d) => d.id === 'assistant')!;
 
 interface AgentFormProps {
 	readonly definition: AgentDefinition;
