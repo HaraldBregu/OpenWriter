@@ -129,13 +129,13 @@ function AgentForm({ definition, icon: Icon }: AgentFormProps): ReactElement {
 
 	return (
 		<div className="w-full flex flex-col gap-6">
-			<div className="flex items-start gap-4">
-				<div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
-					<Icon className="size-5" />
+			<div className="flex items-center gap-4">
+				<div className="grid size-10 shrink-0 place-items-center rounded-full bg-muted text-muted-foreground">
+					<Icon className="size-5" aria-hidden />
 				</div>
 				<div className="flex flex-col gap-1.5">
-					<h2 className="text-lg font-semibold">{definition.name}</h2>
-					<p className="text-sm text-muted-foreground">{definition.description}</p>
+					<h2 className="text-lg font-semibold leading-none">{definition.name}</h2>
+					<p className="text-sm text-muted-foreground leading-snug">{definition.description}</p>
 				</div>
 			</div>
 			<FieldGroup>
