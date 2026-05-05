@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import type { Dispatch, SetStateAction } from 'react';
-import type { FileEntry } from '../../../../../../shared/types';
+import type { FileEntry } from '../context/types';
 
 interface UseSelectionParams {
 	filteredEntries: FileEntry[];
