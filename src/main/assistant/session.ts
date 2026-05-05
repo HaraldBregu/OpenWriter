@@ -58,7 +58,7 @@ export class SessionManager {
 
 	constructor(sessionKey: string) {
 		this.sessionKey = sessionKey;
-		const dir = path.join(app.getPath('userData'), 'assistant-sessions');
+		const dir = path.join(app.getPath('userData'), 'assistant', 'sessions');
 		this.filePath = path.join(dir, `${sessionKey}.jsonl`);
 	}
 
