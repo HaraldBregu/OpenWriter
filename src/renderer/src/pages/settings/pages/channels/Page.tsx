@@ -15,7 +15,6 @@ import { Spinner } from '@/components/ui/Spinner';
 import {
 	Tooltip,
 	TooltipContent,
-	TooltipProvider,
 	TooltipTrigger,
 } from '@/components/ui/Tooltip';
 import { H3, Muted } from '@/components/ui/Typography';
@@ -434,7 +433,7 @@ export default function Page(): ReactElement {
 		<ChannelsProvider>
 			<Bootstrap />
 			<div className="w-full max-w-2xl">
-				<h1 className="text-lg font-normal mb-6">{t('settings.tabs.channels', 'Channels')}</h1>
+				<h1 className="text-2xl font-semibold mb-6">{t('settings.tabs.channels', 'Channels')}</h1>
 				<div className="flex flex-col gap-10">
 					<TelegramSection />
 					<Separator />
