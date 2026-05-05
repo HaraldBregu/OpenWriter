@@ -132,7 +132,6 @@ const Editor = React.memo(
 								if (ed.isDestroyed) return;
 								ed.commands.setContent(doc, {
 									emitUpdate: false,
-									contentType: 'doc',
 								});
 							});
 						});
