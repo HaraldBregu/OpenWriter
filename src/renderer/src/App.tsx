@@ -44,9 +44,7 @@ const ContentReviewerAgentPage = lazy(
 const ContentWriterAgentPage = lazy(() => import('./pages/agents/pages/ContentWriterPage'));
 const ImageCreatorAgentPage = lazy(() => import('./pages/agents/pages/ImageCreatorPage'));
 const AssistantAgentPage = lazy(() => import('./pages/agents/pages/AssistantPage'));
-const ProvidersLayout = lazy(() => import('./pages/providers/Layout'));
-const OpenAIProviderPage = lazy(() => import('./pages/providers/pages/OpenAIPage'));
-const AnthropicProviderPage = lazy(() => import('./pages/providers/pages/AnthropicPage'));
+const ProvidersPage = lazy(() => import('./pages/providers/Page'));
 
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
