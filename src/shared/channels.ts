@@ -425,7 +425,7 @@ export interface EventChannelMap {
 	[AppChannels.openLogsDialog]: { data: undefined };
 	[AppChannels.openReduxDialog]: { data: undefined };
 	[AppChannels.openCronDialog]: { data: undefined };
-	// ---- Images watcher events ----
-	[WorkspaceChannels.imagesChanged]: { data: ImageEntryChangeEvent };
+	// ---- Resources watcher events ----
+	[WorkspaceChannels.resourcesChanged]: { data: ResourceEntryChangeEvent };
 	[AssistantChannels.response]: { data: AssistantResponseEvent };
 }
