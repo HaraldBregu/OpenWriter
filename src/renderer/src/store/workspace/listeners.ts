@@ -67,7 +67,6 @@ startAppListening({
 		await Promise.all([
 			dispatch(loadDocuments()),
 			dispatch(loadResources()),
-			dispatch(loadIndexingInfo()),
 			dispatch(loadProjectName()),
 		]);
 	},
