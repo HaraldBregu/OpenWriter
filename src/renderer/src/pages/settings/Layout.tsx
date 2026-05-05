@@ -15,9 +15,10 @@ import { Button } from '@/components/ui/Button';
 interface NavItemProps {
 	readonly to: string;
 	readonly label: string;
+	readonly badge?: React.ReactNode;
 }
 
-function NavItem({ to, label }: NavItemProps): React.JSX.Element {
+function NavItem({ to, label, badge }: NavItemProps): React.JSX.Element {
 	return (
 		<NavLink to={to} end className="block outline-none">
 			{({ isActive }) => (
@@ -28,7 +29,12 @@ function NavItem({ to, label }: NavItemProps): React.JSX.Element {
 					className="w-full justify-start"
 					render={<span />}
 				>
-					{label}
+					<span className="flex-1 text-left">{label}</span>
+					{badge !== undefined && badge !== null && (
+						<span className="ml-auto text-xs text-muted-foreground tabular-nums">
+							{badge}
+						</span>
+					)}
 				</Button>
 			)}
 		</NavLink>
@@ -45,7 +51,7 @@ export function Layout(): React.JSX.Element {
 				<PageHeaderTitle>{t('settings.title')}</PageHeaderTitle>
 			</PageHeader>
 			<PageBody className="flex-row overflow-hidden p-0">
-				<PageSidebar className="w-64 border-r-0">
+				<PageSidebar className="w-52 border-r-0">
 					<div className="flex flex-col gap-0.5">
 						<NavItem to="/settings/general" label={t('settings.tabs.general')} />
 						<NavItem to="/settings/account" label={t('settings.tabs.account')} />
