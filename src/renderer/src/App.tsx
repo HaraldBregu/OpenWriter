@@ -334,42 +334,15 @@ const App: React.FC = () => {
 														/>
 													</Route>
 													<Route
-														path="/channels/*"
+														path="/channels"
 														element={
 															<RouteWrapper>
-																<ChannelsLayout />
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<ChannelsPage />
+																</Suspense>
 															</RouteWrapper>
 														}
-													>
-														<Route
-															index
-															element={<Navigate to="/channels/telegram" replace />}
-														/>
-														<Route
-															path="telegram"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<TelegramPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="whatsapp"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<WhatsappPage />
-																</Suspense>
-															}
-														/>
-														<Route
-															path="discord"
-															element={
-																<Suspense fallback={<PageLoadingSkeleton />}>
-																	<DiscordPage />
-																</Suspense>
-															}
-														/>
-													</Route>
+													/>
 													<Route
 														path="/content/:id"
 														element={
