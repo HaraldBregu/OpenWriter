@@ -503,7 +503,7 @@ function PageContent(): ReactElement {
 						<Button variant="ghost" size="icon" title="Sparkles" aria-label="Sparkles">
 							<Sparkles aria-hidden="true" />
 						</Button>
-						<DocumentSettings documentId={id ?? null} title={title} content={content} />
+						<DocumentSettings documentId={id ?? null} />
 					</div>
 				</PageHeaderTitle>
 				{preexistingTaskActive && (
