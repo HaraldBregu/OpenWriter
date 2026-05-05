@@ -72,20 +72,20 @@ export function buildColumns({
 			},
 		},
 		{
-			accessorKey: 'importedAt',
+			accessorKey: 'createdAt',
 			header: ({ column }) => <DataTableColumnHeader column={column} title="Imported" />,
 			cell: ({ row }) => (
 				<span className="whitespace-nowrap text-muted-foreground">
-					{formatShortDate(row.getValue('importedAt'))}
+					{formatShortDate(row.getValue('createdAt'))}
 				</span>
 			),
 		},
 		{
-			accessorKey: 'lastModified',
+			accessorKey: 'modifiedAt',
 			header: ({ column }) => <DataTableColumnHeader column={column} title="Modified" />,
 			cell: ({ row }) => (
 				<span className="whitespace-nowrap text-muted-foreground">
-					{formatShortDate(row.getValue('lastModified'))}
+					{formatShortDate(row.getValue('modifiedAt'))}
 				</span>
 			),
 		},

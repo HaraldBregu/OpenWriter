@@ -443,18 +443,6 @@ function Container({ children }: LayoutProps) {
 								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											render={<Link to="/home" />}
-											className="group/btn h-9 px-3"
-											isActive={location.pathname === '/home'}
-										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent">
-												<LayoutDashboard className="h-3.5 w-3.5" />
-											</span>
-											<span className="flex-1 truncate">{t('menu.home', 'Home')}</span>
-										</SidebarMenuButton>
-									</SidebarMenuItem>
-									<SidebarMenuItem>
-										<SidebarMenuButton
 											render={<Link to="/assistant" />}
 											className="group/btn h-9 px-3"
 											isActive={location.pathname === '/assistant'}
