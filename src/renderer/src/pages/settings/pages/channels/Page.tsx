@@ -17,7 +17,7 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from '@/components/ui/Tooltip';
-import { H3, Muted } from '@/components/ui/Typography';
+import { H1, H3, Muted } from '@/components/ui/Typography';
 import type { ChannelStatusEvent } from '../../../../../../shared/types';
 import { ChannelsProvider, useChannelsContext } from './Provider';
 
