@@ -122,7 +122,7 @@ export function buildAppSearchSections({
 					title: document.title,
 					description: document.path,
 					meta: `Updated ${formatRelativeTime(document.updatedAt)}`,
-					href: `/content/${document.id}`,
+					href: `/document/${document.id}`,
 					icon: icons.document,
 				},
 			}))

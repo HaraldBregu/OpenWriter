@@ -22,7 +22,7 @@ export function DocumentCommandModal({ open, onOpenChange }: CommandModalProps) 
 
 	function handleSelect(id: string): void {
 		onOpenChange(false);
-		navigate(`/content/${id}`);
+		navigate(`/document/${id}`);
 	}
 
 	return (
