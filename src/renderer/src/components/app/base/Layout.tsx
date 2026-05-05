@@ -623,10 +623,10 @@ function Container({ children }: LayoutProps) {
 							<SidebarMenu className="gap-1">
 								<SidebarMenuItem>
 									<SidebarMenuButton
-										render={<Link to="/agents" />}
+										render={<Link to="/settings/agents" />}
 										tooltip={t('appLayout.agents', 'Agents')}
 										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/agents')}
+										isActive={location.pathname.startsWith('/settings/agents')}
 									>
 										<Bot />
 										<span>{t('appLayout.agents', 'Agents')}</span>
