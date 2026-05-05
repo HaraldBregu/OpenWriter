@@ -108,7 +108,7 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 								<button
 									type="button"
 									onClick={() => {
-										window.location.hash = '#/home';
+										window.location.hash = '#/assistant';
 									}}
 									className="px-4 py-2 rounded-lg border border-border text-sm text-foreground hover:bg-muted transition-colors"
 								>
