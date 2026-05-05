@@ -109,7 +109,6 @@ export function buildAppSearchSections({
 		}))
 		.filter((entry) => !hasQuery || entry.score > 0)
 		.sort((left, right) => right.score - left.score)
-		.slice(0, APP_SEARCH_RESULTS_PER_SECTION)
 		.map((entry) => entry.item);
 
 	const documentItems = sortByScoreAndDate(
