@@ -647,10 +647,10 @@ function Container({ children }: LayoutProps) {
 								</SidebarMenuItem>
 								<SidebarMenuItem>
 									<SidebarMenuButton
-										render={<Link to="/providers" />}
+										render={<Link to="/settings/providers" />}
 										tooltip={t('appLayout.providers', 'Providers')}
 										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/providers')}
+										isActive={location.pathname.startsWith('/settings/providers')}
 									>
 										<Plug />
 										<span>{t('appLayout.providers', 'Providers')}</span>
