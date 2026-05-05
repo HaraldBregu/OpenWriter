@@ -212,17 +212,15 @@ export default function Page(): ReactElement {
 	return (
 		<AgentsProvider>
 			<Bootstrap />
-			<PageContainer>
-				<PageHeader>
-					<PageHeaderTitle>{t('agents.title', 'Agents')}</PageHeaderTitle>
-				</PageHeader>
-				<PageBody className="flex flex-col gap-10">
+			<div className="w-full max-w-2xl">
+				<h1 className="text-lg font-normal mb-6">{t('settings.tabs.agents', 'Agents')}</h1>
+				<div className="flex flex-col gap-10">
 					<AgentForm definition={CONTENT_REVIEWER} icon={ClipboardCheck} />
 					<AgentForm definition={CONTENT_WRITER} icon={PenLine} />
 					<AgentForm definition={IMAGE_CREATOR} icon={ImageIcon} />
 					<AgentForm definition={ASSISTANT} icon={Bot} />
-				</PageBody>
-			</PageContainer>
+				</div>
+			</div>
 		</AgentsProvider>
 	);
 }
