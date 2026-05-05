@@ -332,17 +332,15 @@ const App: React.FC = () => {
 																</Suspense>
 															}
 														/>
-													</Route>
-													<Route
-														path="/channels"
-														element={
-															<RouteWrapper>
+														<Route
+															path="channels"
+															element={
 																<Suspense fallback={<PageLoadingSkeleton />}>
 																	<ChannelsPage />
 																</Suspense>
-															</RouteWrapper>
-														}
-													/>
+															}
+														/>
+													</Route>
 													<Route
 														path="/content/:id"
 														element={
