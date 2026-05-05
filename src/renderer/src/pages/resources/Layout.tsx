@@ -1,24 +1,24 @@
 import { useEffect, type ReactElement, type ReactNode } from 'react';
-import { ContentProvider, useContentContext } from './Provider';
+import { ResourcesProvider, useResourcesContext } from './Provider';
 import { useAppSelector } from '@/store';
 import { selectCurrentWorkspacePath } from '@/store/workspace';
 
 function Bootstrap(): null {
-	const { setContents, setIsLoading } = useContentContext();
+	const { setResources, setIsLoading } = useResourcesContext();
 	const workspacePath = useAppSelector(selectCurrentWorkspacePath);
 
 	useEffect(() => {
 		let active = true;
 
-		const loadContents = async (): Promise<void> => {
+		const loadResources = async (): Promise<void> => {
 			setIsLoading(true);
 			try {
 				const items = await window.workspace.getResources();
 				if (!active) return;
-				setContents(items.filter((r) => r.name.toLowerCase().endsWith('.md')));
+				setResources(items);
 			} catch {
 				if (!active) return;
-				setContents([]);
+				setResources([]);
 			} finally {
 				if (active) {
 					setIsLoading(false);
@@ -26,12 +26,12 @@ function Bootstrap(): null {
 			}
 		};
 
-		void loadContents();
+		void loadResources();
 
 		return () => {
 			active = false;
 		};
-	}, [setContents, setIsLoading, workspacePath]);
+	}, [setResources, setIsLoading, workspacePath]);
 
 	return null;
 }
@@ -42,9 +42,9 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps): ReactElement {
 	return (
-		<ContentProvider>
+		<ResourcesProvider>
 			<Bootstrap />
 			{children}
-		</ContentProvider>
+		</ResourcesProvider>
 	);
 }
