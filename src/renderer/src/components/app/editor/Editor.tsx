@@ -202,7 +202,6 @@ const Editor = React.memo(
 						if (!editor || editor.isDestroyed) return;
 						editor.commands.setContent(parseDocOrEmpty(value), {
 							emitUpdate: !(options.preventEditorUpdate ?? false),
-							contentType: 'doc',
 						});
 					},
 					insertText(
