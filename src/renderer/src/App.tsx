@@ -33,7 +33,7 @@ const DocumentPage = lazy(() => import('./pages/document/Page'));
 const AssistantPage = lazy(() => import('./pages/assistant/Page'));
 const ContentPage = lazy(() => import('./pages/resources/content/Page'));
 const ImagesPage = lazy(() => import('./pages/resources/images/Page'));
-const ChannelsPage = lazy(() => import('./pages/channels/Page'));
+const ChannelsPage = lazy(() => import('./pages/settings/pages/channels/Page'));
 // Lazy-loaded settings pages
 const GeneralPage = lazy(() => import('./pages/settings/pages/GeneralPage'));
 const AccountPage = lazy(() => import('./pages/settings/pages/AccountPage'));
