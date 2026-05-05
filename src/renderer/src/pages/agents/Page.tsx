@@ -1,6 +1,14 @@
 import { useEffect, type ReactElement } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	Bot,
+	ClipboardCheck,
+	ImageIcon,
+	PenLine,
+	Sparkles,
+	type LucideIcon,
+} from 'lucide-react';
+import {
 	PageBody,
 	PageContainer,
 	PageHeader,
@@ -204,7 +212,7 @@ export default function Page(): ReactElement {
 				<PageHeader>
 					<PageHeaderTitle>{t('agents.title', 'Agents')}</PageHeaderTitle>
 				</PageHeader>
-				<PageBody className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+				<PageBody className="flex flex-col gap-10">
 					{AGENT_DEFINITIONS.map((definition) => (
 						<AgentForm key={definition.id} definition={definition} />
 					))}

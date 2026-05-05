@@ -110,7 +110,7 @@ export default function Page(): ReactElement {
 				<PageHeader>
 					<PageHeaderTitle>{t('providers.title', 'Providers')}</PageHeaderTitle>
 				</PageHeader>
-				<PageBody className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+				<PageBody className="flex flex-col gap-10">
 					{PROVIDER_CATALOGUE.map((provider) => (
 						<ProviderForm key={provider.id} provider={provider} />
 					))}
