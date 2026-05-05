@@ -111,7 +111,7 @@ export function Provider({ children }: FilesProviderProps): ReactElement {
 	const handleConfirmDelete = useCallback(async () => {
 		const ids = [...selected];
 		try {
-			await Promise.all(ids.map((id) => window.workspace.deleteImage(id)));
+			await Promise.all(ids.map((id) => window.workspace.deleteResource(id)));
 			setSelected(new Set());
 			dispatch({ type: 'DELETE_SUCCESS' });
 		} catch {
