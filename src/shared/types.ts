@@ -315,35 +315,39 @@ export interface TaskAction<TInput = unknown> {
  */
 export type TaskActionReturn = { taskId: string };
 
-// ---- Indexing -------------------------------------------------------------
+// ---- Resources (workspace/resources/) -------------------------------------
 
-export interface IndexingInfo {
-	/** Timestamp of the last successful indexing run. */
-	lastIndexedAt: number;
-	/** Number of documents successfully indexed. */
-	indexedCount: number;
-	/** Number of documents that failed during indexing. */
-	failedCount: number;
-	/** Total chunks stored in the vector store. */
-	totalChunks: number;
-}
-
-// ---- Resources ------------------------------------------------------------
-
+/**
+ * A single file under the workspace `resources/` folder.
+ * All resources share one shape regardless of mime type.
+ */
 export interface ResourceInfo {
+	/** Unique identifier — the file's basename within resources/ */
 	id: string;
+	/** Display name (basename) */
 	name: string;
+	/** Absolute path on disk */
 	path: string;
+	/** Path relative to the workspace resources/ folder */
+	relativePath: string;
+	/** Size in bytes */
 	size: number;
+	/** Detected MIME type */
 	mimeType: string;
-	importedAt: number;
-	lastModified: number;
+	/** Timestamp (ms) when the resource was first imported / detected */
+	createdAt: number;
+	/** Timestamp (ms) of the last modification on disk */
+	modifiedAt: number;
 }
 
-// ---- Files (workspace/files/) ---------------------------------------------
+export interface ResourceEntryChangeEvent {
+	type: 'added' | 'changed' | 'removed';
+	resourceId: string;
+	resourcePath: string;
+	timestamp: number;
+}
 
-/** Allowed file extensions for the workspace files/ folder. */
-export const FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
+// ---- Resources UI helpers (renderer-only) ---------------------------------
 
 export type FilesViewMode = 'list' | 'grid';
 export type FileTypeFilter =
@@ -368,103 +372,6 @@ export const FILE_TYPE_FILTERS: { value: FileTypeFilter; label: string }[] = [
 	{ value: 'text', label: 'Text' },
 	{ value: 'pdf', label: 'PDF' },
 ];
-
-export interface FileEntry {
-	/** Unique identifier — the file's basename within files/ */
-	id: string;
-	/** Display name (basename) */
-	name: string;
-	/** Absolute path on disk */
-	path: string;
-	/** Path relative to the workspace files/ folder */
-	relativePath: string;
-	/** Size in bytes */
-	size: number;
-	/** Detected MIME type */
-	mimeType: string;
-	/** Timestamp (ms) when the file was first imported / detected */
-	createdAt: number;
-	/** Timestamp (ms) of the last modification on disk */
-	modifiedAt: number;
-}
-
-// ---- Images (workspace/images/) -------------------------------------------
-
-/** Allowed image extensions for the workspace images/ folder. */
-export const IMAGES_EXTENSIONS = [
-	'.jpg',
-	'.jpeg',
-	'.png',
-	'.gif',
-	'.webp',
-	'.svg',
-	'.avif',
-	'.bmp',
-] as const;
-
-export interface ImageEntry {
-	/** Unique identifier — the file's basename within images/ */
-	id: string;
-	/** Display name (basename) */
-	name: string;
-	/** Absolute path on disk */
-	path: string;
-	/** Path relative to the workspace images/ folder */
-	relativePath: string;
-	/** Size in bytes */
-	size: number;
-	/** Detected MIME type */
-	mimeType: string;
-	/** Timestamp (ms) when the image was first imported / detected */
-	createdAt: number;
-	/** Timestamp (ms) of the last modification on disk */
-	modifiedAt: number;
-}
-
-export interface ImageEntryChangeEvent {
-	type: 'added' | 'changed' | 'removed';
-	imageId: string;
-	imagePath: string;
-	timestamp: number;
-}
-
-export interface FileEntryChangeEvent {
-	type: 'added' | 'changed' | 'removed';
-	fileId: string;
-	filePath: string;
-	timestamp: number;
-}
-
-export interface FolderEntry {
-	/** Discriminator: 'folder' for directories, 'file' for markdown files */
-	kind: 'folder' | 'file';
-	/** Unique identifier — the entry's basename within contents/ */
-	id: string;
-	/** Display name (basename) */
-	name: string;
-	/** Absolute path on disk */
-	path: string;
-	/** Path relative to the workspace contents/ folder */
-	relativePath: string;
-	/** Timestamp (ms) when the entry was first created on disk */
-	createdAt: number;
-	/** Timestamp (ms) of the last modification on disk */
-	modifiedAt: number;
-}
-
-export interface ContentEntryChangeEvent {
-	type: 'added' | 'changed' | 'removed';
-	fileId: string;
-	filePath: string;
-	timestamp: number;
-}
-
-export interface DocumentFileChangeEvent {
-	type: 'added' | 'changed' | 'removed';
-	fileId: string;
-	filePath: string;
-	timestamp: number;
-}
 
 // ---- Output ---------------------------------------------------------------
 
