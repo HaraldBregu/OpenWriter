@@ -1,5 +1,7 @@
 import { File, FileText, type LucideIcon } from 'lucide-react';
-import { FILES_EXTENSIONS, type ResourceInfo } from '../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
+
+const FILES_EXTENSIONS = ['.json', '.md', '.txt', '.pdf'] as const;
 
 export type ResourceSectionId = 'files' | 'content';
 
