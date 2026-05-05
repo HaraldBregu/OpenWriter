@@ -16,7 +16,6 @@ import {
 	Briefcase,
 } from 'lucide-react';
 import type { AppSearchActionDefinition } from './types';
-import { RESOURCE_SECTIONS } from '@/pages/resources/shared/resource-sections';
 
 export const APP_SEARCH_RESULTS_PER_SECTION = 6;
 
