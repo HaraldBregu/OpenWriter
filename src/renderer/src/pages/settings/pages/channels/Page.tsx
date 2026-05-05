@@ -26,14 +26,9 @@ function InfoHint({ text }: { readonly text: string }): ReactElement {
 	return (
 		<Tooltip>
 			<TooltipTrigger
-				render={
-					<span
-						role="button"
-						tabIndex={0}
-						aria-label={text}
-						className="inline-flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
-					/>
-				}
+				type="button"
+				aria-label={text}
+				className="inline-flex items-center text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-full"
 			>
 				<Info className="size-3.5" />
 			</TooltipTrigger>
