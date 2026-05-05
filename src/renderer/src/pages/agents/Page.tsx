@@ -128,12 +128,18 @@ function AgentForm({ definition }: AgentFormProps): ReactElement {
 
 	const providerSelectId = `agent-${definition.id}-provider`;
 	const modelSelectId = `agent-${definition.id}-model`;
+	const Icon = AGENT_ICONS[definition.id] ?? Sparkles;
 
 	return (
 		<div className="w-full flex flex-col gap-6">
-			<div className="flex flex-col gap-1.5">
-				<h2 className="text-lg font-semibold">{definition.name}</h2>
-				<p className="text-sm text-muted-foreground">{definition.description}</p>
+			<div className="flex items-start gap-4">
+				<div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-muted text-muted-foreground">
+					<Icon className="size-5" />
+				</div>
+				<div className="flex flex-col gap-1.5">
+					<h2 className="text-lg font-semibold">{definition.name}</h2>
+					<p className="text-sm text-muted-foreground">{definition.description}</p>
+				</div>
 			</div>
 			<FieldGroup>
 				{(isSaving || isSaved) && (
