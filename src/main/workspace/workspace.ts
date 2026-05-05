@@ -13,7 +13,6 @@ import type {
 import { VALID_OUTPUT_TYPES } from './output-files';
 import type { LoggerService } from '../logger';
 import type {
-	IndexingInfo,
 	FsReadFileParams,
 	FsWriteFileParams,
 	FsCreateFolderParams,
@@ -29,12 +28,6 @@ import type {
 } from '../../shared/types';
 import type { ProjectWorkspaceService } from './project-workspace';
 import { FileManager } from '../shared/file_manager';
-
-const DATA_DIR = 'data';
-const INDEXING_INFO_FILE = 'indexing-info.json';
-
-/** Top-level sub-folders to auto-create when a workspace is opened. */
-const WORKSPACE_SUBFOLDERS = ['files', 'contents', 'data', 'images', 'documents'] as const;
 
 /**
  * Workspace is a Facade over all workspace domain services.
