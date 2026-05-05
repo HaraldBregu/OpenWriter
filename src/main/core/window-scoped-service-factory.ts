@@ -174,44 +174,15 @@ export function createDefaultWindowScopedServiceFactory(): WindowScopedServiceFa
 		},
 	});
 
-	// Register files watcher (workspace/files/)
+	// Register resources service (workspace/resources/)
 	factory.register({
-		key: 'filesWatcher',
+		key: 'resourcesService',
 		factory: async ({ workspaceService, eventBus, globalContainer }) => {
+			const fileManagement = globalContainer.get<FileManager>('fileManagement');
 			const logger = globalContainer.get<LoggerService>('logger');
-			const service = new FilesWatcherService(eventBus, logger);
-			await service.initialize(workspaceService.getCurrent());
+			const service = new ResourcesService(workspaceService, eventBus, fileManagement, logger);
+			await service.initialize();
 			return service;
-		},
-	});
-
-	// Register contents service (workspace/contents/)
-	factory.register({
-		key: 'contentsService',
-		factory: ({ globalContainer }) => {
-			const fileManagement = globalContainer.get<FileManager>('fileManagement');
-			const logger = globalContainer.get<LoggerService>('logger');
-			return new ContentsService(fileManagement, logger);
-		},
-	});
-
-	// Register files service (workspace/files/)
-	factory.register({
-		key: 'filesService',
-		factory: ({ globalContainer }) => {
-			const fileManagement = globalContainer.get<FileManager>('fileManagement');
-			const logger = globalContainer.get<LoggerService>('logger');
-			return new FilesService(fileManagement, logger);
-		},
-	});
-
-	// Register images service (workspace/images/)
-	factory.register({
-		key: 'imagesService',
-		factory: ({ globalContainer }) => {
-			const fileManagement = globalContainer.get<FileManager>('fileManagement');
-			const logger = globalContainer.get<LoggerService>('logger');
-			return new ImagesService(fileManagement, logger);
 		},
 	});
 
