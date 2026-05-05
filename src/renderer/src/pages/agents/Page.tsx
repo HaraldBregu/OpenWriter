@@ -223,9 +223,10 @@ export default function Page(): ReactElement {
 					<PageHeaderTitle>{t('agents.title', 'Agents')}</PageHeaderTitle>
 				</PageHeader>
 				<PageBody className="flex flex-col gap-10">
-					{AGENT_DEFINITIONS.map((definition) => (
-						<AgentForm key={definition.id} definition={definition} />
-					))}
+					<AgentForm definition={CONTENT_REVIEWER} icon={ClipboardCheck} />
+					<AgentForm definition={CONTENT_WRITER} icon={PenLine} />
+					<AgentForm definition={IMAGE_CREATOR} icon={ImageIcon} />
+					<AgentForm definition={ASSISTANT} icon={Bot} />
 				</PageBody>
 			</PageContainer>
 		</AgentsProvider>
