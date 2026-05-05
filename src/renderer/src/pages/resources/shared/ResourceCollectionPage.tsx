@@ -94,18 +94,6 @@ export function ResourceCollectionPage({ sectionId }: ResourceCollectionPageProp
 	const [confirmOpen, setConfirmOpen] = useState(false);
 
 	useEffect(() => {
-		if (section.supportsIndexing) {
-			dispatch(loadIndexingInfo());
-		}
-	}, [dispatch, section.supportsIndexing]);
-
-	useEffect(() => {
-		if (section.supportsIndexing && indexingTaskCompleted) {
-			dispatch(loadIndexingInfo());
-		}
-	}, [dispatch, indexingTaskCompleted, section.supportsIndexing]);
-
-	useEffect(() => {
 		setSelected((current) => {
 			const resourceIds = new Set(resources.map((resource) => resource.id));
 			const nextSelected = new Set([...current].filter((id) => resourceIds.has(id)));
