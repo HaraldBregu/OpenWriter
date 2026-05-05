@@ -621,37 +621,13 @@ function Container({ children }: LayoutProps) {
 								</Collapsible>
 								<SidebarMenuItem>
 									<SidebarMenuButton
-										render={<Link to="/settings/agents" />}
-										tooltip={t('appLayout.agents', 'Agents')}
+										render={<Link to="/settings" />}
+										tooltip={t('appLayout.settings', 'Settings')}
 										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/settings/agents')}
+										isActive={location.pathname.startsWith('/settings')}
 									>
-										<Bot />
-										<span>{t('appLayout.agents', 'Agents')}</span>
-										<ChevronRight className="ml-auto" />
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										render={<Link to="/settings/channels" />}
-										tooltip={t('appLayout.channels', 'Channels')}
-										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/settings/channels')}
-									>
-										<Radio />
-										<span>{t('appLayout.channels', 'Channels')}</span>
-										<ChevronRight className="ml-auto" />
-									</SidebarMenuButton>
-								</SidebarMenuItem>
-								<SidebarMenuItem>
-									<SidebarMenuButton
-										render={<Link to="/settings/providers" />}
-										tooltip={t('appLayout.providers', 'Providers')}
-										className="group/btn h-9 px-3"
-										isActive={location.pathname.startsWith('/settings/providers')}
-									>
-										<Plug />
-										<span>{t('appLayout.providers', 'Providers')}</span>
+										<Settings />
+										<span>{t('appLayout.settings', 'Settings')}</span>
 										<ChevronRight className="ml-auto" />
 									</SidebarMenuButton>
 								</SidebarMenuItem>
