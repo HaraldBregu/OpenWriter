@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import type { FileEntry } from '../context/types';
+import type { ResourceInfo } from '../../../../../../shared/types';
 import { useContext } from './use-context';
 
 interface UseDeleteParams {
-	activeFile: FileEntry | null;
+	activeFile: ResourceInfo | null;
 	onDeleted: () => void;
 }
 
@@ -13,7 +13,7 @@ export function useDelete({ activeFile, onDeleted }: UseDeleteParams) {
 	return useCallback(async () => {
 		if (!activeFile) return;
 		try {
-			await window.workspace.deleteImage(activeFile.id);
+			await window.workspace.deleteResource(activeFile.id);
 			removeEntry(activeFile.id);
 			onDeleted();
 		} catch {
