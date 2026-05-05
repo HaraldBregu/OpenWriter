@@ -9,10 +9,6 @@ export interface EditorActions {
 	closePrompt: () => void;
 	insertPromptView: () => void;
 	insertText: (text: string, options?: { preventEditorUpdate?: boolean }) => void;
-	insertMarkdownText: (
-		text: string,
-		options?: { from?: number; to?: number; preventEditorUpdate?: boolean }
-	) => void;
 }
 
 export function useEditor(editorRef: RefObject<EditorElement | null>): EditorActions {
