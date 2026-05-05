@@ -219,7 +219,7 @@ export class Workspace implements Disposable {
 
 	async getDocumentContent(documentId: string): Promise<string> {
 		const docPath = this.getDocumentFolderPath(documentId);
-		const contentFilePath = path.join(docPath, 'content.md');
+		const contentFilePath = path.join(docPath, 'content.json');
 
 		try {
 			return await fsPromises.readFile(contentFilePath, 'utf-8');
@@ -234,7 +234,7 @@ export class Workspace implements Disposable {
 	 */
 	async updateDocumentContent(documentId: string, content: string): Promise<void> {
 		const docPath = this.getDocumentFolderPath(documentId);
-		const contentFilePath = path.join(docPath, 'content.md');
+		const contentFilePath = path.join(docPath, 'content.json');
 		const configFilePath = path.join(docPath, 'config.json');
 		const manager = this.buildFileManager();
 
