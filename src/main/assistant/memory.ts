@@ -24,7 +24,7 @@ export class MemoryManager {
 	readonly workspace: string;
 
 	constructor(assistantId: string) {
-		this.workspace = path.join(app.getPath('userData'), 'assistant-workspace', assistantId);
+		this.workspace = path.join(app.getPath('userData'), 'assistant', 'workspaces', assistantId);
 		console.log(`MemoryManager initialized with workspace: ${this.workspace}`);
 	}
 
