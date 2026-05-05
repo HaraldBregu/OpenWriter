@@ -1,4 +1,4 @@
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
 
 export interface ContentState {
 	contents: ResourceInfo[];

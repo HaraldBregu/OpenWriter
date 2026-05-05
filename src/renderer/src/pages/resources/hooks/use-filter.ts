@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
 import type { SortDirection, SortKey } from '../shared/types';
 
 interface UseFilterParams {

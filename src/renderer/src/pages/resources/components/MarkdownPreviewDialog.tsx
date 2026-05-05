@@ -10,7 +10,7 @@ import {
 	DialogTitle,
 } from '@/components/ui/Dialog';
 import { ScrollArea } from '@/components/ui/ScrollArea';
-import type { ResourceInfo } from '../../../../../../shared/types';
+import type { ResourceInfo } from '../../../../../shared/types';
 
 interface MarkdownPreviewDialogProps {
 	readonly item: ResourceInfo | null;

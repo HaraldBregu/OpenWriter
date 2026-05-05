@@ -63,7 +63,7 @@ import { useContentContext } from './Provider';
 import { ExtractorDialog, type ExtractorRunPayload } from './components/ExtractorDialog';
 import { MarkdownPreviewDialog } from './components/MarkdownPreviewDialog';
 import { buildColumns } from './components/columns';
-import type { ResourceInfo } from '../../../../../shared/types';
+import type { ResourceInfo } from '../../../../shared/types';
 import Layout from './Layout';
 import { Label } from '@/components/ui/Label';
 

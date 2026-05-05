@@ -1,18 +1,17 @@
 import { createContext, useCallback, useContext, useReducer } from 'react';
 import type { ReactElement, ReactNode } from 'react';
-import type { ResourceInfo } from '../../../../../shared/types';
+import type { ResourceInfo } from '../../../../shared/types';
 import type { SortDirection, SortKey } from './shared/types';
 import { initialState } from './context/state';
-import { contentReducer } from './context/reducer';
+import { resourcesReducer } from './context/reducer';
 import { useSort } from './hooks/use-sort';
 import { useFilter } from './hooks/use-filter';
 import { useSelection } from './hooks/use-selection';
-import { RESOURCE_SECTIONS } from '../shared/resource-sections';
 
-export interface ContentContextValue {
-	contents: ResourceInfo[];
-	setContents: (contents: ResourceInfo[]) => void;
-	filteredContents: ResourceInfo[];
+export interface ResourcesContextValue {
+	resources: ResourceInfo[];
+	setResources: (resources: ResourceInfo[]) => void;
+	filteredResources: ResourceInfo[];
 	isLoading: boolean;
 	setIsLoading: (loading: boolean) => void;
 	uploading: boolean;
@@ -33,43 +32,42 @@ export interface ContentContextValue {
 	handleDelete: () => void;
 	handleDeleteOne: (id: string) => void;
 	handleDeleteMany: (ids: string[]) => void;
-	refreshContents: () => Promise<void>;
+	refreshResources: () => Promise<void>;
 	handleConfirmDelete: () => Promise<void>;
 	confirmOpen: boolean;
 	setConfirmOpen: (open: boolean) => void;
 	removing: boolean;
 }
 
-const ContentContext = createContext<ContentContextValue | null>(null);
+const ResourcesContext = createContext<ResourcesContextValue | null>(null);
 
-export function useContentContext(): ContentContextValue {
-	const context = useContext(ContentContext);
+export function useResourcesContext(): ResourcesContextValue {
+	const context = useContext(ResourcesContext);
 	if (!context) {
-		throw new Error('useContentContext must be used within a ContentProvider');
+		throw new Error('useResourcesContext must be used within a ResourcesProvider');
 	}
 	return context;
 }
 
-interface ContentProviderProps {
+interface ResourcesProviderProps {
 	readonly children: ReactNode;
 }
 
-export function ContentProvider({ children }: ContentProviderProps): ReactElement {
-	const section = RESOURCE_SECTIONS.content;
-	const [state, dispatch] = useReducer(contentReducer, initialState);
+export function ResourcesProvider({ children }: ResourcesProviderProps): ReactElement {
+	const [state, dispatch] = useReducer(resourcesReducer, initialState);
 
 	const { sortKey, sortDirection, handleSort } = useSort();
-	const filteredContents = useFilter({
-		contents: state.contents,
+	const filteredResources = useFilter({
+		resources: state.resources,
 		searchQuery: state.searchQuery,
 		sortKey,
 		sortDirection,
 	});
 	const { selected, setSelected, allChecked, someChecked, handleToggleAll, handleToggleRow } =
-		useSelection({ filteredContents });
+		useSelection({ filteredResources });
 
-	const setContents = useCallback((contents: ResourceInfo[]) => {
-		dispatch({ type: 'SET_CONTENTS', payload: contents });
+	const setResources = useCallback((resources: ResourceInfo[]) => {
+		dispatch({ type: 'SET_RESOURCES', payload: resources });
 	}, []);
 
 	const setIsLoading = useCallback((loading: boolean) => {
@@ -84,16 +82,13 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		dispatch({ type: 'SET_CONFIRM_OPEN', payload: open });
 	}, []);
 
-	const refreshContents = useCallback(async () => {
+	const refreshResources = useCallback(async () => {
 		dispatch({ type: 'SET_IS_LOADING', payload: true });
 		try {
 			const next = await window.workspace.getResources();
-			dispatch({
-				type: 'SET_CONTENTS',
-				payload: next.filter((r) => r.name.toLowerCase().endsWith('.md')),
-			});
+			dispatch({ type: 'SET_RESOURCES', payload: next });
 		} catch {
-			dispatch({ type: 'SET_CONTENTS', payload: [] });
+			dispatch({ type: 'SET_RESOURCES', payload: [] });
 		} finally {
 			dispatch({ type: 'SET_IS_LOADING', payload: false });
 		}
@@ -103,11 +98,9 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		async (extensions?: string[]) => {
 			dispatch({ type: 'SET_UPLOADING', payload: true });
 			try {
-				const imported = await window.workspace.insertResources(
-					extensions ?? section.uploadExtensions
-				);
+				const imported = await window.workspace.insertResources(extensions);
 				if (imported.length > 0) {
-					await refreshContents();
+					await refreshResources();
 				}
 			} catch {
 				// Swallow picker-cancellation and validation errors
@@ -115,7 +108,7 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 				dispatch({ type: 'SET_UPLOADING', payload: false });
 			}
 		},
-		[section, refreshContents]
+		[refreshResources]
 	);
 
 	const handleToggleEdit = useCallback(() => {
@@ -159,17 +152,17 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		dispatch({ type: 'SET_REMOVING', payload: true });
 		try {
 			await Promise.all(ids.map((id) => window.workspace.deleteResource(id)));
-			await refreshContents();
+			await refreshResources();
 			setSelected(new Set());
 		} finally {
 			dispatch({ type: 'SET_REMOVING', payload: false });
 		}
-	}, [selected, refreshContents, setSelected]);
+	}, [selected, refreshResources, setSelected]);
 
-	const value: ContentContextValue = {
-		contents: state.contents,
-		setContents,
-		filteredContents,
+	const value: ResourcesContextValue = {
+		resources: state.resources,
+		setResources,
+		filteredResources,
 		isLoading: state.isLoading,
 		setIsLoading,
 		uploading: state.uploading,
@@ -191,11 +184,11 @@ export function ContentProvider({ children }: ContentProviderProps): ReactElemen
 		handleDeleteOne,
 		handleDeleteMany,
 		handleConfirmDelete,
-		refreshContents,
+		refreshResources,
 		confirmOpen: state.confirmOpen,
 		setConfirmOpen,
 		removing: state.removing,
 	};
 
-	return <ContentContext.Provider value={value}>{children}</ContentContext.Provider>;
+	return <ResourcesContext.Provider value={value}>{children}</ResourcesContext.Provider>;
 }
