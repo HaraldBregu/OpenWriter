@@ -93,14 +93,11 @@ function PageContent(): ReactElement {
 
 		async function load() {
 			try {
-				console.time('[Page] IPC fetch');
 				const [loadedContent, config, docPath] = await Promise.all([
 					window.workspace.getDocumentContent(id!),
 					window.workspace.getDocumentConfig(id!),
 					window.workspace.getDocumentPath(id!),
 				]);
-				console.timeEnd('[Page] IPC fetch');
-				console.log('[Page] content length:', loadedContent.length);
 
 				if (cancelled) return;
 
