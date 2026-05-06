@@ -58,6 +58,8 @@ export interface EditorProps {
 	documentBasePath?: string | null;
 	/** Editor content max-width as a whole-number percentage (1–100). */
 	width?: number;
+	/** Editor text size as a whole-number percentage (50–300). */
+	textSize?: number;
 }
 
 const Editor = React.memo(
