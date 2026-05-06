@@ -68,8 +68,19 @@ export default function DocumentSettings({
 			/>
 			<DropdownMenuContent align="end" className="w-64">
 				<DropdownMenuGroup>
-					<DropdownMenuLabel className="truncate text-sm font-medium text-foreground">
-						Document settings
+					<DropdownMenuLabel className="flex items-center justify-between gap-2 truncate text-sm font-medium text-foreground">
+						<span className="truncate">Document settings</span>
+						<Button
+							variant="ghost"
+							size="icon"
+							className="size-6 shrink-0"
+							onClick={handleOpenFolder}
+							disabled={!documentId}
+							title={t('configSidebar.openFolder', 'Open folder')}
+							aria-label={t('configSidebar.openFolder', 'Open folder')}
+						>
+							<FolderOpen aria-hidden="true" />
+						</Button>
 					</DropdownMenuLabel>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
