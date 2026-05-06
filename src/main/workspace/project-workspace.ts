@@ -55,12 +55,12 @@ export class ProjectWorkspaceService {
 
 		const existing = this.metadata.getProject();
 		if (existing) {
-			const widthOk = this.isValidEditorWidth(existing.editorWidth);
+			const maxWidthOk = this.isValidMaxWidthType(existing.maxWidthType);
 			const textOk = this.isValidTextSize(existing.textSize);
-			if (widthOk && textOk) return existing;
+			if (maxWidthOk && textOk) return existing;
 			const migrated: ProjectWorkspaceInfo = {
 				...existing,
-				editorWidth: widthOk ? existing.editorWidth : DEFAULT_EDITOR_WIDTH,
+				maxWidthType: maxWidthOk ? existing.maxWidthType : DEFAULT_MAX_WIDTH_TYPE,
 				textSize: textOk ? existing.textSize : DEFAULT_TEXT_SIZE,
 				version: SCHEMA_VERSION,
 			};
