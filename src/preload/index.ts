@@ -295,6 +295,8 @@ const workspace: WorkspaceApi = {
 		typedInvokeUnwrap(WorkspaceChannels.updateMaxWidthType, value),
 	updateTextSize: (percentage: number) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateTextSize, percentage),
+	updateFontType: (value: EditorFontType) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateFontType, value),
 	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
