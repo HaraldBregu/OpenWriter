@@ -564,6 +564,7 @@ function PageContent(): ReactElement {
 						documentBasePath={documentBasePath}
 						maxWidth={maxWidthType}
 						textSize={textSize}
+						fontType={fontType}
 					/>
 				)}
 			</PageBody>
