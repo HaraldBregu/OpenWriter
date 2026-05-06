@@ -136,6 +136,16 @@
 	}
 }
 
+.ProseMirror {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+.ProseMirror h1 { font-size: 2.25em; }
+.ProseMirror h2 { font-size: 1.75em; }
+.ProseMirror h3 { font-size: 1.5em; }
+.ProseMirror p  { font-size: 1em; }
+
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {
 	outline: none;
