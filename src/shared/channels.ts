@@ -368,6 +368,10 @@ export interface InvokeChannelMap {
 		args: [percentage: number];
 		result: ProjectWorkspaceInfo;
 	};
+	[WorkspaceChannels.updateFontType]: {
+		args: [value: EditorFontType];
+		result: ProjectWorkspaceInfo;
+	};
 
 	// ---- Document config + content (IpcResult-wrapped) ----
 	[WorkspaceChannels.getDocumentConfig]: {
