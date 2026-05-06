@@ -44,6 +44,10 @@ function isValidMaxWidthType(value: unknown): value is EditorMaxWidthType {
 	return typeof value === 'string' && (MAX_WIDTH_TYPES as readonly string[]).includes(value);
 }
 
+function isValidFontType(value: unknown): value is EditorFontType {
+	return typeof value === 'string' && (FONT_TYPES as readonly string[]).includes(value);
+}
+
 function clampTextSize(value: number): number {
 	return Math.max(50, Math.min(300, Math.round(value)));
 }
