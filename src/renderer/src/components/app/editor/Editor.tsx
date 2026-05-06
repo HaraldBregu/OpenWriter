@@ -337,7 +337,7 @@ const Editor = React.memo(
 					className={className}
 					ref={rootRef}
 					editor={editor}
-					width={width}
+					maxWidth={maxWidth}
 				>
 					{editor && (
 						<>
