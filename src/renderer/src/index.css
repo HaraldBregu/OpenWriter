@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
+/* Pre-generate max-w-[N%] for the customizable editor width (workspace.json `editorWidth`). */
+@source inline("max-w-[{1..100}%]");
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
@@ -138,8 +141,6 @@
 
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {
-	  font-size: 125%;
-
 	outline: none;
 	min-height: 1em;
 	font-family: 'Merriweather', serif;
