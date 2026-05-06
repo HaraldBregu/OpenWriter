@@ -80,7 +80,7 @@ const Editor = React.memo(
 				onRedo,
 				onEditorReady,
 				documentBasePath = null,
-				width = 70,
+				maxWidth = 'medium',
 				textSize = 100,
 			},
 			ref
