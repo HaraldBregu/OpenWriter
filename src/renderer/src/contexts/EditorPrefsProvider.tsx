@@ -55,6 +55,7 @@ function clampTextSize(value: number): number {
 export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): ReactElement {
 	const [maxWidthType, setMaxWidthTypeState] = useState<EditorMaxWidthType>(DEFAULT_MAX_WIDTH_TYPE);
 	const [textSize, setTextSizeState] = useState<number>(DEFAULT_TEXT_SIZE);
+	const [fontType, setFontTypeState] = useState<EditorFontType>(DEFAULT_FONT_TYPE);
 	const mountedRef = useRef(true);
 
 	const refresh = useCallback(async () => {
@@ -63,12 +64,15 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 			if (!mountedRef.current) return;
 			const w = info?.maxWidthType;
 			const t = info?.textSize;
+			const f = info?.fontType;
 			setMaxWidthTypeState(isValidMaxWidthType(w) ? w : DEFAULT_MAX_WIDTH_TYPE);
 			setTextSizeState(typeof t === 'number' ? clampTextSize(t) : DEFAULT_TEXT_SIZE);
+			setFontTypeState(isValidFontType(f) ? f : DEFAULT_FONT_TYPE);
 		} catch {
 			if (!mountedRef.current) return;
 			setMaxWidthTypeState(DEFAULT_MAX_WIDTH_TYPE);
 			setTextSizeState(DEFAULT_TEXT_SIZE);
+			setFontTypeState(DEFAULT_FONT_TYPE);
 		}
 	}, []);
 
