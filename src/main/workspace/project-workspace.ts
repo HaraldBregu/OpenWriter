@@ -227,22 +227,16 @@ export class ProjectWorkspaceService {
 		}
 	}
 
-	private validateEditorWidth(value: unknown): void {
-		if (!this.isValidEditorWidth(value)) {
+	private validateMaxWidthType(value: unknown): void {
+		if (!this.isValidMaxWidthType(value)) {
 			throw new RangeError(
-				`Editor width must be a whole number between ${MIN_EDITOR_WIDTH} and ${MAX_EDITOR_WIDTH}`
+				`Max width type must be one of: ${MAX_WIDTH_TYPES.join(', ')}`
 			);
 		}
 	}
 
-	private isValidEditorWidth(value: unknown): value is number {
-		return (
-			typeof value === 'number' &&
-			Number.isFinite(value) &&
-			Number.isInteger(value) &&
-			value >= MIN_EDITOR_WIDTH &&
-			value <= MAX_EDITOR_WIDTH
-		);
+	private isValidMaxWidthType(value: unknown): value is EditorMaxWidthType {
+		return typeof value === 'string' && (MAX_WIDTH_TYPES as readonly string[]).includes(value);
 	}
 
 	private validateTextSize(value: unknown): void {
