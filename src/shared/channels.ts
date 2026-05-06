@@ -96,6 +96,7 @@ export const WorkspaceChannels = {
 	getProjectInfo: 'project-workspace:get-info',
 	updateProjectName: 'project-workspace:update-name',
 	updateProjectDescription: 'project-workspace:update-description',
+	updateEditorWidth: 'project-workspace:update-editor-width',
 	// Document config + content
 	getDocumentConfig: 'workspace:get-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
