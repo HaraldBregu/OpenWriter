@@ -137,12 +137,11 @@
 }
 
 @theme {
-  --font-default: system-ui, -apple-system, sans-serif;
-  --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: "Fraunces", Georgia, serif;
-  --font-cool: "Departure Mono", ui-monospace, monospace;
+  --font-default: "Inter", system-ui, sans-serif;
+  --font-sans: "Geist", "Inter", system-ui, sans-serif;
+  --font-serif: "Source Serif 4", "Newsreader", Georgia, serif;
+  --font-writer: "iA Writer Duo", "JetBrains Mono", ui-monospace, monospace;
 }
-
 
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {

@@ -615,6 +615,13 @@ export interface DocumentConfig {
 export type EditorMaxWidthType = 'small' | 'medium' | 'large' | 'full';
 
 /**
+ * Allowed values for the editor font selector. Maps to a static Tailwind
+ * font-family class in the renderer (`!font-default`, `!font-sans`,
+ * `!font-serif`, `!font-writer`).
+ */
+export type EditorFontType = 'default' | 'sans' | 'serif' | 'writer';
+
+/**
  * Project-level metadata stored under the `project` key inside the workspace's
  * workspace.json file. Identifies and describes the workspace.
  */
