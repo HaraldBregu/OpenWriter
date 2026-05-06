@@ -213,11 +213,11 @@ export class WorkspaceIpc implements IpcModule {
 		);
 
 		ipcMain.handle(
-			WorkspaceChannels.updateEditorWidth,
+			WorkspaceChannels.updateMaxWidthType,
 			wrapIpcHandler(
-				(event: IpcMainInvokeEvent, percentage: number) =>
-					this.mgr(event, container).updateEditorWidth(percentage),
-				WorkspaceChannels.updateEditorWidth
+				(event: IpcMainInvokeEvent, value: EditorMaxWidthType) =>
+					this.mgr(event, container).updateMaxWidthType(value),
+				WorkspaceChannels.updateMaxWidthType
 			)
 		);
 
