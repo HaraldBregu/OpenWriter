@@ -69,6 +69,8 @@ export interface EditorProps {
 	maxWidth?: EditorMaxWidthType;
 	/** Editor text size as a whole-number percentage (50–300). */
 	textSize?: number;
+	/** Editor font preset. */
+	fontType?: EditorFontType;
 }
 
 const Editor = React.memo(
