@@ -440,11 +440,11 @@ function Container({ children }: LayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4 group-data-[collapsible=icon]:bg-transparent">
 												<Plus className="h-3.5 w-3.5" />
 											</span>
-											<span className="flex-1 truncate">{t('sidebar.document', 'Document')}</span>
-											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
+											<span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{t('sidebar.document', 'Document')}</span>
+											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity group-data-[collapsible=icon]:hidden">
 												{newDocumentShortcutLabel}
 											</span>
 										</SidebarMenuButton>
@@ -455,11 +455,11 @@ function Container({ children }: LayoutProps) {
 											isActive={activeModal === 'search'}
 											onClick={handleOpenSearch}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4">
 												<Search className="h-3.5 w-3.5" />
 											</span>
-											<span className="flex-1 truncate">{t('menu.search', 'Search')}</span>
-											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity">
+											<span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{t('menu.search', 'Search')}</span>
+											<span className="text-sm text-muted-foreground/60 opacity-0 group-hover/btn:opacity-100 transition-opacity group-data-[collapsible=icon]:hidden">
 												{searchShortcutLabel}
 											</span>
 										</SidebarMenuButton>
