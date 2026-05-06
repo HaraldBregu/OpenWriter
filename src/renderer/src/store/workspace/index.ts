@@ -25,7 +25,6 @@ export {
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 	resourceRemoved,
-	editorWidthChanged,
 	importResourcesRequested,
 	importResourcesCompleted,
 	documentsLoaded,
