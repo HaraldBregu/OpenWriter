@@ -34,14 +34,6 @@ export const APP_SEARCH_ACTIONS: AppSearchActionDefinition[] = [
 		meta: 'Route',
 	},
 	{
-		id: 'assistant',
-		title: 'Open Assistant',
-		description: 'Chat with the AI assistant.',
-		href: '/assistant',
-		icon: Sparkles,
-		meta: 'Route',
-	},
-	{
 		id: 'resources',
 		title: 'Open Resources',
 		description: 'Browse imported documents and files.',
