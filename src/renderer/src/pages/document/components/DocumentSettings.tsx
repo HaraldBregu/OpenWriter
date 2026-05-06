@@ -17,7 +17,7 @@ import { Slider } from '@/components/ui/Slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { useEditorWidth } from '../../../hooks/use-editor-width';
 
-const WIDTH_PRESETS = [75, 85, 90, 100] as const;
+const WIDTH_PRESETS = [70, 80, 90, 100] as const;
 
 interface DocumentSettingsProps {
 	readonly documentId: string | null;
