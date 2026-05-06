@@ -31,6 +31,10 @@ const MIN_TEXT_SIZE = 50;
 const MAX_TEXT_SIZE = 300;
 const DEFAULT_TEXT_SIZE = 100;
 
+/** Allowed values for `fontType`. */
+const FONT_TYPES: readonly EditorFontType[] = ['default', 'sans', 'serif', 'writer'];
+const DEFAULT_FONT_TYPE: EditorFontType = 'default';
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
