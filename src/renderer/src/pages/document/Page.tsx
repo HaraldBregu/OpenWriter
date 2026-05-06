@@ -563,6 +563,7 @@ function PageContent(): ReactElement {
 						onEditorReady={handleEditorReady}
 						documentBasePath={documentBasePath}
 						width={editorWidth}
+						textSize={textSize}
 					/>
 				)}
 			</PageBody>
