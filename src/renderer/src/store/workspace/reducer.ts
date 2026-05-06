@@ -266,7 +266,6 @@ export const workspaceSlice = createSlice({
 		builder.addCase(loadProjectName.fulfilled, (state, action) => {
 			state.projectName = action.payload.name;
 			state.projectDescription = action.payload.description;
-			state.editorWidth = action.payload.editorWidth;
 		});
 	},
 });
