@@ -52,6 +52,7 @@ export {
 	selectWorkspaceDeletionReason,
 	selectProjectName,
 	selectProjectDescription,
+	selectEditorWidth,
 	selectResources,
 	selectResourcesStatus,
 	selectResourcesError,
