@@ -28,8 +28,7 @@ export default function DocumentSettings({
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
-	const { editorWidth, setEditorWidth } = useEditorWidth();
-	const [textSize, setTextSize] = useState<number[]>([75]);
+	const { editorWidth, setEditorWidth, textSize, setTextSize } = useEditorPrefs();
 
 	const handleWidthChange = useCallback(
 		(v: unknown) => {
@@ -38,6 +37,15 @@ export default function DocumentSettings({
 			if (Number.isFinite(next)) setEditorWidth(next);
 		},
 		[setEditorWidth]
+	);
+
+	const handleTextSizeChange = useCallback(
+		(v: unknown) => {
+			const next =
+				typeof v === 'string' ? parseInt(v, 10) : typeof v === 'number' ? v : Number.NaN;
+			if (Number.isFinite(next)) setTextSize(next);
+		},
+		[setTextSize]
 	);
 
 	const handleOpenFolder = useCallback(() => {
