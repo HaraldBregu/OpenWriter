@@ -289,8 +289,8 @@ const workspace: WorkspaceApi = {
 	updateProjectName: (name: string) => typedInvokeUnwrap(WorkspaceChannels.updateProjectName, name),
 	updateProjectDescription: (description: string) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
-	updateEditorWidth: (percentage: number) =>
-		typedInvokeUnwrap(WorkspaceChannels.updateEditorWidth, percentage),
+	updateMaxWidthType: (value: EditorMaxWidthType) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateMaxWidthType, value),
 	updateTextSize: (percentage: number) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateTextSize, percentage),
 	// -------------------------------------------------------------------------
