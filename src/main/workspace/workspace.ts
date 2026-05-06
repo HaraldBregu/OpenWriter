@@ -155,6 +155,10 @@ export class Workspace implements Disposable {
 		return this.projectWorkspace.updateDescription(description);
 	}
 
+	async updateEditorWidth(percentage: number): Promise<ProjectWorkspaceInfo> {
+		return this.projectWorkspace.updateEditorWidth(percentage);
+	}
+
 	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
