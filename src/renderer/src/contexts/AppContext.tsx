@@ -33,13 +33,13 @@ export function AppProvider({ children, initialState }: AppProviderProps) {
 		<ThemeProvider initialTheme={initialState?.theme}>
 			<LanguageProvider initialLanguage={initialState?.language}>
 				<SidebarVisibilityProvider>
-					<EditorWidthProvider>
+					<EditorPrefsProvider>
 						<ImagesProvider>
 							<ContentProvider>
 								<DebugDialogsProvider>{children}</DebugDialogsProvider>
 							</ContentProvider>
 						</ImagesProvider>
-					</EditorWidthProvider>
+					</EditorPrefsProvider>
 				</SidebarVisibilityProvider>
 			</LanguageProvider>
 		</ThemeProvider>
