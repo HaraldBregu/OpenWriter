@@ -97,11 +97,12 @@ export default function DocumentSettings({
 					<div className="px-2 py-2">
 						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Width</span>
-							<span className="text-xs tabular-nums text-muted-foreground">{width[0]}%</span>
+							<span className="text-xs tabular-nums text-muted-foreground">{width}%</span>
 						</div>
 						<Slider
-							value={width}
-							onValueChange={(v) => setWidth(Array.isArray(v) ? v : [v])}
+							value={[width]}
+							onValueChange={handleWidthChange}
+							min={1}
 							max={100}
 							step={1}
 							className="w-full"
