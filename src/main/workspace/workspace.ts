@@ -24,6 +24,7 @@ import type {
 	FsListDirEntry,
 	ProjectWorkspaceInfo,
 	EditorMaxWidthType,
+	EditorFontType,
 	DocumentConfig,
 	WorkspaceInfo,
 } from '../../shared/types';
