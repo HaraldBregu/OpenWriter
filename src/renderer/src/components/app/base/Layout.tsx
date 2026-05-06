@@ -254,7 +254,7 @@ function Container({ children }: LayoutProps) {
 					target?.focus();
 				});
 			} else {
-				navigate('/assistant', { replace: true });
+				navigate('/settings/assistant', { replace: true });
 			}
 		}
 	}, [pendingDelete, documents, location.pathname, navigate]);
