@@ -179,6 +179,7 @@ export class ProjectWorkspaceService {
 			createdAt: now,
 			updatedAt: now,
 			appVersion: this.getAppVersion(),
+			editorWidth: DEFAULT_EDITOR_WIDTH,
 		};
 	}
 
