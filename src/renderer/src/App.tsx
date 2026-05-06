@@ -309,6 +309,14 @@ const App: React.FC = () => {
 																</Suspense>
 															}
 														/>
+														<Route
+															path="assistant"
+															element={
+																<Suspense fallback={<PageLoadingSkeleton />}>
+																	<AssistantPage />
+																</Suspense>
+															}
+														/>
 													</Route>
 													<Route
 														path="/document/:id"
