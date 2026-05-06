@@ -41,6 +41,7 @@ import type {
 	FsListDirEntry,
 	ProjectWorkspaceInfo,
 	EditorMaxWidthType,
+	EditorFontType,
 	DocumentConfig,
 	AppLogEntry,
 	AppStartupInfo,
