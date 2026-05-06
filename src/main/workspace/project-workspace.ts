@@ -205,6 +205,7 @@ export class ProjectWorkspaceService {
 			updatedAt: now,
 			appVersion: this.getAppVersion(),
 			editorWidth: DEFAULT_EDITOR_WIDTH,
+			textSize: DEFAULT_TEXT_SIZE,
 		};
 	}
 
