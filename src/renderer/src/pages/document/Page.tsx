@@ -59,7 +59,7 @@ function PageContent(): ReactElement {
 	const appDispatch = useAppDispatch();
 	const navigate = useNavigate();
 	const { editor, setEditor } = useEditorInstance();
-	const { editorWidth } = useEditorWidth();
+	const { editorWidth, textSize } = useEditorPrefs();
 
 	const [title, setTitle] = useReactState('');
 	const [content, setContent] = useReactState('');
