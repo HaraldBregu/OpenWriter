@@ -64,8 +64,8 @@ export default function DocumentSettings({
 	);
 
 	const handleFontChange = useCallback(
-		(v: EditorFontType) => {
-			setFontType(v);
+		(v: EditorFontType | null) => {
+			if (v) setFontType(v);
 		},
 		[setFontType]
 	);
