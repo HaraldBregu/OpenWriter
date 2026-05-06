@@ -19,6 +19,7 @@ import type {
 	DocumentConfig,
 	CreateWorkspaceParams,
 	EditorMaxWidthType,
+	EditorFontType,
 } from '../../shared/types';
 
 /**
