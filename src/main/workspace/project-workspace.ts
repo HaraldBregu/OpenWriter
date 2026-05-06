@@ -203,7 +203,7 @@ export class ProjectWorkspaceService {
 			createdAt: now,
 			updatedAt: now,
 			appVersion: this.getAppVersion(),
-			editorWidth: DEFAULT_EDITOR_WIDTH,
+			maxWidthType: DEFAULT_MAX_WIDTH_TYPE,
 			textSize: DEFAULT_TEXT_SIZE,
 		};
 	}
