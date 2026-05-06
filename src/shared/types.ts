@@ -644,6 +644,8 @@ export interface ProjectWorkspaceInfo {
 	maxWidthType: EditorMaxWidthType;
 	/** Document editor text size as a whole-number percentage (50–300). */
 	textSize: number;
+	/** Document editor font preset. */
+	fontType: EditorFontType;
 }
 
 // ---- AI Agents ------------------------------------------------------------
