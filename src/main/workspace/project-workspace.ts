@@ -282,6 +282,16 @@ export class ProjectWorkspaceService {
 		);
 	}
 
+	private validateFontType(value: unknown): void {
+		if (!this.isValidFontType(value)) {
+			throw new RangeError(`Font type must be one of: ${FONT_TYPES.join(', ')}`);
+		}
+	}
+
+	private isValidFontType(value: unknown): value is EditorFontType {
+		return typeof value === 'string' && (FONT_TYPES as readonly string[]).includes(value);
+	}
+
 	private getAppVersion(): string {
 		try {
 			return app.getVersion();
