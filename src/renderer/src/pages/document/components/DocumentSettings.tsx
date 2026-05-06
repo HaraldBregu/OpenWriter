@@ -32,8 +32,10 @@ export default function DocumentSettings({
 	const [textSize, setTextSize] = useState<number[]>([75]);
 
 	const handleWidthChange = useCallback(
-		(v: number | readonly number[]) => {
-			setEditorWidth(Array.isArray(v) ? v[0] : (v as number));
+		(v: unknown) => {
+			const next =
+				typeof v === 'string' ? parseInt(v, 10) : typeof v === 'number' ? v : Number.NaN;
+			if (Number.isFinite(next)) setEditorWidth(next);
 		},
 		[setEditorWidth]
 	);
