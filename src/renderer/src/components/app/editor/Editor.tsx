@@ -200,6 +200,13 @@ const Editor = React.memo(
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
+				const dom = editor.view.dom as HTMLElement;
+				dom.classList.remove(...FONT_TYPE_CLASS_VALUES);
+				dom.classList.add(FONT_TYPE_CLASS[fontType]);
+			}, [editor, fontType]);
+
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
 
 				const emitSelection = (): void => {
 					const { from, to } = editor.state.selection;
