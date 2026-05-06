@@ -628,6 +628,8 @@ export interface ProjectWorkspaceInfo {
 	appVersion: string;
 	/** Document editor max-width as a whole-number percentage (1–100). */
 	editorWidth: number;
+	/** Document editor text size as a whole-number percentage (50–300). */
+	textSize: number;
 }
 
 // ---- AI Agents ------------------------------------------------------------
