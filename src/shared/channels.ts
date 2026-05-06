@@ -361,6 +361,10 @@ export interface InvokeChannelMap {
 		args: [percentage: number];
 		result: ProjectWorkspaceInfo;
 	};
+	[WorkspaceChannels.updateTextSize]: {
+		args: [percentage: number];
+		result: ProjectWorkspaceInfo;
+	};
 
 	// ---- Document config + content (IpcResult-wrapped) ----
 	[WorkspaceChannels.getDocumentConfig]: {
