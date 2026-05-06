@@ -65,10 +65,10 @@ export default function DocumentSettings({
 					<div className="px-2 py-2">
 						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Width</span>
-							<span className="text-xs tabular-nums text-muted-foreground">{width}%</span>
+							<span className="text-xs tabular-nums text-muted-foreground">{editorWidth}%</span>
 						</div>
 						<Slider
-							value={[width]}
+							value={[editorWidth]}
 							onValueChange={handleWidthChange}
 							min={1}
 							max={100}
