@@ -149,14 +149,23 @@ export default function DocumentSettings({
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
-					<DropdownMenuLabel>Font</DropdownMenuLabel>
-					<DropdownMenuRadioGroup value={fontType} onValueChange={handleFontChange}>
-						{FONT_PRESETS.map((preset) => (
-							<DropdownMenuRadioItem key={preset.value} value={preset.value}>
-								<span className={preset.className}>{preset.label}</span>
-							</DropdownMenuRadioItem>
-						))}
-					</DropdownMenuRadioGroup>
+					<div className="px-2 py-2">
+						<div className="mb-2 flex items-center">
+							<span className="text-xs font-medium">Font</span>
+						</div>
+						<Select<EditorFontType> value={fontType} onValueChange={handleFontChange}>
+							<SelectTrigger className="h-8 text-xs">
+								<SelectValue />
+							</SelectTrigger>
+							<SelectContent>
+								{FONT_PRESETS.map((preset) => (
+									<SelectItem key={preset.value} value={preset.value}>
+										<span className={preset.className}>{preset.label}</span>
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+					</div>
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
