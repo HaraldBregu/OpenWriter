@@ -7,12 +7,17 @@ import {
 	DropdownMenuContent,
 	DropdownMenuGroup,
 	DropdownMenuLabel,
-	DropdownMenuRadioGroup,
-	DropdownMenuRadioItem,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs';
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/Select';
 import { useEditorPrefs } from '../../../hooks/use-editor-prefs';
 import type { EditorMaxWidthType, EditorFontType } from '../../../../../shared/types';
 
