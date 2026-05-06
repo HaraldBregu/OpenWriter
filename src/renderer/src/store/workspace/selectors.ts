@@ -29,11 +29,6 @@ export const selectProjectDescription = createSelector(
 	(state) => state.projectDescription
 );
 
-export const selectEditorWidth = createSelector(
-	selectWorkspaceState,
-	(state) => state.editorWidth
-);
-
 export const selectWorkspaces = createSelector(
 	selectWorkspaceState,
 	(state) => state.workspaces
