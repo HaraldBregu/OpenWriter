@@ -99,6 +99,7 @@ export const WorkspaceChannels = {
 	updateProjectDescription: 'project-workspace:update-description',
 	updateMaxWidthType: 'project-workspace:update-max-width-type',
 	updateTextSize: 'project-workspace:update-text-size',
+	updateFontType: 'project-workspace:update-font-type',
 	// Document config + content
 	getDocumentConfig: 'workspace:get-document-config',
 	documentConfigChanged: 'workspace:document-config-changed',
