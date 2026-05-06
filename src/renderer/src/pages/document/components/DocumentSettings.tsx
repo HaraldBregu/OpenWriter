@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { SlidersHorizontal, FolderOpen, Sun, Moon } from 'lucide-react';
+import { SlidersHorizontal, FolderOpen } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuGroup,
-	DropdownMenuItem,
 	DropdownMenuLabel,
 	DropdownMenuRadioGroup,
 	DropdownMenuRadioItem,
