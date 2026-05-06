@@ -78,15 +78,6 @@ export const workspaceSlice = createSlice({
 		},
 
 		/**
-		 * Optimistically update the editor width in the store. Used by the
-		 * document settings slider to give instant visual feedback before the
-		 * IPC write to workspace.json completes.
-		 */
-		editorWidthChanged: (state, action: PayloadAction<number>) => {
-			state.editorWidth = action.payload;
-		},
-
-		/**
 		 * Triggered to start a file import operation.
 		 * The listener middleware picks this up and calls the IPC method.
 		 */
