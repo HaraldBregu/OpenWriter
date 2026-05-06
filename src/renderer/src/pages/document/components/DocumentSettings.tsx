@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { debounce } from 'lodash';
 import { SlidersHorizontal, FolderOpen, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import {
@@ -15,11 +14,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
 import { Slider } from '@/components/ui/Slider';
-import { useAppDispatch, useAppSelector } from '../../../store';
-import { editorWidthChanged, selectEditorWidth } from '../../../store/workspace';
-
-const EDITOR_WIDTH_PERSIST_DEBOUNCE_MS = 300;
-const DEFAULT_EDITOR_WIDTH = 70;
+import { useEditorWidth } from '../../../hooks/use-editor-width';
 
 interface DocumentSettingsProps {
 	readonly documentId: string | null;
@@ -30,41 +25,14 @@ export default function DocumentSettings({
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
-	const dispatch = useAppDispatch();
-	const editorWidth = useAppSelector(selectEditorWidth);
-	const width = editorWidth ?? DEFAULT_EDITOR_WIDTH;
+	const { editorWidth, setEditorWidth } = useEditorWidth();
 	const [textSize, setTextSize] = useState<number[]>([75]);
-
-	const persistEditorWidth = useMemo(
-		() =>
-			debounce(
-				(value: number) => {
-					void window.workspace.updateEditorWidth(value).catch(() => {
-						// Validation rejection is the only expected failure path here; the
-						// optimistic store update is harmless if the IPC call fails.
-					});
-				},
-				EDITOR_WIDTH_PERSIST_DEBOUNCE_MS,
-				{ leading: false, trailing: true }
-			),
-		[]
-	);
-
-	useEffect(() => {
-		return () => {
-			persistEditorWidth.flush();
-			persistEditorWidth.cancel();
-		};
-	}, [persistEditorWidth]);
 
 	const handleWidthChange = useCallback(
 		(v: number | number[]) => {
-			const next = Array.isArray(v) ? v[0] : v;
-			const clamped = Math.max(1, Math.min(100, Math.round(next)));
-			dispatch(editorWidthChanged(clamped));
-			persistEditorWidth(clamped);
+			setEditorWidth(Array.isArray(v) ? v[0] : v);
 		},
-		[dispatch, persistEditorWidth]
+		[setEditorWidth]
 	);
 
 	const handleOpenFolder = useCallback(() => {
