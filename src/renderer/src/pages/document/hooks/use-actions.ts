@@ -36,7 +36,7 @@ export function useActions(triggerSave: () => void): DocumentActions {
 		dispatch({ type: 'TRASH_STARTED' });
 		try {
 			await window.workspace.trashOutput({ type: 'documents', id: documentId });
-			navigate('/assistant');
+			navigate('/settings/assistant');
 		} catch {
 			dispatch({ type: 'TRASH_FAILED' });
 		}
