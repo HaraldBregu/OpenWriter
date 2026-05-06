@@ -202,6 +202,24 @@ export class ProjectWorkspaceService {
 		}
 	}
 
+	private validateEditorWidth(value: unknown): void {
+		if (!this.isValidEditorWidth(value)) {
+			throw new RangeError(
+				`Editor width must be a whole number between ${MIN_EDITOR_WIDTH} and ${MAX_EDITOR_WIDTH}`
+			);
+		}
+	}
+
+	private isValidEditorWidth(value: unknown): value is number {
+		return (
+			typeof value === 'number' &&
+			Number.isFinite(value) &&
+			Number.isInteger(value) &&
+			value >= MIN_EDITOR_WIDTH &&
+			value <= MAX_EDITOR_WIDTH
+		);
+	}
+
 	private getAppVersion(): string {
 		try {
 			return app.getVersion();
