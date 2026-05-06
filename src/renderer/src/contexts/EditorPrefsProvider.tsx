@@ -121,6 +121,7 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 			} else {
 				setMaxWidthTypeState(DEFAULT_MAX_WIDTH_TYPE);
 				setTextSizeState(DEFAULT_TEXT_SIZE);
+				setFontTypeState(DEFAULT_FONT_TYPE);
 			}
 		});
 		return () => {
@@ -130,8 +131,10 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 			persistMaxWidth.cancel();
 			persistTextSize.flush();
 			persistTextSize.cancel();
+			persistFontType.flush();
+			persistFontType.cancel();
 		};
-	}, [refresh, persistMaxWidth, persistTextSize]);
+	}, [refresh, persistMaxWidth, persistTextSize, persistFontType]);
 
 	const setMaxWidthType = useCallback(
 		(value: EditorMaxWidthType) => {
