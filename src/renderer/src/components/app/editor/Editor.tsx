@@ -8,6 +8,7 @@ import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
+import { cn } from '@/lib/utils';
 
 const EMPTY_DOC: Content = { type: 'doc', content: [{ type: 'paragraph' }] };
 
@@ -154,8 +155,10 @@ const Editor = React.memo(
 					},
 					editorProps: {
 						attributes: {
-							class:
-								'focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0 [&_hr]:my-4 [&_hr]:border-border',
+							class: cn(
+																'focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0 [&_hr]:my-4 [&_hr]:border-border',
+
+							)
 						},
 					},
 				}),
