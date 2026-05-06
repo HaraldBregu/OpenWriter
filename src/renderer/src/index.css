@@ -137,12 +137,10 @@
 }
 
 @theme {
+  --font-default: system-ui, -apple-system, sans-serif;
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-serif: "Source Serif 4", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, monospace;
-  --font-display: "Bebas Neue", Impact, sans-serif;
-  --font-script: "Pacifico", cursive;
-  --font-blackletter: "UnifrakturMaguntia", serif;
+  --font-serif: "Fraunces", Georgia, serif;
+  --font-cool: "Departure Mono", ui-monospace, monospace;
 }
 
 
