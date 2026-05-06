@@ -218,7 +218,6 @@ export const workspaceSlice = createSlice({
 				state.currentPath = null;
 				state.projectName = null;
 				state.projectDescription = null;
-				state.editorWidth = null;
 				state.status = 'ready';
 				state.resources = [];
 				state.resourcesStatus = 'idle';
