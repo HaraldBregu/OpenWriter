@@ -182,6 +182,12 @@ const Editor = React.memo(
 
 			useEffect(() => {
 				if (!editor || editor.isDestroyed) return;
+				const dom = editor.view.dom as HTMLElement;
+				dom.style.fontSize = `${textSize}%`;
+			}, [editor, textSize]);
+
+			useEffect(() => {
+				if (!editor || editor.isDestroyed) return;
 
 				const emitSelection = (): void => {
 					const { from, to } = editor.state.selection;
