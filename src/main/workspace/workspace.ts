@@ -161,6 +161,10 @@ export class Workspace implements Disposable {
 		return this.projectWorkspace.updateMaxWidthType(value);
 	}
 
+	async updateFontType(value: EditorFontType): Promise<ProjectWorkspaceInfo> {
+		return this.projectWorkspace.updateFontType(value);
+	}
+
 	async updateTextSize(percentage: number): Promise<ProjectWorkspaceInfo> {
 		return this.projectWorkspace.updateTextSize(percentage);
 	}
