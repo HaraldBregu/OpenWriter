@@ -289,6 +289,8 @@ export interface WorkspaceApi {
 	updateProjectDescription: (description: string) => Promise<ProjectWorkspaceInfo>;
 	/** Update the editor max-width as a whole-number percentage (1–100). */
 	updateEditorWidth: (percentage: number) => Promise<ProjectWorkspaceInfo>;
+	/** Update the editor text size as a whole-number percentage (50–300). */
+	updateTextSize: (percentage: number) => Promise<ProjectWorkspaceInfo>;
 	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------
