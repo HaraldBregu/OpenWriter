@@ -39,7 +39,8 @@ export default function DocumentSettings({
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
-	const { maxWidthType, setMaxWidthType, textSize, setTextSize } = useEditorPrefs();
+	const { maxWidthType, setMaxWidthType, textSize, setTextSize, fontType, setFontType } =
+		useEditorPrefs();
 
 	const handleWidthChange = useCallback(
 		(v: unknown) => {
