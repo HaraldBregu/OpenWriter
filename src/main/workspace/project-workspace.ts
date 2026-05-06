@@ -23,6 +23,11 @@ const MIN_EDITOR_WIDTH = 1;
 const MAX_EDITOR_WIDTH = 100;
 const DEFAULT_EDITOR_WIDTH = 70;
 
+/** Allowed range for `textSize` (whole-number percentage). */
+const MIN_TEXT_SIZE = 50;
+const MAX_TEXT_SIZE = 300;
+const DEFAULT_TEXT_SIZE = 100;
+
 // ---------------------------------------------------------------------------
 // Service
 // ---------------------------------------------------------------------------
