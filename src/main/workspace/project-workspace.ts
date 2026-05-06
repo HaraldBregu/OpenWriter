@@ -246,6 +246,24 @@ export class ProjectWorkspaceService {
 		);
 	}
 
+	private validateTextSize(value: unknown): void {
+		if (!this.isValidTextSize(value)) {
+			throw new RangeError(
+				`Text size must be a whole number between ${MIN_TEXT_SIZE} and ${MAX_TEXT_SIZE}`
+			);
+		}
+	}
+
+	private isValidTextSize(value: unknown): value is number {
+		return (
+			typeof value === 'number' &&
+			Number.isFinite(value) &&
+			Number.isInteger(value) &&
+			value >= MIN_TEXT_SIZE &&
+			value <= MAX_TEXT_SIZE
+		);
+	}
+
 	private getAppVersion(): string {
 		try {
 			return app.getVersion();
