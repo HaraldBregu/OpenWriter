@@ -6,6 +6,7 @@ import { SidebarVisibilityProvider } from './SidebarVisibilityProvider';
 import { DebugDialogsProvider } from './DebugDialogsContext';
 import { ImagesProvider } from './ImagesProvider';
 import { ContentProvider } from './ContentProvider';
+import { EditorWidthProvider } from './EditorWidthProvider';
 
 export type { ThemeMode } from '../../../shared/types';
 export type AppLanguage = 'en' | 'it';
