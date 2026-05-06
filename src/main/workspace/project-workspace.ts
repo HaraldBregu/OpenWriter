@@ -192,6 +192,19 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
+	async updateFontType(value: EditorFontType): Promise<ProjectWorkspaceInfo> {
+		this.validateFontType(value);
+		const current = await this.getOrCreate();
+		const updated: ProjectWorkspaceInfo = {
+			...current,
+			fontType: value,
+			updatedAt: new Date().toISOString(),
+		};
+		this.metadata.setProject(updated);
+		this.logger?.info('ProjectWorkspaceService', `Updated font type to: ${value}`);
+		return updated;
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
