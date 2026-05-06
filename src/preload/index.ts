@@ -27,6 +27,7 @@ import type {
 	CreateWorkspaceParams,
 	DocumentConfig,
 	EditorMaxWidthType,
+	EditorFontType,
 } from '../shared/types';
 import type { ShortcutId } from '../shared/shortcuts';
 
