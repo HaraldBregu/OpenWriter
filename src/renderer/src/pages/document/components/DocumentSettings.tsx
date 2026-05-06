@@ -97,15 +97,21 @@ export default function DocumentSettings({
 					<div className="px-2 py-2">
 						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Text size</span>
-							<span className="text-xs tabular-nums text-muted-foreground">{textSize[0]}%</span>
+							<span className="text-xs tabular-nums text-muted-foreground">{textSize}%</span>
 						</div>
-						<Slider
-							value={textSize}
-							onValueChange={(v) => setTextSize(Array.isArray(v) ? v : [v])}
-							max={100}
-							step={1}
-							className="w-full"
-						/>
+						<Tabs value={String(textSize)} onValueChange={handleTextSizeChange}>
+							<TabsList className="grid h-8 w-full grid-cols-4 p-0.5">
+								{TEXT_SIZE_PRESETS.map((preset) => (
+									<TabsTrigger
+										key={preset}
+										value={String(preset)}
+										className="h-7 px-0 text-xs"
+									>
+										{preset}%
+									</TabsTrigger>
+								))}
+							</TabsList>
+						</Tabs>
 					</div>
 				</DropdownMenuGroup>
 				<DropdownMenuSeparator />
