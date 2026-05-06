@@ -41,7 +41,6 @@ import {
 	ChevronRight,
 	Search,
 	Globe,
-	Bot,
 	Plus,
 	Sun,
 	Monitor,
