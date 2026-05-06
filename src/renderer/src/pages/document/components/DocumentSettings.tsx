@@ -72,14 +72,19 @@ export default function DocumentSettings({
 							<span className="text-xs font-medium">Width</span>
 							<span className="text-xs tabular-nums text-muted-foreground">{editorWidth}%</span>
 						</div>
-						<Slider
-							value={[editorWidth]}
-							onValueChange={handleWidthChange}
-							min={1}
-							max={100}
-							step={1}
-							className="w-full"
-						/>
+						<Tabs value={String(editorWidth)} onValueChange={handleWidthChange}>
+							<TabsList className="grid h-8 w-full grid-cols-4 p-0.5">
+								{WIDTH_PRESETS.map((preset) => (
+									<TabsTrigger
+										key={preset}
+										value={String(preset)}
+										className="h-7 px-0 text-xs"
+									>
+										{preset}%
+									</TabsTrigger>
+								))}
+							</TabsList>
+						</Tabs>
 					</div>
 					<div className="px-2 py-2">
 						<div className="mb-2 flex items-center justify-between">
