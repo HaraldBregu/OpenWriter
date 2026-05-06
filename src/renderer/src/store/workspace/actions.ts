@@ -80,13 +80,11 @@ export const clearWorkspace = createAsyncThunk('workspace/clear', async () => {
 export const loadProjectName = createAsyncThunk<{
 	name: string | null;
 	description: string | null;
-	editorWidth: number | null;
 }>('workspace/loadProjectName', async () => {
 	const info = await window.workspace.getProjectInfo();
 	return {
 		name: info?.name ?? null,
 		description: info?.description ?? null,
-		editorWidth: info?.editorWidth ?? null,
 	};
 });
 
