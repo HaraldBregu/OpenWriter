@@ -57,8 +57,8 @@ export interface EditorProps {
 	onEditorReady?: (editor: TiptapEditor | null) => void;
 	/** Absolute path of the folder containing the markdown source, used to resolve relative image paths. */
 	documentBasePath?: string | null;
-	/** Editor content max-width as a whole-number percentage (1–100). */
-	width?: number;
+	/** Editor content max-width preset. */
+	maxWidth?: EditorMaxWidthType;
 	/** Editor text size as a whole-number percentage (50–300). */
 	textSize?: number;
 }
