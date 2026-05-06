@@ -138,6 +138,8 @@
 
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {
+	  font-size: 125%;
+
 	outline: none;
 	min-height: 1em;
 	font-family: 'Merriweather', serif;
