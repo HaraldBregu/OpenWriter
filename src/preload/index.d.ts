@@ -101,6 +101,7 @@ export type {
 	FsListDirEntry,
 	ProjectWorkspaceInfo,
 	EditorMaxWidthType,
+	EditorFontType,
 	DocumentConfig,
 	Provider,
 	ProviderModelInfo,
