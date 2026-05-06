@@ -440,7 +440,7 @@ function Container({ children }: LayoutProps) {
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4 group-data-[collapsible=icon]:bg-transparent">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4">
 												<Plus className="h-3.5 w-3.5" />
 											</span>
 											<span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{t('sidebar.document', 'Document')}</span>
