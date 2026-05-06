@@ -58,6 +58,13 @@ export default function DocumentSettings({
 		[setTextSize]
 	);
 
+	const handleFontChange = useCallback(
+		(v: string) => {
+			setFontType(v as EditorFontType);
+		},
+		[setFontType]
+	);
+
 	const handleOpenFolder = useCallback(() => {
 		if (!documentId) return;
 		window.workspace.openDocumentFolder(documentId);
