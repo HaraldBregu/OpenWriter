@@ -106,6 +106,14 @@ export const APP_SEARCH_ACTIONS: AppSearchActionDefinition[] = [
 		meta: 'Settings',
 	},
 	{
+		id: 'settings-assistant',
+		title: 'Open Settings · Assistant',
+		description: 'Chat with the AI assistant.',
+		href: '/settings/assistant',
+		icon: Sparkles,
+		meta: 'Settings',
+	},
+	{
 		id: 'settings-system',
 		title: 'Open Settings · System',
 		description: 'System-level settings and updates.',
