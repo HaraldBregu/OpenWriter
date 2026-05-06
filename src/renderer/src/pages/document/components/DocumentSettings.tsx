@@ -14,8 +14,14 @@ import {
 } from '@/components/ui/DropdownMenu';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs';
 import { useEditorPrefs } from '../../../hooks/use-editor-prefs';
+import type { EditorMaxWidthType } from '../../../../../shared/types';
 
-const WIDTH_PRESETS = [70, 80, 90, 100] as const;
+const WIDTH_PRESETS: ReadonlyArray<{ value: EditorMaxWidthType; label: string }> = [
+	{ value: 'small', label: 'Small' },
+	{ value: 'medium', label: 'Medium' },
+	{ value: 'large', label: 'Large' },
+	{ value: 'full', label: 'Full' },
+];
 const TEXT_SIZE_PRESETS = [100, 110, 120, 130] as const;
 
 interface DocumentSettingsProps {
