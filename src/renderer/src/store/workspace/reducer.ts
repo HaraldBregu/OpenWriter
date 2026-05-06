@@ -275,7 +275,6 @@ export const {
 	handleWorkspaceDeleted,
 	clearDeletionReason,
 	resourceRemoved,
-	editorWidthChanged,
 	importResourcesRequested,
 	importResourcesCompleted,
 	documentsLoaded,
