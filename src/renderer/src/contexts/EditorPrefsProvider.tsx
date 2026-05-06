@@ -10,10 +10,12 @@ import {
 	type ReactNode,
 } from 'react';
 import { debounce } from 'lodash';
-import type { EditorMaxWidthType } from '../../../shared/types';
+import type { EditorMaxWidthType, EditorFontType } from '../../../shared/types';
 
 const MAX_WIDTH_TYPES: readonly EditorMaxWidthType[] = ['small', 'medium', 'large', 'full'];
 const DEFAULT_MAX_WIDTH_TYPE: EditorMaxWidthType = 'medium';
+const FONT_TYPES: readonly EditorFontType[] = ['default', 'sans', 'serif', 'writer'];
+const DEFAULT_FONT_TYPE: EditorFontType = 'default';
 const DEFAULT_TEXT_SIZE = 100;
 const PERSIST_DEBOUNCE_MS = 300;
 
@@ -22,10 +24,14 @@ export interface EditorPrefsContextValue {
 	maxWidthType: EditorMaxWidthType;
 	/** Current editor text size as a whole-number percentage (50–300). */
 	textSize: number;
+	/** Current editor font preset. */
+	fontType: EditorFontType;
 	/** Update the max-width preset. Optimistic in-memory update + debounced persist to workspace.json. */
 	setMaxWidthType: (value: EditorMaxWidthType) => void;
 	/** Update the text size. Optimistic in-memory update + debounced persist to workspace.json. */
 	setTextSize: (percentage: number) => void;
+	/** Update the font preset. Optimistic in-memory update + debounced persist to workspace.json. */
+	setFontType: (value: EditorFontType) => void;
 }
 
 const EditorPrefsContext = createContext<EditorPrefsContextValue | undefined>(undefined);
