@@ -166,6 +166,22 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
+	async updateTextSize(percentage: number): Promise<ProjectWorkspaceInfo> {
+		this.validateTextSize(percentage);
+		const current = await this.getOrCreate();
+		const updated: ProjectWorkspaceInfo = {
+			...current,
+			textSize: percentage,
+			updatedAt: new Date().toISOString(),
+		};
+		this.metadata.setProject(updated);
+		this.logger?.info(
+			'ProjectWorkspaceService',
+			`Updated text size to: ${percentage}%`
+		);
+		return updated;
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
