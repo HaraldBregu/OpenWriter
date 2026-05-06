@@ -633,8 +633,8 @@ export interface ProjectWorkspaceInfo {
 	updatedAt: string;
 	/** Application version that created this project file. */
 	appVersion: string;
-	/** Document editor max-width as a whole-number percentage (1–100). */
-	editorWidth: number;
+	/** Document editor max-width preset. */
+	maxWidthType: EditorMaxWidthType;
 	/** Document editor text size as a whole-number percentage (50–300). */
 	textSize: number;
 }
