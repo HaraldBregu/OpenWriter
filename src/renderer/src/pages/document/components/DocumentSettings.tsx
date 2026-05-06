@@ -92,17 +92,17 @@ export default function DocumentSettings({
 					<div className="px-2 py-2">
 						<div className="mb-2 flex items-center justify-between">
 							<span className="text-xs font-medium">Width</span>
-							<span className="text-xs tabular-nums text-muted-foreground">{editorWidth}%</span>
+							<span className="text-xs capitalize text-muted-foreground">{maxWidthType}</span>
 						</div>
-						<Tabs value={String(editorWidth)} onValueChange={handleWidthChange}>
+						<Tabs value={maxWidthType} onValueChange={handleWidthChange}>
 							<TabsList className="grid h-8 w-full grid-cols-4 p-0.5">
 								{WIDTH_PRESETS.map((preset) => (
 									<TabsTrigger
-										key={preset}
-										value={String(preset)}
+										key={preset.value}
+										value={preset.value}
 										className="h-7 px-0 text-xs"
 									>
-										{preset}%
+										{preset.label}
 									</TabsTrigger>
 								))}
 							</TabsList>
