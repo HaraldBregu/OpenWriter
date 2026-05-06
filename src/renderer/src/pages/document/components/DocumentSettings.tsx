@@ -145,16 +145,12 @@ export default function DocumentSettings({
 				<DropdownMenuSeparator />
 				<DropdownMenuGroup>
 					<DropdownMenuLabel>Font</DropdownMenuLabel>
-					<DropdownMenuRadioGroup defaultValue="sans">
-						<DropdownMenuRadioItem value="sans">
-							<span className="font-sans">Sans</span>
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value="serif">
-							<span className="font-serif">Serif</span>
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value="mono">
-							<span className="font-mono">Mono</span>
-						</DropdownMenuRadioItem>
+					<DropdownMenuRadioGroup value={fontType} onValueChange={handleFontChange}>
+						{FONT_PRESETS.map((preset) => (
+							<DropdownMenuRadioItem key={preset.value} value={preset.value}>
+								<span className={preset.className}>{preset.label}</span>
+							</DropdownMenuRadioItem>
+						))}
 					</DropdownMenuRadioGroup>
 				</DropdownMenuGroup>
 			</DropdownMenuContent>
