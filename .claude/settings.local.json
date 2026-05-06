@@ -170,7 +170,9 @@
       "Bash(xargs sed *)",
       "Read(//Users/haraldbregu/.claude/**)",
       "Bash(echo \"PRE_EXIT=$?\")",
-      "Bash(pkill -f \"tsc -p tsconfig.web\")"
+      "Bash(pkill -f \"tsc -p tsconfig.web\")",
+      "Bash(Move-Item *)",
+      "Bash(powershell *)"
     ],
     "deny": [
       "Bash(git push --force:*)",

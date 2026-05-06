@@ -24,7 +24,7 @@ import './index.css';
 // Lazy-loaded pages
 const SplashPage = lazy(() => import('./pages/splash/SplashPage'));
 const DocumentPage = lazy(() => import('./pages/document/Page'));
-const AssistantPage = lazy(() => import('./pages/assistant/Page'));
+const AssistantPage = lazy(() => import('./pages/settings/pages/assistant/Page'));
 const ResourcesPage = lazy(() => import('./pages/resources/Page'));
 const ChannelsPage = lazy(() => import('./pages/settings/pages/channels/Page'));
 // Lazy-loaded settings pages
