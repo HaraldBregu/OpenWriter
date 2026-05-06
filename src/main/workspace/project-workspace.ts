@@ -56,16 +56,19 @@ export class ProjectWorkspaceService {
 
 		const existing = this.metadata.getProject();
 		if (existing) {
-			if (this.isValidEditorWidth(existing.editorWidth)) return existing;
+			const widthOk = this.isValidEditorWidth(existing.editorWidth);
+			const textOk = this.isValidTextSize(existing.textSize);
+			if (widthOk && textOk) return existing;
 			const migrated: ProjectWorkspaceInfo = {
 				...existing,
-				editorWidth: DEFAULT_EDITOR_WIDTH,
+				editorWidth: widthOk ? existing.editorWidth : DEFAULT_EDITOR_WIDTH,
+				textSize: textOk ? existing.textSize : DEFAULT_TEXT_SIZE,
 				version: SCHEMA_VERSION,
 			};
 			this.metadata.setProject(migrated);
 			this.logger?.info(
 				'ProjectWorkspaceService',
-				`Migrated project info to schema v${SCHEMA_VERSION} (added editorWidth)`
+				`Migrated project info to schema v${SCHEMA_VERSION} (editor prefs)`
 			);
 			return migrated;
 		}
