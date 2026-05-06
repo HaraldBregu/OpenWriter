@@ -33,15 +33,13 @@ export default function DocumentSettings({
 }: DocumentSettingsProps): React.ReactElement {
 	const { t } = useTranslation();
 	const [open, setOpen] = useState(false);
-	const { editorWidth, setEditorWidth, textSize, setTextSize } = useEditorPrefs();
+	const { maxWidthType, setMaxWidthType, textSize, setTextSize } = useEditorPrefs();
 
 	const handleWidthChange = useCallback(
 		(v: unknown) => {
-			const next =
-				typeof v === 'string' ? parseInt(v, 10) : typeof v === 'number' ? v : Number.NaN;
-			if (Number.isFinite(next)) setEditorWidth(next);
+			if (typeof v === 'string') setMaxWidthType(v as EditorMaxWidthType);
 		},
-		[setEditorWidth]
+		[setMaxWidthType]
 	);
 
 	const handleTextSizeChange = useCallback(
