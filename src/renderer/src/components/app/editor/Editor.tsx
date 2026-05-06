@@ -8,7 +8,15 @@ import { BubbleMenu } from './components/BubbleMenu';
 import { OptionMenu } from './components/OptionMenu';
 import Layout from './Layout';
 import type { PromptSubmitPayload } from './types';
-import type { EditorMaxWidthType } from '../../../../../shared/types';
+import type { EditorMaxWidthType, EditorFontType } from '../../../../../shared/types';
+
+const FONT_TYPE_CLASS: Record<EditorFontType, string> = {
+	default: '!font-default',
+	sans: '!font-sans',
+	serif: '!font-serif',
+	writer: '!font-writer',
+};
+const FONT_TYPE_CLASS_VALUES = Object.values(FONT_TYPE_CLASS);
 import { cn } from '@/lib/utils';
 
 const EMPTY_DOC: Content = { type: 'doc', content: [{ type: 'paragraph' }] };
