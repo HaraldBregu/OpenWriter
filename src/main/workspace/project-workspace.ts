@@ -13,10 +13,15 @@ import type { WorkspaceMetadataService } from './workspace-metadata';
  * Current schema version written to every new project block.
  * Increment when the shape changes in a breaking way.
  */
-const SCHEMA_VERSION = 1;
+const SCHEMA_VERSION = 2;
 
 /** Maximum allowed length for the `name` field. */
 const MAX_NAME_LENGTH = 255;
+
+/** Allowed range for `editorWidth` (whole-number percentage). */
+const MIN_EDITOR_WIDTH = 1;
+const MAX_EDITOR_WIDTH = 100;
+const DEFAULT_EDITOR_WIDTH = 70;
 
 // ---------------------------------------------------------------------------
 // Service
