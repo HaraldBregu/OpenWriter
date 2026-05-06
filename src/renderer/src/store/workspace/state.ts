@@ -15,6 +15,8 @@ export interface WorkspaceState {
 	projectName: string | null;
 	/** Project description from workspace metadata (workspace.json `project` block) */
 	projectDescription: string | null;
+	/** Editor max-width as a whole-number percentage (1–100). Null until loaded. */
+	editorWidth: number | null;
 	/** Every managed workspace under `{userData}/workspaces/`. */
 	workspaces: WorkspaceInfo[];
 	status: 'idle' | 'loading' | 'ready' | 'error';
