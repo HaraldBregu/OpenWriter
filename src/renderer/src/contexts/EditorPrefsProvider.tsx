@@ -154,9 +154,18 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 		[persistTextSize]
 	);
 
+	const setFontType = useCallback(
+		(value: EditorFontType) => {
+			if (!isValidFontType(value)) return;
+			setFontTypeState(value);
+			persistFontType(value);
+		},
+		[persistFontType]
+	);
+
 	const value = useMemo<EditorPrefsContextValue>(
-		() => ({ maxWidthType, textSize, setMaxWidthType, setTextSize }),
-		[maxWidthType, textSize, setMaxWidthType, setTextSize]
+		() => ({ maxWidthType, textSize, fontType, setMaxWidthType, setTextSize, setFontType }),
+		[maxWidthType, textSize, fontType, setMaxWidthType, setTextSize, setFontType]
 	);
 
 	return <EditorPrefsContext.Provider value={value}>{children}</EditorPrefsContext.Provider>;
