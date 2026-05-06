@@ -146,6 +146,12 @@
 	}
 }
 
+@theme {
+  --font-display: "Satoshi", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+
 /* TipTap / ProseMirror editor reset */
 .ProseMirror {
 	outline: none;

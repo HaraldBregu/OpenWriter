@@ -172,7 +172,12 @@
       "Bash(echo \"PRE_EXIT=$?\")",
       "Bash(pkill -f \"tsc -p tsconfig.web\")",
       "Bash(Move-Item *)",
-      "Bash(powershell *)"
+      "Bash(powershell *)",
+      "Bash(Get-ChildItem -Path \"C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\" -Recurse -Filter \"*workspace*\" -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(dir C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\\\\src\\\\renderer\\\\src\\\\store\\\\workspace *)",
+      "Bash(dir \"C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\\\\src\\\\renderer\\\\src\\\\store\\\\workspace\" /B)",
+      "Bash(findstr /N \"updateProjectName updateProjectDescription updateEditor\" \"C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\\\\src\\\\main\\\\ipc\\\\workspace-ipc.ts\" \"C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\\\\src\\\\preload\\\\index.ts\" \"C:\\\\Users\\\\BRGHLD87H\\\\Documents\\\\OpenWriter\\\\src\\\\shared\\\\channels.ts\")"
     ],
     "deny": [
       "Bash(git push --force:*)",
