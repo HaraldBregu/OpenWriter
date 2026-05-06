@@ -20,8 +20,7 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 			<div id={id} className={cn('h-full min-w-0 flex flex-col', className)}>
 				<div className="flex-1 overflow-y-auto overflow-x-hidden bg-background">
 					<div
-						className="mx-auto flex w-full flex-col gap-2 p-6"
-						style={{ maxWidth: `${width}%` }}
+						className="mx-auto flex w-full flex-col gap-2 p-6 max-w-3xl"
 					>
 						<div
 							ref={(node) => {

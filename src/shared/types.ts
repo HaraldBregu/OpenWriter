@@ -608,6 +608,13 @@ export interface DocumentConfig {
 // ---- Project Workspace ----------------------------------------------------
 
 /**
+ * Allowed values for the editor max-width selector. Maps to a static Tailwind
+ * class in the renderer (small → max-w-3xl, medium → max-w-5xl,
+ * large → max-w-7xl, full → max-w-full).
+ */
+export type EditorMaxWidthType = 'small' | 'medium' | 'large' | 'full';
+
+/**
  * Project-level metadata stored under the `project` key inside the workspace's
  * workspace.json file. Identifies and describes the workspace.
  */
