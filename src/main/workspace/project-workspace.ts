@@ -50,7 +50,20 @@ export class ProjectWorkspaceService {
 		const workspacePath = this.requireWorkspace();
 
 		const existing = this.metadata.getProject();
-		if (existing) return existing;
+		if (existing) {
+			if (this.isValidEditorWidth(existing.editorWidth)) return existing;
+			const migrated: ProjectWorkspaceInfo = {
+				...existing,
+				editorWidth: DEFAULT_EDITOR_WIDTH,
+				version: SCHEMA_VERSION,
+			};
+			this.metadata.setProject(migrated);
+			this.logger?.info(
+				'ProjectWorkspaceService',
+				`Migrated project info to schema v${SCHEMA_VERSION} (added editorWidth)`
+			);
+			return migrated;
+		}
 
 		const created = this.buildDefault(workspacePath);
 		this.metadata.setProject(created);
