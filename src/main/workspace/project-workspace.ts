@@ -229,6 +229,7 @@ export class ProjectWorkspaceService {
 			appVersion: this.getAppVersion(),
 			maxWidthType: DEFAULT_MAX_WIDTH_TYPE,
 			textSize: DEFAULT_TEXT_SIZE,
+			fontType: DEFAULT_FONT_TYPE,
 		};
 	}
 
