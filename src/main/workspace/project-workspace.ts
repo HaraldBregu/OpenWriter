@@ -65,11 +65,13 @@ export class ProjectWorkspaceService {
 		if (existing) {
 			const maxWidthOk = this.isValidMaxWidthType(existing.maxWidthType);
 			const textOk = this.isValidTextSize(existing.textSize);
-			if (maxWidthOk && textOk) return existing;
+			const fontOk = this.isValidFontType(existing.fontType);
+			if (maxWidthOk && textOk && fontOk) return existing;
 			const migrated: ProjectWorkspaceInfo = {
 				...existing,
 				maxWidthType: maxWidthOk ? existing.maxWidthType : DEFAULT_MAX_WIDTH_TYPE,
 				textSize: textOk ? existing.textSize : DEFAULT_TEXT_SIZE,
+				fontType: fontOk ? existing.fontType : DEFAULT_FONT_TYPE,
 				version: SCHEMA_VERSION,
 			};
 			this.metadata.setProject(migrated);
