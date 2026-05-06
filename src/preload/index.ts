@@ -291,6 +291,8 @@ const workspace: WorkspaceApi = {
 		typedInvokeUnwrap(WorkspaceChannels.updateProjectDescription, description),
 	updateEditorWidth: (percentage: number) =>
 		typedInvokeUnwrap(WorkspaceChannels.updateEditorWidth, percentage),
+	updateTextSize: (percentage: number) =>
+		typedInvokeUnwrap(WorkspaceChannels.updateTextSize, percentage),
 	// -------------------------------------------------------------------------
 	// Document config
 	// -------------------------------------------------------------------------

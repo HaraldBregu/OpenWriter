@@ -23,23 +23,25 @@ const Layout = forwardRef<HTMLDivElement, LayoutProps>(
 						className="mx-auto flex w-full flex-col gap-2 p-6"
 						style={{ maxWidth: `${width}%` }}
 					>
-						<div className="relative w-full" ref={ref}>
-							<div
-								ref={containerRef}
-								className="relative"
-							>
-								{editor ? (
-									<Provider
-										editor={editor}
-										containerRef={containerRef}
-										onImageInsert={onImageInsert}
-									>
-										{children}
-									</Provider>
-								) : (
-									children
-								)}
-							</div>
+						<div
+							ref={(node) => {
+								containerRef.current = node;
+								if (typeof ref === 'function') ref(node);
+								else if (ref) ref.current = node;
+							}}
+							className="relative"
+						>
+							{editor ? (
+								<Provider
+									editor={editor}
+									containerRef={containerRef}
+									onImageInsert={onImageInsert}
+								>
+									{children}
+								</Provider>
+							) : (
+								children
+							)}
 						</div>
 					</div>
 				</div>
