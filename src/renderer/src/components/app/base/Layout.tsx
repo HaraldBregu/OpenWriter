@@ -436,11 +436,11 @@ function Container({ children }: LayoutProps) {
 								<SidebarMenu className="gap-1">
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											className="group/btn h-9 px-3"
+											className="group/btn h-9 px-3 group-data-[collapsible=icon]:justify-center"
 											onClick={createWriting}
 											disabled={creatingWriting}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-sidebar-accent transition-colors group-hover/btn:bg-sidebar-primary group-hover/btn:text-sidebar-primary-foreground">
 												<Plus className="h-3.5 w-3.5" />
 											</span>
 											<span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{t('sidebar.document', 'Document')}</span>
@@ -451,11 +451,11 @@ function Container({ children }: LayoutProps) {
 									</SidebarMenuItem>
 									<SidebarMenuItem>
 										<SidebarMenuButton
-											className="group/btn h-9 px-3"
+											className="group/btn h-9 px-3 group-data-[collapsible=icon]:justify-center"
 											isActive={activeModal === 'search'}
 											onClick={handleOpenSearch}
 										>
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-transparent">
 												<Search className="h-3.5 w-3.5" />
 											</span>
 											<span className="flex-1 truncate group-data-[collapsible=icon]:hidden">{t('menu.search', 'Search')}</span>
