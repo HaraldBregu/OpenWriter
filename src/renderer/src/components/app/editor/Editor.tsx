@@ -92,6 +92,7 @@ const Editor = React.memo(
 				documentBasePath = null,
 				maxWidth = 'medium',
 				textSize = 100,
+				fontType = 'default',
 			},
 			ref
 		) => {
