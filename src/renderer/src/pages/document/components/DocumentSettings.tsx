@@ -13,11 +13,11 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/DropdownMenu';
-import { Slider } from '@/components/ui/Slider';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/Tabs';
-import { useEditorWidth } from '../../../hooks/use-editor-width';
+import { useEditorPrefs } from '../../../hooks/use-editor-prefs';
 
 const WIDTH_PRESETS = [70, 80, 90, 100] as const;
+const TEXT_SIZE_PRESETS = [100, 110, 120, 130] as const;
 
 interface DocumentSettingsProps {
 	readonly documentId: string | null;
