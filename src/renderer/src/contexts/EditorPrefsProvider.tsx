@@ -100,6 +100,18 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 		[]
 	);
 
+	const persistFontType = useMemo(
+		() =>
+			debounce(
+				(value: EditorFontType) => {
+					void window.workspace.updateFontType(value).catch(() => {});
+				},
+				PERSIST_DEBOUNCE_MS,
+				{ leading: false, trailing: true }
+			),
+		[]
+	);
+
 	useEffect(() => {
 		mountedRef.current = true;
 		void refresh();
