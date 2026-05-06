@@ -149,18 +149,18 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
-	async updateEditorWidth(percentage: number): Promise<ProjectWorkspaceInfo> {
-		this.validateEditorWidth(percentage);
+	async updateMaxWidthType(value: EditorMaxWidthType): Promise<ProjectWorkspaceInfo> {
+		this.validateMaxWidthType(value);
 		const current = await this.getOrCreate();
 		const updated: ProjectWorkspaceInfo = {
 			...current,
-			editorWidth: percentage,
+			maxWidthType: value,
 			updatedAt: new Date().toISOString(),
 		};
 		this.metadata.setProject(updated);
 		this.logger?.info(
 			'ProjectWorkspaceService',
-			`Updated editor width to: ${percentage}%`
+			`Updated max width type to: ${value}`
 		);
 		return updated;
 	}
