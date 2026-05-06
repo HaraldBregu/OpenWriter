@@ -358,8 +358,8 @@ export interface InvokeChannelMap {
 		args: [description: string];
 		result: ProjectWorkspaceInfo;
 	};
-	[WorkspaceChannels.updateEditorWidth]: {
-		args: [percentage: number];
+	[WorkspaceChannels.updateMaxWidthType]: {
+		args: [value: EditorMaxWidthType];
 		result: ProjectWorkspaceInfo;
 	};
 	[WorkspaceChannels.updateTextSize]: {
