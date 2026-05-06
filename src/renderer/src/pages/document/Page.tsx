@@ -562,7 +562,7 @@ function PageContent(): ReactElement {
 						onRedo={handleRedo}
 						onEditorReady={handleEditorReady}
 						documentBasePath={documentBasePath}
-						width={editorWidth ?? 70}
+						width={editorWidth}
 					/>
 				)}
 			</PageBody>
