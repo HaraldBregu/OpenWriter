@@ -232,6 +232,15 @@ export class WorkspaceIpc implements IpcModule {
 			)
 		);
 
+		ipcMain.handle(
+			WorkspaceChannels.updateFontType,
+			wrapIpcHandler(
+				(event: IpcMainInvokeEvent, value: EditorFontType) =>
+					this.mgr(event, container).updateFontType(value),
+				WorkspaceChannels.updateFontType
+			)
+		);
+
 		// -------------------------------------------------------------------------
 		// Filesystem
 		// -------------------------------------------------------------------------
