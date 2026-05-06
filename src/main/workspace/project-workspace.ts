@@ -141,6 +141,22 @@ export class ProjectWorkspaceService {
 		return updated;
 	}
 
+	async updateEditorWidth(percentage: number): Promise<ProjectWorkspaceInfo> {
+		this.validateEditorWidth(percentage);
+		const current = await this.getOrCreate();
+		const updated: ProjectWorkspaceInfo = {
+			...current,
+			editorWidth: percentage,
+			updatedAt: new Date().toISOString(),
+		};
+		this.metadata.setProject(updated);
+		this.logger?.info(
+			'ProjectWorkspaceService',
+			`Updated editor width to: ${percentage}%`
+		);
+		return updated;
+	}
+
 	// -------------------------------------------------------------------------
 	// Private helpers
 	// -------------------------------------------------------------------------
