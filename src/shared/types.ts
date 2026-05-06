@@ -626,6 +626,8 @@ export interface ProjectWorkspaceInfo {
 	updatedAt: string;
 	/** Application version that created this project file. */
 	appVersion: string;
+	/** Document editor max-width as a whole-number percentage (1–100). */
+	editorWidth: number;
 }
 
 // ---- AI Agents ------------------------------------------------------------
