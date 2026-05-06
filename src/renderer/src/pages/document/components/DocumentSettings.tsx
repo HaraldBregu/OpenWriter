@@ -29,8 +29,8 @@ export default function DocumentSettings({
 	const [textSize, setTextSize] = useState<number[]>([75]);
 
 	const handleWidthChange = useCallback(
-		(v: number | number[]) => {
-			setEditorWidth(Array.isArray(v) ? v[0] : v);
+		(v: number | readonly number[]) => {
+			setEditorWidth(Array.isArray(v) ? v[0] : (v as number));
 		},
 		[setEditorWidth]
 	);
