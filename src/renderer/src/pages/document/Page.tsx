@@ -38,7 +38,7 @@ import type { TaskEvent } from '../../../../shared/types';
 import type { PromptSubmitPayload } from '@/components/app/editor/types';
 import { useAppDispatch } from '../../store';
 import { documentMetadataPatched } from '../../store/workspace';
-import { useEditorWidth } from '../../hooks/use-editor-width';
+import { useEditorPrefs } from '../../hooks/use-editor-prefs';
 import Layout from './Layout';
 import {
 	PageContainer,
