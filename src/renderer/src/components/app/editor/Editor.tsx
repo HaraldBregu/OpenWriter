@@ -162,7 +162,7 @@ const Editor = React.memo(
 					editorProps: {
 						attributes: {
 							class: cn(
-								'font-sans focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0 [&_hr]:my-4 [&_hr]:border-border',
+								'!font-mono focus:outline-none min-h-[120px] py-2 text-base leading-relaxed text-foreground break-words [&_p]:mb-4 [&_p:last-child]:mb-0 [&_hr]:my-4 [&_hr]:border-border',
 							)
 						},
 					},

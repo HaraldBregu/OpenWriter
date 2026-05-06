@@ -18,6 +18,7 @@ import type {
 	FsListDirParams,
 	DocumentConfig,
 	CreateWorkspaceParams,
+	EditorMaxWidthType,
 } from '../../shared/types';
 
 /**
