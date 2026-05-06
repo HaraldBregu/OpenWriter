@@ -139,27 +139,6 @@ export default function DocumentSettings({
 						</DropdownMenuRadioItem>
 					</DropdownMenuRadioGroup>
 				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuLabel>Theme</DropdownMenuLabel>
-					<DropdownMenuRadioGroup defaultValue="light">
-						<DropdownMenuRadioItem value="light">
-							<Sun className="text-muted-foreground" aria-hidden="true" />
-							<span>Light</span>
-						</DropdownMenuRadioItem>
-						<DropdownMenuRadioItem value="dark">
-							<Moon className="text-muted-foreground" aria-hidden="true" />
-							<span>Dark</span>
-						</DropdownMenuRadioItem>
-					</DropdownMenuRadioGroup>
-				</DropdownMenuGroup>
-				<DropdownMenuSeparator />
-				<DropdownMenuGroup>
-					<DropdownMenuItem onClick={handleOpenFolder} disabled={!documentId}>
-						<FolderOpen className="text-muted-foreground" aria-hidden="true" />
-						<span className="truncate">{t('configSidebar.openFolder', 'Open folder')}</span>
-					</DropdownMenuItem>
-				</DropdownMenuGroup>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
