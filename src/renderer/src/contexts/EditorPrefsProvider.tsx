@@ -10,18 +10,20 @@ import {
 	type ReactNode,
 } from 'react';
 import { debounce } from 'lodash';
+import type { EditorMaxWidthType } from '../../../shared/types';
 
-const DEFAULT_EDITOR_WIDTH = 70;
+const MAX_WIDTH_TYPES: readonly EditorMaxWidthType[] = ['small', 'medium', 'large', 'full'];
+const DEFAULT_MAX_WIDTH_TYPE: EditorMaxWidthType = 'medium';
 const DEFAULT_TEXT_SIZE = 100;
 const PERSIST_DEBOUNCE_MS = 300;
 
 export interface EditorPrefsContextValue {
-	/** Current editor max-width as a whole-number percentage (1–100). */
-	editorWidth: number;
+	/** Current editor max-width preset. */
+	maxWidthType: EditorMaxWidthType;
 	/** Current editor text size as a whole-number percentage (50–300). */
 	textSize: number;
-	/** Update the width. Optimistic in-memory update + debounced persist to workspace.json. */
-	setEditorWidth: (percentage: number) => void;
+	/** Update the max-width preset. Optimistic in-memory update + debounced persist to workspace.json. */
+	setMaxWidthType: (value: EditorMaxWidthType) => void;
 	/** Update the text size. Optimistic in-memory update + debounced persist to workspace.json. */
 	setTextSize: (percentage: number) => void;
 }
@@ -32,8 +34,8 @@ interface EditorPrefsProviderProps {
 	readonly children: ReactNode;
 }
 
-function clampWidth(value: number): number {
-	return Math.max(1, Math.min(100, Math.round(value)));
+function isValidMaxWidthType(value: unknown): value is EditorMaxWidthType {
+	return typeof value === 'string' && (MAX_WIDTH_TYPES as readonly string[]).includes(value);
 }
 
 function clampTextSize(value: number): number {
@@ -41,7 +43,7 @@ function clampTextSize(value: number): number {
 }
 
 export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): ReactElement {
-	const [editorWidth, setEditorWidthState] = useState<number>(DEFAULT_EDITOR_WIDTH);
+	const [maxWidthType, setMaxWidthTypeState] = useState<EditorMaxWidthType>(DEFAULT_MAX_WIDTH_TYPE);
 	const [textSize, setTextSizeState] = useState<number>(DEFAULT_TEXT_SIZE);
 	const mountedRef = useRef(true);
 
@@ -49,22 +51,22 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 		try {
 			const info = await window.workspace.getProjectInfo();
 			if (!mountedRef.current) return;
-			const w = info?.editorWidth;
+			const w = info?.maxWidthType;
 			const t = info?.textSize;
-			setEditorWidthState(typeof w === 'number' ? clampWidth(w) : DEFAULT_EDITOR_WIDTH);
+			setMaxWidthTypeState(isValidMaxWidthType(w) ? w : DEFAULT_MAX_WIDTH_TYPE);
 			setTextSizeState(typeof t === 'number' ? clampTextSize(t) : DEFAULT_TEXT_SIZE);
 		} catch {
 			if (!mountedRef.current) return;
-			setEditorWidthState(DEFAULT_EDITOR_WIDTH);
+			setMaxWidthTypeState(DEFAULT_MAX_WIDTH_TYPE);
 			setTextSizeState(DEFAULT_TEXT_SIZE);
 		}
 	}, []);
 
-	const persistWidth = useMemo(
+	const persistMaxWidth = useMemo(
 		() =>
 			debounce(
-				(value: number) => {
-					void window.workspace.updateEditorWidth(value).catch(() => {});
+				(value: EditorMaxWidthType) => {
+					void window.workspace.updateMaxWidthType(value).catch(() => {});
 				},
 				PERSIST_DEBOUNCE_MS,
 				{ leading: false, trailing: true }
@@ -91,27 +93,27 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 			if (event.currentPath) {
 				void refresh();
 			} else {
-				setEditorWidthState(DEFAULT_EDITOR_WIDTH);
+				setMaxWidthTypeState(DEFAULT_MAX_WIDTH_TYPE);
 				setTextSizeState(DEFAULT_TEXT_SIZE);
 			}
 		});
 		return () => {
 			mountedRef.current = false;
 			unsubscribeWorkspace();
-			persistWidth.flush();
-			persistWidth.cancel();
+			persistMaxWidth.flush();
+			persistMaxWidth.cancel();
 			persistTextSize.flush();
 			persistTextSize.cancel();
 		};
-	}, [refresh, persistWidth, persistTextSize]);
+	}, [refresh, persistMaxWidth, persistTextSize]);
 
-	const setEditorWidth = useCallback(
-		(percentage: number) => {
-			const next = clampWidth(percentage);
-			setEditorWidthState(next);
-			persistWidth(next);
+	const setMaxWidthType = useCallback(
+		(value: EditorMaxWidthType) => {
+			if (!isValidMaxWidthType(value)) return;
+			setMaxWidthTypeState(value);
+			persistMaxWidth(value);
 		},
-		[persistWidth]
+		[persistMaxWidth]
 	);
 
 	const setTextSize = useCallback(
@@ -124,8 +126,8 @@ export function EditorPrefsProvider({ children }: EditorPrefsProviderProps): Rea
 	);
 
 	const value = useMemo<EditorPrefsContextValue>(
-		() => ({ editorWidth, textSize, setEditorWidth, setTextSize }),
-		[editorWidth, textSize, setEditorWidth, setTextSize]
+		() => ({ maxWidthType, textSize, setMaxWidthType, setTextSize }),
+		[maxWidthType, textSize, setMaxWidthType, setTextSize]
 	);
 
 	return <EditorPrefsContext.Provider value={value}>{children}</EditorPrefsContext.Provider>;
