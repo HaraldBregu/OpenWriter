@@ -366,7 +366,7 @@ function Container({ children }: LayoutProps) {
 			/>
 
 			<SidebarPageContainer>
-				<Sidebar collapsible="icon" className="top-12 h-[calc(100svh-3rem)]">
+				<Sidebar className="top-12 h-[calc(100svh-3rem)]">
 					<SidebarHeader>
 						<SidebarMenu>
 							<SidebarMenuItem>
